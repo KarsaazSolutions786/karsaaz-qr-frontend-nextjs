@@ -2,80 +2,76 @@
 
 import { cn } from "@/lib/utils";
 import { useStore } from "@/store/useStore";
-import {
-  ChevronDown,
-  ChevronRight,
-  FileText,
-  Folder,
-  LayoutDashboard,
-  LifeBuoy,
-  Palette,
-  QrCode,
-  Server,
-  Settings,
-  Share2,
-  Shield
-} from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
+/* ── Figma sidebar icon map (Pixel-Perfect) ─────────────────────────── */
+const ICON = {
+  logoText: "/images/sidebar-icons/logo-text.svg",
+  logoQR: "/images/sidebar-icons/logo-qr.svg",
+  collapseBtn: "/images/sidebar-icons/collapse-btn.svg",
+  homeActive: "/images/sidebar-icons/home-white.svg",
+  homeInactive: "/images/sidebar-icons/home-line.svg",
+  existingQR: "/images/sidebar-icons/existing-qr-line.svg",
+  archived: "/images/sidebar-icons/archived-line.svg",
+  storage: "/images/sidebar-icons/storage-line.svg",
+  users: "/images/sidebar-icons/users-line.svg",
+  finance: "/images/sidebar-icons/finance-line.svg",
+  content: "/images/sidebar-icons/content-line.svg",
+  contacts: "/images/sidebar-icons/contacts-line.svg",
+  plugins: "/images/sidebar-icons/plugins-line.svg",
+  system: "/images/sidebar-icons/system-line.svg",
+  chevron: "/images/sidebar-icons/chevron-line.svg",
+  logoutIcon: "/images/sidebar-icons/logout-red-icon.svg",
+  logoutArrow: "/images/sidebar-icons/logout-red-arrow.svg",
+  apple: "/images/sidebar-icons/apple-store.svg",
+  googlePlay: "/images/sidebar-icons/google-play-store.svg",
+} as const;
+
+/* ── Menu items matching Figma nav structure ─────────────────── */
 interface MenuItem {
   title: string;
   href?: string;
-  icon: React.ElementType;
+  icon?: string;
+  activeIcon?: string;
   children?: { title: string; href: string }[];
   adminOnly?: boolean;
 }
 
 const menuItems: MenuItem[] = [
-  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { title: "Home", href: "/dashboard", icon: ICON.homeInactive, activeIcon: ICON.homeActive },
+  { title: "Existing QR", href: "/dashboard/qrcodes", icon: ICON.existingQR },
+  { title: "Archived", href: "/dashboard/qrcodes/archived", icon: ICON.archived },
+  { title: "Storage Connections", href: "/dashboard/cloud-storage", icon: ICON.storage },
   {
-    title: "QR Codes",
-    icon: QrCode,
-    children: [
-      { title: "All QR Codes", href: "/dashboard/qrcodes" },
-      { title: "Create QR", href: "/dashboard/qrcodes/new" },
-      { title: "Bulk Create", href: "/dashboard/qrcodes/bulk-create" },
-      { title: "Archived", href: "/dashboard/qrcodes/archived" },
-    ],
-  },
-  { title: "Folders", href: "/dashboard/folders", icon: Folder },
-  { title: "Referrals", href: "/dashboard/referrals", icon: Share2 },
-  { title: "Support", href: "/dashboard/support", icon: LifeBuoy },
-  {
-    title: "Settings",
-    icon: Settings,
-    children: [
-      { title: "Account", href: "/account/my-account" },
-      { title: "Account Details", href: "/account/account-details" },
-      { title: "Billing", href: "/account/billing" },
-      { title: "Subscriptions", href: "/account/subscriptions" },
-      { title: "Team", href: "/account/team" },
-      { title: "Credits", href: "/account/credits" },
-      { title: "Payment Methods", href: "/account/payment-methods" },
-      { title: "Promo Codes", href: "/account/promo-codes" },
-    ],
-  },
-  {
-    title: "Admin",
-    icon: Shield,
+    title: "Users",
+    icon: ICON.users,
     adminOnly: true,
     children: [
-      { title: "Users", href: "/dashboard/users" },
+      { title: "All users", href: "/dashboard/users" },
+      { title: "Paying users", href: "/dashboard/users?filter=paying" },
+      { title: "Non paying users", href: "/dashboard/users?filter=non-paying" },
       { title: "Roles", href: "/dashboard/roles" },
+    ],
+  },
+  {
+    title: "Finance",
+    icon: ICON.finance,
+    adminOnly: true,
+    children: [
       { title: "Plans", href: "/dashboard/subscription-plans" },
       { title: "Subscriptions", href: "/dashboard/subscriptions" },
       { title: "Billing", href: "/dashboard/billing" },
-      { title: "Domains", href: "/dashboard/domains" },
+      { title: "Transactions", href: "/dashboard/transactions" },
       { title: "Currencies", href: "/dashboard/currencies" },
       { title: "Payment Processors", href: "/dashboard/payment-processors" },
-      { title: "Transactions", href: "/dashboard/transactions" },
     ],
   },
   {
     title: "Content",
-    icon: FileText,
+    icon: ICON.content,
     adminOnly: true,
     children: [
       { title: "Blog Posts", href: "/dashboard/blog-posts" },
@@ -86,20 +82,28 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    title: "Tools",
-    icon: Palette,
+    title: "Contacts",
+    icon: ICON.contacts,
+    adminOnly: true,
+    children: [
+      { title: "Lead Forms", href: "/dashboard/lead-forms" },
+      { title: "Submissions", href: "/dashboard/lead-submissions" },
+    ],
+  },
+  {
+    title: "Plugins",
+    icon: ICON.plugins,
     adminOnly: true,
     children: [
       { title: "Templates", href: "/dashboard/templates" },
       { title: "Cloud Storage", href: "/dashboard/cloud-storage" },
-      { title: "Lead Forms", href: "/dashboard/lead-forms" },
       { title: "Plugins", href: "/dashboard/plugins" },
-      { title: "Abuse Reports", href: "/dashboard/abuse-reports" },
+      { title: "Domains", href: "/dashboard/domains" },
     ],
   },
   {
     title: "System",
-    icon: Server,
+    icon: ICON.system,
     adminOnly: true,
     children: [
       { title: "Status", href: "/dashboard/system/status" },
@@ -113,76 +117,102 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-import { useAuthStore } from "@/store/useAuthStore";
-
+/* ── Sidebar component ──────────────────────────────────────── */
 export default function Sidebar() {
   const { isSidebarOpen } = useStore();
   const { user } = useAuthStore();
   const pathname = usePathname();
+  const router = useRouter();
   const [openGroups, setOpenGroups] = useState<string[]>([]);
 
   const toggleGroup = (title: string) => {
     setOpenGroups((prev) =>
-      prev.includes(title)
-        ? prev.filter((item) => item !== title)
-        : [...prev, title]
+      prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]
     );
   };
 
-  // Admin check based on roles array
-  const isAdmin = user?.roles?.some(r => r.name === "Super Admin" || r.name === "Admin" || r.super_admin) || false;
+  const isAdmin =
+    user?.roles?.some(
+      (r) => r.name === "Super Admin" || r.name === "Admin" || r.super_admin
+    ) || false;
+
+  const isActive = (href: string) => pathname === href;
+  const isGroupActive = (item: MenuItem) =>
+    item.children?.some((child) => pathname === child.href) || false;
 
   if (!isSidebarOpen) return null;
 
   return (
-    <aside
-      className={cn(
-        "flex flex-col border-r bg-white transition-all duration-300 dark:bg-gray-800 dark:border-gray-700",
-        isSidebarOpen ? "w-64" : "w-0 overflow-hidden"
-      )}
-    >
-      <div className="flex h-16 items-center justify-center border-b px-6 dark:border-gray-700">
-        <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
-          Karsaaz QR
-        </span>
+    <aside className="sidebar-figma">
+      {/* ── Logo row (Pixel-Perfect mix) ───────────────────── */}
+      <div className="sidebar-logo-row">
+        <div className="sidebar-logo-group">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ICON.logoText} alt="Karsaaz" className="sidebar-logo-img" />
+          <div className="sidebar-qr-badge">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ICON.logoQR} alt="QR" className="sidebar-qr-badge-img" />
+          </div>
+        </div>
+        <button className="sidebar-collapse-btn" aria-label="Collapse sidebar">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ICON.collapseBtn} alt="" className="sidebar-collapse-icon" />
+        </button>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+      {/* ── Navigation items ─────────────────────────────── */}
+      <nav className="sidebar-nav">
         {menuItems.map((item) => {
           if (item.adminOnly && !isAdmin) return null;
 
+          const hasChildren = !!item.children;
+          const groupOpen = openGroups.includes(item.title);
+          const groupIsActive = isGroupActive(item);
+          const active = !hasChildren && item.href && isActive(item.href);
+
           return (
             <div key={item.title}>
-              {item.children ? (
+              {hasChildren ? (
+                /* ── Expandable group ── */
                 <div>
                   <button
                     onClick={() => toggleGroup(item.title)}
                     className={cn(
-                      "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700",
-                      pathname.startsWith(item.href || "") && "bg-gray-100 dark:bg-gray-700"
+                      "sidebar-nav-item",
+                      (groupIsActive || groupOpen) && "sidebar-nav-item--active-group"
                     )}
                   >
-                    <div className="flex items-center">
-                      <item.icon className="mr-3 h-5 w-5 text-gray-400" />
-                      {item.title}
+                    <div className="sidebar-nav-item-inner">
+                      <div className="sidebar-nav-icon-wrap">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.icon} alt="" className="sidebar-nav-icon" />
+                      </div>
+                      <span className="sidebar-nav-label">{item.title}</span>
                     </div>
-                    {openGroups.includes(item.title) ? (
-                      <ChevronDown className="h-4 w-4 text-gray-400" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4 text-gray-400" />
-                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={ICON.chevron}
+                      alt=""
+                      className={cn(
+                        "sidebar-chevron",
+                        groupOpen ? "sidebar-chevron--open" : "sidebar-chevron--closed"
+                      )}
+                    />
                   </button>
-                  {openGroups.includes(item.title) && (
-                    <div className="mt-1 space-y-1 pl-11">
-                      {item.children.map((child) => (
+
+                  {/* Sub-items */}
+                  {groupOpen && (
+                    <div className="sidebar-sub-items">
+                      {item.children!.map((child) => (
                         <Link
                           key={child.href}
                           href={child.href}
                           className={cn(
-                            "block rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white",
-                            pathname === child.href && "bg-gray-50 text-blue-600 dark:bg-gray-800 dark:text-blue-400"
+                            "sidebar-sub-item",
+                            isActive(child.href) && "sidebar-sub-item--active"
                           )}
                         >
+                          <span className="sidebar-sub-dot" />
                           {child.title}
                         </Link>
                       ))}
@@ -190,21 +220,66 @@ export default function Sidebar() {
                   )}
                 </div>
               ) : (
+                /* ── Simple nav link ── */
                 <Link
                   href={item.href!}
                   className={cn(
-                    "flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700",
-                    pathname === item.href && "bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400"
+                    "sidebar-nav-item",
+                    active && "sidebar-nav-item--active"
                   )}
                 >
-                  <item.icon className="mr-3 h-5 w-5 text-gray-400" />
-                  {item.title}
+                  <div className="sidebar-nav-item-inner">
+                    <div className={cn("sidebar-nav-icon-wrap", active && "sidebar-nav-icon-wrap--active")}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={active ? (item.activeIcon || item.icon) : item.icon} alt="" className="sidebar-nav-icon" />
+                    </div>
+                    <span className="sidebar-nav-label">{item.title}</span>
+                  </div>
                 </Link>
               )}
             </div>
           );
         })}
       </nav>
+
+      {/* ── App store badges ─────────────────────────────── */}
+      <div className="sidebar-app-badges">
+        <a href="#" className="sidebar-badge" aria-label="Download on App Store">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ICON.apple} alt="" className="sidebar-badge-icon" />
+          <div className="sidebar-badge-text">
+            <span className="sidebar-badge-small">Download on the</span>
+            <span className="sidebar-badge-large">App Store</span>
+          </div>
+        </a>
+        <a href="#" className="sidebar-badge" aria-label="Get it on Google Play">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={ICON.googlePlay} alt="" className="sidebar-badge-icon sidebar-badge-icon--play" />
+          <div className="sidebar-badge-text">
+            <span className="sidebar-badge-small">GET IN ON</span>
+            <span className="sidebar-badge-large">Google Play</span>
+          </div>
+        </a>
+      </div>
+
+      {/* ── Logout button (Refined Red) ──────────────────── */}
+      <div className="sidebar-logout-wrap">
+        <button
+          onClick={() => {
+            useAuthStore.getState().clearAuth();
+            router.push("/auth/login");
+          }}
+          className="sidebar-logout-btn"
+        >
+          <div className="sidebar-logout-icons">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ICON.logoutIcon} alt="" className="sidebar-logout-icon" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ICON.logoutArrow} alt="" className="sidebar-logout-icon absolute ml-2 opacity-50" />
+          </div>
+          <span className="sidebar-logout-label">Logout</span>
+        </button>
+      </div>
     </aside>
   );
 }

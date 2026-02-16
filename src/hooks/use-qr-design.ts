@@ -1,7 +1,7 @@
 import { QRDesign } from "@/services/qr.service";
 import { useFormContext } from "react-hook-form";
 
-export interface QRDesignState extends Partial<QRDesign> {
+export interface QRDesignState extends Partial<QRDesign>, Record<string, unknown> {
   // Add any client-only state here if needed
 }
 

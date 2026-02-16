@@ -9,18 +9,18 @@ export const contentService = {
 
     /** GET /api/blog-posts */
     getBlogPosts: async (params?: { page?: number; search?: string }) => {
-        return apiClient.get("/blog-posts", params as any);
+        return apiClient.get("/blog-posts", params);
     },
 
     getBlogPost: async (id: string | number) => {
         return apiClient.get(`/blog-posts/${id}`);
     },
 
-    createBlogPost: async (data: any) => {
+    createBlogPost: async (data: Record<string, unknown>) => {
         return apiClient.post("/blog-posts", data);
     },
 
-    updateBlogPost: async (id: string | number, data: any) => {
+    updateBlogPost: async (id: string | number, data: Record<string, unknown>) => {
         return apiClient.put(`/blog-posts/${id}`, data);
     },
 
@@ -32,18 +32,18 @@ export const contentService = {
 
     /** GET /api/pages */
     getPages: async (params?: { page?: number; search?: string }) => {
-        return apiClient.get("/pages", params as any);
+        return apiClient.get("/pages", params);
     },
 
     getPage: async (id: string | number) => {
         return apiClient.get(`/pages/${id}`);
     },
 
-    createPage: async (data: any) => {
+    createPage: async (data: Record<string, unknown>) => {
         return apiClient.post("/pages", data);
     },
 
-    updatePage: async (id: string | number, data: any) => {
+    updatePage: async (id: string | number, data: Record<string, unknown>) => {
         return apiClient.put(`/pages/${id}`, data);
     },
 
@@ -55,18 +55,18 @@ export const contentService = {
 
     /** GET /api/content-blocks */
     getContentBlocks: async (params?: { page?: number; search?: string }) => {
-        return apiClient.get("/content-blocks", params as any);
+        return apiClient.get("/content-blocks", params);
     },
 
     getContentBlock: async (id: string | number) => {
         return apiClient.get(`/content-blocks/${id}`);
     },
 
-    createContentBlock: async (data: any) => {
+    createContentBlock: async (data: Record<string, unknown>) => {
         return apiClient.post("/content-blocks", data);
     },
 
-    updateContentBlock: async (id: string | number, data: any) => {
+    updateContentBlock: async (id: string | number, data: Record<string, unknown>) => {
         return apiClient.put(`/content-blocks/${id}`, data);
     },
 
@@ -78,18 +78,18 @@ export const contentService = {
 
     /** GET /api/translations */
     getTranslations: async (params?: { page?: number; search?: string }) => {
-        return apiClient.get("/translations", params as any);
+        return apiClient.get("/translations", params);
     },
 
     getTranslation: async (id: string | number) => {
         return apiClient.get(`/translations/${id}`);
     },
 
-    createTranslation: async (data: any) => {
+    createTranslation: async (data: Record<string, unknown>) => {
         return apiClient.post("/translations", data);
     },
 
-    updateTranslation: async (id: string | number, data: any) => {
+    updateTranslation: async (id: string | number, data: Record<string, unknown>) => {
         return apiClient.put(`/translations/${id}`, data);
     },
 
@@ -101,18 +101,18 @@ export const contentService = {
 
     /** GET /api/custom-codes */
     getCustomCodes: async (params?: { page?: number; search?: string }) => {
-        return apiClient.get("/custom-codes", params as any);
+        return apiClient.get("/custom-codes", params);
     },
 
     getCustomCode: async (id: string | number) => {
         return apiClient.get(`/custom-codes/${id}`);
     },
 
-    createCustomCode: async (data: any) => {
+    createCustomCode: async (data: Record<string, unknown>) => {
         return apiClient.post("/custom-codes", data);
     },
 
-    updateCustomCode: async (id: string | number, data: any) => {
+    updateCustomCode: async (id: string | number, data: Record<string, unknown>) => {
         return apiClient.put(`/custom-codes/${id}`, data);
     },
 
@@ -124,18 +124,18 @@ export const contentService = {
 
     /** GET /api/dynamic-biolink-blocks */
     getDynamicBiolinkBlocks: async (params?: { page?: number; search?: string }) => {
-        return apiClient.get("/dynamic-biolink-blocks", params as any);
+        return apiClient.get("/dynamic-biolink-blocks", params);
     },
 
     getDynamicBiolinkBlock: async (id: string | number) => {
         return apiClient.get(`/dynamic-biolink-blocks/${id}`);
     },
 
-    createDynamicBiolinkBlock: async (data: any) => {
+    createDynamicBiolinkBlock: async (data: Record<string, unknown>) => {
         return apiClient.post("/dynamic-biolink-blocks", data);
     },
 
-    updateDynamicBiolinkBlock: async (id: string | number, data: any) => {
+    updateDynamicBiolinkBlock: async (id: string | number, data: Record<string, unknown>) => {
         return apiClient.put(`/dynamic-biolink-blocks/${id}`, data);
     },
 

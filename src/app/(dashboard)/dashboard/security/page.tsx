@@ -21,7 +21,7 @@ import {
   ShieldOff,
   Smartphone,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function SecurityPage() {
@@ -39,36 +39,36 @@ export default function SecurityPage() {
 
   const [revokeAllDialog, setRevokeAllDialog] = useState(false);
 
-  const fetchSessions = async () => {
+  const fetchSessions = useCallback(async () => {
     setSessionsLoading(true);
     try {
       const res = await authService.getSessions();
-      const data = (res as any)?.data ?? res;
+      const data = (res as { data?: Session[] })?.data ?? res;
       setSessions(Array.isArray(data) ? data : []);
     } catch {
       setSessions([]);
     } finally {
       setSessionsLoading(false);
     }
-  };
+  }, []);
 
-  const fetchTwoFaStatus = async () => {
+  const fetchTwoFaStatus = useCallback(async () => {
     setTwoFaLoading(true);
     try {
       const res = await authService.get2faStatus();
-      const data = (res as any)?.data ?? res;
+      const data = (res as { data?: { enabled: boolean; confirmed: boolean } })?.data ?? res;
       setTwoFaStatus(data);
     } catch {
       setTwoFaStatus(null);
     } finally {
       setTwoFaLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchSessions();
     fetchTwoFaStatus();
-  }, []);
+  }, [fetchSessions, fetchTwoFaStatus]);
 
   const handleRevokeSession = async (sessionId: string) => {
     try {
@@ -93,7 +93,7 @@ export default function SecurityPage() {
     setActionLoading(true);
     try {
       const res = await authService.setup2fa();
-      const data = (res as any)?.data ?? res;
+      const data = (res as { data?: { qr_code?: string; secret?: string } })?.data ?? res;
       setSetupData(data);
       setConfirmCode("");
       setTwoFaDialog("setup");

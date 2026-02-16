@@ -78,7 +78,7 @@ export default function TeamManagement() {
         }
     });
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         if (!user?.id) return;
         setIsLoading(true);
         try {
@@ -88,17 +88,17 @@ export default function TeamManagement() {
             ]);
             setSubUsers(usersRes.data);
             setFolders(foldersRes.data);
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Failed to fetch team data:", error);
             toast.error("Failed to load team data");
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [user?.id, setSubUsers, setFolders]); // Add user?.id and setters to dependencies
 
     useEffect(() => {
         fetchData();
-    }, [user?.id]);
+    }, [fetchData]);
 
     const onInvite = async (data: InviteFormValues) => {
         if (!user?.id) return;
@@ -113,8 +113,9 @@ export default function TeamManagement() {
             setIsInviteOpen(false);
             reset();
             fetchData();
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to invite user");
+        } catch (error: unknown) {
+            const apiError = error as { response?: { data?: { message?: string } } };
+            toast.error(apiError.response?.data?.message || "Failed to invite user");
         }
     };
 
@@ -126,7 +127,7 @@ export default function TeamManagement() {
             await userService.deleteSubUser(user.id, subUserId);
             toast.success("User removed successfully");
             setSubUsers(prev => prev.filter(u => u.id !== subUserId));
-        } catch (error) {
+        } catch (_error: unknown) {
             toast.error("Failed to remove user");
         }
     };
@@ -144,7 +145,7 @@ export default function TeamManagement() {
             toast.success("Folder access updated");
             setIsEditFoldersOpen(false);
             fetchData();
-        } catch (error) {
+        } catch (_error: unknown) {
             toast.error("Failed to update folders");
         }
     };

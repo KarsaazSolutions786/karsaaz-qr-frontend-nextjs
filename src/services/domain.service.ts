@@ -48,6 +48,11 @@ export const domainService = {
         return apiClient.put(`/domains/${id}/update-status`, status);
     },
 
+    /** GET /api/domains/{id}/check-connectivity — Check DNS and reachability */
+    checkConnectivity: async (id: string | number) => {
+        return apiClient.get(`/domains/${id}/check-connectivity`);
+    },
+
     /** GET /api/domains/usable — Domains usable for QR creation */
     getUsable: async () => {
         return apiClient.get("/domains/usable");

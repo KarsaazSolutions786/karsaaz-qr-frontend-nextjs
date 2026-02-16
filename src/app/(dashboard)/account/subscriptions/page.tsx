@@ -36,21 +36,21 @@ export default function SubscriptionsPage() {
   const [loading, setLoading] = useState(true);
   const [canceling, setCanceling] = useState<string | number | null>(null);
 
-  useEffect(() => {
-    fetchSubscriptions();
-  }, []);
-
-  const fetchSubscriptions = async () => {
+  const fetchSubscriptions = React.useCallback(async () => {
     try {
       const res = await billingService.getUserSubscriptions();
       const data = res.data ?? res;
       setSubscriptions(Array.isArray(data) ? data : data.data ?? []);
-    } catch (err) {
+    } catch (err: unknown) { // Use unknown for err
       console.error("Failed to load subscriptions", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Empty dependency array as billingService is stable
+
+  useEffect(() => {
+    fetchSubscriptions();
+  }, [fetchSubscriptions]);
 
   const handleCancel = async (id: string | number) => {
     if (!confirm("Are you sure you want to cancel this subscription?")) return;
@@ -59,8 +59,9 @@ export default function SubscriptionsPage() {
       await billingService.cancelSubscription(id);
       toast.success("Subscription canceled");
       fetchSubscriptions();
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to cancel subscription");
+    } catch (err: unknown) { // Use unknown for err
+      const apiError = err as { message?: string }; // Type assertion for message
+      toast.error(apiError?.message || "Failed to cancel subscription");
     } finally {
       setCanceling(null);
     }

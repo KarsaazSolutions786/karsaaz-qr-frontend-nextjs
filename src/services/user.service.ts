@@ -11,15 +11,46 @@ export interface User {
     email: string;
     email_verified_at?: string;
     is_sub?: boolean;
-    parent_user?: { roles: any[] };
+    parent_user?: { roles: { name: string; super_admin: boolean; home_page: string; permissions: { slug: string }[] }[] };
     roles: {
         name: string;
         super_admin: boolean;
         home_page: string;
         permissions: { slug: string }[];
     }[];
-    subscriptions?: any[];
-    latest_subscription_plan?: any;
+    subscriptions?: {
+        id: string | number;
+        status: string;
+        expires_at: string;
+        trial_ends_at?: string;
+        created_at: string;
+        subscription_plan: {
+            id: string | number;
+            name: string;
+            description?: string;
+            price: number;
+            currency: string;
+            frequency: string;
+            is_trial: boolean;
+            trial_days: number;
+            features: string[];
+            qr_types: string[];
+            number_of_users: number;
+        };
+    }[];
+    latest_subscription_plan?: {
+        id: string | number;
+        name: string;
+        description?: string;
+        price: number;
+        currency: string;
+        frequency: string;
+        is_trial: boolean;
+        trial_days: number;
+        features: string[];
+        qr_types: string[];
+        number_of_users: number;
+    };
     created_at?: string;
     updated_at?: string;
 }
@@ -33,7 +64,7 @@ export const userService = {
     },
 
     /** PUT /api/users/{id} — Update profile */
-    updateProfile: async (userId: string | number, data: any) => {
+    updateProfile: async (userId: string | number, data: { name?: string; email?: string }): Promise<User> => {
         return apiClient.put(`/users/${userId}`, data);
     },
 
@@ -45,12 +76,12 @@ export const userService = {
     // ─── Admin: User Management ────────────────────────────
 
     /** GET /api/users?page=&search= — List all users */
-    getAllUsers: async (params?: { page?: number; search?: string; paying?: boolean }) => {
+    getAllUsers: async (params?: { page?: number; search?: string; paying?: boolean }): Promise<{ data: User[]; total: number; last_page: number; current_page: number }> => {
         return apiClient.get("/users", params as any);
     },
 
     /** POST /api/users — Create user */
-    createUser: async (data: any) => {
+    createUser: async (data: { name: string; email: string; password?: string; roles?: string[] }): Promise<User> => {
         return apiClient.post("/users", data);
     },
 
@@ -60,7 +91,7 @@ export const userService = {
     },
 
     /** PUT /api/users/{id} */
-    updateUser: async (id: string | number, data: any) => {
+    updateUser: async (id: string | number, data: { name?: string; email?: string; roles?: string[] }): Promise<User> => {
         return apiClient.put(`/users/${id}`, data);
     },
 
@@ -70,7 +101,7 @@ export const userService = {
     },
 
     /** POST /api/users/{id}/act-as — Impersonate user (Super Admin only) */
-    actAs: async (userId: string | number) => {
+    actAs: async (userId: string | number): Promise<{ token: string; user: User }> => {
         return apiClient.post(`/users/${userId}/act-as`);
     },
 
@@ -124,7 +155,7 @@ export const userService = {
     },
 
     /** GET /api/users/{id}/account-balance — Get user account balance */
-    getAccountBalance: async (userId: string | number) => {
+    getAccountBalance: async (userId: string | number): Promise<{ balance: number }> => {
         return apiClient.get(`/users/${userId}/account-balance`);
     },
 };

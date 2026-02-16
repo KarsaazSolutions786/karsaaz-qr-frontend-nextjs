@@ -38,12 +38,12 @@ export const commissionService = {
 
   /** GET /api/commissions/unclaimed — List unclaimed commissions */
   getUnclaimed: async (params?: { page?: number }) => {
-    return apiClient.get("/commissions/unclaimed", params as any);
+    return apiClient.get("/commissions/unclaimed", params);
   },
 
   /** GET /api/commissions/history — Full commission history */
   getHistory: async (params?: { page?: number; from?: string; to?: string }) => {
-    return apiClient.get("/commissions/history", params as any);
+    return apiClient.get("/commissions/history", params);
   },
 
   /** GET /api/commissions/stats — Commission statistics (total, pending, claimed) */
@@ -65,7 +65,7 @@ export const commissionService = {
 
   /** GET /api/withdrawals/history — Withdrawal history */
   getWithdrawalHistory: async (params?: { page?: number }) => {
-    return apiClient.get("/withdrawals/history", params as any);
+    return apiClient.get("/withdrawals/history", params);
   },
 
   /** GET /api/withdrawals/stats — Withdrawal statistics */
@@ -84,7 +84,7 @@ export const commissionService = {
 
   /** GET /api/withdrawals/referred-users — List users referred by current user */
   getReferredUsers: async (params?: { page?: number }) => {
-    return apiClient.get("/withdrawals/referred-users", params as any);
+    return apiClient.get("/withdrawals/referred-users", params);
   },
 
   /** GET /api/withdrawals/{id} — Get a single withdrawal */
@@ -96,7 +96,7 @@ export const commissionService = {
 
   /** GET /api/withdrawals/admin/pending — Admin: list all pending withdrawals */
   getAdminPendingWithdrawals: async (params?: { page?: number }) => {
-    return apiClient.get("/withdrawals/admin/pending", params as any);
+    return apiClient.get("/withdrawals/admin/pending", params);
   },
 
   /** POST /api/withdrawals/{id}/approve — Admin: approve a withdrawal request */

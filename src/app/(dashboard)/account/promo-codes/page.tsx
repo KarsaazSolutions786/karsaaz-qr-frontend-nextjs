@@ -14,28 +14,40 @@ import { Check, Copy, Gift, Loader2, Tag } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+interface PromoCode {
+  code: string;
+  usage_count?: number;
+}
+
+interface PromoValidationResult {
+  valid: boolean;
+  discount?: string;
+  description?: string;
+}
+
 export default function PromoCodesPage() {
-  const [myCode, setMyCode] = useState<any>(null);
+  const [myCode, setMyCode] = useState<PromoCode | null>(null);
   const [loading, setLoading] = useState(true);
   const [code, setCode] = useState("");
   const [validating, setValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState<any>(null);
+  const [validationResult, setValidationResult] = useState<PromoValidationResult | null>(null);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    const fetchMyCode = async () => {
-      try {
-        const res = await checkoutService.getMyPromoCode();
-        const data = res.data ?? res;
-        setMyCode(data);
-      } catch {
-        // User may not have a promo code
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMyCode();
+  const fetchMyCode = React.useCallback(async () => {
+    try {
+      const res = await checkoutService.getMyPromoCode();
+      const data = res.data ?? res;
+      setMyCode(data as PromoCode);
+    } catch {
+      // User may not have a promo code
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchMyCode();
+  }, [fetchMyCode]);
 
   const handleCopy = () => {
     if (myCode?.code) {

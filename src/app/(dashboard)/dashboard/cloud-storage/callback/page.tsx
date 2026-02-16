@@ -57,8 +57,8 @@ function CloudStorageCallbackContent() {
         setMessage("Connected successfully! Redirecting...");
         toast.success("Cloud storage connected.");
         setTimeout(() => router.replace("/dashboard/cloud-storage"), 1500);
-      } catch (err: any) {
-        const msg = err?.response?.data?.message ?? err?.message ?? "Connection failed.";
+      } catch (err: unknown) {
+        const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? (err as Error)?.message ?? "Connection failed.";
         setStatus("error");
         setMessage(msg);
         toast.error(`Failed to connect: ${msg}`);

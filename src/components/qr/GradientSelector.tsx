@@ -8,10 +8,22 @@ import { cn } from "@/lib/utils";
 import { Plus, Trash2 } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
+interface GradientStop {
+    color: string;
+    stop: number;
+    opacity: number;
+}
+
+interface Gradient {
+    type: "LINEAR" | "RADIAL";
+    angle?: number;
+    colors: GradientStop[];
+}
+
 export function GradientSelector() {
     const { watch, setValue } = useFormContext();
     const design = watch("design") || {};
-    const gradient = design.gradientFill || {
+    const gradient: Gradient = design.gradientFill || {
         type: "LINEAR",
         angle: 45,
         colors: [
@@ -20,7 +32,7 @@ export function GradientSelector() {
         ],
     };
 
-    const updateGradient = (updates: any) => {
+    const updateGradient = (updates: Partial<Gradient>) => {
         setValue("design.gradientFill", { ...gradient, ...updates });
     };
 
@@ -31,12 +43,12 @@ export function GradientSelector() {
 
     const removeStop = (index: number) => {
         if (gradient.colors.length <= 2) return;
-        const newColors = gradient.colors.filter((_: any, i: number) => i !== index);
+        const newColors = gradient.colors.filter((_c, i) => i !== index);
         updateGradient({ colors: newColors });
     };
 
-    const updateStop = (index: number, updates: any) => {
-        const newColors = gradient.colors.map((c: any, i: number) =>
+    const updateStop = (index: number, updates: Partial<GradientStop>) => {
+        const newColors = gradient.colors.map((c, i) =>
             i === index ? { ...c, ...updates } : c
         );
         updateGradient({ colors: newColors });
@@ -45,7 +57,7 @@ export function GradientSelector() {
     // Generate CSS background string for preview
     const getGradientPreview = () => {
         const colorStops = [...gradient.colors].sort((a, b) => a.stop - b.stop)
-            .map((c: any) => `${c.color} ${c.stop}%`)
+            .map((c) => `${c.color} ${c.stop}%`)
             .join(", ");
 
         if (gradient.type === "LINEAR") {

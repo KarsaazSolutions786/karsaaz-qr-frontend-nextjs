@@ -60,7 +60,7 @@ export interface QRCode {
   id: string | number;
   name: string;
   type: string;
-  data: any;
+  data: Record<string, unknown>;
   design: QRDesign;
   svg_url?: string;
   simple_png_url?: string;
@@ -81,7 +81,7 @@ export interface QRCode {
 export interface CreateQRCodePayload {
   name: string;
   type: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
   design?: Partial<QRDesign>;
   folder_id?: string | number;
 }
@@ -99,21 +99,21 @@ export const qrCodeService = {
     sort?: string;
     page_size?: number;
   }) => {
-    return apiClient.get("/qrcodes", params as any);
+    return apiClient.get("/qrcodes", params as Record<string, string | number | boolean>);
   },
 
   /** GET /api/qrcodes/{id} */
-  getOne: async (id: string | number) => {
+  getOne: async (id: string | number): Promise<QRCode> => {
     return apiClient.get(`/qrcodes/${id}`);
   },
 
   /** POST /api/qrcodes — Create new dynamic QR code */
-  create: async (data: CreateQRCodePayload) => {
+  create: async (data: CreateQRCodePayload): Promise<QRCode> => {
     return apiClient.post("/qrcodes", data);
   },
 
   /** POST /api/qrcodes/create-static — Create static (non-dynamic) QR code */
-  createStatic: async (data: any) => {
+  createStatic: async (data: Record<string, unknown>): Promise<QRCode> => {
     return apiClient.post("/qrcodes/create-static", data);
   },
 
@@ -136,7 +136,7 @@ export const qrCodeService = {
     id?: string | number;
     h?: string;
   }) => {
-    return apiClient.get("/qrcodes/preview", params as any);
+    return apiClient.get("/qrcodes/preview", params as Record<string, string | number | boolean | undefined>);
   },
 
   // ─── Operations ────────────────────────────────────────
@@ -185,7 +185,7 @@ export const qrCodeService = {
 
   /** POST /api/qrcodes/{id}/upload-design-file — Upload a design asset file */
   uploadDesignFile: async (id: string | number, file: File, name: string) => {
-    return apiClient.upload(`/qrcodes/${id}/upload-design-file`, { file, name: name as any });
+    return apiClient.upload(`/qrcodes/${id}/upload-design-file`, { file, name });
   },
 
   // ─── Webpage / Landing Page Design ────────────────────
@@ -196,7 +196,7 @@ export const qrCodeService = {
   },
 
   /** POST /api/qrcodes/{id}/webpage-design — Save landing page design */
-  saveWebpageDesign: async (id: string | number, design: any) => {
+  saveWebpageDesign: async (id: string | number, design: Record<string, unknown>) => {
     return apiClient.post(`/qrcodes/${id}/webpage-design`, design);
   },
 
@@ -218,17 +218,17 @@ export const qrCodeService = {
     slug: 'scans-per-day' | 'scans-by-device' | 'scans-by-country' | 'scans-by-browser' | 'scans-by-os' | string,
     params?: { from?: string; to?: string }
   ) => {
-    return apiClient.get(`/qrcodes/${id}/reports/${slug}`, params as any);
+    return apiClient.get(`/qrcodes/${id}/reports/${slug}`, params as Record<string, string | undefined>);
   },
 
   /** GET /api/qrcodes/count?qrcode_type= — Count QR codes (total or by type) */
   getCount: async (params?: { qrcode_type?: string }) => {
-    return apiClient.get("/qrcodes/count", params as any);
+    return apiClient.get("/qrcodes/count", params as Record<string, string | undefined>);
   },
 
   /** GET /api/qrcodes/count/scans — Total scan count across all QR codes */
   getScanCount: async (params?: { type?: string }) => {
-    return apiClient.get("/qrcodes/count/scans", params as any);
+    return apiClient.get("/qrcodes/count/scans", params as Record<string, string | undefined>);
   },
 
   // ─── Download ──────────────────────────────────────────
@@ -246,7 +246,7 @@ export const qrCodeService = {
     id: string | number,
     params?: { page?: number }
   ) => {
-    return apiClient.get(`/qrcodes/${id}/business-review-feedbacks`, params as any);
+    return apiClient.get(`/qrcodes/${id}/business-review-feedbacks`, params as Record<string, number | undefined>);
   },
 
   /** DELETE /api/qrcodes/{id}/business-review-feedbacks/{feedbackId} — delete a review */
@@ -289,7 +289,7 @@ export const qrCodeService = {
   },
 
   /** POST /api/bulk-operations/{type}/create — create & run a bulk operation */
-  runBulkOperation: async (type: string, data: any) => {
+  runBulkOperation: async (type: string, data: FormData | Record<string, unknown>) => {
     return apiClient.post(`/bulk-operations/${type}/create`, data);
   },
 

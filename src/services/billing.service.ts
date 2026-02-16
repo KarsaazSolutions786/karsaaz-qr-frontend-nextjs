@@ -68,11 +68,11 @@ export const billingService = {
 
   /** GET /api/subscriptions — Admin: list all subscriptions */
   getSubscriptions: async (params?: { page?: number; search?: string }) => {
-    return apiClient.get("/subscriptions", params as any);
+    return apiClient.get("/subscriptions", params);
   },
 
   /** POST /api/subscriptions — Admin: manually create a subscription */
-  createSubscription: async (data: any) => {
+  createSubscription: async (data: Record<string, unknown>) => {
     return apiClient.post("/subscriptions", data);
   },
 
@@ -82,7 +82,7 @@ export const billingService = {
   },
 
   /** PUT /api/subscriptions/{id} — Update a subscription */
-  updateSubscription: async (id: string | number, data: any) => {
+  updateSubscription: async (id: string | number, data: Record<string, unknown>) => {
     return apiClient.put(`/subscriptions/${id}`, data);
   },
 

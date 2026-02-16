@@ -21,31 +21,33 @@ import systemService from "../../../../../services/system.service";
 
 export default function SystemSettingsPage() {
   const { call, isLoading } = useApi();
-  const [settings, setSettings] = useState<any>({});
+  const [settings, setSettings] = useState<Record<string, string | number | boolean | null>>({});
 
-  const fetchSettings = async () => {
+  const fetchSettings = React.useCallback(async () => {
     try {
       const response = await call(() => systemService.getSettings());
       setSettings(response.data || response);
     } catch (error) { }
-  };
+  }, [call]);
 
   useEffect(() => {
-    fetchSettings();
-  }, []);
+    requestAnimationFrame(() => {
+      fetchSettings();
+    });
+  }, [fetchSettings]);
 
-  const handleSave = async (section: string, data: any) => {
+  const handleSave = async (section: string, data: Record<string, unknown>) => {
     try {
       await call(() => systemService.updateSettings({ ...data, section }));
       toast.success(`${section} settings saved`);
-    } catch (error) { }
+    } catch (_error: unknown) { }
   };
 
   const testSmtp = async () => {
     try {
       await call(() => systemService.testSmtp());
       toast.success("Test email sent successfully");
-    } catch (error) { }
+    } catch (_error: unknown) { }
   };
 
   return (

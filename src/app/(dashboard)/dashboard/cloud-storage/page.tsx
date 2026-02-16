@@ -19,7 +19,7 @@ const PROVIDER_META: Record<CloudProvider, { label: string; color: string; icon:
 
 export default function CloudStoragePage() {
   const [connections, setConnections] = useState<CloudConnection[]>([]);
-  const [backupJobs, setBackupJobs]   = useState<any[]>([]);
+  const [backupJobs, setBackupJobs]   = useState<Array<{ id: string | number; backup_type?: string; started_at?: string; status?: string }>>([]); // More specific type
   const [loading, setLoading]         = useState(true);
   const [connecting, setConnecting]   = useState<CloudProvider | null>(null);
 
@@ -31,7 +31,7 @@ export default function CloudStoragePage() {
   const [backupDialog, setBackupDialog] = useState<string | number | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
       const [connsRes, jobsRes] = await Promise.allSettled([
@@ -39,25 +39,25 @@ export default function CloudStoragePage() {
         cloudStorageService.getBackupJobs(),
       ]);
       if (connsRes.status === "fulfilled") {
-        const d = (connsRes.value as any)?.data ?? connsRes.value;
+        const d = (connsRes.value as { data?: CloudConnection[] })?.data ?? connsRes.value;
         setConnections(Array.isArray(d) ? d : []);
       }
       if (jobsRes.status === "fulfilled") {
-        const d = (jobsRes.value as any)?.data ?? jobsRes.value;
+        const d = (jobsRes.value as { data?: Array<{ id: string | number; backup_type?: string; started_at?: string; status?: string }> })?.data ?? jobsRes.value;
         setBackupJobs(Array.isArray(d) ? d : []);
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Empty dependency array as services are assumed stable
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const connectOAuth = async (provider: Exclude<CloudProvider, "mega">) => {
     setConnecting(provider);
     try {
       const res = await cloudStorageService.getAuthUrl(provider);
-      const url  = (res as any)?.url ?? (res as any)?.auth_url;
+      const url  = (res as { url?: string; auth_url?: string })?.url ?? (res as { url?: string; auth_url?: string })?.auth_url;
       if (url) window.location.href = url;
       else toast.error("Could not get OAuth URL from server");
     } catch {

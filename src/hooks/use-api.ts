@@ -2,16 +2,16 @@ import { ApiError, ValidationError } from '@/lib/error-handler';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
-interface UseApiOptions {
-  onSuccess?: (data: any) => void;
-  onError?: (error: any) => void;
+interface UseApiOptions<T = unknown> {
+  onSuccess?: (data: T) => void;
+  onError?: (error: unknown) => void;
 }
 
-export function useApi(options: UseApiOptions = {}) {
+export function useApi<T = unknown>(options: UseApiOptions<T> = {}) {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
 
-  const call = useCallback(async (apiFunc: () => Promise<any>) => {
+  const call = useCallback(async (apiFunc: () => Promise<T>) => {
     setIsLoading(true);
     setErrors({});
 
@@ -19,7 +19,7 @@ export function useApi(options: UseApiOptions = {}) {
       const result = await apiFunc();
       if (options.onSuccess) options.onSuccess(result);
       return result;
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e instanceof ValidationError) {
         const validationErrors = e.errors() as Record<string, string[]>;
         setErrors(validationErrors);
@@ -29,7 +29,7 @@ export function useApi(options: UseApiOptions = {}) {
       } else if (e instanceof ApiError) {
         toast.error('An unexpected server error occurred.');
       } else {
-        toast.error(e.message || 'Something went wrong.');
+        toast.error((e as Error).message || 'Something went wrong.');
       }
 
       if (options.onError) options.onError(e);

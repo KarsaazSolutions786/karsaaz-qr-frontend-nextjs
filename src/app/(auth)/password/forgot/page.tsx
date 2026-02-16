@@ -43,8 +43,9 @@ export default function ForgotPasswordPage() {
       await apiClient.post("/forgot-password", data);
       setIsSubmitted(true);
       toast.success("Password reset link sent to your email");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "An error occurred");
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(apiError.response?.data?.message || "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +74,7 @@ export default function ForgotPasswordPage() {
       <CardHeader>
         <CardTitle>Forgot password</CardTitle>
         <CardDescription>
-          Enter your email and we'll send you a link to reset your password.
+          Enter your email and we&apos;ll send you a link to reset your password.
         </CardDescription>
       </CardHeader>
       <CardContent>

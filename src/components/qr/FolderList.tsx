@@ -41,11 +41,7 @@ export function FolderList({ selectedFolderId, onSelectFolder }: FolderListProps
 
     const userId = user?.id;
 
-    useEffect(() => {
-        if (userId) fetchFolders();
-    }, [userId]);
-
-    const fetchFolders = async () => {
+    const fetchFolders = useCallback(async () => {
         if (!userId) return;
         try {
             const response = await folderService.getFolders(userId);
@@ -54,7 +50,15 @@ export function FolderList({ selectedFolderId, onSelectFolder }: FolderListProps
         } catch (error) {
             console.error("Failed to fetch folders", error);
         }
-    };
+    }, [userId]);
+
+    useEffect(() => {
+        if (userId) {
+            requestAnimationFrame(() => {
+                fetchFolders();
+            });
+        }
+    }, [userId, fetchFolders]);
 
     const handleCreate = async () => {
         if (!newFolderName.trim() || !userId) return;
@@ -64,7 +68,7 @@ export function FolderList({ selectedFolderId, onSelectFolder }: FolderListProps
             setIsCreating(false);
             fetchFolders();
             toast.success("Folder created");
-        } catch (error) {
+        } catch (_error: unknown) {
             toast.error("Failed to create folder");
         }
     };
@@ -76,7 +80,7 @@ export function FolderList({ selectedFolderId, onSelectFolder }: FolderListProps
             setEditingId(null);
             fetchFolders();
             toast.success("Folder updated");
-        } catch (error) {
+        } catch (_error: unknown) {
             toast.error("Failed to update folder");
         }
     };

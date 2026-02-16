@@ -17,7 +17,7 @@ import {
 } from "recharts";
 
 interface ChartProps {
-  data: any[];
+  data: Array<Record<string, unknown>>;
   type?: "area" | "bar" | "pie";
   dataKey: string;
   categoryKey: string;

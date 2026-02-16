@@ -16,7 +16,7 @@ export default function DashboardHome() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
-            Welcome back, {user?.name || "User"}! Here's an overview of your activity.
+            Welcome back, {user?.name || "User"}! Here&apos;s an overview of your activity.
           </p>
         </div>
         <Link href="/dashboard/qrcodes/create">

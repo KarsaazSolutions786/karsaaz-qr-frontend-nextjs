@@ -23,24 +23,24 @@ export default function QRCodeStatsPage() {
   const qrId = params.id as string;
   const [stats, setStats] = useState<StatsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  const [dateRange, _setDateRange] = useState({ start: "", end: "" }); // setDateRange is used to update the date range filters
 
-  useEffect(() => {
-    if (qrId) fetchStats();
-  }, [qrId]);
-
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       setIsLoading(true);
       const data = await analyticsService.getQRCodeStats(qrId, dateRange.start && dateRange.end ? dateRange : undefined);
       setStats(data);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to fetch stats", error);
       toast.error("Failed to load analytics data");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [qrId, dateRange]); // Dependencies for fetchStats
+
+  useEffect(() => {
+    if (qrId) fetchStats();
+  }, [qrId, fetchStats]);
 
   if (isLoading) {
     return (

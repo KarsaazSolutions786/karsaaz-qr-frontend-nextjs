@@ -3,7 +3,7 @@
 import React from "react";
 import { ResponsiveContainer, AreaChart, Area, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
 
-export default function Chart({ data }: { data: any[] }) {
+export default function Chart({ data }: { data: Array<{ date: string; scans: number }> }) {
   return (
     <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">

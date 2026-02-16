@@ -28,9 +28,10 @@ export function useAuth() {
         return true;
       }
       return true;
-    } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    } catch (error: unknown) {
       console.error("Login failed:", error);
-      toast.error(error.response?.data?.message || "Failed to login");
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(apiError.response?.data?.message || "Failed to login");
       return false;
     }
   };
@@ -38,7 +39,7 @@ export function useAuth() {
   const logout = async () => {
     try {
       await authService.logout();
-    } catch (error) {
+    } catch (_error: unknown) {
       console.error("Logout failed:", error);
     } finally {
       clearAuth();
@@ -54,7 +55,7 @@ export function useAuth() {
       const response = await apiClient.get("myself");
       setUser(response);
       return response;
-    } catch (error) {
+    } catch (_error: unknown) {
       console.error("Session validation failed:", error);
       clearAuth();
       return null;
@@ -67,7 +68,7 @@ export function useAuth() {
       const response = await apiClient.get("myself");
       setUser(response);
       return response;
-    } catch (error) {
+    } catch (_error: unknown) {
       console.error("Failed to refresh user:", error);
       return null;
     }

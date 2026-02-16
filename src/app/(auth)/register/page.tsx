@@ -59,8 +59,9 @@ export default function RegisterPage() {
       
       toast.success("Account created successfully. Please login.");
       router.push("/account/login");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to create account");
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(apiError.response?.data?.message || "Failed to create account");
     } finally {
       setIsLoading(false);
     }

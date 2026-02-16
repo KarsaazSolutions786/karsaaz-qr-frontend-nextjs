@@ -146,7 +146,7 @@ export const cloudStorageService = {
 
   /** GET /api/cloud-storage/backup-jobs — list all backup jobs */
   getBackupJobs: async (params?: { page?: number }): Promise<{ data: BackupJob[] }> => {
-    return apiClient.get("/cloud-storage/backup-jobs", params as any);
+    return apiClient.get("/cloud-storage/backup-jobs", params);
   },
 
   /** GET /api/cloud-storage/backup-jobs/{id} — get single backup job */

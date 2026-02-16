@@ -5,28 +5,38 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Bell, Loader2, Save } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import systemService from "../../../../../services/system.service";
 
+interface NotificationSettings {
+    admin_email?: string;
+    from_name?: string;
+    // Add other notification settings if known
+}
+
 export default function SystemNotificationsPage() {
-    const [settings, setSettings] = useState<Record<string, any>>({});
+    const [settings, setSettings] = useState<NotificationSettings>({});
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
+    const fetchSettings = useCallback(async () => {
         systemService.getNotificationSettings()
-            .then((data) => setSettings(data || {}))
+            .then((data: NotificationSettings) => setSettings(data || {}))
             .catch(() => toast.error("Failed to load notification settings"))
             .finally(() => setIsLoading(false));
     }, []);
+
+    useEffect(() => {
+        fetchSettings();
+    }, [fetchSettings]);
 
     const handleSave = async () => {
         try {
             setIsSaving(true);
             await systemService.updateNotificationSettings(settings);
             toast.success("Notification settings saved");
-        } catch { toast.error("Failed to save settings"); }
+        } catch (_error: unknown) { toast.error("Failed to save settings"); }
         finally { setIsSaving(false); }
     };
 

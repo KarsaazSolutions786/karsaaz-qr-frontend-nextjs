@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Edit2, Trash2, CheckCircle2, DollarSign, Settings2, Users } from "lucide-react";
+import { Plus, Edit2, Trash2, CheckCircle2, DollarSign, Settings2 as _Settings2, Users } from "lucide-react";
 import { useApi } from "@/hooks/use-api";
 import billingService, { SubscriptionPlan } from "@/services/billing.service";
 import { toast } from "sonner";
@@ -12,17 +12,19 @@ export default function PlansManagementPage() {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const { call, isLoading } = useApi();
 
-  const fetchPlans = async () => {
+  const fetchPlans = React.useCallback(async () => {
     try {
       const response = await call(() => billingService.getPlans());
       const data = response.data || response;
       setPlans(Array.isArray(data) ? data : data.data || []);
-    } catch (error) {}
-  };
+    } catch (_error: unknown) {}
+  }, [call]);
 
   useEffect(() => {
-    fetchPlans();
-  }, []);
+    requestAnimationFrame(() => {
+      fetchPlans();
+    });
+  }, [fetchPlans]);
 
   const handleDelete = async (id: string | number) => {
     if (!confirm("Are you sure you want to delete this plan? This may affect existing subscribers.")) return;
@@ -30,7 +32,7 @@ export default function PlansManagementPage() {
       await call(() => billingService.deletePlan(id));
       toast.success("Plan deleted");
       fetchPlans();
-    } catch (error) {}
+    } catch (_error: unknown) {}
   };
 
   return (

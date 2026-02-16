@@ -5,28 +5,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, MessageSquare, Save } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import systemService from "../../../../../services/system.service";
 
+interface SmsSettings {
+    provider?: string;
+    api_key?: string;
+    sender_id?: string;
+    // Add other SMS settings if known
+}
+
 export default function SystemSmsPage() {
-    const [settings, setSettings] = useState<Record<string, any>>({});
+    const [settings, setSettings] = useState<SmsSettings>({});
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
+    const fetchSettings = useCallback(async () => {
         systemService.getSmsPortals()
-            .then((data) => setSettings(data || {}))
+            .then((data: SmsSettings) => setSettings(data || {}))
             .catch(() => toast.error("Failed to load SMS settings"))
             .finally(() => setIsLoading(false));
     }, []);
+
+    useEffect(() => {
+        fetchSettings();
+    }, [fetchSettings]);
 
     const handleSave = async () => {
         try {
             setIsSaving(true);
             await systemService.updateSmsPortals(settings);
             toast.success("SMS portal settings saved");
-        } catch { toast.error("Failed to save settings"); }
+        } catch (_error: unknown) { toast.error("Failed to save settings"); }
         finally { setIsSaving(false); }
     };
 

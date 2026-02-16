@@ -40,21 +40,21 @@ export default function PaymentMethodsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [settingDefaultId, setSettingDefaultId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchMethods();
-  }, []);
-
-  const fetchMethods = async () => {
+  const fetchMethods = React.useCallback(async () => {
     try {
       const res = await stripeService.getPaymentMethods();
       const data = res.data ?? res;
       setMethods(Array.isArray(data) ? data : data.data ?? []);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Failed to load payment methods", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchMethods();
+  }, [fetchMethods]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Remove this payment method?")) return;
@@ -63,8 +63,9 @@ export default function PaymentMethodsPage() {
       await stripeService.deletePaymentMethod(id);
       toast.success("Payment method removed");
       setMethods((prev) => prev.filter((m) => m.id !== id));
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to remove payment method");
+    } catch (err: unknown) {
+      const apiError = err as { message?: string };
+      toast.error(apiError?.message || "Failed to remove payment method");
     } finally {
       setDeletingId(null);
     }
@@ -78,8 +79,9 @@ export default function PaymentMethodsPage() {
       setMethods((prev) =>
         prev.map((m) => ({ ...m, is_default: m.id === id }))
       );
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to update default");
+    } catch (err: unknown) {
+      const apiError = err as { message?: string };
+      toast.error(apiError?.message || "Failed to update default");
     } finally {
       setSettingDefaultId(null);
     }

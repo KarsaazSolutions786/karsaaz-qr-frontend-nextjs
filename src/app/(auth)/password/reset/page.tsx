@@ -62,8 +62,9 @@ function ResetPasswordPageContent() {
 
       toast.success("Password reset successfully. Please login with your new password.");
       router.push("/account/login");
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to reset password");
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(apiError.response?.data?.message || "Failed to reset password");
     } finally {
       setIsLoading(false);
     }

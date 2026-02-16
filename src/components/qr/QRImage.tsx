@@ -44,15 +44,15 @@ export function QRImage({
       const data = await response.json();
 
       if (data && data.content) {
-        let content = data.content;
+        const _content = data.content;
         let decodedContent = "";
 
         // Detect if content is raw SVG or Base64
-        if (content.trim().startsWith("<svg") || content.trim().startsWith("<?xml")) {
-          decodedContent = content;
+        if (_content.trim().startsWith("<svg") || _content.trim().startsWith("<?xml")) {
+          decodedContent = _content;
         } else {
           try {
-            decodedContent = atob(content);
+            decodedContent = atob(_content);
           } catch (decodeErr) {
             console.error("[QRImage] Base64 decode failed:", decodeErr);
             throw new Error("Failed to decode QR content");
@@ -82,7 +82,7 @@ export function QRImage({
     } finally {
       setLoading(false);
     }
-  }, [onLoad, onError]);
+  }, [onLoad, onError, setSvgContent]);
 
   useEffect(() => {
     if (!url) {

@@ -21,17 +21,17 @@ export interface QRAnalytics {
 export const analyticsService = {
   /** GET /api/qrcodes/count/scans — Total scan count */
   getGlobalScanCount: async (params?: { type?: string }) => {
-    return apiClient.get("/qrcodes/count/scans", params as any);
+    return apiClient.get("/qrcodes/count/scans", params);
   },
 
   /** GET /api/qrcodes/{id}/stats?start=&end= — Per-QR analytics */
   getQRCodeStats: async (id: string | number, params?: { start?: string; end?: string }) => {
-    return apiClient.get(`/qrcodes/${id}/stats`, params as any);
+    return apiClient.get(`/qrcodes/${id}/stats`, params);
   },
 
   /** GET /api/qrcodes/count — Count QR codes by type */
   getQRCodeCount: async (params?: { qrcode_type?: string }) => {
-    return apiClient.get("/qrcodes/count", params as any);
+    return apiClient.get("/qrcodes/count", params);
   },
 };
 

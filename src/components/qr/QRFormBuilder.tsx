@@ -12,8 +12,8 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import debounce from "lodash/debounce";
 import { ImageIcon, Plus, X, UploadCloud, FileText } from "lucide-react";
+import debounce from "lodash/debounce";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import apiClient from "@/lib/api-client";
@@ -36,7 +36,7 @@ export interface FieldDefinition {
 interface QRFormBuilderProps {
   fields: FieldDefinition[];
   autoSave?: boolean;
-  onAutoSave?: (data: Record<string, any>) => void;
+  onAutoSave?: (data: Record<string, unknown>) => void;
 }
 
 function ArrayFieldRenderer({ field }: { field: FieldDefinition }) {
@@ -94,7 +94,7 @@ export function QRFormBuilder({ fields, autoSave = true, onAutoSave }: QRFormBui
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
 
   const debouncedSave = useCallback(
-    debounce((data: Record<string, any>) => {
+    debounce((data: Record<string, unknown>) => {
       if (onAutoSave) onAutoSave(data);
     }, 1000),
     [onAutoSave]
@@ -109,10 +109,10 @@ export function QRFormBuilder({ fields, autoSave = true, onAutoSave }: QRFormBui
   const handleFileUpload = async (fieldName: string, file: File) => {
     setUploading(prev => ({ ...prev, [fieldName]: true }));
     try {
-      const response = await apiClient.upload("/files", { file });
+      const response: { url?: string; path?: string } = await apiClient.upload("/files", { file });
       setValue(fieldName, response.url || response.path); 
       toast.success("File uploaded successfully");
-    } catch (error) {
+    } catch (_error: unknown) {
       toast.error("File upload failed");
     } finally {
       setUploading(prev => ({ ...prev, [fieldName]: false }));
@@ -184,7 +184,7 @@ export function QRFormBuilder({ fields, autoSave = true, onAutoSave }: QRFormBui
             {fileValue ? (
               <div className="relative w-full p-4 bg-gray-50 border rounded-md flex items-center justify-between group">
                 {isImage ? (
-                   <img src={fileValue} className="h-16 w-16 object-cover rounded" alt="Preview" />
+                   <img src={fileValue as string} className="h-16 w-16 object-cover rounded" alt="Uploaded Image" />
                 ) : (
                    <div className="flex items-center gap-3">
                       <FileText className="h-8 w-8 text-blue-500" />

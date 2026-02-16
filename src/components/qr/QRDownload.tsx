@@ -54,8 +54,8 @@ export function QRDownload() {
       } else {
         throw new Error("Conversion failed");
       }
-    } catch (error) {
-      console.error(error);
+    } catch (_error: unknown) {
+      console.error(_error);
       toast.error("Failed to download PNG");
     } finally {
       setDownloading(null);
@@ -70,7 +70,7 @@ export function QRDownload() {
     try {
       await qrCodeService.uploadDesignFile(qrId, file, "qrcode_screenshot");
       toast.success("Screenshot uploaded successfully");
-    } catch (error) {
+    } catch (_error: unknown) {
       toast.error("Failed to upload screenshot");
     } finally {
       setUploadingScreenshot(false);

@@ -5,28 +5,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { KeyRound, Loader2, Save } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import systemService from "../../../../../services/system.service";
 
+interface AuthWorkflowSettings {
+    registration_enabled?: boolean;
+    email_verification?: boolean;
+    social_login?: boolean;
+    passwordless_login?: boolean;
+}
+
 export default function SystemAuthWorkflowPage() {
-    const [settings, setSettings] = useState<Record<string, any>>({});
+    const [settings, setSettings] = useState<AuthWorkflowSettings>({});
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
+    const fetchSettings = useCallback(async () => {
         systemService.getAuthWorkflow()
-            .then((data) => setSettings(data || {}))
+            .then((data: AuthWorkflowSettings) => setSettings(data || {}))
             .catch(() => toast.error("Failed to load auth workflow settings"))
             .finally(() => setIsLoading(false));
     }, []);
+
+    useEffect(() => {
+        fetchSettings();
+    }, [fetchSettings]);
 
     const handleSave = async () => {
         try {
             setIsSaving(true);
             await systemService.updateAuthWorkflow(settings);
             toast.success("Auth workflow settings saved");
-        } catch { toast.error("Failed to save settings"); }
+        } catch (_error: unknown) { toast.error("Failed to save settings"); }
         finally { setIsSaving(false); }
     };
 

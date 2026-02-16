@@ -3,27 +3,34 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2, RefreshCcw, ScrollText } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import systemService from "../../../../../services/system.service";
 
+interface LogEntry {
+    created_at?: string;
+    level?: string;
+    message?: string;
+    // Add other potential log properties if known
+}
+
 export default function SystemLogsPage() {
-    const [logs, setLogs] = useState<any[]>([]);
+    const [logs, setLogs] = useState<LogEntry[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const fetchLogs = async () => {
+    const fetchLogs = useCallback(async () => {
         try {
             setIsLoading(true);
             const data = await systemService.getLogs();
-            setLogs(Array.isArray(data) ? data : data?.data || []);
-        } catch (error) {
+            setLogs(Array.isArray(data) ? data : (data as { data?: LogEntry[] })?.data || []);
+        } catch (error: unknown) {
             toast.error("Failed to load system logs");
         } finally {
             setIsLoading(false);
         }
-    };
+    }, []);
 
-    useEffect(() => { fetchLogs(); }, []);
+    useEffect(() => { fetchLogs(); }, [fetchLogs]);
 
     return (
         <div className="space-y-6">

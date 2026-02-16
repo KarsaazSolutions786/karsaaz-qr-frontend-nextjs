@@ -45,7 +45,7 @@ export default function AbuseReportsTable() {
     const [adminNotes, setAdminNotes] = useState("");
     const [processing, setProcessing] = useState(false);
 
-    const fetchReports = async (page = 1) => {
+    const fetchReports = useCallback(async (page = 1) => {
         setLoading(true);
         try {
             const res = await abuseReportService.getAll({
@@ -65,11 +65,11 @@ export default function AbuseReportsTable() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [statusFilter]); // Add statusFilter as a dependency
 
     useEffect(() => {
         fetchReports(1);
-    }, [statusFilter]);
+    }, [fetchReports]);
 
     const handleAction = (report: AbuseReport, mode: 'resolve' | 'dismiss') => {
         setSelectedReport(report);
@@ -91,8 +91,8 @@ export default function AbuseReportsTable() {
             toast.success(`Report marked as ${status}`);
             setModalMode(null);
             fetchReports(pagination.current_page);
-        } catch (error) {
-            console.error(error);
+        } catch (_error: unknown) {
+            console.error(_error);
             toast.error("Failed to update report status");
         } finally {
             setProcessing(false);

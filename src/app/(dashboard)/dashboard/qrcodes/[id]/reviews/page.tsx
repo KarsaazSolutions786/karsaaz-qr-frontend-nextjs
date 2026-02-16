@@ -25,10 +25,22 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
+interface Review {
+  id: string | number;
+  name?: string;
+  reviewer_name?: string;
+  rating?: number;
+  feedback?: string;
+  message?: string;
+  comment?: string;
+  email?: string;
+  created_at?: string;
+}
+
 export default function QRReviewsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
 
-  const [reviews, setReviews]   = useState<any[]>([]);
+  const [reviews, setReviews]   = useState<Review[]>([]);
   const [total, setTotal]       = useState(0);
   const [page, setPage]         = useState(1);
   const [loading, setLoading]   = useState(true);
@@ -37,7 +49,7 @@ export default function QRReviewsPage({ params }: { params: Promise<{ id: string
     setLoading(true);
     try {
       const res = await qrCodeService.getBusinessReviewFeedbacks(id, { page });
-      const data = (res as any)?.data ?? res;
+      const data = (res as { data?: { data?: Review[] } })?.data ?? res;
       setReviews(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
       setTotal(data?.total ?? 0);
     } catch {

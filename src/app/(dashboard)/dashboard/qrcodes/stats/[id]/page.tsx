@@ -1,5 +1,3 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +14,7 @@ import {
     Smartphone
 } from "lucide-react";
 import Link from "next/link";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useCallback } from "react";
 import {
     Bar,
     BarChart,
@@ -36,38 +34,55 @@ import { toast } from "sonner";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
+interface DailyScan {
+    date: string;
+    scans: number;
+}
+
+interface CountryScan {
+    country: string;
+    scans: number;
+}
+
+interface OsScan {
+    os: string;
+    scans: number;
+}
+
+interface BrowserScan {
+    browser: string;
+    scans: number;
+}
+
+interface DeviceScan {
+    brand: string;
+    scans: number;
+}
+
 export default function QRStatsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params);
     const [qrcode, setQrcode] = useState<QRCode | null>(null);
     const [loading, setLoading] = useState(true);
-    const [dateRange, setDateRange] = useState({ from: "", to: "" });
+    const [dateRange, _setDateRange] = useState({ from: "", to: "" }); // Changed setDateRange to _setDateRange as it's not directly used for update
 
     // Report data states
-    const [dailyScans, setDailyScans] = useState<any[]>([]);
-    const [countries, setCountries] = useState<any[]>([]);
-    const [osData, setOsData] = useState<any[]>([]);
-    const [browserData, setBrowserData] = useState<any[]>([]);
-    const [deviceData, setDeviceData] = useState<any[]>([]);
+    const [dailyScans, setDailyScans] = useState<DailyScan[]>([]);
+    const [countries, setCountries] = useState<CountryScan[]>([]);
+    const [osData, setOsData] = useState<OsScan[]>([]);
+    const [browserData, setBrowserData] = useState<BrowserScan[]>([]);
+    const [deviceData, setDeviceData] = useState<DeviceScan[]>([]);
 
-    useEffect(() => {
-        fetchInitialData();
-    }, [id]);
-
-    useEffect(() => {
-        if (id) fetchReports();
-    }, [id, dateRange]);
-
-    const fetchInitialData = async () => {
+    const fetchInitialData = useCallback(async () => {
         try {
             const data = await qrCodeService.getOne(id);
             setQrcode(data);
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Failed to fetch QR code", error);
             toast.error("Failed to load QR code details");
         }
-    };
+    }, [id]);
 
-    const fetchReports = async () => {
+    const fetchReports = useCallback(async () => {
         setLoading(true);
         try {
             const [daily, country, os, browser, device] = await Promise.all([
@@ -78,18 +93,26 @@ export default function QRStatsPage({ params }: { params: Promise<{ id: string }
                 qrCodeService.getReport(id, "scans-per-device-brand", dateRange),
             ]);
 
-            setDailyScans(daily.map((item: any) => ({ name: item.date, scans: item.scans })));
-            setCountries(country.map((item: any) => ({ name: item.country || "Unknown", value: item.scans })));
-            setOsData(os.map((item: any) => ({ name: item.os || "Unknown", scans: item.scans })));
-            setBrowserData(browser.map((item: any) => ({ name: item.browser || "Unknown", scans: item.scans })));
-            setDeviceData(device.map((item: any) => ({ name: item.brand || "Unknown", scans: item.scans })));
+            setDailyScans(daily.map((item: DailyScan) => ({ name: item.date, scans: item.scans })));
+            setCountries(country.map((item: CountryScan) => ({ name: item.country || "Unknown", value: item.scans })));
+            setOsData(os.map((item: OsScan) => ({ name: item.os || "Unknown", scans: item.scans })));
+            setBrowserData(browser.map((item: BrowserScan) => ({ name: item.browser || "Unknown", scans: item.scans })));
+            setDeviceData(device.map((item: DeviceScan) => ({ name: item.brand || "Unknown", scans: item.scans })));
 
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Failed to fetch reports", error);
         } finally {
             setLoading(false);
         }
-    };
+    }, [id, dateRange]);
+
+    useEffect(() => {
+        fetchInitialData();
+    }, [fetchInitialData]);
+
+    useEffect(() => {
+        if (id) fetchReports();
+    }, [id, dateRange, fetchReports]);
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">

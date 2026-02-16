@@ -34,7 +34,7 @@ export default function CreditPurchaseFlow() {
     const [isCustomAmount, setIsCustomAmount] = useState(false);
     const [processing, setProcessing] = useState(false);
 
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<{ customAmount: number }>({
+    const { register, watch } = useForm<{ customAmount: number }>({
         defaultValues: { customAmount: 100 }
     });
 
@@ -44,10 +44,10 @@ export default function CreditPurchaseFlow() {
             try {
                 const res = await userService.getAccountBalance(user.id);
                 // API response might be { account_balance: 123 } or just number
-                const bal = res.data?.account_balance ?? res.data ?? 0;
+                const bal = (res as { data?: { account_balance?: number } })?.data?.account_balance ?? res.data ?? 0;
                 setBalance(Number(bal));
-            } catch (error) {
-                console.error("Failed to load balance", error);
+            } catch (_error: unknown) { // Handle error as unknown
+                console.error("Failed to load balance", _error);
             } finally {
                 setLoadingBalance(false);
             }
@@ -83,8 +83,9 @@ export default function CreditPurchaseFlow() {
             } else {
                 toast.error("Failed to generate payment link");
             }
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || "Payment initiation failed");
+        } catch (error: unknown) {
+            const apiError = error as { response?: { data?: { message?: string } } };
+            toast.error(apiError.response?.data?.message || "Payment initiation failed");
             setProcessing(false);
         }
     };

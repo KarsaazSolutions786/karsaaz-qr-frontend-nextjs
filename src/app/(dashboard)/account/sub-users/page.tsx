@@ -18,33 +18,33 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
-import userService from "@/services/user.service";
+import userService, { User } from "@/services/user.service"; // Import User interface
 import { Loader2, Mail, Trash2, UserPlus } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function SubUsersPage() {
   const { user } = useAuth();
-  const [subUsers, setSubUsers] = useState<any[]>([]);
+  const [subUsers, setSubUsers] = useState<User[]>([]); // Use User interface
   const [loading, setLoading] = useState(true);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviting, setInviting] = useState(false);
 
-  const fetchSubUsers = async () => {
+  const fetchSubUsers = useCallback(async () => {
     if (!user?.id) return;
     try {
       const response = await userService.getSubUsers(user.id);
       setSubUsers(response.data || []);
-    } catch (error) {
+    } catch (error: unknown) { // Use unknown for error
       console.error("Failed to fetch sub-users", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]); // Add user?.id to dependencies
 
   useEffect(() => {
     fetchSubUsers();
-  }, [user]);
+  }, [fetchSubUsers]);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,8 +57,9 @@ export default function SubUsersPage() {
       toast.success("Invitation sent successfully");
       setInviteEmail("");
       fetchSubUsers();
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to send invitation");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError?.message || "Failed to send invitation");
     } finally {
       setInviting(false);
     }
@@ -72,8 +73,9 @@ export default function SubUsersPage() {
       await userService.deleteSubUser(user.id, subUserId);
       toast.success("Sub-user removed");
       fetchSubUsers();
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to remove sub-user");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError?.message || "Failed to remove sub-user");
     }
   };
 

@@ -21,9 +21,9 @@ export class ApiError extends Error {
 export class ValidationError extends Error {
   public response: Response;
   public request: Request;
-  public jsonResponse: any;
+  public jsonResponse: Record<string, unknown>;
 
-  constructor(details: { response: Response; request: Request; jsonResponse: any }) {
+  constructor(details: { response: Response; request: Request; jsonResponse: Record<string, unknown> }) {
     super('Validation Error');
     this.name = 'ValidationError';
     this.response = details.response;

@@ -8,8 +8,22 @@ import { useApi } from "@/hooks/use-api";
 import { cn } from "@/lib/utils";
 import transactionService from "@/services/transaction.service";
 import { CheckCircle, Eye, Loader2, Receipt, RefreshCw, Search, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+
+interface Transaction {
+  id: string | number;
+  user_id: string | number;
+  user?: { name?: string; email?: string };
+  amount: number;
+  currency?: string;
+  type: string;
+  payment_processor?: string;
+  status: 'completed' | 'pending' | 'failed' | 'refunded';
+  external_id?: string;
+  created_at?: string;
+  proof_of_payment?: string;
+}
 
 const STATUS_STYLES: Record<string, string> = {
   completed: "bg-green-100 text-green-700",
@@ -19,33 +33,33 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 export default function AdminTransactionsPage() {
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [total, setTotal]               = useState(0);
   const [page, setPage]                 = useState(1);
   const [search, setSearch]             = useState("");
   const [loading, setLoading]           = useState(true);
-  const [selected, setSelected]         = useState<any>(null);
+  const [selected, setSelected]         = useState<Transaction | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [actionDialog, setActionDialog] = useState<"approve" | "reject" | "view" | null>(null);
   const { call, isLoading: actionLoading } = useApi();
 
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     setLoading(true);
     try {
       const res = await transactionService.getAll({ page, search: search || undefined });
-      const data = res?.data ?? res;
+      const data = (res as { data?: { data?: Transaction[]; total?: number } })?.data ?? res;
       setTransactions(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
       setTotal(data?.total ?? 0);
-    } catch {
+    } catch (_error: unknown) {
       setTransactions([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, search]);
 
-  useEffect(() => { fetchTransactions(); }, [page, search]);
+  useEffect(() => { fetchTransactions(); }, [fetchTransactions]);
 
-  const openAction = (tx: any, action: "approve" | "reject" | "view") => {
+  const openAction = (tx: Transaction, action: "approve" | "reject" | "view") => {
     setSelected(tx);
     setRejectReason("");
     setActionDialog(action);

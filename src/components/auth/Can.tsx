@@ -20,7 +20,7 @@ export function Can({ permission, children, fallback = null }: CanProps) {
     if (!user) return false;
     
     // Check if user is super admin (bypass all checks)
-    const isSuperAdmin = user.roles?.some((role: any) => role.name === "Super Admin");
+    const isSuperAdmin = user.roles?.some((role: { name: string }) => role.name === "Super Admin");
     if (isSuperAdmin) return true;
 
     // Check specific permission
@@ -28,8 +28,8 @@ export function Can({ permission, children, fallback = null }: CanProps) {
     // Based on documentation: user.roles[].permissions[].slug
     
     if (user.roles) {
-      return user.roles.some((role: any) => 
-        role.permissions?.some((p: any) => p.slug === permission)
+      return user.roles.some((role: { permissions?: { slug: string }[] }) => 
+        role.permissions?.some((p: { slug: string }) => p.slug === permission)
       );
     }
 

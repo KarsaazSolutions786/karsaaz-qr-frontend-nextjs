@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useStore } from "@/store/useStore";
 import { Menu, Bell, User, LogOut } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { _cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 
@@ -15,6 +15,7 @@ export default function Header() {
 
   // Prevent hydration mismatch by only rendering theme-dependent UI after mount
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

@@ -12,10 +12,11 @@ export default function AbuseReportsPage() {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 
-    const isSuperAdmin = user?.roles?.some(r => r.name === "Super Admin" || r.name === "Admin" || r.super_admin) || false;
+    const isSuperAdmin = user?.roles?.some((r: { name: string; super_admin?: boolean }) => r.name === "Super Admin" || r.name === "Admin" || r.super_admin) || false;
 
     useEffect(() => {
         if (mounted && user && !isSuperAdmin) {

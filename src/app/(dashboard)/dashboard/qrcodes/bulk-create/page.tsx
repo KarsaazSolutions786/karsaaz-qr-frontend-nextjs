@@ -1,5 +1,3 @@
-"use client";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,66 +23,79 @@ import {
   Trash2,
   XCircle,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+
+interface FolderType {
+  id: string | number;
+  name: string;
+}
+
+interface BulkInstance {
+  id: number;
+  name: string;
+  status: string;
+  progress: string;
+  created_at: string;
+}
 
 export default function BulkCreatePage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("create");
   const [selectedType, setSelectedType] = useState("url");
   const [selectedFolder, setSelectedFolder] = useState<string>("all");
-  const [folders, setFolders] = useState<any[]>([]);
+  const [folders, setFolders] = useState<FolderType[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // History states
-  const [instances, setInstances] = useState<any[]>([]);
+  const [instances, setInstances] = useState<BulkInstance[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 
   // Rename dialog
-  const [renameDialog, setRenameDialog] = useState<any>(null);
+  const [renameDialog, setRenameDialog] = useState<BulkInstance | null>(null);
   const [renameName, setRenameName] = useState("");
   const [renameLoading, setRenameLoading] = useState(false);
 
   const userId = user?.id;
+
+  const fetchFolders = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const data = await folderService.getFolders(userId);
+      setFolders(data.data || data || []);
+    } catch (error: unknown) {
+      console.error("Failed to fetch folders", error);
+    }
+  }, [userId]);
+
+  const fetchHistory = useCallback(async () => {
+    setLoadingHistory(true);
+    try {
+      const data = await qrCodeService.getBulkInstances();
+      setInstances(data);
+    } catch (error: unknown) {
+      console.error("Failed to fetch history", error);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (userId) fetchFolders();
     if (activeTab === "history") {
       fetchHistory();
     }
-  }, [activeTab, userId]);
+  }, [activeTab, userId, fetchFolders, fetchHistory]);
 
   // Poll for updates if there are running instances
   useEffect(() => {
-    let interval: any;
+    let interval: NodeJS.Timeout; // Specify type for interval
     if (activeTab === "history" && instances.some(i => i.status === "running" || i.status === "pending")) {
       interval = setInterval(fetchHistory, 5000);
     }
     return () => clearInterval(interval);
-  }, [activeTab, instances]);
-
-  const fetchFolders = async () => {
-    if (!userId) return;
-    try {
-      const data = await folderService.getFolders(userId);
-      setFolders(data.data || data || []);
-    } catch (error) {
-      console.error("Failed to fetch folders", error);
-    }
-  };
-
-  const fetchHistory = async () => {
-    setLoadingHistory(true);
-    try {
-      const data = await qrCodeService.getBulkInstances();
-      setInstances(data);
-    } catch (error) {
-      console.error("Failed to fetch history", error);
-    } finally {
-      setLoadingHistory(false);
-    }
-  };
+  }, [activeTab, instances, fetchHistory]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +119,7 @@ export default function BulkCreatePage() {
       toast.success("Bulk job started successfully");
       setFile(null);
       setActiveTab("history");
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Bulk creation failed", error);
       toast.error("Failed to start bulk creation");
     } finally {
@@ -122,8 +133,9 @@ export default function BulkCreatePage() {
       await qrCodeService.deleteBulkInstance(id);
       toast.success("Record deleted");
       fetchHistory();
-    } catch (error) {
-      toast.error("Failed to delete record");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError?.message || "Failed to delete record");
     }
   };
 

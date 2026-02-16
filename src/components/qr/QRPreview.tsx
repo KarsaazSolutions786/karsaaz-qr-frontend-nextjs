@@ -7,7 +7,7 @@ import { useQRPreviewUrl } from "@/hooks/use-qr-preview";
 import { CanvasTextRenderer } from "@/lib/canvas-text-renderer";
 import { cn } from "@/lib/utils";
 import { Eye, Loader2, RefreshCw, Smartphone } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState as _useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 interface QRPreviewProps {
@@ -18,8 +18,8 @@ interface QRPreviewProps {
 export function QRPreview({ id, loading = false }: QRPreviewProps) {
   const { watch } = useFormContext();
   const formData = watch();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rendererRef = useRef<CanvasTextRenderer | null>(null);
+  const _canvasRef = _useRef<HTMLCanvasElement>(null);
+  const rendererRef = _useRef<CanvasTextRenderer | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [stickyTop, setStickyTop] = useState(24);

@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, Lock, Mail, Trash2, User } from "lucide-react";
+import { Loader2, Lock, Mail, Trash2, User as UserIcon } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
@@ -38,8 +38,9 @@ export default function MyAccountPage() {
       await userService.updateProfile(user.id, { name, email });
       toast.success("Profile updated successfully");
       validateSession();
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to update profile");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError?.message || "Failed to update profile");
     } finally {
       setIsLoading(false);
     }
@@ -68,8 +69,9 @@ export default function MyAccountPage() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to update password");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError?.message || "Failed to update password");
     } finally {
       setPasswordLoading(false);
     }
@@ -89,8 +91,9 @@ export default function MyAccountPage() {
       await accountService.deleteAccount();
       toast.success("Account deleted");
       window.location.href = "/";
-    } catch (error: any) {
-      toast.error(error?.message || "Failed to delete account");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError?.message || "Failed to delete account");
     }
   };
 
@@ -122,7 +125,7 @@ export default function MyAccountPage() {
             <form onSubmit={handleProfileUpdate} className="space-y-4">
               <div className="flex items-center space-x-4 mb-4">
                 <div className="relative h-16 w-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
-                  <User className="h-8 w-8 text-gray-500" />
+                  <UserIcon className="h-8 w-8 text-gray-500" />
                 </div>
               </div>
 
@@ -131,7 +134,7 @@ export default function MyAccountPage() {
                   Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
+                  <UserIcon className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
                   <Input
                     id="name"
                     className="pl-9"

@@ -15,7 +15,7 @@ import { BiolinkBlock, BiolinkBlockType, biolinkBlockDefinitions } from "./types
 
 export function BiolinkDesigner() {
     const { control } = useFormContext<{ data: { blocks: BiolinkBlock[] } }>();
-    const { fields, append, remove, move } = useFieldArray({
+    const { fields, append, remove, move: _move } = useFieldArray({
         control,
         name: "data.blocks",
     });
@@ -23,9 +23,10 @@ export function BiolinkDesigner() {
     const [isPickerOpen, setIsPickerOpen] = React.useState(false);
     const [editingBlockIndex, setEditingBlockIndex] = React.useState<number | null>(null);
 
-    const addBlock = (type: BiolinkBlockType) => {
+    const addBlock = useCallback((type: BiolinkBlockType) => {
+        const newBlockId = `block_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`; // Generate ID outside of render
         append({
-            id: Math.random().toString(36).substr(2, 9),
+            id: newBlockId,
             type,
             content: {},
             settings: { visible: true },
@@ -34,7 +35,7 @@ export function BiolinkDesigner() {
         // Open editor for the new block (index is length of fields before append + 0, but fields isn't updated immediately in sync logic sometimes, safe to use fields.length)
         // Actually append update is async in some versions, but usually safe to assume it will be at the end.
         setTimeout(() => setEditingBlockIndex(fields.length), 0); // Hack to wait for update
-    };
+    }, [append, fields.length]);
 
     return (
         <div className="space-y-6">
@@ -60,7 +61,7 @@ export function BiolinkDesigner() {
                                     <block.icon className="h-5 w-5 text-gray-600 group-hover:text-blue-600" />
                                 </div>
                                 <span className="text-xs font-bold">{block.label}</span>
-                                <span className="text-[10px] text-gray-500 line-clamp-1">{block.description}</span>
+                                <span className="text-[10px] text-gray-500 line-clamp-1">{block._blockDescription}</span>
                             </button>
                         ))}
                     </div>
@@ -70,7 +71,7 @@ export function BiolinkDesigner() {
             <div className="space-y-3">
                 {fields.length === 0 ? (
                     <div className="text-center py-10 border-2 border-dashed rounded-lg bg-gray-50 dark:bg-gray-900/50">
-                        <p className="text-sm text-gray-500">No blocks added yet. Click "Add Block" to start building your page.</p>
+                        <p className="text-sm text-gray-500">No blocks added yet. Click &quot;Add Block&quot; to start building your page.</p>
                     </div>
                 ) : (
                     fields.map((field, index) => {

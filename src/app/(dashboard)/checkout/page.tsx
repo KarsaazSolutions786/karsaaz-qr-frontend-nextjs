@@ -34,7 +34,7 @@ function CheckoutContent() {
   const [processors, setProcessors] = useState<PaymentProcessor[]>([]);
   const [activeProcessor, setActiveProcessor] = useState<string>("");
   const [promoCode, setPromoCode] = useState("");
-  const [promoApplied, setPromoApplied] = useState<any>(null);
+  const [promoApplied, setPromoApplied] = useState<{ discount?: string; description?: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
 
@@ -50,10 +50,10 @@ function CheckoutContent() {
         setPlan(planData);
 
         const procData = procRes.data ?? procRes;
-        const list = Array.isArray(procData) ? procData : procData.data ?? [];
+        const list: PaymentProcessor[] = Array.isArray(procData) ? procData : procData.data ?? [];
         setProcessors(list.filter((p: PaymentProcessor) => p.is_active));
         if (list.length > 0) setActiveProcessor(list[0].slug);
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Failed to load checkout", err);
         toast.error("Failed to load checkout");
       } finally {
@@ -110,8 +110,9 @@ function CheckoutContent() {
         }
       }
       toast.success("Checkout initiated!");
-    } catch (err: any) {
-      toast.error(err?.message || "Checkout failed");
+    } catch (err: unknown) {
+      const apiError = err as { message?: string };
+      toast.error(apiError?.message || "Checkout failed");
     } finally {
       setProcessing(false);
     }

@@ -8,14 +8,14 @@ import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 export function FrameSelector() {
-    const { register, watch, setValue } = useFormContext();
+    const { register: _register, watch, setValue } = useFormContext();
     const design = watch("design") || {};
     const frameId = design.frame || "none";
     const frameText = design.frameText || "SCAN ME";
     const frameColor = design.frameColor || "#000000";
     const frameTextColor = design.frameTextColor || "#FFFFFF";
 
-    const currentFrame = qrFrames.find(f => f.id === frameId);
+    const _currentFrame = qrFrames.find(f => f.id === frameId);
 
     // Set defaults if missing
     useEffect(() => {
@@ -23,7 +23,7 @@ export function FrameSelector() {
         if (!design.frameText) setValue("design.frameText", "SCAN ME");
         if (!design.frameColor) setValue("design.frameColor", "#000000");
         if (!design.frameTextColor) setValue("design.frameTextColor", "#FFFFFF");
-    }, []);
+    }, [design.frame, design.frameText, design.frameColor, design.frameTextColor, setValue]);
 
     return (
         <div className="space-y-6">

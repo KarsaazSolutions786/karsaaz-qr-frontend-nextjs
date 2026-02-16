@@ -40,16 +40,17 @@ async function request(route: string, options: RequestOptions = {}) {
     defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
 
-  const finalHeaders = { ...defaultHeaders, ...customHeaders };
+  let finalHeaders: Record<string, string> = { ...defaultHeaders, ...(customHeaders as Record<string, string>) };
 
   // Handle FormData
   if (body instanceof FormData) {
-    delete (finalHeaders as any)['Content-Type'];
+    const { 'Content-Type': _, ...headersWithoutContentType } = finalHeaders;
+    finalHeaders = headersWithoutContentType;
   }
 
   const fetchRequest = new Request(url, {
     ...rest,
-    headers: finalHeaders,
+    headers: finalHeaders as HeadersInit,
     body: body instanceof FormData ? body : (body ? JSON.stringify(body) : undefined),
   });
 
@@ -60,7 +61,7 @@ async function request(route: string, options: RequestOptions = {}) {
     window.dispatchEvent(new CustomEvent('api:response-ready', { detail: { response } }));
   }
 
-  let jsonResponse: any = null;
+  let jsonResponse: unknown = null;
   try {
     jsonResponse = await response.clone().json();
   } catch {
@@ -68,8 +69,8 @@ async function request(route: string, options: RequestOptions = {}) {
   }
 
   // Handle Validation Errors (Laravel standard)
-  if (jsonResponse?.validationErrors || (response.status === 422)) {
-    throw new ValidationError({ response, request: fetchRequest, jsonResponse: jsonResponse || { validationErrors: {} } });
+  if ((jsonResponse as { validationErrors?: object })?.validationErrors || (response.status === 422)) {
+    throw new ValidationError({ response, request: fetchRequest, jsonResponse: (jsonResponse as { validationErrors?: object }) || { validationErrors: {} } });
   }
 
   // Handle API Errors
@@ -81,25 +82,24 @@ async function request(route: string, options: RequestOptions = {}) {
 }
 
 export const apiClient = {
-  get: (url: string, params?: Record<string, any>, options?: RequestInit) => 
+  get: (url: string, params?: Record<string, string | number | boolean>, options?: RequestInit) => 
     request(url, { ...options, method: 'GET', params }),
   
-  post: (url: string, body?: any, options?: RequestInit) => 
-    request(url, { ...options, method: 'POST', body }),
-  
-  put: (url: string, body?: any, options?: RequestInit) => 
-    request(url, { ...options, method: 'PUT', body }),
-  
-  patch: (url: string, body?: any, options?: RequestInit) => 
-    request(url, { ...options, method: 'PATCH', body }),
+  post: (url: string, body?: unknown, options?: RequestInit) =>
+    request(url, { ...options, method: 'POST', body: body as BodyInit }),
+
+  put: (url: string, body?: unknown, options?: RequestInit) =>
+    request(url, { ...options, method: 'PUT', body: body as BodyInit }),
+
+  patch: (url: string, body?: unknown, options?: RequestInit) =>
+    request(url, { ...options, method: 'PATCH', body: body as BodyInit }),
+
   
   delete: (url: string, options?: RequestInit) => 
     request(url, { ...options, method: 'DELETE' }),
 
-  upload: (url: string, data: Record<string, any>) => {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => formData.append(key, value));
-    return request(url, { method: 'POST', body: formData });
+  upload: (url: string, data: FormData) => {
+    return request(url, { method: 'POST', body: data });
   }
 };
 

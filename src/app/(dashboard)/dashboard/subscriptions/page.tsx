@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import billingService from "@/services/billing.service";
+import billingService, { SubscriptionPlan } from "@/services/billing.service";
 import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
@@ -24,8 +24,19 @@ import {
   Trash,
   XCircle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+
+interface Subscription {
+  id: string | number;
+  user_id: string | number;
+  user?: { name?: string; email?: string };
+  plan_id: string | number;
+  subscription_plan?: SubscriptionPlan;
+  status: string;
+  expires_at?: string;
+  created_at: string;
+}
 
 const STATUS_STYLES: Record<string, string> = {
   active:          "bg-green-100 text-green-700",
@@ -35,24 +46,24 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 export default function AdminSubscriptionsPage() {
-  const [subscriptions, setSubscriptions] = useState<any[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading]             = useState(true);
   const [search, setSearch]               = useState("");
   const [currentPage, setCurrentPage]     = useState(1);
   const [totalPages, setTotalPages]       = useState(1);
 
-  const [deleteTarget, setDeleteTarget]   = useState<any>(null);
+  const [deleteTarget, setDeleteTarget]   = useState<Subscription | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [syncing, setSyncing]             = useState(false);
   const [deletingPending, setDeletingPending] = useState(false);
   const [deletePendingDialog, setDeletePendingDialog] = useState(false);
 
-  const fetchSubscriptions = async (page = currentPage) => {
+  const fetchSubscriptions = useCallback(async (page = currentPage) => {
     setLoading(true);
     try {
       const res = await billingService.getSubscriptions({ page, search });
-      const data = (res as any)?.data ?? res;
+      const data = (res as { data?: { data?: Subscription[]; last_page?: number; current_page?: number } })?.data ?? res;
       setSubscriptions(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
       setTotalPages(data?.last_page ?? 1);
       setCurrentPage(data?.current_page ?? page);
@@ -61,9 +72,9 @@ export default function AdminSubscriptionsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, currentPage]); // Dependency on search and currentPage to refetch when it changes
 
-  useEffect(() => { fetchSubscriptions(1); }, []);
+  useEffect(() => { fetchSubscriptions(1); }, [fetchSubscriptions]);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -237,7 +248,7 @@ export default function AdminSubscriptionsPage() {
           <DialogTitle>Delete Subscription</DialogTitle>
           <DialogDescription>
             Are you sure you want to delete this subscription for{" "}
-            "{deleteTarget?.user?.name ?? deleteTarget?.user?.email ?? `User #${deleteTarget?.user_id}`}"?
+            &quot;{deleteTarget?.user?.name ?? deleteTarget?.user?.email ?? `User #${deleteTarget?.user_id}`}&quot;?
             This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
@@ -255,7 +266,7 @@ export default function AdminSubscriptionsPage() {
         <DialogHeader>
           <DialogTitle>Delete All Pending Subscriptions</DialogTitle>
           <DialogDescription>
-            This will permanently delete all subscriptions with status "pending_payment". This action cannot be undone.
+            This will permanently delete all subscriptions with status &quot;pending_payment&quot;. This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

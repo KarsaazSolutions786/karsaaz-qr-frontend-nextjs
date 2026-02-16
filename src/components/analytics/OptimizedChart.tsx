@@ -4,6 +4,8 @@ import React, { Suspense } from "react";
 import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 
+import { ChartProps } from "./AnalyticsChart";
+
 // Optimized: Lazy load Recharts as they are heavy
 const LazyAnalyticsChart = dynamic(() => 
   import("./AnalyticsChart").then(mod => mod.AnalyticsChart), {
@@ -12,7 +14,7 @@ const LazyAnalyticsChart = dynamic(() =>
   }
 );
 
-export function OptimizedChart(props: any) {
+export function OptimizedChart(props: ChartProps) {
   return (
     <Suspense fallback={<div className="h-[300px] flex items-center justify-center bg-muted/20 rounded-lg" />}>
       <LazyAnalyticsChart {...props} />

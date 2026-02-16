@@ -86,8 +86,9 @@ function LoginPageContent() {
           toast.error(response.message || "Failed to send verification code");
         }
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "An error occurred");
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(apiError.response?.data?.message || "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -106,8 +107,9 @@ function LoginPageContent() {
       } else {
         toast.error(response.message || "Invalid verification code");
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Invalid code");
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(apiError.response?.data?.message || "Invalid code");
     } finally {
       setIsLoading(false);
     }
@@ -121,14 +123,15 @@ function LoginPageContent() {
         password: data.password,
       });
       handleAuthSuccess(response);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Invalid password");
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(apiError.response?.data?.message || "Invalid password");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAuthSuccess = (response: any) => {
+  const handleAuthSuccess = (response: Record<string, any>) => {
     const token = response.token || response.access_token;
     const user = response.user || response.data;
 
@@ -151,8 +154,9 @@ function LoginPageContent() {
         startCountdown();
         toast.success("Code resent successfully");
       }
-    } catch (error) {
-      toast.error("Failed to resend code");
+    } catch (error: unknown) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      toast.error(apiError.response?.data?.message || "Failed to resend code");
     } finally {
       setIsLoading(false);
     }
@@ -224,7 +228,7 @@ export default function LoginPage() {
   );
 }
 
-function EmailForm({ onSubmit, isLoading }: { onSubmit: (data: any) => void, isLoading: boolean }) {
+function EmailForm({ onSubmit, isLoading }: { onSubmit: (data: Record<string, unknown>) => void, isLoading: boolean }) {
   const form = useForm({ resolver: zodResolver(emailSchema) });
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -240,7 +244,7 @@ function EmailForm({ onSubmit, isLoading }: { onSubmit: (data: any) => void, isL
   );
 }
 
-function OtpForm({ onSubmit, isLoading, resendCountdown, onResend }: { onSubmit: (data: any) => void, isLoading: boolean, resendCountdown: number, onResend: () => void }) {
+function OtpForm({ onSubmit, isLoading, resendCountdown, onResend }: { onSubmit: (data: Record<string, unknown>) => void, isLoading: boolean, resendCountdown: number, onResend: () => void }) {
   const form = useForm({ resolver: zodResolver(otpSchema) });
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -273,7 +277,7 @@ function OtpForm({ onSubmit, isLoading, resendCountdown, onResend }: { onSubmit:
   );
 }
 
-function PasswordForm({ onSubmit, isLoading }: { onSubmit: (data: any) => void, isLoading: boolean }) {
+function PasswordForm({ onSubmit, isLoading }: { onSubmit: (data: Record<string, unknown>) => void, isLoading: boolean }) {
   const form = useForm({ resolver: zodResolver(passwordSchema) });
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -31,7 +31,7 @@ export default function ArchivedQRCodesPage() {
       } else {
         setQrcodes(response || []);
       }
-    } catch (error) {
+    } catch (_error: unknown) {
       console.error("Failed to fetch archived QR codes", error);
       toast.error("Failed to load archived QR codes");
     } finally {
@@ -44,8 +44,9 @@ export default function ArchivedQRCodesPage() {
       await qrCodeService.archive(id, false); // archived = false means restore
       toast.success("QR Code restored");
       fetchArchivedQRCodes();
-    } catch (error) {
-      toast.error("Failed to restore QR code");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError?.message || "Failed to restore QR code");
     }
   };
 
@@ -55,8 +56,9 @@ export default function ArchivedQRCodesPage() {
       await qrCodeService.delete(id);
       toast.success("QR Code deleted");
       fetchArchivedQRCodes();
-    } catch (error) {
-      toast.error("Failed to delete QR code");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError?.message || "Failed to delete QR code");
     }
   };
 

@@ -17,15 +17,21 @@ import {
   Shield,
   Trash,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+
+interface Permission {
+  id: string | number;
+  name?: string;
+  slug: string;
+}
 
 export default function RolesPage() {
   const [roles, setRoles]           = useState<Role[]>([]);
   const [loading, setLoading]       = useState(true);
   const [search, setSearch]         = useState("");
 
-  const [permissions, setPermissions] = useState<any[]>([]);
+  const [permissions, setPermissions] = useState<Permission[]>([]);
 
   // Create / Edit dialog
   const [formDialog, setFormDialog]   = useState<"create" | "edit" | null>(null);
@@ -39,31 +45,31 @@ export default function RolesPage() {
   const [deleteTarget, setDeleteTarget] = useState<Role | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const fetchRoles = async () => {
+  const fetchRoles = useCallback(async () => {
     setLoading(true);
     try {
       const res = await roleService.getAll({ search });
-      const data = (res as any)?.data ?? res;
+      const data = (res as { data?: Role[] })?.data ?? res;
       setRoles(Array.isArray(data) ? data : []);
     } catch {
       setRoles([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]); // Add search to dependency array
 
-  const fetchPermissions = async () => {
+  const fetchPermissions = useCallback(async () => {
     try {
       const res = await permissionService.getAll();
-      const data = (res as any)?.data ?? res;
+      const data = (res as { data?: Permission[] })?.data ?? res;
       setPermissions(Array.isArray(data) ? data : []);
     } catch { /* silent */ }
-  };
+  }, []); // No dependencies for getAll
 
   useEffect(() => {
     fetchRoles();
     fetchPermissions();
-  }, []);
+  }, [fetchRoles, fetchPermissions]);
 
   const openCreate = () => {
     setFormName("");
@@ -277,7 +283,7 @@ export default function RolesPage() {
         <DialogHeader>
           <DialogTitle>Delete Role</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete the role "{deleteTarget?.name}"? This action cannot be undone.
+            Are you sure you want to delete the role &quot;{deleteTarget?.name}&quot;? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

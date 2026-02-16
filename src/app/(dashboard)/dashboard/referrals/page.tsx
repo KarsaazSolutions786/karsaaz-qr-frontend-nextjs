@@ -17,25 +17,48 @@ import {
   Users,
   Wallet,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-const STATUS_STYLES: Record<string, string> = {
-  pending:     "bg-yellow-100 text-yellow-700",
-  claimed:     "bg-blue-100 text-blue-700",
-  paid:        "bg-green-100 text-green-700",
-  approved:    "bg-green-100 text-green-700",
-  rejected:    "bg-red-100 text-red-700",
-  transferred: "bg-purple-100 text-purple-700",
-};
+interface CommissionDashboard {
+  total_referrals?: number;
+  referred_count?: number;
+  total_earned?: number;
+  unclaimed_amount?: number;
+  commission_rate?: string;
+  rate?: string;
+  referral_link?: string;
+  referral_url?: string;
+}
+
+interface WithdrawalSummary {
+  available_balance?: number;
+}
+
+interface Commission {
+  id: string | number;
+  amount: number;
+  currency?: string;
+  status: string;
+  created_at: string;
+}
+
+interface Withdrawal {
+  id: string | number;
+  amount: number;
+  currency?: string;
+  payment_method?: string;
+  status: string;
+  created_at: string;
+}
 
 export default function ReferralPage() {
   const [tab, setTab] = useState<"overview" | "history" | "withdrawals">("overview");
 
-  const [dashboard, setDashboard]   = useState<any>(null);
-  const [summary, setSummary]       = useState<any>(null);
-  const [commissions, setCommissions] = useState<any[]>([]);
-  const [withdrawals, setWithdrawals] = useState<any[]>([]);
+  const [dashboard, setDashboard]   = useState<CommissionDashboard | null>(null);
+  const [summary, setSummary]       = useState<WithdrawalSummary | null>(null);
+  const [commissions, setCommissions] = useState<Commission[]>([]);
+  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [loading, setLoading]         = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -44,7 +67,7 @@ export default function ReferralPage() {
   const [withdrawMethod, setWithdrawMethod] = useState("");
   const [withdrawDetails, setWithdrawDetails] = useState("");
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [dashRes, summaryRes, historyRes, wdRes] = await Promise.allSettled([
@@ -53,22 +76,22 @@ export default function ReferralPage() {
         commissionService.getHistory(),
         commissionService.getWithdrawalHistory(),
       ]);
-      if (dashRes.status === "fulfilled") setDashboard((dashRes.value as any)?.data ?? dashRes.value);
-      if (summaryRes.status === "fulfilled") setSummary((summaryRes.value as any)?.data ?? summaryRes.value);
+      if (dashRes.status === "fulfilled") setDashboard((dashRes.value as { data?: CommissionDashboard })?.data ?? dashRes.value);
+      if (summaryRes.status === "fulfilled") setSummary((summaryRes.value as { data?: WithdrawalSummary })?.data ?? summaryRes.value);
       if (historyRes.status === "fulfilled") {
-        const d = (historyRes.value as any)?.data ?? historyRes.value;
+        const d = (historyRes.value as { data?: { data?: Commission[] } })?.data ?? historyRes.value;
         setCommissions(Array.isArray(d?.data) ? d.data : Array.isArray(d) ? d : []);
       }
       if (wdRes.status === "fulfilled") {
-        const d = (wdRes.value as any)?.data ?? wdRes.value;
+        const d = (wdRes.value as { data?: { data?: Withdrawal[] } })?.data ?? wdRes.value;
         setWithdrawals(Array.isArray(d?.data) ? d.data : Array.isArray(d) ? d : []);
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Dependencies for useCallback. Assuming commissionService methods are stable.
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const handleClaimCommissions = async () => {
     setActionLoading(true);

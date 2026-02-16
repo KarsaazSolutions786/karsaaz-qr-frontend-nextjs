@@ -30,17 +30,19 @@ export default function FoldersPage() {
   const [search, setSearch] = useState("");
   const { isLoading, call } = useApi();
 
-  const fetchFolders = async () => {
+  const fetchFolders = useCallback(async () => {
     if (!user?.id) return;
     try {
-      const response = await call(() => folderService.getFolders(user.id));
+      const response = await call(() => folderService.getFolders(user.id!));
       setFolders(response.data || []);
-    } catch (error) { }
-  };
+    } catch (_) { }
+  }, [user, call]); // Changed user?.id to user
 
   useEffect(() => {
-    fetchFolders();
-  }, [user]);
+    requestAnimationFrame(() => { // Wrap in requestAnimationFrame
+      fetchFolders();
+    });
+  }, [fetchFolders]);
 
   const handleCreate = async () => {
     const name = prompt("Enter folder name:");
@@ -51,7 +53,7 @@ export default function FoldersPage() {
         toast.success("Folder created");
         fetchFolders();
       }
-    } catch (error) { }
+    } catch (_) { }
   };
 
   const handleDelete = async (id: string | number) => {
@@ -62,7 +64,7 @@ export default function FoldersPage() {
         toast.success("Folder deleted");
         fetchFolders();
       }
-    } catch (error) { }
+    } catch (_) { }
   };
 
   const filteredFolders = folders.filter(f => f.name.toLowerCase().includes(search.toLowerCase()));

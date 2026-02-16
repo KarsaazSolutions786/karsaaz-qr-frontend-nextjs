@@ -268,7 +268,7 @@ export const qrTypeFields: Record<string, FieldDefinition[]> = {
     ],
 
     video: [
-        { name: "url", label: "Video URL", type: "url", required: true, placeholder: "https://youtube.com/watch?v=..." },
+        { name: "video_url", label: "Video URL", type: "url", required: true, placeholder: "https://youtube.com/watch?v=..." },
         { name: "title", label: "Title", type: "text" },
         { name: "description", label: "Description", type: "textarea" },
     ],

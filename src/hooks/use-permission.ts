@@ -9,7 +9,7 @@ export function usePermission() {
 
   const isSuperAdmin = () => {
     if (!user || !user.roles) return false;
-    return user.roles.some((role) => role.super_admin);
+    return user.roles.some((role: { super_admin: boolean }) => role.super_admin);
   };
 
   const isClient = () => {

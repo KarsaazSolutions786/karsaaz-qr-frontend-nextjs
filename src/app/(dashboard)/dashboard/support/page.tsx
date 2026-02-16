@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -19,11 +17,20 @@ import {
   Search,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const PRIORITY_OPTIONS = ["Low", "Medium", "High", "Urgent"];
 const CATEGORY_OPTIONS = ["General", "Technical", "Billing"];
+
+interface Ticket {
+  id: string | number;
+  subject: string;
+  reference?: string;
+  status: 'Open' | 'In Progress' | 'Resolved';
+  priority: 'Low' | 'Medium' | 'High' | 'Urgent';
+  createdAt: string;
+}
 
 const STATUS_STYLES: Record<string, string> = {
   Open:        "bg-orange-100 text-orange-700",
@@ -40,7 +47,7 @@ const PRIORITY_STYLES: Record<string, string> = {
 
 export default function SupportPage() {
   const { user } = useAuth();
-  const [tickets, setTickets]   = useState<any[]>([]);
+  const [tickets, setTickets]   = useState<Ticket[]>([]); // Use Ticket interface
   const [loading, setLoading]   = useState(true);
   const [search, setSearch]     = useState("");
 
@@ -48,20 +55,20 @@ export default function SupportPage() {
   const [form, setForm]           = useState({ subject: "", priority: "Medium", department: "General", message: "" });
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     if (!user?.email) return;
     setLoading(true);
     try {
       const data = await supportService.getTickets(user.email);
       setTickets(Array.isArray(data) ? data : []);
-    } catch {
+    } catch (_error: unknown) { // Use unknown for error
       setTickets([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.email]); // Add user?.email to dependencies
 
-  useEffect(() => { if (user?.email) fetchTickets(); }, [user?.email]);
+  useEffect(() => { if (user?.email) fetchTickets(); }, [user?.email, fetchTickets]); // Add fetchTickets to dependencies
 
   const handleCreateTicket = async () => {
     if (!form.message.trim() || !user) return;
@@ -78,7 +85,7 @@ export default function SupportPage() {
       setNewDialog(false);
       setForm({ subject: "", priority: "Medium", department: "General", message: "" });
       fetchTickets();
-    } catch { toast.error("Failed to create ticket. Please try again."); }
+    } catch (_error: unknown) { toast.error("Failed to create ticket. Please try again."); } // Use unknown for error
     finally { setSubmitting(false); }
   };
 

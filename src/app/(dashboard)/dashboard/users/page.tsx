@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useApi } from "@/hooks/use-api";
 import { cn } from "@/lib/utils";
 import accountService from "@/services/account.service";
-import userService from "@/services/user.service";
+import { User, userService } from "@/services/user.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import {
   CheckCircle,
@@ -32,7 +32,7 @@ import {
   Shield,
   ShieldAlert,
   Trash2,
-  User,
+  User as UserIcon, // Renamed to avoid conflict with User interface
   UserPlus,
   UserSquare2
 } from "lucide-react";
@@ -40,132 +40,260 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+
+
 function UsersManagementContent() {
+
   const searchParams = useSearchParams();
+
   const payingFilter = searchParams.get("paying");
 
-  const [users, setUsers]           = useState<any[]>([]);
+
+
+  const [users, setUsers]           = useState<User[]>([]);
+
   const [total, setTotal]           = useState(0);
+
   const [page, setPage]             = useState(1);
+
   const [search, setSearch]         = useState("");
+
   const [loading, setLoading]       = useState(true);
 
-  const [selected, setSelected]     = useState<any>(null);
+
+
+  const [selected, setSelected]     = useState<User | null>(null);
+
   const [dialog, setDialog]         = useState<"magic-link" | "balance" | "delete" | null>(null);
+
   const [magicUrl, setMagicUrl]     = useState("");
+
   const [balanceAmount, setBalanceAmount] = useState("");
 
+
+
   const { setActingAs } = useAuthStore();
+
   const { call, isLoading: actionLoading } = useApi();
 
+
+
   const fetchUsers = useCallback(async () => {
+
     setLoading(true);
+
     try {
+
       const res = await userService.getAllUsers({
+
         page,
+
         search: search || undefined,
+
         paying: payingFilter === "true" ? true : payingFilter === "false" ? false : undefined,
+
       });
-      const data = (res as any)?.data ?? res;
+
+      const data = res; // No need for `as any` here after fixing service
+
       setUsers(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
+
       setTotal(data?.total ?? 0);
+
     } catch {
+
       setUsers([]);
+
     } finally {
+
       setLoading(false);
+
     }
-  }, [page, search, payingFilter]);
+
+  }, [page, search, payingFilter, call]);
+
+
 
   useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
-  const openDialog = (user: any, d: typeof dialog) => {
+
+
+  const openDialog = (user: User, d: typeof dialog) => {
+
     setSelected(user);
+
     setMagicUrl("");
+
     setBalanceAmount("");
+
     setDialog(d);
+
   };
 
-  const handleActAs = async (user: any) => {
+
+
+  const handleActAs = async (user: User) => {
+
     try {
+
       const response = await call(() => userService.actAs(user.id));
-      const { token, user: newUser } = (response as any)?.data ?? response;
+
+      const { token, user: newUser } = response; // No need for `as any` here
+
       if (token && newUser) {
+
         setActingAs(newUser, token);
+
         toast.success(`Now impersonating ${newUser.name}`);
+
         window.location.href = "/dashboard";
+
       }
+
     } catch { toast.error("Failed to impersonate user"); }
+
   };
+
+
 
   const handleGenerateMagicLink = async () => {
+
     if (!selected) return;
+
     try {
+
       const res = await call(() => accountService.generateMagicLoginUrl(selected.id));
-      const url = (res as any)?.data?.url ?? (res as any)?.url;
+
+      const url = (res as { data?: { url?: string }; url?: string })?.data?.url ?? res?.url;
+
       if (url) setMagicUrl(url);
+
       else toast.error("No URL returned from server");
+
     } catch { toast.error("Failed to generate magic login URL"); }
+
   };
+
+
 
   const handleCopyMagicUrl = () => {
+
     if (!magicUrl) return;
+
     navigator.clipboard.writeText(magicUrl);
+
     toast.success("URL copied to clipboard");
+
   };
 
-  const handleResetRole = async (user: any) => {
+
+
+  const handleResetRole = async (user: User) => {
+
     try {
+
       await call(() => userService.resetRole(user.id));
+
       toast.success("User role reset");
+
       fetchUsers();
+
     } catch { toast.error("Failed to reset role"); }
+
   };
 
-  const handleResetQRLimit = async (user: any) => {
+
+
+  const handleResetQRLimit = async (user: User) => {
+
     try {
+
       await call(() => userService.resetQRCodeLimit(user.id));
+
       toast.success("QR code limit reset");
+
     } catch { toast.error("Failed to reset QR limit"); }
+
   };
 
-  const handleResetScansLimit = async (user: any) => {
+
+
+  const handleResetScansLimit = async (user: User) => {
+
     try {
+
       await call(() => userService.resetScansLimit(user.id));
+
       toast.success("Scans limit reset");
+
     } catch { toast.error("Failed to reset scans limit"); }
+
   };
 
-  const handleVerifyEmail = async (user: any) => {
+
+
+  const handleVerifyEmail = async (user: User) => {
+
     try {
+
       await call(() => userService.verifyEmail(user.id));
+
       toast.success("Email verified successfully");
+
       fetchUsers();
+
     } catch { toast.error("Failed to verify email"); }
+
   };
+
+
 
   const handleChangeBalance = async () => {
-    if (!selected || balanceAmount === "") return;
+
+    if (!selected) return; // Removed || balanceAmount === ""
+
     const amount = parseFloat(balanceAmount);
+
     if (isNaN(amount)) { toast.error("Invalid amount"); return; }
+
     try {
+
       await call(() => userService.updateAccountBalance(selected.id, amount));
+
       toast.success("Account balance updated");
+
       setDialog(null);
+
       fetchUsers();
+
     } catch { toast.error("Failed to update balance"); }
+
   };
+
+
 
   const handleDelete = async () => {
+
     if (!selected) return;
+
     try {
+
       await call(() => userService.deleteUser(selected.id));
+
       toast.success("User deleted");
+
       setDialog(null);
+
       fetchUsers();
+
     } catch { toast.error("Failed to delete user"); }
+
   };
 
+
+
   const perPage = 15;
+
   const totalPages = Math.max(1, Math.ceil(total / perPage));
 
   return (
@@ -226,7 +354,7 @@ function UsersManagementContent() {
                       <td className="p-4">
                         <div className="flex items-center space-x-3">
                           <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 shrink-0">
-                            <User className="h-4 w-4" />
+                            <UserIcon className="h-4 w-4" />
                           </div>
                           <div>
                             <p className="font-medium leading-none">{u.name}</p>
@@ -270,7 +398,7 @@ function UsersManagementContent() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-48">
                             <DropdownMenuItem onClick={() => handleActAs(u)}>
-                              <UserSquare2 className="mr-2 h-4 w-4" /> Act As User
+                              <UserIcon className="mr-2 h-4 w-4" /> Act As User
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => openDialog(u, "magic-link")}>
                               <Link2 className="mr-2 h-4 w-4" /> Magic Login URL

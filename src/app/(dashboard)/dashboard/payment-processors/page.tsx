@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import paymentGatewayService from "@/services/payment-gateway.service";
 import stripeService from "@/services/stripe.service";
-import { cn } from "@/lib/utils";
+import { _cn } from "@/lib/utils";
 import {
   CreditCard,
   Edit2,
@@ -18,20 +18,37 @@ import {
   Webhook,
   Zap,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+
+interface PaymentGateway {
+  id: string | number;
+  name: string;
+  driver: string;
+  key: string;
+  secret: string;
+  mode: "sandbox" | "live";
+}
+
+interface StripeWebhook {
+  id: string;
+  url?: string;
+  webhook_url?: string;
+  status: string;
+  enabled_events: string[];
+}
 
 export default function PaymentProcessorsPage() {
   const [tab, setTab] = useState<"gateways" | "webhooks">("gateways");
 
-  const [gateways, setGateways]     = useState<any[]>([]);
-  const [webhooks, setWebhooks]     = useState<any[]>([]);
+  const [gateways, setGateways]     = useState<PaymentGateway[]>([]);
+  const [webhooks, setWebhooks]     = useState<StripeWebhook[]>([]);
   const [loading, setLoading]       = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
   // Gateway dialog
   const [gwDialog, setGwDialog]     = useState<"create" | "edit" | null>(null);
-  const [selectedGw, setSelectedGw] = useState<any>(null);
+  const [_selectedGw, setSelectedGw] = useState<PaymentGateway | null>(null);
   const [gwForm, setGwForm]         = useState<Record<string, string>>({});
 
   // Webhook dialog
@@ -40,49 +57,31 @@ export default function PaymentProcessorsPage() {
   const [whEvents, setWhEvents]     = useState("");
 
   // Delete dialog
-  const [deleteDialog, setDeleteDialog] = useState<{ type: "gateway"; item: any } | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<{ type: "gateway"; item: PaymentGateway } | null>(null);
 
-  const fetchGateways = async () => {
+  const fetchGateways = useCallback(async () => {
     try {
       const res = await paymentGatewayService.getAll();
-      const d = (res as any)?.data ?? res;
+      const d = (res as { data?: PaymentGateway[] })?.data ?? res;
       setGateways(Array.isArray(d) ? d : []);
-    } catch { setGateways([]); }
-  };
+    } catch (_error: unknown) { setGateways([]); }
+  }, []);
 
-  const fetchWebhooks = async () => {
+  const fetchWebhooks = useCallback(async () => {
     try {
       const res = await stripeService.getWebhooks();
-      const d = (res as any)?.data ?? res;
+      const d = (res as { data?: StripeWebhook[] })?.data ?? res;
       setWebhooks(Array.isArray(d) ? d : []);
-    } catch { setWebhooks([]); }
-  };
+    } catch (_error: unknown) { setWebhooks([]); }
+  }, []);
 
-  const fetchAll = async () => {
+  const fetchAll = useCallback(async () => {
     setLoading(true);
     await Promise.allSettled([fetchGateways(), fetchWebhooks()]);
     setLoading(false);
-  };
+  }, [fetchGateways, fetchWebhooks]);
 
-  useEffect(() => { fetchAll(); }, []);
-
-  const openCreateGateway = () => {
-    setSelectedGw(null);
-    setGwForm({});
-    setGwDialog("create");
-  };
-
-  const openEditGateway = (gw: any) => {
-    setSelectedGw(gw);
-    setGwForm({
-      name: gw.name ?? "",
-      driver: gw.driver ?? "",
-      key: gw.key ?? "",
-      secret: gw.secret ?? "",
-      mode: gw.mode ?? "sandbox",
-    });
-    setGwDialog("edit");
-  };
+  useEffect(() => { fetchAll(); }, [fetchAll]);
 
   const handleSaveGateway = async () => {
     setActionLoading(true);
@@ -245,7 +244,7 @@ export default function PaymentProcessorsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y">
-                    {webhooks.map((wh: any, i) => (
+                    {webhooks.map((wh: StripeWebhook, i) => (
                       <tr key={wh.id ?? i} className="hover:bg-muted/40 transition-colors">
                         <td className="p-4 font-mono text-xs max-w-xs truncate">{wh.url ?? wh.webhook_url ?? "—"}</td>
                         <td className="p-4">
@@ -329,7 +328,7 @@ export default function PaymentProcessorsPage() {
         <DialogHeader>
           <DialogTitle>Delete Payment Gateway</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete "{deleteDialog?.item?.name}"? This cannot be undone.
+            Are you sure you want to delete &quot;{deleteDialog?.item?.name}&quot;? This cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="pt-4">

@@ -34,16 +34,28 @@ export interface Session {
   is_current?: boolean;
 }
 
+export interface LoginResponse {
+  token: string;
+  access_token?: string; // Laravel Passport typically returns access_token
+  user: User;
+}
+
+export interface RegisterResponse {
+  token: string;
+  access_token?: string;
+  user: User;
+}
+
 export const authService = {
   // ─── Standard Auth ─────────────────────────────────────
 
   /** POST /api/login */
-  login: async (payload: LoginPayload) => {
+  login: async (payload: LoginPayload): Promise<LoginResponse> => {
     return apiClient.post("/login", payload);
   },
 
   /** POST /api/register */
-  register: async (payload: RegisterPayload) => {
+  register: async (payload: RegisterPayload): Promise<RegisterResponse> => {
     return apiClient.post("/register", payload);
   },
 
@@ -213,7 +225,7 @@ export const authService = {
   },
 
   /** POST /api/account/act-as/{user} — admin: impersonate another user */
-  actAs: async (userId: string | number) => {
+  actAs: async (userId: string | number): Promise<{ token: string; user: User }> => {
     return apiClient.post(`/account/act-as/${userId}`);
   },
 };

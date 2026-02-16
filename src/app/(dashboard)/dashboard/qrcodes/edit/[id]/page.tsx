@@ -31,11 +31,7 @@ export default function EditQRCodePage({ params }: { params: Promise<{ id: strin
   const methods = useForm();
   const { reset, handleSubmit, register } = methods;
 
-  useEffect(() => {
-    fetchQRCode();
-  }, [id]);
-
-  const fetchQRCode = async () => {
+  const fetchQRCode = useCallback(async () => {
     try {
       const data = await qrCodeService.getOne(id);
       setQrcode(data);
@@ -63,18 +59,22 @@ export default function EditQRCodePage({ params }: { params: Promise<{ id: strin
           advancedShapeFrameColor: data.design?.advancedShapeFrameColor || "#000000",
         }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to fetch QR code", error);
       toast.error("Failed to load QR code data");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, reset]); // Add reset to dependencies
 
-  const onNext = async (formData: Record<string, unknown>) => {
+  useEffect(() => {
+    fetchQRCode();
+  }, [fetchQRCode]);
+
+  const onNext = useCallback(async (formData: Record<string, unknown>) => {
     setIsSubmitting(true);
     try {
-      const { design, name, type, id: _, ...qrData } = formData;
+      const { design, name, type, id: _id, ...qrData } = formData; // Renamed 'id' to '_id' to mark as unused
 
       await qrCodeService.update(id, {
         name: name as string,
@@ -97,18 +97,18 @@ export default function EditQRCodePage({ params }: { params: Promise<{ id: strin
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [id, isLastStep, router, nextStep]); // Add dependencies
 
-  const onInvalid = (errors: unknown) => {
+  const onInvalid = useCallback((errors: unknown) => {
     console.error("Form Validation Errors:", errors);
     toast.error("Please fill in all required fields correctly.");
-  };
+  }, []); // No dependencies
 
-  const handleSaveOnly = async () => {
+  const handleSaveOnly = useCallback(async () => {
     const formData = methods.getValues();
     setIsSubmitting(true);
     try {
-      const { design, name, type, id: _, ...qrData } = formData;
+      const { design, name, type, id: _id, ...qrData } = formData; // Renamed 'id' to '_id'
       await qrCodeService.update(id, {
         name,
         type,
@@ -116,24 +116,26 @@ export default function EditQRCodePage({ params }: { params: Promise<{ id: strin
         design
       });
       toast.success("Saved successfully");
-    } catch (error) {
-      toast.error("Failed to save");
+    } catch (error: unknown) {
+      const apiError = error as { message?: string };
+      toast.error(apiError?.message || "Failed to save");
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [id, methods]); // Add methods to dependencies
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (confirm("Are you sure you want to delete this QR code?")) {
       try {
         await qrCodeService.delete(id);
         toast.success("QR Code deleted");
         router.push("/dashboard/qrcodes");
-      } catch (e) {
-        toast.error("Failed to delete QR code");
+      } catch (e: unknown) {
+        const apiError = e as { message?: string };
+        toast.error(apiError?.message || "Failed to delete QR code");
       }
     }
-  };
+  }, [id, router]); // Add id, router to dependencies
 
   if (loading) {
     return (

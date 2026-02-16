@@ -9,39 +9,47 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import systemService from "../../../../../services/system.service";
 
+interface LogEntry {
+  created_at?: string;
+  level?: string;
+  message?: string;
+}
+
 export default function SystemStatusPage() {
   const { call, isLoading } = useApi();
-  const [status, setStatus] = useState<any>(null);
-  const [logs, setLogs] = useState<any[]>([]);
+  const [status, setStatus] = useState<Record<string, string | number | null> | null>(null);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
 
-  const fetchStatus = async () => {
+  const fetchStatus = React.useCallback(async () => {
     try {
       const response = await call(() => systemService.getStatus());
       setStatus(response.data || response);
-    } catch (error) { }
-  };
+    } catch (_error: unknown) { }
+  }, [call]);
 
-  const fetchLogs = async () => {
+  const fetchLogs = React.useCallback(async () => {
     try {
       const response = await call(() => systemService.getLogs());
       // console.log("Logs response:", response);
-      const logsData = response.data?.data || response.data || [];
+      const logsData = (response as { data?: { data?: LogEntry[] } })?.data?.data || response.data || [];
       setLogs(Array.isArray(logsData) ? logsData : []);
-    } catch (error) {
+    } catch (_error: unknown) {
       setLogs([]);
     }
-  };
+  }, [call]);
 
   useEffect(() => {
-    fetchStatus();
-    fetchLogs();
-  }, []);
+    requestAnimationFrame(() => {
+      fetchStatus();
+      fetchLogs();
+    });
+  }, [fetchStatus, fetchLogs]);
 
   const clearCache = async () => {
     try {
       await call(() => systemService.clearCache("all"));
       toast.success("System cache cleared");
-    } catch (error) { }
+    } catch (_error: unknown) { }
   };
 
   return (
@@ -98,7 +106,13 @@ export default function SystemStatusPage() {
   );
 }
 
-function StatusCard({ icon: Icon, title, value, label, status }: any) {
+function StatusCard({ icon: Icon, title, value, label, status }: {
+  icon: React.ElementType;
+  title: string;
+  value: string | number;
+  label: string;
+  status?: string;
+}) {
   return (
     <Card>
       <CardContent className="pt-6">

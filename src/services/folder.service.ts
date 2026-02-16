@@ -13,17 +13,17 @@ export interface Folder {
 
 export const folderService = {
   /** GET /api/folders/{userId} — Get folders for a specific user */
-  getFolders: async (userId: string | number) => {
+  getFolders: async (userId: string | number): Promise<{ data: Folder[] }> => {
     return apiClient.get(`/folders/${userId}`);
   },
 
   /** POST /api/folders/{userId} — Create folder */
-  createFolder: async (userId: string | number, name: string) => {
+  createFolder: async (userId: string | number, name: string): Promise<Folder> => {
     return apiClient.post(`/folders/${userId}`, { name });
   },
 
   /** PUT /api/folders/{userId}/{id} — Update folder */
-  updateFolder: async (userId: string | number, id: string | number, name: string) => {
+  updateFolder: async (userId: string | number, id: string | number, name: string): Promise<Folder> => {
     return apiClient.put(`/folders/${userId}/${id}`, { name });
   },
 

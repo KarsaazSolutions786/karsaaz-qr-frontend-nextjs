@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export interface Column {
     key: string;
     label: string;
-    render?: (value: any, row: any) => React.ReactNode;
+    render?: (value: unknown, row: Record<string, unknown>) => React.ReactNode;
 }
 
 interface AdminCrudPageProps {
@@ -18,7 +18,7 @@ interface AdminCrudPageProps {
     description?: string;
     icon?: React.ReactNode;
     columns: Column[];
-    fetchFn: (params?: any) => Promise<any>;
+    fetchFn: (params?: Record<string, string | number | boolean | undefined>) => Promise<Record<string, unknown>>;
     deleteFn?: (id: string | number) => Promise<any>;
     createHref?: string;
     editHref?: (id: string | number) => string;
@@ -40,7 +40,7 @@ export default function AdminCrudPage({
     searchable = true,
     paginated = true,
 }: AdminCrudPageProps) {
-    const [items, setItems] = useState<any[]>([]);
+    const [items, setItems] = useState<Record<string, unknown>[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
@@ -49,23 +49,23 @@ export default function AdminCrudPage({
     const fetchItems = useCallback(async () => {
         try {
             setIsLoading(true);
-            const params: any = {};
+            const params: Record<string, string | number | boolean | undefined> = {};
             if (paginated) params.page = page;
             if (searchable && search) params.search = search;
             const response = await fetchFn(params);
             // Handle both paginated and non-paginated responses
-            if (response?.data && Array.isArray(response.data)) {
-                setItems(response.data);
-                setTotalPages(response.last_page || response.meta?.last_page || 1);
+            if ((response as { data?: Record<string, unknown>[]; last_page?: number; meta?: { last_page?: number } })?.data && Array.isArray((response as { data?: Record<string, unknown>[] }).data)) {
+                setItems((response as { data: Record<string, unknown>[] }).data);
+                setTotalPages((response as { last_page?: number; meta?: { last_page?: number } }).last_page || (response as { meta?: { last_page?: number } }).meta?.last_page || 1);
             } else if (Array.isArray(response)) {
                 setItems(response);
-            } else if (response?.data?.data && Array.isArray(response.data.data)) {
-                setItems(response.data.data);
-                setTotalPages(response.data.last_page || 1);
+            } else if ((response as { data?: { data?: Record<string, unknown>[]; last_page?: number } })?.data?.data && Array.isArray((response as { data: { data: Record<string, unknown>[] } }).data.data)) {
+                setItems((response as { data: { data: Record<string, unknown>[] } }).data.data);
+                setTotalPages((response as { data: { last_page?: number } }).data.last_page || 1);
             } else {
                 setItems([]);
             }
-        } catch (error) {
+        } catch (error: unknown) {
             console.error(`Failed to fetch ${title}`, error);
             toast.error(`Failed to load ${title.toLowerCase()}`);
         } finally {
@@ -83,7 +83,7 @@ export default function AdminCrudPage({
             await deleteFn(id);
             toast.success("Item deleted successfully");
             fetchItems();
-        } catch (error) {
+        } catch (_error: unknown) {
             toast.error("Failed to delete item");
         }
     };

@@ -2,7 +2,6 @@
 
 import { BiolinkDesigner } from "@/components/qr/biolinks/BiolinkDesigner";
 import { QRFormBuilder } from "@/components/qr/QRFormBuilder";
-import { QRPreview } from "@/components/qr/QRPreview";
 import { StepIndicator } from "@/components/qr/StepIndicator";
 import { Button } from "@/components/ui/button";
 import { getFieldsForType } from "@/data/qr-type-fields";
@@ -21,7 +20,7 @@ export default function CreateSpecificQRPage() {
   const typeId = params.type as string;
   const typeInfo = allQRTypes.find(t => t.id === typeId);
   const fields = getFieldsForType(typeId);
-  const { currentStep, steps, nextStep, prevStep } = useQRSteps();
+  const { currentStep, steps, nextStep: _nextStep, prevStep: _prevStep } = useQRSteps();
 
   const methods = useForm({
     defaultValues: {
@@ -76,7 +75,6 @@ export default function CreateSpecificQRPage() {
         ai_model: "1.1",
       },
       type: typeId,
-      logoFile: null,
       ...fields.reduce((acc, field) => ({ ...acc, [field.name]: "" }), {})
     }
   });
@@ -86,7 +84,7 @@ export default function CreateSpecificQRPage() {
   const onSubmit = async (data: Record<string, unknown>) => {
     setIsSubmitting(true);
     try {
-      const { design, logoFile, ...qrData } = data;
+      const { design, ...qrData } = data;
 
       // 1. Create the QR Code
       const payload = {

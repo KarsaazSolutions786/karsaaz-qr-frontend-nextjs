@@ -16,42 +16,50 @@ import {
   Search,
   Trash,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+
+interface CustomCode {
+  id: string | number;
+  name: string;
+  code?: string;
+  content?: string; // Sometimes 'content' is used instead of 'code'
+  placement: string;
+}
 
 const PLACEMENT_OPTIONS = ["head", "body_start", "body_end"];
 
 export default function CustomCodesPage() {
-  const [codes, setCodes]       = useState<any[]>([]);
+  const [codes, setCodes]       = useState<CustomCode[]>([]);
   const [loading, setLoading]   = useState(true);
   const [search, setSearch]     = useState("");
 
   // Create / Edit dialog
   const [formDialog, setFormDialog]     = useState<"create" | "edit" | null>(null);
-  const [editTarget, setEditTarget]     = useState<any>(null);
+  const [editTarget, setEditTarget]     = useState<CustomCode | null>(null);
   const [formName, setFormName]         = useState("");
   const [formCode, setFormCode]         = useState("");
   const [formPlacement, setFormPlacement] = useState("head");
   const [formSubmitting, setFormSubmitting] = useState(false);
 
   // Delete dialog
-  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleteTarget, setDeleteTarget] = useState<CustomCode | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const fetchCodes = async () => {
+  const fetchCodes = useCallback(async () => {
     setLoading(true);
     try {
       const res = await contentService.getCustomCodes({ search });
-      const data = (res as any)?.data ?? res;
+      const data = (res as { data?: { data?: CustomCode[] } })?.data ?? res;
       setCodes(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
     } catch {
       setCodes([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [search]); // Depend on search to refetch when search term changes
 
-  useEffect(() => { fetchCodes(); }, []);
+  useEffect(() => { fetchCodes(); }, [fetchCodes]);
 
   const openCreate = () => {
     setFormName("");
@@ -61,7 +69,7 @@ export default function CustomCodesPage() {
     setFormDialog("create");
   };
 
-  const openEdit = (item: any) => {
+  const openEdit = (item: CustomCode) => {
     setFormName(item.name ?? "");
     setFormCode(item.code ?? item.content ?? "");
     setFormPlacement(item.placement ?? "head");
@@ -253,7 +261,7 @@ export default function CustomCodesPage() {
         <DialogHeader>
           <DialogTitle>Delete Custom Code</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete "{deleteTarget?.name}"? This action cannot be undone.
+            Are you sure you want to delete &quot;{deleteTarget?.name}&quot;? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

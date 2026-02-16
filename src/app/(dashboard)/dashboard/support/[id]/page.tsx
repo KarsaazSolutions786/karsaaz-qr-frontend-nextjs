@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
@@ -7,47 +5,62 @@ import supportService from "@/services/support.service";
 import { cn } from "@/lib/utils";
 import { ArrowLeft, Loader2, Send, User } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+
+interface SupportMessage {
+  id?: string | number;
+  author: 'user' | 'admin';
+  body: string;
+  timestamp?: string;
+}
+
+interface SupportTicket {
+  id: string | number;
+  subject: string;
+  reference?: string;
+  status: 'Open' | 'In Progress' | 'Resolved';
+  createdAt?: string;
+}
 
 export default function TicketDetailsPage() {
   const params  = useParams();
   const ticketId = params.id as string;
   const { user } = useAuth();
 
-  const [messages, setMessages] = useState<any[]>([]);
-  const [ticket, setTicket]     = useState<any>(null);
+  const [messages, setMessages] = useState<SupportMessage[]>([]);
+  const [ticket, setTicket]     = useState<SupportTicket | null>(null);
   const [loading, setLoading]   = useState(true);
   const [reply, setReply]       = useState("");
   const [sending, setSending]   = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const fetchConversation = async () => {
+  const fetchConversation = useCallback(async () => {
     setLoading(true);
     try {
       const msgs = await supportService.getConversation(ticketId);
       setMessages(Array.isArray(msgs) ? msgs : []);
-    } catch {
+    } catch (_error: unknown) { // Use unknown for error
       setMessages([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [ticketId]);
 
-  const fetchTicketInfo = async () => {
+  const fetchTicketInfo = useCallback(async () => {
     if (!user?.email) return;
     try {
       const tickets = await supportService.getTickets(user.email);
-      const found = (tickets as any[]).find((t: any) => t.id === ticketId || String(t.id) === ticketId);
+      const found = (tickets as SupportTicket[]).find((t: SupportTicket) => t.id === ticketId || String(t.id) === ticketId);
       if (found) setTicket(found);
-    } catch { /* silent */ }
-  };
+    } catch (_error: unknown) { /* silent */ } // Use unknown for error
+  }, [user?.email, ticketId]);
 
   useEffect(() => {
     fetchConversation();
     if (user?.email) fetchTicketInfo();
-  }, [ticketId, user?.email]);
+  }, [ticketId, user?.email, fetchConversation, fetchTicketInfo]); // Add fetchConversation, fetchTicketInfo to dependencies
 
   // Scroll to bottom when messages load
   useEffect(() => {
@@ -61,10 +74,10 @@ export default function TicketDetailsPage() {
     if (!reply.trim() || !user?.email) return;
     setSending(true);
     try {
-      const newMsg = await supportService.addMessage(ticketId, user.email, reply.trim());
+      const newMsg: SupportMessage = await supportService.addMessage(ticketId, user.email, reply.trim());
       setMessages(prev => [...prev, newMsg]);
       setReply("");
-    } catch { toast.error("Failed to send message"); }
+    } catch (_error: unknown) { toast.error("Failed to send message"); }
     finally { setSending(false); }
   };
 
