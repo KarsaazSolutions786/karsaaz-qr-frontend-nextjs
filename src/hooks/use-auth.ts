@@ -1,0 +1,85 @@
+import { usePermission } from "@/hooks/use-permission";
+import apiClient from "@/lib/api-client";
+import authService from "@/services/auth.service";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+export function useAuth() {
+  const router = useRouter();
+  const { user, token, setAuth, clearAuth, setUser } = useAuthStore();
+  const { userHomePage } = usePermission();
+
+  const login = async (credentials: { email: string; password?: string }) => {
+    try {
+      const response = await authService.login(credentials);
+
+      // Match Laravel standard response structure
+      const responseToken = response.token || response.access_token;
+      const responseUser = response.user || response.data;
+
+      if (responseToken && responseUser) {
+        setAuth(responseUser, responseToken);
+        toast.success("Logged in successfully");
+
+        const redirectPath = userHomePage();
+        router.refresh();
+        router.push(redirectPath);
+        return true;
+      }
+      return true;
+    } catch (error: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
+      console.error("Login failed:", error);
+      toast.error(error.response?.data?.message || "Failed to login");
+      return false;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      clearAuth();
+      router.push("/login");
+      toast.success("Logged out successfully");
+    }
+  };
+
+  const validateSession = async () => {
+    if (!token) return null;
+
+    try {
+      const response = await apiClient.get("myself");
+      setUser(response);
+      return response;
+    } catch (error) {
+      console.error("Session validation failed:", error);
+      clearAuth();
+      return null;
+    }
+  };
+
+  /** Re-fetch and update user data from API (alias for validateSession) */
+  const refreshUser = async () => {
+    try {
+      const response = await apiClient.get("myself");
+      setUser(response);
+      return response;
+    } catch (error) {
+      console.error("Failed to refresh user:", error);
+      return null;
+    }
+  };
+
+  return {
+    user,
+    token,
+    loggedIn: !!user && !!token,
+    login,
+    logout,
+    validateSession,
+    refreshUser,
+  };
+}
