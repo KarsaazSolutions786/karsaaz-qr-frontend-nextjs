@@ -1,0 +1,1 @@
+# karsaaz-qr-frontend-nextjs
