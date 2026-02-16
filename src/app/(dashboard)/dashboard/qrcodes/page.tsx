@@ -2,10 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -27,11 +29,14 @@ import {
   ChevronRight,
   Copy,
   Edit,
+  Loader2,
+  MessageSquare,
   MoreHorizontal,
   Plus,
   Search,
   Square,
-  Trash
+  Trash,
+  UserCog,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -45,6 +50,9 @@ export default function QRCodesPage() {
   const [search, setSearch] = useState("");
 
   const { isLoading, call } = useApi();
+  const [transferDialog, setTransferDialog] = useState<any>(null);
+  const [transferUserId, setTransferUserId] = useState("");
+  const [transferLoading, setTransferLoading] = useState(false);
 
   const fetchQRCodes = async (page = 1) => {
     try {
@@ -74,6 +82,19 @@ export default function QRCodesPage() {
     } else {
       setSelectedIds(new Set(qrcodes.map(qr => qr.id.toString())));
     }
+  };
+
+  const handleTransferOwnership = async () => {
+    if (!transferDialog || !transferUserId.trim()) return;
+    setTransferLoading(true);
+    try {
+      await qrCodeService.changeOwner(transferDialog.id, transferUserId.trim());
+      toast.success(`QR code transferred to user #${transferUserId}`);
+      setTransferDialog(null);
+      setTransferUserId("");
+      fetchQRCodes(currentPage);
+    } catch { toast.error("Failed to transfer ownership"); }
+    finally { setTransferLoading(false); }
   };
 
   const handleBulkArchive = async () => {
@@ -185,11 +206,20 @@ export default function QRCodesPage() {
                           <DropdownMenuItem asChild>
                             <Link href={`/dashboard/qrcodes/${qr.id}/stats`}><BarChart2 className="h-4 w-4 mr-2" /> Stats</Link>
                           </DropdownMenuItem>
+                          {qr.type === "business-reviews" && (
+                            <DropdownMenuItem asChild>
+                              <Link href={`/dashboard/qrcodes/${qr.id}/reviews`}><MessageSquare className="h-4 w-4 mr-2" /> Reviews</Link>
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem asChild>
                             <Link href={`/dashboard/qrcodes/edit/${qr.id}`}><Edit className="h-4 w-4 mr-2" /> Edit</Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => call(() => qrCodeService.duplicate(qr.id))}>
                             <Copy className="h-4 w-4 mr-2" /> Duplicate
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => { setTransferDialog(qr); setTransferUserId(""); }}>
+                            <UserCog className="h-4 w-4 mr-2" /> Transfer Ownership
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-red-600" onClick={() => call(() => qrCodeService.delete(qr.id))}>
                             <Trash className="h-4 w-4 mr-2" /> Delete
@@ -218,6 +248,31 @@ export default function QRCodesPage() {
           </Button>
         </div>
       )}
+
+      {/* Transfer Ownership Dialog */}
+      <Dialog open={transferDialog !== null} onClose={() => setTransferDialog(null)}>
+        <DialogHeader>
+          <DialogTitle>Transfer QR Code Ownership</DialogTitle>
+          <DialogDescription>
+            Transfer "{transferDialog?.name}" to another user. Enter the target user's ID.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="py-4">
+          <Input
+            type="number"
+            placeholder="Enter User ID"
+            value={transferUserId}
+            onChange={e => setTransferUserId(e.target.value)}
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setTransferDialog(null)}>Cancel</Button>
+          <Button onClick={handleTransferOwnership} disabled={transferLoading || !transferUserId.trim()}>
+            {transferLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Transfer
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </div>
   );
 }

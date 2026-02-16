@@ -3,6 +3,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { allQRTypes } from "@/data/qr-types";
@@ -13,12 +15,15 @@ import {
   AlertCircle,
   CheckCircle2,
   Download,
+  Edit2,
   FileUp,
   History,
   Loader2,
   PlayCircle,
   Plus,
-  Trash2
+  RefreshCw,
+  Trash2,
+  XCircle,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -35,6 +40,11 @@ export default function BulkCreatePage() {
   // History states
   const [instances, setInstances] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+
+  // Rename dialog
+  const [renameDialog, setRenameDialog] = useState<any>(null);
+  const [renameName, setRenameName] = useState("");
+  const [renameLoading, setRenameLoading] = useState(false);
 
   const userId = user?.id;
 
@@ -115,6 +125,47 @@ export default function BulkCreatePage() {
     } catch (error) {
       toast.error("Failed to delete record");
     }
+  };
+
+  const rerunInstance = async (id: number) => {
+    try {
+      await qrCodeService.rerunBulkInstance(id);
+      toast.success("Bulk operation restarted");
+      fetchHistory();
+    } catch { toast.error("Failed to re-run bulk operation"); }
+  };
+
+  const exportCsv = async (id: number) => {
+    try {
+      const url = await qrCodeService.exportBulkCsv(id);
+      if (url) window.open(url, "_blank");
+    } catch { toast.error("Failed to export CSV"); }
+  };
+
+  const deleteAllQRCodes = async (id: number) => {
+    if (!confirm("Delete ALL QR codes from this bulk operation? This cannot be undone.")) return;
+    try {
+      await qrCodeService.deleteAllBulkQRCodes(id);
+      toast.success("All QR codes deleted");
+      fetchHistory();
+    } catch { toast.error("Failed to delete QR codes"); }
+  };
+
+  const handleRename = async () => {
+    if (!renameDialog || !renameName.trim()) return;
+    setRenameLoading(true);
+    try {
+      await qrCodeService.renameBulkInstance(renameDialog.id, renameName.trim());
+      toast.success("Renamed successfully");
+      setRenameDialog(null);
+      fetchHistory();
+    } catch { toast.error("Failed to rename"); }
+    finally { setRenameLoading(false); }
+  };
+
+  const downloadSample = async () => {
+    const url = await qrCodeService.getBulkCsvSample(selectedType);
+    if (url) window.open(url, "_blank");
   };
 
   const getStatusBadge = (status: string) => {
@@ -237,10 +288,8 @@ export default function BulkCreatePage() {
                   <p>2. Prepare your data with the appropriate columns for your chosen QR type.</p>
                   <p>3. Upload the file and choose your target folder.</p>
                   <p>4. The process will run in the background. Track progress in the History tab.</p>
-                  <Button variant="secondary" className="w-full mt-4" asChild>
-                    <a href="/api/bulk-operations/import-url-qrcodes/csv-sample" download>
-                      <Download className="mr-2 h-4 w-4" /> Download Sample
-                    </a>
+                  <Button variant="secondary" className="w-full mt-4" onClick={downloadSample}>
+                    <Download className="mr-2 h-4 w-4" /> Download Sample CSV
                   </Button>
                 </CardContent>
               </Card>
@@ -315,7 +364,19 @@ export default function BulkCreatePage() {
                           {new Date(instance.created_at).toLocaleString()}
                         </td>
                         <td className="px-4 py-4 text-right">
-                          <div className="flex justify-end gap-2">
+                          <div className="flex justify-end gap-1">
+                            <Button variant="ghost" size="icon" title="Re-run" onClick={() => rerunInstance(instance.id)}>
+                              <RefreshCw className="h-4 w-4 text-blue-500" />
+                            </Button>
+                            <Button variant="ghost" size="icon" title="Rename" onClick={() => { setRenameDialog(instance); setRenameName(instance.name || ""); }}>
+                              <Edit2 className="h-4 w-4 text-muted-foreground" />
+                            </Button>
+                            <Button variant="ghost" size="icon" title="Export CSV" onClick={() => exportCsv(instance.id)}>
+                              <Download className="h-4 w-4 text-green-600" />
+                            </Button>
+                            <Button variant="ghost" size="icon" title="Delete all QR codes" onClick={() => deleteAllQRCodes(instance.id)}>
+                              <XCircle className="h-4 w-4 text-orange-500" />
+                            </Button>
                             <Button variant="ghost" size="icon" title="Delete record" onClick={() => deleteInstance(instance.id)}>
                               <Trash2 className="h-4 w-4 text-red-500" />
                             </Button>
@@ -336,6 +397,29 @@ export default function BulkCreatePage() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Rename Dialog */}
+      <Dialog open={renameDialog !== null} onClose={() => setRenameDialog(null)}>
+        <DialogHeader>
+          <DialogTitle>Rename Bulk Operation</DialogTitle>
+          <DialogDescription>Enter a new name for this bulk operation instance.</DialogDescription>
+        </DialogHeader>
+        <div className="py-4">
+          <Input
+            placeholder="Operation name"
+            value={renameName}
+            onChange={e => setRenameName(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter") handleRename(); }}
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setRenameDialog(null)}>Cancel</Button>
+          <Button onClick={handleRename} disabled={renameLoading || !renameName.trim()}>
+            {renameLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Rename
+          </Button>
+        </DialogFooter>
+      </Dialog>
     </div>
   );
 }
