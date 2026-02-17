@@ -1,0 +1,114 @@
+'use client'
+
+import { useState } from 'react'
+import { useCreateQRCode } from '@/lib/hooks/mutations/useCreateQRCode'
+import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
+import { URLDataForm } from '@/components/features/qrcodes/forms/URLDataForm'
+import { VCardDataForm } from '@/components/features/qrcodes/forms/VCardDataForm'
+
+export default function CreateQRCodePage() {
+  const [type, setType] = useState('url')
+  const [name, setName] = useState('')
+  const [qrData, setQRData] = useState<any>(null)
+  const createMutation = useCreateQRCode()
+
+  const handleDataSubmit = (data: any) => {
+    setQRData(data)
+  }
+
+  const handleCreateQRCode = async () => {
+    if (!name || !qrData) return
+
+    try {
+      await createMutation.mutateAsync({
+        type,
+        name,
+        data: qrData,
+      })
+    } catch (error) {
+      // Error handled by mutation
+    }
+  }
+
+  const renderDataForm = () => {
+    switch (type) {
+      case 'url':
+        return <URLDataForm onSubmit={handleDataSubmit} />
+      case 'vcard':
+        return <VCardDataForm onSubmit={handleDataSubmit} />
+      default:
+        return (
+          <div className="rounded-md bg-yellow-50 p-4">
+            <p className="text-sm text-yellow-800">
+              Form for type "{type}" coming soon. For now, use URL or vCard.
+            </p>
+          </div>
+        )
+    }
+  }
+
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Create QR Code</h1>
+        <p className="mt-2 text-sm text-gray-600">
+          Choose a type and fill in the details
+        </p>
+      </div>
+
+      <div className="space-y-8">
+        {/* Step 1: Name */}
+        <div className="rounded-lg border border-gray-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">1. Name Your QR Code</h2>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g., My Website Link"
+            className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+          />
+        </div>
+
+        {/* Step 2: Type */}
+        <div className="rounded-lg border border-gray-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">2. Select Type</h2>
+          <QRCodeTypeSelector value={type} onChange={setType} />
+        </div>
+
+        {/* Step 3: Data */}
+        <div className="rounded-lg border border-gray-200 bg-white p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">3. Enter Data</h2>
+          {renderDataForm()}
+        </div>
+
+        {/* Submit */}
+        {createMutation.isError && (
+          <div className="rounded-md bg-red-50 p-4">
+            <p className="text-sm text-red-800">
+              {(createMutation.error as any)?.message || 'Failed to create QR code'}
+            </p>
+          </div>
+        )}
+
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={handleCreateQRCode}
+            disabled={!name || !qrData || createMutation.isPending}
+            className="rounded-md bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {createMutation.isPending ? 'Creating...' : 'Create QR Code'}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => window.history.back()}
+            className="rounded-md border border-gray-300 px-6 py-3 text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
