@@ -1,222 +1,167 @@
-"use client";
-
-import { useState } from 'react';
-import { BlockEditorProps } from '../types';
+import React from 'react';
+import { BlockEditorProps, TitleBlockContent } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Type, Bold, Italic, AlignLeft, AlignCenter, AlignRight, X } from 'lucide-react';
+import { AlignLeft, AlignCenter, AlignRight, Bold, Italic } from 'lucide-react';
 
-/**
- * Title Block
- * A heading block with customizable level, alignment, and styling
- */
+export const TitleBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPreview }) => {
+  const content = block.content as TitleBlockContent;
 
-export default function TitleBlock({ block, onUpdate, onDelete, isEditing = false }: BlockEditorProps) {
-  const { content, design } = block;
-  const titleContent = content as {
-    text: string;
-    level?: 'h1' | 'h2' | 'h3' | 'h4';
-    alignment?: 'left' | 'center' | 'right';
-    fontSize?: 'small' | 'medium' | 'large' | 'xlarge';
-    bold?: boolean;
-    italic?: boolean;
-  };
-
-  // Handle content changes
-  const handleContentChange = (field: string, value: string | number | boolean) => {
+  const updateContent = (updates: Partial<TitleBlockContent>) => {
     onUpdate({
-      content: {
-        ...titleContent,
-        [field]: value
-      }
+      content: { ...content, ...updates }
     });
   };
 
-  // Get font size class based on selection
-  const getFontSizeClass = () => {
-    const sizeMap = {
-      small: 'text-base',
-      medium: 'text-lg',
-      large: 'text-xl',
-      xlarge: 'text-2xl'
-    };
-    return sizeMap[titleContent.fontSize || 'medium'];
+  const updateSettings = (updates: Partial<typeof block.settings>) => {
+    onUpdate({
+      settings: { ...block.settings, ...updates }
+    });
   };
 
-  // Get heading element based on level
-  const renderHeading = (text: string) => {
-    const baseClasses = [
-      'font-semibold',
-      'leading-tight',
-      'm-0',
-      getFontSizeClass(),
-      titleContent.bold ? 'font-bold' : '',
-      titleContent.italic ? 'italic' : ''
-    ].filter(Boolean).join(' ');
-
-    const style = {
-      color: design.textColor,
-      fontSize: design.fontSize,
-      fontFamily: design.fontFamily
-    };
-
-    switch (titleContent.level) {
-      case 'h1':
-        return <h1 className={baseClasses} style={style}>{text}</h1>;
-      case 'h2':
-        return <h2 className={baseClasses} style={style}>{text}</h2>;
-      case 'h3':
-        return <h3 className={baseClasses} style={style}>{text}</h3>;
-      case 'h4':
-        return <h4 className={baseClasses} style={style}>{text}</h4>;
-      default:
-        return <h2 className={baseClasses} style={style}>{text}</h2>;
+  const getFontSize = (size: string) => {
+    switch (size) {
+      case 'small': return '1.25rem';
+      case 'medium': return '1.5rem';
+      case 'large': return '2rem';
+      case 'xlarge': return '2.5rem';
+      default: return '1.5rem';
     }
   };
 
-  // Render public view
-  if (!isEditing) {
+  const HeadingTag = (content.level || 'h2') as keyof JSX.IntrinsicElements;
+
+  if (isPreview) {
     return (
-      <div 
-        className="block-title"
-        style={{ 
-          backgroundColor: design.backgroundColor,
-          padding: design.padding,
-          margin: design.margin,
-          borderRadius: design.borderRadius,
-          textAlign: titleContent.alignment || 'left'
+      <HeadingTag
+        className="w-full"
+        style={{
+          textAlign: content.alignment || 'left',
+          fontSize: getFontSize(content.fontSize || 'medium'),
+          fontWeight: content.bold ? 'bold' : 'normal',
+          fontStyle: content.italic ? 'italic' : 'normal',
+          color: block.settings.textColor || '#000000',
+          padding: block.settings.padding || '0px',
+          margin: block.settings.margin || '0px',
         }}
-        role="heading"
-        aria-level={titleContent.level === 'h1' ? 1 : titleContent.level === 'h2' ? 2 : titleContent.level === 'h3' ? 3 : 4}
       >
-        {renderHeading(titleContent.text || 'Enter your title...')}
-      </div>
+        {content.text || 'Add a title...'}
+      </HeadingTag>
     );
   }
 
-  // Render editor interface
   return (
-    <div className="block-editor-title space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Type size={20} />
-          <h3 className="text-lg font-semibold">Title Block</h3>
-        </div>
-        <Button variant="ghost" size="sm" onClick={onDelete}>
-          <X size={16} />
-        </Button>
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Title Text</Label>
+        <Input 
+          value={content.text} 
+          onChange={(e) => updateContent({ text: e.target.value })}
+          placeholder="Enter your title"
+        />
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <Label>Title Text</Label>
-          <Input
-            value={titleContent.text || ''}
-            onChange={(e) => handleContentChange('text', e.target.value)}
-            placeholder="Enter your title..."
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Heading Level</Label>
-            <Select
-              value={titleContent.level || 'h2'}
-              onValueChange={(value) => handleContentChange('level', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="h1">H1 (Main)</SelectItem>
-                <SelectItem value="h2">H2 (Section)</SelectItem>
-                <SelectItem value="h3">H3 (Subsection)</SelectItem>
-                <SelectItem value="h4">H4 (Minor)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Label>Font Size</Label>
-            <Select
-              value={titleContent.fontSize || 'medium'}
-              onValueChange={(value) => handleContentChange('fontSize', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="small">Small</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="large">Large</SelectItem>
-                <SelectItem value="xlarge">Extra Large</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div>
-          <Label>Alignment</Label>
-          <Select
-            value={titleContent.alignment || 'left'}
-            onValueChange={(value) => handleContentChange('alignment', value)}
+      <div className="flex gap-4">
+        <div className="space-y-2 flex-1">
+          <Label>Level</Label>
+          <Select 
+            value={content.level || 'h2'} 
+            onValueChange={(value) => updateContent({ level: value as any })}
           >
             <SelectTrigger>
-              <SelectValue />
+              <SelectValue placeholder="Select level" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="left">
-                <div className="flex items-center gap-2">
-                  <AlignLeft size={16} />
-                  Left
-                </div>
-              </SelectItem>
-              <SelectItem value="center">
-                <div className="flex items-center gap-2">
-                  <AlignCenter size={16} />
-                  Center
-                </div>
-              </SelectItem>
-              <SelectItem value="right">
-                <div className="flex items-center gap-2">
-                  <AlignRight size={16} />
-                  Right
-                </div>
-              </SelectItem>
+              <SelectItem value="h1">H1 (Main)</SelectItem>
+              <SelectItem value="h2">H2 (Section)</SelectItem>
+              <SelectItem value="h3">H3 (Subsection)</SelectItem>
+              <SelectItem value="h4">H4 (Small)</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center space-x-2">
-              <Switch
-                checked={titleContent.bold || false}
-                onCheckedChange={(checked) => handleContentChange('bold', checked)}
-              />
-              <Label className="flex items-center gap-2">
-                <Bold size={14} />
-                Bold
-              </Label>
-            </div>
+        <div className="space-y-2 flex-1">
+          <Label>Size</Label>
+          <Select 
+            value={content.fontSize || 'medium'} 
+            onValueChange={(value) => updateContent({ fontSize: value as any })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select size" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="small">Small</SelectItem>
+              <SelectItem value="medium">Medium</SelectItem>
+              <SelectItem value="large">Large</SelectItem>
+              <SelectItem value="xlarge">Extra Large</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
-            <div className="flex items-center space-x-2">
-              <Switch
-                checked={titleContent.italic || false}
-                onCheckedChange={(checked) => handleContentChange('italic', checked)}
-              />
-              <Label className="flex items-center gap-2">
-                <Italic size={14} />
-                Italic
-              </Label>
-            </div>
-          </div>
+      <div className="flex justify-between items-center">
+        <div className="flex gap-2">
+            <Button
+              variant={content.alignment === 'left' ? 'default' : 'outline'}
+              size="icon"
+              onClick={() => updateContent({ alignment: 'left' })}
+            >
+              <AlignLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={content.alignment === 'center' ? 'default' : 'outline'}
+              size="icon"
+              onClick={() => updateContent({ alignment: 'center' })}
+            >
+              <AlignCenter className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={content.alignment === 'right' ? 'default' : 'outline'}
+              size="icon"
+              onClick={() => updateContent({ alignment: 'right' })}
+            >
+              <AlignRight className="h-4 w-4" />
+            </Button>
+        </div>
+
+        <div className="flex gap-2">
+           <Button
+              variant={content.bold ? 'default' : 'outline'}
+              size="icon"
+              onClick={() => updateContent({ bold: !content.bold })}
+            >
+              <Bold className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={content.italic ? 'default' : 'outline'}
+              size="icon"
+              onClick={() => updateContent({ italic: !content.italic })}
+            >
+              <Italic className="h-4 w-4" />
+            </Button>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Text Color</Label>
+        <div className="flex gap-2">
+          <Input 
+            type="color" 
+            value={block.settings.textColor || '#000000'}
+            className="w-12 h-10 p-1 cursor-pointer"
+            onChange={(e) => updateSettings({ textColor: e.target.value })}
+          />
+          <Input 
+            value={block.settings.textColor || '#000000'}
+            onChange={(e) => updateSettings({ textColor: e.target.value })}
+            placeholder="#000000"
+          />
         </div>
       </div>
     </div>
   );
-}
+};

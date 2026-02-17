@@ -1,402 +1,223 @@
-"use client";
-
-import { useState, useEffect } from 'react';
-import { BlockEditorProps } from '../types';
-import { ImageBlockContent } from '../types';
+import React from 'react';
+import { BlockEditorProps, ImageBlockContent } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Image, X, Link, ExternalLink, EyeOff } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Slider } from '@/components/ui/slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-/**
- * Image Block
- * A responsive image block with caption, alt text, optional link wrapping, and size controls
- */
+export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPreview }) => {
+  const content = block.content as ImageBlockContent;
 
-export default function ImageBlock({ block, onUpdate, onDelete, isEditing = false }: BlockEditorProps) {
-  const { content, design } = block;
-  const imageContent = content as ImageBlockContent;
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const [imageKey, setImageKey] = useState(0);
-
-  // Reset loading state when URL changes
-  useEffect(() => {
-    requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setIsLoading(true);
-            setHasError(false);
-            setImageKey(prev => prev + 1);
-          });    });
-  }, [imageContent.url]);
-
-  // Handle content changes
-  const handleContentChange = (field: keyof ImageBlockContent, value: string | number) => {
+  const updateContent = (updates: Partial<ImageBlockContent>) => {
     onUpdate({
-      content: {
-        ...imageContent,
-        [field]: value
-      }
+      content: { ...content, ...updates }
     });
   };
 
-  // Handle design changes
-  const handleDesignChange = (field: keyof typeof design, value: string) => {
+  const updateSettings = (updates: Partial<typeof block.settings>) => {
     onUpdate({
-      design: {
-        ...design,
-        [field]: value
-      }
+      settings: { ...block.settings, ...updates }
     });
   };
 
-  const handleImageLoad = () => {
-    setIsLoading(false);
-    setHasError(false);
-  };
-
-  const handleImageError = () => {
-    setIsLoading(false);
-    setHasError(true);
-  };
-
-  // Public view (display mode)
-  if (!isEditing) {
-    const imageWrapper = (
+  if (isPreview) {
+    return (
       <div 
-        className="block-image"
-        style={{ 
-          backgroundColor: design.backgroundColor,
-          padding: design.padding,
-          margin: design.margin,
-          borderRadius: design.borderRadius,
-          textAlign: 'center'
+        className="w-full flex flex-col items-center"
+        style={{
+          padding: block.settings.padding,
+          margin: block.settings.margin,
+          backgroundColor: block.settings.backgroundColor,
+          borderRadius: block.settings.borderRadius,
         }}
       >
-        {imageContent.url && !hasError ? (
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-            {/* Loading state */}
-            {isLoading && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '2rem',
-                backgroundColor: '#f3f4f6',
-                borderRadius: '0.5rem',
-                minWidth: '200px',
-                minHeight: '200px'
-              }}>
-                <div className="animate-pulse">
-                  <Image size={48} style={{ opacity: 0.3 }} aria-label="Loading image" />
-                </div>
-              </div>
-            )}
-            
-            {/* Actual image */}
-            <img
-              key={imageKey} // Add key prop here
-              src={imageContent.url}
-              alt={imageContent.alt || ''}
-              title={imageContent.title || undefined}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
+        {content.link ? (
+          <a href={content.link} target="_blank" rel="noopener noreferrer" className="block w-full">
+            <img 
+              src={content.url || "https://placehold.co/600x400?text=Image+Block"} 
+              alt={content.alt || "Biolink Image"}
+              className="w-full h-auto object-cover"
               style={{
-                maxWidth: '100%',
-                height: 'auto',
-                borderRadius: design.borderRadius,
-                display: isLoading ? 'none' : 'block',
-                width: imageContent.width || 'auto',
-                height: imageContent.height || 'auto'
+                borderRadius: block.settings.borderRadius || '8px',
+                width: content.width || '100%',
+                maxHeight: content.height || 'auto'
               }}
             />
-            
-            {/* Caption */}
-            {imageContent.caption && !isLoading && !hasError && (
-              <div style={{
-                marginTop: '0.75rem',
-                fontSize: '0.875rem',
-                color: design.textColor || '#6b7280',
-                fontStyle: 'italic'
-              }}>
-                {imageContent.caption}
-              </div>
-            )}
-          </div>
+          </a>
         ) : (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2rem',
-            backgroundColor: '#fef2f2',
-            border: '1px dashed #fca5a5',
-            borderRadius: '0.5rem',
-            color: '#dc2626'
-          }}>
-            <Image size={32} style={{ marginBottom: '0.5rem', opacity: 0.5 }} />
-            <span style={{ fontSize: '0.875rem' }}>
-              {hasError ? 'Failed to load image' : 'No image URL provided'}
-            </span>
-          </div>
+          <img 
+            src={content.url || "https://placehold.co/600x400?text=Image+Block"} 
+            alt={content.alt || "Biolink Image"}
+            className="w-full h-auto object-cover"
+            style={{
+              borderRadius: block.settings.borderRadius || '8px',
+              width: content.width || '100%',
+              maxHeight: content.height || 'auto'
+            }}
+          />
+        )}
+        
+        {content.title && (
+          <h3 className="mt-2 text-lg font-semibold text-center" style={{ color: block.settings.textColor }}>
+            {content.title}
+          </h3>
+        )}
+        
+        {content.caption && (
+          <p className="mt-1 text-sm text-center opacity-80" style={{ color: block.settings.textColor }}>
+            {content.caption}
+          </p>
         )}
       </div>
     );
-
-    // Wrap with link if provided
-    if (imageContent.link) {
-      return (
-        <a
-          href={imageContent.link}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ 
-            textDecoration: 'none',
-            display: 'block'
-          }}
-        >
-          {imageWrapper}
-        </a>
-      );
-    }
-
-    return imageWrapper;
   }
 
-  // Edit mode
   return (
-    <div className="block-editor-image space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Image size={20} />
-          <h3 className="text-lg font-semibold">Image Block</h3>
-        </div>
-        <Button variant="ghost" size="sm" onClick={onDelete}>
-          <X size={16} />
-        </Button>
-      </div>
+    <div className="space-y-4">
+      <Tabs defaultValue="content">
+        <TabsList className="w-full">
+          <TabsTrigger value="content" className="flex-1">Content</TabsTrigger>
+          <TabsTrigger value="style" className="flex-1">Style</TabsTrigger>
+          <TabsTrigger value="settings" className="flex-1">Settings</TabsTrigger>
+        </TabsList>
 
-      <div className="space-y-4">
-        {/* Image URL */}
-        <div>
-          <Label htmlFor="image-url">Image URL *</Label>
-          <Input
-            id="image-url"
-            type="url"
-            value={imageContent.url || ''}
-            onChange={(e) => handleContentChange('url', e.target.value)}
-            placeholder="https://example.com/image.jpg"
-            required
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            Enter a valid image URL (JPG, PNG, GIF, WebP, etc.)
-          </p>
-          {hasError && imageContent.url && (
-            <p className="text-xs text-destructive mt-1">
-              Unable to load image. Please check the URL.
-            </p>
-          )}
-        </div>
-
-        {/* Alt Text */}
-        <div>
-          <Label htmlFor="image-alt">Alt Text (Accessibility)</Label>
-          <Input
-            id="image-alt"
-            value={imageContent.alt || ''}
-            onChange={(e) => handleContentChange('alt', e.target.value)}
-            placeholder="Description of the image for screen readers"
-          />
-          <p className="text-xs text-muted-foreground mt-1">
-            Important for accessibility and SEO
-          </p>
-        </div>
-
-        {/* Title */}
-        <div>
-          <Label htmlFor="image-title">Title (Tooltip)</Label>
-          <Input
-            id="image-title"
-            value={imageContent.title || ''}
-            onChange={(e) => handleContentChange('title', e.target.value)}
-            placeholder="Text shown on hover"
-          />
-        </div>
-
-        {/* Caption */}
-        <div>
-          <Label htmlFor="image-caption">Caption</Label>
-          <Textarea
-            id="image-caption"
-            value={imageContent.caption || ''}
-            onChange={(e) => handleContentChange('caption', e.target.value)}
-            placeholder="Optional caption text displayed below the image"
-            rows={2}
-          />
-        </div>
-
-        {/* Link URL */}
-        <div>
-          <Label htmlFor="image-link">Link URL (Optional)</Label>
-          <div className="flex gap-2">
-            <Link size={16} className="mt-2 text-muted-foreground" />
-            <Input
-              id="image-link"
-              type="url"
-              value={imageContent.link || ''}
-              onChange={(e) => handleContentChange('link', e.target.value)}
-              placeholder="https://example.com (makes image clickable)"
-              className="flex-1"
+        <TabsContent value="content" className="space-y-4 pt-4">
+          <div className="space-y-2">
+            <Label>Image URL</Label>
+            <Input 
+              value={content.url} 
+              onChange={(e) => updateContent({ url: e.target.value })}
+              placeholder="https://example.com/image.jpg"
             />
-          </div>
-        </div>
-
-        {/* Size Controls */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="image-width">Width</Label>
-            <Input
-              id="image-width"
-              value={imageContent.width || ''}
-              onChange={(e) => handleContentChange('width', e.target.value)}
-              placeholder="auto"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              e.g., 100%, 300px, 20rem
+            <p className="text-xs text-muted-foreground">
+              Enter an image URL directly or upload (coming soon).
             </p>
           </div>
-          <div>
-            <Label htmlFor="image-height">Height</Label>
-            <Input
-              id="image-height"
-              value={imageContent.height || ''}
-              onChange={(e) => handleContentChange('height', e.target.value)}
-              placeholder="auto"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              e.g., 200px, 15rem, auto
-            </p>
-          </div>
-        </div>
 
-        {/* Design Controls */}
-        <div className="border-t pt-4 space-y-4">
-          <h4 className="text-sm font-semibold">Design Settings</h4>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="design-padding">Padding</Label>
-              <Input
-                id="design-padding"
-                value={design.padding || ''}
-                onChange={(e) => handleDesignChange('padding', e.target.value)}
-                placeholder="1rem"
-              />
-            </div>
-            <div>
-              <Label htmlFor="design-margin">Margin</Label>
-              <Input
-                id="design-margin"
-                value={design.margin || ''}
-                onChange={(e) => handleDesignChange('margin', e.target.value)}
-                placeholder="0.5rem"
-              />
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="design-bg-color">Background Color</Label>
-              <Input
-                id="design-bg-color"
-                type="color"
-                value={design.backgroundColor || '#ffffff'}
-                onChange={(e) => handleDesignChange('backgroundColor', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="design-text-color">Caption Text Color</Label>
-              <Input
-                id="design-text-color"
-                type="color"
-                value={design.textColor || '#6b7280'}
-                onChange={(e) => handleDesignChange('textColor', e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <div>
-            <Label htmlFor="design-border-radius">Border Radius</Label>
-            <Input
-              id="design-border-radius"
-              value={design.borderRadius || ''}
-              onChange={(e) => handleDesignChange('borderRadius', e.target.value)}
-              placeholder="0.5rem"
+          <div className="space-y-2">
+            <Label>Link (Optional)</Label>
+            <Input 
+              value={content.link || ''} 
+              onChange={(e) => updateContent({ link: e.target.value })}
+              placeholder="https://mysite.com"
             />
           </div>
-        </div>
 
-        {/* Preview */}
-        <div className="border-t pt-4">
-          <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-semibold">Preview</h4>
-            {hasError ? (
-              <span className="text-xs text-destructive">Error loading image</span>
-            ) : isLoading && imageContent.url ? (
-              <span className="text-xs text-muted-foreground">Loading...</span>
-            ) : null}
+          <div className="space-y-2">
+            <Label>Title (Optional)</Label>
+            <Input 
+              value={content.title || ''} 
+              onChange={(e) => updateContent({ title: e.target.value })}
+              placeholder="Image Title"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Caption (Optional)</Label>
+            <Input 
+              value={content.caption || ''} 
+              onChange={(e) => updateContent({ caption: e.target.value })}
+              placeholder="Add a caption..."
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Alt Text</Label>
+            <Input 
+              value={content.alt || ''} 
+              onChange={(e) => updateContent({ alt: e.target.value })}
+              placeholder="Description for accessibility"
+            />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="style" className="space-y-4 pt-4">
+          <div className="space-y-2">
+            <Label>Width</Label>
+            <Select 
+              value={content.width || '100%'} 
+              onValueChange={(value) => updateContent({ width: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select width" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="100%">Full Width (100%)</SelectItem>
+                <SelectItem value="75%">75%</SelectItem>
+                <SelectItem value="50%">50%</SelectItem>
+                <SelectItem value="25%">25%</SelectItem>
+                <SelectItem value="auto">Auto</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Border Radius</Label>
+            <Select 
+              value={block.settings.borderRadius || '8px'} 
+              onValueChange={(value) => updateSettings({ borderRadius: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select radius" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0px">None</SelectItem>
+                <SelectItem value="4px">Small</SelectItem>
+                <SelectItem value="8px">Medium</SelectItem>
+                <SelectItem value="16px">Large</SelectItem>
+                <SelectItem value="9999px">Full (Circle)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-4 pt-4">
+          <div className="flex items-center justify-between">
+            <Label>Visible</Label>
+            <Switch 
+              checked={block.settings.visible}
+              onCheckedChange={(checked) => updateSettings({ visible: checked })}
+            />
+          </div>
+
+          <div className="space-y-2">
+             <Label>Padding</Label>
+             <Select 
+               value={block.settings.padding || '0px'} 
+               onValueChange={(value) => updateSettings({ padding: value })}
+             >
+               <SelectTrigger>
+                 <SelectValue placeholder="Select padding" />
+               </SelectTrigger>
+               <SelectContent>
+                 <SelectItem value="0px">None</SelectItem>
+                 <SelectItem value="8px">Small</SelectItem>
+                 <SelectItem value="16px">Medium</SelectItem>
+                 <SelectItem value="24px">Large</SelectItem>
+               </SelectContent>
+             </Select>
           </div>
           
-          <div className="border rounded-lg p-4 bg-muted/20">
-            {!imageContent.url ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Image size={32} className="mx-auto mb-2 opacity-50" />
-                <p className="text-sm">Enter an image URL to see preview</p>
-              </div>
-            ) : hasError ? (
-              <div className="text-center py-8 text-destructive">
-                <div className="flex items-center justify-center gap-2">
-                  <EyeOff size={24} />
-                  <p className="text-sm">Failed to load image</p>
-                </div>
-                <p className="text-xs mt-1 text-destructive/80">
-                  Check the URL and try again
-                </p>
-              </div>
-            ) : (
-              <div className="text-center">
-                <img
-                  src={imageContent.url}
-                  alt={imageContent.alt || 'Preview'}
-                  className="max-w-full h-auto mx-auto rounded"
-                  onLoad={handleImageLoad}
-                  onError={handleImageError}
-                  style={{
-                    width: imageContent.width || 'auto',
-                    height: imageContent.height || 'auto',
-                    maxHeight: '300px'
-                  }}
-                />
-                {imageContent.caption && (
-                  <p className="text-sm text-muted-foreground mt-2 italic">
-                    {imageContent.caption}
-                  </p>
-                )}
-                {imageContent.link && (
-                  <div className="flex items-center justify-center gap-1 mt-2">
-                    <ExternalLink size={12} className="text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">
-                      Linked to: {imageContent.link}
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
+           <div className="space-y-2">
+            <Label>Background Color</Label>
+            <div className="flex gap-2">
+              <Input 
+                type="color" 
+                value={block.settings.backgroundColor || '#ffffff'}
+                className="w-12 h-10 p-1 cursor-pointer"
+                onChange={(e) => updateSettings({ backgroundColor: e.target.value })}
+              />
+              <Input 
+                value={block.settings.backgroundColor || '#ffffff'}
+                onChange={(e) => updateSettings({ backgroundColor: e.target.value })}
+                placeholder="#ffffff"
+              />
+            </div>
           </div>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
-}
+};

@@ -1,19 +1,23 @@
 "use client";
 
 import { useState, useCallback } from 'react';
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Block, BiolinkPage } from './types';
 import { blockRegistry, createBlock, getBlocksForMenu } from './block-registry';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Plus, Eye, EyeOff, Trash2, Settings, Save, Layout } from 'lucide-react';
+import { Plus, Eye, EyeOff, Trash2, Settings, Save, Layout, GripVertical, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
 
 /**
  * Block Editor
@@ -22,15 +26,23 @@ import {
 
 interface BlockEditorProps {
   page: BiolinkPage;
-  onSave: (page: BiolinkPage) => void;
+  onSave: (page: BiolinkPage) => Promise<void>;
   isLoading?: boolean;
 }
 
 export default function BlockEditor({ page, onSave, isLoading = false }: BlockEditorProps) {
   const [blocks, setBlocks] = useState<Block[]>(page.blocks || []);
   const [activeBlock, setActiveBlock] = useState<Block | null>(null);
-  const [editingBlock, setEditingBlock] = useState<string | null>(null);
+  const [editingBlockId, setEditingBlockId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   // Handle drag start
   const handleDragStart = useCallback((event: DragStartEvent) => {
@@ -46,22 +58,22 @@ export default function BlockEditor({ page, onSave, isLoading = false }: BlockEd
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = blocks.findIndex(b => b.id === active.id);
-      const newIndex = blocks.findIndex(b => b.id === over.id);
+      setBlocks((items) => {
+        const oldIndex = items.findIndex(b => b.id === active.id);
+        const newIndex = items.findIndex(b => b.id === over.id);
 
-      const newBlocks = arrayMove(blocks, oldIndex, newIndex).map((block, index) => ({
-        ...block,
-        settings: {
-          ...block.settings,
-          order: index
-        }
-      }));
-
-      setBlocks(newBlocks);
+        return arrayMove(items, oldIndex, newIndex).map((block, index) => ({
+          ...block,
+          settings: {
+            ...block.settings,
+            order: index
+          }
+        }));
+      });
     }
 
     setActiveBlock(null);
-  }, [blocks]);
+  }, []);
 
   // Add new block
   const handleAddBlock = (type: string) => {
@@ -69,7 +81,7 @@ export default function BlockEditor({ page, onSave, isLoading = false }: BlockEd
     newBlock.settings.order = blocks.length;
     
     setBlocks([...blocks, newBlock]);
-    setEditingBlock(newBlock.id); // Open editor for new block
+    setEditingBlockId(newBlock.id); // Open editor for new block
   };
 
   // Update block
@@ -82,8 +94,8 @@ export default function BlockEditor({ page, onSave, isLoading = false }: BlockEd
   // Delete block
   const handleDeleteBlock = (blockId: string) => {
     setBlocks(blocks.filter(block => block.id !== blockId));
-    if (editingBlock === blockId) {
-      setEditingBlock(null);
+    if (editingBlockId === blockId) {
+      setEditingBlockId(null);
     }
   };
 
@@ -113,263 +125,259 @@ export default function BlockEditor({ page, onSave, isLoading = false }: BlockEd
   };
 
   // Get the block component for rendering
-  const renderBlock = (block: Block) => {
+  const renderBlock = (block: Block, isOverlay = false) => {
     const config = blockRegistry.find(b => b.type === block.type);
     if (!config) {
-      return <div>Unknown block type: {block.type}</div>;
+      return <div className="p-4 border border-red-200 bg-red-50 text-red-500 rounded">Unknown block type: {block.type}</div>;
     }
 
     const BlockComponent = config.component;
+    const isEditing = editingBlockId === block.id;
     
+    // In overlay mode, force preview
+    const isPreview = isOverlay || !isEditing;
+
     return (
       <BlockComponent
         key={block.id}
         block={block}
         onUpdate={(updates) => handleUpdateBlock(block.id, updates)}
         onDelete={() => handleDeleteBlock(block.id)}
-        isEditing={editingBlock === block.id}
+        isEditing={isEditing}
+        isPreview={isPreview}
       />
     );
   };
 
-  // Filter visible blocks for preview
-  const visibleBlocks = blocks.filter(block => block.settings.visible);
+  // Filter visible blocks for preview text
+  const visibleBlocksCount = blocks.filter(block => block.settings.visible).length;
 
   return (
-    <div className="biolink-block-editor space-y-6">
+    <div className="biolink-block-editor space-y-6 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">
-          <Layout className="inline-block mr-2" size={24} />
-          Edit Blocks
-        </h2>
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground">
-            {visibleBlocks.length} visible • {blocks.length} total
-          </span>
-          <Button onClick={handleSave} disabled={isSaving || isLoading}>
+      <div className="flex items-center justify-between sticky top-0 z-50 bg-background/80 backdrop-blur-sm py-4 border-b">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center">
+            <Layout className="mr-2" size={24} />
+            Content Blocks
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {visibleBlocksCount} visible • {blocks.length} total
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button>
+                <Plus size={16} className="mr-2" />
+                Add Block
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-64 max-h-[80vh] overflow-y-auto">
+              <DropdownMenuLabel>Add a Block</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {getBlocksForMenu().map(blockConfig => (
+                <DropdownMenuItem
+                  key={blockConfig.type}
+                  onClick={() => handleAddBlock(blockConfig.type)}
+                  className="flex items-center gap-3 py-3 cursor-pointer"
+                >
+                  <blockConfig.icon size={18} className="text-muted-foreground" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">{blockConfig.name}</span>
+                    <span className="text-xs text-muted-foreground">{blockConfig.description}</span>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button variant="outline" onClick={handleSave} disabled={isSaving || isLoading}>
             {isSaving ? (
               <>
-                <div className="animate-spin mr-2">⏳</div>
+                <div className="animate-spin mr-2 h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
                 Saving...
               </>
             ) : (
               <>
                 <Save size={16} className="mr-2" />
-                Save Changes
+                Save
               </>
             )}
           </Button>
         </div>
       </div>
 
-      {/* Instructions */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Layout size={16} />
-              Drag blocks to reorder
-            </div>
-            <div className="flex items-center gap-2">
-              <Eye size={16} />
-              Click eye to hide/show
-            </div>
-            <div className="flex items-center gap-2">
-              <Settings size={16} />
-              Click block to edit
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Add Block Button */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button className="w-full">
-            <Plus size={16} className="mr-2" />
-            Add Block
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-64 max-h-96 overflow-y-auto">
-          {getBlocksForMenu().map(blockConfig => (
-            <DropdownMenuItem
-              key={blockConfig.type}
-              onClick={() => handleAddBlock(blockConfig.type)}
-              className="flex items-center gap-3 py-3 cursor-pointer"
-            >
-              <blockConfig.icon size={18} className="text-muted-foreground" />
-              <div className="flex flex-col">
-                <span className="font-medium">{blockConfig.name}</span>
-                <span className="text-xs text-muted-foreground">{blockConfig.description}</span>
-              </div>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-
       {/* Block List */}
       {blocks.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <Layout size={48} className="text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">No blocks yet</h3>
-            <p className="text-muted-foreground text-center max-w-md mb-4">
-              Add your first block to start building your biolink page. You can add links, text, images, and more.
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <div className="bg-muted p-4 rounded-full mb-4">
+              <Layout size={32} className="text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">Start Building Your Page</h3>
+            <p className="text-muted-foreground text-center max-w-sm mb-6">
+              Add your first block to create a unique biolink page. Links, text, images, and more.
             </p>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button>
-                  <Plus size={16} className="mr-2" />
-                  Add Your First Block
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {/* Simplify first experience - show common blocks */}
-                {['link', 'text', 'image'].map(type => {
-                  const config = blockRegistry.find(b => b.type === type);
-                  return config ? (
-                    <DropdownMenuItem
-                      key={type}
-                      onClick={() => handleAddBlock(type)}
-                    >
-                      <config.icon size={16} className="mr-2" />
-                      {config.name}
-                    </DropdownMenuItem>
-                  ) : null;
-                })}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button onClick={() => handleAddBlock('link')}>
+              <Plus size={16} className="mr-2" />
+              Add Link Block
+            </Button>
           </CardContent>
         </Card>
       ) : (
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <DndContext 
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart} 
+          onDragEnd={handleDragEnd}
+        >
           <SortableContext items={blocks.map(b => b.id)} strategy={verticalListSortingStrategy}>
-            <div className="space-y-4">
+            <div className="space-y-4 pb-20">
               {blocks.map((block) => (
-                <BlockItem
+                <SortableBlockItem
                   key={block.id}
                   block={block}
-                  isEditing={editingBlock === block.id}
-                  onToggleEdit={() => setEditingBlock(editingBlock === block.id ? null : block.id)}
+                  isEditing={editingBlockId === block.id}
+                  onToggleEdit={() => setEditingBlockId(editingBlockId === block.id ? null : block.id)}
                   onToggleVisibility={() => handleToggleVisibility(block.id)}
                   onDelete={() => handleDeleteBlock(block.id)}
                 >
                   {renderBlock(block)}
-                </BlockItem>
+                </SortableBlockItem>
               ))}
             </div>
           </SortableContext>
 
           <DragOverlay>
             {activeBlock ? (
-              <div className="opacity-50">
-                {renderBlock(activeBlock)}
+              <div className="opacity-90 scale-105 shadow-xl rounded-lg bg-background border">
+                {renderBlock(activeBlock, true)}
               </div>
             ) : null}
           </DragOverlay>
         </DndContext>
       )}
-
-      {/* Empty State */}
-      {blocks.length > 0 && (
-        <div className="text-center text-sm text-muted-foreground pt-4 border-t">
-          Drag blocks to reorder • Click to edit • Toggle visibility • Delete with ❌
-        </div>
-      )}
     </div>
   );
 }
 
-// Block Item Wrapper Component
-function BlockItem({ 
-  children, 
-  block, 
-  isEditing, 
-  onToggleEdit, 
-  onToggleVisibility, 
-  onDelete 
-}: { 
+// Sortable Block Item Component
+interface SortableBlockItemProps {
   children: React.ReactNode;
   block: Block;
   isEditing: boolean;
   onToggleEdit: () => void;
   onToggleVisibility: () => void;
   onDelete: () => void;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: block.id,
-  });
+}
+
+function SortableBlockItem({ 
+  children, 
+  block, 
+  isEditing, 
+  onToggleEdit, 
+  onToggleVisibility, 
+  onDelete 
+}: SortableBlockItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: block.id });
 
   const style = {
-    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 100 : 1,
+    opacity: isDragging ? 0.3 : 1,
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative group ${isEditing ? 'ring-2 ring-blue-500' : ''}`}
+      className={cn(
+        "group relative bg-card border rounded-lg transition-all",
+        isEditing ? "ring-2 ring-primary shadow-md" : "hover:border-primary/50",
+        !block.settings.visible && "opacity-60 bg-muted/50"
+      )}
     >
-      {/* Block Controls */}
-      <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onToggleVisibility}
-          className="h-8 w-8 p-0"
-        >
-          {block.settings.visible ? (
-            <Eye size={14} className="text-green-600" />
-          ) : (
-            <EyeOff size={14} className="text-gray-400" />
-          )}
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onDelete}
-          className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-        >
-          <Trash2 size={14} />
-        </Button>
-        <div
-          {...attributes}
+      {/* Block Header / Controls */}
+      <div className="flex items-center gap-2 p-3 border-b bg-muted/10">
+        {/* Drag Handle */}
+        <div 
+          {...attributes} 
           {...listeners}
-          className="h-8 w-8 flex items-center justify-center cursor-grab active:cursor-grabbing hover:bg-gray-100 rounded"
+          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground p-1 rounded hover:bg-muted"
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" className="text-gray-400">
-            <path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zM7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-            <path d="M7 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-          </svg>
+          <GripVertical size={16} />
+        </div>
+
+        {/* Block Icon & Title */}
+        <div 
+          className="flex-1 flex items-center gap-2 cursor-pointer" 
+          onClick={onToggleEdit}
+        >
+          <span className="font-medium text-sm">
+            {block.title || block.type}
+          </span>
+          {!block.settings.visible && (
+            <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+              Hidden
+            </span>
+          )}
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggleVisibility}
+            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+            title={block.settings.visible ? "Hide block" : "Show block"}
+          >
+            {block.settings.visible ? <Eye size={14} /> : <EyeOff size={14} />}
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onDelete}
+            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+            title="Delete block"
+          >
+            <Trash2 size={14} />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggleEdit}
+            className={cn(
+              "h-8 w-8 p-0 text-muted-foreground hover:text-primary",
+              isEditing && "text-primary bg-primary/10"
+            )}
+            title="Edit block"
+          >
+            {isEditing ? <X size={14} /> : <Settings size={14} />}
+          </Button>
         </div>
       </div>
 
-      {/* Edit Toggle */}
-      <div 
-        className="cursor-pointer" 
-        onClick={onToggleEdit}
-        role="button"
-        aria-label="Edit block"
+      {/* Block Content */}
+      <div className={cn(
+        "p-4",
+        isEditing ? "bg-background" : "bg-muted/5 cursor-pointer hover:bg-muted/10"
+      )}
+      onClick={!isEditing ? onToggleEdit : undefined}
       >
         {children}
       </div>
     </div>
   );
-}
-
-// Custom hook for sortable
-function useSortable({ id: _id }: { id: string }) {
-  // Import from @dnd-kit in real implementation
-  // For now, return stubbed values
-  return {
-    attributes: {},
-    listeners: { onMouseDown: () => {} },
-    setNodeRef: (_node: HTMLElement | null) => {},
-    transform: null,
-    transition: 'transform 250ms ease',
-    isDragging: false
-  };
 }

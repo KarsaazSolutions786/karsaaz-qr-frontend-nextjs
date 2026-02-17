@@ -19,8 +19,8 @@ import ListBlock from './blocks/ListBlock';
 import SocialLinksBlock from './blocks/SocialLinksBlock';
 import ShareBlock from './blocks/ShareBlock';
 import ContactBlock from './blocks/ContactBlock';
-// import AudioBlock from './blocks/AudioBlock';
-// import ImageGridBlock from './blocks/ImageGridBlock';
+import AudioBlock from './blocks/AudioBlock';
+import ImageGridBlock from './blocks/ImageGridBlock';
 import ProfileBlock from './blocks/ProfileBlock';
 import CustomCodeBlock from './blocks/CustomCodeBlock';
 import ReviewSitesBlock from './blocks/ReviewSitesBlock';
@@ -404,43 +404,43 @@ export const blockRegistry: BlockConfig[] = [
     ]
   },
 
-  // {
-  //   type: 'audio',
-  //   name: 'Audio',
-  //   description: 'Add an audio player',
-  //   icon: Music,
-  //   category: BLOCK_CATEGORIES.MEDIA,
-  //   component: AudioBlock,
-  //   defaultData: {
-  //     url: '',
-  //     title: '',
-  //     artist: '',
-  //     cover: '',
-  //     autoplay: false,
-  //     controls: true
-  //   },
-  //   defaultSettings: {
-  //     visible: true,
-  //     order: 0,
-  //     customClasses: [],
-  //     padding: '1rem',
-  //     margin: '0.5rem 0'
-  //   },
-  //   defaultDesign: {
-  //     backgroundColor: '#f9f9f9',
-  //     textColor: '#000000',
-  //     borderRadius: '8px',
-  //     padding: '1rem',
-  //     margin: '0.5rem 0'
-  //   },
-  //   fieldDefinitions: [
-  //     { name: 'url', label: 'Audio URL', type: 'url', required: true, placeholder: 'https://example.com/audio.mp3' },
-  //     { name: 'title', label: 'Track Title', type: 'text' },
-  //     { name: 'artist', label: 'Artist', type: 'text' },
-  //     { name: 'cover', label: 'Cover Image', type: 'url', placeholder: 'https://example.com/cover.jpg' },
-  //     { name: 'autoplay', label: 'Autoplay', type: 'boolean' }
-  //   ]
-  // },
+  {
+    type: 'audio',
+    name: 'Audio',
+    description: 'Add an audio player',
+    icon: _Music,
+    category: BLOCK_CATEGORIES.MEDIA,
+    component: AudioBlock,
+    defaultData: {
+      url: '',
+      title: '',
+      artist: '',
+      cover: '',
+      autoplay: false,
+      controls: true
+    },
+    defaultSettings: {
+      visible: true,
+      order: 0,
+      customClasses: [],
+      padding: '1rem',
+      margin: '0.5rem 0'
+    },
+    defaultDesign: {
+      backgroundColor: '#f9f9f9',
+      textColor: '#000000',
+      borderRadius: '8px',
+      padding: '1rem',
+      margin: '0.5rem 0'
+    },
+    fieldDefinitions: [
+      { name: 'url', label: 'Audio URL', type: 'url', required: true, placeholder: 'https://example.com/audio.mp3' },
+      { name: 'title', label: 'Track Title', type: 'text' },
+      { name: 'artist', label: 'Artist', type: 'text' },
+      { name: 'cover', label: 'Cover Image', type: 'url', placeholder: 'https://example.com/cover.jpg' },
+      { name: 'autoplay', label: 'Autoplay', type: 'boolean' }
+    ]
+  },
 
   {
     type: 'image-grid',
