@@ -9,8 +9,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export default function OAuthCallbackPage({ params }: { params: Promise<{ provider: string }> }) {
-  const { provider } = use(params);
+export default function OAuthCallbackPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
+  const provider = slug;
   const searchParams = useSearchParams();
   const router = useRouter();
   const { setAuth } = useAuthStore();

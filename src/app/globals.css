@@ -530,3 +530,239 @@
 .dark .sidebar-logout-label {
   color: #6D6D6D;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   CREATE QR CODE PAGE — Figma grid layout
+   ═══════════════════════════════════════════════════════════ */
+
+.qr-create-page {
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── Header ── */
+.qr-create-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 24px;
+}
+
+.qr-create-title {
+  font-weight: 700;
+  font-size: 24px;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
+}
+
+.dark .qr-create-title {
+  color: #1a1a1a;
+}
+
+.qr-create-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 200px;
+  height: 40px;
+  padding: 0 14px;
+  background: white;
+  border: 1px solid #E0E0E0;
+  border-radius: 20px;
+}
+
+.qr-create-search-icon {
+  width: 18px;
+  height: 18px;
+  color: #999;
+  flex-shrink: 0;
+}
+
+.qr-create-search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #333;
+}
+
+.qr-create-search-input::placeholder {
+  color: #BDBDBD;
+}
+
+/* ── QR Grid ── */
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.qr-grid--extended {
+  margin-top: 12px;
+}
+
+/* ── QR Card (base) ── */
+.qr-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  min-height: 56px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.qr-card:hover {
+  box-shadow: 0 4px 12px rgba(175, 71, 175, 0.1);
+  transform: translateY(-1px);
+}
+
+.qr-card--selected {
+  border: 2px solid #AF47AF;
+  box-shadow: 0 0 0 3px rgba(175, 71, 175, 0.12);
+}
+
+/* ── Card inner layout ── */
+.qr-card-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.qr-card-icon-circle {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #F3E8F3;
+  color: #AF47AF;
+  flex-shrink: 0;
+}
+
+.qr-card-label {
+  font-weight: 500;
+  font-size: 13px;
+  color: #333;
+  white-space: nowrap;
+}
+
+.qr-card-chevron {
+  width: 16px;
+  height: 16px;
+  color: #AF47AF;
+  flex-shrink: 0;
+}
+
+/* ── Wide card (URL/LINK, VCard) ── */
+.qr-card--wide {
+  grid-column: span 2;
+  padding: 16px 20px;
+  min-height: 64px;
+}
+
+.qr-card--wide .qr-card-label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ── Tall card (Restaurant Menu) ── */
+.qr-card--tall {
+  grid-row: span 2;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 16px;
+  min-height: 130px;
+}
+
+.qr-card--tall .qr-card-inner {
+  flex-direction: row;
+  width: 100%;
+}
+
+.qr-card--tall .qr-card-chevron {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+/* ── Icon-only card (social media icons) ── */
+.qr-card--icon-only {
+  width: 100%;
+  min-height: 56px;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 14px;
+}
+
+.qr-card-branded-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+/* ── View More button ── */
+.qr-view-more-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 180px;
+  margin: 24px auto 0;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1.5px solid #E0E0E0;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.qr-view-more-btn:hover {
+  border-color: #AF47AF;
+  color: #AF47AF;
+}
+
+.qr-view-more-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s;
+}
+
+.qr-view-more-icon--open {
+  transform: rotate(180deg);
+}
+
+/* ── Responsive: smaller screens ── */
+@media (max-width: 900px) {
+  .qr-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .qr-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .qr-create-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .qr-create-search {
+    width: 100%;
+  }
+}

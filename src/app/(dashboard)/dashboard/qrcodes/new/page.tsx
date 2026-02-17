@@ -38,13 +38,25 @@ export default function NewQRCodePage() {
   const CurrentStepComponent = StepComponents[currentStep] || StepComponents[0];
   const isFinalStep = currentStep === StepComponents.length - 1;
 
+  const isTypeStep = currentStep === 0;
+
+  /* ── Step 0: Type selection — clean full-page layout (matches Figma) ── */
+  if (isTypeStep) {
+    return (
+      <div className="flex-1 p-4 md:p-8">
+        <CurrentStepComponent />
+      </div>
+    );
+  }
+
+  /* ── Steps 1+: Wizard layout with indicator, preview, and navigation ── */
   return (
     <div className="flex flex-col h-full min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-black">
       <StepIndicator />
-      
+
       <main className="flex-1 container mx-auto max-w-7xl p-4 md:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
-          
+
           {/* Left: Configuration Steps */}
           <div className={`lg:col-span-${isFinalStep ? '12' : '8'} flex flex-col`}>
             <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 min-h-[500px] h-full">
