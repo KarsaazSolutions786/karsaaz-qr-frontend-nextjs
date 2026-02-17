@@ -330,6 +330,12 @@ export const qrCodeService = {
     return `${API_BASE}/bulk-operations/export-csv/${instanceId}`;
   },
 
+  /** GET /api/bulk-operations/export-zip/{instance} — export bulk QR codes as ZIP */
+  exportBulkZip: async (instanceId: string | number): Promise<string> => {
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    return `${API_BASE}/bulk-operations/export-zip/${instanceId}`;
+  },
+
   /** GET /api/bulk-operations/{type}/csv-sample — download the CSV template/sample */
   getBulkCsvSample: async (type: string): Promise<string> => {
     const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';

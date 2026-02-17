@@ -24,10 +24,13 @@ export const abuseReportService = {
 
   /** POST /api/abuse-reports — Submit an abuse report (rate: 5/min, no auth) */
   submit: async (data: {
-    qrcode_id: string | number;
+    qrcode_id?: string | number;
+    qrcode_hash?: string;
     reported_by_email: string;
-    reason: string;
+    reason?: string;
+    category?: string; // Legacy field name
     description?: string;
+    details?: string; // Legacy field name
   }) => {
     return apiClient.post("/abuse-reports", data);
   },

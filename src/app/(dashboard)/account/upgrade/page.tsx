@@ -1,63 +1,63 @@
 "use client";
 
+import { useConfig } from "@/hooks/use-config";
+import { Loader2, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
-export default function AccountUpgradePage() {
-  const [isLoading, setIsLoading] = useState(true);
+export default function HostedUpgradePage() {
+  const { config, isLoading } = useConfig();
+  const [customHtml, setCustomHtml] = useState<string>("");
 
-  // In the original app, this page renders a custom code injection point.
-  // <qrcg-custom-code-renderer position="Account Upgrade: Hosted Upgrade Page">
-  
-  // Since we are migrating, we might need a way to render this custom code or 
-  // provide a default upgrade UI if no custom code is present.
-  
-  // For now, we'll display a placeholder or loading state.
-  
   useEffect(() => {
-    // Simulate loading external content
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    // Legacy behavior: The actual upgrade UI is often injected via custom code
+    // from the admin panel's "Account Upgrade: Hosted Upgrade Page" position.
+    if (config?.custom_codes) {
+      const upgradeCode = config.custom_codes.find(
+        (c: any) => c.position === "Account Upgrade: Hosted Upgrade Page"
+      );
+      if (upgradeCode) {
+        setCustomHtml(upgradeCode.code);
+      }
+    }
+  }, [config]);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[400px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto py-10">
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle>Upgrade Your Account</CardTitle>
-          <CardDescription>
-            Unlock premium features and higher limits.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="min-h-[400px] flex items-center justify-center">
-          {isLoading ? (
-            <div className="flex flex-col items-center gap-2">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-muted-foreground">Loading upgrade options...</p>
-            </div>
-          ) : (
-            <div className="text-center space-y-4">
-              <p>
-                {/* This is where the custom code for the upgrade page would be injected */}
-                {/* For example, an iframe or a script that loads the pricing table */}
-                Custom upgrade page content not yet configured.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                (Position: "Account Upgrade: Hosted Upgrade Page")
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+    <div className="space-y-6 max-w-4xl mx-auto py-8">
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-black uppercase tracking-tight flex items-center justify-center gap-2">
+          Upgrade Your Account <Sparkles className="h-6 w-6 text-blue-600" />
+        </h1>
+        <p className="text-muted-foreground uppercase font-bold tracking-widest text-xs">
+          Unlock premium features and higher limits
+        </p>
+      </div>
+
+      {customHtml ? (
+        <div 
+          className="bg-card rounded-[2rem] border-2 shadow-sm p-8"
+          dangerouslySetInnerHTML={{ __html: customHtml }} 
+        />
+      ) : (
+        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-[2rem] border-2 border-blue-100 dark:border-blue-900/50 p-12 text-center space-y-4">
+          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+            No custom upgrade UI configured. Please visit the pricing page to select a plan.
+          </p>
+          <a 
+            href="/pricing" 
+            className="inline-block bg-blue-600 text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-xs hover:bg-blue-700 transition-all"
+          >
+            View Pricing Plans
+          </a>
+        </div>
+      )}
     </div>
   );
 }

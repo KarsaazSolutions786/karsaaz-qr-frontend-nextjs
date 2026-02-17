@@ -31,6 +31,16 @@ export const env = {
 
   isProduction: () => process.env.NODE_ENV === 'production',
   isDevelopment: () => process.env.NODE_ENV === 'development',
+
+  // Feature Flags
+  isPieceXDemo: () => process.env.NEXT_PUBLIC_PIECEX_DEMO_ENABLED === 'true',
+  getFirebaseSmsConfig: () => {
+    try {
+      return JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_SMS_CONFIG || '{}');
+    } catch {
+      return {};
+    }
+  },
 };
 
 export default env;

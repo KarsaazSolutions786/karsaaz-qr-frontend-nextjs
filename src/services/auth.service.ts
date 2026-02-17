@@ -111,6 +111,16 @@ export const authService = {
     return apiClient.post("/auth/google/complete-registration", data);
   },
 
+  /** POST /api/auth/facebook/token-login — Facebook OAuth token login */
+  facebookLogin: async (token: string) => {
+    return apiClient.post("/auth/facebook/token-login", { token });
+  },
+
+  /** POST /api/auth/twitter/token-login — Twitter OAuth token login */
+  twitterLogin: async (token: string, secret: string) => {
+    return apiClient.post("/auth/twitter/token-login", { token, secret });
+  },
+
   /** POST /api/auth/apple/verify-token — Apple Sign In */
   appleLogin: async (identityToken: string, data?: { name?: string }) => {
     return apiClient.post("/auth/apple/verify-token", {
