@@ -43,6 +43,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { title: "Home", href: "/dashboard", icon: ICON.homeInactive, activeIcon: ICON.homeActive },
   { title: "Existing QR", href: "/dashboard/qrcodes", icon: ICON.existingQR },
+  { title: "Bulk Operations", href: "/dashboard/bulk-operations", icon: ICON.content },
   { title: "Archived", href: "/dashboard/qrcodes/archived", icon: ICON.archived },
   { title: "Storage Connections", href: "/dashboard/cloud-storage", icon: ICON.storage },
   {
@@ -62,6 +63,7 @@ const menuItems: MenuItem[] = [
     adminOnly: true,
     children: [
       { title: "Plans", href: "/dashboard/subscription-plans" },
+      { title: "Credit Pricing", href: "/dashboard/subscription-plans/credit-pricing" },
       { title: "Subscriptions", href: "/dashboard/subscriptions" },
       { title: "Billing", href: "/dashboard/billing" },
       { title: "Transactions", href: "/dashboard/transactions" },
@@ -95,7 +97,7 @@ const menuItems: MenuItem[] = [
     icon: ICON.plugins,
     adminOnly: true,
     children: [
-      { title: "Templates", href: "/dashboard/templates" },
+      { title: "Templates", href: "/dashboard/qrcode-templates" },
       { title: "Cloud Storage", href: "/dashboard/cloud-storage" },
       { title: "Plugins", href: "/dashboard/plugins" },
       { title: "Domains", href: "/dashboard/domains" },
@@ -113,6 +115,14 @@ const menuItems: MenuItem[] = [
       { title: "Notifications", href: "/dashboard/system/notifications" },
       { title: "SMS Portals", href: "/dashboard/system/sms" },
       { title: "Auth Workflow", href: "/dashboard/system/auth-workflow" },
+    ],
+  },
+  {
+    title: "Help & Support",
+    icon: ICON.system,
+    children: [
+      { title: "Support Tickets", href: "/account/support-tickets" },
+      { title: "Report Abuse", href: "/dashboard/report-abuse" },
     ],
   },
 ];

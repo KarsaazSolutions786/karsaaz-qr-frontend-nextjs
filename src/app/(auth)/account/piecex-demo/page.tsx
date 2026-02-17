@@ -1,33 +1,32 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { ResultCard } from "@/components/ui/result-card";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-export default function PiecexDemoPage() {
+export default function PieceXDemoPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Set demo flag
-    if (typeof window !== "undefined") {
-      localStorage.setItem("is_piecex_demo", "true");
+    // Legacy logic: Set a flag in localStorage and redirect to login
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('is_piecex_demo', 'true');
+      
+      const timer = setTimeout(() => {
+        router.push("/login");
+      }, 1500);
+
+      return () => clearTimeout(timer);
     }
-
-    // Redirect after delay
-    const timer = setTimeout(() => {
-      router.push("/account/login");
-    }, 1500);
-
-    return () => clearTimeout(timer);
   }, [router]);
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-4">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <h1 className="text-2xl font-semibold tracking-tight">Redirecting you now...</h1>
-        <p className="text-sm text-muted-foreground">Setting up demo environment</p>
-      </div>
-    </div>
+    <ResultCard
+      status="loading"
+      title="Activating Demo"
+      description="We're setting up the PieceX demo environment for you. Redirecting to login in a moment..."
+      icon={Loader2}
+    />
   );
 }

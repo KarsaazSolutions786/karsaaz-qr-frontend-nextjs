@@ -76,6 +76,20 @@ export default function Header() {
               >
                 Account Details
               </Link>
+              <Link
+                href="/account/support-tickets"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-600"
+                onClick={() => setIsProfileOpen(false)}
+              >
+                Support Tickets
+              </Link>
+              <Link
+                href="/account/upgrade"
+                className="block px-4 py-2 text-sm font-bold text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-gray-600"
+                onClick={() => setIsProfileOpen(false)}
+              >
+                Upgrade Plan
+              </Link>
               <button
                 onClick={() => {
                   logout();

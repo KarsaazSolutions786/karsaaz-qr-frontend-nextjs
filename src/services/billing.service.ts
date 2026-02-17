@@ -154,6 +154,23 @@ export const billingService = {
   getMyPromoCode: async () => {
     return apiClient.get("/promo-codes/my-promo-code");
   },
+
+  // ─── Account Credits ───────────────────────────────────
+
+  /** GET /api/subscription-plans/credit-pricing — Get prices for buying credits */
+  getAccountCreditPrices: async () => {
+    return apiClient.get("/subscription-plans/credit-pricing");
+  },
+
+  /** POST /api/subscription-plans/credit-pricing — Update credit pricing */
+  updateAccountCreditPrices: async (data: { dynamic_qr_price: number; static_qr_price: number }) => {
+    return apiClient.post("/subscription-plans/credit-pricing", data);
+  },
+
+  /** POST /api/payment-processors/{slug}/create-charge-link/{amount} — Purchase credits */
+  createCreditCheckoutSession: async (amount: number, slug: string = 'paypal') => {
+    return apiClient.post(`/payment-processors/${slug}/create-charge-link/${amount}`);
+  },
 };
 
 export default billingService;
