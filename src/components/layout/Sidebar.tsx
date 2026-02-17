@@ -5,7 +5,7 @@ import { useStore } from "@/store/useStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 
 /* ── Figma sidebar icon map (Pixel-Perfect) ─────────────────────────── */
 const ICON = {
@@ -119,11 +119,13 @@ const menuItems: MenuItem[] = [
 
 /* ── Sidebar component ──────────────────────────────────────── */
 export default function Sidebar() {
-  const { isSidebarOpen } = useStore();
+  const { isSidebarOpen, toggleSidebar } = useStore();
   const { user } = useAuthStore();
   const pathname = usePathname();
   const router = useRouter();
   const [openGroups, setOpenGroups] = useState<string[]>([]);
+
+  const collapsed = !isSidebarOpen;
 
   const toggleGroup = (title: string) => {
     setOpenGroups((prev) =>
@@ -140,28 +142,36 @@ export default function Sidebar() {
   const isGroupActive = (item: MenuItem) =>
     item.children?.some((child) => pathname === child.href) || false;
 
-  if (!isSidebarOpen) return null;
-
   return (
-    <aside className="sidebar-figma">
-      {/* ── Logo row (Pixel-Perfect mix) ───────────────────── */}
+    <aside className={cn("sidebar-figma", collapsed && "sidebar-figma--collapsed")}>
+      {/* ── Logo row ───────────────────────────────────────── */}
       <div className="sidebar-logo-row">
-        <div className="sidebar-logo-group">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ICON.logoText} alt="Karsaaz" className="sidebar-logo-img" />
-          <div className="sidebar-qr-badge">
+        {!collapsed && (
+          <div className="sidebar-logo-group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={ICON.logoQR} alt="QR" className="sidebar-qr-badge-img" />
+            <img src={ICON.logoText} alt="Karsaaz" className="sidebar-logo-img" />
           </div>
-        </div>
-        <button className="sidebar-collapse-btn" aria-label="Collapse sidebar">
+        )}
+        <div className="sidebar-qr-badge">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ICON.collapseBtn} alt="" className="sidebar-collapse-icon" />
+          <img src={ICON.logoQR} alt="QR" className="sidebar-qr-badge-img" />
+        </div>
+        <button
+          className="sidebar-collapse-btn"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          onClick={toggleSidebar}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={ICON.collapseBtn}
+            alt=""
+            className={cn("sidebar-collapse-icon", collapsed && "sidebar-collapse-icon--flipped")}
+          />
         </button>
       </div>
 
       {/* ── Navigation items ─────────────────────────────── */}
-      <nav className="sidebar-nav">
+      <nav className={cn("sidebar-nav", collapsed && "sidebar-nav--collapsed")}>
         {menuItems.map((item) => {
           if (item.adminOnly && !isAdmin) return null;
 
@@ -170,10 +180,41 @@ export default function Sidebar() {
           const groupIsActive = isGroupActive(item);
           const active = !hasChildren && item.href && isActive(item.href);
 
+          /* ── Collapsed: icon-only items ── */
+          if (collapsed) {
+            const firstChildHref = item.children?.[0]?.href;
+            const href = item.href || firstChildHref || "#";
+            const isItemActive = active || groupIsActive;
+
+            return (
+              <Link
+                key={item.title}
+                href={href}
+                className={cn(
+                  "sidebar-nav-item--icon-only",
+                  isItemActive && "sidebar-nav-item--icon-only-active"
+                )}
+                title={item.title}
+              >
+                <div className={cn(
+                  "sidebar-nav-icon-wrap",
+                  isItemActive && "sidebar-nav-icon-wrap--active"
+                )}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={isItemActive ? (item.activeIcon || item.icon) : item.icon}
+                    alt=""
+                    className="sidebar-nav-icon"
+                  />
+                </div>
+              </Link>
+            );
+          }
+
+          /* ── Expanded: full nav items ── */
           return (
             <div key={item.title}>
               {hasChildren ? (
-                /* ── Expandable group ── */
                 <div>
                   <button
                     onClick={() => toggleGroup(item.title)}
@@ -200,7 +241,6 @@ export default function Sidebar() {
                     />
                   </button>
 
-                  {/* Sub-items */}
                   {groupOpen && (
                     <div className="sidebar-sub-items">
                       {item.children!.map((child) => (
@@ -220,7 +260,6 @@ export default function Sidebar() {
                   )}
                 </div>
               ) : (
-                /* ── Simple nav link ── */
                 <Link
                   href={item.href!}
                   className={cn(
@@ -243,33 +282,37 @@ export default function Sidebar() {
       </nav>
 
       {/* ── App store badges ─────────────────────────────── */}
-      <div className="sidebar-app-badges">
-        <a href="#" className="sidebar-badge" aria-label="Download on App Store">
+      <div className={cn("sidebar-app-badges", collapsed && "sidebar-app-badges--collapsed")}>
+        <a href="#" className={cn("sidebar-badge", collapsed && "sidebar-badge--icon-only")} aria-label="Download on App Store">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={ICON.apple} alt="" className="sidebar-badge-icon" />
-          <div className="sidebar-badge-text">
-            <span className="sidebar-badge-small">Download on the</span>
-            <span className="sidebar-badge-large">App Store</span>
-          </div>
+          {!collapsed && (
+            <div className="sidebar-badge-text">
+              <span className="sidebar-badge-small">Download on the</span>
+              <span className="sidebar-badge-large">App Store</span>
+            </div>
+          )}
         </a>
-        <a href="#" className="sidebar-badge" aria-label="Get it on Google Play">
+        <a href="#" className={cn("sidebar-badge", collapsed && "sidebar-badge--icon-only")} aria-label="Get it on Google Play">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={ICON.googlePlay} alt="" className="sidebar-badge-icon sidebar-badge-icon--play" />
-          <div className="sidebar-badge-text">
-            <span className="sidebar-badge-small">GET IN ON</span>
-            <span className="sidebar-badge-large">Google Play</span>
-          </div>
+          <img src={ICON.googlePlay} alt="" className={cn("sidebar-badge-icon", !collapsed && "sidebar-badge-icon--play")} />
+          {!collapsed && (
+            <div className="sidebar-badge-text">
+              <span className="sidebar-badge-small">GET IN ON</span>
+              <span className="sidebar-badge-large">Google Play</span>
+            </div>
+          )}
         </a>
       </div>
 
-      {/* ── Logout button (Refined Red) ──────────────────── */}
-      <div className="sidebar-logout-wrap">
+      {/* ── Logout button ──────────────────────────────────── */}
+      <div className={cn("sidebar-logout-wrap", collapsed && "sidebar-logout-wrap--collapsed")}>
         <button
           onClick={() => {
             useAuthStore.getState().clearAuth();
             router.push("/auth/login");
           }}
-          className="sidebar-logout-btn"
+          className={cn("sidebar-logout-btn", collapsed && "sidebar-logout-btn--collapsed")}
         >
           <div className="sidebar-logout-icons">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -277,7 +320,7 @@ export default function Sidebar() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={ICON.logoutArrow} alt="" className="sidebar-logout-icon absolute ml-2 opacity-50" />
           </div>
-          <span className="sidebar-logout-label">Logout</span>
+          {!collapsed && <span className="sidebar-logout-label">Logout</span>}
         </button>
       </div>
     </aside>

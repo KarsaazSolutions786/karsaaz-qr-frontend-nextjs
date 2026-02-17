@@ -84,7 +84,7 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
-   SIDEBAR — Figma "sidemenu opened" (node 2896:1128)
+   SIDEBAR — Figma sidemenu (opened: 264px, collapsed: 115px)
    ═══════════════════════════════════════════════════════════ */
 
 .sidebar-figma {
@@ -100,14 +100,27 @@
   backdrop-filter: blur(25px);
   background: rgba(255, 255, 255, 0.9);
   font-family: 'Inter', sans-serif;
+  transition: width 0.25s ease, min-width 0.25s ease;
+}
+
+/* ── Collapsed sidebar ── */
+.sidebar-figma--collapsed {
+  width: 115px;
+  min-width: 115px;
 }
 
 /* ── Logo row ── */
 .sidebar-logo-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 30px 20px 20px;
+  gap: 8px;
+  padding: 31px 20px 20px;
+}
+
+.sidebar-figma--collapsed .sidebar-logo-row {
+  justify-content: center;
+  gap: 6px;
+  padding: 31px 12px 20px;
 }
 
 .sidebar-logo-group {
@@ -125,42 +138,55 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   background: white;
-  border-radius: 6px;
-  box-shadow: 0px 2px 4px rgba(175, 71, 175, 0.1);
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(175, 71, 175, 0.15);
+  flex-shrink: 0;
 }
 
 .sidebar-qr-badge-img {
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
 }
 
 .sidebar-collapse-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 30px;
   border-radius: 8px;
-  background: rgba(189, 107, 255, 0.08);
-  transition: all 0.2s;
-  cursor: pointer;
+  background: white;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+  margin-left: auto;
   border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
   padding: 0;
 }
 
+.sidebar-figma--collapsed .sidebar-collapse-btn {
+  margin-left: 0;
+}
+
 .sidebar-collapse-btn:hover {
-  background: rgba(189, 107, 255, 0.15);
+  background: rgba(189, 107, 255, 0.08);
 }
 
 .sidebar-collapse-icon {
   width: 14px;
   height: 14px;
+  transition: transform 0.25s ease;
 }
 
-/* ── Nav Items ── */
+.sidebar-collapse-icon--flipped {
+  transform: rotate(180deg);
+}
+
+/* ── Nav Items (expanded) ── */
 .sidebar-nav {
   flex: 1;
   padding: 0 20px;
@@ -180,7 +206,14 @@
   border-radius: 2px;
 }
 
-/* ── Nav item (each row) ── */
+/* ── Nav (collapsed) ── */
+.sidebar-nav--collapsed {
+  align-items: center;
+  padding: 0 12px;
+  gap: 20px;
+}
+
+/* ── Nav item (each row — expanded) ── */
 .sidebar-nav-item {
   display: flex;
   align-items: center;
@@ -189,7 +222,6 @@
   height: 50.4px;
   padding: 0 10px;
   border-radius: 26px;
-  /* Rounded pill for inactive */
   -webkit-backdrop-filter: blur(1.6px);
   backdrop-filter: blur(1.6px);
   cursor: pointer;
@@ -222,20 +254,19 @@
   flex-shrink: 0;
 }
 
-/* ACTIVE STATE - Refined */
+/* ACTIVE STATE — purple gradient (expanded) */
 .sidebar-nav-item--active {
   background: radial-gradient(108.33% 108.33% at 50% 50%, #E889FF 0%, #B36AC5 100%);
   box-shadow: 0px 4px 12px rgba(179, 106, 197, 0.24);
   border-radius: 12px;
-  /* Less rounded for active items */
 }
 
 /* Active Icon box white */
 .sidebar-nav-icon-wrap--active {
   background: #FFFFFF;
   border-radius: 5.91px;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
 }
 
 .sidebar-nav-icon {
@@ -319,13 +350,44 @@
   box-shadow: 0 0 4px rgba(175, 71, 175, 0.4);
 }
 
+/* ── Icon-only nav item (collapsed) ── */
+.sidebar-nav-item--icon-only {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 33px;
+  height: 33px;
+  text-decoration: none;
+  transition: all 0.2s;
+  border-radius: 8px;
+}
+
+.sidebar-nav-item--icon-only:hover {
+  background: rgba(189, 107, 255, 0.08);
+}
+
+.sidebar-nav-item--icon-only-active {
+  background: radial-gradient(108.33% 108.33% at 50% 50%, #E889FF 0%, #B36AC5 100%);
+  box-shadow: 0px 4px 12px rgba(179, 106, 197, 0.24);
+  border-radius: 8px;
+  width: 50px;
+  height: 50px;
+}
+
 /* ── App Store badges ── */
 .sidebar-app-badges {
-  padding: 20px;
+  padding: 16px 20px;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  gap: 4px;
   margin-bottom: 0;
+}
+
+.sidebar-app-badges--collapsed {
+  flex-direction: row;
+  justify-content: center;
+  padding: 16px 8px;
+  gap: 8px;
 }
 
 .sidebar-badge {
@@ -333,31 +395,37 @@
   align-items: center;
   gap: 10px;
   width: 109px;
-  /* Exact Figma width */
   height: 35px;
-  padding: 0 10px;
-  background: #333333;
-  border-radius: 8px;
+  padding: 4px 6px;
+  background: white;
+  border: 1px solid rgba(27, 27, 27, 0.04);
+  border-radius: 4px;
   text-decoration: none;
   transition: opacity 0.2s;
-  border: none;
   overflow: hidden;
 }
 
 .sidebar-badge:hover {
-  opacity: 0.9;
+  opacity: 0.85;
+}
+
+.sidebar-badge--icon-only {
+  width: 35px;
+  height: 35px;
+  justify-content: center;
+  padding: 4px;
 }
 
 .sidebar-badge-icon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 23px;
   flex-shrink: 0;
   object-fit: contain;
 }
 
 .sidebar-badge-icon--play {
-  width: 16px;
-  height: 16px;
+  width: 21px;
+  height: 21px;
 }
 
 .sidebar-badge-text {
@@ -367,39 +435,52 @@
 }
 
 .sidebar-badge-small {
-  font-size: 5px;
-  color: white;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 8px;
+  font-weight: 400;
+  color: black;
+  letter-spacing: 0.02em;
 }
 
 .sidebar-badge-large {
   font-size: 10px;
-  font-weight: 600;
-  color: white;
-  margin-top: 0;
+  font-weight: 500;
+  color: black;
+  margin-top: 2px;
 }
 
-/* ── Logout Button (Refined RED) ── */
+/* ── Logout Button ── */
 .sidebar-logout-wrap {
-  padding: 24px 20px 40px;
+  padding: 12px 20px 32px;
+}
+
+.sidebar-logout-wrap--collapsed {
+  padding: 12px 8px 32px;
+  display: flex;
+  justify-content: center;
 }
 
 .sidebar-logout-btn {
   width: 224px;
-  height: 40px;
+  height: 50px;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 0 16px;
   background: #FFFFFF;
   border: 1px solid rgba(189, 107, 255, 0.32);
-  /* Lavender border */
   border-radius: 12px;
   -webkit-backdrop-filter: blur(1.6px);
   backdrop-filter: blur(1.6px);
   cursor: pointer;
   transition: all 0.2s;
+}
+
+.sidebar-logout-btn--collapsed {
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  justify-content: center;
+  gap: 0;
 }
 
 .sidebar-logout-btn:hover {
@@ -424,112 +505,14 @@
 
 .sidebar-logout-label {
   font-weight: 500;
-  font-size: 13px;
+  font-size: 16px;
   color: #6D6D6D;
 }
 
-/* ── Sidebar row alignments ── */
-.sidebar-logo-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 31px 24px 20px;
-}
-
-.sidebar-logo-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sidebar-logo-img {
-  height: 20px;
-  width: auto;
-}
-
-.sidebar-qr-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(175, 71, 175, 0.15);
-}
-
-.sidebar-qr-badge-img {
-  width: 22px;
-  height: 22px;
-}
-
-.sidebar-collapse-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: white;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
-  margin-left: auto;
-  border: none;
-  cursor: pointer;
-}
-
-.sidebar-collapse-icon {
-  width: 14px;
-  height: 14px;
-}
-
-/* ──────────────────────────────────────────────────────────────
-   Sidebar Theme — ALWAYS LIGHT (matching target design)
-   ────────────────────────────────────────────────────────────── */
-
-.sidebar-figma {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 264px;
-  min-width: 264px;
-  height: 100vh;
-  overflow: hidden;
-  border-right: 1px solid #E0E0E0;
-  background: #F5F5F5;
-  font-family: 'Inter', sans-serif;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
-}
-
-.sidebar-nav-label {
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 140%;
-  color: #6D6D6D;
-  transition: color 0.2s;
-}
-
-.sidebar-nav-item--active .sidebar-nav-label {
-  color: #FFFFFF;
-}
-
-.sidebar-sub-item {
-  color: #8E8E8E;
-}
-
-.sidebar-logout-label {
-  color: #6D6D6D;
-}
-
-/* ── App Badges ── */
-.sidebar-badge {
-  background: #2D2D2D;
-  border-radius: 8px;
-}
-
-/* ── Dark Mode - Ensure sidebar stays LIGHT ── */
+/* ── Dark Mode — Ensure sidebar stays LIGHT ── */
 .dark .sidebar-figma {
-  background: #F5F5F5;
-  border-right-color: #E0E0E0;
+  background: rgba(255, 255, 255, 0.9);
+  border-right-color: white;
 }
 
 .dark .sidebar-nav-label {
