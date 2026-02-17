@@ -122,6 +122,7 @@ const menuItems: MenuItem[] = [
     icon: ICON.system,
     children: [
       { title: "Support Tickets", href: "/account/support-tickets" },
+      { title: "Referrals", href: "/dashboard/referrals" },
       { title: "Report Abuse", href: "/dashboard/report-abuse" },
     ],
   },

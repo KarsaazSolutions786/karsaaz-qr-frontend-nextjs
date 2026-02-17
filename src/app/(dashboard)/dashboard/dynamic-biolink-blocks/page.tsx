@@ -14,7 +14,7 @@ export default function AdminDynamicBiolinkBlocksPage() {
                 { key: "id", label: "ID" },
                 { key: "name", label: "Name" },
                 { key: "type", label: "Type" },
-                { key: "is_active", label: "Active", render: (v) => v ? "✓" : "—" },
+                { key: "is_active", label: "Active", render: (v: any) => v ? "✓" : "—" },
             ]}
             fetchFn={contentService.getDynamicBiolinkBlocks}
             deleteFn={contentService.deleteDynamicBiolinkBlock}

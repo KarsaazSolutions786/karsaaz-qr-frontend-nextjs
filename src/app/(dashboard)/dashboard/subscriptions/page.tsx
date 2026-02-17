@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -39,23 +39,23 @@ interface Subscription {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  active:          "bg-green-100 text-green-700",
-  expired:         "bg-gray-100 text-gray-600",
+  active: "bg-green-100 text-green-700",
+  expired: "bg-gray-100 text-gray-600",
   pending_payment: "bg-yellow-100 text-yellow-700",
-  canceled:        "bg-red-100 text-red-700",
+  canceled: "bg-red-100 text-red-700",
 };
 
 export default function AdminSubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const [loading, setLoading]             = useState(true);
-  const [search, setSearch]               = useState("");
-  const [currentPage, setCurrentPage]     = useState(1);
-  const [totalPages, setTotalPages]       = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const [deleteTarget, setDeleteTarget]   = useState<Subscription | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Subscription | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const [syncing, setSyncing]             = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const [deletingPending, setDeletingPending] = useState(false);
   const [deletePendingDialog, setDeletePendingDialog] = useState(false);
 
@@ -149,7 +149,7 @@ export default function AdminSubscriptionsPage() {
               placeholder="Search subscriptions..."
               className="pl-8 h-9"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
               onKeyDown={e => e.key === "Enter" && fetchSubscriptions(1)}
             />
           </div>
@@ -243,7 +243,8 @@ export default function AdminSubscriptionsPage() {
       )}
 
       {/* Delete Confirm Dialog */}
-      <Dialog open={deleteTarget !== null} onClose={() => setDeleteTarget(null)}>
+      <Dialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Subscription</DialogTitle>
           <DialogDescription>
@@ -259,10 +260,12 @@ export default function AdminSubscriptionsPage() {
             Delete
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
 
       {/* Delete Pending Confirm Dialog */}
-      <Dialog open={deletePendingDialog} onClose={() => setDeletePendingDialog(false)}>
+      <Dialog open={deletePendingDialog} onOpenChange={(open) => !open && setDeletePendingDialog(false)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete All Pending Subscriptions</DialogTitle>
           <DialogDescription>
@@ -276,6 +279,7 @@ export default function AdminSubscriptionsPage() {
             Delete Pending
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );

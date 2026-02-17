@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -110,7 +110,7 @@ function UsersManagementContent() {
 
     }
 
-  }, [page, search, payingFilter, call]);
+  }, [page, search, payingFilter]);
 
 
 
@@ -453,7 +453,8 @@ function UsersManagementContent() {
       </Card>
 
       {/* Magic Login URL Dialog */}
-      <Dialog open={dialog === "magic-link"} onClose={() => setDialog(null)}>
+      <Dialog open={dialog === "magic-link"} onOpenChange={(open) => !open && setDialog(null)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Magic Login URL</DialogTitle>
           <DialogDescription>Generate a one-time login link for {selected?.name}.</DialogDescription>
@@ -477,10 +478,12 @@ function UsersManagementContent() {
             {magicUrl ? "Regenerate" : "Generate"}
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
 
       {/* Change Balance Dialog */}
-      <Dialog open={dialog === "balance"} onClose={() => setDialog(null)}>
+      <Dialog open={dialog === "balance"} onOpenChange={(open) => !open && setDialog(null)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Change Account Balance</DialogTitle>
           <DialogDescription>Set a new account balance for {selected?.name}.</DialogDescription>
@@ -501,10 +504,12 @@ function UsersManagementContent() {
             Update Balance
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={dialog === "delete"} onClose={() => setDialog(null)}>
+      <Dialog open={dialog === "delete"} onOpenChange={(open) => !open && setDialog(null)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete User</DialogTitle>
           <DialogDescription>
@@ -519,6 +524,7 @@ function UsersManagementContent() {
             Delete
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );

@@ -27,18 +27,18 @@ interface Permission {
 }
 
 export default function RolesPage() {
-  const [roles, setRoles]           = useState<Role[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [search, setSearch]         = useState("");
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const [permissions, setPermissions] = useState<Permission[]>([]);
 
   // Create / Edit dialog
-  const [formDialog, setFormDialog]   = useState<"create" | "edit" | null>(null);
-  const [editTarget, setEditTarget]   = useState<Role | null>(null);
-  const [formName, setFormName]       = useState("");
+  const [formDialog, setFormDialog] = useState<"create" | "edit" | null>(null);
+  const [editTarget, setEditTarget] = useState<Role | null>(null);
+  const [formName, setFormName] = useState("");
   const [formHomePage, setFormHomePage] = useState("");
-  const [formPerms, setFormPerms]     = useState<Set<string | number>>(new Set());
+  const [formPerms, setFormPerms] = useState<Set<string | number>>(new Set());
   const [formSubmitting, setFormSubmitting] = useState(false);
 
   // Delete dialog
@@ -225,7 +225,7 @@ export default function RolesPage() {
       </Card>
 
       {/* Create / Edit Dialog */}
-      <Dialog open={formDialog !== null} onClose={() => setFormDialog(null)}>
+      <Dialog open={formDialog !== null} onOpenChange={(open) => !open && setFormDialog(null)}>
         <DialogHeader>
           <DialogTitle>{formDialog === "edit" ? "Edit Role" : "Create Role"}</DialogTitle>
           <DialogDescription>
@@ -238,7 +238,7 @@ export default function RolesPage() {
             <Input
               placeholder="e.g. Editor"
               value={formName}
-              onChange={e => setFormName(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormName(e.target.value)}
             />
           </div>
           <div className="space-y-1">
@@ -246,7 +246,7 @@ export default function RolesPage() {
             <Input
               placeholder="e.g. /dashboard"
               value={formHomePage}
-              onChange={e => setFormHomePage(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormHomePage(e.target.value)}
             />
           </div>
           {permissions.length > 0 && (
@@ -279,7 +279,7 @@ export default function RolesPage() {
       </Dialog>
 
       {/* Delete Confirm Dialog */}
-      <Dialog open={deleteTarget !== null} onClose={() => setDeleteTarget(null)}>
+      <Dialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <DialogHeader>
           <DialogTitle>Delete Role</DialogTitle>
           <DialogDescription>

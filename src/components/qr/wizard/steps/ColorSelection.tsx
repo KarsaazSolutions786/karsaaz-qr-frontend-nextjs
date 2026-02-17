@@ -1,156 +1,260 @@
 "use client";
 
 import { useQRWizard } from "@/store/use-qr-wizard";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
+import { useState, useCallback } from "react";
+import { ChevronDown, Upload } from "lucide-react";
+import QRPreview from "@/components/qr/QRPreview";
+
+type FillType = "solid" | "gradient" | "image";
+type GradientMode = "Linear" | "Radial" | "Angular" | "Diamond";
 
 export default function ColorSelection() {
   const { design, updateDesign } = useQRWizard();
 
-  const handleColorChange = (section: 'background' | 'dots' | 'corners' | 'frame', key: string, value: string) => {
-    // @ts-ignore - dynamic key access
-    updateDesign({ [section]: { ...design[section], [key]: value } });
+  const [fillType, setFillType] = useState<FillType>(design.background.type || "solid");
+  const [fillDropdownOpen, setFillDropdownOpen] = useState(false);
+  const [gradientMode, setGradientMode] = useState<GradientMode>("Diamond");
+  const [gradientDropdownOpen, setGradientDropdownOpen] = useState(false);
+  const [bgEnabled, setBgEnabled] = useState(true);
+
+  const handleFillTypeChange = useCallback((type: FillType) => {
+    setFillType(type);
+    setFillDropdownOpen(false);
+    updateDesign({ background: { ...design.background, type } });
+  }, [design.background, updateDesign]);
+
+  const handleColorChange = (section: "background" | "dots" | "corners", key: string, value: string) => {
+    if (section === "background") {
+      updateDesign({ background: { ...design.background, [key]: value } });
+    } else if (section === "dots") {
+      updateDesign({ dots: { ...design.dots, [key]: value } });
+    } else if (section === "corners") {
+      updateDesign({ corners: { ...design.corners, [key]: value } });
+    }
   };
 
+  const fillTypeLabel = fillType === "solid" ? "Solid Color" : fillType === "gradient" ? "Gradient" : "Image";
+
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-center">Customize Colors</h2>
-      
-      <Tabs defaultValue="background" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-8">
-          <TabsTrigger value="background">Background</TabsTrigger>
-          <TabsTrigger value="foreground">Foreground</TabsTrigger>
-          <TabsTrigger value="eyes">Eyes</TabsTrigger>
-          <TabsTrigger value="frame">Frame</TabsTrigger>
-        </TabsList>
+    <div className="wizard-color-layout">
+      {/* Left: Controls */}
+      <div className="wizard-color-controls">
+        {/* Fill Type */}
+        <div className="wizard-color-row">
+          <span className="wizard-color-label">Fill Type</span>
+          <div className="wizard-color-dropdown-wrap">
+            <button
+              onClick={() => setFillDropdownOpen(!fillDropdownOpen)}
+              className="wizard-color-dropdown-btn"
+            >
+              <span>{fillTypeLabel}</span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            {fillDropdownOpen && (
+              <div className="wizard-color-dropdown-menu">
+                <button onClick={() => handleFillTypeChange("solid")} className={cn("wizard-color-dropdown-item", fillType === "solid" && "wizard-color-dropdown-item--active")}>Solid Color</button>
+                <button onClick={() => handleFillTypeChange("gradient")} className={cn("wizard-color-dropdown-item", fillType === "gradient" && "wizard-color-dropdown-item--active")}>Gradient</button>
+                <button onClick={() => handleFillTypeChange("image")} className={cn("wizard-color-dropdown-item", fillType === "image" && "wizard-color-dropdown-item--active")}>Image</button>
+              </div>
+            )}
+          </div>
+        </div>
 
-        {/* Background Settings */}
-        <TabsContent value="background" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <Label>Color Type</Label>
-              <div className="flex gap-2">
-                {['solid', 'gradient', 'image'].map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => handleColorChange('background', 'type', type)}
-                    className={`px-4 py-2 rounded-md text-sm capitalize border ${
-                      design.background.type === type 
-                        ? 'bg-primary text-white border-primary' 
-                        : 'bg-white hover:bg-gray-50'
-                    }`}
-                  >
-                    {type}
-                  </button>
-                ))}
+        {/* Solid Color mode */}
+        {fillType === "solid" && (
+          <>
+            <ColorRow
+              label="Fill Color"
+              value={design.dots.color}
+              onChange={(v) => handleColorChange("dots", "color", v)}
+            />
+            <ColorRow
+              label="Eye external Color"
+              value={design.corners.squareColor}
+              onChange={(v) => handleColorChange("corners", "squareColor", v)}
+            />
+            <ColorRow
+              label="Eye Internal Color"
+              value={design.corners.dotColor}
+              onChange={(v) => handleColorChange("corners", "dotColor", v)}
+            />
+
+            {/* Background toggle */}
+            <div className="wizard-color-row">
+              <span className="wizard-color-label">Background</span>
+              <button
+                onClick={() => setBgEnabled(!bgEnabled)}
+                className={cn("wizard-color-toggle", bgEnabled && "wizard-color-toggle--on")}
+              >
+                <span className="wizard-color-toggle-thumb" />
+              </button>
+            </div>
+
+            {bgEnabled && (
+              <ColorRow
+                label="Background Color"
+                value={design.background.color}
+                onChange={(v) => handleColorChange("background", "color", v)}
+              />
+            )}
+          </>
+        )}
+
+        {/* Gradient mode */}
+        {fillType === "gradient" && (
+          <>
+            {/* Gradient type dropdown */}
+            <div className="wizard-color-row">
+              <div className="wizard-color-dropdown-wrap">
+                <button
+                  onClick={() => setGradientDropdownOpen(!gradientDropdownOpen)}
+                  className="wizard-color-dropdown-btn"
+                >
+                  <span>{gradientMode}</span>
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                {gradientDropdownOpen && (
+                  <div className="wizard-color-dropdown-menu">
+                    {(["Linear", "Radial", "Angular", "Diamond"] as GradientMode[]).map((mode) => (
+                      <button
+                        key={mode}
+                        onClick={() => { setGradientMode(mode); setGradientDropdownOpen(false); }}
+                        className={cn("wizard-color-dropdown-item", gradientMode === mode && "wizard-color-dropdown-item--active")}
+                      >
+                        {mode}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="space-y-4">
-              <Label>Background Color</Label>
-              <div className="flex gap-3">
-                <Input 
-                  type="color" 
-                  value={design.background.color}
-                  className="w-12 h-12 p-1 cursor-pointer"
-                  onChange={(e) => handleColorChange('background', 'color', e.target.value)}
+            {/* Gradient preview bar */}
+            <div className="wizard-gradient-preview">
+              <div
+                className="wizard-gradient-bar"
+                style={{
+                  background: `linear-gradient(to right, ${design.background.gradientColor1 || "#FAF1FF"}, ${design.background.gradientColor2 || "#EEEEEE"})`
+                }}
+              />
+            </div>
+
+            {/* Gradient stops */}
+            <div className="wizard-gradient-stops">
+              <div className="wizard-gradient-stop">
+                <span className="wizard-gradient-stop-pct">0%</span>
+                <input
+                  type="color"
+                  value={design.background.gradientColor1 || "#FAF1FF"}
+                  onChange={(e) => updateDesign({ background: { ...design.background, gradientColor1: e.target.value } })}
+                  className="wizard-color-swatch"
                 />
-                <Input 
-                  type="text" 
-                  value={design.background.color}
-                  className="flex-1"
-                  onChange={(e) => handleColorChange('background', 'color', e.target.value)}
-                />
+                <span className="wizard-gradient-stop-hex">{(design.background.gradientColor1 || "#FAF1FF").replace("#", "").toUpperCase()}</span>
+                <span className="wizard-gradient-stop-opacity">100 %</span>
               </div>
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Foreground (Dots) Settings */}
-        <TabsContent value="foreground" className="space-y-6">
-          <div className="space-y-4">
-            <Label>Dots Color</Label>
-            <div className="flex gap-3">
-              <Input 
-                type="color" 
-                value={design.dots.color}
-                className="w-12 h-12 p-1 cursor-pointer"
-                onChange={(e) => handleColorChange('dots', 'color', e.target.value)}
-              />
-              <Input 
-                type="text" 
-                value={design.dots.color}
-                className="flex-1"
-                onChange={(e) => handleColorChange('dots', 'color', e.target.value)}
-              />
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Eyes (Corners) Settings */}
-        <TabsContent value="eyes" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <Label>External Eye Color</Label>
-              <div className="flex gap-3">
-                <Input 
-                  type="color" 
-                  value={design.corners.squareColor}
-                  className="w-12 h-12 p-1 cursor-pointer"
-                  onChange={(e) => handleColorChange('corners', 'squareColor', e.target.value)}
+              <div className="wizard-gradient-stop">
+                <span className="wizard-gradient-stop-pct">100%</span>
+                <input
+                  type="color"
+                  value={design.background.gradientColor2 || "#EEEEEE"}
+                  onChange={(e) => updateDesign({ background: { ...design.background, gradientColor2: e.target.value } })}
+                  className="wizard-color-swatch"
                 />
-                <Input 
-                  type="text" 
-                  value={design.corners.squareColor}
-                  className="flex-1"
-                  onChange={(e) => handleColorChange('corners', 'squareColor', e.target.value)}
-                />
+                <span className="wizard-gradient-stop-hex">{(design.background.gradientColor2 || "#EEEEEE").replace("#", "").toUpperCase()}</span>
+                <span className="wizard-gradient-stop-opacity">100 %</span>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <Label>Internal Dot Color</Label>
-              <div className="flex gap-3">
-                <Input 
-                  type="color" 
-                  value={design.corners.dotColor}
-                  className="w-12 h-12 p-1 cursor-pointer"
-                  onChange={(e) => handleColorChange('corners', 'dotColor', e.target.value)}
-                />
-                <Input 
-                  type="text" 
-                  value={design.corners.dotColor}
-                  className="flex-1"
-                  onChange={(e) => handleColorChange('corners', 'dotColor', e.target.value)}
-                />
-              </div>
+            {/* Background toggle & color */}
+            <div className="wizard-color-row">
+              <span className="wizard-color-label">Background</span>
+              <button
+                onClick={() => setBgEnabled(!bgEnabled)}
+                className={cn("wizard-color-toggle", bgEnabled && "wizard-color-toggle--on")}
+              >
+                <span className="wizard-color-toggle-thumb" />
+              </button>
             </div>
-          </div>
-        </TabsContent>
+            {bgEnabled && (
+              <ColorRow
+                label="Background Color"
+                value={design.background.color}
+                onChange={(v) => handleColorChange("background", "color", v)}
+              />
+            )}
+          </>
+        )}
 
-        {/* Frame Settings */}
-        <TabsContent value="frame" className="space-y-6">
-          <div className="space-y-4">
-            <Label>Frame Color</Label>
-            <div className="flex gap-3">
-              <Input 
-                type="color" 
-                value={design.frame.color}
-                className="w-12 h-12 p-1 cursor-pointer"
-                onChange={(e) => handleColorChange('frame', 'color', e.target.value)}
-              />
-              <Input 
-                type="text" 
-                value={design.frame.color}
-                className="flex-1"
-                onChange={(e) => handleColorChange('frame', 'color', e.target.value)}
-              />
+        {/* Image mode */}
+        {fillType === "image" && (
+          <>
+            <div className="wizard-image-upload">
+              <Upload className="w-6 h-6 text-gray-400" />
+              <p className="wizard-image-upload-text">Drop your file here</p>
+              <span className="wizard-image-upload-or">or</span>
+              <button className="wizard-image-upload-btn">Browse Files</button>
             </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+
+            <div className="wizard-color-row">
+              <span className="wizard-color-label">Background</span>
+              <button
+                onClick={() => setBgEnabled(!bgEnabled)}
+                className={cn("wizard-color-toggle", bgEnabled && "wizard-color-toggle--on")}
+              >
+                <span className="wizard-color-toggle-thumb" />
+              </button>
+            </div>
+            {bgEnabled && (
+              <ColorRow
+                label="Background Color"
+                value={design.background.color}
+                onChange={(v) => handleColorChange("background", "color", v)}
+              />
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Right: QR Preview */}
+      <div className="wizard-color-preview">
+        <div className="wizard-color-preview-card">
+          <QRPreview />
+          <p className="wizard-preview-hint">Double click to enlarge</p>
+        </div>
+        <button className="wizard-ai-btn">
+          <span>💡</span> Create With AI
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* Reusable color row: label + 4 swatches + RGB button */
+function ColorRow({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="wizard-color-row">
+      <span className="wizard-color-label">{label}</span>
+      <div className="wizard-color-swatches">
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="wizard-color-swatch wizard-color-swatch--main"
+        />
+        <div className="wizard-color-swatch wizard-color-swatch--preset" style={{ background: "#C4A0E8" }} onClick={() => onChange("#C4A0E8")} />
+        <div className="wizard-color-swatch wizard-color-swatch--preset" style={{ background: "#7DDBA3" }} onClick={() => onChange("#7DDBA3")} />
+        <div className="wizard-color-swatch wizard-color-swatch--preset" style={{ background: "#FFFFFF", border: "1px solid #E0E0E0" }} onClick={() => onChange("#FFFFFF")} />
+        <button className="wizard-color-rgb-btn">RGB</button>
+      </div>
     </div>
   );
 }

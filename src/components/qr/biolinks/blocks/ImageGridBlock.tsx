@@ -1,15 +1,15 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { BlockEditorProps } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useState } from 'react';
+import { BlockEditorProps } from '../types';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { X, Image, Plus, ExternalLink, Eye, Grid3x3, LayoutGrid } from 'lucide-react';
+import { X, Image as ImageIcon, Plus, ExternalLink, Eye, LayoutGrid } from 'lucide-react';
 import {
   Dialog,
+  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -108,14 +108,14 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
 
   // Handle image load
   const handleImageLoad = (imageId: string) => {
-    setImageLoadingStates(prev => ({ ...prev, [imageId]: false }));
-    setImageErrorStates(prev => ({ ...prev, [imageId]: false }));
+    setImageLoadingStates((prev: Record<string, boolean>) => ({ ...prev, [imageId]: false }));
+    setImageErrorStates((prev: Record<string, boolean>) => ({ ...prev, [imageId]: false }));
   };
 
   // Handle image error
   const handleImageError = (imageId: string) => {
-    setImageLoadingStates(prev => ({ ...prev, [imageId]: false }));
-    setImageErrorStates(prev => ({ ...prev, [imageId]: true }));
+    setImageLoadingStates((prev: Record<string, boolean>) => ({ ...prev, [imageId]: false }));
+    setImageErrorStates((prev: Record<string, boolean>) => ({ ...prev, [imageId]: true }));
   };
 
   // Open lightbox
@@ -125,10 +125,10 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
   };
 
   // Close lightbox
-  const closeLightbox = () => {
-    setLightboxOpen(false);
-    setSelectedImage(null);
-  };
+  // const closeLightbox = () => {
+  //   setLightboxOpen(false);
+  //   setSelectedImage(null);
+  // };
 
   // Render single image item
   const renderImage = (image: ImageItem, index: number) => {
@@ -142,7 +142,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
         {isLoading && (
           <div className="flex items-center justify-center bg-gray-100 rounded-lg aspect-square">
             <div className="animate-pulse">
-              <Image size={32} className="opacity-30" />
+              <ImageIcon size={32} className="opacity-30" />
             </div>
           </div>
         )}
@@ -155,10 +155,8 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
             title={image.title || undefined}
             onLoad={() => handleImageLoad(imageId)}
             onError={() => handleImageError(imageId)}
-            className={`w-full h-auto rounded-lg cursor-pointer transition-opacity duration-300 ${
-              isLoading ? 'opacity-0' : 'opacity-100'
-            }`}
-            style={{ aspectRatio: 'auto' }}
+            className={`w-full h-auto rounded-lg cursor-pointer transition-opacity duration-300 aspect-auto ${isLoading ? 'opacity-0' : 'opacity-100'
+              }`}
             onClick={() => openLightbox(image)}
           />
         )}
@@ -166,14 +164,14 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
         {/* Error State */}
         {hasError && (
           <div className="flex items-center justify-center bg-red-50 border border-red-200 rounded-lg aspect-square">
-            <Image size={24} className="text-red-500 opacity-50" />
+            <ImageIcon size={24} className="text-red-500 opacity-50" />
           </div>
         )}
 
         {/* No Image State */}
         {!image.url && (
           <div className="flex items-center justify-center bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg aspect-square">
-            <Image size={24} className="text-gray-400" />
+            <ImageIcon size={24} className="text-gray-400" />
           </div>
         )}
 
@@ -251,41 +249,42 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
         </div>
 
         {/* Lightbox Modal */}
-        <Dialog open={lightboxOpen} onClose={closeLightbox} className="max-w-4xl max-h-[90vh] overflow-auto">
-          <DialogHeader>
-            <DialogTitle>{selectedImage?.title || &apos;Image Preview&apos;}</DialogTitle>
-            <DialogDescription>
-              {selectedImage?.caption || &apos;Click outside to close&apos;}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mt-4">
-            {selectedImage?.url && (
-              <img
-                src={selectedImage.url}
-                alt={selectedImage.alt || ''}
-                className="w-full h-auto rounded-lg"
-                style={{ maxHeight: '70vh', objectFit: 'contain' }}
-              />
-            )}
-            {selectedImage?.caption && (
-              <p className="text-center text-sm text-gray-600 mt-4">
-                {selectedImage.caption}
-              </p>
-            )}
-            {selectedImage?.link && (
-              <div className="text-center mt-2">
-                <a
-                  href={selectedImage.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
-                >
-                  <ExternalLink size={14} />
-                  Open Link
-                </a>
-              </div>
-            )}
-          </div>
+        <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+            <DialogHeader>
+              <DialogTitle>{selectedImage?.title || 'Image Preview'}</DialogTitle>
+              <DialogDescription>
+                {selectedImage?.caption || 'Click outside to close'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-4">
+              {selectedImage?.url && (
+                <img
+                  src={selectedImage.url}
+                  alt={selectedImage.alt || ''}
+                  className="w-full h-auto rounded-lg max-h-[70vh] object-contain"
+                />
+              )}
+              {selectedImage?.caption && (
+                <p className="text-center text-sm text-gray-600 mt-4">
+                  {selectedImage.caption}
+                </p>
+              )}
+              {selectedImage?.link && (
+                <div className="text-center mt-2">
+                  <a
+                    href={selectedImage.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
+                  >
+                    <ExternalLink size={14} />
+                    Open Link
+                  </a>
+                </div>
+              )}
+            </div>
+          </DialogContent>
         </Dialog>
       </>
     );
@@ -329,7 +328,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
           <Input
             id="grid-gap"
             value={gap}
-            onChange={(e) => handleContentChange('gap', e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleContentChange('gap', e.target.value)}
             placeholder="1rem"
           />
           <p className="text-xs text-muted-foreground mt-1">
@@ -347,7 +346,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
             <Input
               id="design-padding"
               value={design.padding || ''}
-              onChange={(e) => onUpdate({
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate({
                 design: { ...design, padding: e.target.value }
               })}
               placeholder="1rem"
@@ -358,7 +357,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
             <Input
               id="design-margin"
               value={design.margin || ''}
-              onChange={(e) => onUpdate({
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate({
                 design: { ...design, margin: e.target.value }
               })}
               placeholder="0.5rem 0"
@@ -372,7 +371,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
               id="design-bg-color"
               type="color"
               value={design.backgroundColor || '#ffffff'}
-              onChange={(e) => onUpdate({
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate({
                 design: { ...design, backgroundColor: e.target.value }
               })}
             />
@@ -382,7 +381,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
             <Input
               id="design-border-radius"
               value={design.borderRadius || ''}
-              onChange={(e) => onUpdate({
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate({
                 design: { ...design, borderRadius: e.target.value }
               })}
               placeholder="8px"
@@ -441,7 +440,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
                     id={`image-url-${index}`}
                     type="url"
                     value={image.url || ''}
-                    onChange={(e) => handleImageItemChange(index, 'url', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleImageItemChange(index, 'url', e.target.value)}
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
@@ -451,7 +450,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
                   <Input
                     id={`image-alt-${index}`}
                     value={image.alt || ''}
-                    onChange={(e) => handleImageItemChange(index, 'alt', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleImageItemChange(index, 'alt', e.target.value)}
                     placeholder="Description for accessibility"
                   />
                 </div>
@@ -461,7 +460,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
                   <Input
                     id={`image-title-${index}`}
                     value={image.title || ''}
-                    onChange={(e) => handleImageItemChange(index, 'title', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleImageItemChange(index, 'title', e.target.value)}
                     placeholder="Text shown on hover"
                   />
                 </div>
@@ -471,7 +470,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
                   <Input
                     id={`image-caption-${index}`}
                     value={image.caption || ''}
-                    onChange={(e) => handleImageItemChange(index, 'caption', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleImageItemChange(index, 'caption', e.target.value)}
                     placeholder="Text displayed below image"
                   />
                 </div>
@@ -482,7 +481,7 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
                     id={`image-link-${index}`}
                     type="url"
                     value={image.link || ''}
-                    onChange={(e) => handleImageItemChange(index, 'link', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleImageItemChange(index, 'link', e.target.value)}
                     placeholder="https://example.com (makes image clickable)"
                   />
                 </div>
@@ -492,9 +491,9 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
 
           {images.length === 0 && (
             <div className="text-center py-8 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
-              <Image size={32} className="mx-auto mb-2 opacity-50" />
+              <ImageIcon size={32} className="mx-auto mb-2 opacity-50" />
               <p className="text-sm">No images yet</p>
-              <p className="text-xs mt-1">Click "Add Image" to get started</p>
+              <p className="text-xs mt-1">Click &quot;Add Image&quot; to get started</p>
             </div>
           )}
         </div>
@@ -506,40 +505,42 @@ export default function ImageGridBlock({ block, onUpdate, onDelete, isEditing = 
       </div>
 
       {/* Lightbox Modal */}
-      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen} className="max-w-4xl max-h-[90vh] overflow-auto">
-        <DialogHeader>
-                      <DialogTitle>{selectedImage?.title || &apos;Image Preview&apos;}</DialogTitle>          <DialogDescription>
-            {selectedImage?.caption || &apos;Click outside to close&apos;}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="mt-4">
-          {selectedImage?.url && (
-            <img
-              src={selectedImage.url}
-              alt={selectedImage.alt || ''}
-              className="w-full h-auto rounded-lg"
-              style={{ maxHeight: '70vh', objectFit: 'contain' }}
-            />
-          )}
-          {selectedImage?.caption && (
-            <p className="text-center text-sm text-gray-600 mt-4">
-              {selectedImage.caption}
-            </p>
-          )}
-          {selectedImage?.link && (
-            <div className="text-center mt-2">
-              <a
-                href={selectedImage.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
-              >
-                <ExternalLink size={14} />
-                Open Link
-              </a>
-            </div>
-          )}
-        </div>
+      <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+          <DialogHeader>
+            <DialogTitle>{selectedImage?.title || 'Image Preview'}</DialogTitle>
+            <DialogDescription>
+              {selectedImage?.caption || 'Click outside to close'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4">
+            {selectedImage?.url && (
+              <img
+                src={selectedImage.url}
+                alt={selectedImage.alt || ''}
+                className="w-full h-auto rounded-lg max-h-[70vh] object-contain"
+              />
+            )}
+            {selectedImage?.caption && (
+              <p className="text-center text-sm text-gray-600 mt-4">
+                {selectedImage.caption}
+              </p>
+            )}
+            {selectedImage?.link && (
+              <div className="text-center mt-2">
+                <a
+                  href={selectedImage.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 text-sm inline-flex items-center gap-1"
+                >
+                  <ExternalLink size={14} />
+                  Open Link
+                </a>
+              </div>
+            )}
+          </div>
+        </DialogContent>
       </Dialog>
     </div>
   );

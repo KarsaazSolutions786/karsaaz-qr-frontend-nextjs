@@ -13,7 +13,7 @@ import {
   Star,
   Trash2
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface PaymentMethod {

@@ -4,6 +4,8 @@ import { useQRWizard } from "@/store/use-qr-wizard";
 import StepIndicator from "@/components/qr/wizard/StepIndicator";
 import WizardNavigation from "@/components/qr/wizard/WizardNavigation";
 import { useEffect, useState } from "react";
+import { ChevronLeft } from "lucide-react";
+import { getQRTypeById } from "@/data/qr-types";
 
 // Steps
 import TypeSelection from "@/components/qr/wizard/steps/TypeSelection";
@@ -12,9 +14,6 @@ import ColorSelection from "@/components/qr/wizard/steps/ColorSelection";
 import LookAndFeel from "@/components/qr/wizard/steps/LookAndFeel";
 import StickerSelection from "@/components/qr/wizard/steps/StickerSelection";
 import DownloadPreview from "@/components/qr/wizard/steps/DownloadPreview";
-
-// Preview
-import QRPreview from "@/components/qr/QRPreview"; 
 
 const StepComponents = [
   TypeSelection,
@@ -26,7 +25,7 @@ const StepComponents = [
 ];
 
 export default function NewQRCodePage() {
-  const { currentStep } = useQRWizard();
+  const { currentStep, qrType, setStep } = useQRWizard();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -36,11 +35,14 @@ export default function NewQRCodePage() {
   if (!mounted) return null;
 
   const CurrentStepComponent = StepComponents[currentStep] || StepComponents[0];
-  const isFinalStep = currentStep === StepComponents.length - 1;
-
   const isTypeStep = currentStep === 0;
+  const isDataStep = currentStep === 1;
+  const showWizardChrome = currentStep >= 2;
 
-  /* ── Step 0: Type selection — clean full-page layout (matches Figma) ── */
+  const typeInfo = qrType ? getQRTypeById(qrType) : null;
+  const typeName = typeInfo?.name || qrType?.toUpperCase() || "URL/LINK";
+
+  /* ── Step 0: Type selection — clean full-page layout ── */
   if (isTypeStep) {
     return (
       <div className="flex-1 p-4 md:p-8">
@@ -49,41 +51,36 @@ export default function NewQRCodePage() {
     );
   }
 
-  /* ── Steps 1+: Wizard layout with indicator, preview, and navigation ── */
+  /* ── Step 1: Data input — own layout (has back/next built-in) ── */
+  if (isDataStep) {
+    return (
+      <div className="wizard-page">
+        <CurrentStepComponent />
+      </div>
+    );
+  }
+
+  /* ── Steps 2-5: Wizard with step indicator, content, and navigation ── */
   return (
-    <div className="flex flex-col h-full min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-black">
-      <StepIndicator />
+    <div className="wizard-page">
+      {/* Title bar: back arrow + type name */}
+      <div className="wizard-title-bar">
+        <button onClick={() => setStep(currentStep - 1)} className="wizard-data-back">
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <h1 className="wizard-data-title">{typeName}</h1>
+      </div>
 
-      <main className="flex-1 container mx-auto max-w-7xl p-4 md:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-full">
+      {/* Step indicator (Select color → Look & Feel → Sticker → Download) */}
+      {showWizardChrome && <StepIndicator />}
 
-          {/* Left: Configuration Steps */}
-          <div className={`lg:col-span-${isFinalStep ? '12' : '8'} flex flex-col`}>
-            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 min-h-[500px] h-full">
-              <CurrentStepComponent />
-            </div>
-          </div>
+      {/* Main content card */}
+      <div className="wizard-content-card">
+        <CurrentStepComponent />
+      </div>
 
-          {/* Right: Live Preview (Hidden on final step as it has its own) */}
-          {!isFinalStep && (
-            <div className="lg:col-span-4 hidden lg:block">
-              <div className="sticky top-8 space-y-4">
-                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6 flex items-center justify-center">
-                  <div className="scale-75 origin-top">
-                    {/* Integrated existing QRPreview component */}
-                    <QRPreview />
-                  </div>
-                </div>
-                <p className="text-center text-sm text-muted-foreground">
-                  Live Preview
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </main>
-
-      <WizardNavigation />
+      {/* Bottom navigation */}
+      {showWizardChrome && <WizardNavigation />}
     </div>
   );
 }

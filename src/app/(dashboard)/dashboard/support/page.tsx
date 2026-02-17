@@ -1,6 +1,8 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
@@ -33,26 +35,26 @@ interface Ticket {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  Open:        "bg-orange-100 text-orange-700",
+  Open: "bg-orange-100 text-orange-700",
   "In Progress": "bg-blue-100 text-blue-700",
-  Resolved:    "bg-green-100 text-green-700",
+  Resolved: "bg-green-100 text-green-700",
 };
 
 const PRIORITY_STYLES: Record<string, string> = {
   Urgent: "bg-red-100 text-red-700",
-  High:   "bg-red-50 text-red-600",
+  High: "bg-red-50 text-red-600",
   Medium: "bg-yellow-100 text-yellow-700",
-  Low:    "bg-gray-100 text-gray-600",
+  Low: "bg-gray-100 text-gray-600",
 };
 
 export default function SupportPage() {
   const { user } = useAuth();
-  const [tickets, setTickets]   = useState<Ticket[]>([]); // Use Ticket interface
-  const [loading, setLoading]   = useState(true);
-  const [search, setSearch]     = useState("");
+  const [tickets, setTickets] = useState<Ticket[]>([]); // Use Ticket interface
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   const [newDialog, setNewDialog] = useState(false);
-  const [form, setForm]           = useState({ subject: "", priority: "Medium", department: "General", message: "" });
+  const [form, setForm] = useState({ subject: "", priority: "Medium", department: "General", message: "" });
   const [submitting, setSubmitting] = useState(false);
 
   const fetchTickets = useCallback(async () => {
@@ -95,9 +97,9 @@ export default function SupportPage() {
   );
 
   const stats = {
-    open:       tickets.filter(t => t.status === "Open").length,
+    open: tickets.filter(t => t.status === "Open").length,
     inProgress: tickets.filter(t => t.status === "In Progress").length,
-    resolved:   tickets.filter(t => t.status === "Resolved").length,
+    resolved: tickets.filter(t => t.status === "Resolved").length,
   };
 
   return (
@@ -156,7 +158,7 @@ export default function SupportPage() {
               placeholder="Search tickets..."
               className="pl-8"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
             />
           </div>
         </CardHeader>
@@ -203,52 +205,56 @@ export default function SupportPage() {
       </Card>
 
       {/* New Ticket Dialog */}
-      <Dialog open={newDialog} onClose={() => setNewDialog(false)}>
-        <DialogHeader>
-          <DialogTitle>Create Support Ticket</DialogTitle>
-          <DialogDescription>Describe your issue and our team will get back to you shortly.</DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3 py-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label>Category</Label>
-              <select
-                className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-                value={form.department}
-                onChange={e => setForm(f => ({ ...f, department: e.target.value }))}
-              >
-                {CATEGORY_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
+      <Dialog open={newDialog} onOpenChange={setNewDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Support Ticket</DialogTitle>
+            <DialogDescription>Describe your issue and our team will get back to you shortly.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label>Category</Label>
+                <select
+                  aria-label="Select Ticket Category"
+                  className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                  value={form.department}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm(f => ({ ...f, department: e.target.value }))}
+                >
+                  {CATEGORY_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div className="space-y-1">
+                <Label>Priority</Label>
+                <select
+                  aria-label="Select Ticket Priority"
+                  className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                  value={form.priority}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setForm(f => ({ ...f, priority: e.target.value }))}
+                >
+                  {PRIORITY_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
             </div>
             <div className="space-y-1">
-              <Label>Priority</Label>
-              <select
-                className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-                value={form.priority}
-                onChange={e => setForm(f => ({ ...f, priority: e.target.value }))}
-              >
-                {PRIORITY_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
-              </select>
+              <Label htmlFor="ticket-message">Describe Your Issue</Label>
+              <textarea
+                id="ticket-message"
+                className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+                placeholder="Please describe your issue in detail..."
+                value={form.message}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setForm(f => ({ ...f, message: e.target.value }))}
+              />
             </div>
           </div>
-          <div className="space-y-1">
-            <Label htmlFor="ticket-message">Describe Your Issue</Label>
-            <textarea
-              id="ticket-message"
-              className="w-full min-h-[100px] rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-ring"
-              placeholder="Please describe your issue in detail..."
-              value={form.message}
-              onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setNewDialog(false)}>Cancel</Button>
-          <Button onClick={handleCreateTicket} disabled={submitting || !form.message.trim()}>
-            {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Submit Ticket
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNewDialog(false)}>Cancel</Button>
+            <Button onClick={handleCreateTicket} disabled={submitting || !form.message.trim()}>
+              {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Submit Ticket
+            </Button>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );

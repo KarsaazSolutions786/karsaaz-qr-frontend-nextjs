@@ -22,11 +22,11 @@ export default function TextBlock({ block, onUpdate, onDelete, isEditing = false
   };
 
   // Handle input changes
-  const handleContentChange = (field: string, value: string | boolean) => {
+  const updateContent = (updates: Partial<typeof textContent>) => {
     onUpdate({
       content: {
         ...textContent,
-        [field]: value
+        ...updates
       }
     });
   };
@@ -34,9 +34,9 @@ export default function TextBlock({ block, onUpdate, onDelete, isEditing = false
   // Render text content (public view)
   if (!isEditing) {
     return (
-      <div 
+      <div
         className="block-text"
-        style={{ 
+        style={{
           backgroundColor: design.backgroundColor,
           color: design.textColor,
           padding: design.padding,
@@ -45,7 +45,7 @@ export default function TextBlock({ block, onUpdate, onDelete, isEditing = false
           textAlign: textContent.alignment || 'left'
         }}
       >
-        <div style={{ 
+        <div style={{
           whiteSpace: 'pre-wrap',
           lineHeight: '1.5',
           fontSize: '1rem'
@@ -71,7 +71,7 @@ export default function TextBlock({ block, onUpdate, onDelete, isEditing = false
           <Label>Content</Label>
           <Textarea
             value={textContent.content || ''}
-            onChange={(e) => handleContentChange('content', e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateContent({ content: e.target.value })}
             placeholder="Enter your text..."
             rows={6}
           />
@@ -81,7 +81,7 @@ export default function TextBlock({ block, onUpdate, onDelete, isEditing = false
           <Label>Alignment</Label>
           <Select
             value={textContent.alignment || 'left'}
-            onValueChange={(value) => handleContentChange('alignment', value)}
+            onValueChange={(value) => updateContent({ alignment: value as 'left' | 'center' | 'right' })}
           >
             <SelectTrigger>
               <SelectValue />
@@ -97,7 +97,7 @@ export default function TextBlock({ block, onUpdate, onDelete, isEditing = false
         <div className="flex items-center space-x-2">
           <Switch
             checked={textContent.enableMarkdown || false}
-            onCheckedChange={(checked) => handleContentChange('enableMarkdown', checked)}
+            onCheckedChange={(checked) => updateContent({ enableMarkdown: checked })}
           />
           <Label>Enable Markdown</Label>
         </div>

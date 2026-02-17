@@ -186,7 +186,7 @@ function CheckoutContent() {
               <Input
                 placeholder="Enter promo code"
                 value={promoCode}
-                onChange={(e) => setPromoCode(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPromoCode(e.target.value)}
               />
               <Button variant="outline" onClick={handleApplyPromo}>
                 Apply

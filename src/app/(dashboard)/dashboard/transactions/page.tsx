@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useApi } from "@/hooks/use-api";
 import { cn } from "@/lib/utils";
@@ -171,7 +171,8 @@ export default function AdminTransactionsPage() {
       </Card>
 
       {/* Approve Dialog */}
-      <Dialog open={actionDialog === "approve"} onClose={() => setActionDialog(null)}>
+      <Dialog open={actionDialog === "approve"} onOpenChange={(open) => !open && setActionDialog(null)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Approve Transaction</DialogTitle>
           <DialogDescription>
@@ -186,10 +187,12 @@ export default function AdminTransactionsPage() {
             Approve
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
 
       {/* Reject Dialog */}
-      <Dialog open={actionDialog === "reject"} onClose={() => setActionDialog(null)}>
+      <Dialog open={actionDialog === "reject"} onOpenChange={(open) => !open && setActionDialog(null)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Reject Transaction</DialogTitle>
           <DialogDescription>Provide a reason for rejecting transaction #{selected?.id}.</DialogDescription>
@@ -205,10 +208,12 @@ export default function AdminTransactionsPage() {
             Reject
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
 
       {/* View Dialog */}
-      <Dialog open={actionDialog === "view"} onClose={() => setActionDialog(null)}>
+      <Dialog open={actionDialog === "view"} onOpenChange={(open) => !open && setActionDialog(null)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Transaction #{selected?.id}</DialogTitle>
         </DialogHeader>
@@ -239,6 +244,7 @@ export default function AdminTransactionsPage() {
         <DialogFooter>
           <Button variant="outline" onClick={() => setActionDialog(null)}>Close</Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );

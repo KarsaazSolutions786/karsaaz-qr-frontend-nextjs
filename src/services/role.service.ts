@@ -24,12 +24,12 @@ export const roleService = {
     },
 
     /** POST /api/roles */
-    create: async (data: Partial<Role>) => {
+    create: async (data: Partial<Role> | { name: string; home_page?: string; permissions?: (string | number)[] }) => {
         return apiClient.post("/roles", data);
     },
 
     /** PUT /api/roles/{id} */
-    update: async (id: string | number, data: Partial<Role>) => {
+    update: async (id: string | number, data: Partial<Role> | { name?: string; home_page?: string; permissions?: (string | number)[] }) => {
         return apiClient.put(`/roles/${id}`, data);
     },
 

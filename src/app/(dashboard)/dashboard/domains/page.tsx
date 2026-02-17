@@ -3,7 +3,7 @@
 import { DomainConnectivityStatus } from "@/components/admin/DomainConnectivityStatus";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -171,7 +171,8 @@ export default function DomainsPage() {
                 </Table>
             </Card>
 
-            <Dialog open={isAddOpen} onClose={() => setIsAddOpen(false)} className="rounded-[2.5rem] sm:max-w-[425px]">
+            <Dialog open={isAddOpen} onOpenChange={(open) => !open && setIsAddOpen(false)}>
+                <DialogContent className="rounded-[2.5rem] sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-black uppercase tracking-tight">Deploy Custom Domain</DialogTitle>
                     <DialogDescription className="text-[10px] font-bold uppercase tracking-widest">Register your domain for white-label delivery</DialogDescription>
@@ -198,6 +199,7 @@ export default function DomainsPage() {
                         {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Deploy Pipeline"}
                     </Button>
                 </div>
+                </DialogContent>
             </Dialog>
         </div>
     );

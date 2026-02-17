@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import Cookies from 'js-cookie';
 
-interface User {
+export interface User {
   id: string | number;
   name: string;
   email: string;
@@ -53,10 +53,10 @@ export const useAuthStore = create<AuthState>()(
 
       setActingAs: (newUser, newToken) => {
         const current = { user: get().user, token: get().token };
-        set({ 
-          mainUser: current, 
-          user: newUser, 
-          token: newToken 
+        set({
+          mainUser: current,
+          user: newUser,
+          token: newToken
         });
         Cookies.set('auth_token', newToken, { expires: 1 });
       },
@@ -64,10 +64,10 @@ export const useAuthStore = create<AuthState>()(
       removeActingAs: () => {
         const original = get().mainUser;
         if (original) {
-          set({ 
-            user: original.user, 
-            token: original.token, 
-            mainUser: null 
+          set({
+            user: original.user,
+            token: original.token,
+            mainUser: null
           });
           if (original.token) {
             Cookies.set('auth_token', original.token, { expires: 7 });

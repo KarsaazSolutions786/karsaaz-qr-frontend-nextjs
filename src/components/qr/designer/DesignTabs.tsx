@@ -31,6 +31,7 @@ import { FillTypeFields } from "./FillTypeFields";
 import { LogoFields } from "./LogoFields";
 import { ModuleFields } from "./ModuleFields";
 import { OutlinedShapesFields } from "./OutlinedShapesFields";
+import { PatternSelector } from "../PatternSelector";
 
 export function DesignTabs() {
   const { register, watch, setValue } = useFormContext();
@@ -77,6 +78,18 @@ export function DesignTabs() {
             <h4 className="text-xs font-black uppercase tracking-widest text-blue-900 dark:text-blue-200">Structural Modules</h4>
           </div>
           <ModuleFields />
+          
+          {/* Pattern Preview Enhancement */}
+          <div className="pt-8 border-t-2 border-dashed border-gray-100 dark:border-zinc-900 space-y-4">
+            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2 px-1 ml-0.5 border-l-2 border-blue-600/30">
+              Quick Pattern Reference
+            </div>
+            <PatternSelector
+              value={watch("design.module") || "square"}
+              onChange={(pattern) => setValue("design.module", pattern)}
+              label="Common Module Styles"
+            />
+          </div>
         </section>
 
         {/* Outlined Shapes Section */}

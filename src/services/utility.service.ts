@@ -47,10 +47,10 @@ export const utilityService = {
 
   /** POST /api/translations/import — Import translations from a file */
   importTranslations: async (file: File, language: string) => {
-    return apiClient.upload("/translations/import", {
-      file,
-      language: language as any,
-    });
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("language", language);
+    return apiClient.upload("/translations/import", formData);
   },
 
   // ─── Calling Codes ─────────────────────────────────────

@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
     Dialog,
+    DialogContent,
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog";
 import { Eye, EyeOff, GripVertical, Plus, Settings, Trash2 } from "lucide-react";
-import React from "react";
+import React, { useCallback } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { BlockEditor } from "./BlockEditor";
+import BlockEditor from "./BlockEditor";
 import { BiolinkBlock, BiolinkBlockType, biolinkBlockDefinitions } from "./types";
 
 export function BiolinkDesigner() {
@@ -46,7 +47,8 @@ export function BiolinkDesigner() {
                     Add Block
                 </Button>
 
-                <Dialog open={isPickerOpen} onClose={() => setIsPickerOpen(false)}>
+                <Dialog open={isPickerOpen} onOpenChange={(open) => !open && setIsPickerOpen(false)}>
+                    <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Add a Block</DialogTitle>
                     </DialogHeader>
@@ -65,6 +67,7 @@ export function BiolinkDesigner() {
                             </button>
                         ))}
                     </div>
+                    </DialogContent>
                 </Dialog>
             </div>
 

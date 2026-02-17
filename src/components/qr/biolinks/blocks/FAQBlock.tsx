@@ -7,23 +7,23 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { 
-  Accordion, 
-  AccordionItem, 
-  AccordionTrigger, 
-  AccordionContent 
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent
 } from '@/components/ui/accordion';
-import { 
-  Search, 
-  Plus, 
-  Trash2, 
-  GripVertical, 
-  ChevronUp, 
+import {
+  Search,
+  Plus,
+  Trash2,
+  GripVertical,
+  ChevronUp,
   ChevronDown,
   HelpCircle,
   X
 } from 'lucide-react';
-import { cn as _cn } from '@/lib/utils';
+// import { cn as _cn } from '@/lib/utils';
 
 /**
  * FAQ Block
@@ -67,10 +67,10 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
   // Filter items based on search query
   const filteredItems = useMemo(() => {
     if (!searchQuery.trim()) return faqContent.items || [];
-    
+
     const query = searchQuery.toLowerCase();
-    return (faqContent.items || []).filter(item => 
-      item.question.toLowerCase().includes(query) || 
+    return (faqContent.items || []).filter(item =>
+      item.question.toLowerCase().includes(query) ||
       item.answer.toLowerCase().includes(query)
     );
   }, [faqContent.items, searchQuery]);
@@ -84,7 +84,7 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
 
   // Handle item content change
   const handleItemChange = (id: string, field: 'question' | 'answer', value: string) => {
-    const updatedItems = (faqContent.items || []).map(item => 
+    const updatedItems = (faqContent.items || []).map(item =>
       item.id === id ? { ...item, [field]: value } : item
     );
     onUpdate({
@@ -127,15 +127,15 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
   const moveItem = (id: string, direction: 'up' | 'down') => {
     const items = [...(faqContent.items || [])];
     const index = items.findIndex(item => item.id === id);
-    
+
     if (index === -1) return;
-    
+
     const newIndex = direction === 'up' ? index - 1 : index + 1;
-    
+
     if (newIndex < 0 || newIndex >= items.length) return;
-    
+
     [items[index], items[newIndex]] = [items[newIndex], items[index]];
-    
+
     onUpdate({
       content: {
         ...faqContent,
@@ -163,14 +163,14 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
     if (isEditing || !faqContent.items?.length) return null;
 
     const structuredData = {
-      &quot;@context&quot;: &quot;https://schema.org&quot;,
-      &quot;@type&quot;: &quot;FAQPage&quot;,
-      &quot;mainEntity&quot;: faqContent.items.map(item => ({
-        &quot;@type&quot;: &quot;Question&quot;,
-        &quot;name&quot;: item.question,
-        &quot;acceptedAnswer&quot;: {
-          &quot;@type&quot;: &quot;Answer&quot;,
-          &quot;text&quot;: item.answer
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqContent.items.map(item => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer
         }
       }))
     };
@@ -187,13 +187,13 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
     }
 
     const itemsToShow = searchQuery ? filteredItems : faqContent.items;
-    
+
     return (
       <>
         {renderStructuredData()}
-        <div 
+        <div
           className="block-faq"
-          style={{ 
+          style={{
             backgroundColor: design.backgroundColor,
             color: design.textColor,
             padding: design.padding,
@@ -209,7 +209,7 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
                 type="text"
                 placeholder={faqContent.searchPlaceholder || "Search FAQs..."}
                 value={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleSearchChange(e.target.value)}
                 className="pl-9"
               />
             </div>
@@ -217,52 +217,90 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
 
           {/* FAQ Accordion */}
           {itemsToShow.length > 0 ? (
-            <Accordion 
-              type={faqContent.allowMultipleOpen ? "multiple" : "single"}
-              value={openItems}
-              onValueChange={handleAccordionChange}
-              className="w-full space-y-3"
-            >
-              {itemsToShow.map((item) => (
-                <AccordionItem 
-                  key={item.id} 
-                  value={item.id}
-                  className="border rounded-lg overflow-hidden transition-all hover:shadow-sm"
-                  style={{
-                    borderColor: 'rgba(0, 0, 0, 0.1)',
-                    backgroundColor: design.backgroundColor === 'transparent' ? '#ffffff' : design.backgroundColor
-                  }}
-                >
-                  <AccordionTrigger 
-                    className="px-4 hover:no-underline"
-                    style={{ color: design.textColor }}
+            faqContent.allowMultipleOpen ? (
+              <Accordion
+                type="multiple"
+                value={openItems}
+                onValueChange={handleAccordionChange}
+                className="w-full space-y-3"
+              >
+                {itemsToShow.map((item) => (
+                  <AccordionItem
+                    key={item.id}
+                    value={item.id}
+                    className="border rounded-lg overflow-hidden transition-all hover:shadow-sm border-black/10"
+                    style={{
+                      backgroundColor: design.backgroundColor === 'transparent' ? '#ffffff' : design.backgroundColor
+                    }}
                   >
-                    <span className="text-left font-medium pr-4">{item.question}</span>
-                  </AccordionTrigger>
-                  <AccordionContent 
-                    className="px-4"
-                    style={{ color: design.textColor }}
+                    <AccordionTrigger
+                      className="px-4 hover:no-underline"
+                      style={{ color: design.textColor }}
+                    >
+                      <span className="text-left font-medium pr-4">{item.question}</span>
+                    </AccordionTrigger>
+                    <AccordionContent
+                      className="px-4"
+                      style={{ color: design.textColor }}
+                    >
+                      <div className="prose prose-sm max-w-none">
+                        <p className="whitespace-pre-wrap leading-relaxed">{item.answer}</p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            ) : (
+              <Accordion
+                type="single"
+                collapsible
+                value={openItems[0] || ''}
+                onValueChange={(val) => handleAccordionChange(val ? [val] : [])}
+                className="w-full space-y-3"
+              >
+                {itemsToShow.map((item) => (
+                  <AccordionItem
+                    key={item.id}
+                    value={item.id}
+                    className="border rounded-lg overflow-hidden transition-all hover:shadow-sm border-black/10"
+                    style={{
+                      backgroundColor: design.backgroundColor === 'transparent' ? '#ffffff' : design.backgroundColor
+                    }}
                   >
-                    <div className="prose prose-sm max-w-none">
-                      <p className="whitespace-pre-wrap leading-relaxed">{item.answer}</p>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+                    <AccordionTrigger
+                      className="px-4 hover:no-underline"
+                      style={{ color: design.textColor }}
+                    >
+                      <span className="text-left font-medium pr-4">{item.question}</span>
+                    </AccordionTrigger>
+                    <AccordionContent
+                      className="px-4"
+                      style={{ color: design.textColor }}
+                    >
+                      <div className="prose prose-sm max-w-none">
+                        <p className="whitespace-pre-wrap leading-relaxed">{item.answer}</p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <p>No FAQs found matching your search.</p>
             </div>
-          )}
+          )
+          }
 
           {/* Results Count */}
-          {searchQuery && (
-            <div className="text-sm text-muted-foreground mt-4">
-              Showing {itemsToShow.length} of {faqContent.items.length} FAQs
-            </div>
-          )}
-        </div>
+          {
+            searchQuery && (
+              <div className="text-sm text-muted-foreground mt-4">
+                Showing {itemsToShow.length} of {faqContent.items.length} FAQs
+              </div>
+            )
+          }
+        </div >
       </>
     );
   }
@@ -296,7 +334,7 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
           <Label>Search Placeholder Text</Label>
           <Input
             value={faqContent.searchPlaceholder || ''}
-            onChange={(e) => onUpdate({
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate({
               content: {
                 ...faqContent,
                 searchPlaceholder: e.target.value
@@ -319,15 +357,14 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
 
         {(faqContent.items || []).length === 0 ? (
           <div className="text-center py-8 border-2 border-dashed rounded-lg text-muted-foreground">
-            <p>No FAQ items yet. Click "Add Item" to get started.</p>
+            <p>No FAQ items yet. Click &quot;Add Item&quot; to get started.</p>
           </div>
         ) : (
           <div className="space-y-3">
             {faqContent.items.map((item, index) => (
-              <div 
-                key={item.id} 
-                className="border rounded-lg p-4 space-y-3"
-                style={{ borderColor: 'rgba(0, 0, 0, 0.1)' }}
+              <div
+                key={item.id}
+                className="border rounded-lg p-4 space-y-3 border-black/10"
               >
                 {/* Item Header with Controls */}
                 <div className="flex items-center justify-between">
@@ -369,7 +406,7 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
                   <Label className="text-sm">Question</Label>
                   <Input
                     value={item.question}
-                    onChange={(e) => handleItemChange(item.id, 'question', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleItemChange(item.id, 'question', e.target.value)}
                     placeholder="Enter your question..."
                   />
                 </div>
@@ -379,7 +416,7 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
                   <Label className="text-sm">Answer</Label>
                   <Textarea
                     value={item.answer}
-                    onChange={(e) => handleItemChange(item.id, 'answer', e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleItemChange(item.id, 'answer', e.target.value)}
                     placeholder="Enter the answer..."
                     rows={4}
                   />
@@ -398,7 +435,7 @@ export default function FAQBlock({ block, onUpdate, onDelete, isEditing = false 
         <div className="text-sm text-muted-foreground p-3 bg-muted rounded-lg">
           <p className="flex items-center gap-2">
             <HelpCircle size={14} />
-            Preview: {faqContent.items.length} item{faqContent.items.length !== 1 ? 's' : ''} • 
+            Preview: {faqContent.items.length} item{faqContent.items.length !== 1 ? 's' : ''} •
             {faqContent.allowMultipleOpen ? ' Multiple open' : ' Single open'}
           </p>
         </div>

@@ -12,7 +12,7 @@ import { useApi } from "@/hooks/use-api";
 import { supportService, Ticket } from "@/services/support.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import { cn } from "@/lib/utils";
-import { Headset, Loader2, MessageSquare, Plus, RefreshCw, Ticket as TicketIcon } from "lucide-react";
+import { Headset, Loader2, MessageSquare, Plus, RefreshCw, Ticket as TicketIcon, CheckCircle2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SupportTicketConversation } from "@/components/support/SupportTicketConversation";
@@ -21,7 +21,7 @@ export default function SupportTicketsPage() {
   const { user } = useAuthStore();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const { call, isLoading } = useApi();
-  
+
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [newTicket, setNewTicket] = useState({
     subject: "",
@@ -104,17 +104,17 @@ export default function SupportTicketsPage() {
               <form onSubmit={handleCreate} className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-black uppercase tracking-widest">Issue Subject</Label>
-                  <Input 
-                    placeholder="Briefly describe the problem" 
+                  <Input
+                    placeholder="Briefly describe the problem"
                     value={newTicket.subject}
-                    onChange={e => setNewTicket({...newTicket, subject: e.target.value})}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTicket({ ...newTicket, subject: e.target.value })}
                     required
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-[10px] font-black uppercase tracking-widest">Category</Label>
-                    <Select value={newTicket.category} onValueChange={v => setNewTicket({...newTicket, category: v})}>
+                    <Select value={newTicket.category} onValueChange={v => setNewTicket({ ...newTicket, category: v })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="General">General Inquiry</SelectItem>
@@ -125,7 +125,7 @@ export default function SupportTicketsPage() {
                   </div>
                   <div className="space-y-2">
                     <Label className="text-[10px] font-black uppercase tracking-widest">Priority</Label>
-                    <Select value={newTicket.priority} onValueChange={v => setNewTicket({...newTicket, priority: v})}>
+                    <Select value={newTicket.priority} onValueChange={v => setNewTicket({ ...newTicket, priority: v })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Low">Low</SelectItem>
@@ -137,11 +137,11 @@ export default function SupportTicketsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px] font-black uppercase tracking-widest">Message Details</Label>
-                  <Textarea 
-                    placeholder="Provide full details about your request..." 
+                  <Textarea
+                    placeholder="Provide full details about your request..."
                     className="min-h-[150px] rounded-2xl"
                     value={newTicket.message}
-                    onChange={e => setNewTicket({...newTicket, message: e.target.value})}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewTicket({ ...newTicket, message: e.target.value })}
                     required
                   />
                 </div>
@@ -213,9 +213,9 @@ export default function SupportTicketsPage() {
                       <TableCell className="p-4">
                         <span className={cn(
                           "px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border",
-                          t.status === "Open" ? "bg-orange-50 text-orange-600 border-orange-100" : 
-                          t.status === "Resolved" ? "bg-green-50 text-green-600 border-green-100" :
-                          "bg-blue-50 text-blue-600 border-blue-100"
+                          t.status === "Open" ? "bg-orange-50 text-orange-600 border-orange-100" :
+                            t.status === "Resolved" ? "bg-green-50 text-green-600 border-green-100" :
+                              "bg-blue-50 text-blue-600 border-blue-100"
                         )}>
                           {t.status}
                         </span>
@@ -245,9 +245,9 @@ export default function SupportTicketsPage() {
                               </DialogHeader>
                             </div>
                             <div className="p-0">
-                              <SupportTicketConversation 
-                                ticketId={t.id} 
-                                userEmail={user?.email || ""} 
+                              <SupportTicketConversation
+                                ticketId={t.id}
+                                userEmail={user?.email || ""}
                                 isClosed={t.status === "Resolved"}
                               />
                             </div>

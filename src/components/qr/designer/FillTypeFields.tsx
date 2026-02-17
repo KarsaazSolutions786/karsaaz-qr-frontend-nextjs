@@ -10,6 +10,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { ColorPicker } from "@/components/qr/ColorPicker";
 import { qrCodeService } from "@/services/qr.service";
 import { Palette } from "lucide-react";
 import React from "react";
@@ -70,22 +71,12 @@ export function FillTypeFields() {
 
       <div className="pt-4 border-t space-y-4">
         {fillType === "solid" && (
-          <div className="space-y-3">
-            <Label className="text-[10px] font-bold uppercase">Main Color</Label>
-            <div className="flex gap-2">
-              <Input
-                type="color"
-                className="h-10 w-14 p-1 rounded-lg"
-                {...register("design.foregroundColor")}
-              />
-              <Input
-                type="text"
-                className="flex-1 h-10 rounded-lg font-mono text-xs uppercase"
-                placeholder="#000000"
-                {...register("design.foregroundColor")}
-              />
-            </div>
-          </div>
+          <ColorPicker
+            value={watch("design.foregroundColor") || "#000000"}
+            onChange={(color) => setValue("design.foregroundColor", color)}
+            label="Main Color"
+            showPresets
+          />
         )}
 
         {fillType === "gradient" && (
@@ -107,14 +98,22 @@ export function FillTypeFields() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-[10px] font-bold uppercase">Start Color</Label>
-                <Input type="color" className="h-10 w-full p-1 rounded-lg" value={gradientFill.colors[0]} onChange={(e) => updateGradient("colors", [e.target.value, gradientFill.colors[1]])} />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] font-bold uppercase">End Color</Label>
-                <Input type="color" className="h-10 w-full p-1 rounded-lg" value={gradientFill.colors[1]} onChange={(e) => updateGradient("colors", [gradientFill.colors[0], e.target.value])} />
-              </div>
+              <ColorPicker
+                value={gradientFill.colors[0]}
+                onChange={(color) =>
+                  updateGradient("colors", [color, gradientFill.colors[1]])
+                }
+                label="Start Color"
+                showPresets={false}
+              />
+              <ColorPicker
+                value={gradientFill.colors[1]}
+                onChange={(color) =>
+                  updateGradient("colors", [gradientFill.colors[0], color])
+                }
+                label="End Color"
+                showPresets={false}
+              />
             </div>
 
             {gradientFill.type === "linear" && (
@@ -152,14 +151,18 @@ export function FillTypeFields() {
         )}
 
         <div className="grid grid-cols-2 gap-4 pt-4 border-t border-dashed">
-          <div className="space-y-2">
-            <Label className="text-[10px] font-bold uppercase">Eye Inner</Label>
-            <Input type="color" className="h-9 w-full p-1 rounded-lg" {...register("design.eyeInternalColor")} />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-[10px] font-bold uppercase">Eye Outer</Label>
-            <Input type="color" className="h-9 w-full p-1 rounded-lg" {...register("design.eyeExternalColor")} />
-          </div>
+          <ColorPicker
+            value={watch("design.eyeInternalColor") || "#000000"}
+            onChange={(color) => setValue("design.eyeInternalColor", color)}
+            label="Eye Inner"
+            showPresets={false}
+          />
+          <ColorPicker
+            value={watch("design.eyeExternalColor") || "#000000"}
+            onChange={(color) => setValue("design.eyeExternalColor", color)}
+            label="Eye Outer"
+            showPresets={false}
+          />
         </div>
       </div>
     </div>

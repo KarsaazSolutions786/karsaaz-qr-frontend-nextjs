@@ -1,13 +1,13 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ColorPicker } from "@/components/qr/ColorPicker";
 import { qrShapes } from "@/data/qr-designer";
 import { useFormContext } from "react-hook-form";
 import { SelectorGrid, SelectorItem } from "./SelectorGrid";
 
 export function OutlinedShapesFields() {
-  const { register, watch, setValue } = useFormContext();
+  const { watch, setValue } = useFormContext();
   const currentShape = watch("design.shape") || "none";
 
   return (
@@ -32,17 +32,11 @@ export function OutlinedShapesFields() {
               <Label className="text-[10px] font-black uppercase tracking-widest text-blue-900 dark:text-blue-300">Frame Aesthetics</Label>
               <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Adjust the container color</p>
             </div>
-            <div className="flex gap-2 w-full sm:w-auto">
-              <Input
-                type="color"
-                className="h-12 w-16 p-1.5 rounded-xl border-none shadow-sm cursor-pointer"
-                {...register("design.frameColor")}
-              />
-              <Input
-                type="text"
-                className="flex-1 h-12 w-32 rounded-xl font-black font-mono text-xs uppercase bg-white dark:bg-zinc-950 border-none shadow-sm text-center"
-                placeholder="#000000"
-                {...register("design.frameColor")}
+            <div className="w-full sm:w-auto">
+              <ColorPicker
+                value={watch("design.frameColor") || "#000000"}
+                onChange={(color) => setValue("design.frameColor", color)}
+                showPresets={false}
               />
             </div>
           </div>

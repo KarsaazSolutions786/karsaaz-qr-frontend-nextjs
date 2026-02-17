@@ -15,7 +15,7 @@ export default function AdminPluginsPage() {
                 { key: "name", label: "Name" },
                 { key: "version", label: "Version" },
                 {
-                    key: "is_active", label: "Status", render: (v) => (
+                    key: "is_active", label: "Status", render: (v: any) => (
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${v ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
                             {v ? "Active" : "Inactive"}
                         </span>

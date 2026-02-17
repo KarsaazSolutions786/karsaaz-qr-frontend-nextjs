@@ -25,13 +25,13 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function SecurityPage() {
-  const [sessions, setSessions]     = useState<Session[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
 
   const [twoFaStatus, setTwoFaStatus] = useState<{ enabled: boolean; confirmed: boolean } | null>(null);
   const [twoFaLoading, setTwoFaLoading] = useState(true);
 
-  const [setupData, setSetupData]   = useState<{ qr_code?: string; secret?: string } | null>(null);
+  const [setupData, setSetupData] = useState<{ qr_code?: string; secret?: string } | null>(null);
   const [confirmCode, setConfirmCode] = useState("");
   const [disableCode, setDisableCode] = useState("");
   const [twoFaDialog, setTwoFaDialog] = useState<"setup" | "disable" | null>(null);
@@ -254,7 +254,7 @@ export default function SecurityPage() {
       </Card>
 
       {/* 2FA Setup Dialog */}
-      <Dialog open={twoFaDialog === "setup"} onClose={() => setTwoFaDialog(null)}>
+      <Dialog open={twoFaDialog === "setup"} onOpenChange={(open) => !open && setTwoFaDialog(null)}>
         <DialogHeader>
           <DialogTitle>Enable Two-Factor Authentication</DialogTitle>
           <DialogDescription>
@@ -278,7 +278,7 @@ export default function SecurityPage() {
             <Label htmlFor="confirm-code">Verification Code</Label>
             <Input id="confirm-code" type="text" inputMode="numeric" maxLength={6}
               placeholder="Enter 6-digit code" value={confirmCode}
-              onChange={e => setConfirmCode(e.target.value)} />
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmCode(e.target.value)} />
           </div>
         </div>
         <DialogFooter>
@@ -291,7 +291,7 @@ export default function SecurityPage() {
       </Dialog>
 
       {/* 2FA Disable Dialog */}
-      <Dialog open={twoFaDialog === "disable"} onClose={() => setTwoFaDialog(null)}>
+      <Dialog open={twoFaDialog === "disable"} onOpenChange={(open) => !open && setTwoFaDialog(null)}>
         <DialogHeader>
           <DialogTitle>Disable Two-Factor Authentication</DialogTitle>
           <DialogDescription>Enter your current authenticator code to disable 2FA.</DialogDescription>
@@ -299,7 +299,7 @@ export default function SecurityPage() {
         <div className="py-4">
           <Input type="text" inputMode="numeric" maxLength={6}
             placeholder="Enter 6-digit code" value={disableCode}
-            onChange={e => setDisableCode(e.target.value)} />
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDisableCode(e.target.value)} />
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setTwoFaDialog(null)}>Cancel</Button>
@@ -311,7 +311,7 @@ export default function SecurityPage() {
       </Dialog>
 
       {/* Revoke All Dialog */}
-      <Dialog open={revokeAllDialog} onClose={() => setRevokeAllDialog(false)}>
+      <Dialog open={revokeAllDialog} onOpenChange={(open) => !open && setRevokeAllDialog(false)}>
         <DialogHeader>
           <DialogTitle>Revoke All Sessions</DialogTitle>
           <DialogDescription>

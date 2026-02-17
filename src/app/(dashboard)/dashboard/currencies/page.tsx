@@ -15,7 +15,7 @@ export default function AdminCurrenciesPage() {
                 { key: "name", label: "Name" },
                 { key: "code", label: "Code" },
                 { key: "symbol", label: "Symbol" },
-                { key: "is_default", label: "Default", render: (v) => v ? "✓" : "—" },
+                { key: "is_default", label: "Default", render: (v: any) => v ? "✓" : "—" },
             ]}
             fetchFn={currencyService.getAll}
             deleteFn={currencyService.delete}

@@ -2,67 +2,116 @@
 
 import { useQRWizard } from "@/store/use-qr-wizard";
 import { cn } from "@/lib/utils";
-import { Palette, QrCode, Sticker, Download, Type, FileText } from "lucide-react";
 
+/* Step icons matching Figma: color wheel, grid, sticker/scan, download arrow */
 const STEPS = [
-  { id: 0, label: "Type", icon: Type },
-  { id: 1, label: "Content", icon: FileText },
-  { id: 2, label: "Select color", icon: Palette },
-  { id: 3, label: "Look & Feel", icon: QrCode },
-  { id: 4, label: "Sticker", icon: Sticker },
-  { id: 5, label: "Download", icon: Download },
+  { id: 2, label: "Select color", icon: "/images/wizard-icons/step-color.svg" },
+  { id: 3, label: "Look & Feel", icon: "/images/wizard-icons/step-look.svg" },
+  { id: 4, label: "Sticker", icon: "/images/wizard-icons/step-sticker.svg" },
+  { id: 5, label: "Download", icon: "/images/wizard-icons/step-download.svg" },
 ];
 
 export default function StepIndicator() {
   const { currentStep, setStep } = useQRWizard();
 
+  /* Map wizard currentStep (2-5) to local step index (0-3) */
+  const activeIdx = currentStep - 2;
+
   return (
-    <div className="w-full py-6 px-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center justify-between relative">
-          {/* Progress Line */}
-          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 dark:bg-gray-800 -z-10" />
-          <div 
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-primary -z-10 transition-all duration-300 ease-in-out"
-            style={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
-          />
+    <div className="wizard-step-bar">
+      {STEPS.map((step, idx) => {
+        const isActive = idx <= activeIdx;
+        const isCurrent = idx === activeIdx;
+        const isCompleted = idx < activeIdx;
+        const isLast = idx === STEPS.length - 1;
 
-          {STEPS.map((step, index) => {
-            const isActive = index === currentStep;
-            const isCompleted = index < currentStep;
-            const Icon = step.icon;
+        return (
+          <div key={step.id} className="wizard-step-item">
+            {/* Circle */}
+            <button
+              onClick={() => isCompleted && setStep(step.id)}
+              disabled={!isCompleted && !isCurrent}
+              className={cn(
+                "wizard-step-circle",
+                isActive && "wizard-step-circle--active",
+                isCurrent && "wizard-step-circle--current"
+              )}
+            >
+              <StepIcon stepId={step.id} isActive={isActive} />
+            </button>
 
-            return (
-              <button
-                key={step.id}
-                onClick={() => setStep(index)}
-                disabled={!isCompleted && !isActive} // Can navigate back, but not forward randomly
+            {/* Label */}
+            <span
+              className={cn(
+                "wizard-step-label",
+                isActive && "wizard-step-label--active"
+              )}
+            >
+              {step.label}
+            </span>
+
+            {/* Connector line */}
+            {!isLast && (
+              <div
                 className={cn(
-                  "flex flex-col items-center gap-2 group focus:outline-none",
-                  (isActive || isCompleted) ? "cursor-pointer" : "cursor-not-allowed opacity-50"
+                  "wizard-step-line",
+                  idx < activeIdx && "wizard-step-line--active"
                 )}
-              >
-                <div 
-                  className={cn(
-                    "w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 border-2 bg-white dark:bg-gray-900",
-                    isActive ? "border-primary text-primary scale-110 shadow-lg" : 
-                    isCompleted ? "border-primary bg-primary text-white" : 
-                    "border-gray-300 text-gray-400"
-                  )}
-                >
-                  <Icon className="w-5 h-5" />
-                </div>
-                <span className={cn(
-                  "text-xs font-medium transition-colors hidden sm:block absolute top-14 w-24 text-center",
-                  isActive ? "text-primary" : "text-gray-500"
-                )}>
-                  {step.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+              />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
+}
+
+/* Inline SVG icons matching Figma step indicator */
+function StepIcon({ stepId, isActive }: { stepId: number; isActive: boolean }) {
+  const color = isActive ? "#AF47AF" : "#C4C4C4";
+
+  switch (stepId) {
+    case 2: // Color wheel
+      return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="2" />
+          <circle cx="12" cy="12" r="4" fill={color} />
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10" stroke={color} strokeWidth="2" />
+          <circle cx="12" cy="5" r="2" fill="#FF6B6B" />
+          <circle cx="17" cy="9" r="2" fill="#4ECDC4" />
+          <circle cx="17" cy="15" r="2" fill="#45B7D1" />
+          <circle cx="12" cy="19" r="2" fill="#96CEB4" />
+          <circle cx="7" cy="15" r="2" fill="#DDA0DD" />
+          <circle cx="7" cy="9" r="2" fill="#FFEAA7" />
+        </svg>
+      );
+    case 3: // Grid / Look & Feel
+      return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="7" height="7" rx="1.5" stroke={color} strokeWidth="2" />
+          <rect x="14" y="3" width="7" height="7" rx="1.5" stroke={color} strokeWidth="2" />
+          <rect x="3" y="14" width="7" height="7" rx="1.5" stroke={color} strokeWidth="2" />
+          <rect x="14" y="14" width="7" height="7" rx="1.5" stroke={color} strokeWidth="2" />
+        </svg>
+      );
+    case 4: // Sticker / QR scan
+      return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke={color} strokeWidth="2" />
+          <rect x="7" y="7" width="4" height="4" rx="1" fill={color} />
+          <rect x="13" y="7" width="4" height="4" rx="1" fill={color} />
+          <rect x="7" y="13" width="4" height="4" rx="1" fill={color} />
+          <text x="12" y="20" textAnchor="middle" fontSize="5" fill={color} fontWeight="bold">SCAN</text>
+        </svg>
+      );
+    case 5: // Download arrow
+      return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 3v12M12 15l-4-4M12 15l4-4" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    default:
+      return null;
+  }
 }

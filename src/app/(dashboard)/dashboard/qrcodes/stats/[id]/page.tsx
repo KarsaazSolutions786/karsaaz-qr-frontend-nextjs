@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,27 +37,27 @@ import { toast } from "sonner";
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
 interface DailyScan {
-    date: string;
+    name: string;
     scans: number;
 }
 
 interface CountryScan {
-    country: string;
-    scans: number;
+    name: string;
+    value: number;
 }
 
 interface OsScan {
-    os: string;
+    name: string;
     scans: number;
 }
 
 interface BrowserScan {
-    browser: string;
+    name: string;
     scans: number;
 }
 
 interface DeviceScan {
-    brand: string;
+    name: string;
     scans: number;
 }
 
@@ -86,18 +88,18 @@ export default function QRStatsPage({ params }: { params: Promise<{ id: string }
         setLoading(true);
         try {
             const [daily, country, os, browser, device] = await Promise.all([
-                qrCodeService.getReport(id, "scans-per-day", dateRange),
-                qrCodeService.getReport(id, "scans-per-country", dateRange),
-                qrCodeService.getReport(id, "scans-per-os", dateRange),
-                qrCodeService.getReport(id, "scans-per-browser", dateRange),
-                qrCodeService.getReport(id, "scans-per-device-brand", dateRange),
+                qrCodeService.getReport(id, "scans-per-day", dateRange) as Promise<{ date: string; scans: number }[]>,
+                qrCodeService.getReport(id, "scans-per-country", dateRange) as Promise<{ country: string; scans: number }[]>,
+                qrCodeService.getReport(id, "scans-per-os", dateRange) as Promise<{ os: string; scans: number }[]>,
+                qrCodeService.getReport(id, "scans-per-browser", dateRange) as Promise<{ browser: string; scans: number }[]>,
+                qrCodeService.getReport(id, "scans-per-device-brand", dateRange) as Promise<{ brand: string; scans: number }[]>,
             ]);
 
-            setDailyScans(daily.map((item: DailyScan) => ({ name: item.date, scans: item.scans })));
-            setCountries(country.map((item: CountryScan) => ({ name: item.country || "Unknown", value: item.scans })));
-            setOsData(os.map((item: OsScan) => ({ name: item.os || "Unknown", scans: item.scans })));
-            setBrowserData(browser.map((item: BrowserScan) => ({ name: item.browser || "Unknown", scans: item.scans })));
-            setDeviceData(device.map((item: DeviceScan) => ({ name: item.brand || "Unknown", scans: item.scans })));
+            setDailyScans(daily.map((item) => ({ name: item.date, scans: item.scans })));
+            setCountries(country.map((item) => ({ name: item.country || "Unknown", value: item.scans })));
+            setOsData(os.map((item) => ({ name: item.os || "Unknown", scans: item.scans })));
+            setBrowserData(browser.map((item) => ({ name: item.browser || "Unknown", scans: item.scans })));
+            setDeviceData(device.map((item) => ({ name: item.brand || "Unknown", scans: item.scans })));
 
         } catch (error: unknown) {
             console.error("Failed to fetch reports", error);

@@ -148,17 +148,17 @@ export default function AdminCrudPage({
                                 </thead>
                                 <tbody>
                                     {items.map((item, idx) => (
-                                        <tr key={item[idField] || idx} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800/30">
+                                        <tr key={String(item[idField] ?? idx)} className="border-b last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800/30">
                                             {columns.map((col) => (
                                                 <td key={col.key} className="px-4 py-3">
-                                                    {col.render ? col.render(item[col.key], item) : (item[col.key] ?? "—")}
+                                                    {col.render ? col.render(item[col.key], item) : (String(item[col.key] ?? "—"))}
                                                 </td>
                                             ))}
                                             {(editHref || deleteFn) && (
                                                 <td className="px-4 py-3 text-right">
                                                     <div className="flex items-center justify-end gap-1">
                                                         {editHref && (
-                                                            <a href={editHref(item[idField])}>
+                                                            <a href={editHref(item[idField] as string | number)}>
                                                                 <Button variant="ghost" size="icon">
                                                                     <Edit className="h-4 w-4" />
                                                                 </Button>
@@ -166,7 +166,7 @@ export default function AdminCrudPage({
                                                         )}
                                                         {deleteFn && (
                                                             <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600"
-                                                                onClick={() => handleDelete(item[idField])}>
+                                                                onClick={() => handleDelete(item[idField] as string | number)}>
                                                                 <Trash className="h-4 w-4" />
                                                             </Button>
                                                         )}

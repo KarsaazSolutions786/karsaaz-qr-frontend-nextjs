@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { ColorPicker } from "@/components/qr/ColorPicker";
 import { cn } from "@/lib/utils";
 import { qrCodeService } from "@/services/qr.service";
 import { ImageIcon, Upload } from "lucide-react";
@@ -152,10 +153,11 @@ export function LogoFields() {
 
                   <div className="space-y-4">
                     <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Block Density</Label>
-                    <div className="flex gap-2">
-                      <Input type="color" className="h-10 w-14 p-1 rounded-xl border-none shadow-sm" {...register("design.logoBackgroundFill")} />
-                      <Input type="text" className="flex-1 h-10 rounded-xl font-mono text-xs uppercase bg-gray-50 dark:bg-zinc-900 border-none text-center" {...register("design.logoBackgroundFill")} />
-                    </div>
+                    <ColorPicker
+                      value={watch("design.logoBackgroundFill") || "#ffffff"}
+                      onChange={(color) => setValue("design.logoBackgroundFill", color)}
+                      showPresets={false}
+                    />
                   </div>
 
                   <div className="space-y-4">

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import commissionService from "@/services/commission.service";
@@ -53,7 +53,17 @@ interface Withdrawal {
 }
 
 export default function ReferralPage() {
-  const [tab, setTab] = useState<"overview" | "history" | "withdrawals">("overview");
+  const STATUS_STYLES: Record<string, string> = {
+    pending: "bg-yellow-100 text-yellow-700",
+    approved: "bg-green-100 text-green-700",
+    completed: "bg-green-100 text-green-700",
+    paid: "bg-green-100 text-green-700",
+    rejected: "bg-red-100 text-red-700",
+    cancelled: "bg-red-100 text-red-700",
+    processing: "bg-blue-100 text-blue-700",
+  };
+
+  const [tab, setTab]= useState<"overview" | "history" | "withdrawals">("overview");
 
   const [dashboard, setDashboard]   = useState<CommissionDashboard | null>(null);
   const [summary, setSummary]       = useState<WithdrawalSummary | null>(null);
@@ -326,7 +336,8 @@ export default function ReferralPage() {
       )}
 
       {/* Withdraw Dialog */}
-      <Dialog open={withdrawDialog} onClose={() => setWithdrawDialog(false)}>
+      <Dialog open={withdrawDialog} onOpenChange={setWithdrawDialog}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Request Withdrawal</DialogTitle>
           <DialogDescription>
@@ -358,6 +369,7 @@ export default function ReferralPage() {
             Submit Request
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );

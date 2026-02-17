@@ -41,20 +41,20 @@ interface StripeWebhook {
 export default function PaymentProcessorsPage() {
   const [tab, setTab] = useState<"gateways" | "webhooks">("gateways");
 
-  const [gateways, setGateways]     = useState<PaymentGateway[]>([]);
-  const [webhooks, setWebhooks]     = useState<StripeWebhook[]>([]);
-  const [loading, setLoading]       = useState(true);
+  const [gateways, setGateways] = useState<PaymentGateway[]>([]);
+  const [webhooks, setWebhooks] = useState<StripeWebhook[]>([]);
+  const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
   // Gateway dialog
-  const [gwDialog, setGwDialog]     = useState<"create" | "edit" | null>(null);
+  const [gwDialog, setGwDialog] = useState<"create" | "edit" | null>(null);
   const [_selectedGw, setSelectedGw] = useState<PaymentGateway | null>(null);
-  const [gwForm, setGwForm]         = useState<Record<string, string>>({});
+  const [gwForm, setGwForm] = useState<Record<string, string>>({});
 
   // Webhook dialog
-  const [whDialog, setWhDialog]     = useState(false);
-  const [whUrl, setWhUrl]           = useState("");
-  const [whEvents, setWhEvents]     = useState("");
+  const [whDialog, setWhDialog] = useState(false);
+  const [whUrl, setWhUrl] = useState("");
+  const [whEvents, setWhEvents] = useState("");
 
   // Delete dialog
   const [deleteDialog, setDeleteDialog] = useState<{ type: "gateway"; item: PaymentGateway } | null>(null);
@@ -268,7 +268,7 @@ export default function PaymentProcessorsPage() {
       )}
 
       {/* Gateway Create/Edit Dialog */}
-      <Dialog open={gwDialog !== null} onClose={() => setGwDialog(null)}>
+      <Dialog open={gwDialog !== null} onOpenChange={(open) => !open && setGwDialog(null)}>
         <DialogHeader>
           <DialogTitle>{gwDialog === "create" ? "Add Payment Gateway" : "Edit Payment Gateway"}</DialogTitle>
         </DialogHeader>
@@ -283,7 +283,7 @@ export default function PaymentProcessorsPage() {
             <div key={key} className="space-y-1">
               <Label htmlFor={`gw-${key}`}>{label}</Label>
               <Input id={`gw-${key}`} placeholder={placeholder} value={gwForm[key] ?? ""}
-                onChange={e => setGwForm(f => ({ ...f, [key]: e.target.value }))} />
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setGwForm(f => ({ ...f, [key]: e.target.value }))} />
             </div>
           ))}
         </div>
@@ -297,7 +297,7 @@ export default function PaymentProcessorsPage() {
       </Dialog>
 
       {/* Webhook Create Dialog */}
-      <Dialog open={whDialog} onClose={() => setWhDialog(false)}>
+      <Dialog open={whDialog} onOpenChange={(open) => !open && setWhDialog(false)}>
         <DialogHeader>
           <DialogTitle>Add Stripe Webhook</DialogTitle>
           <DialogDescription>Register a new endpoint to receive Stripe events.</DialogDescription>
@@ -324,7 +324,7 @@ export default function PaymentProcessorsPage() {
       </Dialog>
 
       {/* Delete Confirmation */}
-      <Dialog open={deleteDialog !== null} onClose={() => setDeleteDialog(null)}>
+      <Dialog open={deleteDialog !== null} onOpenChange={(open) => !open && setDeleteDialog(null)}>
         <DialogHeader>
           <DialogTitle>Delete Payment Gateway</DialogTitle>
           <DialogDescription>

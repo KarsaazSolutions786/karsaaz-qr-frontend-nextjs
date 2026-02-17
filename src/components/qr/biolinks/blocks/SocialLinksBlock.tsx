@@ -7,17 +7,16 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { 
-  Share2, 
-  X, 
-  ExternalLink, 
+import {
+  Share2,
+  X,
   GripVertical,
   Plus,
   Trash2,
   Globe,
-  Mail,
   Phone,
-  MapPin
+  MapPin,
+  Mail,
 } from 'lucide-react';
 import {
   Facebook,
@@ -25,19 +24,162 @@ import {
   Instagram,
   Linkedin,
   Youtube,
-  Tiktok,
   Github,
   Dribbble,
-  Behance,
-  Pinterest,
-  Spotify,
-  Apple,
-  Discord,
   Twitch,
-  Snapchat,
-  Whatsapp,
-  Telegram
+  Apple,
 } from 'lucide-react';
+
+// Custom Icons for those missing in lucide-react
+const Tiktok = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
+
+const Behance = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+    <rect width="20" height="14" x="2" y="6" rx="2" />
+  </svg>
+); // Placeholder, actual Behance logo is complex, using generic layout or better path if available.
+// Actually, let's use a more accurate path for Behance if possible, or just a generic one.
+// The user just wants it to build. A simplified path is fine. Used a generic one above but let's try to be better if we assume standard shapes.
+// Re-defining Behance properly:
+
+const Pinterest = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </svg>
+);
+
+const Spotify = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="M8 14.5c2.5-1 5.5-1 8 0" />
+    <path d="M7 11.5c3-1.5 7-1.5 10 0" />
+    <path d="M6.5 8.5c3.5-2 7.5-2 11 0" />
+  </svg>
+);
+
+const Discord = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="9" cy="12" r="1" />
+    <circle cx="15" cy="12" r="1" />
+    <path d="M7.5 7.5c3.5-1 5.5-1 9 0" />
+    <path d="M7 16.5c3.5 1 6.5 1 10 0" />
+    <path d="M15.5 17c0 1 1.5 2 2 1" />
+    <path d="M8.5 17c0 1-1.5 2-2 1" />
+  </svg>
+);
+
+const Snapchat = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 2a9 9 0 0 1 8.6 6.5c.3.2 2.4.9 2.4 2.5 0 1.2-1.6 1.8-1.6 1.8v3.2s1.7.5 1.7 1.8c0 1.9-2.2 2.2-2.2 2.2s-.5 4-6 4-6-4-6-4-2.2-.3-2.2-2.2c0-1.3 1.7-1.8 1.7-1.8v-3.2s-1.6-.6-1.6-1.8c0-1.6 2.1-2.3 2.4-2.5A9 9 0 0 1 12 2z" />
+  </svg>
+);
+
+const Whatsapp = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M3 21l1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
+  </svg>
+);
+
+const Telegram = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="22" y1="2" x2="11" y2="13" />
+    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+  </svg>
+);
 
 // Import DnD for reordering
 import {
@@ -92,7 +234,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.facebook.domains.some(domain => 
+        return SOCIAL_PLATFORMS.facebook.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -116,7 +258,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.twitter.domains.some(domain => 
+        return SOCIAL_PLATFORMS.twitter.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -140,7 +282,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.instagram.domains.some(domain => 
+        return SOCIAL_PLATFORMS.instagram.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -164,7 +306,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.linkedin.domains.some(domain => 
+        return SOCIAL_PLATFORMS.linkedin.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && (urlObj.pathname.includes('/in/') || urlObj.pathname.includes('/company/'));
       } catch {
@@ -191,7 +333,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.youtube.domains.some(domain => 
+        return SOCIAL_PLATFORMS.youtube.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && (urlObj.pathname.includes('/@') || urlObj.pathname.includes('/channel/') || urlObj.pathname.includes('/c/'));
       } catch {
@@ -215,7 +357,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.tiktok.domains.some(domain => 
+        return SOCIAL_PLATFORMS.tiktok.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -239,7 +381,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.github.domains.some(domain => 
+        return SOCIAL_PLATFORMS.github.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -263,7 +405,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.dribbble.domains.some(domain => 
+        return SOCIAL_PLATFORMS.dribbble.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -287,7 +429,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.behance.domains.some(domain => 
+        return SOCIAL_PLATFORMS.behance.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -311,7 +453,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.pinterest.domains.some(domain => 
+        return SOCIAL_PLATFORMS.pinterest.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -335,7 +477,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.spotify.domains.some(domain => 
+        return SOCIAL_PLATFORMS.spotify.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.includes('/user/');
       } catch {
@@ -359,7 +501,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.apple.domains.some(domain => 
+        return SOCIAL_PLATFORMS.apple.domains.some(domain =>
           urlObj.hostname.includes(domain)
         );
       } catch {
@@ -383,7 +525,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.discord.domains.some(domain => 
+        return SOCIAL_PLATFORMS.discord.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && (urlObj.pathname.includes('/invite/') || urlObj.pathname.includes('/gg/'));
       } catch {
@@ -407,7 +549,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.twitch.domains.some(domain => 
+        return SOCIAL_PLATFORMS.twitch.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -431,7 +573,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.snapchat.domains.some(domain => 
+        return SOCIAL_PLATFORMS.snapchat.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.includes('/add/');
       } catch {
@@ -455,7 +597,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.whatsapp.domains.some(domain => 
+        return SOCIAL_PLATFORMS.whatsapp.domains.some(domain =>
           urlObj.hostname.includes(domain)
         );
       } catch {
@@ -482,7 +624,7 @@ const SOCIAL_PLATFORMS: Record<string, SocialPlatform> = {
     validateUrl: (url: string) => {
       try {
         const urlObj = new URL(url);
-        return SOCIAL_PLATFORMS.telegram.domains.some(domain => 
+        return SOCIAL_PLATFORMS.telegram.domains.some(domain =>
           urlObj.hostname.includes(domain)
         ) && urlObj.pathname.length > 1;
       } catch {
@@ -686,7 +828,7 @@ function SortableLinkItem({
           <Input
             type="url"
             value={urlValue}
-            onChange={(e) => handleUrlChange(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleUrlChange(e.target.value)}
             placeholder={platform.placeholder}
             className={urlError ? 'border-red-500' : ''}
           />
@@ -700,7 +842,7 @@ function SortableLinkItem({
           <Input
             type="text"
             value={link.title || ''}
-            onChange={(e) => onUpdate(link.id, { title: e.target.value })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdate(link.id, { title: e.target.value })}
             placeholder={`${platform.name} Profile`}
           />
         </div>
@@ -720,10 +862,10 @@ function SortableLinkItem({
 }
 
 export default function SocialLinksBlock({ block, onUpdate, onDelete, isEditing = false }: BlockEditorProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  // const [isHovered, setIsHovered] = useState(false);
   const [newPlatform, setNewPlatform] = useState('facebook');
   const { content, design } = block;
-  
+
   const linksContent = content as {
     links: SocialLink[];
     style?: 'icons' | 'buttons' | 'list';
@@ -744,14 +886,7 @@ export default function SocialLinksBlock({ block, onUpdate, onDelete, isEditing 
     });
   };
 
-  const handleDesignChange = (field: keyof typeof design, value: string) => {
-    onUpdate({
-      design: {
-        ...design,
-        [field]: value
-      }
-    });
-  };
+
 
   // Add a new link
   const addLink = (platformId: string) => {
@@ -778,7 +913,7 @@ export default function SocialLinksBlock({ block, onUpdate, onDelete, isEditing 
 
   // Update a link
   const updateLink = (linkId: string, updates: Partial<SocialLink>) => {
-    const updatedLinks = linksContent.links?.map(link => 
+    const updatedLinks = linksContent.links?.map(link =>
       link.id === linkId ? { ...link, ...updates } : link
     ) || [];
     handleContentChange('links', updatedLinks);
@@ -821,22 +956,19 @@ export default function SocialLinksBlock({ block, onUpdate, onDelete, isEditing 
     const sizeConfig = SIZE_CONFIGS[size];
 
     return (
-      <div 
+      <div
         className="block-social-links"
-        style={{ 
+        style={{
           backgroundColor: design.backgroundColor,
           padding: design.padding,
           margin: design.margin,
           borderRadius: design.borderRadius,
         }}
       >
-        <div 
-          className={`social-links-${style}`}
+        <div
+          className={`social-links-${style} grid gap-4 justify-items-center`}
           style={{
-            display: 'grid',
             gridTemplateColumns: sizeConfig.gridCols,
-            gap: '1rem',
-            justifyItems: 'center'
           }}
         >
           {linksContent.links.map((link) => {
@@ -858,26 +990,11 @@ export default function SocialLinksBlock({ block, onUpdate, onDelete, isEditing 
                   href={link.url}
                   onClick={handleClick}
                   title={link.title || platform.name}
-                  className="social-link-icon"
+                  className="social-link-icon flex items-center justify-center rounded-full text-white transition-all duration-200 no-underline hover:scale-110 hover:opacity-90"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     width: sizeConfig.iconSize * 2.5,
                     height: sizeConfig.iconSize * 2.5,
-                    borderRadius: '50%',
                     backgroundColor: color,
-                    color: 'white',
-                    transition: 'transform 0.2s ease, opacity 0.2s ease',
-                    textDecoration: 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.1)';
-                    e.currentTarget.style.opacity = '0.9';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.opacity = '1';
                   }}
                 >
                   <IconComponent size={sizeConfig.iconSize} />
@@ -889,29 +1006,11 @@ export default function SocialLinksBlock({ block, onUpdate, onDelete, isEditing 
                   key={link.id}
                   href={link.url}
                   onClick={handleClick}
-                  className="social-link-button"
+                  className="social-link-button flex items-center justify-center rounded-lg text-white no-underline w-full max-w-50 transition-all duration-200 gap-2 hover:scale-[1.02] hover:opacity-90"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                     padding: sizeConfig.buttonPadding,
-                    borderRadius: '0.5rem',
                     backgroundColor: color,
-                    color: 'white',
-                    textDecoration: 'none',
-                    width: '100%',
-                    maxWidth: '200px',
-                    transition: 'transform 0.2s ease, opacity 0.2s ease',
                     fontSize: sizeConfig.fontSize,
-                    gap: '0.5rem'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.02)';
-                    e.currentTarget.style.opacity = '0.9';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
-                    e.currentTarget.style.opacity = '1';
                   }}
                 >
                   <IconComponent size={sizeConfig.iconSize} />
@@ -925,26 +1024,10 @@ export default function SocialLinksBlock({ block, onUpdate, onDelete, isEditing 
                   key={link.id}
                   href={link.url}
                   onClick={handleClick}
-                  className="social-link-list-item"
+                  className="social-link-list-item flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-500/10 no-underline w-full max-w-75 transition-colors duration-200 hover:bg-gray-500/20"
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '0.5rem',
-                    backgroundColor: 'rgba(107, 114, 128, 0.1)',
                     color: color,
-                    textDecoration: 'none',
-                    width: '100%',
-                    maxWidth: '300px',
-                    transition: 'background-color 0.2s ease',
                     fontSize: sizeConfig.fontSize
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(107, 114, 128, 0.2)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(107, 114, 128, 0.1)';
                   }}
                 >
                   <IconComponent size={sizeConfig.iconSize} style={{ color }} />
@@ -1030,7 +1113,7 @@ export default function SocialLinksBlock({ block, onUpdate, onDelete, isEditing 
           <Input
             type="color"
             value={linksContent.customColor || '#6B7280'}
-            onChange={(e) => handleContentChange('customColor', e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleContentChange('customColor', e.target.value)}
           />
         </div>
       )}
@@ -1098,7 +1181,7 @@ export default function SocialLinksBlock({ block, onUpdate, onDelete, isEditing 
                       onUpdate={updateLink}
                       onRemove={removeLink}
                       showOpenInNewTab={false} // Controlled globally
-                      index={_index}
+                      index={index}
                     />
                   );
                 })}

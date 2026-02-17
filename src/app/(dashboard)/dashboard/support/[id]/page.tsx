@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
@@ -11,7 +13,7 @@ import { toast } from "sonner";
 
 interface SupportMessage {
   id?: string | number;
-  author: 'user' | 'admin';
+  author: 'user' | 'admin' | 'support';
   body: string;
   timestamp?: string;
 }
@@ -25,15 +27,15 @@ interface SupportTicket {
 }
 
 export default function TicketDetailsPage() {
-  const params  = useParams();
+  const params = useParams();
   const ticketId = params.id as string;
   const { user } = useAuth();
 
   const [messages, setMessages] = useState<SupportMessage[]>([]);
-  const [ticket, setTicket]     = useState<SupportTicket | null>(null);
-  const [loading, setLoading]   = useState(true);
-  const [reply, setReply]       = useState("");
-  const [sending, setSending]   = useState(false);
+  const [ticket, setTicket] = useState<SupportTicket | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [reply, setReply] = useState("");
+  const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const fetchConversation = useCallback(async () => {
@@ -99,8 +101,8 @@ export default function TicketDetailsPage() {
                 {ticket?.status && (
                   <span className={cn("ml-2 px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase",
                     ticket.status === "Open" ? "bg-orange-100 text-orange-700" :
-                    ticket.status === "In Progress" ? "bg-blue-100 text-blue-700" :
-                    "bg-green-100 text-green-700"
+                      ticket.status === "In Progress" ? "bg-blue-100 text-blue-700" :
+                        "bg-green-100 text-green-700"
                   )}>
                     {ticket.status}
                   </span>

@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import checkoutService from "@/services/checkout.service";
 import { Check, Copy, Gift, Loader2, Tag } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface PromoCode {
@@ -137,8 +137,8 @@ export default function PromoCodesPage() {
             <Input
               placeholder="Enter promo code"
               value={code}
-              onChange={(e) => setCode(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleValidate()}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCode(e.target.value)}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && handleValidate()}
             />
             <Button onClick={handleValidate} disabled={validating}>
               {validating ? (
@@ -151,8 +151,8 @@ export default function PromoCodesPage() {
           {validationResult && (
             <div
               className={`mt-3 p-3 rounded-lg text-sm ${validationResult.valid
-                  ? "bg-green-50 dark:bg-green-900/20 text-green-700"
-                  : "bg-red-50 dark:bg-red-900/20 text-red-700"
+                ? "bg-green-50 dark:bg-green-900/20 text-green-700"
+                : "bg-red-50 dark:bg-red-900/20 text-red-700"
                 }`}
             >
               {validationResult.valid

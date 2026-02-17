@@ -24,7 +24,7 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
   if (isPreview) {
     return (
-      <div 
+      <div
         className="w-full flex flex-col items-center"
         style={{
           padding: block.settings.padding,
@@ -35,8 +35,8 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
       >
         {content.link ? (
           <a href={content.link} target="_blank" rel="noopener noreferrer" className="block w-full">
-            <img 
-              src={content.url || "https://placehold.co/600x400?text=Image+Block"} 
+            <img
+              src={content.url || "https://placehold.co/600x400?text=Image+Block"}
               alt={content.alt || "Biolink Image"}
               className="w-full h-auto object-cover"
               style={{
@@ -47,8 +47,8 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
             />
           </a>
         ) : (
-          <img 
-            src={content.url || "https://placehold.co/600x400?text=Image+Block"} 
+          <img
+            src={content.url || "https://placehold.co/600x400?text=Image+Block"}
             alt={content.alt || "Biolink Image"}
             className="w-full h-auto object-cover"
             style={{
@@ -58,13 +58,13 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
             }}
           />
         )}
-        
+
         {content.title && (
           <h3 className="mt-2 text-lg font-semibold text-center" style={{ color: block.settings.textColor }}>
             {content.title}
           </h3>
         )}
-        
+
         {content.caption && (
           <p className="mt-1 text-sm text-center opacity-80" style={{ color: block.settings.textColor }}>
             {content.caption}
@@ -86,8 +86,8 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
         <TabsContent value="content" className="space-y-4 pt-4">
           <div className="space-y-2">
             <Label>Image URL</Label>
-            <Input 
-              value={content.url} 
+            <Input
+              value={content.url}
               onChange={(e) => updateContent({ url: e.target.value })}
               placeholder="https://example.com/image.jpg"
             />
@@ -98,8 +98,8 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
           <div className="space-y-2">
             <Label>Link (Optional)</Label>
-            <Input 
-              value={content.link || ''} 
+            <Input
+              value={content.link || ''}
               onChange={(e) => updateContent({ link: e.target.value })}
               placeholder="https://mysite.com"
             />
@@ -107,8 +107,8 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
           <div className="space-y-2">
             <Label>Title (Optional)</Label>
-            <Input 
-              value={content.title || ''} 
+            <Input
+              value={content.title || ''}
               onChange={(e) => updateContent({ title: e.target.value })}
               placeholder="Image Title"
             />
@@ -116,8 +116,8 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
           <div className="space-y-2">
             <Label>Caption (Optional)</Label>
-            <Input 
-              value={content.caption || ''} 
+            <Input
+              value={content.caption || ''}
               onChange={(e) => updateContent({ caption: e.target.value })}
               placeholder="Add a caption..."
             />
@@ -125,8 +125,8 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
           <div className="space-y-2">
             <Label>Alt Text</Label>
-            <Input 
-              value={content.alt || ''} 
+            <Input
+              value={content.alt || ''}
               onChange={(e) => updateContent({ alt: e.target.value })}
               placeholder="Description for accessibility"
             />
@@ -136,8 +136,8 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
         <TabsContent value="style" className="space-y-4 pt-4">
           <div className="space-y-2">
             <Label>Width</Label>
-            <Select 
-              value={content.width || '100%'} 
+            <Select
+              value={content.width || '100%'}
               onValueChange={(value) => updateContent({ width: value })}
             >
               <SelectTrigger>
@@ -155,8 +155,8 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
           <div className="space-y-2">
             <Label>Border Radius</Label>
-            <Select 
-              value={block.settings.borderRadius || '8px'} 
+            <Select
+              value={block.settings.borderRadius || '8px'}
               onValueChange={(value) => updateSettings({ borderRadius: value })}
             >
               <SelectTrigger>
@@ -176,40 +176,40 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
         <TabsContent value="settings" className="space-y-4 pt-4">
           <div className="flex items-center justify-between">
             <Label>Visible</Label>
-            <Switch 
+            <Switch
               checked={block.settings.visible}
               onCheckedChange={(checked) => updateSettings({ visible: checked })}
             />
           </div>
 
           <div className="space-y-2">
-             <Label>Padding</Label>
-             <Select 
-               value={block.settings.padding || '0px'} 
-               onValueChange={(value) => updateSettings({ padding: value })}
-             >
-               <SelectTrigger>
-                 <SelectValue placeholder="Select padding" />
-               </SelectTrigger>
-               <SelectContent>
-                 <SelectItem value="0px">None</SelectItem>
-                 <SelectItem value="8px">Small</SelectItem>
-                 <SelectItem value="16px">Medium</SelectItem>
-                 <SelectItem value="24px">Large</SelectItem>
-               </SelectContent>
-             </Select>
+            <Label>Padding</Label>
+            <Select
+              value={block.settings.padding || '0px'}
+              onValueChange={(value) => updateSettings({ padding: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select padding" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0px">None</SelectItem>
+                <SelectItem value="8px">Small</SelectItem>
+                <SelectItem value="16px">Medium</SelectItem>
+                <SelectItem value="24px">Large</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          
-           <div className="space-y-2">
+
+          <div className="space-y-2">
             <Label>Background Color</Label>
             <div className="flex gap-2">
-              <Input 
-                type="color" 
+              <Input
+                type="color"
                 value={block.settings.backgroundColor || '#ffffff'}
                 className="w-12 h-10 p-1 cursor-pointer"
                 onChange={(e) => updateSettings({ backgroundColor: e.target.value })}
               />
-              <Input 
+              <Input
                 value={block.settings.backgroundColor || '#ffffff'}
                 onChange={(e) => updateSettings({ backgroundColor: e.target.value })}
                 placeholder="#ffffff"
@@ -221,3 +221,5 @@ export const ImageBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
     </div>
   );
 };
+
+export default ImageBlock;

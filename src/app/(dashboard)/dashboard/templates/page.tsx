@@ -14,7 +14,7 @@ export default function AdminTemplatesPage() {
                 { key: "id", label: "ID" },
                 { key: "name", label: "Name" },
                 { key: "type", label: "Type" },
-                { key: "is_public", label: "Public", render: (v) => v ? "✓" : "—" },
+                { key: "is_public", label: "Public", render: (v: any) => v ? "✓" : "—" },
                 { key: "created_at", label: "Created" },
             ]}
             fetchFn={templateService.getTemplates}

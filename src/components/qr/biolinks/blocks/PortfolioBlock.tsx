@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
+  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -428,7 +429,8 @@ export default function PortfolioBlock({ block, onUpdate, onDelete, isEditing = 
         </div>
 
         {/* Project Details Modal */}
-        <Dialog open={!!selectedProject} onClose={closeProjectDetails} className="max-w-3xl max-h-[90vh] overflow-auto">
+        <Dialog open={!!selectedProject} onOpenChange={(open) => !open && closeProjectDetails()}>
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-auto">
             <DialogHeader>
               <DialogTitle>{selectedProject?.title}</DialogTitle>
               <DialogDescription>
@@ -507,10 +509,12 @@ export default function PortfolioBlock({ block, onUpdate, onDelete, isEditing = 
                 )}
               </div>
             </div>
+            </DialogContent>
         </Dialog>
 
         {/* Lightbox Modal */}
-        <Dialog open={lightboxOpen} onClose={closeLightbox} className="max-w-4xl max-h-[90vh] overflow-auto">
+        <Dialog open={lightboxOpen} onOpenChange={(open) => !open && closeLightbox()}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
             <DialogHeader>
               <DialogTitle>Project Image</DialogTitle>
               <DialogDescription>
@@ -527,6 +531,7 @@ export default function PortfolioBlock({ block, onUpdate, onDelete, isEditing = 
                 />
               )}
             </div>
+            </DialogContent>
         </Dialog>
       </>
     );

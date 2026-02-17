@@ -8,7 +8,7 @@ import {
     UserPlus,
     Users
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/card";
 import {
     Dialog,
+    DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
@@ -196,7 +197,8 @@ export default function TeamManagement() {
                     Invite User
                 </Button>
 
-                <Dialog open={isInviteOpen} onClose={() => setIsInviteOpen(false)}>
+                <Dialog open={isInviteOpen} onOpenChange={(open) => !open && setIsInviteOpen(false)}>
+                    <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Invite New Team Member</DialogTitle>
                         <DialogDescription>
@@ -255,6 +257,7 @@ export default function TeamManagement() {
                             </Button>
                         </DialogFooter>
                     </form>
+                    </DialogContent>
                 </Dialog>
             </div>
 
@@ -327,7 +330,8 @@ export default function TeamManagement() {
             </Card>
 
             {/* Edit Folders Dialog */}
-            <Dialog open={isEditFoldersOpen} onClose={() => setIsEditFoldersOpen(false)}>
+            <Dialog open={isEditFoldersOpen} onOpenChange={(open) => !open && setIsEditFoldersOpen(false)}>
+                <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Manage Access</DialogTitle>
                     <DialogDescription>
@@ -357,6 +361,7 @@ export default function TeamManagement() {
                     <Button variant="outline" onClick={() => setIsEditFoldersOpen(false)}>Cancel</Button>
                     <Button onClick={onSaveFolders}>Save Changes</Button>
                 </DialogFooter>
+                </DialogContent>
             </Dialog>
         </div>
     );

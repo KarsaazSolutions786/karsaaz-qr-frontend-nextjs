@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Dialog, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import contentService from "@/services/content.service";
@@ -30,15 +30,15 @@ interface CustomCode {
 const PLACEMENT_OPTIONS = ["head", "body_start", "body_end"];
 
 export default function CustomCodesPage() {
-  const [codes, setCodes]       = useState<CustomCode[]>([]);
-  const [loading, setLoading]   = useState(true);
-  const [search, setSearch]     = useState("");
+  const [codes, setCodes] = useState<CustomCode[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
   // Create / Edit dialog
-  const [formDialog, setFormDialog]     = useState<"create" | "edit" | null>(null);
-  const [editTarget, setEditTarget]     = useState<CustomCode | null>(null);
-  const [formName, setFormName]         = useState("");
-  const [formCode, setFormCode]         = useState("");
+  const [formDialog, setFormDialog] = useState<"create" | "edit" | null>(null);
+  const [editTarget, setEditTarget] = useState<CustomCode | null>(null);
+  const [formName, setFormName] = useState("");
+  const [formCode, setFormCode] = useState("");
   const [formPlacement, setFormPlacement] = useState("head");
   const [formSubmitting, setFormSubmitting] = useState(false);
 
@@ -146,7 +146,7 @@ export default function CustomCodesPage() {
               placeholder="Search custom codes..."
               className="pl-8"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
               onKeyDown={e => e.key === "Enter" && fetchCodes()}
             />
           </div>
@@ -205,7 +205,8 @@ export default function CustomCodesPage() {
       </Card>
 
       {/* Create / Edit Dialog */}
-      <Dialog open={formDialog !== null} onClose={() => setFormDialog(null)}>
+      <Dialog open={formDialog !== null} onOpenChange={(open) => !open && setFormDialog(null)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>{formDialog === "edit" ? "Edit Custom Code" : "Add Custom Code"}</DialogTitle>
           <DialogDescription>
@@ -220,7 +221,7 @@ export default function CustomCodesPage() {
             <Input
               placeholder="e.g. Google Analytics"
               value={formName}
-              onChange={e => setFormName(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormName(e.target.value)}
             />
           </div>
           <div className="space-y-1">
@@ -228,7 +229,7 @@ export default function CustomCodesPage() {
             <select
               className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
               value={formPlacement}
-              onChange={e => setFormPlacement(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormPlacement(e.target.value)}
             >
               {PLACEMENT_OPTIONS.map(p => (
                 <option key={p} value={p}>
@@ -243,7 +244,7 @@ export default function CustomCodesPage() {
               className="w-full min-h-[160px] rounded-md border border-input bg-background px-3 py-2 text-sm font-mono resize-y focus:outline-none focus:ring-1 focus:ring-ring"
               placeholder="<script>...</script> or <style>...</style>"
               value={formCode}
-              onChange={e => setFormCode(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormCode(e.target.value)}
             />
           </div>
         </div>
@@ -254,10 +255,12 @@ export default function CustomCodesPage() {
             {formDialog === "edit" ? "Save Changes" : "Add Code"}
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
 
       {/* Delete Confirm Dialog */}
-      <Dialog open={deleteTarget !== null} onClose={() => setDeleteTarget(null)}>
+      <Dialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent>
         <DialogHeader>
           <DialogTitle>Delete Custom Code</DialogTitle>
           <DialogDescription>
@@ -271,6 +274,7 @@ export default function CustomCodesPage() {
             Delete
           </Button>
         </DialogFooter>
+        </DialogContent>
       </Dialog>
     </div>
   );

@@ -7,31 +7,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import cloudStorageService, { CloudConnection, CloudProvider } from "@/services/cloud-storage.service";
 import { CheckCircle, Cloud, HardDrive, Loader2, Plus, RefreshCw, Trash2, Wifi, XCircle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const PROVIDER_META: Record<CloudProvider, { label: string; color: string; icon: string }> = {
   google_drive: { label: "Google Drive", color: "bg-blue-100 text-blue-700", icon: "G" },
-  dropbox:      { label: "Dropbox",      color: "bg-indigo-100 text-indigo-700", icon: "D" },
-  onedrive:     { label: "OneDrive",     color: "bg-sky-100 text-sky-700", icon: "O" },
-  mega:         { label: "MEGA",         color: "bg-red-100 text-red-700", icon: "M" },
+  dropbox: { label: "Dropbox", color: "bg-indigo-100 text-indigo-700", icon: "D" },
+  onedrive: { label: "OneDrive", color: "bg-sky-100 text-sky-700", icon: "O" },
+  mega: { label: "MEGA", color: "bg-red-100 text-red-700", icon: "M" },
 };
 
 export default function CloudStoragePage() {
   const [connections, setConnections] = useState<CloudConnection[]>([]);
-  const [backupJobs, setBackupJobs]   = useState<Array<{ id: string | number; backup_type?: string; started_at?: string; status?: string }>>([]); // More specific type
-  const [loading, setLoading]         = useState(true);
-  const [connecting, setConnecting]   = useState<CloudProvider | null>(null);
+  const [backupJobs, setBackupJobs] = useState<Array<{ id: string | number; backup_type?: string; started_at?: string; status?: string }>>([]); // More specific type
+  const [loading, setLoading] = useState(true);
+  const [connecting, setConnecting] = useState<CloudProvider | null>(null);
 
-  const [megaDialog, setMegaDialog]   = useState(false);
-  const [megaEmail, setMegaEmail]     = useState("");
+  const [megaDialog, setMegaDialog] = useState(false);
+  const [megaEmail, setMegaEmail] = useState("");
   const [megaPassword, setMegaPassword] = useState("");
   const [megaLoading, setMegaLoading] = useState(false);
 
   const [backupDialog, setBackupDialog] = useState<string | number | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
 
-  const fetchData = React.useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [connsRes, jobsRes] = await Promise.allSettled([
@@ -57,7 +57,7 @@ export default function CloudStoragePage() {
     setConnecting(provider);
     try {
       const res = await cloudStorageService.getAuthUrl(provider);
-      const url  = (res as { url?: string; auth_url?: string })?.url ?? (res as { url?: string; auth_url?: string })?.auth_url;
+      const url = (res as { url?: string; auth_url?: string })?.url ?? (res as { url?: string; auth_url?: string })?.auth_url;
       if (url) window.location.href = url;
       else toast.error("Could not get OAuth URL from server");
     } catch {
@@ -226,7 +226,7 @@ export default function CloudStoragePage() {
       )}
 
       {/* MEGA Connect Dialog */}
-      <Dialog open={megaDialog} onClose={() => setMegaDialog(false)}>
+      <Dialog open={megaDialog} onOpenChange={setMegaDialog}>
         <DialogHeader>
           <DialogTitle>Connect MEGA</DialogTitle>
           <DialogDescription>Enter your MEGA account credentials to connect.</DialogDescription>
@@ -234,11 +234,11 @@ export default function CloudStoragePage() {
         <div className="space-y-4 py-4">
           <div className="space-y-1">
             <Label htmlFor="mega-email">MEGA Email</Label>
-            <Input id="mega-email" type="email" placeholder="you@mega.nz" value={megaEmail} onChange={e => setMegaEmail(e.target.value)} />
+            <Input id="mega-email" type="email" placeholder="you@mega.nz" value={megaEmail} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMegaEmail(e.target.value)} />
           </div>
           <div className="space-y-1">
             <Label htmlFor="mega-password">MEGA Password</Label>
-            <Input id="mega-password" type="password" placeholder="••••••••" value={megaPassword} onChange={e => setMegaPassword(e.target.value)} />
+            <Input id="mega-password" type="password" placeholder="••••••••" value={megaPassword} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMegaPassword(e.target.value)} />
           </div>
         </div>
         <DialogFooter>
@@ -250,7 +250,7 @@ export default function CloudStoragePage() {
       </Dialog>
 
       {/* Backup Confirm Dialog */}
-      <Dialog open={backupDialog !== null} onClose={() => setBackupDialog(null)}>
+      <Dialog open={backupDialog !== null} onOpenChange={(open) => !open && setBackupDialog(null)}>
         <DialogHeader>
           <DialogTitle>Start Backup</DialogTitle>
           <DialogDescription>Back up all your QR code data to this cloud storage connection.</DialogDescription>

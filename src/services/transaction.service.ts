@@ -48,10 +48,10 @@ export const transactionService = {
 
   /** POST /api/transactions/upload-proof-of-payment — upload payment receipt/screenshot */
   uploadProofOfPayment: async (transactionId: string | number, file: File) => {
-    return apiClient.upload("/transactions/upload-proof-of-payment", {
-      file,
-      transaction_id: transactionId as any,
-    });
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("transaction_id", String(transactionId));
+    return apiClient.upload("/transactions/upload-proof-of-payment", formData);
   },
 
   // ─── Admin Actions ─────────────────────────────────────

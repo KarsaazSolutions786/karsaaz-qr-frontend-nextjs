@@ -228,7 +228,7 @@ export default function LoginPage() {
   );
 }
 
-function EmailForm({ onSubmit, isLoading }: { onSubmit: (data: Record<string, unknown>) => void, isLoading: boolean }) {
+function EmailForm({ onSubmit, isLoading }: { onSubmit: (data: { email: string }) => void, isLoading: boolean }) {
   const form = useForm({ resolver: zodResolver(emailSchema) });
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -244,7 +244,7 @@ function EmailForm({ onSubmit, isLoading }: { onSubmit: (data: Record<string, un
   );
 }
 
-function OtpForm({ onSubmit, isLoading, resendCountdown, onResend }: { onSubmit: (data: Record<string, unknown>) => void, isLoading: boolean, resendCountdown: number, onResend: () => void }) {
+function OtpForm({ onSubmit, isLoading, resendCountdown, onResend }: { onSubmit: (data: { otp: string }) => void, isLoading: boolean, resendCountdown: number, onResend: () => void }) {
   const form = useForm({ resolver: zodResolver(otpSchema) });
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -277,7 +277,7 @@ function OtpForm({ onSubmit, isLoading, resendCountdown, onResend }: { onSubmit:
   );
 }
 
-function PasswordForm({ onSubmit, isLoading }: { onSubmit: (data: Record<string, unknown>) => void, isLoading: boolean }) {
+function PasswordForm({ onSubmit, isLoading }: { onSubmit: (data: { password: string }) => void, isLoading: boolean }) {
   const form = useForm({ resolver: zodResolver(passwordSchema) });
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

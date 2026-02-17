@@ -3,6 +3,8 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ColorPicker } from "@/components/qr/ColorPicker";
+import { StickerPositioning } from "@/components/qr/StickerPositioning";
 import { advancedShapes } from "@/data/qr-designer";
 import { Upload } from "lucide-react";
 import { useFormContext } from "react-hook-form";
@@ -45,8 +47,12 @@ export function AdvancedShapeFields() {
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Define the primary frame tone</p>
               </div>
               <div className="flex gap-2">
-                <Input type="color" className="h-12 w-16 p-1.5 rounded-xl border-none shadow-md cursor-pointer" value={frameColor} onChange={(e) => setValue("design.advancedShapeFrameColor", e.target.value)} />
-                <Input type="text" className="flex-1 h-12 w-32 rounded-xl font-black font-mono text-xs uppercase bg-white dark:bg-zinc-950 border-none shadow-md text-center" value={frameColor} onChange={(e) => setValue("design.advancedShapeFrameColor", e.target.value)} />
+                <ColorPicker
+                  value={frameColor}
+                  onChange={(color) => setValue("design.advancedShapeFrameColor", color)}
+                  showPresets={false}
+                  className="w-full"
+                />
               </div>
 
               {["rect-frame-text-top", "rect-frame-text-bottom", "simple-text-top", "simple-text-bottom"].includes(advancedShape) && (
@@ -177,6 +183,27 @@ export function AdvancedShapeFields() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* Sticker Positioning Section */}
+        <div className="pt-10 border-t-2 border-dashed border-gray-100 dark:border-zinc-900">
+          <StickerPositioning
+            value={{
+              x: watch("design.advancedShapePositionX") || 50,
+              y: watch("design.advancedShapePositionY") || 50,
+              scale: watch("design.advancedShapeScale") || 100,
+              rotation: watch("design.advancedShapeRotation") || 0,
+              opacity: watch("design.advancedShapeOpacity") || 100,
+            }}
+            onChange={(state) => {
+              setValue("design.advancedShapePositionX", state.x);
+              setValue("design.advancedShapePositionY", state.y);
+              setValue("design.advancedShapeScale", state.scale);
+              setValue("design.advancedShapeRotation", state.rotation);
+              setValue("design.advancedShapeOpacity", state.opacity);
+            }}
+            label="Positioning & Transform"
+          />
         </div>
       )}
     </div>

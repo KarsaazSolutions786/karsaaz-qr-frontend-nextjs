@@ -50,7 +50,7 @@ export const VideoBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
   if (isPreview) {
     return (
-      <div 
+      <div
         className="w-full flex flex-col items-center"
         style={{
           padding: block.settings.padding,
@@ -59,9 +59,9 @@ export const VideoBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
           borderRadius: block.settings.borderRadius,
         }}
       >
-        <div 
-          className="w-full relative overflow-hidden"
-          style={{ paddingTop: '56.25%', borderRadius: block.settings.borderRadius || '8px' }} // 16:9 Aspect Ratio
+        <div
+          className="w-full relative overflow-hidden aspect-video"
+          style={{ borderRadius: block.settings.borderRadius || '8px' }} // 16:9 Aspect Ratio
         >
           {embedData.url ? (
             <iframe
@@ -77,13 +77,13 @@ export const VideoBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
             </div>
           )}
         </div>
-        
+
         {content.title && (
           <h3 className="mt-2 text-lg font-semibold text-center" style={{ color: block.settings.textColor }}>
             {content.title}
           </h3>
         )}
-        
+
         {content.description && (
           <p className="mt-1 text-sm text-center opacity-80" style={{ color: block.settings.textColor }}>
             {content.description}
@@ -104,9 +104,9 @@ export const VideoBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
         <TabsContent value="content" className="space-y-4 pt-4">
           <div className="space-y-2">
             <Label>Video URL</Label>
-            <Input 
-              value={content.url} 
-              onChange={(e) => updateContent({ url: e.target.value })}
+            <Input
+              value={content.url}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateContent({ url: e.target.value })}
               placeholder="https://youtube.com/watch?v=..."
             />
             <p className="text-xs text-muted-foreground">
@@ -116,18 +116,18 @@ export const VideoBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
           <div className="space-y-2">
             <Label>Title (Optional)</Label>
-            <Input 
-              value={content.title || ''} 
-              onChange={(e) => updateContent({ title: e.target.value })}
+            <Input
+              value={content.title || ''}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateContent({ title: e.target.value })}
               placeholder="Video Title"
             />
           </div>
 
           <div className="space-y-2">
             <Label>Description (Optional)</Label>
-            <Input 
-              value={content.description || ''} 
-              onChange={(e) => updateContent({ description: e.target.value })}
+            <Input
+              value={content.description || ''}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateContent({ description: e.target.value })}
               placeholder="Add a description..."
             />
           </div>
@@ -136,7 +136,7 @@ export const VideoBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
         <TabsContent value="settings" className="space-y-4 pt-4">
           <div className="flex items-center justify-between">
             <Label>Autoplay</Label>
-            <Switch 
+            <Switch
               checked={content.autoplay}
               onCheckedChange={(checked) => updateContent({ autoplay: checked })}
             />
@@ -144,33 +144,33 @@ export const VideoBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
           <div className="flex items-center justify-between">
             <Label>Show Controls</Label>
-            <Switch 
+            <Switch
               checked={content.controls !== false}
               onCheckedChange={(checked) => updateContent({ controls: checked })}
             />
           </div>
 
           <div className="space-y-2">
-             <Label>Padding</Label>
-             <Input 
-                value={block.settings.padding || '0px'}
-                onChange={(e) => updateSettings({ padding: e.target.value })}
-                placeholder="e.g. 10px"
-             />
+            <Label>Padding</Label>
+            <Input
+              value={block.settings.padding || '0px'}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSettings({ padding: e.target.value })}
+              placeholder="e.g. 10px"
+            />
           </div>
-          
-           <div className="space-y-2">
+
+          <div className="space-y-2">
             <Label>Background Color</Label>
             <div className="flex gap-2">
-              <Input 
-                type="color" 
+              <Input
+                type="color"
                 value={block.settings.backgroundColor || '#ffffff'}
                 className="w-12 h-10 p-1 cursor-pointer"
-                onChange={(e) => updateSettings({ backgroundColor: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSettings({ backgroundColor: e.target.value })}
               />
-              <Input 
+              <Input
                 value={block.settings.backgroundColor || '#ffffff'}
-                onChange={(e) => updateSettings({ backgroundColor: e.target.value })}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSettings({ backgroundColor: e.target.value })}
                 placeholder="#ffffff"
               />
             </div>
@@ -180,3 +180,5 @@ export const VideoBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
     </div>
   );
 };
+
+export default VideoBlock;

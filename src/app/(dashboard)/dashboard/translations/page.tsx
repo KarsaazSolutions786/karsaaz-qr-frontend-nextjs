@@ -14,7 +14,7 @@ export default function AdminTranslationsPage() {
                 { key: "id", label: "ID" },
                 { key: "name", label: "Language" },
                 { key: "code", label: "Code" },
-                { key: "is_default", label: "Default", render: (v) => v ? "✓" : "—" },
+                { key: "is_default", label: "Default", render: (v: any) => v ? "✓" : "—" },
             ]}
             fetchFn={contentService.getTranslations}
             deleteFn={contentService.deleteTranslation}

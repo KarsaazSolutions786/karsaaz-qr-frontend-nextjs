@@ -7,7 +7,7 @@ import { useQRPreviewUrl } from "@/hooks/use-qr-preview";
 import { CanvasTextRenderer } from "@/lib/canvas-text-renderer";
 import { cn } from "@/lib/utils";
 import { Eye, Loader2, RefreshCw, Smartphone } from "lucide-react";
-import { useEffect, useRef, useState as _useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 interface QRPreviewProps {
@@ -18,8 +18,8 @@ interface QRPreviewProps {
 export function QRPreview({ id, loading = false }: QRPreviewProps) {
   const { watch } = useFormContext();
   const formData = watch();
-  const _canvasRef = _useRef<HTMLCanvasElement>(null);
-  const rendererRef = _useRef<CanvasTextRenderer | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rendererRef = useRef<CanvasTextRenderer | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [stickyTop, setStickyTop] = useState(24);
@@ -77,7 +77,7 @@ export function QRPreview({ id, loading = false }: QRPreviewProps) {
       <Card className="overflow-hidden border-2 border-muted shadow-lg bg-white dark:bg-zinc-950">
         <div className="bg-muted/30 p-3 border-b flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-blue-600 dark:text-blue-400">
-            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Eye className="h-3.5 w-3.5" />} 
+            {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Eye className="h-3.5 w-3.5" />}
             High-Fidelity Preview
           </span>
           <div className="flex gap-1 items-center">
@@ -93,7 +93,7 @@ export function QRPreview({ id, loading = false }: QRPreviewProps) {
                 <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
               </div>
             )}
-            
+
             <QRImage
               url={previewUrl}
               className="border-none shadow-none ring-0 p-0"
@@ -111,9 +111,9 @@ export function QRPreview({ id, loading = false }: QRPreviewProps) {
             />
           </div>
 
-              <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">
-                Scan to test scannability across different lighting and devices
-              </p>
+          <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">
+            Scan to test scannability across different lighting and devices
+          </p>
         </CardContent>
       </Card>
 
@@ -122,10 +122,12 @@ export function QRPreview({ id, loading = false }: QRPreviewProps) {
         <div className="mt-4 p-4 rounded-2xl bg-orange-50 border-2 border-orange-100 dark:bg-orange-950/20 dark:border-orange-900 flex gap-3 animate-in fade-in slide-in-from-top-2 duration-500">
           <RefreshCw className="h-5 w-5 text-orange-600 shrink-0 mt-0.5" />
           <p className="text-[11px] text-orange-800 dark:text-orange-300 font-bold leading-tight uppercase tracking-tight">
-            High logo scale or round shapes may reduce scannability. <br/>Test it before you proceed.
+            High logo scale or round shapes may reduce scannability. <br />Test it before you proceed.
           </p>
         </div>
       )}
     </div>
   );
 }
+
+export default QRPreview;

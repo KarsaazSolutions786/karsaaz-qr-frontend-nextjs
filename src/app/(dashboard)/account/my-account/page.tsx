@@ -139,7 +139,7 @@ export default function MyAccountPage() {
                     id="name"
                     className="pl-9"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                     disabled={isLoading}
                   />
                 </div>
@@ -156,7 +156,7 @@ export default function MyAccountPage() {
                     type="email"
                     className="pl-9"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     disabled={isLoading}
                   />
                 </div>
@@ -198,14 +198,14 @@ export default function MyAccountPage() {
                     type="password"
                     placeholder="Current password"
                     value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCurrentPassword(e.target.value)}
                     required
                   />
                   <Input
                     type="password"
                     placeholder="New password (min 8 chars)"
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)}
                     required
                     minLength={8}
                   />
@@ -213,7 +213,7 @@ export default function MyAccountPage() {
                     type="password"
                     placeholder="Confirm new password"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
                     required
                   />
                   <div className="flex gap-2">

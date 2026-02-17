@@ -99,7 +99,7 @@ export const qrCodeService = {
     sort?: string;
     page_size?: number;
   }) => {
-    return apiClient.get("/qrcodes", params as Record<string, string | number | boolean>);
+    return apiClient.get("/qrcodes", params as any);
   },
 
   /** GET /api/qrcodes/{id} */
@@ -136,7 +136,7 @@ export const qrCodeService = {
     id?: string | number;
     h?: string;
   }) => {
-    return apiClient.get("/qrcodes/preview", params as Record<string, string | number | boolean | undefined>);
+    return apiClient.get("/qrcodes/preview", params as any);
   },
 
   // ─── Operations ────────────────────────────────────────
@@ -170,22 +170,31 @@ export const qrCodeService = {
 
   /** POST /api/qrcodes/{id}/logo — Upload logo image (FormData) */
   uploadLogo: async (id: string | number, file: File) => {
-    return apiClient.upload(`/qrcodes/${id}/logo`, { logo: file });
+    const formData = new FormData();
+    formData.append("logo", file);
+    return apiClient.upload(`/qrcodes/${id}/logo`, formData);
   },
 
   /** POST /api/qrcodes/{id}/background-image — Upload foreground/background image */
   uploadBackgroundImage: async (id: string | number, file: File) => {
-    return apiClient.upload(`/qrcodes/${id}/background-image`, { image: file });
+    const formData = new FormData();
+    formData.append("image", file);
+    return apiClient.upload(`/qrcodes/${id}/background-image`, formData);
   },
 
   /** POST /api/qrcodes/data-file — Upload a data file (for file-type QR codes) */
   uploadDataFile: async (file: File) => {
-    return apiClient.upload("/qrcodes/data-file", { file });
+    const formData = new FormData();
+    formData.append("file", file);
+    return apiClient.upload("/qrcodes/data-file", formData);
   },
 
   /** POST /api/qrcodes/{id}/upload-design-file — Upload a design asset file */
   uploadDesignFile: async (id: string | number, file: File, name: string) => {
-    return apiClient.upload(`/qrcodes/${id}/upload-design-file`, { file, name });
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", name);
+    return apiClient.upload(`/qrcodes/${id}/upload-design-file`, formData);
   },
 
   // ─── Webpage / Landing Page Design ────────────────────
@@ -202,7 +211,9 @@ export const qrCodeService = {
 
   /** POST /api/qrcodes/{id}/webpage-design-file — Upload webpage design asset */
   uploadWebpageDesignFile: async (id: string | number, file: File) => {
-    return apiClient.upload(`/qrcodes/${id}/webpage-design-file`, { file });
+    const formData = new FormData();
+    formData.append("file", file);
+    return apiClient.upload(`/qrcodes/${id}/webpage-design-file`, formData);
   },
 
   /** DELETE /api/qrcodes/{id}/webpage-design-file — Delete webpage design asset */
@@ -218,17 +229,17 @@ export const qrCodeService = {
     slug: 'scans-per-day' | 'scans-by-device' | 'scans-by-country' | 'scans-by-browser' | 'scans-by-os' | string,
     params?: { from?: string; to?: string }
   ) => {
-    return apiClient.get(`/qrcodes/${id}/reports/${slug}`, params as Record<string, string | undefined>);
+    return apiClient.get(`/qrcodes/${id}/reports/${slug}`, params as any);
   },
 
   /** GET /api/qrcodes/count?qrcode_type= — Count QR codes (total or by type) */
   getCount: async (params?: { qrcode_type?: string }) => {
-    return apiClient.get("/qrcodes/count", params as Record<string, string | undefined>);
+    return apiClient.get("/qrcodes/count", params as any);
   },
 
   /** GET /api/qrcodes/count/scans — Total scan count across all QR codes */
   getScanCount: async (params?: { type?: string }) => {
-    return apiClient.get("/qrcodes/count/scans", params as Record<string, string | undefined>);
+    return apiClient.get("/qrcodes/count/scans", params as any);
   },
 
   // ─── Download ──────────────────────────────────────────
@@ -246,7 +257,7 @@ export const qrCodeService = {
     id: string | number,
     params?: { page?: number }
   ) => {
-    return apiClient.get(`/qrcodes/${id}/business-review-feedbacks`, params as Record<string, number | undefined>);
+    return apiClient.get(`/qrcodes/${id}/business-review-feedbacks`, params as any);
   },
 
   /** DELETE /api/qrcodes/{id}/business-review-feedbacks/{feedbackId} — delete a review */

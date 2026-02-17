@@ -1,101 +1,173 @@
 "use client";
 
 import { useQRWizard } from "@/store/use-qr-wizard";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { getQRTypeById } from "@/data/qr-types";
 
 export default function DataInput() {
-  const { qrType, qrData, setQRData } = useQRWizard();
+  const { qrType, qrData, setQRData, setStep } = useQRWizard();
 
-  const updateData = (key: string, value: any) => {
+  const updateData = (key: string, value: string) => {
     setQRData({ ...qrData, [key]: value });
   };
 
-  if (!qrType) {
-    return <div className="text-center p-10">Please select a QR code type first.</div>;
-  }
+  const typeInfo = qrType ? getQRTypeById(qrType) : null;
+  const typeName = typeInfo?.name || qrType?.toUpperCase() || "QR Code";
 
-  // Simplified form logic - in production, break this into sub-components per type
+  const handleBack = () => setStep(0);
+  const handleNext = () => setStep(2);
+
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-6">
-      <h2 className="text-2xl font-bold mb-4 capitalize">Enter {qrType} Details</h2>
+    <div className="wizard-data-input">
+      {/* Header: back arrow + type name */}
+      <div className="wizard-data-header">
+        <button onClick={handleBack} className="wizard-data-back">
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+        <h1 className="wizard-data-title">{typeName}</h1>
+      </div>
 
-      {qrType === 'url' && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="url">Website URL</Label>
-            <Input 
-              id="url" 
-              placeholder="https://example.com" 
-              value={qrData.url || ''}
-              onChange={(e) => updateData('url', e.target.value)}
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch 
-              id="dynamic" 
-              checked={qrData.dynamic || false}
-              onCheckedChange={(checked) => updateData('dynamic', checked)}
-            />
-            <Label htmlFor="dynamic">Dynamic QR Code (Trackable)</Label>
-          </div>
-        </div>
-      )}
+      {/* Input form area */}
+      <div className="wizard-data-form">
+        {renderForm(qrType, qrData, updateData)}
+      </div>
 
-      {qrType === 'text' && (
-        <div className="space-y-2">
-          <Label htmlFor="text">Content</Label>
-          <Textarea 
-            id="text" 
-            placeholder="Enter your text here..." 
-            rows={5}
-            value={qrData.text || ''}
-            onChange={(e) => updateData('text', e.target.value)}
-          />
-        </div>
-      )}
+      {/* Next button */}
+      <div className="wizard-data-actions">
+        <button onClick={handleNext} className="wizard-data-next">
+          <span>Next</span>
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
 
-      {qrType === 'email' && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
-            <Input 
-              id="email" 
-              type="email" 
-              placeholder="user@example.com"
-              value={qrData.email || ''}
-              onChange={(e) => updateData('email', e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="subject">Subject</Label>
-            <Input 
-              id="subject" 
-              placeholder="Hello..."
-              value={qrData.subject || ''}
-              onChange={(e) => updateData('subject', e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="body">Message</Label>
-            <Textarea 
-              id="body" 
-              rows={4}
-              value={qrData.body || ''}
-              onChange={(e) => updateData('body', e.target.value)}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Add other types as needed */}
-      {!['url', 'text', 'email'].includes(qrType) && (
-        <div className="text-center p-8 bg-gray-50 rounded-lg">
-          <p className="text-muted-foreground">Form for <strong>{qrType}</strong> is coming soon.</p>
-        </div>
-      )}
+      {/* QR watermark background */}
+      <div className="wizard-data-watermark" aria-hidden="true">
+        <svg viewBox="0 0 400 400" fill="none" className="wizard-data-watermark-svg">
+          {/* Simplified QR pattern */}
+          <rect x="0" y="0" width="120" height="120" rx="8" fill="currentColor" opacity="0.06" />
+          <rect x="140" y="0" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="200" y="0" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="280" y="0" width="120" height="120" rx="8" fill="currentColor" opacity="0.06" />
+          <rect x="0" y="140" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="80" y="140" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="140" y="140" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="200" y="140" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="280" y="140" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="360" y="140" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="0" y="200" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="140" y="200" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="280" y="200" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="360" y="200" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="0" y="280" width="120" height="120" rx="8" fill="currentColor" opacity="0.06" />
+          <rect x="140" y="280" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="200" y="280" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="280" y="280" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="360" y="280" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="280" y="360" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+          <rect x="360" y="360" width="40" height="40" rx="4" fill="currentColor" opacity="0.06" />
+        </svg>
+      </div>
     </div>
   );
+}
+
+function renderForm(
+  qrType: string | null,
+  qrData: Record<string, string>,
+  updateData: (key: string, value: string) => void
+) {
+  switch (qrType) {
+    case "text":
+    case "url":
+      return (
+        <input
+          type="url"
+          placeholder="Enter URL here"
+          value={qrData.url || ""}
+          onChange={(e) => updateData("url", e.target.value)}
+          className="wizard-data-url-input"
+        />
+      );
+
+    case "email":
+      return (
+        <div className="wizard-data-fields">
+          <input
+            type="email"
+            placeholder="Email address"
+            value={qrData.email || ""}
+            onChange={(e) => updateData("email", e.target.value)}
+            className="wizard-data-url-input"
+          />
+          <input
+            type="text"
+            placeholder="Subject"
+            value={qrData.subject || ""}
+            onChange={(e) => updateData("subject", e.target.value)}
+            className="wizard-data-url-input"
+          />
+          <textarea
+            placeholder="Message body"
+            rows={3}
+            value={qrData.body || ""}
+            onChange={(e) => updateData("body", e.target.value)}
+            className="wizard-data-url-input"
+          />
+        </div>
+      );
+
+    case "wifi":
+      return (
+        <div className="wizard-data-fields">
+          <input
+            type="text"
+            placeholder="Network name (SSID)"
+            value={qrData.ssid || ""}
+            onChange={(e) => updateData("ssid", e.target.value)}
+            className="wizard-data-url-input"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={qrData.password || ""}
+            onChange={(e) => updateData("password", e.target.value)}
+            className="wizard-data-url-input"
+          />
+        </div>
+      );
+
+    case "call":
+    case "sms":
+      return (
+        <input
+          type="tel"
+          placeholder="Phone number"
+          value={qrData.phone || ""}
+          onChange={(e) => updateData("phone", e.target.value)}
+          className="wizard-data-url-input"
+        />
+      );
+
+    case "vcard":
+      return (
+        <div className="wizard-data-fields">
+          <input type="text" placeholder="Full name" value={qrData.name || ""} onChange={(e) => updateData("name", e.target.value)} className="wizard-data-url-input" />
+          <input type="text" placeholder="Organization" value={qrData.org || ""} onChange={(e) => updateData("org", e.target.value)} className="wizard-data-url-input" />
+          <input type="tel" placeholder="Phone number" value={qrData.phone || ""} onChange={(e) => updateData("phone", e.target.value)} className="wizard-data-url-input" />
+          <input type="email" placeholder="Email address" value={qrData.email || ""} onChange={(e) => updateData("email", e.target.value)} className="wizard-data-url-input" />
+          <input type="url" placeholder="Website URL" value={qrData.url || ""} onChange={(e) => updateData("url", e.target.value)} className="wizard-data-url-input" />
+        </div>
+      );
+
+    default:
+      return (
+        <input
+          type="url"
+          placeholder="Enter URL here"
+          value={qrData.url || ""}
+          onChange={(e) => updateData("url", e.target.value)}
+          className="wizard-data-url-input"
+        />
+      );
+  }
 }

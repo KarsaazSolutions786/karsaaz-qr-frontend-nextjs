@@ -58,8 +58,8 @@ export const TitleBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
     <div className="space-y-4">
       <div className="space-y-2">
         <Label>Title Text</Label>
-        <Input 
-          value={content.text} 
+        <Input
+          value={content.text}
           onChange={(e) => updateContent({ text: e.target.value })}
           placeholder="Enter your title"
         />
@@ -68,8 +68,8 @@ export const TitleBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
       <div className="flex gap-4">
         <div className="space-y-2 flex-1">
           <Label>Level</Label>
-          <Select 
-            value={content.level || 'h2'} 
+          <Select
+            value={content.level || 'h2'}
             onValueChange={(value) => updateContent({ level: value as any })}
           >
             <SelectTrigger>
@@ -86,8 +86,8 @@ export const TitleBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
         <div className="space-y-2 flex-1">
           <Label>Size</Label>
-          <Select 
-            value={content.fontSize || 'medium'} 
+          <Select
+            value={content.fontSize || 'medium'}
             onValueChange={(value) => updateContent({ fontSize: value as any })}
           >
             <SelectTrigger>
@@ -105,57 +105,57 @@ export const TitleBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
 
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
-            <Button
-              variant={content.alignment === 'left' ? 'default' : 'outline'}
-              size="icon"
-              onClick={() => updateContent({ alignment: 'left' })}
-            >
-              <AlignLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={content.alignment === 'center' ? 'default' : 'outline'}
-              size="icon"
-              onClick={() => updateContent({ alignment: 'center' })}
-            >
-              <AlignCenter className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={content.alignment === 'right' ? 'default' : 'outline'}
-              size="icon"
-              onClick={() => updateContent({ alignment: 'right' })}
-            >
-              <AlignRight className="h-4 w-4" />
-            </Button>
+          <Button
+            variant={content.alignment === 'left' ? 'default' : 'outline'}
+            size="icon"
+            onClick={() => updateContent({ alignment: 'left' })}
+          >
+            <AlignLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={content.alignment === 'center' ? 'default' : 'outline'}
+            size="icon"
+            onClick={() => updateContent({ alignment: 'center' })}
+          >
+            <AlignCenter className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={content.alignment === 'right' ? 'default' : 'outline'}
+            size="icon"
+            onClick={() => updateContent({ alignment: 'right' })}
+          >
+            <AlignRight className="h-4 w-4" />
+          </Button>
         </div>
 
         <div className="flex gap-2">
-           <Button
-              variant={content.bold ? 'default' : 'outline'}
-              size="icon"
-              onClick={() => updateContent({ bold: !content.bold })}
-            >
-              <Bold className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={content.italic ? 'default' : 'outline'}
-              size="icon"
-              onClick={() => updateContent({ italic: !content.italic })}
-            >
-              <Italic className="h-4 w-4" />
-            </Button>
+          <Button
+            variant={content.bold ? 'default' : 'outline'}
+            size="icon"
+            onClick={() => updateContent({ bold: !content.bold })}
+          >
+            <Bold className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={content.italic ? 'default' : 'outline'}
+            size="icon"
+            onClick={() => updateContent({ italic: !content.italic })}
+          >
+            <Italic className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
       <div className="space-y-2">
         <Label>Text Color</Label>
         <div className="flex gap-2">
-          <Input 
-            type="color" 
+          <Input
+            type="color"
             value={block.settings.textColor || '#000000'}
             className="w-12 h-10 p-1 cursor-pointer"
             onChange={(e) => updateSettings({ textColor: e.target.value })}
           />
-          <Input 
+          <Input
             value={block.settings.textColor || '#000000'}
             onChange={(e) => updateSettings({ textColor: e.target.value })}
             placeholder="#000000"
@@ -165,3 +165,5 @@ export const TitleBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, isPrev
     </div>
   );
 };
+
+export default TitleBlock;

@@ -15,7 +15,7 @@ export default function AdminPagesPage() {
                 { key: "title", label: "Title" },
                 { key: "slug", label: "Slug" },
                 {
-                    key: "status", label: "Status", render: (v) => (
+                    key: "status", label: "Status", render: (v: any) => (
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${v === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                             {v || "draft"}
                         </span>

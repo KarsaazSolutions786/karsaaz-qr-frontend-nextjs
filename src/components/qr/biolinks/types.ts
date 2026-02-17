@@ -3,6 +3,15 @@
  * Type definitions for the biolink block editor
  */
 
+export interface UploadedFile {
+  id: string;
+  url: string;
+  name: string;
+  size?: number;
+  type?: string;
+  createdAt?: string;
+}
+
 import { LucideIcon } from 'lucide-react';
 
 // Block Content Type Definitions
@@ -167,32 +176,32 @@ export interface ContactBlockContent {
   showForm: boolean;
   formTitle: string;
   formSubtitle: string;
-  
+
   // Business Hours
   showBusinessHours: boolean;
   businessHours: BusinessHour[];
   timezone: string;
-  
+
   // Map
   showMap: boolean;
   mapUrl: string;
   mapHeight: string;
-  
+
   // Response Time
   showResponseTime: boolean;
   responseTime: string;
-  
+
   // Form Configuration
   requirePhone: boolean;
   requireSubject: boolean;
   emailTo: string;
   ccEmail?: string;
   bccEmail?: string;
-  
+
   // Spam Protection
   enableHoneypot: boolean;
   honeypotField: string;
-  
+
   // Messages
   successMessage: string;
   errorMessage: string;
@@ -224,7 +233,7 @@ export interface FileBlockContent {
 }
 
 // Union Type for all block content
-export type BlockContent = 
+export type BlockContent =
   | LinkBlockContent
   | TextBlockContent
   | ImageBlockContent
@@ -344,3 +353,7 @@ export interface BlockEditorProps {
   isEditing?: boolean;
   isPreview?: boolean;
 }
+
+export type BiolinkBlock = Block;
+export type BiolinkBlockType = BlockContent['type'];
+export const biolinkBlockDefinitions: any = {};

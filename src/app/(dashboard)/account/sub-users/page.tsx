@@ -106,7 +106,7 @@ export default function SubUsersPage() {
                   placeholder="colleague@example.com"
                   className="pl-9"
                   value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInviteEmail(e.target.value)}
                   required
                   disabled={inviting}
                 />

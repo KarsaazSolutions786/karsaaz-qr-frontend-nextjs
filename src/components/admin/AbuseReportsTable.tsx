@@ -3,7 +3,7 @@
 import {
     Eye
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import {
     Dialog,
+    DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
@@ -252,7 +253,8 @@ export default function AbuseReportsTable() {
             </Card>
 
             {/* Action Modal */}
-            <Dialog open={!!modalMode} onClose={() => setModalMode(null)}>
+            <Dialog open={!!modalMode} onOpenChange={(open) => !open && setModalMode(null)}>
+                <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
                         {modalMode === 'resolve' ? 'Resolve Report' : 'Dismiss Report'}
@@ -290,6 +292,7 @@ export default function AbuseReportsTable() {
                         {processing ? "Processing..." : (modalMode === 'resolve' ? "Confirm Resolution" : "Confirm Dismissal")}
                     </Button>
                 </DialogFooter>
+                </DialogContent>
             </Dialog>
         </div>
     );

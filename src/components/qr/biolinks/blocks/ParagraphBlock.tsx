@@ -2,8 +2,6 @@ import React from 'react';
 import { BlockEditorProps, ParagraphBlockContent } from '../types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
@@ -35,7 +33,7 @@ export const ParagraphBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, is
           color: block.settings.textColor || '#000000',
           padding: block.settings.padding || '0px',
           margin: block.settings.margin || '0px',
-          wordWrap: content.wordWrap || 'break-word',
+          wordWrap: (content.wordWrap || 'break-word') as React.CSSProperties['wordWrap'],
         }}
       >
         {content.text || 'Add your text here...'}
@@ -48,9 +46,9 @@ export const ParagraphBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, is
       <div className="space-y-2">
         <Label>Content</Label>
         <TextareaAutosize
-          className="w-full min-h-[100px] p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+          className="w-full min-h-25 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-background"
           value={content.text}
-          onChange={(e) => updateContent({ text: e.target.value })}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateContent({ text: e.target.value })}
           placeholder="Type your paragraph here..."
         />
       </div>
@@ -87,8 +85,8 @@ export const ParagraphBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, is
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Font Size</Label>
-          <Select 
-            value={content.fontSize || '1rem'} 
+          <Select
+            value={content.fontSize || '1rem'}
             onValueChange={(value) => updateContent({ fontSize: value })}
           >
             <SelectTrigger>
@@ -105,8 +103,8 @@ export const ParagraphBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, is
 
         <div className="space-y-2">
           <Label>Line Height</Label>
-          <Select 
-            value={String(content.lineHeight || 1.5)} 
+          <Select
+            value={String(content.lineHeight || 1.5)}
             onValueChange={(value) => updateContent({ lineHeight: Number(value) })}
           >
             <SelectTrigger>
@@ -126,15 +124,15 @@ export const ParagraphBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, is
       <div className="space-y-2">
         <Label>Text Color</Label>
         <div className="flex gap-2">
-          <Input 
-            type="color" 
+          <Input
+            type="color"
             value={block.settings.textColor || '#000000'}
             className="w-12 h-10 p-1 cursor-pointer"
-            onChange={(e) => updateSettings({ textColor: e.target.value })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSettings({ textColor: e.target.value })}
           />
-          <Input 
+          <Input
             value={block.settings.textColor || '#000000'}
-            onChange={(e) => updateSettings({ textColor: e.target.value })}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateSettings({ textColor: e.target.value })}
             placeholder="#000000"
           />
         </div>
@@ -142,3 +140,5 @@ export const ParagraphBlock: React.FC<BlockEditorProps> = ({ block, onUpdate, is
     </div>
   );
 };
+
+export default ParagraphBlock;

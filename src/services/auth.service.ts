@@ -4,6 +4,7 @@
  * OTP/passwordless, 2FA, Apple Sign In, session management, and admin magic links.
  */
 import apiClient from "@/lib/api-client";
+import { User } from "@/store/useAuthStore";
 
 export interface LoginPayload {
   email: string;
@@ -51,12 +52,12 @@ export const authService = {
 
   /** POST /api/login */
   login: async (payload: LoginPayload): Promise<LoginResponse> => {
-    return apiClient.post("/login", payload);
+    return apiClient.post<LoginResponse>("/login", payload);
   },
 
   /** POST /api/register */
   register: async (payload: RegisterPayload): Promise<RegisterResponse> => {
-    return apiClient.post("/register", payload);
+    return apiClient.post<RegisterResponse>("/register", payload);
   },
 
   /** POST /api/logout */
@@ -97,8 +98,8 @@ export const authService = {
   // ─── Social Auth ───────────────────────────────────────
 
   /** POST /api/auth/google/token-login — Google OAuth token login */
-  googleLogin: async (token: string) => {
-    return apiClient.post("/auth/google/token-login", { token });
+  googleLogin: async (token: string): Promise<LoginResponse> => {
+    return apiClient.post<LoginResponse>("/auth/google/token-login", { token });
   },
 
   /** POST /api/auth/google/verify-token — verify Google ID token */
@@ -112,13 +113,13 @@ export const authService = {
   },
 
   /** POST /api/auth/facebook/token-login — Facebook OAuth token login */
-  facebookLogin: async (token: string) => {
-    return apiClient.post("/auth/facebook/token-login", { token });
+  facebookLogin: async (token: string): Promise<LoginResponse> => {
+    return apiClient.post<LoginResponse>("/auth/facebook/token-login", { token });
   },
 
   /** POST /api/auth/twitter/token-login — Twitter OAuth token login */
-  twitterLogin: async (token: string, secret: string) => {
-    return apiClient.post("/auth/twitter/token-login", { token, secret });
+  twitterLogin: async (token: string, secret: string): Promise<LoginResponse> => {
+    return apiClient.post<LoginResponse>("/auth/twitter/token-login", { token, secret });
   },
 
   /** POST /api/auth/apple/verify-token — Apple Sign In */
@@ -202,7 +203,7 @@ export const authService = {
 
   /** GET /api/user/sessions — list all active sessions for current user */
   getSessions: async (): Promise<{ data: Session[] }> => {
-    return apiClient.get("/user/sessions");
+    return apiClient.get<{ data: Session[] }>("/user/sessions");
   },
 
   /** POST /api/user/sessions/revoke-all — revoke all sessions except current */
@@ -236,7 +237,7 @@ export const authService = {
 
   /** POST /api/account/act-as/{user} — admin: impersonate another user */
   actAs: async (userId: string | number): Promise<{ token: string; user: User }> => {
-    return apiClient.post(`/account/act-as/${userId}`);
+    return apiClient.post<{ token: string; user: User }>(`/account/act-as/${userId}`);
   },
 };
 

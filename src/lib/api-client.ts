@@ -1,5 +1,6 @@
 import { ApiError, ValidationError } from './error-handler';
 import Cookies from 'js-cookie';
+import { withRetry } from './network-retry';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://192.168.100.17:8000/api';
 
@@ -54,7 +55,10 @@ async function request(route: string, options: RequestOptions = {}) {
     body: body instanceof FormData ? body : (body ? JSON.stringify(body) : undefined),
   });
 
-  const response = await fetch(fetchRequest);
+  const isRetryable = !rest.method || rest.method === 'GET';
+  const response = isRetryable
+    ? await withRetry(() => fetch(fetchRequest.clone()), { maxRetries: 2 })
+    : await fetch(fetchRequest);
 
   // Custom event for legacy compatibility (client-side only)
   if (typeof window !== 'undefined') {
@@ -82,24 +86,24 @@ async function request(route: string, options: RequestOptions = {}) {
 }
 
 export const apiClient = {
-  get: (url: string, params?: Record<string, string | number | boolean>, options?: RequestInit) => 
-    request(url, { ...options, method: 'GET', params }),
-  
-  post: (url: string, body?: unknown, options?: RequestInit) =>
-    request(url, { ...options, method: 'POST', body: body as BodyInit }),
+  get: <T = any>(url: string, params?: Record<string, string | number | boolean>, options?: RequestInit): Promise<T> =>
+    request(url, { ...options, method: 'GET', params }) as Promise<T>,
 
-  put: (url: string, body?: unknown, options?: RequestInit) =>
-    request(url, { ...options, method: 'PUT', body: body as BodyInit }),
+  post: <T = any>(url: string, body?: unknown, options?: RequestInit): Promise<T> =>
+    request(url, { ...options, method: 'POST', body: body as BodyInit }) as Promise<T>,
 
-  patch: (url: string, body?: unknown, options?: RequestInit) =>
-    request(url, { ...options, method: 'PATCH', body: body as BodyInit }),
+  put: <T = any>(url: string, body?: unknown, options?: RequestInit): Promise<T> =>
+    request(url, { ...options, method: 'PUT', body: body as BodyInit }) as Promise<T>,
 
-  
-  delete: (url: string, options?: RequestInit) => 
-    request(url, { ...options, method: 'DELETE' }),
+  patch: <T = any>(url: string, body?: unknown, options?: RequestInit): Promise<T> =>
+    request(url, { ...options, method: 'PATCH', body: body as BodyInit }) as Promise<T>,
 
-  upload: (url: string, data: FormData) => {
-    return request(url, { method: 'POST', body: data });
+
+  delete: <T = any>(url: string, options?: RequestInit): Promise<T> =>
+    request(url, { ...options, method: 'DELETE' }) as Promise<T>,
+
+  upload: <T = any>(url: string, data: FormData): Promise<T> => {
+    return request(url, { method: 'POST', body: data }) as Promise<T>;
   }
 };
 

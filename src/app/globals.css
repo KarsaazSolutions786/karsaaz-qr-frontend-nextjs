@@ -766,3 +766,815 @@
     width: 100%;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   QR WIZARD — Figma wizard step layouts
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Wizard page container ── */
+.wizard-page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 4rem);
+  background: var(--karsaaz-dashboard-bg, #F0EBF8);
+}
+
+/* ── Title bar (< URL/LINK) ── */
+.wizard-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 32px 0;
+}
+
+.wizard-data-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  color: #AF47AF;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.wizard-data-back:hover {
+  background: rgba(175, 71, 175, 0.08);
+}
+
+.wizard-data-title {
+  font-weight: 700;
+  font-size: 22px;
+  color: #1a1a1a;
+  letter-spacing: -0.01em;
+}
+
+/* ── Step Indicator Bar ── */
+.wizard-step-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  padding: 24px 32px 16px;
+  position: relative;
+}
+
+.wizard-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  max-width: 200px;
+}
+
+.wizard-step-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #E0E0E0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  transition: all 0.3s;
+  position: relative;
+  z-index: 2;
+}
+
+.wizard-step-circle--active {
+  border-color: #AF47AF;
+}
+
+.wizard-step-circle--current {
+  border-color: #AF47AF;
+  box-shadow: 0 0 0 4px rgba(175, 71, 175, 0.12);
+}
+
+.wizard-step-circle:not(:disabled) {
+  cursor: pointer;
+}
+
+.wizard-step-label {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #C4C4C4;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.wizard-step-label--active {
+  color: #AF47AF;
+}
+
+/* Connector line between steps */
+.wizard-step-line {
+  position: absolute;
+  top: 24px;
+  left: calc(50% + 24px);
+  width: calc(100% - 48px);
+  height: 2px;
+  background: #E0E0E0;
+  z-index: 1;
+}
+
+.wizard-step-line--active {
+  background: #AF47AF;
+}
+
+/* ── Wizard Content Card ── */
+.wizard-content-card {
+  margin: 16px 32px;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid rgba(175, 71, 175, 0.12);
+  overflow: hidden;
+  flex: 1;
+}
+
+/* ── Navigation Bar (bottom) ── */
+.wizard-nav-bar {
+  padding: 16px 32px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.wizard-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.wizard-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wizard-nav-finish {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.wizard-nav-finish:hover {
+  color: #AF47AF;
+}
+
+.wizard-nav-back {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  background: none;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.wizard-nav-back:hover {
+  border-color: #AF47AF;
+  color: #AF47AF;
+}
+
+.wizard-nav-next {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  background: none;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.wizard-nav-next:hover {
+  border-color: #AF47AF;
+  color: #AF47AF;
+}
+
+/* ── Data Input Step (Step 1) ── */
+.wizard-data-input {
+  position: relative;
+  min-height: calc(100vh - 4rem);
+  padding: 32px;
+  overflow: hidden;
+}
+
+.wizard-data-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.wizard-data-form {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+}
+
+.wizard-data-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wizard-data-url-input {
+  width: 100%;
+  padding: 14px 18px;
+  font-size: 14px;
+  border: 1px solid #E8E0F0;
+  border-radius: 10px;
+  background: white;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.wizard-data-url-input:focus {
+  border-color: #AF47AF;
+}
+
+.wizard-data-url-input::placeholder {
+  color: #BDBDBD;
+}
+
+.wizard-data-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.wizard-data-next {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  background: none;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.wizard-data-next:hover {
+  border-color: #AF47AF;
+  color: #AF47AF;
+}
+
+/* QR watermark background */
+.wizard-data-watermark {
+  position: absolute;
+  right: -40px;
+  bottom: -40px;
+  width: 500px;
+  height: 500px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+}
+
+.wizard-data-watermark-svg {
+  width: 100%;
+  height: 100%;
+  color: #AF47AF;
+}
+
+/* ── Color / Look & Feel / Sticker — Two-column layout ── */
+.wizard-color-layout,
+.wizard-look-layout,
+.wizard-sticker-layout,
+.wizard-download-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 32px;
+  padding: 24px 32px;
+  min-height: 500px;
+}
+
+@media (max-width: 900px) {
+  .wizard-color-layout,
+  .wizard-look-layout,
+  .wizard-sticker-layout,
+  .wizard-download-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left column controls */
+.wizard-color-controls,
+.wizard-look-controls,
+.wizard-sticker-controls,
+.wizard-download-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Color row: label + swatches */
+.wizard-color-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.wizard-color-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+/* Color swatches group */
+.wizard-color-swatches {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wizard-color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.wizard-color-swatch--main {
+  width: 32px;
+  height: 32px;
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.wizard-color-swatch--preset {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  transition: transform 0.15s;
+}
+
+.wizard-color-swatch--preset:hover {
+  transform: scale(1.1);
+}
+
+.wizard-color-rgb-btn {
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  background: #333;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+/* Toggle switch */
+.wizard-color-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: #E0E0E0;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.wizard-color-toggle--on {
+  background: #4CAF50;
+}
+
+.wizard-color-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.wizard-color-toggle--on .wizard-color-toggle-thumb {
+  transform: translateX(20px);
+}
+
+/* Dropdown */
+.wizard-color-dropdown-wrap {
+  position: relative;
+}
+
+.wizard-color-dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  background: #AF47AF;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.wizard-color-dropdown-btn:hover {
+  background: #9B3D9B;
+}
+
+.wizard-color-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: white;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 20;
+  overflow: hidden;
+  min-width: 140px;
+}
+
+.wizard-color-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  font-size: 13px;
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #333;
+}
+
+.wizard-color-dropdown-item:hover {
+  background: #F5F0FA;
+}
+
+.wizard-color-dropdown-item--active {
+  color: #AF47AF;
+  font-weight: 600;
+}
+
+/* Gradient controls */
+.wizard-gradient-preview {
+  padding: 8px 0;
+}
+
+.wizard-gradient-bar {
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #E0E0E0;
+}
+
+.wizard-gradient-stops {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #2A2A3A;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.wizard-gradient-stop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wizard-gradient-stop-pct {
+  font-size: 12px;
+  color: #AF47AF;
+  min-width: 36px;
+  background: rgba(175, 71, 175, 0.2);
+  border-radius: 4px;
+  padding: 2px 6px;
+  text-align: center;
+}
+
+.wizard-gradient-stop-hex {
+  font-size: 12px;
+  color: #CCC;
+  font-family: monospace;
+}
+
+.wizard-gradient-stop-opacity {
+  font-size: 12px;
+  color: #999;
+  margin-left: auto;
+}
+
+/* Image upload */
+.wizard-image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px;
+  border: 2px dashed #E0D0F0;
+  border-radius: 12px;
+  background: #FAFAFE;
+}
+
+.wizard-image-upload--small {
+  padding: 24px;
+}
+
+.wizard-image-upload-text {
+  font-size: 14px;
+  color: #999;
+}
+
+.wizard-image-upload-or {
+  font-size: 12px;
+  color: #CCC;
+}
+
+.wizard-image-upload-btn {
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  background: #AF47AF;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 20px;
+  cursor: pointer;
+}
+
+.wizard-image-upload-btn:hover {
+  background: #9B3D9B;
+}
+
+/* Right column: QR Preview */
+.wizard-color-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.wizard-color-preview-card {
+  background: #F5F0FA;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.wizard-preview-hint {
+  font-size: 11px;
+  color: #999;
+  text-align: center;
+}
+
+.wizard-ai-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  background: white;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+  justify-content: center;
+}
+
+.wizard-ai-btn:hover {
+  border-color: #AF47AF;
+  color: #AF47AF;
+}
+
+/* ── Shape/Pattern Selection Grid ── */
+.wizard-shape-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wizard-shape-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.wizard-shape-item {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #E8E0F0;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.15s;
+  padding: 4px;
+}
+
+.wizard-shape-item:hover {
+  border-color: #C4A0E8;
+}
+
+.wizard-shape-item--selected {
+  border-color: #AF47AF;
+  background: rgba(175, 71, 175, 0.05);
+  box-shadow: 0 0 0 2px rgba(175, 71, 175, 0.15);
+}
+
+.wizard-shape-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+}
+
+/* Logo grid */
+.wizard-logo-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.wizard-logo-item {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: none;
+  cursor: pointer;
+  padding: 4px;
+  transition: all 0.15s;
+}
+
+.wizard-logo-item:hover {
+  border-color: #E0D0F0;
+}
+
+.wizard-logo-item--selected {
+  border-color: #AF47AF;
+}
+
+.wizard-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+/* Radio buttons */
+.wizard-radio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+}
+
+.wizard-radio input[type="radio"] {
+  accent-color: #AF47AF;
+}
+
+.wizard-look-logo-toggle {
+  display: flex;
+  gap: 16px;
+}
+
+.wizard-look-logo-section {
+  margin-top: 8px;
+}
+
+/* Sticker text wrap */
+.wizard-sticker-text-wrap {
+  max-width: 500px;
+}
+
+/* ── Download Step ── */
+.wizard-download-heading {
+  margin-bottom: 24px;
+}
+
+.wizard-download-title {
+  font-size: 28px;
+  font-weight: 400;
+  color: #333;
+  margin: 0;
+}
+
+.wizard-download-ready {
+  font-size: 48px;
+  font-weight: 700;
+  color: #AF47AF;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.wizard-download-name {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.wizard-download-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.wizard-download-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.wizard-download-btn:hover {
+  color: #AF47AF;
+}
+
+/* ── Responsive adjustments ── */
+@media (max-width: 768px) {
+  .wizard-step-bar {
+    padding: 16px;
+    gap: 0;
+  }
+
+  .wizard-step-circle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .wizard-step-label {
+    font-size: 10px;
+  }
+
+  .wizard-content-card {
+    margin: 8px 16px;
+  }
+
+  .wizard-color-layout,
+  .wizard-look-layout,
+  .wizard-sticker-layout,
+  .wizard-download-layout {
+    padding: 16px;
+  }
+
+  .wizard-shape-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .wizard-logo-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

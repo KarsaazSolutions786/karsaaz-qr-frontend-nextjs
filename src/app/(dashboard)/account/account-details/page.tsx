@@ -67,7 +67,8 @@ export default function AccountDetailsPage() {
         setSubscription(activeSub);
 
         if (balRes) {
-          const balData = balRes.data ?? balRes;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const balData = (balRes as any).data ?? balRes;
           setBalance(typeof balData === "number" ? balData : balData?.balance ?? null);
         }
       } catch (err: unknown) {
