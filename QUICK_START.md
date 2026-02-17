@@ -1,383 +1,395 @@
-# QR Designer Enhancements - Quick Start Guide
+# Quick Start Guide - Next.js Migration
 
-## Overview
-This guide provides a quick reference for using the newly enhanced QR Designer components.
-
-## New Components
-
-### 1. ColorPicker
-**Location:** `src/components/qr/ColorPicker.tsx`
-
-Provides hex color input + color picker + preset colors.
-
-**Basic Usage:**
-```tsx
-import { ColorPicker } from "@/components/qr/ColorPicker";
-import { useFormContext } from "react-hook-form";
-
-function MyComponent() {
-  const { watch, setValue } = useFormContext();
-  
-  return (
-    <ColorPicker
-      value={watch("design.foregroundColor") || "#000000"}
-      onChange={(color) => setValue("design.foregroundColor", color)}
-      label="Foreground Color"
-      showPresets={true}
-    />
-  );
-}
-```
-
-**Props:**
-```tsx
-interface ColorPickerProps {
-  value?: string;              // Hex color (#RRGGBB)
-  onChange: (color: string) => void;  // Called on color change
-  label?: string;              // Section label
-  showPresets?: boolean;       // Show preset colors
-  className?: string;          // Additional styles
-}
-```
-
-**Preset Colors:**
-- #000000 (Black)
-- #FFFFFF (White)
-- #FF0000 (Red)
-- #00AA00 (Green)
-- #0000FF (Blue)
-- #FFAA00 (Orange)
-- #AA00FF (Purple)
-- #00AAAA (Cyan)
-
-### 2. PatternSelector
-**Location:** `src/components/qr/PatternSelector.tsx`
-
-Visual grid for selecting QR code module patterns.
-
-**Basic Usage:**
-```tsx
-import { PatternSelector } from "@/components/qr/PatternSelector";
-import { useFormContext } from "react-hook-form";
-
-function MyComponent() {
-  const { watch, setValue } = useFormContext();
-  
-  return (
-    <PatternSelector
-      value={watch("design.module") || "square"}
-      onChange={(pattern) => setValue("design.module", pattern)}
-      label="Module Pattern"
-    />
-  );
-}
-```
-
-**Props:**
-```tsx
-interface PatternSelectorProps {
-  value?: string;              // Pattern ID
-  onChange: (pattern: string) => void;
-  label?: string;              // Section label
-  className?: string;          // Additional styles
-}
-```
-
-**Available Patterns:**
-- `square` - ▢ Square modules
-- `rounded` - ◉ Rounded modules
-- `circle` - ● Circle modules
-- `diamond` - ◆ Diamond modules
-- `line` - ║ Line modules
-- `dot` - · Dot modules
-
-### 3. StickerPositioning
-**Location:** `src/components/qr/StickerPositioning.tsx`
-
-Advanced positioning controls for QR code stickers.
-
-**Basic Usage:**
-```tsx
-import { StickerPositioning } from "@/components/qr/StickerPositioning";
-import { useFormContext } from "react-hook-form";
-
-function MyComponent() {
-  const { watch, setValue } = useFormContext();
-  
-  return (
-    <StickerPositioning
-      value={{
-        x: watch("design.advancedShapePositionX") || 50,
-        y: watch("design.advancedShapePositionY") || 50,
-        scale: watch("design.advancedShapeScale") || 100,
-        rotation: watch("design.advancedShapeRotation") || 0,
-        opacity: watch("design.advancedShapeOpacity") || 100,
-      }}
-      onChange={(state) => {
-        setValue("design.advancedShapePositionX", state.x);
-        setValue("design.advancedShapePositionY", state.y);
-        setValue("design.advancedShapeScale", state.scale);
-        setValue("design.advancedShapeRotation", state.rotation);
-        setValue("design.advancedShapeOpacity", state.opacity);
-      }}
-      label="Sticker Positioning"
-    />
-  );
-}
-```
-
-**Props:**
-```tsx
-interface StickerPositioningProps {
-  value?: Partial<StickerPositioningState>;
-  onChange: (state: StickerPositioningState) => void;
-  label?: string;
-  className?: string;
-}
-
-interface StickerPositioningState {
-  x: number;        // 0-100 (%)
-  y: number;        // 0-100 (%)
-  scale: number;    // 1-200 (%)
-  rotation: number; // 0-360 (degrees)
-  opacity: number;  // 0-100 (%)
-}
-```
-
-## Enhanced Components
-
-### FillTypeFields.tsx
-Now uses ColorPicker for:
-- Main foreground color
-- Gradient start color
-- Gradient end color
-- Eye inner color
-- Eye outer color
-
-### BackgroundFields.tsx
-Now uses ColorPicker for background color selection.
-
-### LogoFields.tsx
-Now uses ColorPicker for logo background fill color.
-
-### OutlinedShapesFields.tsx
-Now uses ColorPicker for frame color.
-
-### AdvancedShapeFields.tsx
-**Now includes:**
-- ColorPicker for sticker frame color
-- New StickerPositioning component for advanced positioning
-- Only appears when sticker type is selected
-
-### DesignTabs.tsx
-**Now includes:**
-- PatternSelector as "Quick Pattern Reference"
-- Located in Structural Modules section
-- Works alongside existing ModuleFields
-
-## Integration Examples
-
-### Using ColorPicker in a custom component
-```tsx
-import { ColorPicker } from "@/components/qr/ColorPicker";
-
-export function CustomColorControl() {
-  const [color, setColor] = useState("#000000");
-  
-  return (
-    <ColorPicker
-      value={color}
-      onChange={setColor}
-      label="Choose Color"
-      showPresets
-    />
-  );
-}
-```
-
-### Using PatternSelector in a custom component
-```tsx
-import { PatternSelector } from "@/components/qr/PatternSelector";
-
-export function CustomPatternControl() {
-  const [pattern, setPattern] = useState("square");
-  
-  return (
-    <PatternSelector
-      value={pattern}
-      onChange={setPattern}
-      label="Choose Pattern"
-    />
-  );
-}
-```
-
-### Full sticker positioning example
-```tsx
-import { StickerPositioning, type StickerPositioningState } from "@/components/qr/StickerPositioning";
-
-export function StickerEditor() {
-  const [position, setPosition] = useState<StickerPositioningState>({
-    x: 50,
-    y: 50,
-    scale: 100,
-    rotation: 0,
-    opacity: 100,
-  });
-  
-  return (
-    <StickerPositioning
-      value={position}
-      onChange={setPosition}
-      label="Positioning"
-    />
-  );
-}
-```
-
-## Form Integration
-
-All components work seamlessly with `react-hook-form`:
-
-```tsx
-import { useFormContext } from "react-hook-form";
-import { ColorPicker } from "@/components/qr/ColorPicker";
-import { PatternSelector } from "@/components/qr/PatternSelector";
-
-function QRDesignForm() {
-  const { watch, setValue } = useFormContext();
-  
-  return (
-    <div className="space-y-6">
-      <ColorPicker
-        value={watch("design.foregroundColor")}
-        onChange={(color) => setValue("design.foregroundColor", color)}
-        label="QR Code Color"
-      />
-      
-      <PatternSelector
-        value={watch("design.module")}
-        onChange={(pattern) => setValue("design.module", pattern)}
-        label="Module Style"
-      />
-    </div>
-  );
-}
-```
-
-## Styling Notes
-
-All components use Tailwind CSS and support:
-- Dark mode (dark: prefix)
-- Responsive design
-- Custom className prop for additional styles
-
-### Dark Mode Support
-```tsx
-<ColorPicker
-  value={color}
-  onChange={setColor}
-  className="dark:bg-zinc-900"
-/>
-```
-
-## TypeScript Support
-
-Full TypeScript support with exported interfaces:
-
-```tsx
-import type { StickerPositioningState } from "@/components/qr/StickerPositioning";
-
-const defaultState: StickerPositioningState = {
-  x: 50,
-  y: 50,
-  scale: 100,
-  rotation: 0,
-  opacity: 100,
-};
-```
-
-## Common Tasks
-
-### Validate Hex Color
-```tsx
-const isValidHex = /^#[0-9A-F]{6}$/i.test(color);
-```
-
-### Reset to Default Colors
-```tsx
-const DEFAULT_COLORS = {
-  foreground: "#000000",
-  background: "#FFFFFF",
-  accent: "#0066FF",
-};
-```
-
-### Export Positioning
-```tsx
-function exportStickerPosition(state: StickerPositioningState) {
-  return {
-    position: { x: state.x, y: state.y },
-    scale: state.scale,
-    rotation: state.rotation,
-    opacity: state.opacity / 100, // Convert to 0-1
-  };
-}
-```
-
-## Troubleshooting
-
-### ColorPicker not updating form
-Make sure you're using `setValue` from `useFormContext`:
-```tsx
-const { setValue } = useFormContext();
-<ColorPicker onChange={(color) => setValue("fieldName", color)} />
-```
-
-### PatternSelector not showing
-Ensure the component is within a form context and watch the correct field:
-```tsx
-const { watch, setValue } = useFormContext();
-const value = watch("design.module"); // Must match form field
-```
-
-### StickerPositioning preview not visible
-Check that all state values are being properly set:
-```tsx
-onChange={(state) => {
-  setValue("design.advancedShapePositionX", state.x); // Required
-  setValue("design.advancedShapePositionY", state.y); // Required
-  // ... etc
-}}
-```
-
-## Performance Tips
-
-1. **Use with form context** - Components are optimized for react-hook-form
-2. **Memoize callbacks** - If using with useState instead of form context
-3. **Debounce expensive operations** - If connected to real-time preview
-4. **Use conditional rendering** - Hide when not needed
-
-## Browser Support
-
-All components support:
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-Requires:
-- React 16.8+
-- Tailwind CSS 3.0+
-
-## Getting Help
-
-For detailed documentation, see:
-- `QR_DESIGNER_ENHANCEMENTS.md` - Full feature documentation
-- `ENHANCEMENTS_SUMMARY.md` - Implementation summary
+> Get up and running with the migration in 30 minutes
 
 ---
 
-**Version:** 1.0
-**Last Updated:** 2024
-**Status:** ✅ Production Ready
+## Prerequisites
+
+- Node.js 18+ installed
+- pnpm installed (`npm install -g pnpm`)
+- Git
+- Code editor (VS Code recommended)
+
+---
+
+## Step 1: Initialize Project (5 min)
+
+```bash
+# Navigate to project directory
+cd "C:\Dev\karsaaz qr\karsaaz Qr React js"
+
+# Create Next.js app
+npx create-next-app@latest . --typescript --tailwind --app --eslint --src-dir --import-alias "@/*"
+
+# Install dependencies
+pnpm install
+
+# Install additional packages
+pnpm add @tanstack/react-query @tanstack/react-query-devtools
+pnpm add axios zod react-hook-form @hookform/resolvers/zod
+pnpm add sonner  # Toast notifications
+pnpm add lucide-react  # Icons
+
+# Dev dependencies
+pnpm add -D @types/node
+```
+
+---
+
+## Step 2: Set Up shadcn/ui (5 min)
+
+```bash
+# Initialize shadcn/ui
+npx shadcn-ui@latest init
+
+# Install common components
+npx shadcn-ui@latest add button
+npx shadcn-ui@latest add input
+npx shadcn-ui@latest add form
+npx shadcn-ui@latest add table
+npx shadcn-ui@latest add dialog
+npx shadcn-ui@latest add dropdown-menu
+npx shadcn-ui@latest add toast
+npx shadcn-ui@latest add card
+npx shadcn-ui@latest add tabs
+npx shadcn-ui@latest add select
+```
+
+---
+
+## Step 3: Create Folder Structure (2 min)
+
+```bash
+# Create directories
+mkdir -p src/lib/api/hooks
+mkdir -p src/lib/api/endpoints
+mkdir -p src/lib/auth
+mkdir -p src/lib/utils
+mkdir -p src/lib/validations
+mkdir -p src/types
+mkdir -p src/config
+mkdir -p src/components/layouts
+mkdir -p src/components/modules
+mkdir -p src/components/forms
+mkdir -p src/app/(auth)
+mkdir -p src/app/(dashboard)
+```
+
+---
+
+## Step 4: Environment Variables (2 min)
+
+Create `.env.local`:
+
+```bash
+# API Configuration
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+
+# App Configuration
+NEXT_PUBLIC_APP_NAME=Karsaaz QR
+NEXT_PUBLIC_APP_URL=http://localhost:3001
+
+# OAuth (if using)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# NextAuth (if using)
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3001
+```
+
+---
+
+## Step 5: Create Core Files (10 min)
+
+### API Client (`src/lib/api/client.ts`)
+
+```typescript
+import axios from 'axios'
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
+
+export const apiClient = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+})
+
+// Request interceptor
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
+// Response interceptor
+apiClient.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token')
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
+```
+
+### React Query Provider (`src/app/providers.tsx`)
+
+```typescript
+'use client'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { useState } from 'react'
+import { Toaster } from 'sonner'
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }))
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <Toaster position="top-right" />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  )
+}
+```
+
+### Root Layout (`src/app/layout.tsx`)
+
+```typescript
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
+import { Providers } from './providers'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata: Metadata = {
+  title: 'Karsaaz QR',
+  description: 'QR Code Management System',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+### Auth Utilities (`src/lib/auth/index.ts`)
+
+```typescript
+export function getToken(): string | null {
+  if (typeof window === 'undefined') return null
+  return localStorage.getItem('token')
+}
+
+export function setToken(token: string): void {
+  localStorage.setItem('token', token)
+}
+
+export function removeToken(): void {
+  localStorage.removeItem('token')
+}
+
+export function isAuthenticated(): boolean {
+  return !!getToken()
+}
+```
+
+---
+
+## Step 6: Create First Page (5 min)
+
+### Login Page (`src/app/(auth)/login/page.tsx`)
+
+```typescript
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { apiClient } from '@/lib/api/client'
+import { setToken } from '@/lib/auth'
+import { toast } from 'sonner'
+
+export default function LoginPage() {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    try {
+      const data = await apiClient.post('/auth/login', { email, password })
+      setToken(data.token)
+      toast.success('Login successful!')
+      router.push('/dashboard')
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Login failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl">Login to Karsaaz QR</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Email</label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">Password</label>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Logging in...' : 'Login'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+```
+
+### Dashboard Page (`src/app/(dashboard)/dashboard/page.tsx`)
+
+```typescript
+export default function DashboardPage() {
+  return (
+    <div>
+      <h1 className="text-3xl font-bold">Dashboard</h1>
+      <p className="text-muted-foreground mt-2">
+        Welcome to Karsaaz QR Dashboard
+      </p>
+    </div>
+  )
+}
+```
+
+---
+
+## Step 7: Run Development Server (1 min)
+
+```bash
+pnpm dev
+```
+
+Visit: http://localhost:3000
+
+---
+
+## Next Steps
+
+1. ✅ **Verify setup works** - Can you see the login page?
+2. 📖 **Read MIGRATION_PLAN.md** - Understand the full migration strategy
+3. 🔧 **Start with auth** - Implement full authentication flow
+4. 📋 **Follow checklist** - Use MIGRATION_CHECKLIST.md to track progress
+5. 💬 **Ask questions** - Document blockers and decisions
+
+---
+
+## Common Issues
+
+### Issue: Port already in use
+```bash
+# Kill process on port 3000
+npx kill-port 3000
+
+# Or use different port
+pnpm dev -p 3001
+```
+
+### Issue: Module not found
+```bash
+# Clear cache and reinstall
+rm -rf node_modules .next
+pnpm install
+```
+
+### Issue: TypeScript errors
+```bash
+# Check tsconfig.json is correct
+# Restart TS server in VS Code: Cmd+Shift+P > "Restart TS Server"
+```
+
+---
+
+## Useful Commands
+
+```bash
+# Development
+pnpm dev                  # Start dev server
+pnpm build               # Build for production
+pnpm start               # Start production server
+pnpm lint                # Run ESLint
+
+# Component management
+npx shadcn-ui@latest add [component-name]
+
+# Type checking
+pnpm tsc --noEmit        # Check types without building
+```
+
+---
+
+## Resources
+
+- 📚 [Next.js Docs](https://nextjs.org/docs)
+- 📚 [React Query Docs](https://tanstack.com/query/latest)
+- 📚 [Tailwind Docs](https://tailwindcss.com/docs)
+- 📚 [shadcn/ui Docs](https://ui.shadcn.com)
+- 📋 [Migration Plan](./MIGRATION_PLAN.md)
+- ✅ [Checklist](./MIGRATION_CHECKLIST.md)
+
+---
+
+**You're ready to start! 🚀**

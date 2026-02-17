@@ -1,5 +1,0 @@
-import { redirect } from "next/navigation";
-
-export default function AccountSettingsRedirect() {
-  redirect("/account/my-account");
-}

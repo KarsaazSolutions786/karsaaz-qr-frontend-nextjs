@@ -1,6 +1,0 @@
-﻿src/app/(dashboard)/account/billing/page.tsx(5,93): error TS2307: Cannot find module '@/components/ui/table' or its corresponding type declarations.
-src/app/(dashboard)/account/my-account/page.tsx(31,17): error TS2339: Property 'refreshUser' does not exist on type '{ user: User | null; token: string | null; loggedIn: boolean; login: (credentials: { email: string; password?: string | undefined; }) => Promise<boolean>; logout: () => Promise<void>; validateSession: () => Promise<...>; }'.
-src/app/(dashboard)/dashboard/qrcodes/new/[type]/page.tsx(13,27): error TS2307: Cannot find module '@/services/qr-service' or its corresponding type declarations.
-src/services/referral.service.ts(53,60): error TS2345: Argument of type '{ page?: number; email: string; productId: string; }' is not assignable to parameter of type 'Record<string, string>'.
-  Property 'page' is incompatible with index signature.
-    Type 'number' is not assignable to type 'string'.
