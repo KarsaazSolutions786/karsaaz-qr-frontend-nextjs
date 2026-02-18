@@ -1,0 +1,261 @@
+[Immersive Web Emulator] native WebXR API successfully overridden
+installHook.js:1 Warning: Expected server HTML to contain a matching <div> in <div>. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+react-dom.development.js:6981 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at throwOnHydrationMismatch (react-dom.development.js:6981:9)
+    at tryToClaimNextHydratableInstance (react-dom.development.js:7016:7)
+    at updateHostComponent$1 (react-dom.development.js:16621:5)
+    at beginWork$1 (react-dom.development.js:18503:14)
+    at HTMLUnknownElement.callCallback (react-dom.development.js:20565:14)
+    at Object.invokeGuardedCallbackImpl (react-dom.development.js:20614:16)
+    at invokeGuardedCallback (react-dom.development.js:20689:29)
+    at beginWork (react-dom.development.js:26949:7)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+installHook.js:1 Warning: An error occurred during hydration. The server HTML was replaced with client content in <#document>.
+5
+on-recoverable-error.js:20 Uncaught Error: Hydration failed because the initial UI does not match what was rendered on the server.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at throwOnHydrationMismatch (react-dom.development.js:6981:9)
+    at tryToClaimNextHydratableInstance (react-dom.development.js:7016:7)
+    at updateHostComponent$1 (react-dom.development.js:16621:5)
+    at beginWork$1 (react-dom.development.js:18503:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopConcurrent (react-dom.development.js:25734:5)
+    at renderRootConcurrent (react-dom.development.js:25690:9)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24504:38)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+react-dom.development.js:16571 Uncaught Error: There was an error while hydrating. Because the error happened outside of a Suspense boundary, the entire root will switch to client rendering.
+See more info here: https://nextjs.org/docs/messages/react-hydration-error
+    at updateHostRoot (react-dom.development.js:16571:57)
+    at beginWork$1 (react-dom.development.js:18486:14)
+    at beginWork (react-dom.development.js:26927:14)
+    at performUnitOfWork (react-dom.development.js:25748:12)
+    at workLoopSync (react-dom.development.js:25464:5)
+    at renderRootSync (react-dom.development.js:25419:7)
+    at recoverFromConcurrentError (react-dom.development.js:24597:20)
+    at performConcurrentWorkOnRoot (react-dom.development.js:24542:26)
+    at workLoop (scheduler.development.js:256:34)
+    at flushWork (scheduler.development.js:225:14)
+    at MessagePort.performWorkUntilDeadline (scheduler.development.js:534:21)
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+hot-reloader-client.js:187 [Fast Refresh] rebuilding
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+hot-reloader-client.js:44 [Fast Refresh] done in 916ms
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 No default component was found for a parallel route rendered on this page. Falling back to nearest NotFound boundary.
+Learn more: https://nextjs.org/docs/app/building-your-application/routing/parallel-routes#defaultjs
+
+ Error Component Stack
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+hot-reloader-client.js:187 [Fast Refresh] rebuilding
+hot-reloader-client.js:44 [Fast Refresh] done in 802ms
+hot-reloader-client.js:187 [Fast Refresh] rebuilding
+hot-reloader-client.js:44 [Fast Refresh] done in 280ms
+hot-reloader-client.js:187 [Fast Refresh] rebuilding
+hot-reloader-client.js:44 [Fast Refresh] done in 321ms
+client.ts:25 [API Request] GET /subscriptions/current
+frame_ant.js:2 
+ GET http://127.0.0.1:8000/api/subscriptions/current 404 (Not Found)
+installHook.js:1 [API Response Error] 
+{status: 404, message: 'Request failed with status code 404', url: '/subscriptions/current'}
+client.ts:25 [API Request] GET /plans
+frame_ant.js:2 
+ GET http://127.0.0.1:8000/api/plans 404 (Not Found)
+installHook.js:1 [API Response Error] 
+{status: 404, message: 'Request failed with status code 404', url: '/plans'}
+client.ts:25 [API Request] GET /plans
+frame_ant.js:2 
+ GET http://127.0.0.1:8000/api/plans 404 (Not Found)
+installHook.js:1 [API Response Error] 
+{status: 404, message: 'Request failed with status code 404', url: '/plans'}
+client.ts:25 [API Request] GET /plans
+frame_ant.js:2 
+ GET http://127.0.0.1:8000/api/plans 404 (Not Found)
+installHook.js:1 [API Response Error] 
+{status: 404, message: 'Request failed with status code 404', url: '/plans'}
+client.ts:25 [API Request] GET /plans
+frame_ant.js:2 
+ GET http://127.0.0.1:8000/api/plans 404 (Not Found)
+installHook.js:1 [API Response Error] 
+{status: 404, message: 'Request failed with status code 404', url: '/plans'}
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+client.ts:25 [API Request] GET /qrcodes
+client.ts:41 [API Response] GET /qrcodes - 200
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+installHook.js:1 QR Codes fetch error: TypeError: Cannot read properties of undefined (reading 'current_page')
+    at transformPaginatedResponse (qrcodes.ts:48:40)
+    at Object.list (qrcodes.ts:112:12)
+ Error Component Stack
+    at QRCodesPage (page.tsx:17:39)
+    at DashboardLayout (layout.tsx:63:3)
+    at AuthProvider (AuthContext.tsx:21:32)
+    at Providers (providers.tsx:9:29)
+    at body (<anonymous>)
+    at html (<anonymous>)
+    at RootLayout [Server] (<anonymous>)
+

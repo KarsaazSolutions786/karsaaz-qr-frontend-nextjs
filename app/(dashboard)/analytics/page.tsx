@@ -10,6 +10,10 @@ import BarChart from '@/components/analytics/charts/BarChart'
 import PieChart from '@/components/analytics/charts/PieChart'
 import ActivityFeed from '@/components/analytics/ActivityFeed'
 import DateRangePicker from '@/components/analytics/DateRangePicker'
+import { RealtimeStatsWidget } from '@/components/analytics/RealtimeStatsWidget'
+import { LocationMap } from '@/components/analytics/LocationMap'
+import { DeviceBrowserCharts } from '@/components/analytics/DeviceBrowserCharts'
+import { ReferrerTracker } from '@/components/analytics/ReferrerTracker'
 import type { DateRange } from '@/types/entities/analytics'
 
 export default function AnalyticsPage() {
@@ -29,6 +33,44 @@ export default function AnalyticsPage() {
     error: topError,
   } = useTopQRCodes(dateRange, 5)
 
+  // Mock data for new analytics components
+  const mockLocationData = [
+    { country: 'United States', countryCode: 'US', scans: 1245, city: 'New York', latitude: 40.7128, longitude: -74.0060 },
+    { country: 'Canada', countryCode: 'CA', scans: 856, city: 'Toronto', latitude: 43.6532, longitude: -79.3832 },
+    { country: 'United Kingdom', countryCode: 'GB', scans: 734, city: 'London', latitude: 51.5074, longitude: -0.1278 },
+    { country: 'Germany', countryCode: 'DE', scans: 621, city: 'Berlin', latitude: 52.5200, longitude: 13.4050 },
+    { country: 'Japan', countryCode: 'JP', scans: 489, city: 'Tokyo', latitude: 35.6762, longitude: 139.6503 },
+  ]
+
+  const mockDeviceData = [
+    { type: 'mobile' as const, count: 3250 },
+    { type: 'desktop' as const, count: 1420 },
+    { type: 'tablet' as const, count: 330 },
+  ]
+
+  const mockBrowserData = [
+    { name: 'Chrome', count: 2450 },
+    { name: 'Safari', count: 1560 },
+    { name: 'Firefox', count: 720 },
+    { name: 'Edge', count: 270 },
+  ]
+
+  const mockOSData = [
+    { name: 'iOS', count: 1890 },
+    { name: 'Android', count: 1650 },
+    { name: 'Windows', count: 980 },
+    { name: 'macOS', count: 480 },
+  ]
+
+  const mockReferrers = [
+    { url: 'https://google.com/search', domain: 'google.com', scans: 856, lastSeen: new Date() },
+    { url: 'https://facebook.com', domain: 'facebook.com', scans: 634, lastSeen: new Date() },
+    { url: 'https://twitter.com', domain: 'twitter.com', scans: 421, lastSeen: new Date() },
+    { url: 'https://instagram.com', domain: 'instagram.com', scans: 312, lastSeen: new Date() },
+  ]
+
+  const totalScans = overview?.totalScans || 5000
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -41,6 +83,9 @@ export default function AnalyticsPage() {
         </div>
         <DateRangePicker value={dateRange} onChange={setDateRange} />
       </div>
+
+      {/* Real-time Stats Widget */}
+      <RealtimeStatsWidget showRecentScans={true} />
 
       {/* Metrics Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -104,6 +149,29 @@ export default function AnalyticsPage() {
           />
         </ChartContainer>
       </div>
+
+      {/* Location Map */}
+      <LocationMap
+        locations={mockLocationData}
+        totalScans={totalScans}
+        showList={true}
+      />
+
+      {/* Device & Browser Analytics */}
+      <DeviceBrowserCharts
+        devices={mockDeviceData}
+        browsers={mockBrowserData}
+        operatingSystems={mockOSData}
+        totalScans={totalScans}
+      />
+
+      {/* Referrer Tracking */}
+      <ReferrerTracker
+        referrers={mockReferrers}
+        totalScans={totalScans}
+        directScans={1234}
+        unknownScans={543}
+      />
 
       {/* Breakdown Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
