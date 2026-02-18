@@ -5,19 +5,19 @@
  * Orchestrates module shapes, corner shapes, fills, logos, backgrounds, and stickers.
  */
 
-import QRCode from 'qrcode-generator';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type QRCodeType = any;
 import { DesignerConfig, FillConfig } from '@/types/entities/designer';
-import { StickerConfig, getStickerPosition } from '@/types/entities/sticker';
+import { StickerConfig } from '@/types/entities/sticker';
 import { isDark, getModuleNeighbors, isCornerPosition } from './qrcode-utils';
-import { needsLogoMarginClearing, getCornerModuleType } from './qrcode-generator';
+import { needsLogoMarginClearing } from './qrcode-generator';
 import { renderModule, ModuleRenderContext } from './module-shapes';
 import { renderAllCorners } from './corner-shapes';
-import { fillToSVGDefinition, fillToSVGReference, isSolidFill, isGradientFill } from './fill-handlers';
 import { renderOutline } from './outline-renderer';
 import { calculateStickerPosition } from './sticker-utils';
 
 export interface SVGRenderOptions {
-  qr: QRCode;
+  qr: QRCodeType;
   moduleCount: number;
   config: DesignerConfig;
   stickerConfig?: StickerConfig | null;
@@ -206,7 +206,7 @@ function renderGradientDefinitionFromColors(
  * Render all modules
  */
 function renderModules(
-  qr: QRCode,
+  qr: QRCodeType,
   moduleCount: number,
   moduleSize: number,
   offset: number,

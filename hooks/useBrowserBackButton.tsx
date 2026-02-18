@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useWizardStore, WizardStep } from '@/lib/store/wizard-store';
 
@@ -204,7 +204,6 @@ export interface WizardProgressBarProps {
 }
 
 export function WizardProgressBar({ className = '' }: WizardProgressBarProps) {
-  const completedSteps = useWizardStore((state) => state.completedSteps);
   const currentStep = useWizardStore((state) => state.currentStep);
 
   const totalSteps = STEP_ORDER.length;

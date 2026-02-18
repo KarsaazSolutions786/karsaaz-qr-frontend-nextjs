@@ -5,7 +5,8 @@
  * Integrates qrcode-generator library with custom rendering pipeline.
  */
 
-import QRCode from 'qrcode-generator';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type QRCodeType = any;
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer';
 import { StickerConfig } from '@/types/entities/sticker';
 import {
@@ -14,7 +15,6 @@ import {
   isDark,
   calculateQRDimensions,
   isCornerPosition,
-  isInLogoArea,
   validateQRData,
 } from './qrcode-utils';
 
@@ -25,7 +25,7 @@ export interface GenerateQRCodeOptions {
 }
 
 export interface QRCodeGenerationResult {
-  qr: QRCode;
+  qr: QRCodeType;
   moduleCount: number;
   dimensions: {
     moduleSize: number;
@@ -37,12 +37,12 @@ export interface QRCodeGenerationResult {
 }
 
 /**
- * Generate QR code with full designer configuration
+ * Generate QR code with full designer configuration (sync version for use in useMemo)
  */
-export async function generateQRCode(
+export function generateQRCodeSync(
   options: GenerateQRCodeOptions
-): Promise<QRCodeGenerationResult> {
-  const { data, designerConfig = {}, stickerConfig = null } = options;
+): QRCodeGenerationResult {
+  const { data, designerConfig = {} } = options;
 
   // Validate QR data
   const validation = validateQRData(data);
@@ -76,13 +76,22 @@ export async function generateQRCode(
 }
 
 /**
+ * Generate QR code with full designer configuration
+ */
+export async function generateQRCode(
+  options: GenerateQRCodeOptions
+): Promise<QRCodeGenerationResult> {
+  return generateQRCodeSync(options);
+}
+
+/**
  * Get QR code data URL (for preview/download)
  */
 export async function getQRCodeDataURL(
   options: GenerateQRCodeOptions,
   format: 'png' | 'svg' = 'png'
 ): Promise<string> {
-  const result = await generateQRCode(options);
+  await generateQRCode(options);
 
   if (format === 'svg') {
     // SVG rendering will be handled by svg-renderer.ts
@@ -205,14 +214,15 @@ export function validateDesignerConfig(config: Partial<DesignerConfig>): {
 /**
  * Get QR code module matrix as 2D array
  */
-export function getModuleMatrix(qr: QRCode): boolean[][] {
+export function getModuleMatrix(qr: QRCodeType): boolean[][] {
   const moduleCount = getModuleCount(qr);
   const matrix: boolean[][] = [];
 
   for (let row = 0; row < moduleCount; row++) {
-    matrix[row] = [];
+    const rowArr: boolean[] = [];
+    matrix[row] = rowArr;
     for (let col = 0; col < moduleCount; col++) {
-      matrix[row][col] = isDark(qr, row, col);
+      rowArr[col] = isDark(qr, row, col);
     }
   }
 

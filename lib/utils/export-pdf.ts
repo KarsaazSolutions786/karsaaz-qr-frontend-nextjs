@@ -50,7 +50,7 @@ export async function exportPDF(svg: string, options: PDFExportOptions = {}): Pr
     includeMetadata = true,
     metadata,
     compression = true,
-    quality = 0.95,
+    quality: _quality = 0.95,
   } = options;
 
   // Create PDF document

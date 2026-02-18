@@ -6,7 +6,7 @@
 
 'use client';
 
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { FixedSizeList, VariableSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -120,7 +120,7 @@ export function VirtualizedGrid<T>({
     const rowItems = items.slice(startIndex, startIndex + columnCount);
     
     return (
-      <div style={style} className="flex" style={{ ...style, gap }}>
+      <div className="flex" style={{ ...style, gap }}>
         {rowItems.map((item, i) => {
           const itemIndex = startIndex + i;
           return (

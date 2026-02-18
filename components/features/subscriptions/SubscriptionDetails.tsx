@@ -5,6 +5,7 @@ import { Subscription } from '@/types/entities/subscription'
 import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { CancelSubscriptionDialog } from './CancelSubscriptionDialog'
 import { formatDate } from '@/lib/utils/format'
+import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
 
 interface SubscriptionDetailsProps {
   subscription: Subscription
@@ -12,9 +13,10 @@ interface SubscriptionDetailsProps {
 
 export function SubscriptionDetails({ subscription }: SubscriptionDetailsProps) {
   const [showCancelDialog, setShowCancelDialog] = useState(false)
-  const { data: plans } = usePlans()
+  const { data: plansData } = usePlans()
   
-  const plan = plans?.find((p) => p.id === subscription.planId)
+  const rawPlan = plansData?.data?.find((p) => p.id === Number(subscription.planId))
+  const plan = rawPlan ? mapSubscriptionPlanToPlan(rawPlan) : undefined
 
   const getStatusColor = (status: string) => {
     switch (status) {

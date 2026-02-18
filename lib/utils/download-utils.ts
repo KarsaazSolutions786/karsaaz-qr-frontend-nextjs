@@ -112,7 +112,7 @@ export async function downloadPNG(
 export async function downloadPDF(
   svgElement: SVGSVGElement,
   filename: string,
-  size: number = 600
+  _size: number = 600
 ): Promise<void> {
   try {
     // Dynamic imports to reduce initial bundle size

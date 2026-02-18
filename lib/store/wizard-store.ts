@@ -90,20 +90,19 @@ const DEFAULT_DESIGNER_CONFIG: DesignerConfig = {
   moduleShape: 'square',
   cornerFrameStyle: 'square',
   cornerDotStyle: 'square',
-  moduleFill: {
-    type: 'solid',
-    color: '#000000',
-  },
-  cornerFill: {
+  foregroundFill: {
     type: 'solid',
     color: '#000000',
   },
   background: {
     type: 'transparent',
   },
-  logo: null,
-  outline: null,
-  aiDesign: null,
+  size: 600,
+  margin: 4,
+  errorCorrectionLevel: 'M',
+  logo: undefined,
+  outline: undefined,
+  aiDesign: undefined,
 };
 
 // Generate session ID

@@ -119,7 +119,7 @@ function buildPrintHTML(
   options: Required<Omit<PrintOptions, 'title' | 'description'>>,
   metadata?: PrintMetadata
 ): string {
-  const { pageSize, orientation, margins, qrSize, centerOnPage, includeMetadata } = options;
+  const { pageSize: _pageSize, orientation: _orientation, margins: _margins, qrSize: _qrSize, centerOnPage: _centerOnPage, includeMetadata } = options;
   
   return `
 <!DOCTYPE html>

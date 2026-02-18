@@ -7,7 +7,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { MapPin, Globe, TrendingUp, Filter } from 'lucide-react';
+import { MapPin, Globe } from 'lucide-react';
 
 export interface LocationData {
   country: string;

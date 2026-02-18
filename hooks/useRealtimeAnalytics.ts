@@ -162,15 +162,15 @@ export function useRealtimeAnalytics({
             location: {
               country: ['United States', 'Canada', 'UK', 'Germany', 'Japan'][
                 Math.floor(Math.random() * 5)
-              ],
+              ] ?? 'United States',
               city: ['New York', 'Toronto', 'London', 'Berlin', 'Tokyo'][
                 Math.floor(Math.random() * 5)
-              ],
+              ] ?? 'New York',
             },
             device: {
-              type: ['mobile', 'tablet', 'desktop'][Math.floor(Math.random() * 3)] as any,
-              os: ['iOS', 'Android', 'Windows', 'macOS'][Math.floor(Math.random() * 4)],
-              browser: ['Chrome', 'Safari', 'Firefox', 'Edge'][Math.floor(Math.random() * 4)],
+              type: (['mobile', 'tablet', 'desktop'][Math.floor(Math.random() * 3)] ?? 'mobile') as any,
+              os: ['iOS', 'Android', 'Windows', 'macOS'][Math.floor(Math.random() * 4)] ?? 'iOS',
+              browser: ['Chrome', 'Safari', 'Firefox', 'Edge'][Math.floor(Math.random() * 4)] ?? 'Chrome',
             },
             referrer: Math.random() > 0.5 ? 'https://google.com' : undefined,
           };
@@ -271,7 +271,7 @@ export function calculateTimeBasedStats(scans: ScanEvent[]) {
     const hour = scan.timestamp.getHours();
     hourlyStats[hour]++;
     
-    const day = scan.timestamp.toISOString().split('T')[0];
+    const day = scan.timestamp.toISOString().split('T')[0] ?? '';
     dailyStats.set(day, (dailyStats.get(day) || 0) + 1);
   });
   

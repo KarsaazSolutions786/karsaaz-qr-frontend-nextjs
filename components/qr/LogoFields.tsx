@@ -25,7 +25,7 @@ export function LogoFields({
   value,
   onChange,
   errorCorrectionLevel,
-  qrSize = 512,
+  qrSize: _qrSize = 512,
   className = '',
 }: LogoFieldsProps) {
   // Handle logo URL change

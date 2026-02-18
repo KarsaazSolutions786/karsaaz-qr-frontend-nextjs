@@ -33,7 +33,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
   
   const { data: qrcode, isLoading } = useQRCode(params.id)
   const deleteMutation = useDeleteQRCode()
-  const { duplicate, archive, transferOwnership, convertType, setPINProtection } = useQRActions()
+  const { duplicateQRCode, archiveQRCode, transferQRCode, convertQRType, addPINProtection } = useQRActions()
 
   const handleDelete = async () => {
     try {
@@ -43,37 +43,37 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
     }
   }
 
-  const handleDuplicate = async (count: number) => {
+  const handleDuplicate = async (options: { count: number; includeDesign: boolean; includeSettings: boolean; prefix: string }) => {
     if (qrcode) {
-      await duplicate(qrcode, count)
+      await duplicateQRCode(qrcode.id, options)
       setShowDuplicate(false)
     }
   }
 
   const handleArchive = async (reason?: string) => {
     if (qrcode) {
-      await archive(qrcode.id, reason)
+      await archiveQRCode(qrcode.id, { reason })
       setShowArchive(false)
     }
   }
 
-  const handleTransfer = async (newOwnerId: string) => {
+  const handleTransfer = async (options: { newOwnerId: string; transferDesign: boolean; transferAnalytics: boolean; notifyNewOwner: boolean }) => {
     if (qrcode) {
-      await transferOwnership(qrcode.id, newOwnerId)
+      await transferQRCode(qrcode.id, options)
       setShowTransfer(false)
     }
   }
 
-  const handleConvertType = async (newType: string) => {
+  const handleConvertType = async (newType: string, newData: Record<string, any>) => {
     if (qrcode) {
-      await convertType(qrcode.id, newType)
+      await convertQRType(qrcode.id, newType, newData)
       setShowTypeConversion(false)
     }
   }
 
-  const handlePINUpdate = async (pin: string, action: 'add' | 'remove' | 'update') => {
+  const handleAddPIN = async (pin: string, confirmPin: string, expiresAt?: Date) => {
     if (qrcode) {
-      await setPINProtection(qrcode.id, pin, action)
+      await addPINProtection(qrcode.id, { pin, confirmPin, expiresAt })
       setShowPINProtection(false)
     }
   }
@@ -269,36 +269,39 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
           <TypeConversionModal
             isOpen={showTypeConversion}
             onClose={() => setShowTypeConversion(false)}
-            qrCode={qrcode}
+            currentType={qrcode.type || 'url'}
+            currentData={(qrcode.data as Record<string, any>) || {}}
             onConvert={handleConvertType}
           />
           
           <DuplicateModal
             isOpen={showDuplicate}
             onClose={() => setShowDuplicate(false)}
-            qrCode={qrcode}
+            qrCodeName={qrcode.name || 'QR Code'}
             onDuplicate={handleDuplicate}
           />
           
           <TransferOwnershipModal
             isOpen={showTransfer}
             onClose={() => setShowTransfer(false)}
-            qrCode={qrcode}
+            qrCodeName={qrcode.name || 'QR Code'}
+            currentOwner={qrcode.userId?.toString() || ''}
             onTransfer={handleTransfer}
           />
           
           <ArchiveModal
             isOpen={showArchive}
             onClose={() => setShowArchive(false)}
-            qrCodes={[qrcode]}
+            mode="archive"
+            qrCodeNames={[qrcode.name || 'QR Code']}
             onArchive={handleArchive}
           />
           
           <PINProtectionModal
             isOpen={showPINProtection}
             onClose={() => setShowPINProtection(false)}
-            qrCode={qrcode}
-            onUpdate={handlePINUpdate}
+            mode="add"
+            onAddPIN={handleAddPIN}
           />
         </>
       )}

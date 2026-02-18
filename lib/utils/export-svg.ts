@@ -145,10 +145,12 @@ function addBackgroundRectToSVG(svg: string, backgroundColor: string): string {
 
   let bgRect = '';
 
-  if (viewBoxMatch) {
-    const [, , , width, height] = viewBoxMatch[1].split(/\s+/);
+  if (viewBoxMatch && viewBoxMatch[1]) {
+    const parts = viewBoxMatch[1].split(/\s+/);
+    const width = parts[2] ?? '0';
+    const height = parts[3] ?? '0';
     bgRect = `<rect x="0" y="0" width="${width}" height="${height}" fill="${backgroundColor}"/>`;
-  } else if (widthMatch && heightMatch) {
+  } else if (widthMatch && heightMatch && widthMatch[1] && heightMatch[1]) {
     bgRect = `<rect x="0" y="0" width="${widthMatch[1]}" height="${heightMatch[1]}" fill="${backgroundColor}"/>`;
   }
 
@@ -276,11 +278,11 @@ export function validateSVG(svg: string): { valid: boolean; errors: string[] } {
 export function getSVGDimensions(svg: string): { width: number; height: number } | null {
   // Try viewBox first
   const viewBoxMatch = svg.match(/viewBox="([^"]+)"/);
-  if (viewBoxMatch) {
+  if (viewBoxMatch && viewBoxMatch[1]) {
     const parts = viewBoxMatch[1].split(/\s+/);
     return {
-      width: parseFloat(parts[2]),
-      height: parseFloat(parts[3]),
+      width: parseFloat(parts[2] ?? '0'),
+      height: parseFloat(parts[3] ?? '0'),
     };
   }
 
@@ -288,7 +290,7 @@ export function getSVGDimensions(svg: string): { width: number; height: number }
   const widthMatch = svg.match(/width="([^"]+)"/);
   const heightMatch = svg.match(/height="([^"]+)"/);
   
-  if (widthMatch && heightMatch) {
+  if (widthMatch && heightMatch && widthMatch[1] && heightMatch[1]) {
     return {
       width: parseFloat(widthMatch[1]),
       height: parseFloat(heightMatch[1]),

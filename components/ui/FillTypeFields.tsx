@@ -203,7 +203,7 @@ export function FillTypeFields({
  */
 export function SimpleFillSelector({
   value,
-  onChange,
+  onChange: _onChange,
   label,
   className = '',
 }: {

@@ -6,57 +6,131 @@ import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
 import {
   QrCodeIcon,
-  ChartBarIcon,
   LinkIcon,
   NewspaperIcon,
   Squares2X2Icon,
   ClipboardDocumentListIcon,
-  UserIcon,
   CreditCardIcon,
   Bars3Icon,
   XMarkIcon,
-  FolderIcon,
-  PlusIcon,
   ArchiveBoxIcon,
   CloudIcon,
   CurrencyDollarIcon,
   SparklesIcon,
   ChevronRightIcon,
+  ChevronDownIcon,
   ArrowRightOnRectangleIcon,
+  UsersIcon,
+  BanknotesIcon,
+  DocumentTextIcon,
+  LanguageIcon,
+  CodeBracketIcon,
+  DocumentDuplicateIcon,
+  EnvelopeIcon,
+  PuzzlePieceIcon,
+  Cog6ToothIcon,
+  ServerIcon,
+  ClockIcon,
+  BellIcon,
+  DevicePhoneMobileIcon,
+  ShieldCheckIcon,
+  ExclamationTriangleIcon,
+  GlobeAltIcon,
+  HomeIcon,
+  SignalIcon,
+  UserGroupIcon,
+  CircleStackIcon,
 } from '@heroicons/react/24/outline'
 
-// QR Management group
-const qrManagementItems = [
-  { name: 'Create QR', href: '/qrcodes/new', icon: PlusIcon },
-  { name: 'My QR Codes', href: '/qrcodes', icon: QrCodeIcon },
+// Navigation group type
+interface NavItem {
+  name: string
+  href: string
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+}
+
+interface NavGroup {
+  name: string
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  items: NavItem[]
+}
+
+// Top-level standalone items
+const topNavigation: NavItem[] = [
+  { name: 'Home', href: '/qrcodes', icon: HomeIcon },
+  { name: 'Existing QRs', href: '/qrcodes', icon: QrCodeIcon },
   { name: 'Archived', href: '/qrcodes?archived=true', icon: ArchiveBoxIcon },
-]
-
-// Main navigation groups (collapsible)
-const navigationGroups = [
-  {
-    name: 'QR Management',
-    icon: QrCodeIcon,
-    locked: true, // Always expanded
-    items: qrManagementItems,
-  },
-]
-
-// Standalone navigation items
-const standaloneNavigation = [
-  { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
   { name: 'Cloud Storage', href: '/cloud-storage', icon: CloudIcon },
-  { name: 'Biolinks', href: '/biolinks', icon: LinkIcon },
-  { name: 'Blog Posts', href: '/blog-posts', icon: NewspaperIcon },
-  { name: 'Content Blocks', href: '/content-blocks', icon: Squares2X2Icon },
-  { name: 'Lead Forms', href: '/lead-forms', icon: ClipboardDocumentListIcon },
+  { name: 'Connections', href: '/connections', icon: SignalIcon },
 ]
 
-// Settings navigation
-const settingsNavigation = [
-  { name: 'Account', href: '/account', icon: UserIcon },
-  { name: 'Billing', href: '/billing', icon: CreditCardIcon },
-  { name: 'Subscription', href: '/subscriptions', icon: SparklesIcon },
+// Collapsible navigation groups
+const navigationGroups: NavGroup[] = [
+  {
+    name: 'USERS',
+    icon: UsersIcon,
+    items: [
+      { name: 'All Users', href: '/users', icon: UsersIcon },
+      { name: 'Paying Users', href: '/users/paying', icon: CreditCardIcon },
+      { name: 'Non Paying Users', href: '/users/non-paying', icon: UserGroupIcon },
+      { name: 'Roles', href: '/users/roles', icon: ShieldCheckIcon },
+    ],
+  },
+  {
+    name: 'FINANCE',
+    icon: BanknotesIcon,
+    items: [
+      { name: 'Plans', href: '/plans', icon: SparklesIcon },
+      { name: 'Subscriptions', href: '/subscriptions', icon: CreditCardIcon },
+      { name: 'Billing', href: '/billing', icon: BanknotesIcon },
+      { name: 'Transactions', href: '/transactions', icon: CurrencyDollarIcon },
+      { name: 'Payment Processors', href: '/payment-processors', icon: BanknotesIcon },
+      { name: 'Currencies', href: '/currencies', icon: CircleStackIcon },
+    ],
+  },
+  {
+    name: 'CONTENT',
+    icon: DocumentTextIcon,
+    items: [
+      { name: 'Blog Posts', href: '/blog-posts', icon: NewspaperIcon },
+      { name: 'Content Blocks', href: '/content-blocks', icon: Squares2X2Icon },
+      { name: 'Translations', href: '/translations', icon: LanguageIcon },
+      { name: 'Custom Code', href: '/custom-code', icon: CodeBracketIcon },
+      { name: 'Pages', href: '/pages', icon: DocumentDuplicateIcon },
+      { name: 'Dynamic BioLinks', href: '/biolinks', icon: LinkIcon },
+    ],
+  },
+  {
+    name: 'CONTACTS',
+    icon: EnvelopeIcon,
+    items: [
+      { name: 'Contact Form', href: '/contact-form', icon: EnvelopeIcon },
+      { name: 'Lead Forms', href: '/lead-forms', icon: ClipboardDocumentListIcon },
+    ],
+  },
+  {
+    name: 'PLUGINS',
+    icon: PuzzlePieceIcon,
+    items: [
+      { name: 'Available Plugins', href: '/plugins/available', icon: PuzzlePieceIcon },
+      { name: 'Installed Plugins', href: '/plugins/installed', icon: Cog6ToothIcon },
+    ],
+  },
+  {
+    name: 'SYSTEM',
+    icon: ServerIcon,
+    items: [
+      { name: 'Status', href: '/system/status', icon: SignalIcon },
+      { name: 'Settings', href: '/system/settings', icon: Cog6ToothIcon },
+      { name: 'Logs', href: '/system/logs', icon: ClockIcon },
+      { name: 'Cache', href: '/system/cache', icon: CircleStackIcon },
+      { name: 'Notifications', href: '/system/notifications', icon: BellIcon },
+      { name: 'Sms Portals', href: '/system/sms-portals', icon: DevicePhoneMobileIcon },
+      { name: 'Auth Workflow', href: '/system/auth-workflow', icon: ShieldCheckIcon },
+      { name: 'Abuse Reports', href: '/system/abuse-reports', icon: ExclamationTriangleIcon },
+      { name: 'Domains', href: '/system/domains', icon: GlobeAltIcon },
+    ],
+  },
 ]
 
 export default function DashboardLayout({
@@ -68,9 +142,7 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const { user, isLoading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
-    'QR Management': true, // Always expanded by default
-  })
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     // Redirect to login if not authenticated
@@ -80,8 +152,7 @@ export default function DashboardLayout({
     }
   }, [user, isLoading, router])
 
-  const toggleGroup = (groupName: string, isLocked: boolean) => {
-    if (isLocked) return // Don't toggle locked groups
+  const toggleGroup = (groupName: string) => {
     setExpandedGroups(prev => ({
       ...prev,
       [groupName]: !prev[groupName]
@@ -89,10 +160,16 @@ export default function DashboardLayout({
   }
 
   const isItemActive = (href: string) => {
-    if (href === '/qrcodes?archived=true') {
-      return pathname === '/qrcodes' && window.location.search.includes('archived=true')
+    // Don't check query params during SSR to avoid hydration issues
+    if (href.includes('?')) {
+      return pathname === href.split('?')[0]
     }
     return pathname === href || pathname?.startsWith(`${href}/`)
+  }
+
+  // Check if any item in a group is active (to auto-highlight group header)
+  const isGroupActive = (group: NavGroup) => {
+    return group.items.some(item => isItemActive(item.href))
   }
 
   // Don't show loading state - let child pages handle their own loading
@@ -139,37 +216,62 @@ export default function DashboardLayout({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
-            {/* Navigation Groups (Collapsible) */}
+          <nav className="flex-1 px-3 py-4 overflow-y-auto">
+            {/* Top-level standalone items */}
+            <div className="space-y-1">
+              {topNavigation.map((item) => {
+                const active = isItemActive(item.href)
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`
+                      flex items-center px-3 py-2 text-sm font-medium rounded-lg
+                      transition-colors duration-150
+                      ${
+                        active
+                          ? 'bg-primary text-white'
+                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      }
+                    `}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
+                    {item.name}
+                  </Link>
+                )
+              })}
+            </div>
+
+            {/* Collapsible Navigation Groups */}
             {navigationGroups.map((group) => {
               const isExpanded = expandedGroups[group.name] ?? false
+              const groupActive = isGroupActive(group)
               return (
-                <div key={group.name} className="mb-4">
+                <div key={group.name} className="mt-4">
                   <button
-                    onClick={() => toggleGroup(group.name, group.locked || false)}
+                    onClick={() => toggleGroup(group.name)}
                     className={`
-                      w-full flex items-center justify-between px-3 py-2 text-sm font-semibold
-                      text-gray-700 hover:bg-gray-50 rounded-lg transition-colors
-                      ${group.locked ? 'cursor-default' : 'cursor-pointer'}
+                      w-full flex items-center justify-between px-3 py-2 text-xs font-bold
+                      uppercase tracking-wider rounded-lg transition-colors cursor-pointer
+                      ${groupActive ? 'text-primary' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'}
                     `}
                   >
                     <div className="flex items-center">
-                      <group.icon className="mr-3 h-5 w-5 text-gray-500" />
+                      <group.icon className="mr-2 h-4 w-4" />
                       <span>{group.name}</span>
                     </div>
-                    {!group.locked && (
-                      <ChevronRightIcon
-                        className={`h-4 w-4 text-gray-500 transition-transform ${
-                          isExpanded ? 'rotate-90' : ''
-                        }`}
-                      />
+                    {isExpanded ? (
+                      <ChevronDownIcon className="h-4 w-4" />
+                    ) : (
+                      <ChevronRightIcon className="h-4 w-4" />
                     )}
                   </button>
                   
                   {/* Group Items */}
-                  {(isExpanded || group.locked) && (
-                    <div className="ml-8 mt-1 space-y-1">
-                      {group.items?.map((item) => {
+                  {isExpanded && (
+                    <div className="mt-1 ml-2 space-y-1 border-l-2 border-gray-200 pl-3">
+                      {group.items.map((item) => {
                         const active = isItemActive(item.href)
                         return (
                           <Link
@@ -186,7 +288,7 @@ export default function DashboardLayout({
                             `}
                             onClick={() => setSidebarOpen(false)}
                           >
-                            <item.icon className="mr-3 h-4 w-4" />
+                            <item.icon className="mr-3 h-4 w-4 flex-shrink-0" />
                             {item.name}
                           </Link>
                         )
@@ -194,57 +296,6 @@ export default function DashboardLayout({
                     </div>
                   )}
                 </div>
-              )
-            })}
-
-            {/* Standalone Items */}
-            {standaloneNavigation.map((item) => {
-              const active = isItemActive(item.href)
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`
-                    flex items-center px-3 py-2 text-sm font-medium rounded-lg
-                    transition-colors duration-150
-                    ${
-                      active
-                        ? 'bg-primary text-white'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                    }
-                  `}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
-                </Link>
-              )
-            })}
-
-            {/* Divider */}
-            <div className="my-4 border-t border-gray-200" />
-
-            {/* Settings navigation */}
-            {settingsNavigation.map((item) => {
-              const active = isItemActive(item.href)
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`
-                    flex items-center px-3 py-2 text-sm font-medium rounded-lg
-                    transition-colors duration-150
-                    ${
-                      active
-                        ? 'bg-primary text-white'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                    }
-                  `}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <item.icon className="mr-3 h-5 w-5" />
-                  {item.name}
-                </Link>
               )
             })}
           </nav>

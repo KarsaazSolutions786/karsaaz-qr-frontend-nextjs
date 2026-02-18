@@ -42,13 +42,26 @@ interface BackendPaginatedResponse<T> {
 
 // Transform backend response to frontend format
 function transformPaginatedResponse<T>(response: BackendPaginatedResponse<T>): PaginatedResponse<T> {
+  // Handle case where response or pagination is undefined
+  if (!response || !response.pagination) {
+    return {
+      data: response?.data || [],
+      pagination: {
+        currentPage: 1,
+        perPage: 15,
+        total: 0,
+        lastPage: 1,
+      },
+    }
+  }
+  
   return {
-    data: response.data,
+    data: response.data || [],
     pagination: {
-      currentPage: response.pagination.current_page,
-      perPage: response.pagination.per_page,
-      total: response.pagination.total,
-      lastPage: response.pagination.last_page,
+      currentPage: response.pagination.current_page || 1,
+      perPage: response.pagination.per_page || 15,
+      total: response.pagination.total || 0,
+      lastPage: response.pagination.last_page || 1,
     },
   }
 }
@@ -102,14 +115,28 @@ export interface BulkCreateResponse {
 export const qrcodesAPI = {
   // List QR codes with pagination
   list: async (params: ListQRCodesParams = {}) => {
-    const response = await apiClient.get<BackendPaginatedResponse<QRCode>>('/qrcodes', { 
-      params: {
-        ...params,
-        per_page: params.perPage, // Transform to snake_case for backend
-        keyword: params.search, // Backend uses 'keyword' instead of 'search'
+    try {
+      const response = await apiClient.get<BackendPaginatedResponse<QRCode>>('/qrcodes', { 
+        params: {
+          ...params,
+          per_page: params.perPage, // Transform to snake_case for backend
+          keyword: params.search, // Backend uses 'keyword' instead of 'search'
+        }
+      })
+      
+      console.log('QR Codes API Response:', response.data)
+      
+      // Check if response has the expected structure
+      if (!response.data) {
+        console.warn('No data in response')
+        return transformPaginatedResponse({ data: [], pagination: null as any })
       }
-    })
-    return transformPaginatedResponse(response.data)
+      
+      return transformPaginatedResponse(response.data)
+    } catch (error) {
+      console.error('QR Codes fetch error:', error)
+      throw error
+    }
   },
 
   // Get single QR code

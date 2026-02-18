@@ -7,7 +7,6 @@
 
 import { ModuleShape } from '@/types/entities/designer';
 import { getModuleNeighbors } from './qrcode-utils';
-import QRCode from 'qrcode-generator';
 
 export interface ModuleRenderContext {
   row: number;
@@ -15,7 +14,7 @@ export interface ModuleRenderContext {
   x: number;
   y: number;
   size: number;
-  qr: QRCode;
+  qr: any; // QRCode from qrcode-generator
   moduleCount: number;
   neighbors?: ReturnType<typeof getModuleNeighbors>;
 }

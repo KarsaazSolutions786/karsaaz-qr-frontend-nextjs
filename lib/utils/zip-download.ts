@@ -118,14 +118,14 @@ async function addQRCodeAllFormats(
   pngSize: number
 ): Promise<void> {
   // SVG
-  const svgBlob = await exportSVG(qrCode.svgElement, {
+  const svgBlob = await exportSVG(qrCode.svgElement as any, {
     filename,
     optimized: true,
   }).then(() => getSVGBlob(qrCode.svgElement));
   zip.file(joinPath(basePath, `${filename}.svg`), svgBlob);
   
   // PNG
-  const pngBlob = await exportPNG(qrCode.svgElement, {
+  const pngBlob = await exportPNG(qrCode.svgElement as any, {
     width: pngSize,
     height: pngSize,
     filename,
@@ -133,7 +133,7 @@ async function addQRCodeAllFormats(
   zip.file(joinPath(basePath, `${filename}.png`), pngBlob);
   
   // PDF
-  const pdfBlob = await exportPDF(qrCode.svgElement, {
+  const pdfBlob = await exportPDF(qrCode.svgElement as any, {
     filename,
   }).then(() => getPDFBlob(qrCode.svgElement));
   zip.file(joinPath(basePath, `${filename}.pdf`), pdfBlob);
@@ -345,6 +345,7 @@ export async function downloadQRCodesAsZipWithProgress(
   
   for (let i = 0; i < qrCodes.length; i++) {
     const qrCode = qrCodes[i];
+    if (!qrCode) continue;
     const basePath = folderStructure && qrCode.folderPath ? qrCode.folderPath : '';
     const sanitizedName = sanitizeFilename(qrCode.name || qrCode.id);
     

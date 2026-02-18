@@ -61,8 +61,8 @@ export function useQRActions() {
     try {
       const {
         count = 1,
-        includeDesign = true,
-        includeSettings = true,
+        includeDesign: _includeDesign = true,
+        includeSettings: _includeSettings = true,
         prefix = 'Copy of',
       } = options;
       

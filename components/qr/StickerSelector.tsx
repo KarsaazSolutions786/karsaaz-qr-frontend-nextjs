@@ -9,7 +9,7 @@
 import React, { useState } from 'react';
 import { Sticker, StickerCategory } from '@/types/entities/sticker';
 import { StickerGallery } from './StickerGallery';
-import { StickerCategoryFilter, StickerCategoryTabs } from './StickerCategoryFilter';
+import { StickerCategoryTabs } from './StickerCategoryFilter';
 import { StickerUpload } from './StickerUpload';
 import { useStickerGallery, useStickerSearch } from '@/hooks/useStickerGallery';
 
@@ -49,7 +49,7 @@ export function StickerSelector({
     error,
     categoryCounts,
     uploadSticker,
-    deleteSticker,
+    deleteSticker: _deleteSticker,
   } = useStickerGallery({
     includeBuiltin: true,
     fetchCustomStickers,

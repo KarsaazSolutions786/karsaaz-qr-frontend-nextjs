@@ -5,7 +5,7 @@
  * Communicates with backend AI service to generate design suggestions.
  */
 
-import { apiClient } from '../api-client';
+import apiClient from './client';
 import { DesignerConfig } from '@/types/entities/designer';
 
 export interface AIDesignRequest {

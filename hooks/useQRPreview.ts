@@ -7,10 +7,10 @@
 
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { DesignerConfig } from '@/types/entities/designer';
 import { StickerConfig } from '@/types/entities/sticker';
-import { generateQRCode } from '@/lib/utils/qrcode-generator';
+import { generateQRCodeSync } from '@/lib/utils/qrcode-generator';
 import { generateQRCodeSVG } from '@/lib/utils/svg-renderer';
 
 export interface UseQRPreviewOptions {
@@ -27,7 +27,6 @@ export interface QRPreviewState {
   isGenerating: boolean;
   error: string | null;
   moduleCount: number;
-  estimatedComplexity: 'low' | 'medium' | 'high';
 }
 
 /**
@@ -42,7 +41,6 @@ export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
     isGenerating: false,
     error: null,
     moduleCount: 0,
-    estimatedComplexity: 'low',
   });
 
   // Generate QR code with debounce
@@ -58,7 +56,6 @@ export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
           isGenerating: false,
           error: 'No data provided',
           moduleCount: 0,
-          estimatedComplexity: 'low',
         });
         return;
       }
@@ -67,22 +64,16 @@ export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
 
       try {
         // Generate QR code
-        const result = generateQRCode({
+        const result = generateQRCodeSync({
           data,
-          errorCorrectionLevel: config.errorCorrectionLevel,
-          margin: config.margin,
           designerConfig: config,
         });
-
-        if (!result.success) {
-          throw new Error(result.error);
-        }
 
         // Generate SVG
         const svg = generateQRCodeSVG({
           qr: result.qr,
           moduleCount: result.moduleCount,
-          config,
+          config: result.config,
           stickerConfig: stickerConfig || null,
         });
 
@@ -97,7 +88,6 @@ export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
             isGenerating: false,
             error: null,
             moduleCount: result.moduleCount,
-            estimatedComplexity: result.estimatedComplexity,
           });
         }
       } catch (error) {
@@ -109,7 +99,6 @@ export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
             isGenerating: false,
             error: err.message,
             moduleCount: 0,
-            estimatedComplexity: 'low',
           });
 
           if (onError) {
@@ -146,22 +135,22 @@ export function useQRDownload(svg: string | null, size: number) {
       downloadPNG: async (filename: string) => {
         if (!svg) throw new Error('No QR code to download');
         const { downloadPNG } = await import('@/lib/utils/download-utils');
-        await downloadPNG(svg, filename, size);
+        await downloadPNG(svg as any, filename, size);
       },
       downloadSVG: (filename: string) => {
         if (!svg) throw new Error('No QR code to download');
         const { downloadSVG } = require('@/lib/utils/download-utils');
-        downloadSVG(svg, filename);
+        downloadSVG(svg as any, filename);
       },
       downloadPDF: async (filename: string) => {
         if (!svg) throw new Error('No QR code to download');
         const { downloadPDF } = await import('@/lib/utils/download-utils');
-        await downloadPDF(svg, filename, size);
+        await downloadPDF(svg as any, filename, size);
       },
       downloadEPS: (filename: string) => {
         if (!svg) throw new Error('No QR code to download');
         const { downloadEPS } = require('@/lib/utils/download-utils');
-        downloadEPS(svg, filename);
+        downloadEPS(svg as any, filename);
       },
     };
   }, [svg, size]);

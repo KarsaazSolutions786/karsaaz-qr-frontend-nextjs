@@ -6,9 +6,8 @@
 
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { StickerPosition, StickerPositionPreset, POSITION_PRESETS } from '@/types/entities/sticker';
-import { calculateStickerPosition } from '@/lib/utils/sticker-utils';
 
 export interface StickerPositioningProps {
   position: StickerPosition;
@@ -22,8 +21,8 @@ export interface StickerPositioningProps {
 export function StickerPositioning({
   position,
   onChange,
-  qrSize = 300,
-  stickerSize = 0.2,
+  qrSize: _qrSize = 300,
+  stickerSize: _stickerSize = 0.2,
   showPreview = true,
   className = '',
 }: StickerPositioningProps) {
@@ -238,7 +237,7 @@ interface PositionButtonProps {
   onClick: () => void;
 }
 
-function PositionButton({ preset, label, icon, isSelected, onClick }: PositionButtonProps) {
+function PositionButton({ preset: _preset, label, icon, isSelected, onClick }: PositionButtonProps) {
   return (
     <button
       type="button"

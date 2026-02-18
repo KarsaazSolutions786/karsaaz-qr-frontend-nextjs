@@ -22,7 +22,8 @@ export function renderOutline(ctx: OutlineRenderContext): string {
   }
 
   const { size, outline } = ctx;
-  const { color, width } = outline;
+  const color = outline.color!;
+  const width = outline.width!;
 
   // Insert outline rect after opening svg tag
   const svgOpenTagEnd = ctx.svg.indexOf('>');
@@ -57,7 +58,8 @@ export function renderRoundedOutline(ctx: OutlineRenderContext, borderRadius: nu
   }
 
   const { size, outline } = ctx;
-  const { color, width } = outline;
+  const color = outline.color!;
+  const width = outline.width!;
 
   const svgOpenTagEnd = ctx.svg.indexOf('>');
   if (svgOpenTagEnd === -1) return ctx.svg;
@@ -93,7 +95,8 @@ export function renderCircularOutline(ctx: OutlineRenderContext): string {
   }
 
   const { size, outline } = ctx;
-  const { color, width } = outline;
+  const color = outline.color!;
+  const width = outline.width!;
 
   const svgOpenTagEnd = ctx.svg.indexOf('>');
   if (svgOpenTagEnd === -1) return ctx.svg;
@@ -132,7 +135,8 @@ export function renderDashedOutline(
   }
 
   const { size, outline } = ctx;
-  const { color, width } = outline;
+  const color = outline.color!;
+  const width = outline.width!;
 
   const svgOpenTagEnd = ctx.svg.indexOf('>');
   if (svgOpenTagEnd === -1) return ctx.svg;
@@ -171,7 +175,8 @@ export function renderDoubleOutline(
   }
 
   const { size, outline } = ctx;
-  const { color, width } = outline;
+  const color = outline.color!;
+  const width = outline.width!;
 
   const svgOpenTagEnd = ctx.svg.indexOf('>');
   if (svgOpenTagEnd === -1) return ctx.svg;

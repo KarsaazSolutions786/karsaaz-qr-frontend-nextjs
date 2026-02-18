@@ -2,9 +2,12 @@
 
 import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { PlanCard } from './PlanCard'
+import type { Plan } from '@/types/entities/subscription'
+import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
 
 export function PricingPlans() {
-  const { data: plans, isLoading, error } = usePlans()
+  const { data: plansData, isLoading, error } = usePlans()
+  const plans: Plan[] | undefined = plansData?.data?.map(mapSubscriptionPlanToPlan)
 
   if (isLoading) {
     return (
@@ -32,7 +35,7 @@ export function PricingPlans() {
     )
   }
 
-  if (!plans || plans.length === 0) {
+  if (!plans || plans?.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-6 text-center">
         <p className="text-gray-600">No plans available at this time.</p>

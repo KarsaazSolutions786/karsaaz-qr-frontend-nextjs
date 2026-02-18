@@ -7,7 +7,7 @@
 
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { AIDesignConfig } from '@/types/entities/designer';
 import {
   AI_PROMPT_EXAMPLES,

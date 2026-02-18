@@ -44,28 +44,6 @@ export function GradientBuilder({
     }
   }, [value]);
 
-  // Generate SVG gradient for QR preview
-  const generateSVGGradient = useMemo(() => {
-    if (value.type === 'linear') {
-      const angle = value.rotation ?? 0;
-      const rad = (angle * Math.PI) / 180;
-      const x1 = 50 - 50 * Math.cos(rad);
-      const y1 = 50 - 50 * Math.sin(rad);
-      const x2 = 50 + 50 * Math.cos(rad);
-      const y2 = 50 + 50 * Math.sin(rad);
-
-      return `<linearGradient id="preview-gradient" x1="${x1}%" y1="${y1}%" x2="${x2}%" y2="${y2}%">
-        <stop offset="0%" stop-color="${value.startColor}"/>
-        <stop offset="100%" stop-color="${value.endColor}"/>
-      </linearGradient>`;
-    } else {
-      return `<radialGradient id="preview-gradient">
-        <stop offset="0%" stop-color="${value.startColor}"/>
-        <stop offset="100%" stop-color="${value.endColor}"/>
-      </radialGradient>`;
-    }
-  }, [value]);
-
   const handleTypeChange = (type: GradientType) => {
     onChange({ ...value, type });
   };

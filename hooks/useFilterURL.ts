@@ -42,10 +42,10 @@ export function filtersToURLParams(filters: FilterState): URLSearchParams {
     
     if (filters.dateRange === 'custom') {
       if (filters.dateFrom) {
-        params.set('dateFrom', filters.dateFrom.toISOString().split('T')[0]);
+        params.set('dateFrom', filters.dateFrom.toISOString().split('T')[0] ?? '');
       }
       if (filters.dateTo) {
-        params.set('dateTo', filters.dateTo.toISOString().split('T')[0]);
+        params.set('dateTo', filters.dateTo.toISOString().split('T')[0] ?? '');
       }
     }
   }

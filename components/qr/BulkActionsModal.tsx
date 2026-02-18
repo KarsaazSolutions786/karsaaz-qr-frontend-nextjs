@@ -7,7 +7,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Download, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, Download, Loader2, AlertCircle } from 'lucide-react';
 import {
   downloadQRCodesAsZipWithProgress,
   estimateZipSize,
@@ -44,7 +44,7 @@ export function BulkActionsModal({
  * Bulk download modal
  */
 function BulkDownloadModal({
-  isOpen,
+  isOpen: _isOpen,
   onClose,
   qrCodes,
 }: {
@@ -266,7 +266,7 @@ function BulkDownloadModal({
  * Bulk delete modal
  */
 function BulkDeleteModal({
-  isOpen,
+  isOpen: _isOpen,
   onClose,
   qrCodes,
 }: {

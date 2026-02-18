@@ -104,7 +104,6 @@ export function StickerCategoryDropdown({
   onCategoryChange,
   className = '',
 }: StickerCategoryDropdownProps) {
-  const displayName = getCategoryDisplayName(selectedCategory);
   const icon = getCategoryIcon(selectedCategory);
 
   return (

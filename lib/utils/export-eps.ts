@@ -170,8 +170,8 @@ function svgToPostScript(svg: string, width: number, height: number): string {
   // Extract paths (basic support)
   const pathMatches = svg.matchAll(/<path[^>]*d="([^"]+)"[^>]*>/g);
   for (const match of pathMatches) {
-    const d = match[1];
-    const fill = match[0].match(/fill="([^"]+)"/)?.[ 1] || '#000000';
+    const d = match[1] ?? '';
+    const fill = match[0]?.match(/fill="([^"]+)"/)?.[ 1] || '#000000';
 
     const rgb = hexToRGB(fill);
     ps += `${rgb.r} ${rgb.g} ${rgb.b} rgb\n`;
@@ -207,7 +207,7 @@ function pathToPostScript(d: string, svgHeight: number): string {
   let currentY = 0;
 
   for (const cmd of commands) {
-    const type = cmd[0];
+    const type = cmd[0] ?? '';
     const coords = cmd
       .slice(1)
       .trim()
@@ -216,31 +216,31 @@ function pathToPostScript(d: string, svgHeight: number): string {
 
     switch (type.toUpperCase()) {
       case 'M': // MoveTo
-        currentX = coords[0];
-        currentY = coords[1];
+        currentX = coords[0] ?? 0;
+        currentY = coords[1] ?? 0;
         ps += `${currentX} ${svgHeight - currentY} m\n`;
         break;
 
       case 'L': // LineTo
-        currentX = coords[0];
-        currentY = coords[1];
+        currentX = coords[0] ?? 0;
+        currentY = coords[1] ?? 0;
         ps += `${currentX} ${svgHeight - currentY} l\n`;
         break;
 
       case 'H': // Horizontal LineTo
-        currentX = coords[0];
+        currentX = coords[0] ?? 0;
         ps += `${currentX} ${svgHeight - currentY} l\n`;
         break;
 
       case 'V': // Vertical LineTo
-        currentY = coords[0];
+        currentY = coords[0] ?? 0;
         ps += `${currentX} ${svgHeight - currentY} l\n`;
         break;
 
       case 'C': // Cubic Bezier
-        ps += `${coords[0]} ${svgHeight - coords[1]} ${coords[2]} ${svgHeight - coords[3]} ${coords[4]} ${svgHeight - coords[5]} c\n`;
-        currentX = coords[4];
-        currentY = coords[5];
+        ps += `${coords[0] ?? 0} ${svgHeight - (coords[1] ?? 0)} ${coords[2] ?? 0} ${svgHeight - (coords[3] ?? 0)} ${coords[4] ?? 0} ${svgHeight - (coords[5] ?? 0)} c\n`;
+        currentX = coords[4] ?? 0;
+        currentY = coords[5] ?? 0;
         break;
 
       case 'Z': // ClosePath

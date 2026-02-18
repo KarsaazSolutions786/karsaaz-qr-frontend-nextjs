@@ -7,7 +7,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Link2, TrendingUp, ExternalLink, Search, Filter } from 'lucide-react';
+import { Link2, ExternalLink, Search } from 'lucide-react';
 
 export interface ReferrerData {
   url: string;

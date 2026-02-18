@@ -24,7 +24,7 @@ export function PINProtectionModal({
   isOpen,
   onClose,
   mode,
-  isPinProtected = false,
+  isPinProtected: _isPinProtected = false,
   onAddPIN,
   onRemovePIN,
   onUpdatePIN,

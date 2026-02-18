@@ -62,7 +62,7 @@ const PRESET_INFO: Record<SizePresetKey, {
 export function SizePresets({
   selected,
   onSelect,
-  format = 'png',
+  format: _format = 'png',
   disabled = false,
   className = '',
 }: SizePresetsProps) {

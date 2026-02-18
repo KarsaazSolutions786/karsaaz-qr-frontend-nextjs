@@ -121,7 +121,7 @@ export function useThrottledCallback<T extends (...args: any[]) => any>(
  * Detects when element enters viewport (for lazy loading).
  */
 export function useIntersectionObserver(
-  ref: React.RefObject<Element>,
+  ref: React.RefObject<Element | null>,
   options: IntersectionObserverInit = {}
 ): boolean {
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -132,7 +132,7 @@ export function useIntersectionObserver(
     
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsIntersecting(entry.isIntersecting);
+        if (entry) setIsIntersecting(entry.isIntersecting);
       },
       {
         threshold: 0.1,
@@ -255,7 +255,7 @@ export function deepEqual(a: any, b: any): boolean {
 /**
  * Batch updates to reduce re-renders
  */
-export function batchUpdates<T>(
+export function batchUpdates(
   updates: Array<() => void>,
   callback?: () => void
 ): void {

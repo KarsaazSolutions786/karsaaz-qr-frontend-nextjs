@@ -62,7 +62,7 @@ export const DPI_PRESETS: DPIPreset[] = [
 export function DPISettings({
   value,
   onChange,
-  format = 'png',
+  format: _format = 'png',
   disabled = false,
   className = '',
 }: DPISettingsProps) {

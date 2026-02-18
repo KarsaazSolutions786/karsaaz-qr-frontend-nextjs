@@ -164,7 +164,7 @@ function getStickerPositionPreset(preset: string): { x: number; y: number } {
     'bottom-right': { x: 1, y: 1 },
     custom: { x: 0.5, y: 1 },
   };
-  return presets[preset] || presets.bottom;
+  return presets[preset] ?? presets.bottom ?? { x: 0.5, y: 1 };
 }
 
 /**

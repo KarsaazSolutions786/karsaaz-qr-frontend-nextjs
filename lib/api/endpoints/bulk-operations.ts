@@ -1,5 +1,4 @@
 import apiClient from '@/lib/api/client'
-import { QRCode } from '@/types/entities/qrcode'
 
 // Bulk Operations API Endpoints
 

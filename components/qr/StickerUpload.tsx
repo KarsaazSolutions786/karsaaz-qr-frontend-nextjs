@@ -11,7 +11,6 @@ import { StickerCategory } from '@/types/entities/sticker';
 import {
   validateStickerFile,
   formatFileSize,
-  compressStickerImage,
   estimateUploadTime,
   getCategoryDisplayName,
 } from '@/lib/utils/sticker-utils';
@@ -86,16 +85,18 @@ export function StickerUpload({
     setIsDragging(false);
 
     const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleFileSelect(files[0]);
+    const firstFile = files[0];
+    if (files.length > 0 && firstFile) {
+      handleFileSelect(firstFile);
     }
   };
 
   // Handle file input change
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFileSelect(files[0]);
+    const firstFile = files?.[0];
+    if (files && files.length > 0 && firstFile) {
+      handleFileSelect(firstFile);
     }
   };
 

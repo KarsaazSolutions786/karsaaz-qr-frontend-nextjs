@@ -4,14 +4,16 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { StripeCheckoutForm } from '@/components/features/subscriptions/StripeCheckoutForm'
+import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
 import Link from 'next/link'
 
 function CheckoutContent() {
   const searchParams = useSearchParams()
   const planId = searchParams.get('plan')
   
-  const { data: plans, isLoading } = usePlans()
-  const selectedPlan = plans?.find((p) => p.id === planId)
+  const { data: plansData, isLoading } = usePlans()
+  const rawPlan = plansData?.data?.find((p) => p.id === Number(planId))
+  const selectedPlan = rawPlan ? mapSubscriptionPlanToPlan(rawPlan) : undefined
 
   if (isLoading) {
     return (

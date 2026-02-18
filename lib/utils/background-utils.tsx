@@ -17,9 +17,7 @@ export interface BackgroundValidationResult {
  */
 export function validateBackgroundConfig(bg: BackgroundConfig): BackgroundValidationResult {
   const errors: string[] = [];
-  const warnings: string[];
-
- = [];
+  const warnings: string[] = [];
 
   if (bg.type === 'solid') {
     if (bg.color && !/^#[0-9A-F]{6}$/i.test(bg.color)) {
@@ -265,9 +263,9 @@ export async function getDominantColor(imageUrl: string): Promise<string> {
       const pixels = data.length / 4;
 
       for (let i = 0; i < data.length; i += 4) {
-        r += data[i];
-        g += data[i + 1];
-        b += data[i + 2];
+        r += data[i] ?? 0;
+        g += data[i + 1] ?? 0;
+        b += data[i + 2] ?? 0;
       }
 
       r = Math.round(r / pixels);
@@ -294,11 +292,11 @@ export function hasGoodContrast(backgroundColor: string, foregroundColor: string
     const g = ((rgb >> 8) & 0xff) / 255;
     const b = (rgb & 0xff) / 255;
 
-    const [rs, gs, bs] = [r, g, b].map(c =>
+    const mapped = [r, g, b].map(c =>
       c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
     );
 
-    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+    return 0.2126 * (mapped[0] ?? 0) + 0.7152 * (mapped[1] ?? 0) + 0.0722 * (mapped[2] ?? 0);
   };
 
   const l1 = getLuminance(backgroundColor);

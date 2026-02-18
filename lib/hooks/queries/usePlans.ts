@@ -1,14 +1,21 @@
 import { useQuery } from '@tanstack/react-query'
-import { getPlans } from '@/lib/api/endpoints/subscriptions'
+import { plansAPI } from '@/lib/api/endpoints/plans'
 import { queryKeys } from '@/lib/query/keys'
 
-export function usePlans() {
+// Get all plans
+export function usePlans(params?: { page?: number; search?: string }) {
   return useQuery({
-    queryKey: queryKeys.subscriptions.plans(),
-    queryFn: async () => {
-      const response = await getPlans()
-      return response.data
-    },
-    staleTime: 10 * 60 * 1000, // Plans don't change often, cache for 10 minutes
+    queryKey: queryKeys.plans.list(params),
+    queryFn: () => plansAPI.getAll(params),
+    staleTime: 30000,
+  })
+}
+
+// Get single plan
+export function usePlan(id: number) {
+  return useQuery({
+    queryKey: queryKeys.plans.detail(id),
+    queryFn: () => plansAPI.getById(id),
+    enabled: !!id,
   })
 }

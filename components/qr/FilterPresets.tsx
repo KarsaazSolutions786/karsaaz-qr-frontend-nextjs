@@ -240,7 +240,6 @@ export function FilterPresetsDropdown({
   onLoadPreset,
   className = '',
 }: Pick<FilterPresetsProps, 'presets' | 'activePresetId' | 'onLoadPreset' | 'className'>) {
-  const activePreset = presets.find(p => p.id === activePresetId);
   
   return (
     <select

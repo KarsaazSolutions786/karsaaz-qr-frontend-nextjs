@@ -227,7 +227,7 @@ export async function hasTransparency(dataURL: string): Promise<boolean> {
 
       // Check alpha channel
       for (let i = 3; i < data.length; i += 4) {
-        if (data[i] < 255) {
+        if ((data[i] ?? 255) < 255) {
           resolve(true);
           return;
         }

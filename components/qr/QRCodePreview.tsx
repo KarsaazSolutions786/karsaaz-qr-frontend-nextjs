@@ -10,7 +10,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer';
 import { StickerConfig } from '@/types/entities/sticker';
-import { generateQRCode } from '@/lib/utils/qrcode-generator';
+import { generateQRCodeSync } from '@/lib/utils/qrcode-generator';
 import { generateQRCodeSVG } from '@/lib/utils/svg-renderer';
 import { downloadPNG, downloadSVG, downloadPDF, downloadEPS } from '@/lib/utils/download-utils';
 
@@ -49,16 +49,10 @@ export const QRCodePreview = React.forwardRef<QRCodePreviewRef, QRCodePreviewPro
           return { error: 'No data provided' as const, svg: null, qr: null, moduleCount: 0 };
         }
 
-        const result = generateQRCode({
+        const result = generateQRCodeSync({
           data,
-          errorCorrectionLevel: mergedConfig.errorCorrectionLevel,
-          margin: mergedConfig.margin,
           designerConfig: mergedConfig,
         });
-
-        if (!result.success) {
-          return { error: result.error, svg: null, qr: null, moduleCount: 0 };
-        }
 
         const svg = generateQRCodeSVG({
           qr: result.qr,
@@ -86,18 +80,20 @@ export const QRCodePreview = React.forwardRef<QRCodePreviewRef, QRCodePreviewPro
 
         const defaultFilename = filename || `qrcode-${Date.now()}`;
 
+        const svgEl = qrResult.svg as any;
+
         switch (format) {
           case 'png':
-            await downloadPNG(qrResult.svg, `${defaultFilename}.png`, mergedConfig.size);
+            await downloadPNG(svgEl, `${defaultFilename}.png`, mergedConfig.size);
             break;
           case 'svg':
-            downloadSVG(qrResult.svg, `${defaultFilename}.svg`);
+            downloadSVG(svgEl, `${defaultFilename}.svg`);
             break;
           case 'pdf':
-            await downloadPDF(qrResult.svg, `${defaultFilename}.pdf`, mergedConfig.size);
+            await downloadPDF(svgEl, `${defaultFilename}.pdf`, mergedConfig.size);
             break;
           case 'eps':
-            downloadEPS(qrResult.svg, `${defaultFilename}.eps`);
+            downloadEPS(svgEl, `${defaultFilename}.eps`);
             break;
           default:
             throw new Error(`Unsupported format: ${format}`);

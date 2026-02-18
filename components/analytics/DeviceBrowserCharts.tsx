@@ -7,7 +7,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { Smartphone, Monitor, Tablet, Chrome, Globe } from 'lucide-react';
+import { Smartphone, Monitor, Tablet, Globe } from 'lucide-react';
 
 export interface DeviceData {
   type: 'mobile' | 'tablet' | 'desktop';

@@ -102,4 +102,62 @@ export const queryKeys = {
     detail: (id: number) => ['biolinks', id] as const,
     bySlug: (slug: string) => ['biolinks', 'slug', slug] as const,
   },
+
+  // Plans (Subscription Plans - Admin)
+  plans: {
+    all: () => ['plans'] as const,
+    list: (filters?: Record<string, unknown>) => ['plans', 'list', filters] as const,
+    detail: (id: number) => ['plans', id] as const,
+  },
+
+  // Transactions (Admin)
+  transactions: {
+    all: () => ['transactions'] as const,
+    list: (filters?: Record<string, unknown>) => ['transactions', 'list', filters] as const,
+    detail: (id: number) => ['transactions', id] as const,
+  },
+
+  // Currencies
+  currencies: {
+    all: () => ['currencies'] as const,
+    list: (filters?: Record<string, unknown>) => ['currencies', 'list', filters] as const,
+    detail: (id: number) => ['currencies', id] as const,
+  },
+
+  // Roles
+  roles: {
+    all: () => ['roles'] as const,
+    list: (filters?: Record<string, unknown>) => ['roles', 'list', filters] as const,
+    detail: (id: number) => ['roles', id] as const,
+    permissions: () => ['roles', 'permissions'] as const,
+  },
+
+  // Contacts
+  contacts: {
+    all: () => ['contacts'] as const,
+    list: (filters?: Record<string, unknown>) => ['contacts', 'list', filters] as const,
+    detail: (id: number) => ['contacts', id] as const,
+  },
+
+  // Pages
+  pages: {
+    all: () => ['pages'] as const,
+    list: (filters?: Record<string, unknown>) => ['pages', 'list', filters] as const,
+    detail: (id: number) => ['pages', id] as const,
+  },
+
+  // Translations
+  translations: {
+    all: () => ['translations'] as const,
+    list: (filters?: Record<string, unknown>) => ['translations', 'list', filters] as const,
+    detail: (id: number) => ['translations', id] as const,
+  },
+
+  // Custom Codes
+  customCodes: {
+    all: () => ['custom-codes'] as const,
+    list: (filters?: Record<string, unknown>) => ['custom-codes', 'list', filters] as const,
+    detail: (id: number) => ['custom-codes', id] as const,
+    positions: () => ['custom-codes', 'positions'] as const,
+  },
 }

@@ -30,32 +30,80 @@ export const ROUTES = {
     EDIT: (id: string) => `/qrcodes/${id}/edit`,
     STATS: (id: string) => `/qrcodes/${id}/stats`,
     BULK_CREATE: '/qrcodes/bulk-create',
+    TEMPLATES: '/qrcode-templates',
+    ARCHIVED: '/qrcodes?archived=true',
   },
 
-  // Subscriptions
+  // Cloud Storage
+  CLOUD_STORAGE: '/cloud-storage',
+
+  // Connections
+  CONNECTIONS: '/connections',
+
+  // Users
+  USERS: {
+    ALL: '/users',
+    PAYING: '/users/paying',
+    NON_PAYING: '/users/non-paying',
+    ROLES: '/users/roles',
+  },
+
+  // Finance
+  FINANCE: {
+    PLANS: '/plans',
+    SUBSCRIPTIONS: '/subscriptions',
+    BILLING: '/billing',
+    TRANSACTIONS: '/transactions',
+    PAYMENT_PROCESSORS: '/payment-processors',
+    CURRENCIES: '/currencies',
+  },
+
+  // Content
+  CONTENT: {
+    BLOG_POSTS: '/blog-posts',
+    CONTENT_BLOCKS: '/content-blocks',
+    TRANSLATIONS: '/translations',
+    CUSTOM_CODE: '/custom-code',
+    PAGES: '/pages',
+    BIOLINKS: '/biolinks',
+  },
+
+  // Contacts
+  CONTACTS: {
+    CONTACT_FORM: '/contact-form',
+    LEAD_FORMS: '/lead-forms',
+  },
+
+  // Plugins
+  PLUGINS: {
+    AVAILABLE: '/plugins/available',
+    INSTALLED: '/plugins/installed',
+  },
+
+  // System
+  SYSTEM: {
+    STATUS: '/system/status',
+    SETTINGS: '/system/settings',
+    LOGS: '/system/logs',
+    CACHE: '/system/cache',
+    NOTIFICATIONS: '/system/notifications',
+    SMS_PORTALS: '/system/sms-portals',
+    AUTH_WORKFLOW: '/system/auth-workflow',
+    ABUSE_REPORTS: '/system/abuse-reports',
+    DOMAINS: '/system/domains',
+  },
+
+  // Subscriptions (legacy alias)
   SUBSCRIPTIONS: '/subscriptions',
   CHECKOUT: '/checkout',
 
-  // Domains
-  DOMAINS: '/domains',
-
-  // Billing
+  // Billing (legacy alias)
   BILLING: '/billing',
 
   // Support
   SUPPORT: {
     LIST: '/support',
     TICKET: (id: string) => `/support/${id}`,
-  },
-
-  // Admin
-  ADMIN: {
-    USERS: '/admin/users',
-    CONTENT: {
-      BLOG: '/admin/content/blog',
-      PAGES: '/admin/content/pages',
-    },
-    SYSTEM: '/admin/system',
   },
 
   // Referrals

@@ -61,7 +61,7 @@ export function useFocusTrap(enabled: boolean = true) {
  */
 export function useAriaLive() {
   const [message, setMessage] = useState('');
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout>(undefined);
   
   const announce = (text: string, timeout: number = 3000) => {
     setMessage(text);
@@ -131,7 +131,7 @@ export function VisuallyHidden({
   as: Component = 'span',
 }: { 
   children: React.ReactNode;
-  as?: keyof JSX.IntrinsicElements;
+  as?: React.ElementType;
 }) {
   return (
     <Component className="sr-only">

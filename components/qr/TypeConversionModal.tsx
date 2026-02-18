@@ -32,7 +32,7 @@ export function TypeConversionModal({
   isOpen,
   onClose,
   currentType,
-  currentData,
+  currentData: _currentData,
   onConvert,
 }: TypeConversionModalProps) {
   const [selectedType, setSelectedType] = useState(currentType);

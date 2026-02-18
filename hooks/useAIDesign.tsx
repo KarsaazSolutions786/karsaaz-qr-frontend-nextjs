@@ -8,7 +8,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { DesignerConfig, AIDesignConfig } from '@/types/entities/designer';
+import { DesignerConfig } from '@/types/entities/designer';
 import {
   generateAIDesign,
   generateAIDesignVariations,
@@ -115,9 +115,10 @@ export function useAIDesign(options: UseAIDesignOptions = {}): UseAIDesignReturn
           setVariations(response.variations);
           
           // Auto-apply first variation if available
-          if (response.variations.length > 0) {
-            setCurrentDesign(response.variations[0].config);
-            onSuccess?.(response.variations[0].config);
+          const firstVariation = response.variations[0];
+          if (response.variations.length > 0 && firstVariation) {
+            setCurrentDesign(firstVariation.config);
+            onSuccess?.(firstVariation.config);
           }
         } else {
           const errorMsg = response.error || 'Failed to generate variations';
