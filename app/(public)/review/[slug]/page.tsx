@@ -1,19 +1,23 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ReviewPreview from '@/components/public/business-review/ReviewPreview'
+import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
 async function getBusinessReview(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/qrcodes/business-review/${slug}`, {
-      cache: 'no-store',
-    })
+    const qrData = await getQRCodeRedirect(slug)
     
-    if (!res.ok) {
+    // Validate type is business-review, review, or rating
+    const validTypes = ['business-review', 'review', 'rating']
+    if (!validTypes.includes(qrData.type)) {
+      console.error(`Invalid QR type for business review: ${qrData.type}`)
       return null
     }
     
-    const data = await res.json()
-    return data.data
+    // Track the view
+    trackQRView(slug)
+    
+    return qrData.data
   } catch (error) {
     console.error('Failed to fetch business review:', error)
     return null

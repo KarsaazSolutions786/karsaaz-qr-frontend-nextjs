@@ -1,23 +1,16 @@
 'use client'
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
-import { authAPI, GoogleLoginRequest } from '@/lib/api/endpoints/auth'
-import { queryKeys } from '@/lib/query/keys'
+import { authAPI } from '@/lib/api/endpoints/auth'
 
+/**
+ * Google login hook — triggers server-side OAuth redirect.
+ * No mutation needed since it's a full-page redirect.
+ */
 export function useGoogleLogin() {
-  const router = useRouter()
-  const queryClient = useQueryClient()
+  const redirectToGoogle = () => {
+    const redirectUrl = authAPI.getGoogleRedirectUrl()
+    window.location.href = redirectUrl
+  }
 
-  return useMutation({
-    mutationFn: (data: GoogleLoginRequest) => authAPI.googleLogin(data),
-    onSuccess: (response) => {
-      queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
-      
-      const params = new URLSearchParams(window.location.search)
-      const from = params.get('from')
-      
-      router.push(from || '/dashboard')
-    },
-  })
+  return { redirectToGoogle }
 }

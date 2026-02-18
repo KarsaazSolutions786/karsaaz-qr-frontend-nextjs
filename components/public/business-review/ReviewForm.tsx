@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Star, Send, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { submitReview } from '@/lib/api/public-qrcodes';
 
 interface ReviewFormProps {
   businessName: string;
@@ -49,23 +50,12 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
     setIsSubmitting(true);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/qrcodes/business-review/${slug}/submit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          rating,
-          name: formData.name,
-          email: formData.email,
-          comment: formData.comment,
-        }),
+      await submitReview(slug, {
+        rating,
+        name: formData.name,
+        email: formData.email,
+        comment: formData.comment,
       });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Failed to submit review');
-      }
 
       setFormData({ name: '', email: '', comment: '' });
       setRating(0);

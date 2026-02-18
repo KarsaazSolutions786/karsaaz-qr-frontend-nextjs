@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import CataloguePreview from '@/components/public/product-catalogue/CataloguePreview';
+import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes';
 
 interface ProductCataloguePageProps {
   params: {
@@ -7,18 +8,22 @@ interface ProductCataloguePageProps {
   };
 }
 
+const VALID_CATALOGUE_TYPES = ['product-catalogue', 'products', 'catalog', 'catalogue'];
+
 async function getCatalogueData(slug: string) {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-    const response = await fetch(`${apiUrl}/api/qrcodes/product-catalogue/${slug}`, {
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
+    const qrData = await getQRCodeRedirect(slug);
+    
+    // Validate type
+    if (!VALID_CATALOGUE_TYPES.includes(qrData.type)) {
+      console.error(`Invalid QR code type: ${qrData.type}. Expected one of: ${VALID_CATALOGUE_TYPES.join(', ')}`);
       return null;
     }
 
-    return await response.json();
+    // Track view for analytics
+    trackQRView(slug);
+    
+    return qrData.data;
   } catch (error) {
     console.error('Error fetching catalogue:', error);
     return null;

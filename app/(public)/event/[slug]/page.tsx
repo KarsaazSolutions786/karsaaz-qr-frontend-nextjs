@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import EventPreview from '@/components/public/event/EventPreview';
+import { getQRCodeRedirect } from '@/lib/api/public-qrcodes';
 
 interface EventPageProps {
   params: {
@@ -9,15 +10,13 @@ interface EventPageProps {
 
 async function getEventData(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/qrcodes/event/${slug}`, {
-      cache: 'no-store',
-    });
-
-    if (!res.ok) {
+    const qrData = await getQRCodeRedirect(slug);
+    
+    if (!qrData || qrData.type !== 'event') {
       return null;
     }
 
-    return res.json();
+    return qrData.data;
   } catch (error) {
     console.error('Error fetching event:', error);
     return null;

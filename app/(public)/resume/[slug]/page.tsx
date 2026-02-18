@@ -1,17 +1,26 @@
 import { notFound } from 'next/navigation';
 import ResumeDisplay from '@/components/public/resume/ResumeDisplay';
+import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes';
 
 async function getResumeData(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/qrcodes/resume/${slug}`, {
-      cache: 'no-store',
-    });
-
-    if (!res.ok) {
+    const qrData = await getQRCodeRedirect(slug);
+    
+    if (!qrData) {
       return null;
     }
 
-    return res.json();
+    // Validate type is resume, cv, or curriculum-vitae
+    const validTypes = ['resume', 'cv', 'curriculum-vitae'];
+    if (!validTypes.includes(qrData.type)) {
+      console.error('Invalid QR code type for resume page:', qrData.type);
+      return null;
+    }
+
+    // Track view
+    await trackQRView(slug);
+
+    return qrData.data;
   } catch (error) {
     console.error('Error fetching resume:', error);
     return null;

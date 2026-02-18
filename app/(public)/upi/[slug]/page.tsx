@@ -1,19 +1,22 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import UPIPreview from '@/components/public/upi/UPIPreview'
+import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
 async function getUPIPayment(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/qrcodes/upi-dynamic/${slug}`, {
-      cache: 'no-store',
-    })
+    const qrData = await getQRCodeRedirect(slug)
     
-    if (!res.ok) {
+    if (!qrData) {
       return null
     }
     
-    const data = await res.json()
-    return data.data
+    // Validate type is 'upi-dynamic', 'upi', or 'payment'
+    if (!['upi-dynamic', 'upi', 'payment'].includes(qrData.data.type)) {
+      return null
+    }
+    
+    return qrData.data
   } catch (error) {
     console.error('Failed to fetch UPI payment:', error)
     return null

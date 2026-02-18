@@ -1,12 +1,25 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 
+// API Base URL Configuration (matches Lit frontend priority)
+// 1. NEXT_PUBLIC_API_URL environment variable
+// 2. Fallback to production URL
+const getApiBaseURL = () => {
+  if (typeof window !== 'undefined' && (window as any).BACKEND_URL) {
+    return `${(window as any).BACKEND_URL}/api`;
+  }
+  return process.env.NEXT_PUBLIC_API_URL 
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api`
+    : 'https://app.karsaazqr.com/api';
+};
+
 const apiClient: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api',
-  timeout: 5000, // Reduced timeout for faster failure detection
+  baseURL: getApiBaseURL(),
+  timeout: 60000, // 60s timeout (matches Lit frontend default)
   headers: {
+    'Accept': 'application/json',
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Important: Send cookies with requests (for JWT in httpOnly cookie)
+  withCredentials: true, // Send cookies with requests
 })
 
 // Request interceptor: Attach JWT token from localStorage
@@ -45,27 +58,21 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
 
-    // Handle 401 Unauthorized (expired token)
+    // Handle 401 Unauthorized — clear auth and redirect to login
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
-      try {
-        // Attempt to refresh token (backend should handle refresh via httpOnly cookie)
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh`,
-          {},
-          { withCredentials: true }
-        )
-
-        // Retry the original request
-        return apiClient(originalRequest)
-      } catch (refreshError) {
-        // Refresh failed - redirect to login
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login'
-        }
-        return Promise.reject(refreshError)
+      // Don't redirect if this was the login or register request itself
+      const url = originalRequest.url || ''
+      const isAuthRequest = url.includes('/login') || url.includes('/register') || url.includes('/verify-otp')
+      
+      if (!isAuthRequest && typeof window !== 'undefined') {
+        localStorage.removeItem('user')
+        localStorage.removeItem('token')
+        window.location.href = '/login'
       }
+      
+      return Promise.reject(error)
     }
 
     // Handle other errors

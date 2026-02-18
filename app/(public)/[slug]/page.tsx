@@ -1,19 +1,23 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import BiolinkPreview from '@/components/features/biolinks/editor/BiolinkPreview'
+import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
 async function getBiolink(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/biolinks/slug/${slug}`, {
-      cache: 'no-store',
-    })
+    // Use the public API to get QR code data
+    const qrData = await getQRCodeRedirect(slug)
     
-    if (!res.ok) {
+    // Validate it's a biolinks type
+    if (!['biolinks', 'biolink'].includes(qrData.type?.toLowerCase())) {
       return null
     }
     
-    const data = await res.json()
-    return data.data
+    // Track the view (fire-and-forget analytics)
+    trackQRView(slug)
+    
+    // Return the biolinks data
+    return qrData.data
   } catch (error) {
     console.error('Failed to fetch biolink:', error)
     return null

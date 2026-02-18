@@ -87,7 +87,7 @@ export default function NonPayingUsersPage() {
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {new Date(user.createdAt).toLocaleDateString()}
+                        {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—'}
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                         <Link
@@ -97,7 +97,7 @@ export default function NonPayingUsersPage() {
                           Edit
                         </Link>
                         <button
-                          onClick={() => handleDelete(user.id, user.name || user.email)}
+                          onClick={() => handleDelete(String(user.id), user.name || user.email)}
                           className="text-red-600 hover:text-red-900"
                           disabled={deleteMutation.isPending}
                         >

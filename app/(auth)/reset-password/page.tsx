@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 // Mark as dynamic since it uses searchParams
 export const dynamic = 'force-dynamic'
 
-function ResetPasswordContent({ token }: { token: string }) {
+function ResetPasswordContent({ token, email }: { token: string; email: string }) {
   if (!token) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
@@ -37,7 +37,7 @@ function ResetPasswordContent({ token }: { token: string }) {
         </div>
 
         <div className="mt-8">
-          <ResetPasswordForm token={token} />
+          <ResetPasswordForm token={token} email={email} />
         </div>
       </div>
     </div>
@@ -47,13 +47,14 @@ function ResetPasswordContent({ token }: { token: string }) {
 export default function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams: { token?: string }
+  searchParams: { token?: string; email?: string }
 }) {
   const token = searchParams.token || ''
+  const email = searchParams.email || ''
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <ResetPasswordContent token={token} />
+      <ResetPasswordContent token={token} email={email} />
     </Suspense>
   )
 }

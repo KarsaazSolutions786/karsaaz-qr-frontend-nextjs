@@ -1,19 +1,17 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import VCardPreview from '@/components/public/vcard/VCardPreview'
+import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
 async function getVCard(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/qrcodes/vcard/${slug}`, {
-      cache: 'no-store',
-    })
+    const qrData = await getQRCodeRedirect(slug)
     
-    if (!res.ok) {
+    if (!qrData || !['vcard', 'vcard-plus', 'contact'].includes(qrData.type)) {
       return null
     }
     
-    const data = await res.json()
-    return data.data
+    return qrData.data
   } catch (error) {
     console.error('Failed to fetch vCard:', error)
     return null

@@ -188,7 +188,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
                   <div className="relative">
                     <div className="aspect-[9/19.5] max-w-sm mx-auto bg-gray-100 dark:bg-gray-800 rounded-3xl overflow-hidden shadow-2xl relative">
                       <Image
-                        src={app.screenshots[currentScreenshot]}
+                        src={app.screenshots[currentScreenshot] ?? ''}
                         alt={`Screenshot ${currentScreenshot + 1}`}
                         fill
                         className="object-cover"

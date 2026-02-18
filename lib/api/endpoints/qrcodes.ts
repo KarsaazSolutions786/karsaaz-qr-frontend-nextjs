@@ -222,4 +222,68 @@ export const qrcodesAPI = {
     })
     return response.data
   },
+
+  // Get QR code redirect data (for public preview pages)
+  getRedirect: async (id: string) => {
+    const response = await apiClient.get(`/qrcodes/${id}/redirect`)
+    return response.data
+  },
+
+  // Get QR code by slug (public endpoint)
+  getBySlug: async (slug: string) => {
+    const response = await apiClient.get(`/qrcodes/slug/${slug}`)
+    return response.data
+  },
+
+  // Change QR code status
+  changeStatus: async (id: string, status: 'active' | 'inactive') => {
+    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/change-status`, {
+      status,
+    })
+    return response.data
+  },
+
+  // Change QR code user/owner
+  changeUser: async (id: string, userId: string) => {
+    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/change-user`, {
+      user_id: userId,
+    })
+    return response.data
+  },
+
+  // Copy/Duplicate QR code (alternative to clone)
+  copy: async (id: string) => {
+    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/copy`)
+    return response.data
+  },
+
+  // Get compatible SVG
+  getCompatibleSVG: async (id: string) => {
+    const response = await apiClient.get(`/qrcodes/${id}/compatible-svg`, {
+      responseType: 'text',
+    })
+    return response.data
+  },
+
+  // Count QR codes by type
+  count: async (type?: string) => {
+    const response = await apiClient.get('/qrcodes/count', {
+      params: { qrcode_type: type },
+    })
+    return response.data
+  },
+
+  // Count total scans
+  countScans: async (type?: string) => {
+    const response = await apiClient.get('/qrcodes/count/scans', {
+      params: { type },
+    })
+    return response.data
+  },
+
+  // Get reports
+  getReports: async (id: string, slug: string) => {
+    const response = await apiClient.get(`/qrcodes/${id}/reports/${slug}`)
+    return response.data
+  },
 }

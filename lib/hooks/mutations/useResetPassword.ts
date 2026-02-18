@@ -2,15 +2,22 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { authAPI, ResetPasswordRequest } from '@/lib/api/endpoints/auth'
+import { authAPI } from '@/lib/api/endpoints/auth'
+import type { ResetPasswordFormData } from '@/lib/validations/auth'
 
 export function useResetPassword() {
   const router = useRouter()
 
   return useMutation({
-    mutationFn: (data: ResetPasswordRequest) => authAPI.resetPassword(data),
+    mutationFn: (data: ResetPasswordFormData) =>
+      authAPI.resetPassword({
+        token: data.token,
+        email: data.email,
+        password: data.password,
+        password_confirmation: data.confirmPassword,
+      }),
     onSuccess: () => {
-      router.push('/auth/login?message=password-reset-success')
+      router.push('/login?message=password-reset-success')
     },
   })
 }

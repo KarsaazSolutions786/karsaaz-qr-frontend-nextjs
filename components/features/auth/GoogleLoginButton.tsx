@@ -1,32 +1,20 @@
 'use client'
 
-import { useGoogleLogin } from '@/lib/hooks/mutations/useGoogleLogin'
+import { authAPI } from '@/lib/api/endpoints/auth'
 
 export function GoogleLoginButton() {
-  const googleLoginMutation = useGoogleLogin()
-
-  const handleGoogleLogin = async () => {
-    // In a real implementation, this would integrate with Google OAuth
-    // For now, it's a placeholder that shows the pattern
-    try {
-      // This would typically use the Google Sign-In library
-      // const googleUser = await google.accounts.oauth2.initTokenClient(...)
-      // const token = googleUser.credential
-      
-      // For placeholder purposes:
-      console.log('Google OAuth would be triggered here')
-      // await googleLoginMutation.mutateAsync({ token })
-    } catch (error) {
-      console.error('Google login error:', error)
-    }
+  const handleGoogleLogin = () => {
+    // Server-side OAuth flow: redirect to backend which handles Google OAuth
+    // The backend redirects back with user + token data after successful auth
+    const redirectUrl = authAPI.getGoogleRedirectUrl()
+    window.location.href = redirectUrl
   }
 
   return (
     <button
       type="button"
       onClick={handleGoogleLogin}
-      disabled={googleLoginMutation.isPending}
-      className="w-full flex items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      className="w-full flex items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
     >
       <svg className="h-5 w-5" viewBox="0 0 24 24">
         <path
@@ -46,7 +34,7 @@ export function GoogleLoginButton() {
           d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
         />
       </svg>
-      {googleLoginMutation.isPending ? 'Signing in...' : 'Continue with Google'}
+      Continue with Google
     </button>
   )
 }

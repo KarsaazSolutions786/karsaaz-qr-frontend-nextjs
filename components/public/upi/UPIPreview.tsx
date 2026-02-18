@@ -12,7 +12,6 @@ import {
   Copy,
   AlertCircle,
   Building2,
-  CreditCard,
   Shield,
 } from 'lucide-react';
 import PreviewHeader from '@/components/public/shared/PreviewHeader';
@@ -128,7 +127,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
     setPaymentReceipt(receipt);
   };
 
-  const handleUPIAppClick = (packageName: string) => {
+  const handleUPIAppClick = (_packageName: string) => {
     if (upiString) {
       window.location.href = upiString;
       

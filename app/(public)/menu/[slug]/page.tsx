@@ -1,22 +1,22 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import MenuPreview from '@/components/public/restaurant-menu/MenuPreview'
+import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
 async function getRestaurantMenu(slug: string) {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/qrcodes/restaurant-menu/${slug}`,
-      {
-        cache: 'no-store',
-      }
-    )
+    const qrData = await getQRCodeRedirect(slug)
     
-    if (!res.ok) {
+    if (!qrData || !qrData.data) {
       return null
     }
     
-    const data = await res.json()
-    return data.data
+    // Validate type is 'restaurant-menu' or 'menu'
+    if (qrData.type !== 'restaurant-menu' && qrData.type !== 'menu') {
+      return null
+    }
+    
+    return qrData.data
   } catch (error) {
     console.error('Failed to fetch restaurant menu:', error)
     return null

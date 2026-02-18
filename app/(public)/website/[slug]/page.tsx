@@ -1,19 +1,22 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import WebsitePreview from '@/components/public/website-builder/WebsitePreview'
+import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
 async function getWebsite(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/qrcodes/website-builder/${slug}`, {
-      cache: 'no-store',
-    })
+    const qrData = await getQRCodeRedirect(slug)
     
-    if (!res.ok) {
+    if (!qrData || !qrData.data) {
       return null
     }
     
-    const data = await res.json()
-    return data.data
+    // Validate type is 'website-builder', 'website', or 'site'
+    if (!['website-builder', 'website', 'site'].includes(qrData.data.type)) {
+      return null
+    }
+    
+    return qrData.data
   } catch (error) {
     console.error('Failed to fetch website:', error)
     return null

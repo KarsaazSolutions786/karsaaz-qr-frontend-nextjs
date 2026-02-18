@@ -1,19 +1,22 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import BusinessProfilePreview from '@/components/public/business-profile/BusinessProfilePreview'
+import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
 async function getBusinessProfile(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/qrcodes/business-profile/${slug}`, {
-      cache: 'no-store',
-    })
+    const qrData = await getQRCodeRedirect(slug)
     
-    if (!res.ok) {
+    if (!qrData) {
       return null
     }
     
-    const data = await res.json()
-    return data.data
+    // Validate type is 'business-profile' or 'business'
+    if (qrData.type !== 'business-profile' && qrData.type !== 'business') {
+      return null
+    }
+    
+    return qrData.data
   } catch (error) {
     console.error('Failed to fetch business profile:', error)
     return null

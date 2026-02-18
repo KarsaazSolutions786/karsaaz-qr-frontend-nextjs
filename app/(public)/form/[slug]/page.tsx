@@ -1,22 +1,19 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import FormPreview from '@/components/public/lead-form/FormPreview'
+import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
 async function getLeadForm(slug: string) {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/qrcodes/lead-form/${slug}`,
-      {
-        cache: 'no-store',
-      }
-    )
-
-    if (!res.ok) {
+    const qrData = await getQRCodeRedirect(slug)
+    
+    // Validate type is 'lead-form', 'form', or 'contact-form'
+    const validTypes = ['lead-form', 'form', 'contact-form']
+    if (!validTypes.includes(qrData.type)) {
       return null
     }
 
-    const data = await res.json()
-    return data.data
+    return qrData.data
   } catch (error) {
     console.error('Failed to fetch lead form:', error)
     return null

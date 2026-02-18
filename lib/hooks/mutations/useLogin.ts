@@ -6,6 +6,21 @@ import { authAPI, LoginRequest } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 
+/** Determine where to send the user after login */
+function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): string {
+  // Check for ?from= query parameter first
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search)
+    const from = params.get('from')
+    if (from) return from
+  }
+  // Use the home_page from user's first role (matches original frontend)
+  const homePage = user.roles?.[0]?.home_page
+  if (homePage) return homePage
+  // Default fallback
+  return '/qrcodes'
+}
+
 export function useLogin() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -22,12 +37,14 @@ export function useLogin() {
       }
 
       queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
-      
-      // Check for redirect query parameter
-      const params = new URLSearchParams(window.location.search)
-      const from = params.get('from')
-      
-      router.push(from || '/qrcodes')
+
+      // Check if email is verified — if not, redirect to verification
+      if (response.user.email_verified_at === null) {
+        router.push(`/verify-email?email=${encodeURIComponent(response.user.email)}`)
+        return
+      }
+
+      router.push(getPostLoginRedirect(response.user))
     },
   })
 }

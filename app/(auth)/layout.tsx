@@ -13,9 +13,10 @@ export default function AuthLayout({
   const { user, isLoading } = useAuth()
 
   useEffect(() => {
-    // Redirect to dashboard if already authenticated
+    // Redirect to user's home page if already authenticated
     if (!isLoading && user) {
-      router.push('/qrcodes')
+      const homePage = user.roles?.[0]?.home_page || '/qrcodes'
+      router.push(homePage)
     }
   }, [user, isLoading, router])
 

@@ -152,6 +152,33 @@ export function RegisterForm() {
         )}
       </div>
 
+      {/* Terms consent checkbox */}
+      <div className="flex items-start">
+        <div className="flex h-5 items-center">
+          <input
+            {...register('termsConsent')}
+            id="termsConsent"
+            type="checkbox"
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+        </div>
+        <div className="ml-3 text-sm">
+          <label htmlFor="termsConsent" className="text-gray-600">
+            I agree to the{' '}
+            <a href="/terms" target="_blank" className="font-medium text-blue-600 hover:text-blue-500">
+              Terms of Service
+            </a>
+            {' '}and{' '}
+            <a href="/privacy" target="_blank" className="font-medium text-blue-600 hover:text-blue-500">
+              Privacy Policy
+            </a>
+          </label>
+          {errors.termsConsent && (
+            <p className="mt-1 text-sm text-red-600">{errors.termsConsent.message}</p>
+          )}
+        </div>
+      </div>
+
       {registerMutation.isError && (
         <div className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
@@ -174,13 +201,6 @@ export function RegisterForm() {
         <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
           Sign in
         </Link>
-      </p>
-      
-      <p className="text-center text-xs text-gray-500">
-        By creating an account, you agree to our{' '}
-        <a href="/terms" className="text-blue-600 hover:text-blue-500">Terms of Service</a>
-        {' '}and{' '}
-        <a href="/privacy" className="text-blue-600 hover:text-blue-500">Privacy Policy</a>
       </p>
     </form>
   )

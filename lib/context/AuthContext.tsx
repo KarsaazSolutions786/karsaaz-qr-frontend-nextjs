@@ -1,7 +1,7 @@
 'use client'
 
-import React, { createContext, ReactNode, useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import React, { createContext, ReactNode, useState, useEffect, useCallback, useRef } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import apiClient from '@/lib/api/client'
 import { queryKeys } from '@/lib/query/keys'
@@ -21,10 +21,10 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
   const queryClient = useQueryClient()
+  const hasValidated = useRef(false)
   
-  // Store user in state (will be set from login response or localStorage)
+  // Initialize user from localStorage
   const [user, setUser] = useState<User | null>(() => {
-    // Try to load user from localStorage on mount
     if (typeof window !== 'undefined') {
       try {
         const stored = localStorage.getItem('user')
@@ -36,56 +36,84 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null
   })
 
-  const loginMutation = useMutation({
-    mutationFn: async ({ email, password, rememberMe }: { email: string; password: string; rememberMe?: boolean }) => {
-      const response = await apiClient.post<{ user: User; token: string }>('/login', { 
-        email, 
-        password,
-        remember: rememberMe 
-      })
-      return response.data
-    },
-    onSuccess: (data) => {
-      // Store user in state and localStorage
-      setUser(data.user)
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('user', JSON.stringify(data.user))
-        localStorage.setItem('token', data.token)
-      }
-      
-      queryClient.setQueryData(queryKeys.auth.currentUser(), data.user)
-      router.push('/qrcodes')
-    },
+  // isLoading = true until initial token validation completes
+  const [isLoading, setIsLoading] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return !!localStorage.getItem('token')
+    }
+    return false
   })
 
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
+  // Validate token on mount by calling GET /myself
+  useEffect(() => {
+    if (hasValidated.current) return
+    hasValidated.current = true
+
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+    if (!token) {
+      setIsLoading(false)
+      return
+    }
+
+    apiClient.get<{ data: User }>('/myself')
+      .then((response) => {
+        const freshUser = response.data.data ?? response.data
+        setUser(freshUser as User)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user', JSON.stringify(freshUser))
+        }
+        queryClient.setQueryData(queryKeys.auth.currentUser(), freshUser)
+      })
+      .catch(() => {
+        // Token is invalid — clear everything
+        setUser(null)
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('user')
+          localStorage.removeItem('token')
+        }
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }, [queryClient])
+
+  const login = useCallback(async (email: string, password: string, rememberMe?: boolean) => {
+    const response = await apiClient.post<{ user: User; token: string }>('/login', {
+      email,
+      password,
+      remember: rememberMe,
+    })
+    const data = response.data
+    setUser(data.user)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('user', JSON.stringify(data.user))
+      localStorage.setItem('token', data.token)
+    }
+    queryClient.setQueryData(queryKeys.auth.currentUser(), data.user)
+  }, [queryClient])
+
+  const logout = useCallback(async () => {
+    try {
       await apiClient.post('/logout')
-    },
-    onSuccess: () => {
-      // Clear user from state and localStorage
-      setUser(null)
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('user')
-        localStorage.removeItem('token')
-      }
-      
-      queryClient.setQueryData(queryKeys.auth.currentUser(), null)
-      queryClient.clear()
-      router.push('/login')
-    },
-  })
+    } catch {
+      // Ignore — we clear local state regardless
+    }
+    setUser(null)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
+    }
+    queryClient.setQueryData(queryKeys.auth.currentUser(), null)
+    queryClient.clear()
+    router.push('/login')
+  }, [queryClient, router])
 
   const contextValue: AuthContextType = {
     user,
-    isLoading: loginMutation.isPending,
+    isLoading,
     isAuthenticated: !!user,
-    login: async (email, password, rememberMe) => {
-      await loginMutation.mutateAsync({ email, password, rememberMe })
-    },
-    logout: async () => {
-      await logoutMutation.mutateAsync()
-    },
+    login,
+    logout,
     setUser,
   }
 

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LeadForm, LeadFormField } from '@/types/entities/lead-form';
+import { submitLeadForm } from '@/lib/api/public-qrcodes';
 
 interface FormDisplayProps {
   form: LeadForm;
@@ -123,24 +124,10 @@ export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api'}/qrcodes/lead-form/${form.slug}/submit`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            data: formData,
-            fingerprint: generateFingerprint(),
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to submit form');
-      }
+      await submitLeadForm(form.slug, {
+        data: formData,
+        fingerprint: generateFingerprint(),
+      });
 
       onSuccess();
     } catch (error) {

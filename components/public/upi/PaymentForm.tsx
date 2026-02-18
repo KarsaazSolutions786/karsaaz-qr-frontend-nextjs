@@ -26,7 +26,7 @@ export default function PaymentForm({
   fixedAmount,
   minAmount = 1,
   maxAmount = 100000,
-  currency = 'INR',
+  currency: _currency = 'INR',
   allowCustomAmount = true,
   transactionNote = '',
   onPaymentInitiate,
