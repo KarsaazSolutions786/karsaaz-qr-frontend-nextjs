@@ -9,6 +9,17 @@ export interface ListQRCodesParams {
   perPage?: number
   search?: string
   type?: string
+  types?: string[] // Multiple types filter
+  status?: 'active' | 'inactive' | 'archived'
+  statuses?: string[] // Multiple statuses filter
+  folderId?: string | null // Folder filter
+  tags?: string[] // Tags filter
+  createdFrom?: string // ISO 8601
+  createdTo?: string // ISO 8601
+  updatedFrom?: string // ISO 8601
+  updatedTo?: string // ISO 8601
+  scansMin?: number // Minimum scan count
+  scansMax?: number // Maximum scan count
   sortBy?: 'createdAt' | 'updatedAt' | 'name' | 'scans'
   sortOrder?: 'asc' | 'desc'
 }
@@ -47,6 +58,11 @@ export interface CreateQRCodeRequest {
   name: string
   data: any
   customization?: any
+  designerConfig?: any // New: Advanced designer configuration
+  stickerConfig?: any // New: Sticker configuration
+  folderId?: string | null // New: Folder assignment
+  status?: 'active' | 'inactive' | 'archived' // New: Status
+  tags?: string[] // New: Tags
   password?: string
   domainId?: string
 }
@@ -55,6 +71,11 @@ export interface UpdateQRCodeRequest {
   name?: string
   data?: any
   customization?: any
+  designerConfig?: any // New: Advanced designer configuration
+  stickerConfig?: any // New: Sticker configuration
+  folderId?: string | null // New: Folder assignment
+  status?: 'active' | 'inactive' | 'archived' // New: Status
+  tags?: string[] // New: Tags
   password?: string
   domainId?: string
 }
@@ -144,6 +165,34 @@ export const qrcodesAPI = {
   // Clone QR code
   clone: async (id: string) => {
     const response = await apiClient.post<QRCode>(`/qrcodes/${id}/clone`)
+    return response.data
+  },
+
+  // Archive QR code
+  archive: async (id: string) => {
+    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/archive`)
+    return response.data
+  },
+
+  // Unarchive QR code
+  unarchive: async (id: string) => {
+    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/unarchive`)
+    return response.data
+  },
+
+  // Transfer ownership
+  transferOwnership: async (id: string, newOwnerId: string) => {
+    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/transfer`, {
+      user_id: newOwnerId,
+    })
+    return response.data
+  },
+
+  // Set/Remove PIN protection
+  setPIN: async (id: string, pin: string | null) => {
+    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/pin`, {
+      pin,
+    })
     return response.data
   },
 }

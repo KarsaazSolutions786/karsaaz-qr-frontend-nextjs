@@ -1,3 +1,6 @@
+import { DesignerConfig } from './designer';
+import { StickerConfig } from './sticker';
+
 export type QRCodeType =
   | 'url'
   | 'vcard'
@@ -97,7 +100,12 @@ export interface QRCode {
   name: string // User-defined name
   type: QRCodeType // QR code type
   data: QRCodeData // Type-specific data (union type)
-  customization: QRCustomization // Visual customization
+  customization: QRCustomization // Basic customization (legacy)
+  designerConfig?: DesignerConfig // Advanced designer configuration (new)
+  stickerConfig?: StickerConfig // Sticker configuration (new)
+  folderId?: string | null // Folder ID (new)
+  status?: 'active' | 'inactive' | 'archived' // Status (new)
+  tags?: string[] // Tags for organization (new)
   domainId?: string // Custom domain (optional)
   password?: string // PIN protection (hashed, optional)
   screenshotUrl?: string // Landing page screenshot (optional)
