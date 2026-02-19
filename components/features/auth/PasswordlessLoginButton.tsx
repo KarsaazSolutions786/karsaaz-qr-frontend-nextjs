@@ -11,7 +11,7 @@ const emailSchema = z.object({
 })
 
 const tokenSchema = z.object({
-  token: z.string().length(6, 'Token must be 6 characters'),
+  otp: z.string().length(5, 'Code must be 5 digits'),
 })
 
 type EmailFormData = z.infer<typeof emailSchema>
@@ -43,7 +43,7 @@ export function PasswordlessLoginButton() {
 
   const handleTokenSubmit = async (data: TokenFormData) => {
     try {
-      await verifyMutation.mutateAsync({ email, token: data.token })
+      await verifyMutation.mutateAsync({ email, otp: data.otp })
     } catch (error) {
       // Error handled by mutation
     }
@@ -57,20 +57,20 @@ export function PasswordlessLoginButton() {
         </p>
         <form onSubmit={tokenForm.handleSubmit(handleTokenSubmit)} className="space-y-4">
           <div>
-            <label htmlFor="token" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
               Login Code
             </label>
             <input
-              {...tokenForm.register('token')}
-              id="token"
+              {...tokenForm.register('otp')}
+              id="otp"
               type="text"
-              maxLength={6}
-              placeholder="000000"
+              maxLength={5}
+              placeholder="12345"
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-center text-lg tracking-widest shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
             />
-            {tokenForm.formState.errors.token && (
+            {tokenForm.formState.errors.otp && (
               <p className="mt-1 text-sm text-red-600">
-                {tokenForm.formState.errors.token.message}
+                {tokenForm.formState.errors.otp.message}
               </p>
             )}
           </div>

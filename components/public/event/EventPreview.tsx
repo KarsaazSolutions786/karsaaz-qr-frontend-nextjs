@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Share2, Download, Users, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import EventDetails from './EventDetails';
+import { SimplePagination } from '@/components/common/SimplePagination';
 
 interface Speaker {
   id: string;
@@ -64,6 +65,9 @@ export default function EventPreview({ event }: EventPreviewProps) {
     phone: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [agendaPage, setAgendaPage] = useState(1);
+
+  const AGENDA_ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
     const eventDate = new Date(`${event.date} ${event.time}`);
@@ -87,6 +91,18 @@ export default function EventPreview({ event }: EventPreviewProps) {
 
     return () => clearInterval(timer);
   }, [event.date, event.time]);
+
+  // Calculate paginated agenda items
+  const totalAgendaPages = event.agenda 
+    ? Math.ceil(event.agenda.length / AGENDA_ITEMS_PER_PAGE) 
+    : 0;
+  const paginatedAgenda = event.agenda 
+    ? event.agenda.slice(
+        (agendaPage - 1) * AGENDA_ITEMS_PER_PAGE,
+        agendaPage * AGENDA_ITEMS_PER_PAGE
+      )
+    : [];
+  const shouldShowAgendaPagination = event.agenda && event.agenda.length > AGENDA_ITEMS_PER_PAGE;
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -251,7 +267,7 @@ END:VCALENDAR`;
               <div className="bg-white rounded-2xl p-8 shadow-lg">
                 <h2 className="text-3xl font-bold mb-6 text-gray-900">Event Agenda</h2>
                 <div className="space-y-4">
-                  {event.agenda.map((item, index) => (
+                  {paginatedAgenda.map((item, index) => (
                     <motion.div
                       key={item.id}
                       initial={{ opacity: 0, x: -20 }}
@@ -273,6 +289,16 @@ END:VCALENDAR`;
                     </motion.div>
                   ))}
                 </div>
+                {shouldShowAgendaPagination && (
+                  <div className="mt-6">
+                    <SimplePagination
+                      currentPage={agendaPage}
+                      totalPages={totalAgendaPages}
+                      onPageChange={setAgendaPage}
+                      variant="buttons"
+                    />
+                  </div>
+                )}
               </div>
             )}
 

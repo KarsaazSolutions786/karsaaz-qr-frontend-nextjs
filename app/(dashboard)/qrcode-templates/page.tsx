@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Filter, Grid3x3, LayoutList } from 'lucide-react'
 import { useTemplates, useTemplateCategories } from '@/lib/hooks/queries/useTemplates'
@@ -9,6 +9,7 @@ import TemplateList from '@/components/templates/TemplateList'
 import TemplateFiltersModal from '@/components/templates/TemplateFiltersModal'
 import TemplateCategoryFilter from '@/components/templates/TemplateCategoryFilter'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
+import { Pagination } from '@/components/common/Pagination'
 import type { TemplateFilters } from '@/types/entities/template'
 
 export default function QRCodeTemplatesPage() {
@@ -19,6 +20,8 @@ export default function QRCodeTemplatesPage() {
   })
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showFiltersModal, setShowFiltersModal] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(12)
 
   const { data: templates, isLoading, error } = useTemplates({
     ...filters,
@@ -26,6 +29,11 @@ export default function QRCodeTemplatesPage() {
   })
 
   const { data: categories } = useTemplateCategories()
+
+  // Reset to page 1 when filters, category, or search changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filters, search])
 
   const handleCategoryChange = (categoryId?: number) => {
     setFilters((prev) => ({
@@ -43,6 +51,25 @@ export default function QRCodeTemplatesPage() {
   )
   const privateTemplates = templates?.filter(
     (t) => t.template_access_level === 'private'
+  )
+
+  // Calculate pagination for the combined templates (shown on the same page)
+  const allDisplayedTemplates = [
+    ...(privateTemplates || []),
+    ...(publicTemplates || []),
+  ]
+  const totalItems = allDisplayedTemplates.length
+  const totalPages = Math.ceil(totalItems / pageSize)
+  const startIndex = (currentPage - 1) * pageSize
+  const endIndex = startIndex + pageSize
+  const paginatedTemplates = allDisplayedTemplates.slice(startIndex, endIndex)
+
+  // Separate paginated templates back into public and private
+  const paginatedPrivateTemplates = paginatedTemplates.filter(
+    (t) => t.template_access_level === 'private'
+  )
+  const paginatedPublicTemplates = paginatedTemplates.filter(
+    (t) => t.template_access_level === 'public'
   )
 
   return (
@@ -133,51 +160,68 @@ export default function QRCodeTemplatesPage() {
           )}
 
           {!isLoading && !error && templates && templates.length > 0 && (
-            <div className="space-y-8">
-              {privateTemplates && privateTemplates.length > 0 && (
-                <section>
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                    My Templates ({privateTemplates.length})
-                  </h2>
-                  {viewMode === 'grid' ? (
-                    <TemplateGrid
-                      templates={privateTemplates}
-                      onUseTemplate={handleUseTemplate}
-                    />
-                  ) : (
-                    <TemplateList
-                      templates={privateTemplates}
-                      onUseTemplate={handleUseTemplate}
-                    />
-                  )}
-                </section>
-              )}
+            <>
+              <div className="space-y-8">
+                {paginatedPrivateTemplates && paginatedPrivateTemplates.length > 0 && (
+                  <section>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                      My Templates ({privateTemplates?.length || 0})
+                    </h2>
+                    {viewMode === 'grid' ? (
+                      <TemplateGrid
+                        templates={paginatedPrivateTemplates}
+                        onUseTemplate={handleUseTemplate}
+                      />
+                    ) : (
+                      <TemplateList
+                        templates={paginatedPrivateTemplates}
+                        onUseTemplate={handleUseTemplate}
+                      />
+                    )}
+                  </section>
+                )}
 
-              {publicTemplates && publicTemplates.length > 0 && (
-                <section>
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                    Public Templates ({publicTemplates.length})
-                  </h2>
-                  {viewMode === 'grid' ? (
-                    <TemplateGrid
-                      templates={publicTemplates}
-                      onUseTemplate={handleUseTemplate}
-                    />
-                  ) : (
-                    <TemplateList
-                      templates={publicTemplates}
-                      onUseTemplate={handleUseTemplate}
-                    />
-                  )}
-                </section>
-              )}
-            </div>
-          )}
+                {paginatedPublicTemplates && paginatedPublicTemplates.length > 0 && (
+                  <section>
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                      Public Templates ({publicTemplates?.length || 0})
+                    </h2>
+                    {viewMode === 'grid' ? (
+                      <TemplateGrid
+                        templates={paginatedPublicTemplates}
+                        onUseTemplate={handleUseTemplate}
+                      />
+                    ) : (
+                      <TemplateList
+                        templates={paginatedPublicTemplates}
+                        onUseTemplate={handleUseTemplate}
+                      />
+                    )}
+                  </section>
+                )}
+              </div>
 
-          {!isLoading && templates && templates.length > 0 && (
-            <div className="mt-6 text-sm text-gray-600 text-center">
-              Showing {templates.length} template{templates.length !== 1 ? 's' : ''}
-            </div>
+              {totalPages > 1 && (
+                <div className="mt-8">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    pageSize={pageSize}
+                    onPageChange={setCurrentPage}
+                    onPageSizeChange={(newPageSize) => {
+                      setPageSize(newPageSize)
+                      setCurrentPage(1)
+                    }}
+                    pageSizeOptions={[12, 24, 36, 48]}
+                    showFirstLast={true}
+                    showPageNumbers={true}
+                    showTotalItems={true}
+                    showPageSize={true}
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

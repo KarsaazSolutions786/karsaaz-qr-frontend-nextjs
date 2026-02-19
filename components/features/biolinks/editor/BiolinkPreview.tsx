@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import type { Biolink, BlockData } from '@/types/entities/biolink'
 import LinkBlock from '../blocks/LinkBlock'
 import TextBlock from '../blocks/TextBlock'
@@ -6,6 +9,7 @@ import TitleBlock from '../blocks/TitleBlock'
 import SocialLinksBlock from '../blocks/SocialLinksBlock'
 import VideoBlock from '../blocks/VideoBlock'
 import DividerBlock from '../blocks/DividerBlock'
+import SimplePagination from '@/components/common/SimplePagination'
 
 interface BiolinkPreviewProps {
   biolink: Partial<Biolink>
@@ -13,11 +17,23 @@ interface BiolinkPreviewProps {
 }
 
 export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps) {
+  const BLOCKS_PER_PAGE = 10
+  const [visibleBlocksCount, setVisibleBlocksCount] = useState(BLOCKS_PER_PAGE)
+
   const theme = biolink.theme || {
     backgroundColor: '#ffffff',
     textColor: '#000000',
     buttonColor: '#3b82f6',
     buttonTextColor: '#ffffff',
+  }
+
+  const totalBlocks = blocks.length
+  const visibleBlocks = blocks.slice(0, visibleBlocksCount)
+  const hasMoreBlocks = visibleBlocksCount < totalBlocks
+  const showPagination = totalBlocks > BLOCKS_PER_PAGE
+
+  const handleLoadMore = () => {
+    setVisibleBlocksCount((prev) => Math.min(prev + BLOCKS_PER_PAGE, totalBlocks))
   }
 
   const renderBlock = (block: BlockData) => {
@@ -69,7 +85,22 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
             <p className="text-gray-500">No blocks added yet</p>
           </div>
         ) : (
-          blocks.map((block) => renderBlock(block))
+          <>
+            {visibleBlocks.map((block) => renderBlock(block))}
+            {showPagination && (
+              <div className="pt-4">
+                <SimplePagination
+                  currentPage={1}
+                  totalPages={1}
+                  onPageChange={handleLoadMore}
+                  variant="load-more"
+                  hasMore={hasMoreBlocks}
+                  loadMoreText={`Load More (${totalBlocks - visibleBlocksCount} remaining)`}
+                  showPageIndicator={false}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

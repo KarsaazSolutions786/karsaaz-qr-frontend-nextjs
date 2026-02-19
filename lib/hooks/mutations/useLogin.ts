@@ -2,9 +2,10 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { authAPI, LoginRequest } from '@/lib/api/endpoints/auth'
+import { authAPI } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { LoginFormData } from '@/lib/validations/auth'
 
 /** Determine where to send the user after login */
 function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): string {
@@ -27,7 +28,13 @@ export function useLogin() {
   const { setUser } = useAuth()
 
   return useMutation({
-    mutationFn: (data: LoginRequest) => authAPI.login(data),
+    mutationFn: (data: LoginFormData) => {
+      // Only send fields the backend expects (email + password)
+      return authAPI.login({
+        email: data.email,
+        password: data.password,
+      })
+    },
     onSuccess: (response) => {
       // Store user in AuthContext and localStorage
       setUser(response.user)

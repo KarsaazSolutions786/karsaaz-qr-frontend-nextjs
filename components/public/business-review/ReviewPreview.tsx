@@ -7,6 +7,7 @@ import PreviewFooter from '@/components/public/shared/PreviewFooter';
 import SocialShare from '@/components/public/shared/SocialShare';
 import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
 import ReviewForm from './ReviewForm';
+import SimplePagination from '@/components/common/SimplePagination';
 import { cn } from '@/lib/utils';
 
 interface Review {
@@ -54,6 +55,8 @@ const platformIcons: Record<string, string> = {
 
 export default function ReviewPreview({ review }: ReviewPreviewProps) {
   const [submitted, setSubmitted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 5;
   const reviews = review.reviews || [];
   const primaryColor = review.theme?.primaryColor || '#2563eb';
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
@@ -67,6 +70,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
 
   const handleReviewSuccess = () => {
     setSubmitted(true);
+    setCurrentPage(1); // Reset to first page when new review is submitted
     // Optionally refetch reviews here
   };
 
@@ -85,6 +89,21 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
       }
     });
     return distribution.reverse();
+  };
+
+  // Pagination calculations
+  const totalPages = Math.ceil(reviews.length / reviewsPerPage);
+  const startIndex = (currentPage - 1) * reviewsPerPage;
+  const endIndex = startIndex + reviewsPerPage;
+  const paginatedReviews = reviews.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to reviews section
+    const reviewsSection = document.getElementById('reviews-section');
+    if (reviewsSection) {
+      reviewsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -179,7 +198,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
 
               {/* Existing Reviews */}
               {review.showExistingReviews && reviews.length > 0 && (
-                <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                <section id="reviews-section" className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-2xl font-bold text-gray-900">What Others Are Saying</h2>
                     <div className="flex items-center gap-2">
@@ -214,7 +233,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
 
                   {/* Reviews List */}
                   <div className="space-y-6">
-                    {reviews.slice(0, 10).map((reviewItem) => (
+                    {paginatedReviews.map((reviewItem) => (
                       <div key={reviewItem.id} className="border-b border-gray-100 last:border-0 pb-6 last:pb-0">
                         <div className="flex items-start gap-4">
                           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
@@ -262,6 +281,19 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
                       </div>
                     ))}
                   </div>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="mt-8 pt-6 border-t border-gray-100">
+                      <SimplePagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                        variant="buttons"
+                        showPageIndicator={true}
+                      />
+                    </div>
+                  )}
                 </section>
               )}
             </div>

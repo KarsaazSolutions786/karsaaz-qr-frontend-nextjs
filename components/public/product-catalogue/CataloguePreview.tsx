@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, ShoppingCart, X, Filter, Grid, List, Phone, Mail, MapPin } from 'lucide-react';
 import ProductGrid from './ProductGrid';
+import SimplePagination from '@/components/common/SimplePagination';
 
 interface Variant {
   id: string;
@@ -53,6 +54,8 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
   const [showInquiry, setShowInquiry] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<'name' | 'price-low' | 'price-high' | 'newest'>('newest');
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 12;
 
   const categories = useMemo(() => {
     if (data.categories && data.categories.length > 0) {
@@ -94,6 +97,20 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
 
     return sorted;
   }, [data.products, selectedCategory, searchQuery, sortBy]);
+
+  // Reset to page 1 when filters/search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery, sortBy]);
+
+  // Calculate paginated products
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * productsPerPage;
+    const endIndex = startIndex + productsPerPage;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage, productsPerPage]);
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const addToCart = (product: Product, variants?: Variant[]) => {
     setCart(prev => {
@@ -281,14 +298,24 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
         ) : (
           <>
             <div className="mb-4 text-sm text-gray-600">
-              Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
+              Showing {paginatedProducts.length} of {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
             </div>
             <ProductGrid
-              products={filteredProducts}
+              products={paginatedProducts}
               viewMode={viewMode}
               onAddToCart={addToCart}
               allowCart={data.allowCart}
             />
+            {totalPages > 1 && (
+              <div className="mt-8">
+                <SimplePagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                  variant="buttons"
+                />
+              </div>
+            )}
           </>
         )}
       </main>

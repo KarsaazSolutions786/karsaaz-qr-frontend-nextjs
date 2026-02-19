@@ -2,11 +2,33 @@ import { Permission, PERMISSIONS, ROLES } from '@/types/entities/permissions'
 import { User } from '@/types/entities/user'
 
 /**
+ * Get all permissions for a user from their roles
+ */
+function getUserPermissions(user: User): Permission[] {
+  // Check new roles array first (from API)
+  if (user.roles && user.roles.length > 0) {
+    return user.roles.flatMap(r => r.permissions ?? [])
+  }
+  // Fallback to flat permissions array
+  return user.permissions ?? []
+}
+
+/**
+ * Get the user's primary role name
+ */
+function getUserRole(user: User): string | undefined {
+  if (user.roles && user.roles.length > 0) {
+    return user.roles[0]?.name
+  }
+  return user.role
+}
+
+/**
  * Check if user has a specific permission
  */
 export function hasPermission(user: User | null | undefined, permission: Permission): boolean {
   if (!user) return false
-  return user.permissions.includes(permission)
+  return getUserPermissions(user).includes(permission)
 }
 
 /**
@@ -17,7 +39,8 @@ export function hasAllPermissions(
   permissions: Permission[]
 ): boolean {
   if (!user) return false
-  return permissions.every(permission => user.permissions.includes(permission))
+  const userPerms = getUserPermissions(user)
+  return permissions.every(permission => userPerms.includes(permission))
 }
 
 /**
@@ -28,7 +51,8 @@ export function hasAnyPermission(
   permissions: Permission[]
 ): boolean {
   if (!user) return false
-  return permissions.some(permission => user.permissions.includes(permission))
+  const userPerms = getUserPermissions(user)
+  return permissions.some(permission => userPerms.includes(permission))
 }
 
 /**
@@ -36,13 +60,17 @@ export function hasAnyPermission(
  */
 export function hasRole(user: User | null | undefined, role: string): boolean {
   if (!user) return false
-  return user.role === role
+  const userRole = getUserRole(user)
+  return userRole === role
 }
 
 /**
  * Check if user is admin
  */
 export function isAdmin(user: User | null | undefined): boolean {
+  if (!user) return false
+  // Check super_admin flag in roles
+  if (user.roles?.some(r => r.super_admin === 1)) return true
   return hasRole(user, 'admin')
 }
 
@@ -51,7 +79,8 @@ export function isAdmin(user: User | null | undefined): boolean {
  */
 export function isModerator(user: User | null | undefined): boolean {
   if (!user) return false
-  return user.role === 'moderator' || user.role === 'admin'
+  const role = getUserRole(user)
+  return role === 'moderator' || role === 'admin'
 }
 
 /**
@@ -81,7 +110,7 @@ export function canPerformAction(
 
   // If resource has an owner, check if user owns it
   if (resourceOwnerId !== undefined) {
-    return user.id === resourceOwnerId
+    return String(user.id) === resourceOwnerId
   }
 
   return true

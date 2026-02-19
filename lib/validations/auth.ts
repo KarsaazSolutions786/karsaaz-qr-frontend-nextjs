@@ -73,16 +73,23 @@ export const updateProfileSchema = z.object({
 
 export type UpdateProfileFormData = z.infer<typeof updateProfileSchema>
 
-// Passwordless auth schema
-export const passwordlessInitSchema = z.object({
-  email: z.string().email('Invalid email address'),
+// Passwordless auth — email step
+export const passwordlessEmailSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
 })
 
-export type PasswordlessInitFormData = z.infer<typeof passwordlessInitSchema>
+export type PasswordlessEmailFormData = z.infer<typeof passwordlessEmailSchema>
 
-export const passwordlessVerifySchema = z.object({
-  email: z.string().email('Invalid email address'),
-  code: z.string().regex(/^[0-9]{5}$/, 'Code must be 5 digits'),
+// Passwordless auth — OTP verification step (5-digit code)
+export const passwordlessOtpSchema = z.object({
+  otp: z.string().length(5, 'Code must be 5 digits').regex(/^[0-9]{5}$/, 'Code must be 5 digits'),
 })
 
-export type PasswordlessVerifyFormData = z.infer<typeof passwordlessVerifySchema>
+export type PasswordlessOtpFormData = z.infer<typeof passwordlessOtpSchema>
+
+// Passwordless auth — password fallback step (for users who prefer traditional)
+export const passwordlessFallbackPasswordSchema = z.object({
+  password: z.string().min(1, 'Password is required'),
+})
+
+export type PasswordlessFallbackPasswordFormData = z.infer<typeof passwordlessFallbackPasswordSchema>

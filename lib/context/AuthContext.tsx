@@ -11,7 +11,7 @@ export interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
-  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>
+  login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   setUser: (user: User | null) => void
 }
@@ -77,11 +77,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
   }, [queryClient])
 
-  const login = useCallback(async (email: string, password: string, rememberMe?: boolean) => {
+  const login = useCallback(async (email: string, password: string) => {
+    // Only send fields the backend accepts (email + password)
     const response = await apiClient.post<{ user: User; token: string }>('/login', {
       email,
       password,
-      remember: rememberMe,
     })
     const data = response.data
     setUser(data.user)

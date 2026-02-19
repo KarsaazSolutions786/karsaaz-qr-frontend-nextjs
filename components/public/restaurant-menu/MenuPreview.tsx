@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, X, ChevronRight, Utensils, Leaf, Wheat, Milk, Fish, Egg } from 'lucide-react';
 import PreviewHeader from '@/components/public/shared/PreviewHeader';
 import PreviewFooter from '@/components/public/shared/PreviewFooter';
@@ -8,6 +8,7 @@ import SocialShare from '@/components/public/shared/SocialShare';
 import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
 import MenuDisplay from './MenuDisplay';
 import { Input } from '@/components/ui/input';
+import SimplePagination from '@/components/common/SimplePagination';
 
 interface AllergenInfo {
   glutenFree?: boolean;
@@ -77,12 +78,19 @@ export default function MenuPreview({ menu }: MenuPreviewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedAllergenFilter, setSelectedAllergenFilter] = useState<keyof AllergenInfo | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
 
   const primaryColor = menu.theme?.primaryColor || '#dc2626';
   const accentColor = menu.theme?.accentColor || '#f97316';
   const currencySymbol = menu.currencySymbol || '$';
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedAllergenFilter, selectedCategory]);
 
   // Filter categories and items based on search and filters
   const filteredCategories = useMemo(() => {
@@ -111,6 +119,48 @@ export default function MenuPreview({ menu }: MenuPreviewProps) {
       })
       .filter(category => category.items.length > 0);
   }, [menu.categories, searchQuery, selectedAllergenFilter]);
+
+  // Flatten all items for pagination
+  const allFilteredItems = useMemo(() => {
+    return filteredCategories.flatMap(category => 
+      category.items.map(item => ({
+        ...item,
+        categoryId: category.id,
+        categoryName: category.name,
+        categoryIcon: category.icon,
+      }))
+    );
+  }, [filteredCategories]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(allFilteredItems.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = allFilteredItems.slice(startIndex, endIndex);
+
+  // Group current page items back into categories
+  const paginatedCategories = useMemo(() => {
+    const categoryMap = new Map<string, MenuCategory>();
+    
+    currentItems.forEach(item => {
+      if (!categoryMap.has(item.categoryId)) {
+        const originalCategory = filteredCategories.find(c => c.id === item.categoryId);
+        if (originalCategory) {
+          categoryMap.set(item.categoryId, {
+            ...originalCategory,
+            items: [],
+          });
+        }
+      }
+      
+      const category = categoryMap.get(item.categoryId);
+      if (category) {
+        category.items.push(item);
+      }
+    });
+    
+    return Array.from(categoryMap.values());
+  }, [currentItems, filteredCategories]);
 
   // Get all unique allergens present in the menu
   const availableAllergens = useMemo(() => {
@@ -282,31 +332,46 @@ export default function MenuPreview({ menu }: MenuPreviewProps) {
           )}
 
           {/* Menu Categories */}
-          {filteredCategories.length > 0 ? (
-            <div className="space-y-12">
-              {filteredCategories.map((category) => (
-                <section key={category.id} id={`category-${category.id}`} className="scroll-mt-32">
-                  <div className="mb-6">
-                    <div className="flex items-center gap-3 mb-2">
-                      {category.icon && (
-                        <span className="text-3xl">{category.icon}</span>
+          {paginatedCategories.length > 0 ? (
+            <>
+              <div className="space-y-12">
+                {paginatedCategories.map((category) => (
+                  <section key={category.id} id={`category-${category.id}`} className="scroll-mt-32">
+                    <div className="mb-6">
+                      <div className="flex items-center gap-3 mb-2">
+                        {category.icon && (
+                          <span className="text-3xl">{category.icon}</span>
+                        )}
+                        <h2 className="text-3xl font-bold text-gray-900">{category.name}</h2>
+                      </div>
+                      {category.description && (
+                        <p className="text-gray-600 ml-12">{category.description}</p>
                       )}
-                      <h2 className="text-3xl font-bold text-gray-900">{category.name}</h2>
                     </div>
-                    {category.description && (
-                      <p className="text-gray-600 ml-12">{category.description}</p>
-                    )}
-                  </div>
-                  
-                  <MenuDisplay 
-                    items={category.items}
-                    currencySymbol={currencySymbol}
-                    primaryColor={primaryColor}
-                    accentColor={accentColor}
+                    
+                    <MenuDisplay 
+                      items={category.items}
+                      currencySymbol={currencySymbol}
+                      primaryColor={primaryColor}
+                      accentColor={accentColor}
+                    />
+                  </section>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-8">
+                  <SimplePagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                    variant="buttons"
+                    showPageIndicator={true}
                   />
-                </section>
-              ))}
-            </div>
+                </div>
+              )}
+            </>
           ) : (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center">
               <div 

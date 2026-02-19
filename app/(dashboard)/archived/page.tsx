@@ -2,9 +2,9 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Plus, Filter, FolderTree as FolderTreeIcon } from 'lucide-react'
+import { Archive, Filter, FolderTree as FolderTreeIcon } from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { useMultiSelect } from '@/hooks/useMultiSelect'
@@ -13,26 +13,23 @@ import { MultiSelectToolbar } from '@/components/qr/MultiSelectToolbar'
 import { FilterModal } from '@/components/qr/FilterModal'
 import { FolderTree } from '@/components/qr/FolderTree'
 import { QRCodeCardSkeleton } from '@/components/common/Skeleton'
-import { NoQRCodesEmptyState, NoSearchResultsEmptyState } from '@/components/common/EmptyState'
+import { NoSearchResultsEmptyState } from '@/components/common/EmptyState'
 import { SortDropdown, type SortOption } from '@/components/qr/SortDropdown'
 import { ViewModeToggle } from '@/components/qr/ViewModeToggle'
-import { QRCodeQuotaDisplay } from '@/components/qr/QRCodeQuotaDisplay'
-import { BulkCreateButton } from '@/components/qr/BulkCreateButton'
-import { TrialMessage } from '@/components/qr/TrialMessage'
 import { QRCodeMinimalCard } from '@/components/qr/QRCodeMinimalCard'
 import { QRCodeDetailedRow } from '@/components/qr/QRCodeDetailedRow'
 import { QRCodeCard } from '@/components/features/qrcodes/QRCodeCard'
 import { Pagination } from '@/components/common/Pagination'
 
-
-export default function QRCodesPage() {
+export default function ArchivedQRCodesPage() {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [showFilters, setShowFilters] = useState(false)
   const [showFolders, setShowFolders] = useState(false)
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<SortOption>('date-desc')
-  // Load view mode from localStorage
+  
+  // Load view mode from localStorage (same as main QR list)
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('qr-list-view-mode') as 'grid' | 'list' | 'minimal') || 'grid'
@@ -48,23 +45,13 @@ export default function QRCodesPage() {
     }
   }
   
+  // Fetch QR codes with archived filter
   const { data, isLoading, error } = useQRCodes({ 
     page, 
     search: search || undefined,
     folderId: selectedFolder || undefined,
+    status: 'archived',
   })
-
-  // Mock user data - replace with real user data from context/hook
-  const user = {
-    subscription: {
-      plan: 'trial', // or 'basic', 'pro', 'enterprise'
-      qrCodesUsed: data?.pagination?.total || 0,
-      qrCodesLimit: 10,
-      trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-  }
-
-  const isOnTrial = user.subscription.plan === 'trial'
 
   const {
     selectedItems,
@@ -77,13 +64,20 @@ export default function QRCodesPage() {
     resetFilters,
   } = useFilters()
 
+  // Auto-set status filter to archived
+  useEffect(() => {
+    if (filters.status !== 'archived') {
+      updateFilters({ status: 'archived' })
+    }
+  }, [])
+
   const handleSearch = (query: string) => {
     setSearch(query)
     setPage(1)
   }
 
   if (error) {
-    console.error('QR Codes fetch error:', error)
+    console.error('Archived QR Codes fetch error:', error)
   }
 
   const qrcodes = data?.data || []
@@ -91,29 +85,19 @@ export default function QRCodesPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      {/* Trial Message */}
-      {isOnTrial && (
-        <div className="mb-6">
-          <TrialMessage
-            trialEndsAt={user.subscription.trialEndsAt}
-            onUpgrade={() => { window.location.href = '/pricing' }}
-          />
-        </div>
-      )}
-
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">QR Codes</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Manage all your QR codes in one place
-          </p>
-          <div className="mt-3">
-            <QRCodeQuotaDisplay
-              used={user.subscription.qrCodesUsed}
-              total={user.subscription.qrCodesLimit}
-              plan={user.subscription.plan}
-            />
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <Archive className="w-6 h-6 text-gray-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Archived QR Codes</h1>
+              <p className="mt-2 text-sm text-gray-600">
+                View and manage your archived QR codes
+              </p>
+            </div>
           </div>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center gap-3">
@@ -131,15 +115,11 @@ export default function QRCodesPage() {
             <Filter className="w-4 h-4 mr-2" />
             Filters
           </button>
-          <BulkCreateButton
-            onClick={() => { window.location.href = '/qrcodes/bulk' }}
-          />
           <Link
-            href="/qrcodes/new"
+            href="/qrcodes"
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
-            <Plus className="w-4 h-4 mr-2" />
-            Create QR Code
+            View Active QR Codes
           </Link>
         </div>
       </div>
@@ -176,7 +156,7 @@ export default function QRCodesPage() {
           <div className="mb-6 space-y-4">
             <DebouncedSearch
               onSearch={handleSearch}
-              placeholder="Search QR codes..."
+              placeholder="Search archived QR codes..."
               delay={300}
               minLength={0}
             />
@@ -193,6 +173,22 @@ export default function QRCodesPage() {
             </div>
           </div>
 
+          {/* Info Banner */}
+          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <Archive className="w-5 h-5 text-blue-600 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-blue-900">
+                  These QR codes are archived
+                </p>
+                <p className="text-sm text-blue-700 mt-1">
+                  Archived QR codes are hidden from your active list but can be unarchived at any time. 
+                  They continue to work and track scans.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Loading State */}
           {isLoading && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -204,7 +200,21 @@ export default function QRCodesPage() {
 
           {/* Empty States */}
           {!isLoading && !hasQRCodes && !search && (
-            <NoQRCodesEmptyState onCreate={() => window.location.href = '/qrcodes/new'} />
+            <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+              <Archive className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                No archived QR codes
+              </h3>
+              <p className="text-gray-600 mb-6">
+                You haven't archived any QR codes yet. Archived items will appear here.
+              </p>
+              <Link
+                href="/qrcodes"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                View Active QR Codes
+              </Link>
+            </div>
           )}
 
           {!isLoading && !hasQRCodes && search && (

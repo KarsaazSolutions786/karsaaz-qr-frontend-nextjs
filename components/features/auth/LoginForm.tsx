@@ -38,7 +38,7 @@ export function LoginForm() {
           id="email"
           type="email"
           autoComplete="email"
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-purple-500"
         />
         {errors.email && (
           <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
@@ -55,7 +55,7 @@ export function LoginForm() {
             id="password"
             type={showPassword ? 'text' : 'password'}
             autoComplete="current-password"
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-purple-500"
           />
           <button
             type="button"
@@ -76,7 +76,7 @@ export function LoginForm() {
             {...register('rememberMe')}
             id="rememberMe"
             type="checkbox"
-            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            className="h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
           />
           <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-900">
             Remember me
@@ -85,7 +85,7 @@ export function LoginForm() {
 
         <Link
           href="/forgot-password"
-          className="text-sm font-medium text-blue-600 hover:text-blue-500"
+          className="text-sm font-medium text-purple-600 hover:text-purple-500"
         >
           Forgot password?
         </Link>
@@ -94,7 +94,9 @@ export function LoginForm() {
       {loginMutation.isError && (
         <div className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
-            {(loginMutation.error as any)?.message || 'Invalid email or password. Please try again.'}
+            {(loginMutation.error as any)?.response?.data?.message
+              || (loginMutation.error as any)?.message
+              || 'Invalid email or password. Please try again.'}
           </p>
         </div>
       )}
@@ -102,14 +104,14 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={isSubmitting || loginMutation.isPending}
-        className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-md bg-gradient-to-b from-purple-400 to-purple-700 px-4 py-2 text-white hover:from-purple-500 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
       >
         {isSubmitting || loginMutation.isPending ? 'Signing in...' : 'Sign in'}
       </button>
 
       <p className="text-center text-sm text-gray-600">
         Don&apos;t have an account?{' '}
-        <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+        <Link href="/signup" className="font-medium text-purple-600 hover:text-purple-500">
           Sign up
         </Link>
       </p>

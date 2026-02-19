@@ -6,7 +6,6 @@ import { User } from '@/types/entities/user'
 export interface LoginRequest {
   email: string
   password: string
-  remember?: boolean
 }
 
 export interface LoginResponse {
@@ -57,28 +56,56 @@ export interface ResetPasswordResponse {
   message: string
 }
 
+// Passwordless Auth — check if feature is enabled
+export interface PasswordlessStatusResponse {
+  success: boolean
+  enabled: boolean
+  feature: string
+}
+
+// Passwordless Auth — check per-user login preference
+export interface PasswordlessCheckPreferenceRequest {
+  email: string
+}
+
+export interface PasswordlessCheckPreferenceResponse {
+  login_method: 'passwordless' | 'traditional'
+}
+
+// Passwordless Auth — initialize OTP flow
 export interface PasswordlessInitRequest {
   email: string
-  type?: 'email' | 'sms'
 }
 
 export interface PasswordlessInitResponse {
-  message: string
+  success: boolean
+  otp_sent: boolean
+  is_new_user: boolean
+  email: string
+  message?: string
 }
 
+// Passwordless Auth — verify OTP and authenticate
 export interface PasswordlessVerifyRequest {
   email: string
-  token: string
+  otp: string
 }
 
 export interface PasswordlessVerifyResponse {
-  user: User
+  success: boolean
   token: string
+  user: User
+  is_new_user: boolean
 }
 
-export interface PasswordlessStatusResponse {
-  enabled: boolean
-  default_type?: 'email' | 'sms'
+// Passwordless Auth — resend OTP
+export interface PasswordlessResendRequest {
+  email: string
+}
+
+export interface PasswordlessResendResponse {
+  success: boolean
+  message?: string
 }
 
 export interface UpdateProfileRequest {
@@ -148,7 +175,7 @@ export const authAPI = {
     return response.data
   },
 
-  // Get passwordless auth status
+  // Passwordless auth — check if feature is enabled globally
   passwordlessStatus: async () => {
     const response = await apiClient.get<PasswordlessStatusResponse>(
       '/passwordless-auth/status'
@@ -156,7 +183,16 @@ export const authAPI = {
     return response.data
   },
 
-  // Passwordless auth — send login code
+  // Passwordless auth — check per-user login preference
+  passwordlessCheckPreference: async (data: PasswordlessCheckPreferenceRequest) => {
+    const response = await apiClient.post<PasswordlessCheckPreferenceResponse>(
+      '/passwordless-auth/check-preference',
+      data
+    )
+    return response.data
+  },
+
+  // Passwordless auth — initialize OTP flow (sends email with 5-digit code)
   passwordlessInit: async (data: PasswordlessInitRequest) => {
     const response = await apiClient.post<PasswordlessInitResponse>(
       '/passwordless-auth/init',
@@ -165,7 +201,7 @@ export const authAPI = {
     return response.data
   },
 
-  // Passwordless auth — verify code and get token
+  // Passwordless auth — verify 5-digit OTP code and authenticate
   passwordlessVerify: async (data: PasswordlessVerifyRequest) => {
     const response = await apiClient.post<PasswordlessVerifyResponse>(
       '/passwordless-auth/verify',
@@ -174,17 +210,18 @@ export const authAPI = {
     return response.data
   },
 
-  // Passwordless auth — resend code
-  passwordlessResend: async (email: string) => {
-    const response = await apiClient.post('/passwordless-auth/resend', { email })
+  // Passwordless auth — resend OTP code
+  passwordlessResend: async (data: PasswordlessResendRequest) => {
+    const response = await apiClient.post<PasswordlessResendResponse>(
+      '/passwordless-auth/resend',
+      data
+    )
     return response.data
   },
 
   // Google OAuth — returns the redirect URL for server-side flow
   getGoogleRedirectUrl: () => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api'
-    // Strip /api suffix if present — OAuth redirect is at root level
-    const rootUrl = baseUrl.replace(/\/api\/?$/, '')
+    const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
     return `${rootUrl}/auth-workflow/google/redirect`
   },
 
