@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* RTL Support */
+[dir='rtl'] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir='rtl'] .rtl\:flip {
+  transform: scaleX(-1);
+}
+
 /* Biolinks Animations */
 @layer utilities {
   @keyframes fade-in {

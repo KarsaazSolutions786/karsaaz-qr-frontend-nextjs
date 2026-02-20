@@ -11,6 +11,31 @@ import { PhoneDataForm } from '@/components/features/qrcodes/forms/PhoneDataForm
 import { LocationDataForm } from '@/components/features/qrcodes/forms/LocationDataForm'
 import { CalendarDataForm } from '@/components/features/qrcodes/forms/CalendarDataForm'
 import { AppStoreDataForm } from '@/components/features/qrcodes/forms/AppStoreDataForm'
+import { WhatsAppDataForm } from '@/components/features/qrcodes/forms/WhatsAppDataForm'
+import { TelegramDataForm } from '@/components/features/qrcodes/forms/TelegramDataForm'
+import { InstagramDataForm } from '@/components/features/qrcodes/forms/InstagramDataForm'
+import { FacebookDataForm } from '@/components/features/qrcodes/forms/FacebookDataForm'
+import { YouTubeDataForm } from '@/components/features/qrcodes/forms/YouTubeDataForm'
+import { LinkedInDataForm } from '@/components/features/qrcodes/forms/LinkedInDataForm'
+import { SnapchatDataForm } from '@/components/features/qrcodes/forms/SnapchatDataForm'
+import { SpotifyDataForm } from '@/components/features/qrcodes/forms/SpotifyDataForm'
+import { TikTokDataForm } from '@/components/features/qrcodes/forms/TikTokDataForm'
+import { TwitterXDataForm } from '@/components/features/qrcodes/forms/TwitterXDataForm'
+import { FacebookMessengerDataForm } from '@/components/features/qrcodes/forms/FacebookMessengerDataForm'
+import { ViberDataForm } from '@/components/features/qrcodes/forms/ViberDataForm'
+import { FaceTimeDataForm } from '@/components/features/qrcodes/forms/FaceTimeDataForm'
+import { WeChatDataForm } from '@/components/features/qrcodes/forms/WeChatDataForm'
+import { SkypeDataForm } from '@/components/features/qrcodes/forms/SkypeDataForm'
+import { ZoomDataForm } from '@/components/features/qrcodes/forms/ZoomDataForm'
+import { PayPalDataForm } from '@/components/features/qrcodes/forms/PayPalDataForm'
+import { CryptoDataForm } from '@/components/features/qrcodes/forms/CryptoDataForm'
+import { BrazilPIXDataForm } from '@/components/features/qrcodes/forms/BrazilPIXDataForm'
+import { GoogleMapsDataForm } from '@/components/features/qrcodes/forms/GoogleMapsDataForm'
+import { DynamicEmailDataForm } from '@/components/features/qrcodes/forms/DynamicEmailDataForm'
+import { DynamicSMSDataForm } from '@/components/features/qrcodes/forms/DynamicSMSDataForm'
+import { GoogleReviewDataForm } from '@/components/features/qrcodes/forms/GoogleReviewDataForm'
+import { FileUploadDataForm } from '@/components/features/qrcodes/forms/FileUploadDataForm'
+import { UPIDynamicDataForm } from '@/components/features/qrcodes/forms/UPIDynamicDataForm'
 import { QRCodePreview } from '@/components/features/qrcodes/QRCodePreview'
 import { Info } from 'lucide-react'
 
@@ -66,6 +91,56 @@ export default function Step2TypeAndData({
         return <CalendarDataForm {...commonProps} />
       case 'app-store':
         return <AppStoreDataForm {...commonProps} />
+      case 'whatsapp':
+        return <WhatsAppDataForm {...commonProps} />
+      case 'telegram':
+        return <TelegramDataForm {...commonProps} />
+      case 'instagram':
+        return <InstagramDataForm {...commonProps} />
+      case 'facebook':
+        return <FacebookDataForm {...commonProps} />
+      case 'youtube':
+        return <YouTubeDataForm {...commonProps} />
+      case 'linkedin':
+        return <LinkedInDataForm {...commonProps} />
+      case 'snapchat':
+        return <SnapchatDataForm {...commonProps} />
+      case 'spotify':
+        return <SpotifyDataForm {...commonProps} />
+      case 'tiktok':
+        return <TikTokDataForm {...commonProps} />
+      case 'x':
+        return <TwitterXDataForm {...commonProps} />
+      case 'facebookmessenger':
+        return <FacebookMessengerDataForm {...commonProps} />
+      case 'viber':
+        return <ViberDataForm {...commonProps} />
+      case 'facetime':
+        return <FaceTimeDataForm {...commonProps} />
+      case 'wechat':
+        return <WeChatDataForm {...commonProps} />
+      case 'skype':
+        return <SkypeDataForm {...commonProps} />
+      case 'zoom':
+        return <ZoomDataForm {...commonProps} />
+      case 'paypal':
+        return <PayPalDataForm {...commonProps} />
+      case 'crypto':
+        return <CryptoDataForm {...commonProps} />
+      case 'brazilpix':
+        return <BrazilPIXDataForm {...commonProps} />
+      case 'googlemaps':
+        return <GoogleMapsDataForm {...commonProps} />
+      case 'email-dynamic':
+        return <DynamicEmailDataForm {...commonProps} />
+      case 'sms-dynamic':
+        return <DynamicSMSDataForm {...commonProps} />
+      case 'google-review':
+        return <GoogleReviewDataForm {...commonProps} />
+      case 'file-upload':
+        return <FileUploadDataForm {...commonProps} />
+      case 'upi-dynamic':
+        return <UPIDynamicDataForm {...commonProps} />
       default:
         return (
           <div className="text-center py-8 text-gray-500">

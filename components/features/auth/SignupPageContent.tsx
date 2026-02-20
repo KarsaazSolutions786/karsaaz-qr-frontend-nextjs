@@ -7,17 +7,20 @@
  *   - When passwordless auth is ENABLED → redirect to /login
  *     (because the Email+OTP flow handles both login and registration)
  *   - When passwordless auth is DISABLED → show normal signup form
+ *   - When new user registration is DISABLED → show disabled message
  */
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth'
 import { RegisterForm } from './RegisterForm'
 import { GoogleLoginButton } from './GoogleLoginButton'
+import Link from 'next/link'
 
 export function SignupPageContent() {
   const router = useRouter()
   const { data: statusData, isLoading, isError } = usePasswordlessStatus()
+  const [registrationDisabled, setRegistrationDisabled] = useState(false)
 
   // Redirect to login when passwordless is enabled
   // (matches original: <qrcg-redirect from="/account/sign-up" to="/account/login">)
@@ -43,6 +46,28 @@ export function SignupPageContent() {
 
   // ── Passwordless DISABLED: show normal signup form ──
   // Matches original qrcg-sign-up.js layout
+
+  // If registration is disabled, show message instead of form
+  if (registrationDisabled) {
+    return (
+      <div className="space-y-6 text-center">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Registration Disabled</h2>
+          <p className="mt-4 text-sm text-gray-600">
+            New user registrations are currently disabled. Please contact the administrator
+            for more information.
+          </p>
+        </div>
+        <Link
+          href="/login"
+          className="inline-block rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+        >
+          Go to Login
+        </Link>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -67,7 +92,7 @@ export function SignupPageContent() {
         </div>
       </div>
 
-      <RegisterForm />
+      <RegisterForm onRegistrationDisabled={() => setRegistrationDisabled(true)} />
     </div>
   )
 }

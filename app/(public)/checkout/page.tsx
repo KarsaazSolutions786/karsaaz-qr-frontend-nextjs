@@ -1,11 +1,15 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { Suspense } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { StripeCheckoutForm } from '@/components/features/subscriptions/StripeCheckoutForm'
+import { PayPalButton } from '@/components/features/payment/PayPalButton'
+import { getPaymentProcessors, type PaymentProcessor } from '@/lib/api/endpoints/paypal'
 import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
 import Link from 'next/link'
+
+type PaymentGateway = 'stripe' | 'paypal'
 
 function CheckoutContent() {
   const searchParams = useSearchParams()
@@ -14,6 +18,26 @@ function CheckoutContent() {
   const { data: plansData, isLoading } = usePlans()
   const rawPlan = plansData?.data?.find((p) => p.id === Number(planId))
   const selectedPlan = rawPlan ? mapSubscriptionPlanToPlan(rawPlan) : undefined
+
+  const [gateway, setGateway] = useState<PaymentGateway>('stripe')
+  const [processors, setProcessors] = useState<PaymentProcessor[]>([])
+  const [paypalClientId, setPaypalClientId] = useState<string>('')
+
+  useEffect(() => {
+    getPaymentProcessors()
+      .then(({ data }) => {
+        const list = Array.isArray(data) ? data : []
+        setProcessors(list)
+        const paypal = list.find((p) => p.slug === 'paypal')
+        if (paypal?.settings?.paypal_client_id) {
+          setPaypalClientId(paypal.settings.paypal_client_id)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const hasPayPal = processors.some((p) => p.slug === 'paypal' && p.is_enabled)
+  const hasStripe = processors.some((p) => p.slug === 'stripe' && p.is_enabled) || processors.length === 0
 
   if (isLoading) {
     return (
@@ -46,7 +70,7 @@ function CheckoutContent() {
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">Complete Your Purchase</h1>
           <p className="mt-2 text-gray-600">
-            You're subscribing to the <strong>{selectedPlan.name}</strong> plan
+            You&apos;re subscribing to the <strong>{selectedPlan.name}</strong> plan
           </p>
         </div>
 
@@ -74,7 +98,7 @@ function CheckoutContent() {
 
               <div className="mt-6 space-y-2 text-xs text-gray-500">
                 <p>✓ Cancel anytime</p>
-                <p>✓ Secure payment via Stripe</p>
+                <p>✓ Secure payment</p>
                 <p>✓ Instant access</p>
               </div>
             </div>
@@ -83,7 +107,64 @@ function CheckoutContent() {
           {/* Checkout Form */}
           <div className="lg:col-span-2">
             <div className="rounded-lg border border-gray-200 bg-white p-6">
-              <StripeCheckoutForm plan={selectedPlan} />
+              {/* Gateway Selector */}
+              {hasStripe && hasPayPal && (
+                <div className="mb-6">
+                  <p className="text-sm font-medium text-gray-700 mb-3">Pay with</p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setGateway('stripe')}
+                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border text-sm font-medium transition-colors ${
+                        gateway === 'stripe'
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      💳 Credit Card
+                    </button>
+                    <button
+                      onClick={() => setGateway('paypal')}
+                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border text-sm font-medium transition-colors ${
+                        gateway === 'paypal'
+                          ? 'border-yellow-500 bg-yellow-50 text-yellow-700'
+                          : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      🅿️ PayPal
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Payment Form */}
+              {gateway === 'stripe' && hasStripe && (
+                <StripeCheckoutForm plan={selectedPlan} />
+              )}
+
+              {gateway === 'paypal' && hasPayPal && paypalClientId && (
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900">PayPal Payment</h2>
+                    <p className="mt-1 text-sm text-gray-600">
+                      You&apos;ll be redirected to PayPal to complete your subscription.
+                    </p>
+                  </div>
+                  <PayPalButton
+                    plan={{
+                      ...selectedPlan,
+                      paypal_plan_id: (rawPlan as any)?.paypal_plan_id,
+                    }}
+                    clientId={paypalClientId}
+                  />
+                </div>
+              )}
+
+              {/* Fallback if only one is available */}
+              {!hasStripe && !hasPayPal && (
+                <div className="text-center py-8 text-sm text-gray-500">
+                  No payment processors are currently configured. Please contact support.
+                </div>
+              )}
             </div>
           </div>
         </div>

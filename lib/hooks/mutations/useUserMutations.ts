@@ -39,8 +39,24 @@ export function useDeleteUser() {
 }
 
 export function useActAsUser() {
+  const router = useRouter()
   return useMutation({
     mutationFn: (id: number) => usersAPI.actAs(id),
+    onSuccess: (data: any) => {
+      // Store current admin as mainUser, swap to impersonated user
+      if (typeof window !== 'undefined' && data?.user && data?.token) {
+        const mainUser = {
+          user: JSON.parse(localStorage.getItem('user') || 'null'),
+          token: localStorage.getItem('token'),
+        }
+        localStorage.setItem('mainUser', JSON.stringify(mainUser))
+        localStorage.setItem('user', JSON.stringify(data.user))
+        localStorage.setItem('token', data.token)
+      }
+      // Navigate home and reload to pick up new session
+      router.push('/qrcodes')
+      setTimeout(() => window.location.reload(), 100)
+    },
   })
 }
 

@@ -70,4 +70,31 @@ export const usersAPI = {
     const response = await apiClient.post(`/users/verify-email/${id}`)
     return response.data
   },
+
+  // ── Sub-User Management ──
+
+  // Get sub-users for a user
+  getSubUsers: async (userId: number) => {
+    const response = await apiClient.get<User[]>(`/users/${userId}/sub-users`)
+    return response.data
+  },
+
+  // Invite a sub-user
+  inviteSubUser: async (userId: number, data: { name: string; email: string; mobile?: string; folder_id: string }) => {
+    const response = await apiClient.post<User>(`/users/${userId}/invite-sub-user`, data)
+    return response.data
+  },
+
+  // Update sub-user folder access
+  updateSubUserFolders: async (userId: number, subUserId: number, folderIds: string[]) => {
+    const response = await apiClient.post(`/users/${userId}/sub-users/${subUserId}/update-folders`, {
+      folder_ids: folderIds,
+    })
+    return response.data
+  },
+
+  // Delete sub-user
+  deleteSubUser: async (userId: number, subUserId: number) => {
+    await apiClient.delete(`/users/${userId}/sub-users/${subUserId}`)
+  },
 }

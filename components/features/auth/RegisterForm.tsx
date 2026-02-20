@@ -1,36 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { registerSchema, type RegisterFormData } from '@/lib/validations/auth'
 import { useRegister } from '@/lib/hooks/mutations/useRegister'
+import { PasswordStrengthBar } from '@/lib/utils/password-strength'
 
-// Password strength calculator
-function getPasswordStrength(password: string): {
-  score: number
-  label: string
-  color: string
-} {
-  if (!password) return { score: 0, label: '', color: 'bg-gray-200' }
-  
-  let score = 0
-  if (password.length >= 8) score++
-  if (password.length >= 12) score++
-  if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++
-  if (/\d/.test(password)) score++
-  if (/[^a-zA-Z\d]/.test(password)) score++
-  
-  if (score <= 2) return { score, label: 'Weak', color: 'bg-red-500' }
-  if (score <= 3) return { score, label: 'Fair', color: 'bg-yellow-500' }
-  if (score <= 4) return { score, label: 'Good', color: 'bg-blue-500' }
-  return { score, label: 'Strong', color: 'bg-green-500' }
-}
-
-export function RegisterForm() {
+export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisabled?: () => void } = {}) {
   const [showPassword, setShowPassword] = useState(false)
-  const [passwordStrength, setPasswordStrength] = useState({ score: 0, label: '', color: 'bg-gray-200' })
   const registerMutation = useRegister()
 
   const {
@@ -43,16 +22,20 @@ export function RegisterForm() {
   })
 
   const password = watch('password', '')
-  
-  useEffect(() => {
-    setPasswordStrength(getPasswordStrength(password))
-  }, [password])
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
       await registerMutation.mutateAsync(data)
       // Success is handled by the mutation (redirects to verify-email)
-    } catch (error) {
+    } catch (error: any) {
+      // Check if registration is disabled
+      const message = error?.response?.data?.message || error?.message || ''
+      if (
+        message.toLowerCase().includes('registration') &&
+        message.toLowerCase().includes('disabled')
+      ) {
+        onRegistrationDisabled?.()
+      }
       // Error handled by mutation
     }
   }
@@ -115,24 +98,7 @@ export function RegisterForm() {
         )}
         
         {/* Password strength indicator */}
-        {password && (
-          <div className="mt-2">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className={`h-full ${passwordStrength.color} transition-all duration-300`}
-                  style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
-                />
-              </div>
-              <span className="text-xs font-medium text-gray-600">
-                {passwordStrength.label}
-              </span>
-            </div>
-            <p className="mt-1 text-xs text-gray-500">
-              Use 8+ characters with a mix of letters, numbers & symbols
-            </p>
-          </div>
-        )}
+        <PasswordStrengthBar password={password} />
       </div>
 
       <div>

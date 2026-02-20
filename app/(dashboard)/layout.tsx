@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { LanguagePicker } from '@/components/common/LanguagePicker'
+import { ActAsBanner } from '@/components/common/ActAsBanner'
 import {
   QrCodeIcon,
   LinkIcon,
@@ -43,7 +45,20 @@ import {
   ChartBarIcon,
   UserCircleIcon,
   RectangleGroupIcon,
+  FolderIcon,
+  TagIcon,
 } from '@heroicons/react/24/outline'
+import {
+  getSidebarFolders,
+  getSidebarTemplateCategories,
+  getDynamicQRCodeCount,
+  getTotalScans,
+  getCurrentPlan,
+  formatLimit,
+  type Plan
+} from '@/lib/api/sidebar'
+import type { Folder } from '@/types/entities/folder'
+import type { TemplateCategory } from '@/types/entities/template'
 
 // Navigation types
 interface NavItem {
@@ -58,34 +73,44 @@ interface NavGroup {
   items: NavItem[]
 }
 
-// Top-level standalone items (always visible, matches original qrcodesGroup + cloudStorageGroup)
+// Top-level standalone items (locked groups - always visible, matches Lit qrcodesGroup + cloudStorageGroup)
 const topNavigation: NavItem[] = [
   { name: 'Home', href: '/qrcodes/new', icon: HomeIcon },
   { name: 'Existing QRs', href: '/qrcodes', icon: QrCodeIcon },
   { name: 'Archived', href: '/archived', icon: ArchiveBoxIcon },
-  { name: 'QR Templates', href: '/qrcode-templates', icon: RectangleGroupIcon },
-  { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'Cloud Storage', href: '/cloud-storage', icon: CloudIcon },
-  { name: 'Connections', href: '/connections', icon: SignalIcon },
 ]
 
-// Collapsible navigation groups (matches original menu-store groups)
+// Cloud Storage locked group (separate from collapsible groups)
+const cloudStorageNavigation: NavItem[] = [
+  { name: 'Connections', href: '/cloud-storage', icon: CloudIcon },
+]
+
+// Collapsible navigation groups (matches Lit menu-store groups exactly)
 const navigationGroups: NavGroup[] = [
+  {
+    name: 'Referrals',
+    icon: CurrencyDollarIcon,
+    items: [
+      { name: 'Commission Summary', href: '/referrals', icon: ChartBarIcon },
+      { name: 'Withdrawal History', href: '/referrals?tab=history', icon: ClockIcon },
+      { name: 'Request Withdrawal', href: '/referrals?tab=withdraw', icon: BanknotesIcon },
+    ],
+  },
   {
     name: 'Users',
     icon: UsersIcon,
     items: [
       { name: 'All Users', href: '/users', icon: UsersIcon },
-      { name: 'Paying Users', href: '/users/paying', icon: CreditCardIcon },
-      { name: 'Non Paying Users', href: '/users/non-paying', icon: UserGroupIcon },
-      { name: 'Roles', href: '/users/roles', icon: ShieldCheckIcon },
+      { name: 'Paying Users', href: '/users?paying=true', icon: CreditCardIcon },
+      { name: 'Non Paying Users', href: '/users?paying=false', icon: UserGroupIcon },
+      { name: 'Roles', href: '/roles', icon: ShieldCheckIcon },
     ],
   },
   {
     name: 'Finance',
     icon: BanknotesIcon,
     items: [
-      { name: 'Plans', href: '/plans', icon: SparklesIcon },
+      { name: 'Pricing Plans', href: '/plans', icon: SparklesIcon },
       { name: 'Subscriptions', href: '/subscriptions', icon: CreditCardIcon },
       { name: 'Billing', href: '/billing', icon: BanknotesIcon },
       { name: 'Transactions', href: '/transactions', icon: CurrencyDollarIcon },
@@ -100,16 +125,16 @@ const navigationGroups: NavGroup[] = [
       { name: 'Blog Posts', href: '/blog-posts', icon: NewspaperIcon },
       { name: 'Content Blocks', href: '/content-blocks', icon: Squares2X2Icon },
       { name: 'Translations', href: '/translations', icon: LanguageIcon },
-      { name: 'Custom Code', href: '/custom-code', icon: CodeBracketIcon },
+      { name: 'Custom Code', href: '/custom-codes', icon: CodeBracketIcon },
       { name: 'Pages', href: '/pages', icon: DocumentDuplicateIcon },
-      { name: 'Dynamic BioLinks', href: '/biolinks', icon: LinkIcon },
+      { name: 'Dynamic BioLinks', href: '/dynamic-biolink-blocks', icon: LinkIcon },
     ],
   },
   {
     name: 'Contacts',
     icon: EnvelopeIcon,
     items: [
-      { name: 'Contact Form', href: '/contact-form', icon: EnvelopeIcon },
+      { name: 'Contact Form', href: '/contacts', icon: EnvelopeIcon },
       { name: 'Lead Forms', href: '/lead-forms', icon: ClipboardDocumentListIcon },
     ],
   },
@@ -130,10 +155,11 @@ const navigationGroups: NavGroup[] = [
       { name: 'Logs', href: '/system/logs', icon: ClockIcon },
       { name: 'Cache', href: '/system/cache', icon: CircleStackIcon },
       { name: 'Notifications', href: '/system/notifications', icon: BellIcon },
-      { name: 'Sms Portals', href: '/system/sms-portals', icon: DevicePhoneMobileIcon },
+      { name: 'Sms Portals', href: '/system/sms', icon: DevicePhoneMobileIcon },
       { name: 'Auth Workflow', href: '/system/auth-workflow', icon: ShieldCheckIcon },
-      { name: 'Abuse Reports', href: '/system/abuse-reports', icon: ExclamationTriangleIcon },
-      { name: 'Domains', href: '/system/domains', icon: GlobeAltIcon },
+      { name: 'Abuse Reports', href: '/admin/abuse-reports', icon: ExclamationTriangleIcon },
+      { name: 'Domains', href: '/domains', icon: GlobeAltIcon },
+      { name: 'Template Categories', href: '/template-categories', icon: RectangleGroupIcon },
     ],
   },
 ]
@@ -149,6 +175,16 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  
+  // Dynamic sidebar data
+  const [folders, setFolders] = useState<Folder[]>([])
+  const [templateCategories, setTemplateCategories] = useState<TemplateCategory[]>([])
+  
+  // Account widget stats
+  const [qrCount, setQrCount] = useState<number>(0)
+  const [scanCount, setScanCount] = useState<number>(0)
+  const [plan, setPlan] = useState<Plan | null>(null)
+  const [statsLoading, setStatsLoading] = useState(true)
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -156,6 +192,54 @@ export default function DashboardLayout({
       router.push(`/login?from=${encodeURIComponent(currentPath)}`)
     }
   }, [user, isLoading, router])
+
+  // Fetch dynamic sidebar data
+  useEffect(() => {
+    if (!user) return
+
+    const fetchSidebarData = async () => {
+      try {
+        // Fetch folders and template categories in parallel
+        const [foldersData, categoriesData] = await Promise.all([
+          getSidebarFolders(),
+          getSidebarTemplateCategories()
+        ])
+        
+        setFolders(foldersData)
+        setTemplateCategories(categoriesData)
+      } catch (error) {
+        console.error('Failed to fetch sidebar data:', error)
+      }
+    }
+
+    fetchSidebarData()
+  }, [user])
+
+  // Fetch account stats
+  useEffect(() => {
+    if (!user) return
+
+    const fetchStats = async () => {
+      setStatsLoading(true)
+      try {
+        const [qrCountData, scansData, planData] = await Promise.all([
+          getDynamicQRCodeCount(),
+          getTotalScans(),
+          getCurrentPlan()
+        ])
+        
+        setQrCount(qrCountData)
+        setScanCount(scansData)
+        setPlan(planData)
+      } catch (error) {
+        console.error('Failed to fetch account stats:', error)
+      } finally {
+        setStatsLoading(false)
+      }
+    }
+
+    fetchStats()
+  }, [user])
 
   // Auto-expand group that contains active route
   useEffect(() => {
@@ -176,10 +260,38 @@ export default function DashboardLayout({
 
   const isItemActive = (href: string) => {
     if (!pathname) return false
-    if (href.includes('?')) {
-      return pathname === href.split('?')[0]
+    
+    // Parse item href
+    const [itemPath, itemQueryString = ''] = href.split('?')
+    const itemParams = new URLSearchParams(itemQueryString)
+    
+    // Parse current location
+    const windowParams = new URLSearchParams(window.location.search)
+    
+    // Check pathname match
+    const pathMatch = pathname === itemPath || pathname.startsWith(`${itemPath}/`)
+    
+    if (!pathMatch) return false
+    
+    // If no query params in item href, just check pathname
+    if (!itemQueryString) {
+      return pathMatch
     }
-    return pathname === href || pathname.startsWith(`${href}/`)
+    
+    // Check all item query params match window params
+    const paramsMatch = Array.from(itemParams.keys()).every(
+      key => itemParams.get(key) === windowParams.get(key)
+    )
+    
+    if (!paramsMatch) return false
+    
+    // Check window doesn't have extra params (except 'page')
+    const ignoredKeys = ['page']
+    const hasExtraParams = Array.from(windowParams.keys()).some(
+      key => !ignoredKeys.includes(key) && !itemParams.has(key)
+    )
+    
+    return !hasExtraParams
   }
 
   const isGroupActive = (group: NavGroup) => {
@@ -241,8 +353,11 @@ export default function DashboardLayout({
 
         {/* Navigation (scrollable) */}
         <nav className="flex-1 overflow-y-auto px-2 py-3 scrollbar-hide">
-          {/* Top-level items (always visible — locked group) */}
-          <div className="space-y-0.5">
+          {/* Separator line (matches Lit .sidebar-top) */}
+          <div className="mx-3 mb-2 border-t border-dotted border-purple-300/30" />
+          
+          {/* Top-level items (locked group - always visible) */}
+          <div className="space-y-0.5 mb-3">
             {topNavigation.map((item) => {
               const active = isItemActive(item.href)
               return (
@@ -250,9 +365,9 @@ export default function DashboardLayout({
                   key={item.name}
                   href={item.href}
                   className={`
-                    flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors
+                    flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors
                     ${active
-                      ? 'bg-black/20 text-white'
+                      ? 'bg-black/20 text-white font-medium'
                       : 'text-white/90 hover:bg-white/10 hover:text-white'
                     }
                   `}
@@ -264,6 +379,111 @@ export default function DashboardLayout({
               )
             })}
           </div>
+
+          {/* Cloud Storage locked group */}
+          <div className="mb-3">
+            <div className="px-3 mb-1.5">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Cloud Storage</span>
+            </div>
+            <div className="space-y-0.5">
+              {cloudStorageNavigation.map((item) => {
+                const active = isItemActive(item.href)
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`
+                      flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors
+                      ${active
+                        ? 'bg-black/20 text-white font-medium'
+                        : 'text-white/90 hover:bg-white/10 hover:text-white'
+                      }
+                    `}
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    {item.name}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Folders Group (Dynamic) - matches Lit frontend */}
+          {folders.length > 0 && (
+            <div className="mb-3">
+              <div className="px-3 mb-1.5">
+                <span className="text-xs font-bold text-white uppercase tracking-wider">Folders</span>
+              </div>
+              <div className="space-y-0.5">
+                {folders.map((folder) => {
+                  const folderHref = `/qrcodes?folder_id=${folder.id}`
+                  const active = isItemActive(folderHref)
+                  return (
+                    <Link
+                      key={folder.id}
+                      href={folderHref}
+                      className={`
+                        flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-md transition-colors
+                        ${active
+                          ? 'bg-black/20 text-white font-medium'
+                          : 'text-white/90 hover:bg-white/10 hover:text-white'
+                        }
+                      `}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <FolderIcon className="h-4 w-4 shrink-0" />
+                        <span className="truncate">{folder.name}</span>
+                      </div>
+                      {/* QR Count Badge - matches Lit folder-menu-item.js */}
+                      <div className={`
+                        flex items-center justify-center min-w-[2rem] h-5 px-2 rounded-full text-xs font-bold
+                        ${active 
+                          ? 'bg-white/20 text-white' 
+                          : 'bg-white/90 text-purple-700'
+                        }
+                      `}>
+                        {folder.qrCodeCount || 0}
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Template Categories Group (Dynamic) - matches Lit frontend */}
+          {templateCategories.length > 0 && (
+            <div className="mb-3">
+              <div className="px-3 mb-1.5">
+                <span className="text-xs font-bold text-white uppercase tracking-wider">Categories</span>
+              </div>
+              <div className="space-y-0.5">
+                {templateCategories.map((category) => {
+                  const categoryHref = `/qrcodes/new?template-category-id=${category.id}`
+                  const active = isItemActive(categoryHref)
+                  return (
+                    <Link
+                      key={category.id}
+                      href={categoryHref}
+                      className={`
+                        flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors
+                        ${active
+                          ? 'bg-black/20 text-white font-medium'
+                          : 'text-white/90 hover:bg-white/10 hover:text-white'
+                        }
+                      `}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <TagIcon className="h-4 w-4 shrink-0" />
+                      {category.name}
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Separator */}
           <div className="mx-3 my-3 border-t border-white/20" />
@@ -333,43 +553,80 @@ export default function DashboardLayout({
           <div className="h-24" />
         </nav>
 
-        {/* Account section (matches original sidebar-account) */}
+        {/* Language Picker */}
+        <div className="shrink-0 px-3 py-2 border-t border-white/10">
+          <LanguagePicker variant="dark" />
+        </div>
+
+        {/* Account section (matches Lit sidebar-account.js) */}
         {user && (
           <div className="shrink-0 bg-black/20 px-3 py-3">
-            {/* User info row */}
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-full bg-white/20 text-white flex items-center justify-center text-sm font-semibold shrink-0">
-                {user.name?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || 'U'}
+            {/* Stats (matches Lit detailed view) */}
+            {!statsLoading && plan && (
+              <div className="mb-2 grid grid-cols-2 gap-2 text-xs">
+                <div className="bg-purple-900/30 rounded px-2 py-1.5">
+                  <div className="text-white/60 font-bold uppercase text-[0.65rem] mb-0.5 truncate">
+                    Dynamic QRs
+                  </div>
+                  <div className="text-white font-semibold truncate">
+                    {qrCount} / {formatLimit(plan.number_of_dynamic_qrcodes)}
+                  </div>
+                </div>
+                <div className="bg-purple-900/30 rounded px-2 py-1.5">
+                  <div className="text-white/60 font-bold uppercase text-[0.65rem] mb-0.5 truncate">
+                    Scans
+                  </div>
+                  <div className="text-white font-semibold truncate">
+                    {scanCount.toLocaleString()} / {formatLimit(plan.number_of_scans)}
+                  </div>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-white truncate">
-                  {user.name || 'User'}
-                </p>
-                <p className="text-xs text-white/60 truncate">{user.email}</p>
-              </div>
-            </div>
+            )}
 
-            {/* Account & Logout buttons */}
+            {/* Email */}
+            <p className="text-xs text-white/80 truncate mb-2">{user.email}</p>
+
+            {/* Action Buttons */}
             <div className="flex gap-2">
-              <Link
-                href="/account"
-                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold
-                  bg-white text-primary rounded-md hover:bg-white/90 transition-colors"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <UserCircleIcon className="h-3.5 w-3.5" />
-                Account
-              </Link>
-              <button
-                onClick={handleLogout}
-                disabled={isLoggingOut}
-                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold
-                  bg-red-500/80 text-white rounded-md hover:bg-red-500 transition-colors
-                  disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ArrowRightOnRectangleIcon className="h-3.5 w-3.5" />
-                {isLoggingOut ? 'Logging out...' : 'Logout'}
-              </button>
+              {/* Trial upgrade button (matches Lit) */}
+              {plan?.is_trial ? (
+                <>
+                  <div className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-semibold bg-purple-900/30 text-white rounded-md">
+                    <span className="truncate">Trial</span>
+                  </div>
+                  <Link
+                    href="/account/upgrade"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold
+                      bg-yellow-400 text-purple-900 rounded-md hover:bg-yellow-300 transition-colors"
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <SparklesIcon className="h-3.5 w-3.5" />
+                    Upgrade
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/account"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold
+                      bg-white text-purple-700 rounded-md hover:bg-white/90 transition-colors"
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    <UserCircleIcon className="h-3.5 w-3.5" />
+                    Account
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    disabled={isLoggingOut}
+                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold
+                      bg-red-500/80 text-white rounded-md hover:bg-red-500 transition-colors
+                      disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <ArrowRightOnRectangleIcon className="h-3.5 w-3.5" />
+                    {isLoggingOut ? 'Logging out...' : 'Logout'}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -377,6 +634,8 @@ export default function DashboardLayout({
 
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Impersonation banner */}
+        <ActAsBanner />
         {/* Mobile header */}
         <div className="sticky top-0 z-10 flex h-14 items-center gap-x-4 bg-white border-b border-gray-200 px-4 shadow-sm lg:hidden">
           <button
@@ -389,6 +648,7 @@ export default function DashboardLayout({
           <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
             Karsaaz QR
           </div>
+          <LanguagePicker />
         </div>
 
         {/* Page content */}

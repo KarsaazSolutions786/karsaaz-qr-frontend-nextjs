@@ -13,6 +13,31 @@ import { PhoneDataForm } from './forms/PhoneDataForm'
 import { LocationDataForm } from './forms/LocationDataForm'
 import { CalendarDataForm } from './forms/CalendarDataForm'
 import { AppStoreDataForm } from './forms/AppStoreDataForm'
+import { WhatsAppDataForm } from './forms/WhatsAppDataForm'
+import { TelegramDataForm } from './forms/TelegramDataForm'
+import { InstagramDataForm } from './forms/InstagramDataForm'
+import { FacebookDataForm } from './forms/FacebookDataForm'
+import { YouTubeDataForm } from './forms/YouTubeDataForm'
+import { LinkedInDataForm } from './forms/LinkedInDataForm'
+import { SnapchatDataForm } from './forms/SnapchatDataForm'
+import { SpotifyDataForm } from './forms/SpotifyDataForm'
+import { TikTokDataForm } from './forms/TikTokDataForm'
+import { TwitterXDataForm } from './forms/TwitterXDataForm'
+import { FacebookMessengerDataForm } from './forms/FacebookMessengerDataForm'
+import { ViberDataForm } from './forms/ViberDataForm'
+import { FaceTimeDataForm } from './forms/FaceTimeDataForm'
+import { WeChatDataForm } from './forms/WeChatDataForm'
+import { SkypeDataForm } from './forms/SkypeDataForm'
+import { ZoomDataForm } from './forms/ZoomDataForm'
+import { PayPalDataForm } from './forms/PayPalDataForm'
+import { CryptoDataForm } from './forms/CryptoDataForm'
+import { BrazilPIXDataForm } from './forms/BrazilPIXDataForm'
+import { GoogleMapsDataForm } from './forms/GoogleMapsDataForm'
+import { DynamicEmailDataForm } from './forms/DynamicEmailDataForm'
+import { DynamicSMSDataForm } from './forms/DynamicSMSDataForm'
+import { GoogleReviewDataForm } from './forms/GoogleReviewDataForm'
+import { FileUploadDataForm } from './forms/FileUploadDataForm'
+import { UPIDynamicDataForm } from './forms/UPIDynamicDataForm'
 
 interface QRCodeFormProps {
   initialType?: string
@@ -70,6 +95,56 @@ export function QRCodeForm({
         return <CalendarDataForm {...formProps} />
       case 'app-store':
         return <AppStoreDataForm {...formProps} />
+      case 'whatsapp':
+        return <WhatsAppDataForm {...formProps} />
+      case 'telegram':
+        return <TelegramDataForm {...formProps} />
+      case 'instagram':
+        return <InstagramDataForm {...formProps} />
+      case 'facebook':
+        return <FacebookDataForm {...formProps} />
+      case 'youtube':
+        return <YouTubeDataForm {...formProps} />
+      case 'linkedin':
+        return <LinkedInDataForm {...formProps} />
+      case 'snapchat':
+        return <SnapchatDataForm {...formProps} />
+      case 'spotify':
+        return <SpotifyDataForm {...formProps} />
+      case 'tiktok':
+        return <TikTokDataForm {...formProps} />
+      case 'x':
+        return <TwitterXDataForm {...formProps} />
+      case 'facebookmessenger':
+        return <FacebookMessengerDataForm {...formProps} />
+      case 'viber':
+        return <ViberDataForm {...formProps} />
+      case 'facetime':
+        return <FaceTimeDataForm {...formProps} />
+      case 'wechat':
+        return <WeChatDataForm {...formProps} />
+      case 'skype':
+        return <SkypeDataForm {...formProps} />
+      case 'zoom':
+        return <ZoomDataForm {...formProps} />
+      case 'paypal':
+        return <PayPalDataForm {...formProps} />
+      case 'crypto':
+        return <CryptoDataForm {...formProps} />
+      case 'brazilpix':
+        return <BrazilPIXDataForm {...formProps} />
+      case 'googlemaps':
+        return <GoogleMapsDataForm {...formProps} />
+      case 'email-dynamic':
+        return <DynamicEmailDataForm {...formProps} />
+      case 'sms-dynamic':
+        return <DynamicSMSDataForm {...formProps} />
+      case 'google-review':
+        return <GoogleReviewDataForm {...formProps} />
+      case 'file-upload':
+        return <FileUploadDataForm {...formProps} />
+      case 'upi-dynamic':
+        return <UPIDynamicDataForm {...formProps} />
       default:
         return <div className="text-sm text-gray-500">Unknown QR code type</div>
     }

@@ -108,6 +108,22 @@ export interface PasswordlessResendResponse {
   message?: string
 }
 
+// Passwordless Auth — per-user preference (authenticated)
+export interface PasswordlessPreferenceResponse {
+  preference: 'passwordless' | 'traditional'
+}
+
+export interface PasswordlessSetPreferenceRequest {
+  preference: 'enabled' | 'disabled'
+  password?: string
+  password_confirmation?: string
+}
+
+export interface PasswordlessSetPreferenceResponse {
+  success: boolean
+  message?: string
+}
+
 export interface UpdateProfileRequest {
   name?: string
   email?: string
@@ -214,6 +230,25 @@ export const authAPI = {
   passwordlessResend: async (data: PasswordlessResendRequest) => {
     const response = await apiClient.post<PasswordlessResendResponse>(
       '/passwordless-auth/resend',
+      data
+    )
+    return response.data
+  },
+
+  // Passwordless auth — get current user's login preference (requires auth)
+  passwordlessGetPreference: async () => {
+    const response = await apiClient.get<PasswordlessPreferenceResponse>(
+      '/passwordless-auth/preference'
+    )
+    return response.data
+  },
+
+  // Passwordless auth — set user's login preference (requires auth)
+  // preference='disabled' + password to switch to traditional
+  // preference='enabled' to switch to passwordless
+  passwordlessSetPreference: async (data: PasswordlessSetPreferenceRequest) => {
+    const response = await apiClient.put<PasswordlessSetPreferenceResponse>(
+      '/passwordless-auth/preference',
       data
     )
     return response.data

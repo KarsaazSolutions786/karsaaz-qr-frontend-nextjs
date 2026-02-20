@@ -3,6 +3,9 @@
 import { useSubscription } from '@/lib/hooks/queries/useSubscription'
 import { SubscriptionDetails } from '@/components/features/subscriptions/SubscriptionDetails'
 import { PricingPlans } from '@/components/features/subscriptions/PricingPlans'
+import { StripeCustomerPortal } from '@/components/features/subscriptions/StripeCustomerPortal'
+import { StripeSubscriptionManagement } from '@/components/features/subscriptions/StripeSubscriptionManagement'
+import { StripeInvoices } from '@/components/features/subscriptions/StripeInvoices'
 import Link from 'next/link'
 
 export default function SubscriptionsPage() {
@@ -49,7 +52,12 @@ export default function SubscriptionsPage() {
         </p>
       </div>
 
-      <SubscriptionDetails subscription={subscription} />
+      <div className="space-y-6">
+        <SubscriptionDetails subscription={subscription} />
+        <StripeSubscriptionManagement />
+        <StripeCustomerPortal />
+        <StripeInvoices />
+      </div>
 
       <div className="mt-8">
         <Link

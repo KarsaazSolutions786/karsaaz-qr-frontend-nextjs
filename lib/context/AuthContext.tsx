@@ -14,6 +14,14 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   setUser: (user: User | null) => void
+  /** Impersonate a user (admin only) — stores current user and swaps to target */
+  actAs: (targetUser: User, targetToken: string) => void
+  /** Stop impersonating — restore original admin user */
+  removeActAs: () => void
+  /** Whether admin is currently impersonating another user */
+  isActingAs: boolean
+  /** The user being impersonated (when acting as) */
+  actingAsUser: User | null
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -94,6 +102,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
+      // Check if Auth0 is enabled — redirect to Auth0 logout
+      const configStr = typeof window !== 'undefined' ? localStorage.getItem('auth0_enabled') : null
+      if (configStr === 'true') {
+        window.location.href = `${process.env.NEXT_PUBLIC_API_URL || 'https://app.karsaazqr.com'}/auth0/logout`
+        return
+      }
       await apiClient.post('/logout')
     } catch {
       // Ignore — we clear local state regardless
@@ -102,11 +116,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('user')
       localStorage.removeItem('token')
+      localStorage.removeItem('mainUser')
     }
     queryClient.setQueryData(queryKeys.auth.currentUser(), null)
     queryClient.clear()
     router.push('/login')
   }, [queryClient, router])
+
+  // ── ActAs (Admin Impersonation) ──
+  const isActingAs = typeof window !== 'undefined'
+    ? !!localStorage.getItem('mainUser')
+    : false
+
+  const actingAsUser = isActingAs ? user : null
+
+  const actAs = useCallback((targetUser: User, targetToken: string) => {
+    if (typeof window === 'undefined') return
+    // Save current admin user before switching
+    const mainUser = {
+      user: JSON.parse(localStorage.getItem('user') || 'null'),
+      token: localStorage.getItem('token'),
+    }
+    localStorage.setItem('mainUser', JSON.stringify(mainUser))
+    // Switch to target user
+    localStorage.setItem('user', JSON.stringify(targetUser))
+    localStorage.setItem('token', targetToken)
+    setUser(targetUser)
+    queryClient.setQueryData(queryKeys.auth.currentUser(), targetUser)
+  }, [queryClient])
+
+  const removeActAs = useCallback(() => {
+    if (typeof window === 'undefined') return
+    const mainUserStr = localStorage.getItem('mainUser')
+    if (!mainUserStr) return
+    try {
+      const mainUser = JSON.parse(mainUserStr)
+      localStorage.setItem('user', JSON.stringify(mainUser.user))
+      localStorage.setItem('token', mainUser.token)
+      localStorage.removeItem('mainUser')
+      setUser(mainUser.user)
+      queryClient.setQueryData(queryKeys.auth.currentUser(), mainUser.user)
+    } catch {
+      localStorage.removeItem('mainUser')
+    }
+  }, [queryClient])
 
   const contextValue: AuthContextType = {
     user,
@@ -115,6 +168,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     login,
     logout,
     setUser,
+    actAs,
+    removeActAs,
+    isActingAs,
+    actingAsUser,
   }
 
   return React.createElement(

@@ -8,6 +8,7 @@ import {
   PasswordlessVerifyRequest,
   PasswordlessCheckPreferenceRequest,
   PasswordlessResendRequest,
+  PasswordlessSetPreferenceRequest,
 } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -93,5 +94,36 @@ export function usePasswordlessVerify() {
 export function usePasswordlessResend() {
   return useMutation({
     mutationFn: (data: PasswordlessResendRequest) => authAPI.passwordlessResend(data),
+  })
+}
+
+/**
+ * Query to get the current user's login preference (requires auth).
+ * Matches original: GET passwordless-auth/preference
+ * Returns { preference: 'passwordless' | 'traditional' }
+ */
+export function usePasswordlessGetPreference() {
+  return useQuery({
+    queryKey: ['passwordless-preference'],
+    queryFn: () => authAPI.passwordlessGetPreference(),
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  })
+}
+
+/**
+ * Mutation to set login preference (requires auth).
+ * To switch to traditional: { preference: 'disabled', password, password_confirmation }
+ * To switch to passwordless: { preference: 'enabled' }
+ */
+export function usePasswordlessSetPreference() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: PasswordlessSetPreferenceRequest) =>
+      authAPI.passwordlessSetPreference(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['passwordless-preference'] })
+    },
   })
 }

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { resetPasswordSchema, type ResetPasswordFormData } from '@/lib/validations/auth'
 import { useResetPassword } from '@/lib/hooks/mutations/useResetPassword'
+import { PasswordStrengthBar } from '@/lib/utils/password-strength'
 
 interface ResetPasswordFormProps {
   token: string
@@ -18,6 +19,7 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
@@ -26,6 +28,8 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
       email,
     },
   })
+
+  const password = watch('password', '')
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     try {
@@ -79,6 +83,7 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
         {errors.password && (
           <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
         )}
+        <PasswordStrengthBar password={password} />
       </div>
 
       <div>

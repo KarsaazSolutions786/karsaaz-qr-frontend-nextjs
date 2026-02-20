@@ -1,60 +1,97 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import {
+  getPaymentProcessors,
+  updatePaymentProcessor,
+  type PaymentProcessor,
+} from '@/lib/api/endpoints/paypal'
+import { PayPalConfigForm } from '@/components/features/payment-processors/PayPalConfigForm'
 
-interface Processor {
+interface ProcessorUI {
   id: string
   name: string
   description: string
   enabled: boolean
   icon: string
+  slug: string
+  configurable: boolean
+  settings?: Record<string, string>
 }
 
-const initialProcessors: Processor[] = [
+const DEFAULT_PROCESSORS: ProcessorUI[] = [
   {
-    id: 'stripe',
-    name: 'Stripe',
+    id: 'stripe', slug: 'stripe', name: 'Stripe',
     description: 'Accept credit cards, debit cards, and other payment methods via Stripe.',
-    enabled: false,
-    icon: '💳',
+    enabled: false, icon: '💳', configurable: false,
   },
   {
-    id: 'paypal',
-    name: 'PayPal',
+    id: 'paypal', slug: 'paypal', name: 'PayPal',
     description: 'Enable PayPal checkout for customers with PayPal accounts.',
-    enabled: false,
-    icon: '🅿️',
+    enabled: false, icon: '🅿️', configurable: true,
   },
   {
-    id: 'razorpay',
-    name: 'Razorpay',
+    id: 'razorpay', slug: 'razorpay', name: 'Razorpay',
     description: 'Accept payments via UPI, cards, netbanking, and wallets in India.',
-    enabled: false,
-    icon: '🏦',
+    enabled: false, icon: '🏦', configurable: false,
   },
   {
-    id: 'bank_transfer',
-    name: 'Bank Transfer',
+    id: 'bank_transfer', slug: 'bank_transfer', name: 'Bank Transfer',
     description: 'Allow customers to pay via direct bank transfer or wire.',
-    enabled: false,
-    icon: '🏧',
+    enabled: false, icon: '🏧', configurable: false,
   },
   {
-    id: 'crypto',
-    name: 'Cryptocurrency',
+    id: 'crypto', slug: 'crypto', name: 'Cryptocurrency',
     description: 'Accept Bitcoin, Ethereum, and other crypto payments.',
-    enabled: false,
-    icon: '₿',
+    enabled: false, icon: '₿', configurable: false,
   },
 ]
 
 export default function PaymentProcessorsPage() {
-  const [processors, setProcessors] = useState<Processor[]>(initialProcessors)
+  const [processors, setProcessors] = useState<ProcessorUI[]>(DEFAULT_PROCESSORS)
+  const [configuring, setConfiguring] = useState<string | null>(null)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
 
-  const toggleProcessor = (id: string) => {
+  useEffect(() => {
+    getPaymentProcessors()
+      .then(({ data }) => {
+        if (!Array.isArray(data)) return
+        setProcessors((prev) =>
+          prev.map((p) => {
+            const backend = data.find((bp: PaymentProcessor) => bp.slug === p.slug)
+            if (backend) {
+              return { ...p, enabled: backend.is_enabled, settings: backend.settings }
+            }
+            return p
+          })
+        )
+      })
+      .catch(() => {})
+  }, [])
+
+  const toggleProcessor = async (slug: string) => {
+    const proc = processors.find((p) => p.slug === slug)
+    if (!proc) return
+
+    setTogglingId(slug)
+    try {
+      await updatePaymentProcessor(slug, { is_enabled: !proc.enabled })
+      setProcessors((prev) =>
+        prev.map((p) => (p.slug === slug ? { ...p, enabled: !p.enabled } : p))
+      )
+    } catch {
+      // Failed
+    } finally {
+      setTogglingId(null)
+    }
+  }
+
+  const handlePayPalSave = async (values: Record<string, string>) => {
+    await updatePaymentProcessor('paypal', { settings: values })
     setProcessors((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, enabled: !p.enabled } : p))
+      prev.map((p) => (p.slug === 'paypal' ? { ...p, settings: values } : p))
     )
+    setConfiguring(null)
   }
 
   return (
@@ -91,10 +128,22 @@ export default function PaymentProcessorsPage() {
                 </span>
               </div>
               <p className="mt-3 text-sm text-gray-500">{processor.description}</p>
+
+              {/* Config form */}
+              {configuring === processor.slug && processor.slug === 'paypal' && (
+                <div className="mt-4 border-t border-gray-100 pt-4">
+                  <PayPalConfigForm
+                    initialValues={processor.settings as any}
+                    onSave={handlePayPalSave}
+                  />
+                </div>
+              )}
+
               <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
                 <button
-                  onClick={() => toggleProcessor(processor.id)}
-                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                  onClick={() => toggleProcessor(processor.slug)}
+                  disabled={togglingId === processor.slug}
+                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 ${
                     processor.enabled ? 'bg-blue-600' : 'bg-gray-200'
                   }`}
                 >
@@ -104,9 +153,14 @@ export default function PaymentProcessorsPage() {
                     }`}
                   />
                 </button>
-                <button className="text-sm font-medium text-blue-600 hover:text-blue-500">
-                  Configure
-                </button>
+                {processor.configurable && (
+                  <button
+                    onClick={() => setConfiguring(configuring === processor.slug ? null : processor.slug)}
+                    className="text-sm font-medium text-blue-600 hover:text-blue-500"
+                  >
+                    {configuring === processor.slug ? 'Close' : 'Configure'}
+                  </button>
+                )}
               </div>
             </div>
           </div>

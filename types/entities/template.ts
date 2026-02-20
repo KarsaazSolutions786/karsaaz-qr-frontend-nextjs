@@ -25,6 +25,8 @@ export interface TemplateCategory {
   slug: string
   description?: string
   icon?: string
+  imageUrl?: string      // Category background image (image_url from API)
+  textColor?: string     // Text color for category name overlay (text_color from API)
   sort_order?: number
   created_at: string
   updated_at: string

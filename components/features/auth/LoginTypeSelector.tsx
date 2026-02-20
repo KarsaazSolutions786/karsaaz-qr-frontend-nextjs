@@ -19,6 +19,7 @@ import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth
 import { EmailOtpLoginForm } from './EmailOtpLoginForm'
 import { LoginForm } from './LoginForm'
 import { GoogleLoginButton } from './GoogleLoginButton'
+import { Auth0LoginButton } from './Auth0LoginButton'
 
 export function LoginTypeSelector() {
   const searchParams = useSearchParams()
@@ -69,6 +70,8 @@ function TraditionalLoginView() {
       </div>
 
       <GoogleLoginButton />
+
+      <Auth0LoginButton />
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
