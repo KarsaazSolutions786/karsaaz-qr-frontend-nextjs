@@ -39,7 +39,7 @@ export default function BlogPostsPage() {
         <div className="mb-6">
           <input
             type="search"
-            placeholder="Search posts..."
+            placeholder="Search by title"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:max-w-md"

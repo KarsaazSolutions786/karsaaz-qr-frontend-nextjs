@@ -54,7 +54,6 @@ export default function DynamicBiolinkBlocksPage() {
               <tr>
                 <th className="w-16 px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Fields</th>
                 <th className="w-28 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
               </tr>
             </thead>
@@ -63,7 +62,6 @@ export default function DynamicBiolinkBlocksPage() {
                 <tr key={block.id} className="hover:bg-gray-50">
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-400">{block.id}</td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">{block.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{block.fields?.length ?? 0} field(s)</td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
                     <div className="flex items-center justify-end gap-2">
                       <Link href={`/dynamic-biolink-blocks/${block.id}`}
