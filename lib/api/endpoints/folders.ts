@@ -19,9 +19,15 @@ export interface MoveQRCodesRequest {
 
 // Folder API functions
 export const foldersAPI = {
-  // List all folders
+  // List folders for a specific user — matches backend GET /folders/{userId}
+  listByUser: async (userId: number | string) => {
+    const response = await apiClient.get<Folder[]>(`/folders/${userId}`)
+    return response.data
+  },
+
+  // List all folders (legacy — kept for backward compatibility)
   list: async (params: ListFoldersParams = {}) => {
-    const response = await apiClient.get<Folder[]>('/folders', { 
+    const response = await apiClient.get<Folder[]>('/folders', {
       params: {
         parent_id: params.parentId,
         include_children: params.includeChildren,

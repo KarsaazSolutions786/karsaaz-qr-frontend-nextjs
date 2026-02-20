@@ -1,128 +1,352 @@
 'use client'
 
-import { useState } from 'react'
-import { Download, Upload, CheckCircle, XCircle, Clock, Calendar, Database, ArrowUpDown } from 'lucide-react'
+import { useState, useCallback } from 'react'
+import {
+  Download,
+  Upload,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Calendar,
+  Database,
+  ArrowUpDown,
+  Trash2,
+  RefreshCw,
+  ExternalLink,
+  Loader2,
+  HardDrive,
+  Cloud,
+} from 'lucide-react'
+import { useCloudConnections, useBackupJobs, useBackupJob, useCloudStorageMutations } from '@/lib/hooks/queries/useCloudStorage'
+import type { CloudProvider, CloudConnection, BackupJob } from '@/lib/api/endpoints/cloud-storage'
 
-interface StorageProvider {
-  id: string
+// ─── Provider Metadata ──────────────────────────────────────────────────
+
+interface ProviderInfo {
+  id: CloudProvider
   name: string
   description: string
-  active: boolean
-  icon: string
-  fields: { label: string; placeholder: string; type?: string }[]
+  icon: React.ReactNode
+  isOAuth: boolean
 }
 
-interface BackupJob {
-  id: string
-  date: string
-  status: 'success' | 'failed' | 'in-progress'
-  provider: string
-  filesCount: number
-  size: string
-  duration: string
-}
-
-const initialProviders: StorageProvider[] = [
+const PROVIDERS: ProviderInfo[] = [
   {
-    id: 'local',
-    name: 'Local Storage',
-    description: 'Store files on the local server filesystem. Suitable for single-server setups.',
-    active: true,
-    icon: '💾',
-    fields: [{ label: 'Storage Path', placeholder: '/var/www/storage' }],
+    id: 'google_drive',
+    name: 'Google Drive',
+    description: 'Connect your Google Drive to back up QR codes and data.',
+    icon: (
+      <svg className="w-8 h-8" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066DA"/>
+        <path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 001.2 4.5h27.5z" fill="#00AC47"/>
+        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.85z" fill="#EA4335"/>
+        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832D"/>
+        <path d="M59.85 53H27.5l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.3c1.6 0 3.15-.45 4.5-1.2z" fill="#2684FC"/>
+        <path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.2 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#FFBA00"/>
+      </svg>
+    ),
+    isOAuth: true,
   },
   {
-    id: 's3',
-    name: 'Amazon S3',
-    description: 'Use AWS S3 buckets for scalable, durable cloud storage.',
-    active: false,
-    icon: '☁️',
-    fields: [
-      { label: 'Access Key', placeholder: 'AKIA...' },
-      { label: 'Secret Key', placeholder: '••••••••', type: 'password' },
-      { label: 'Bucket Name', placeholder: 'my-bucket' },
-      { label: 'Region', placeholder: 'us-east-1' },
-    ],
+    id: 'dropbox',
+    name: 'Dropbox',
+    description: 'Connect your Dropbox account for cloud backups.',
+    icon: (
+      <svg className="w-8 h-8" viewBox="0 0 43 40" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.5 0L0 8.2l8.6 6.9 12.5-8.2zM0 22l12.5 8.2 8.6-6.9L8.6 15zM21.1 23.3l8.6 6.9L42.2 22l-8.6-6.9zM42.2 8.2L29.7 0l-8.6 6.9 12.5 8.2zM21.2 25.1l-8.6 6.9-3.9-2.6v2.9l12.5 7.5 12.5-7.5v-2.9l-3.9 2.6z" fill="#0061FF"/>
+      </svg>
+    ),
+    isOAuth: true,
   },
   {
-    id: 'gcs',
-    name: 'Google Cloud Storage',
-    description: 'Store files using Google Cloud Storage buckets.',
-    active: false,
-    icon: '🔵',
-    fields: [
-      { label: 'Project ID', placeholder: 'my-project-123' },
-      { label: 'Bucket Name', placeholder: 'my-gcs-bucket' },
-      { label: 'Service Account Key (JSON)', placeholder: 'Paste key JSON...' },
-    ],
+    id: 'onedrive',
+    name: 'OneDrive',
+    description: 'Connect your Microsoft OneDrive for backups.',
+    icon: (
+      <svg className="w-8 h-8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10.146 4.884a5.135 5.135 0 014.673-.657 6.27 6.27 0 012.418 1.43A7.503 7.503 0 0124 12.75a7.502 7.502 0 01-4.5 6.875H8.25a8.248 8.248 0 01-5.915-2.487A8.248 8.248 0 01.5 12a8.248 8.248 0 014.846-7.498 5.14 5.14 0 014.8.382z" fill="#0364B8"/>
+      </svg>
+    ),
+    isOAuth: true,
   },
   {
-    id: 'do_spaces',
-    name: 'DigitalOcean Spaces',
-    description: 'S3-compatible object storage from DigitalOcean.',
-    active: false,
-    icon: '🌊',
-    fields: [
-      { label: 'Access Key', placeholder: 'DO...' },
-      { label: 'Secret Key', placeholder: '••••••••', type: 'password' },
-      { label: 'Space Name', placeholder: 'my-space' },
-      { label: 'Region', placeholder: 'nyc3' },
-    ],
+    id: 'mega',
+    name: 'MEGA',
+    description: 'Connect your MEGA account using email and password.',
+    icon: (
+      <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+        <span className="text-white font-bold text-xs">M</span>
+      </div>
+    ),
+    isOAuth: false,
   },
 ]
 
-// Mock backup history data
-const initialBackups: BackupJob[] = [
-  {
-    id: '1',
-    date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    status: 'success',
-    provider: 'Amazon S3',
-    filesCount: 1247,
-    size: '2.3 GB',
-    duration: '5m 23s'
-  },
-  {
-    id: '2',
-    date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    status: 'success',
-    provider: 'Amazon S3',
-    filesCount: 1245,
-    size: '2.3 GB',
-    duration: '4m 58s'
-  },
-  {
-    id: '3',
-    date: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
-    status: 'failed',
-    provider: 'Amazon S3',
-    filesCount: 0,
-    size: '0 MB',
-    duration: '12s'
-  },
-]
+// ─── Backup Modal ────────────────────────────────────────────────────────
+
+function BackupModal({
+  connections,
+  onClose,
+  onStart,
+  isStarting,
+}: {
+  connections: CloudConnection[]
+  onClose: () => void
+  onStart: (connectionId: string, format: string, includeImages: boolean, includeAnalytics: boolean) => void
+  isStarting: boolean
+}) {
+  const [selectedConnection, setSelectedConnection] = useState(connections[0]?.id || '')
+  const [format, setFormat] = useState('zip')
+  const [includeImages, setIncludeImages] = useState(true)
+  const [includeAnalytics, setIncludeAnalytics] = useState(true)
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Start Backup</h3>
+
+        {/* Connection selector */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+          <select
+            value={selectedConnection}
+            onChange={(e) => setSelectedConnection(e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            {connections.map((c) => (
+              <option key={c.id} value={c.id}>
+                {PROVIDERS.find(p => p.id === c.provider)?.name || c.provider} — {c.email || c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Format */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Format</label>
+          <select
+            value={format}
+            onChange={(e) => setFormat(e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="zip">ZIP Archive</option>
+            <option value="json">JSON</option>
+            <option value="csv">CSV</option>
+          </select>
+        </div>
+
+        {/* Options */}
+        <div className="mb-6 space-y-3">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={includeImages}
+              onChange={(e) => setIncludeImages(e.target.checked)}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-700">Include QR code images</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={includeAnalytics}
+              onChange={(e) => setIncludeAnalytics(e.target.checked)}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-700">Include analytics data</span>
+          </label>
+        </div>
+
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            disabled={isStarting}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onStart(selectedConnection, format, includeImages, includeAnalytics)}
+            disabled={isStarting || !selectedConnection}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isStarting && <Loader2 className="w-4 h-4 animate-spin" />}
+            Start Backup
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── MEGA Connect Modal ──────────────────────────────────────────────────
+
+function MegaConnectModal({
+  onClose,
+  onConnect,
+  isConnecting,
+}: {
+  onClose: () => void
+  onConnect: (email: string, password: string) => void
+  isConnecting: boolean
+}) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Connect MEGA Account</h3>
+
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your MEGA password"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            disabled={isConnecting}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onConnect(email, password)}
+            disabled={isConnecting || !email || !password}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isConnecting && <Loader2 className="w-4 h-4 animate-spin" />}
+            Connect
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Main Page ───────────────────────────────────────────────────────────
 
 export default function CloudStoragePage() {
   const [activeTab, setActiveTab] = useState<'connections' | 'history'>('connections')
-  const [providers, setProviders] = useState<StorageProvider[]>(initialProviders)
-  const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [backups] = useState<BackupJob[]>(initialBackups)
+  const [showBackupModal, setShowBackupModal] = useState(false)
+  const [showMegaModal, setShowMegaModal] = useState(false)
+  const [pollingJobId, setPollingJobId] = useState<string | null>(null)
 
-  const setActive = (id: string) => {
-    setProviders((prev) =>
-      prev.map((p) => ({ ...p, active: p.id === id }))
-    )
+  // Real data from API
+  const { data: connections, isLoading: connectionsLoading } = useCloudConnections()
+  const { data: backupJobs, isLoading: backupsLoading } = useBackupJobs()
+  const { data: pollingJob } = useBackupJob(pollingJobId)
+
+  const {
+    deleteConnection,
+    testConnection,
+    connectOAuth,
+    connectMega,
+    createBackup,
+    deleteBackupJob,
+    refreshToken,
+  } = useCloudStorageMutations()
+
+  const connectedProviders = connections || []
+  const backups = backupJobs || []
+
+  // Get provider info
+  const getProviderInfo = (provider: CloudProvider) =>
+    PROVIDERS.find(p => p.id === provider)
+
+  // Check if a provider is already connected
+  const isProviderConnected = (provider: CloudProvider) =>
+    connectedProviders.some(c => c.provider === provider && c.status === 'connected')
+
+  // Handle connect button click
+  const handleConnect = useCallback((provider: ProviderInfo) => {
+    if (provider.isOAuth) {
+      connectOAuth.mutate(provider.id as Exclude<CloudProvider, 'mega'>)
+    } else {
+      // MEGA — show credentials modal
+      setShowMegaModal(true)
+    }
+  }, [connectOAuth])
+
+  // Handle MEGA connect
+  const handleMegaConnect = useCallback((email: string, password: string) => {
+    connectMega.mutate({ email, password }, {
+      onSuccess: () => setShowMegaModal(false),
+    })
+  }, [connectMega])
+
+  // Handle start backup
+  const handleStartBackup = useCallback((
+    connectionId: string,
+    format: string,
+    includeImages: boolean,
+    includeAnalytics: boolean
+  ) => {
+    createBackup.mutate({
+      connection_id: connectionId,
+      format: format as 'json' | 'csv' | 'zip',
+      include_images: includeImages,
+      include_analytics: includeAnalytics,
+    }, {
+      onSuccess: (job) => {
+        setShowBackupModal(false)
+        setPollingJobId(job.id)
+      },
+    })
+  }, [createBackup])
+
+  // Format file size
+  const formatSize = (bytes?: number) => {
+    if (!bytes) return '—'
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`
   }
-  
-  const activeProvider = providers.find(p => p.active)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Cloud Storage</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          {activeTab === 'connections' ? 'Configure file storage providers' : 'View backup history and manage backups'}
-        </p>
+      <div className="sm:flex sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Cloud className="w-6 h-6 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Cloud Storage</h1>
+              <p className="mt-1 text-sm text-gray-600">
+                {activeTab === 'connections' ? 'Connect cloud storage providers for backups' : 'View backup history and manage backups'}
+              </p>
+            </div>
+          </div>
+        </div>
+        {activeTab === 'history' && connectedProviders.length > 0 && (
+          <button
+            onClick={() => setShowBackupModal(true)}
+            className="mt-4 sm:mt-0 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+          >
+            <Upload className="w-4 h-4" />
+            Start Backup Now
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
@@ -137,6 +361,11 @@ export default function CloudStoragePage() {
             }`}
           >
             Connections
+            {connectedProviders.length > 0 && (
+              <span className="ml-2 bg-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full">
+                {connectedProviders.length}
+              </span>
+            )}
           </button>
           <button
             onClick={() => setActiveTab('history')}
@@ -147,244 +376,333 @@ export default function CloudStoragePage() {
             }`}
           >
             Backup History
+            {backups.length > 0 && (
+              <span className="ml-2 bg-gray-100 text-gray-700 text-xs font-medium px-2 py-0.5 rounded-full">
+                {backups.length}
+              </span>
+            )}
           </button>
         </nav>
       </div>
 
-      {/* Connections Tab */}
+      {/* ── Connections Tab ── */}
       {activeTab === 'connections' && (
         <div className="mt-8 space-y-4">
-        {providers.map((provider) => (
-          <div
-            key={provider.id}
-            className={`overflow-hidden rounded-lg border bg-white shadow-sm ${
-              provider.active ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-200'
-            }`}
-          >
-            <div className="flex items-center justify-between p-5">
-              <div className="flex items-center space-x-4">
-                <span className="text-2xl">{provider.icon}</span>
-                <div>
-                  <h3 className="text-base font-semibold text-gray-900">{provider.name}</h3>
-                  <p className="text-sm text-gray-500">{provider.description}</p>
+          {connectionsLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="animate-pulse bg-white rounded-lg border border-gray-200 p-5">
+                  <div className="flex items-center gap-4">
+                    <div className="w-8 h-8 bg-gray-200 rounded" />
+                    <div className="flex-1">
+                      <div className="h-4 bg-gray-200 rounded w-32 mb-2" />
+                      <div className="h-3 bg-gray-100 rounded w-64" />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                {provider.active ? (
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                    Active
-                  </span>
-                ) : (
-                  <button
-                    onClick={() => setActive(provider.id)}
-                    className="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                  >
-                    Activate
-                  </button>
-                )}
-                <button
-                  onClick={() => setExpandedId(expandedId === provider.id ? null : provider.id)}
-                  className="text-sm font-medium text-blue-600 hover:text-blue-500"
+              ))}
+            </div>
+          ) : (
+            PROVIDERS.map((provider) => {
+              const connection = connectedProviders.find(c => c.provider === provider.id)
+              const isConnected = connection?.status === 'connected'
+              const isExpired = connection?.status === 'expired'
+
+              return (
+                <div
+                  key={provider.id}
+                  className={`overflow-hidden rounded-lg border bg-white shadow-sm ${
+                    isConnected ? 'border-green-300 ring-1 ring-green-200' :
+                    isExpired ? 'border-yellow-300 ring-1 ring-yellow-200' :
+                    'border-gray-200'
+                  }`}
                 >
-                  {expandedId === provider.id ? 'Hide Settings' : 'Settings'}
-                </button>
+                  <div className="flex items-center justify-between p-5">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-shrink-0">{provider.icon}</div>
+                      <div>
+                        <h3 className="text-base font-semibold text-gray-900">{provider.name}</h3>
+                        <p className="text-sm text-gray-500">{provider.description}</p>
+                        {connection && (
+                          <p className="text-xs text-gray-400 mt-1">
+                            {connection.email && `${connection.email} · `}
+                            Connected {new Date(connection.connected_at).toLocaleDateString()}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      {isConnected && (
+                        <>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                            <CheckCircle className="w-3 h-3" />
+                            Connected
+                          </span>
+                          <button
+                            onClick={() => testConnection.mutate(connection!.id)}
+                            disabled={testConnection.isPending}
+                            className="text-sm font-medium text-gray-600 hover:text-gray-800 disabled:opacity-50"
+                            title="Test connection"
+                          >
+                            {testConnection.isPending ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <RefreshCw className="w-4 h-4" />
+                            )}
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`Disconnect ${provider.name}?`)) {
+                                deleteConnection.mutate(connection!.id)
+                              }
+                            }}
+                            disabled={deleteConnection.isPending}
+                            className="text-sm font-medium text-red-600 hover:text-red-700 disabled:opacity-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
+                      {isExpired && (
+                        <>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                            <Clock className="w-3 h-3" />
+                            Expired
+                          </span>
+                          {provider.isOAuth && (
+                            <button
+                              onClick={() => refreshToken.mutate(provider.id as Exclude<CloudProvider, 'mega'>)}
+                              disabled={refreshToken.isPending}
+                              className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 disabled:opacity-50"
+                            >
+                              <RefreshCw className="w-4 h-4" />
+                              Refresh
+                            </button>
+                          )}
+                          <button
+                            onClick={() => {
+                              if (confirm(`Disconnect ${provider.name}?`)) {
+                                deleteConnection.mutate(connection!.id)
+                              }
+                            }}
+                            className="text-sm font-medium text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
+                      {!connection && (
+                        <button
+                          onClick={() => handleConnect(provider)}
+                          disabled={connectOAuth.isPending || connectMega.isPending}
+                          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                        >
+                          {(connectOAuth.isPending || connectMega.isPending) ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <ExternalLink className="w-4 h-4" />
+                          )}
+                          Connect
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          )}
+
+          {/* No providers connected message */}
+          {!connectionsLoading && connectedProviders.length === 0 && (
+            <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <HardDrive className="w-5 h-5 text-blue-600 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-blue-900">
+                    No cloud storage connected
+                  </p>
+                  <p className="text-sm text-blue-700 mt-1">
+                    Connect a cloud storage provider above to start backing up your QR codes and data.
+                  </p>
+                </div>
               </div>
             </div>
-
-            {expandedId === provider.id && (
-              <div className="border-t border-gray-200 bg-gray-50 p-5">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {provider.fields.map((field) => (
-                    <div key={field.label}>
-                      <label className="block text-sm font-medium text-gray-700">
-                        {field.label}
-                      </label>
-                      <input
-                        type={field.type || 'text'}
-                        placeholder={field.placeholder}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <button className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                    Save Configuration
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+          )}
+        </div>
       )}
 
-      {/* Backup History Tab */}
+      {/* ── Backup History Tab ── */}
       {activeTab === 'history' && (
         <div className="mt-8">
-          {/* Backup Actions Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Backup Jobs</h3>
-              <p className="text-sm text-gray-600 mt-1">
-                {activeProvider ? `Backing up to ${activeProvider.name}` : 'No active storage provider'}
-              </p>
+          {/* Active polling job banner */}
+          {pollingJob && (pollingJob.status === 'pending' || pollingJob.status === 'in_progress') && (
+            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center gap-3">
+                <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                <div>
+                  <p className="text-sm font-medium text-blue-900">
+                    Backup in progress...
+                  </p>
+                  <p className="text-sm text-blue-700">
+                    {pollingJob.status === 'pending' ? 'Preparing backup...' : 'Uploading files...'}
+                  </p>
+                </div>
+              </div>
             </div>
-            <button 
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!activeProvider}
-            >
-              <Upload className="w-4 h-4" />
-              Start Backup Now
-            </button>
-          </div>
+          )}
 
           {/* Backup List */}
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            {backups.length === 0 ? (
-              <div className="p-12 text-center">
-                <Database className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600">No backup history yet</p>
-                <p className="text-sm text-gray-500 mt-1">
-                  Start your first backup to see it here
-                </p>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-200">
-                {backups.map((backup) => (
-                  <div key={backup.id} className="p-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-4 flex-1">
-                        {/* Status Icon */}
-                        <div className="mt-1">
-                          {backup.status === 'success' && (
-                            <div className="p-2 bg-green-100 rounded-lg">
-                              <CheckCircle className="w-5 h-5 text-green-600" />
-                            </div>
-                          )}
-                          {backup.status === 'failed' && (
-                            <div className="p-2 bg-red-100 rounded-lg">
-                              <XCircle className="w-5 h-5 text-red-600" />
-                            </div>
-                          )}
-                          {backup.status === 'in-progress' && (
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                              <Clock className="w-5 h-5 text-blue-600 animate-spin" />
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Backup Details */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span
-                              className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                backup.status === 'success'
-                                  ? 'bg-green-100 text-green-700'
-                                  : backup.status === 'failed'
-                                  ? 'bg-red-100 text-red-700'
-                                  : 'bg-blue-100 text-blue-700'
-                              }`}
-                            >
-                              {backup.status === 'success' && 'Completed'}
-                              {backup.status === 'failed' && 'Failed'}
-                              {backup.status === 'in-progress' && 'In Progress'}
-                            </span>
-                            <span className="text-sm text-gray-500">{backup.provider}</span>
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-3.5 h-3.5" />
-                              {new Date(backup.date).toLocaleString()}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Database className="w-3.5 h-3.5" />
-                              {backup.filesCount} files
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <ArrowUpDown className="w-3.5 h-3.5" />
-                              {backup.size}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5" />
-                              {backup.duration}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      {backup.status === 'success' && (
-                        <div className="flex items-center gap-2 ml-4">
-                          <button className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                            <Download className="w-4 h-4 inline mr-1" />
-                            Restore
-                          </button>
-                          <button className="px-3 py-1.5 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-md hover:bg-red-50">
-                            Delete
-                          </button>
-                        </div>
-                      )}
+            {backupsLoading ? (
+              <div className="p-6 space-y-4">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="animate-pulse flex items-start gap-4">
+                    <div className="w-10 h-10 bg-gray-200 rounded-lg" />
+                    <div className="flex-1">
+                      <div className="h-4 bg-gray-200 rounded w-24 mb-2" />
+                      <div className="h-3 bg-gray-100 rounded w-64" />
                     </div>
                   </div>
                 ))}
               </div>
+            ) : backups.length === 0 ? (
+              <div className="p-12 text-center">
+                <Database className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600 font-medium">No backup history yet</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {connectedProviders.length > 0
+                    ? 'Click "Start Backup Now" to create your first backup'
+                    : 'Connect a cloud storage provider first, then start a backup'
+                  }
+                </p>
+                {connectedProviders.length > 0 && (
+                  <button
+                    onClick={() => setShowBackupModal(true)}
+                    className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+                  >
+                    <Upload className="w-4 h-4" />
+                    Start Backup Now
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200">
+                {backups.map((backup) => {
+                  const providerInfo = getProviderInfo(backup.provider)
+                  return (
+                    <div key={backup.id} className="p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start gap-4 flex-1">
+                          {/* Status Icon */}
+                          <div className="mt-1">
+                            {backup.status === 'completed' && (
+                              <div className="p-2 bg-green-100 rounded-lg">
+                                <CheckCircle className="w-5 h-5 text-green-600" />
+                              </div>
+                            )}
+                            {backup.status === 'failed' && (
+                              <div className="p-2 bg-red-100 rounded-lg">
+                                <XCircle className="w-5 h-5 text-red-600" />
+                              </div>
+                            )}
+                            {(backup.status === 'pending' || backup.status === 'in_progress') && (
+                              <div className="p-2 bg-blue-100 rounded-lg">
+                                <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Backup Details */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span
+                                className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                  backup.status === 'completed'
+                                    ? 'bg-green-100 text-green-700'
+                                    : backup.status === 'failed'
+                                    ? 'bg-red-100 text-red-700'
+                                    : 'bg-blue-100 text-blue-700'
+                                }`}
+                              >
+                                {backup.status === 'completed' && 'Completed'}
+                                {backup.status === 'failed' && 'Failed'}
+                                {backup.status === 'pending' && 'Pending'}
+                                {backup.status === 'in_progress' && 'In Progress'}
+                              </span>
+                              <span className="text-sm text-gray-500">
+                                {providerInfo?.name || backup.provider}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-gray-600">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-3.5 h-3.5" />
+                                {new Date(backup.created_at).toLocaleString()}
+                              </span>
+                              {backup.files_count != null && (
+                                <span className="flex items-center gap-1">
+                                  <Database className="w-3.5 h-3.5" />
+                                  {backup.files_count} files
+                                </span>
+                              )}
+                              {backup.size_bytes != null && (
+                                <span className="flex items-center gap-1">
+                                  <ArrowUpDown className="w-3.5 h-3.5" />
+                                  {formatSize(backup.size_bytes)}
+                                </span>
+                              )}
+                              {backup.completed_at && backup.started_at && (
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3.5 h-3.5" />
+                                  {Math.round((new Date(backup.completed_at).getTime() - new Date(backup.started_at).getTime()) / 1000)}s
+                                </span>
+                              )}
+                            </div>
+                            {backup.error_message && (
+                              <p className="text-sm text-red-600 mt-1">{backup.error_message}</p>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2 ml-4">
+                          <button
+                            onClick={() => {
+                              if (confirm('Delete this backup record?')) {
+                                deleteBackupJob.mutate(backup.id)
+                              }
+                            }}
+                            disabled={deleteBackupJob.isPending}
+                            className="px-3 py-1.5 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-md hover:bg-red-50 disabled:opacity-50"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             )}
           </div>
-
-          {/* Auto-Backup Settings */}
-          <div className="mt-6 bg-white rounded-lg border border-gray-200 p-6">
-            <h4 className="text-base font-semibold text-gray-900 mb-4">Auto-Backup Settings</h4>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-gray-900">Enable automatic backups</p>
-                  <p className="text-sm text-gray-500">Automatically backup your data on a schedule</p>
-                </div>
-                <button 
-                  className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors hover:bg-gray-300"
-                  disabled={!activeProvider}
-                >
-                  <span className="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform translate-x-1" />
-                </button>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Backup Frequency
-                  </label>
-                  <select 
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    disabled={!activeProvider}
-                  >
-                    <option>Daily</option>
-                    <option>Weekly</option>
-                    <option>Monthly</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Time
-                  </label>
-                  <input
-                    type="time"
-                    defaultValue="02:00"
-                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    disabled={!activeProvider}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <button 
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={!activeProvider}
-                >
-                  Save Auto-Backup Settings
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
+      )}
+
+      {/* ── Modals ── */}
+      {showBackupModal && connectedProviders.length > 0 && (
+        <BackupModal
+          connections={connectedProviders}
+          onClose={() => setShowBackupModal(false)}
+          onStart={handleStartBackup}
+          isStarting={createBackup.isPending}
+        />
+      )}
+
+      {showMegaModal && (
+        <MegaConnectModal
+          onClose={() => setShowMegaModal(false)}
+          onConnect={handleMegaConnect}
+          isConnecting={connectMega.isPending}
+        />
       )}
     </div>
   )

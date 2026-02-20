@@ -13,7 +13,7 @@ export interface UserListResponse {
 
 export const usersAPI = {
   // Get all users
-  getAll: async (params?: { page?: number; search?: string; paying?: 'paying' | 'non-paying' }) => {
+  getAll: async (params?: { page?: number; search?: string; paying?: 'paying' | 'non-paying'; number_of_qrcodes?: string }) => {
     const response = await apiClient.get<UserListResponse>('/users', { params })
     return response.data
   },

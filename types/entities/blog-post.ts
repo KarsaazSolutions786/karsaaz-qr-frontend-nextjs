@@ -9,6 +9,7 @@ export interface BlogPost {
   featuredImageId?: number
   publishedAt?: string
   translationId?: number
+  translation?: { name: string }
   createdAt: string
   updatedAt: string
 }

@@ -57,10 +57,10 @@ export default function BlogPostsPage() {
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
+                    <th className="w-12 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">ID</th>
                     <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Title</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Excerpt</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Published</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Created</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Language</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Published at</th>
                     <th className="relative py-3.5 pl-3 pr-4">
                       <span className="sr-only">Actions</span>
                     </th>
@@ -69,26 +69,15 @@ export default function BlogPostsPage() {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {data.data.map((post: BlogPost) => (
                     <tr key={post.id}>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-500">{post.id}</td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                         {post.title}
                       </td>
-                      <td className="px-3 py-4 text-sm text-gray-500 max-w-xs truncate">
-                        {(post.excerpt || post.content)?.slice(0, 60)}
-                        {(post.excerpt || post.content)?.length > 60 ? '…' : ''}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm">
-                        {post.publishedAt ? (
-                          <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                            Published
-                          </span>
-                        ) : (
-                          <span className="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold leading-5 text-gray-800">
-                            Draft
-                          </span>
-                        )}
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {post.translation?.name ?? 'English (default)'}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {new Date(post.createdAt).toLocaleDateString()}
+                        {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : '---'}
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                         <Link

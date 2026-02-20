@@ -35,6 +35,11 @@ export interface User {
   avatar?: string
   created_at?: string
   updated_at?: string
+  // Admin-facing backend fields
+  mobile_number?: string
+  qrcodes_count?: number
+  scans?: number
+  parent_user?: { id: number | string; name: string } | null
   // Computed/convenience properties (set by client-side logic)
   role?: string
   permissions?: Permission[]

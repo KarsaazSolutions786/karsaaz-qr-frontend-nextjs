@@ -201,7 +201,7 @@ export default function DashboardLayout({
       try {
         // Fetch folders and template categories in parallel
         const [foldersData, categoriesData] = await Promise.all([
-          getSidebarFolders(),
+          getSidebarFolders(user.id),
           getSidebarTemplateCategories()
         ])
         

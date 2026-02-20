@@ -29,6 +29,19 @@ export const queryKeys = {
     transactions: () => ['subscriptions', 'transactions'] as const,
   },
 
+  // Admin Subscriptions
+  adminSubscriptions: {
+    all: () => ['admin-subscriptions'] as const,
+    list: (filters?: Record<string, unknown>) => ['admin-subscriptions', 'list', filters] as const,
+    detail: (id: number) => ['admin-subscriptions', id] as const,
+    statuses: () => ['admin-subscriptions', 'statuses'] as const,
+  },
+
+  // System Configs
+  systemConfigs: {
+    byKeys: (keys: string[]) => ['system-configs', keys.sort().join(',')] as const,
+  },
+
   // Domains
   domains: {
     all: () => ['domains'] as const,
@@ -159,5 +172,34 @@ export const queryKeys = {
     list: (filters?: Record<string, unknown>) => ['custom-codes', 'list', filters] as const,
     detail: (id: number) => ['custom-codes', id] as const,
     positions: () => ['custom-codes', 'positions'] as const,
+  },
+
+  // Dynamic Biolink Blocks
+  dynamicBiolinkBlocks: {
+    all: () => ['dynamic-biolink-blocks'] as const,
+    list: (filters?: Record<string, unknown>) => ['dynamic-biolink-blocks', 'list', filters] as const,
+    detail: (id: number) => ['dynamic-biolink-blocks', id] as const,
+  },
+
+  // Folders
+  folders: {
+    all: () => ['folders'] as const,
+    list: (params?: Record<string, unknown>) => ['folders', 'list', params] as const,
+    tree: () => ['folders', 'tree'] as const,
+    detail: (id: string) => ['folders', id] as const,
+  },
+
+  // Cloud Storage
+  cloudStorage: {
+    connections: () => ['cloud-storage', 'connections'] as const,
+    connection: (id: string) => ['cloud-storage', 'connections', id] as const,
+    backupJobs: () => ['cloud-storage', 'backup-jobs'] as const,
+    backupJob: (id: string) => ['cloud-storage', 'backup-jobs', id] as const,
+  },
+
+  // Passwordless Auth
+  passwordless: {
+    status: () => ['passwordless', 'status'] as const,
+    preference: () => ['passwordless', 'preference'] as const,
   },
 }

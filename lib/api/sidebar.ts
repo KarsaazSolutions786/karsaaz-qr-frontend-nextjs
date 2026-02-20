@@ -28,11 +28,12 @@ export interface Plan {
 
 /**
  * Fetch user's folders with QR counts for sidebar
- * Uses existing folders API
+ * Matches Lit frontend: GET /folders/{userId}
  */
-export async function getSidebarFolders(): Promise<Folder[]> {
+export async function getSidebarFolders(userId?: number | string): Promise<Folder[]> {
+  if (!userId) return []
   try {
-    const folders = await foldersAPI.list()
+    const folders = await foldersAPI.listByUser(userId)
     return folders || []
   } catch (error) {
     console.error('Failed to fetch sidebar folders:', error)
@@ -94,11 +95,12 @@ export async function getTotalScans(): Promise<number> {
       'product-catalogue', 'business-review', 'app-download', 'biolink'
     ].join(',')
     
-    const response = await apiClient.get('/analytics/total-scans', {
+    // Matches Lit frontend: GET /qrcodes/count/scans?type=... returns { count: number }
+    const response = await apiClient.get('/qrcodes/count/scans', {
       params: { type: dynamicTypes }
     })
     
-    return response.data?.total || response.data?.count || 0
+    return response.data?.count || response.data?.total || 0
   } catch (error) {
     console.error('Failed to fetch total scans:', error)
     return 0

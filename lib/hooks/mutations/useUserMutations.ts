@@ -8,10 +8,11 @@ export function useCreateUser() {
   const router = useRouter()
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: Partial<User>) => usersAPI.create(data),
-    onSuccess: () => {
+    mutationFn: (data: Partial<User> & { role_id?: number; password?: string; password_confirmation?: string }) =>
+      usersAPI.create(data),
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users.all() })
-      router.push('/users')
+      router.push(`/users/${data.id}`)
     },
   })
 }
@@ -19,7 +20,7 @@ export function useCreateUser() {
 export function useUpdateUser() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<User> }) =>
+    mutationFn: ({ id, data }: { id: number; data: Partial<User> & { role_id?: number; password?: string; password_confirmation?: string } }) =>
       usersAPI.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users.all() })
@@ -77,5 +78,21 @@ export function useResetUserScansLimit() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users.all() })
     },
+  })
+}
+
+export function useResetUserRole() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => usersAPI.resetRole(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.all() })
+    },
+  })
+}
+
+export function useGenerateMagicUrl() {
+  return useMutation({
+    mutationFn: (id: number) => usersAPI.generateMagicUrl(id),
   })
 }

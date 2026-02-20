@@ -1,27 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from '@/lib/hooks/queries/useTranslations'
 import {
   useDeleteTranslation,
   useSetMainTranslation,
   useToggleTranslationActive,
+  useAutoTranslate,
 } from '@/lib/hooks/mutations/useTranslationMutations'
+import { translationsAPI } from '@/lib/api/endpoints/translations'
 import type { Translation } from '@/types/entities/translation'
 
 export default function TranslationsPage() {
+  const router = useRouter()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
+  const [canAutoTranslate, setCanAutoTranslate] = useState<boolean | null>(null)
+
   const { data, isLoading } = useTranslations({ page, search: search || undefined })
   const deleteMutation = useDeleteTranslation()
   const setMainMutation = useSetMainTranslation()
   const toggleActiveMutation = useToggleTranslationActive()
+  const autoTranslateMutation = useAutoTranslate()
+
+  useEffect(() => {
+    translationsAPI.canAutoTranslate()
+      .then((res) => setCanAutoTranslate(res.available ?? false))
+      .catch(() => setCanAutoTranslate(false))
+  }, [])
 
   const handleDelete = async (id: number, name: string) => {
     if (confirm(`Are you sure you want to delete "${name}"?`)) {
       await deleteMutation.mutateAsync(id)
     }
+  }
+
+  const handleAutoTranslate = (id: number) => {
+    if (!canAutoTranslate) {
+      if (confirm('Google Translate API key is not configured. Go to System Settings to configure it?')) {
+        router.push('/system/settings?tab-id=advanced')
+      }
+      return
+    }
+    if (!confirm('Start auto-translation? This may take a few minutes.')) return
+    autoTranslateMutation.mutate(id, {
+      onSuccess: () => {
+        alert('Auto translation started. Check completeness after a few minutes.')
+      },
+    })
   }
 
   return (
@@ -40,15 +68,14 @@ export default function TranslationsPage() {
 
       <div className="mt-8">
         <div className="mb-6">
-          <input type="search" placeholder="Search translations..." value={search}
+          <input type="search" placeholder="Search translations…" value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:max-w-md" />
         </div>
 
         {isLoading ? (
-          <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading translations...</p>
+          <div className="flex justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
           </div>
         ) : data && data.data.length > 0 ? (
           <>
@@ -56,18 +83,19 @@ export default function TranslationsPage() {
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
+                    <th className="w-8 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">ID</th>
                     <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Name</th>
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Locale</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Direction</th>
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Active</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Main</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Main Language</th>
                     <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Completeness</th>
-                    <th className="relative py-3.5 pl-3 pr-4"><span className="sr-only">Actions</span></th>
+                    <th className="relative py-3.5 pl-3 pr-4 w-72"><span className="sr-only">Actions</span></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {data.data.map((translation: Translation) => (
                     <tr key={translation.id}>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-500">{translation.id}</td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                         {translation.displayName || translation.name}
                       </td>
@@ -75,52 +103,56 @@ export default function TranslationsPage() {
                         <span className="inline-flex rounded-full bg-indigo-100 px-2 text-xs font-semibold leading-5 text-indigo-800">{translation.locale}</span>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${translation.direction === 'rtl' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}`}>
-                          {translation.direction.toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         <button
                           onClick={() => toggleActiveMutation.mutate(translation.id)}
                           disabled={toggleActiveMutation.isPending || translation.isMain}
-                          className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${translation.isActive ? 'bg-blue-600' : 'bg-gray-200'}`}
+                          className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 ${translation.isActive ? 'bg-blue-600' : 'bg-gray-200'}`}
                         >
                           <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${translation.isActive ? 'translate-x-5' : 'translate-x-0'}`} />
                         </button>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {translation.isMain ? (
-                          <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">Main</span>
+                          <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">YES</span>
                         ) : (
-                          <button
-                            onClick={() => setMainMutation.mutate(translation.id)}
-                            disabled={setMainMutation.isPending}
-                            className="text-sm text-blue-600 hover:text-blue-900 disabled:opacity-50"
-                          >
-                            Set Main
-                          </button>
+                          <span className="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold leading-5 text-gray-600">NO</span>
                         )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         <div className="flex items-center gap-2">
                           <div className="h-2 w-24 overflow-hidden rounded-full bg-gray-200">
-                            <div
-                              className="h-full rounded-full bg-blue-600 transition-all"
-                              style={{ width: `${translation.completeness}%` }}
-                            />
+                            <div className="h-full rounded-full bg-blue-600 transition-all" style={{ width: `${translation.completeness}%` }} />
                           </div>
                           <span className="text-xs text-gray-500">{translation.completeness}%</span>
                         </div>
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
-                        <Link href={`/translations/${translation.id}`} className="text-blue-600 hover:text-blue-900 mr-4">Edit</Link>
-                        <button
-                          onClick={() => handleDelete(translation.id, translation.name)}
-                          className="text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-50"
-                          disabled={deleteMutation.isPending || translation.isMain}
-                        >
-                          Delete
-                        </button>
+                        <div className="flex items-center justify-end gap-3 flex-wrap">
+                          <Link href={`/translations/${translation.id}`} className="text-blue-600 hover:text-blue-900">Edit</Link>
+                          <button
+                            onClick={() => handleAutoTranslate(translation.id)}
+                            disabled={autoTranslateMutation.isPending}
+                            className="text-purple-600 hover:text-purple-900 disabled:opacity-50"
+                          >
+                            Auto Translate
+                          </button>
+                          {!translation.isMain && (
+                            <button
+                              onClick={() => setMainMutation.mutate(translation.id)}
+                              disabled={setMainMutation.isPending}
+                              className="text-indigo-600 hover:text-indigo-900 disabled:opacity-50"
+                            >
+                              Set Main
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDelete(translation.id, translation.name)}
+                            className="text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={deleteMutation.isPending || translation.isMain}
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -139,10 +171,7 @@ export default function TranslationsPage() {
           </>
         ) : (
           <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No translations</h3>
+            <h3 className="text-sm font-medium text-gray-900">No translations</h3>
             <p className="mt-1 text-sm text-gray-500">Get started by adding a language</p>
             <div className="mt-6">
               <Link href="/translations/new" className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">Add Language</Link>

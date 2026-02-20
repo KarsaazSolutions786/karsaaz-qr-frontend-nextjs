@@ -10,8 +10,9 @@ export interface ListQRCodesParams {
   search?: string
   type?: string
   types?: string[] // Multiple types filter
-  status?: 'active' | 'inactive' | 'archived'
+  status?: 'active' | 'inactive' // Use search_archived for archived filter
   statuses?: string[] // Multiple statuses filter
+  search_archived?: boolean // true = show archived QRs, false = show active QRs
   folderId?: string | null // Folder filter
   tags?: string[] // Tags filter
   createdFrom?: string // ISO 8601
@@ -116,16 +117,51 @@ export const qrcodesAPI = {
   // List QR codes with pagination
   list: async (params: ListQRCodesParams = {}) => {
     try {
-      const response = await apiClient.get<BackendPaginatedResponse<QRCode>>('/qrcodes', { 
-        params: {
-          ...params,
-          per_page: params.perPage, // Transform to snake_case for backend
-          keyword: params.search, // Backend uses 'keyword' instead of 'search'
-        }
+      const {
+        sortBy,
+        sortOrder,
+        perPage,
+        search,
+        search_archived,
+        folderId,
+        scansMin,
+        scansMax,
+        createdFrom,
+        createdTo,
+        updatedFrom,
+        updatedTo,
+        ...restParams
+      } = params
+
+      // Build query params using backend's expected param names
+      const queryParams: Record<string, unknown> = {
+        ...restParams,                          // page, type, status, tags, etc.
+        page_size: perPage,                     // backend uses page_size
+        keyword: search,                        // backend uses keyword
+        folder_id: folderId,                    // backend uses folder_id
+        // Convert sortBy+sortOrder to Vue-compatible sort param (-field = desc)
+        sort: sortBy
+          ? (sortOrder === 'desc' ? `-${sortBy}` : sortBy)
+          : undefined,
+        ...(scansMin != null ? { scans_min: scansMin } : {}),
+        ...(scansMax != null ? { scans_max: scansMax } : {}),
+        ...(createdFrom ? { created_from: createdFrom } : {}),
+        ...(createdTo ? { created_to: createdTo } : {}),
+        ...(updatedFrom ? { updated_from: updatedFrom } : {}),
+        ...(updatedTo ? { updated_to: updatedTo } : {}),
+      }
+
+      // Only include search_archived if explicitly set
+      if (search_archived !== undefined) {
+        queryParams.search_archived = search_archived
+      }
+
+      const response = await apiClient.get<BackendPaginatedResponse<QRCode>>('/qrcodes', {
+        params: queryParams,
       })
-      
+
       console.log('QR Codes API Response:', response.data)
-      
+
       // Check if response has the expected structure
       if (!response.data) {
         console.warn('No data in response')

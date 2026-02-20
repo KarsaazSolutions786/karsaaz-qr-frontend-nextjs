@@ -37,3 +37,24 @@ export function useDeleteContentBlock() {
     },
   })
 }
+
+export function useDeleteContentBlocksByTranslation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (translationId: number) => contentBlocksAPI.deleteByTranslation(translationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.contentBlocks.all() })
+    },
+  })
+}
+
+export function useCopyContentBlocks() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ sourceId, destinationId }: { sourceId: number; destinationId: number }) =>
+      contentBlocksAPI.copyBlocks(sourceId, destinationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.contentBlocks.all() })
+    },
+  })
+}

@@ -10,6 +10,7 @@ export interface LeadForm {
   isActive: boolean
   responseCount: number
   userId: number
+  qrcode_name?: string
   createdAt: string
   updatedAt: string
 }
@@ -45,10 +46,16 @@ export interface FormSettings {
   captchaEnabled: boolean
 }
 
+export interface LeadFormResponseField {
+  question: string
+  value: string | number | null
+}
+
 export interface LeadFormResponse {
   id: number
   leadFormId: number
-  data: Record<string, any>
+  data: Record<string, unknown>
+  fields?: LeadFormResponseField[]
   fingerprint: string | null
   ipAddress: string | null
   userAgent: string | null

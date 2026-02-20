@@ -1,16 +1,27 @@
 export interface Transaction {
-  id: string // UUID
+  id: string // UUID or numeric string
   userId: string
-  subscriptionId: string
-  type: 'payment' | 'refund' | 'failed_payment'
-  amount: number // Amount in cents
+  subscriptionId?: string
+  type?: 'payment' | 'refund' | 'failed_payment'
+  amount: number // Amount in cents (or raw amount)
   currency: string // e.g., "USD"
   status: 'pending' | 'completed' | 'failed'
+
+  // Backend-specific fields (used by admin transactions list)
+  source?: string // e.g. 'stripe' | 'offline-payment' | 'paypal' | 'razorpay'
+  formatted_amount?: string // e.g. "$29.99"
+  user_name?: string // denormalized from user relationship
+  subscription_plan_name?: string // denormalized from subscription plan
+  stripe_payment_intent_id?: string
+  payment_proof?: string // file path — only for offline-payment source
+
+  // Camel-case legacy fields
   stripePaymentIntentId?: string
   stripeInvoiceId?: string
   description?: string
   createdAt: string // ISO 8601
-  updatedAt: string
+  updatedAt?: string
+  created_at?: string // snake_case from backend
 }
 
 export interface PaymentMethod {

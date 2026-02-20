@@ -1,6 +1,7 @@
 'use client'
 
 import { useQRCode } from '@/lib/hooks/queries/useQRCode'
+import { useQRCodeStats } from '@/lib/hooks/queries/useQRCodeStats'
 import { useDeleteQRCode } from '@/lib/hooks/mutations/useDeleteQRCode'
 import { useQRActions } from '@/hooks/useQRActions'
 import { QRCodePreview } from '@/components/features/qrcodes/QRCodePreview'
@@ -32,8 +33,9 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
   const [showPINProtection, setShowPINProtection] = useState(false)
   
   const { data: qrcode, isLoading } = useQRCode(params.id)
+  const { data: stats } = useQRCodeStats(params.id)
   const deleteMutation = useDeleteQRCode()
-  const { duplicateQRCode, archiveQRCode, transferQRCode, convertQRType, addPINProtection } = useQRActions()
+  const { duplicateQRCode, archiveQRCode, transferQRCode, convertQRType, addPINProtection, downloadQRCode } = useQRActions()
 
   const handleDelete = async () => {
     try {
@@ -150,7 +152,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
             <div className="space-y-2">
               <button
                 className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
-                onClick={() => {/* Download action */}}
+                onClick={() => qrcode && downloadQRCode(qrcode.id, qrcode.name)}
               >
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 Download QR Code
@@ -202,15 +204,15 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
           <div className="grid grid-cols-3 gap-4">
             <div className="rounded-lg border border-gray-200 bg-white p-4">
               <p className="text-sm font-medium text-gray-500">Total Scans</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">{qrcode.scans}</p>
+              <p className="mt-2 text-3xl font-bold text-gray-900">{stats?.total_scans ?? qrcode.scans}</p>
             </div>
             <div className="rounded-lg border border-gray-200 bg-white p-4">
               <p className="text-sm font-medium text-gray-500">This Month</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">{Math.floor(qrcode.scans * 0.3)}</p>
+              <p className="mt-2 text-3xl font-bold text-gray-900">{stats?.scans_this_month ?? '—'}</p>
             </div>
             <div className="rounded-lg border border-gray-200 bg-white p-4">
               <p className="text-sm font-medium text-gray-500">Today</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">{Math.floor(qrcode.scans * 0.05)}</p>
+              <p className="mt-2 text-3xl font-bold text-gray-900">{stats?.scans_today ?? '—'}</p>
             </div>
           </div>
 
@@ -225,8 +227,12 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
               <div>
                 <dt className="text-sm font-medium text-gray-500">Status</dt>
                 <dd className="mt-1">
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                    Active
+                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                    qrcode.status === 'archived' ? 'bg-orange-100 text-orange-800' :
+                    qrcode.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                    'bg-green-100 text-green-800'
+                  }`}>
+                    {(qrcode.status || 'active').charAt(0).toUpperCase() + (qrcode.status || 'active').slice(1)}
                   </span>
                 </dd>
               </div>

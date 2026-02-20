@@ -2,14 +2,15 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState, useEffect } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { Archive, Filter, FolderTree as FolderTreeIcon } from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { useMultiSelect } from '@/hooks/useMultiSelect'
 import { useFilters } from '@/hooks/useFilters'
-import { MultiSelectToolbar } from '@/components/qr/MultiSelectToolbar'
+import { useQRActions } from '@/hooks/useQRActions'
+import { MultiSelectToolbar, type BulkAction } from '@/components/qr/MultiSelectToolbar'
 import { FilterModal } from '@/components/qr/FilterModal'
 import { FolderTree } from '@/components/qr/FolderTree'
 import { QRCodeCardSkeleton } from '@/components/common/Skeleton'
@@ -20,6 +21,16 @@ import { QRCodeMinimalCard } from '@/components/qr/QRCodeMinimalCard'
 import { QRCodeDetailedRow } from '@/components/qr/QRCodeDetailedRow'
 import { QRCodeCard } from '@/components/features/qrcodes/QRCodeCard'
 import { Pagination } from '@/components/common/Pagination'
+import { useFolders } from '@/lib/hooks/queries/useFolders'
+import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
+import {
+  Download,
+  Trash2,
+  FolderInput,
+  ArchiveRestore,
+  Copy,
+  FileDown,
+} from 'lucide-react'
 
 export default function ArchivedQRCodesPage() {
   const [search, setSearch] = useState('')
@@ -44,32 +55,100 @@ export default function ArchivedQRCodesPage() {
       localStorage.setItem('qr-list-view-mode', mode)
     }
   }
-  
-  // Fetch QR codes with archived filter
-  const { data, isLoading, error } = useQRCodes({ 
-    page, 
-    search: search || undefined,
-    folderId: selectedFolder || undefined,
-    status: 'archived',
-  })
-
-  const {
-    selectedItems,
-    deselectAll,
-  } = useMultiSelect()
 
   const {
     filters,
     updateFilters,
     resetFilters,
   } = useFilters()
+  
+  // Parse sort option into API params
+  const { sortBy: sortField, sortOrder } = useMemo(() => parseSortOption(sortBy), [sortBy])
 
-  // Auto-set status filter to archived
-  useEffect(() => {
-    if (filters.status !== 'archived') {
-      updateFilters({ status: 'archived' })
+  // Build filter params for API
+  const filterParams = useMemo(() => buildApiFilters(filters), [filters])
+
+  // Fetch QR codes with archived filter + sort + filters
+  const { data, isLoading, error } = useQRCodes({ 
+    page, 
+    search: search || undefined,
+    folderId: selectedFolder || undefined,
+    sortBy: sortField,
+    sortOrder,
+    search_archived: true,
+    ...filterParams,
+  })
+
+  // Folders data
+  const { data: foldersData } = useFolders()
+
+  const qrcodes = data?.data || []
+  const hasQRCodes = qrcodes.length > 0
+
+  const {
+    selectedItems,
+    selectedIds,
+    deselectAll,
+    toggleItem,
+  } = useMultiSelect(qrcodes)
+
+  const {
+    isProcessing,
+    bulkDownloadQRCodes,
+    moveToFolder,
+    bulkDuplicateQRCodes,
+    bulkUnarchiveQRCodes,
+    bulkDeleteQRCodes,
+    unarchiveQRCode,
+    duplicateQRCode,
+    deleteQRCode,
+    downloadQRCode,
+  } = useQRActions()
+
+  // Build bulk actions for archived toolbar (unarchive instead of archive)
+  const bulkActions: BulkAction[] = useMemo(() => [
+    {
+      id: 'download',
+      label: 'Download',
+      icon: <Download className="w-4 h-4" />,
+      onClick: (ids: string[]) => bulkDownloadQRCodes(ids),
+    },
+    {
+      id: 'duplicate',
+      label: 'Duplicate',
+      icon: <Copy className="w-4 h-4" />,
+      onClick: (ids: string[]) => bulkDuplicateQRCodes(ids),
+    },
+    {
+      id: 'unarchive',
+      label: 'Unarchive',
+      icon: <ArchiveRestore className="w-4 h-4" />,
+      onClick: (ids: string[]) => bulkUnarchiveQRCodes(ids).then(() => deselectAll()),
+    },
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: <Trash2 className="w-4 h-4" />,
+      variant: 'danger' as const,
+      requiresConfirmation: true,
+      onClick: (ids: string[]) => bulkDeleteQRCodes(ids).then(() => deselectAll()),
+    },
+  ], [bulkDownloadQRCodes, bulkDuplicateQRCodes, bulkUnarchiveQRCodes, bulkDeleteQRCodes, deselectAll])
+
+  // Single-item action handler for archived rows
+  const handleRowAction = useCallback((action: string, qrCodeId: string) => {
+    switch (action) {
+      case 'unarchive': unarchiveQRCode(qrCodeId); break
+      case 'duplicate': duplicateQRCode(qrCodeId); break
+      case 'delete':
+        if (confirm('Are you sure you want to delete this QR code?')) {
+          deleteQRCode(qrCodeId)
+        }
+        break
+      case 'download': downloadQRCode(qrCodeId); break
+      default: break
     }
-  }, [])
+  }, [unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode])
 
   const handleSearch = (query: string) => {
     setSearch(query)
@@ -79,9 +158,6 @@ export default function ArchivedQRCodesPage() {
   if (error) {
     console.error('Archived QR Codes fetch error:', error)
   }
-
-  const qrcodes = data?.data || []
-  const hasQRCodes = qrcodes.length > 0
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -130,6 +206,10 @@ export default function ArchivedQRCodesPage() {
           <MultiSelectToolbar
             selectedCount={selectedItems.length}
             onClearSelection={deselectAll}
+            actions={bulkActions.map(a => ({
+              ...a,
+              onClick: () => a.onClick(selectedIds),
+            }))}
           />
         </div>
       )}
@@ -141,9 +221,9 @@ export default function ArchivedQRCodesPage() {
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="font-semibold text-gray-900 mb-4">Folders</h3>
               <FolderTree
-                folders={[]}
+                folders={foldersData || []}
                 selectedFolderId={selectedFolder}
-                onSelectFolder={setSelectedFolder}
+                onSelectFolder={(id) => { setSelectedFolder(id); setPage(1) }}
                 onToggleExpanded={() => {}}
               />
             </div>
@@ -244,8 +324,8 @@ export default function ArchivedQRCodesPage() {
                       key={qrcode.id}
                       qrcode={qrcode}
                       isSelected={selectedItems.some(item => item.id === qrcode.id)}
-                      onToggleSelect={() => {}}
-                      onAction={() => {}}
+                      onToggleSelect={() => toggleItem(qrcode.id)}
+                      onAction={(action) => handleRowAction(action, qrcode.id)}
                     />
                   ))}
                 </div>

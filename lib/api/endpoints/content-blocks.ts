@@ -7,7 +7,7 @@ import type {
 
 export const contentBlocksAPI = {
   // Get all content blocks
-  getAll: async (params?: { page?: number; search?: string }) => {
+  getAll: async (params?: { page?: number; search?: string; translation_id?: number }) => {
     const response = await apiClient.get<ContentBlockListResponse>('/content-blocks', { params })
     return response.data
   },
