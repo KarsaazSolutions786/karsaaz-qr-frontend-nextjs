@@ -5,7 +5,7 @@
  * with customizable frame and dot styles.
  */
 
-import { CornerFrameStyle, CornerDotStyle } from '@/types/entities/designer';
+// Corner finder style types handled via string for backward compatibility
 
 export interface CornerRenderContext {
   x: number; // Top-left X position
@@ -18,7 +18,7 @@ export interface CornerRenderContext {
  * Render corner frame (outer pattern)
  */
 export function renderCornerFrame(
-  style: CornerFrameStyle,
+  style: string,
   ctx: CornerRenderContext,
   color: string
 ): string {
@@ -27,12 +27,15 @@ export function renderCornerFrame(
 
   switch (style) {
     case 'square':
+    case 'default':
       return renderSquareFrame(x, y, size, moduleSize, color);
     case 'rounded':
+    case 'rounded-corners':
       return renderRoundedFrame(x, y, size, moduleSize, color);
     case 'extra-rounded':
       return renderExtraRoundedFrame(x, y, size, moduleSize, color);
     case 'circular':
+    case 'circle':
       return renderCircularFrame(x, y, size, moduleSize, color);
     case 'dot':
       return renderDotFrame(x, y, size, moduleSize, color);
@@ -45,7 +48,7 @@ export function renderCornerFrame(
  * Render corner dot (inner pattern)
  */
 export function renderCornerDot(
-  style: CornerDotStyle,
+  style: string,
   ctx: CornerRenderContext,
   color: string
 ): string {
@@ -56,11 +59,14 @@ export function renderCornerDot(
 
   switch (style) {
     case 'square':
+    case 'default':
       return `<rect x="${dotX}" y="${dotY}" width="${dotSize}" height="${dotSize}" fill="${color}"/>`;
     case 'rounded':
+    case 'rounded-corners':
       const roundedRadius = dotSize * 0.3;
       return `<rect x="${dotX}" y="${dotY}" width="${dotSize}" height="${dotSize}" rx="${roundedRadius}" ry="${roundedRadius}" fill="${color}"/>`;
     case 'dot':
+    case 'circle':
       const cx = dotX + dotSize / 2;
       const cy = dotY + dotSize / 2;
       const radius = dotSize / 2;
@@ -197,8 +203,8 @@ function renderDotFrame(
  * Render complete corner (frame + dot)
  */
 export function renderCompleteCorner(
-  frameStyle: CornerFrameStyle,
-  dotStyle: CornerDotStyle,
+  frameStyle: string,
+  dotStyle: string,
   ctx: CornerRenderContext,
   color: string
 ): string {
@@ -212,8 +218,8 @@ export function renderCompleteCorner(
  * Render all three corners
  */
 export function renderAllCorners(
-  frameStyle: CornerFrameStyle,
-  dotStyle: CornerDotStyle,
+  frameStyle: string,
+  dotStyle: string,
   moduleSize: number,
   moduleCount: number,
   margin: number,
@@ -251,22 +257,28 @@ export function renderAllCorners(
  * Get corner style description (for UI)
  */
 export function getCornerStyleDescription(
-  frameStyle: CornerFrameStyle,
-  dotStyle: CornerDotStyle
+  frameStyle: string,
+  dotStyle: string
 ): string {
-  const frameDescriptions: Record<CornerFrameStyle, string> = {
+  const frameDescriptions: Record<string, string> = {
     square: 'Square',
+    default: 'Square',
     rounded: 'Rounded',
+    'rounded-corners': 'Rounded',
     'extra-rounded': 'Extra Rounded',
     circular: 'Circular',
+    circle: 'Circular',
     dot: 'Dotted',
   };
 
-  const dotDescriptions: Record<CornerDotStyle, string> = {
+  const dotDescriptions: Record<string, string> = {
     square: 'square dot',
+    default: 'square dot',
     rounded: 'rounded dot',
+    'rounded-corners': 'rounded dot',
     dot: 'circular dot',
+    circle: 'circular dot',
   };
 
-  return `${frameDescriptions[frameStyle]} frame with ${dotDescriptions[dotStyle]}`;
+  return `${frameDescriptions[frameStyle] || frameStyle} frame with ${dotDescriptions[dotStyle] || dotStyle}`;
 }

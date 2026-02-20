@@ -3,30 +3,55 @@
  * 
  * Defines all visual customization options for QR codes including
  * module shapes, corner styles, fills, logos, backgrounds, and AI designs.
+ * 
+ * IMPORTANT: Shape values must match the legacy Lit frontend exactly
+ * for backend compatibility.
  */
 
-// Module/Pattern Shapes
+// Module/Pattern Shapes — matches legacy module-fields.js (15 options)
 export type ModuleShape = 
   | 'square'
-  | 'rounded'
   | 'dots'
-  | 'circular'
+  | 'triangle'
+  | 'rhombus'
+  | 'star-5'
+  | 'star-7'
+  | 'roundness'
+  | 'vertical-lines'
+  | 'horizontal-lines'
   | 'diamond'
-  | 'classy'
-  | 'classy-rounded';
+  | 'fish'
+  | 'tree'
+  | 'twoTrianglesWithCircle'
+  | 'fourTriangles'
+  | 'triangle-end';
 
-// Corner Styles
-export type CornerFrameStyle =
-  | 'square'
-  | 'rounded'
-  | 'extra-rounded'
-  | 'circular'
-  | 'dot';
+// Finder (eye frame) Styles — matches legacy module-fields.js (9 options)
+export type FinderStyle =
+  | 'default'
+  | 'eye-shaped'
+  | 'octagon'
+  | 'rounded-corners'
+  | 'whirlpool'
+  | 'water-drop'
+  | 'circle'
+  | 'zigzag'
+  | 'circle-dots';
 
-export type CornerDotStyle =
-  | 'square'
-  | 'rounded'
-  | 'dot';
+// Finder Dot Styles — matches legacy module-fields.js (8 options)
+export type FinderDotStyle =
+  | 'default'
+  | 'eye-shaped'
+  | 'octagon'
+  | 'rounded-corners'
+  | 'whirlpool'
+  | 'water-drop'
+  | 'circle'
+  | 'zigzag';
+
+// Keep old types as aliases for backward compat
+export type CornerFrameStyle = FinderStyle;
+export type CornerDotStyle = FinderDotStyle;
 
 // Fill Types
 export type FillType =
@@ -61,15 +86,26 @@ export type FillConfig = SolidFill | GradientFill | ImageFill;
 
 // Logo Configuration
 export type LogoShape = 'square' | 'circle';
+export type LogoType = 'preset' | 'custom';
 
 export interface LogoConfig {
   url: string;
-  size: number; // 0-1 (percentage of QR code size)
+  logoType?: LogoType; // preset or custom upload (default: 'preset')
+  size: number; // 0-1 (percentage of QR code size) — maps to logoScale
   margin: number; // Margin around logo in modules
   shape: LogoShape;
-  borderWidth?: number; // Border width in pixels
-  borderColor?: string; // Hex color
-  backgroundColor?: string; // Background behind logo
+  borderWidth?: number;
+  borderColor?: string;
+  backgroundColor?: string;
+  // Position controls (defaults: centered, no rotation)
+  positionX?: number; // 0-1 horizontal (0.5 = center)
+  positionY?: number; // 0-1 vertical (0.5 = center)
+  rotate?: number; // 0-360 degrees
+  // Background controls (defaults: enabled, white circle, 1.3x)
+  backgroundEnabled?: boolean;
+  backgroundFill?: string; // hex color for background behind logo
+  backgroundScale?: number; // 0.3-2 (multiplier of logo area)
+  backgroundShape?: LogoShape; // circle or square
 }
 
 // Background Configuration
@@ -104,14 +140,33 @@ export interface AIDesignConfig {
   designId?: string; // Reference to generated design
 }
 
+// Gradient Fill Configuration (backend format with multi-stop support)
+export interface GradientFillConfig {
+  type: string; // LINEAR, RADIAL
+  colors: Array<{
+    color: string;
+    stop: number; // 0-100
+    opacity: number; // 0-1
+    id?: string;
+  }>;
+  angle?: number; // 0-360 for LINEAR
+}
+
 // Complete Designer Configuration
 export interface DesignerConfig {
   // Module customization
   moduleShape: ModuleShape;
   
-  // Corner customization
-  cornerFrameStyle: CornerFrameStyle;
-  cornerDotStyle: CornerDotStyle;
+  // Finder (eye) customization — uses legacy naming
+  finder: FinderStyle;
+  finderDot: FinderDotStyle;
+  // Keep old aliases working
+  cornerFrameStyle?: FinderStyle;
+  cornerDotStyle?: FinderDotStyle;
+  
+  // Eye colors (separate from foreground)
+  eyeExternalColor: string;
+  eyeInternalColor: string;
   
   // Fill customization
   foregroundFill: FillConfig;
@@ -122,25 +177,62 @@ export interface DesignerConfig {
   // Background
   background: BackgroundConfig;
   
+  // Outlined shape
+  shape: string; // 60+ shapes or 'none'
+  frameColor: string;
+  
+  // Advanced shape / sticker
+  advancedShape: string; // 12 options or 'none'
+  advancedShapeDropShadow: boolean;
+  advancedShapeFrameColor: string;
+  
+  // Sticker text
+  text: string;
+  textColor: string;
+  textBackgroundColor: string;
+  fontFamily: string;
+  textSize: number;
+  
+  // Sticker-specific fields
+  healthcareFrameColor?: string;
+  healthcareHeartColor?: string;
+  reviewCollectorCircleColor?: string;
+  reviewCollectorStarsColor?: string;
+  reviewCollectorLogoSrc?: string;
+  couponLeftColor?: string;
+  couponRightColor?: string;
+  couponTextLine1?: string;
+  couponTextLine2?: string;
+  couponTextLine3?: string;
+  
   // Outline (optional)
   outline?: OutlineConfig;
   
   // AI Design (optional)
   aiDesign?: AIDesignConfig;
+  isAi: boolean;
+  aiPrompt?: string;
+  aiStrength: number;
+  aiSteps: number;
   
   // Size settings
   size: number; // Base size in pixels (default: 600)
   margin: number; // Quiet zone margin in modules (default: 4)
   
   // Error correction level
-  errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'; // Low, Medium, Quartile, High
+  errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
+  
+  // Gradient (backend format — used in transformer)
+  gradientFill?: GradientFillConfig;
 }
 
-// Default designer configuration
+// Default designer configuration — matches legacy state.js defaults
 export const DEFAULT_DESIGNER_CONFIG: DesignerConfig = {
   moduleShape: 'square',
-  cornerFrameStyle: 'square',
-  cornerDotStyle: 'square',
+  finder: 'default',
+  finderDot: 'default',
+  eyeExternalColor: '#000000',
+  eyeInternalColor: '#000000',
   foregroundFill: {
     type: 'solid',
     color: '#000000',
@@ -149,6 +241,19 @@ export const DEFAULT_DESIGNER_CONFIG: DesignerConfig = {
     type: 'solid',
     color: '#FFFFFF',
   },
+  shape: 'none',
+  frameColor: '#000000',
+  advancedShape: 'none',
+  advancedShapeDropShadow: true,
+  advancedShapeFrameColor: '#000000',
+  text: 'SCAN ME',
+  textColor: '#ffffff',
+  textBackgroundColor: '#1c57cb',
+  fontFamily: 'Raleway',
+  textSize: 1,
+  isAi: false,
+  aiStrength: 1.8,
+  aiSteps: 18,
   size: 600,
   margin: 4,
   errorCorrectionLevel: 'M',
@@ -170,8 +275,8 @@ export const DESIGN_PRESETS: DesignPreset[] = [
     description: 'Traditional square QR code',
     config: {
       moduleShape: 'square',
-      cornerFrameStyle: 'square',
-      cornerDotStyle: 'square',
+      finder: 'default',
+      finderDot: 'default',
     },
   },
   {
@@ -180,18 +285,18 @@ export const DESIGN_PRESETS: DesignPreset[] = [
     description: 'Rounded corners with dots',
     config: {
       moduleShape: 'dots',
-      cornerFrameStyle: 'rounded',
-      cornerDotStyle: 'dot',
+      finder: 'rounded-corners',
+      finderDot: 'circle',
     },
   },
   {
     id: 'elegant',
     name: 'Elegant',
-    description: 'Circular modules with gradient',
+    description: 'Rounded modules with gradient',
     config: {
-      moduleShape: 'circular',
-      cornerFrameStyle: 'circular',
-      cornerDotStyle: 'dot',
+      moduleShape: 'roundness',
+      finder: 'circle',
+      finderDot: 'circle',
       foregroundFill: {
         type: 'gradient',
         gradientType: 'linear',
@@ -207,8 +312,8 @@ export const DESIGN_PRESETS: DesignPreset[] = [
     description: 'Diamond shapes with bright colors',
     config: {
       moduleShape: 'diamond',
-      cornerFrameStyle: 'rounded',
-      cornerDotStyle: 'dot',
+      finder: 'rounded-corners',
+      finderDot: 'circle',
       foregroundFill: {
         type: 'solid',
         color: '#FF6B6B',

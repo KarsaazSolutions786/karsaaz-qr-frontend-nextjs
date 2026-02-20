@@ -30,6 +30,16 @@ export interface Subscription {
   stripeCustomerId?: string // Stripe customer ID
   createdAt: string
   updatedAt: string
+  /** Plan details populated by backend */
+  plan?: {
+    id: string
+    name: string
+    qr_codes_limit?: number | null
+    scans_limit?: number | null
+  }
+  /** Whether subscription is currently on trial */
+  on_trial?: boolean
+  trial_ends_at?: string
 }
 
 export interface PromoCode {

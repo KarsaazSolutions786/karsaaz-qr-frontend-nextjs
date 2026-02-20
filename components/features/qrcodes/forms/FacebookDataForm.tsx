@@ -1,29 +1,18 @@
 'use client'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { facebookDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'; const ERROR = 'mt-1 text-xs text-red-500'
 type FacebookDataFormData = z.infer<typeof facebookDataSchema>
-
-interface FacebookDataFormProps {
-  defaultValues?: FacebookDataFormData
-  onSubmit: (data: FacebookDataFormData) => void
-}
-
-export function FacebookDataForm({ defaultValues, onSubmit }: FacebookDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<FacebookDataFormData>({
-    resolver: zodResolver(facebookDataSchema),
-    defaultValues,
-  })
-
+interface FacebookDataFormProps { defaultValues?: Partial<FacebookDataFormData>; onChange?: (data: Partial<FacebookDataFormData>) => void }
+export function FacebookDataForm({ defaultValues, onChange }: FacebookDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<FacebookDataFormData>({ schema: facebookDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="facebook" className="block text-sm font-medium text-gray-700">Facebook Page URL</label>
-        <input {...register('facebook')} id="facebook" type="text" placeholder="e.g. https://facebook.com/yourpage" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.facebook && <p className="mt-1 text-sm text-red-600">{errors.facebook.message}</p>}
+        <label htmlFor="facebook" className={LABEL}>Facebook Page URL or Username</label>
+        <input {...register('facebook')} id="facebook" type="text" placeholder="https://facebook.com/yourpage" className={INPUT} />
+        {errors.facebook && <p className={ERROR}>{errors.facebook.message}</p>}
       </div>
     </form>
   )

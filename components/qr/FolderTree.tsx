@@ -18,10 +18,21 @@ import {
   FolderPlus,
   Move,
 } from 'lucide-react';
-import { FolderTreeNode } from '@/hooks/useFolders';
+
+/** Minimal folder shape required by FolderTree */
+export interface FolderTreeItem {
+  id: string;
+  name: string;
+  color?: string;
+  parentId?: string | null;
+  level?: number;
+  itemCount?: number;
+  children?: FolderTreeItem[];
+  isExpanded?: boolean;
+}
 
 export interface FolderTreeProps {
-  folders: FolderTreeNode[];
+  folders: FolderTreeItem[];
   selectedFolderId?: string | null;
   onSelectFolder: (folderId: string | null) => void;
   onToggleExpanded: (folderId: string) => void;
@@ -132,7 +143,7 @@ export function FolderTree({
  * Folder tree item
  */
 interface FolderTreeItemProps {
-  folder: FolderTreeNode;
+  folder: FolderTreeItem;
   isSelected: boolean;
   isDragging: boolean;
   isDropTarget: boolean;
@@ -167,8 +178,8 @@ function FolderTreeItem({
   dragEnabled = false,
 }: FolderTreeItemProps) {
   const [showMenu, setShowMenu] = useState(false);
-  const hasChildren = folder.children.length > 0;
-  const indent = (folder.level - 1) * 20;
+  const hasChildren = (folder.children?.length ?? 0) > 0;
+  const indent = ((folder.level ?? 1) - 1) * 20;
   
   return (
     <div>
@@ -231,7 +242,7 @@ function FolderTreeItem({
         </button>
         
         {/* Item count */}
-        {folder.itemCount > 0 && (
+        {(folder.itemCount ?? 0) > 0 && (
           <span className="text-xs text-gray-500 px-1.5 py-0.5 bg-gray-100 rounded">
             {folder.itemCount}
           </span>
@@ -314,7 +325,7 @@ function FolderTreeItem({
       </div>
       
       {/* Children */}
-      {folder.isExpanded && hasChildren && (
+      {folder.isExpanded && hasChildren && folder.children && (
         <div className="mt-1">
           {folder.children.map(child => (
             <FolderTreeItem

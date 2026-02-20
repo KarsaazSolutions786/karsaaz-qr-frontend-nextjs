@@ -1,29 +1,18 @@
 'use client'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { googleMapsDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'; const ERROR = 'mt-1 text-xs text-red-500'
 type GoogleMapsDataFormData = z.infer<typeof googleMapsDataSchema>
-
-interface GoogleMapsDataFormProps {
-  defaultValues?: GoogleMapsDataFormData
-  onSubmit: (data: GoogleMapsDataFormData) => void
-}
-
-export function GoogleMapsDataForm({ defaultValues, onSubmit }: GoogleMapsDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<GoogleMapsDataFormData>({
-    resolver: zodResolver(googleMapsDataSchema),
-    defaultValues,
-  })
-
+interface GoogleMapsDataFormProps { defaultValues?: Partial<GoogleMapsDataFormData>; onChange?: (data: Partial<GoogleMapsDataFormData>) => void }
+export function GoogleMapsDataForm({ defaultValues, onChange }: GoogleMapsDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<GoogleMapsDataFormData>({ schema: googleMapsDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="googlemaps" className="block text-sm font-medium text-gray-700">Google Maps URL</label>
-        <input {...register('googlemaps')} id="googlemaps" type="text" placeholder="e.g. https://maps.google.com/..." className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.googlemaps && <p className="mt-1 text-sm text-red-600">{errors.googlemaps.message}</p>}
+        <label htmlFor="googlemaps" className={LABEL}>Google Maps URL or Address</label>
+        <input {...register('googlemaps')} id="googlemaps" type="text" placeholder="https://maps.google.com/... or a search address" className={INPUT} />
+        {errors.googlemaps && <p className={ERROR}>{errors.googlemaps.message}</p>}
       </div>
     </form>
   )

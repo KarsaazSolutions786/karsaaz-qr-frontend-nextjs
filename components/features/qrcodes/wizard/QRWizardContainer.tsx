@@ -1,16 +1,18 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { StepperWizard } from '@/components/wizard/StepperWizard'
 import { useWizardState, WizardStep } from '@/lib/hooks/useWizardState'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
 import { DEFAULT_DESIGNER_CONFIG, DesignerConfig } from '@/types/entities/designer'
+import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
 import Step1DataEntry from './Step1DataEntry'
 import Step2Designer from './Step2Designer'
 import Step3Download from './Step3Download'
 import { toast } from 'sonner'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
+import { transformDesignToBackend, transformDesignFromBackend } from '@/lib/qr/design-transformer'
 
 interface QRWizardContainerProps {
   mode?: 'create' | 'edit'
@@ -20,7 +22,32 @@ interface QRWizardContainerProps {
   onCancel?: () => void
 }
 
-const WIZARD_STEPS: WizardStep[] = [
+// Steps for CREATE mode: Type → Data → Design → Download (4 steps)
+const CREATE_WIZARD_STEPS: WizardStep[] = [
+  {
+    id: 'type',
+    title: 'Type',
+    description: 'Select QR code type',
+  },
+  {
+    id: 'data',
+    title: 'Enter Data',
+    description: 'Fill in your QR code content',
+  },
+  {
+    id: 'design',
+    title: 'Design',
+    description: 'Customize the appearance',
+  },
+  {
+    id: 'download',
+    title: 'Download',
+    description: 'Save and download your QR code',
+  },
+]
+
+// Steps for EDIT mode: Data → Design → Download (3 steps, no type change)
+const EDIT_WIZARD_STEPS: WizardStep[] = [
   {
     id: 'data',
     title: 'Enter Data',
@@ -47,8 +74,13 @@ export default function QRWizardContainer({
 }: QRWizardContainerProps) {
   const router = useRouter()
 
-  // QR type: from page selection (create) or existing QR (edit)
-  const qrType = initialData?.type || 'url'
+  // Determine wizard steps based on mode
+  const WIZARD_STEPS = useMemo(() => {
+    return mode === 'create' ? CREATE_WIZARD_STEPS : EDIT_WIZARD_STEPS
+  }, [mode])
+
+  // QR type: state variable that can be changed in Type step (create mode)
+  const [qrType, setQrType] = useState<string>(initialData?.type || '')
 
   // Form data state
   const [formData, setFormData] = useState<Record<string, any>>(
@@ -56,11 +88,18 @@ export default function QRWizardContainer({
   )
 
   // Design state — use real DesignerConfig
-  const [design, setDesign] = useState<Partial<DesignerConfig>>(
-    initialData?.designerConfig || initialData?.customization || {
-      ...DEFAULT_DESIGNER_CONFIG,
+  // Transform from backend format when loading existing QR code
+  const [design, setDesign] = useState<Partial<DesignerConfig>>(() => {
+    const backendDesign = initialData?.designerConfig || initialData?.customization
+    if (backendDesign) {
+      // Backend uses format like fillType, module, finder — transform to React format
+      return {
+        ...DEFAULT_DESIGNER_CONFIG,
+        ...transformDesignFromBackend(backendDesign),
+      }
     }
-  )
+    return { ...DEFAULT_DESIGNER_CONFIG }
+  })
 
   // Settings state (name, folder, pin, expiration, tags)
   const [settings, setSettings] = useState({
@@ -83,8 +122,21 @@ export default function QRWizardContainer({
     steps: WIZARD_STEPS,
     initialStep: 0,
     validateStep: async (stepIndex) => {
-      if (stepIndex === 0) {
-        // Data step — ensure at least some data is entered
+      const currentStepId = WIZARD_STEPS[stepIndex]?.id
+
+      // Type step (create mode) — ensure a type is selected
+      if (currentStepId === 'type') {
+        if (!qrType) {
+          toast.error('Validation Error', {
+            description: 'Please select a QR code type before continuing.',
+          })
+          return false
+        }
+        return true
+      }
+
+      // Data step — ensure at least some data is entered
+      if (currentStepId === 'data') {
         if (!formData || Object.keys(formData).length === 0) {
           toast.error('Validation Error', {
             description: 'Please enter the QR code data before continuing.',
@@ -99,13 +151,18 @@ export default function QRWizardContainer({
 
   // ------------------------------------------------------------------
   // Save QR code to backend (called directly, NOT via redirect hooks)
+  // On first save: creates QR, sets ID, and redirects to /qrcodes/:id/edit
+  // On subsequent saves: updates existing QR
   // ------------------------------------------------------------------
-  const saveQRCode = useCallback(async () => {
+  const saveQRCode = useCallback(async (shouldRedirect: boolean = false) => {
+    // Transform React DesignerConfig to backend-expected format
+    const backendDesign = transformDesignToBackend(design)
+    
     const payload = {
       type: qrType,
       name: settings.name || `${qrType} QR Code`,
       data: formData,
-      designerConfig: design,
+      design: backendDesign, // Backend fillable expects 'design', not 'designerConfig'
       folderId: settings.folderId || null,
       tags: settings.tags,
       password: settings.pinProtected ? settings.pin || undefined : undefined,
@@ -118,40 +175,58 @@ export default function QRWizardContainer({
     } else {
       // First save — create
       const result = await qrcodesAPI.create(payload)
-      setSavedQRId(result.id)
+      const newId = result.id
+      setSavedQRId(newId)
+      
+      // Redirect to edit URL after first save (matches original Lit flow)
+      if (shouldRedirect && mode === 'create') {
+        router.replace(`/qrcodes/${newId}/edit`)
+      }
       return result
     }
-  }, [qrType, formData, design, settings, savedQRId])
+  }, [qrType, formData, design, settings, savedQRId, mode, router])
 
   // ------------------------------------------------------------------
-  // Navigation handlers
+  // Navigation handlers - Save on every step change (like original Lit)
   // ------------------------------------------------------------------
 
-  /** Custom "Next" handler — auto-saves when moving from Design → Download */
+  /** Custom "Next" handler — auto-saves on every step change (except Type step) */
   const handleNext = useCallback(async () => {
-    // Moving from Design (step 1) to Download (step 2) → auto-save
-    if (wizard.currentStep === 1) {
-      setIsSaving(true)
-      try {
-        await saveQRCode()
-        setIsSaved(true)
+    const currentStepId = WIZARD_STEPS[wizard.currentStep]?.id
+    
+    // Type step — no save needed, just advance
+    if (currentStepId === 'type') {
+      wizard.nextStep()
+      return
+    }
+    
+    // For all other steps, save when navigating forward
+    setIsSaving(true)
+    try {
+      // First save redirects to /edit/:id, subsequent saves stay on current page
+      const isFirstSave = !savedQRId
+      await saveQRCode(isFirstSave)
+      setIsSaved(true)
+      
+      // Only show toast on Design → Download transition
+      if (currentStepId === 'design') {
         toast.success('QR Code Saved', {
           description: 'Your QR code has been saved. You can now download it.',
           icon: <CheckCircle2 className="w-5 h-5 text-green-600" />,
         })
-      } catch (error: any) {
-        toast.error('Save Failed', {
-          description: error?.message || 'Failed to save QR code. Please try again.',
-          icon: <AlertCircle className="w-5 h-5 text-red-600" />,
-        })
-        setIsSaving(false)
-        return // don't advance
       }
+    } catch (error: any) {
+      toast.error('Save Failed', {
+        description: error?.message || 'Failed to save QR code. Please try again.',
+        icon: <AlertCircle className="w-5 h-5 text-red-600" />,
+      })
       setIsSaving(false)
+      return // don't advance
     }
+    setIsSaving(false)
 
     wizard.nextStep()
-  }, [wizard, saveQRCode])
+  }, [wizard, saveQRCode, savedQRId, WIZARD_STEPS])
 
   /** "Done" / Submit handler — finishes and navigates away */
   const handleSubmit = useCallback(async () => {
@@ -159,7 +234,8 @@ export default function QRWizardContainer({
     if (!isSaved) {
       setIsSaving(true)
       try {
-        const result = await saveQRCode()
+        // Don't redirect on submit - we'll navigate to detail page instead
+        const result = await saveQRCode(false)
         setIsSaved(true)
         wizard.reset()
         if (onSuccess) {
@@ -190,6 +266,13 @@ export default function QRWizardContainer({
   // Data-change handlers (mark unsaved on any change)
   // ------------------------------------------------------------------
 
+  const handleTypeChange = useCallback((type: string) => {
+    setQrType(type)
+    // Reset form data when type changes (different types have different data structures)
+    setFormData({})
+    setIsSaved(false)
+  }, [])
+
   const handleDataChange = useCallback((data: Record<string, any>) => {
     setFormData(data)
     setIsSaved(false)
@@ -216,6 +299,17 @@ export default function QRWizardContainer({
     const currentStepId = WIZARD_STEPS[wizard.currentStep]?.id ?? 'data'
 
     switch (currentStepId) {
+      case 'type':
+        return (
+          <div className="py-4">
+            <QRCodeTypeSelector
+              value={qrType}
+              onChange={handleTypeChange}
+              showSearch={true}
+            />
+          </div>
+        )
+
       case 'data':
         return (
           <Step1DataEntry
@@ -254,7 +348,7 @@ export default function QRWizardContainer({
   }
 
   return (
-    <div className="h-screen flex flex-col">
+    <div>
       <StepperWizard
         steps={WIZARD_STEPS}
         currentStep={wizard.currentStep}

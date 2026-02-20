@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback } from 'react'
 import { URLDataForm } from '@/components/features/qrcodes/forms/URLDataForm'
 import { VCardDataForm } from '@/components/features/qrcodes/forms/VCardDataForm'
 import { WiFiDataForm } from '@/components/features/qrcodes/forms/WiFiDataForm'
@@ -58,60 +58,14 @@ export default function Step1DataEntry({
   // Encode data for live preview
   const previewData = encodeQRData(qrType, data)
 
-  // Debounced data capture from form inputs
-  const formRef = useRef<HTMLDivElement>(null)
-
-  // Capture form data on every input change via event delegation
-  const handleFormInteraction = useCallback(() => {
-    if (!formRef.current) return
-    const form = formRef.current.querySelector('form')
-    if (!form) return
-
-    const formData = new FormData(form)
-    const captured: Record<string, any> = {}
-    formData.forEach((value, key) => {
-      captured[key] = value
-    })
-
-    // Also capture checkboxes (FormData doesn't include unchecked checkboxes)
-    const checkboxes = form.querySelectorAll('input[type="checkbox"]')
-    checkboxes.forEach((cb) => {
-      const checkbox = cb as HTMLInputElement
-      if (checkbox.name) {
-        captured[checkbox.name] = checkbox.checked
-      }
-    })
-
-    if (Object.keys(captured).length > 0) {
-      onChange(captured)
-    }
-  }, [onChange])
-
-  // Set up event delegation for capturing form changes in real-time
-  useEffect(() => {
-    const container = formRef.current
-    if (!container) return
-
-    const handleInput = () => handleFormInteraction()
-    const handleChange = () => handleFormInteraction()
-
-    container.addEventListener('input', handleInput)
-    container.addEventListener('change', handleChange)
-
-    return () => {
-      container.removeEventListener('input', handleInput)
-      container.removeEventListener('change', handleChange)
-    }
-  }, [handleFormInteraction])
-
-  const handleDataSubmit = useCallback((formData: any) => {
+  const handleDataChange = useCallback((formData: any) => {
     onChange(formData)
   }, [onChange])
 
   const renderDataForm = () => {
     const commonProps = {
       defaultValues: data as any,
-      onSubmit: handleDataSubmit,
+      onChange: handleDataChange,
     }
 
     switch (qrType) {
@@ -134,7 +88,10 @@ export default function Step1DataEntry({
       case 'calendar':
         return <CalendarDataForm {...commonProps} />
       case 'app-store':
+      case 'app-download':
         return <AppStoreDataForm {...commonProps} />
+      case 'call':
+        return <PhoneDataForm {...commonProps} />
       case 'whatsapp':
         return <WhatsAppDataForm {...commonProps} />
       case 'telegram':
@@ -229,7 +186,6 @@ export default function Step1DataEntry({
             Enter QR Code Data
           </h3>
           <div
-            ref={formRef}
             className="bg-gray-50 rounded-lg p-6 border border-gray-200"
           >
             {renderDataForm()}

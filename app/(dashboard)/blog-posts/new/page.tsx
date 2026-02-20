@@ -98,6 +98,11 @@ export default function NewBlogPostPage() {
           </p>
         </div>
 
+        {/* Featured Image — note */}
+        <div className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
+          Featured image upload is available after the post is first saved.
+        </div>
+
         {/* Published At */}
         <div>
           <label htmlFor="publishedAt" className="block text-sm font-medium text-gray-700">

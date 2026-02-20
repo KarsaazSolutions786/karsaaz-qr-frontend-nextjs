@@ -26,8 +26,8 @@ export default function NewRolePage() {
     try {
       await createMutation.mutateAsync({
         name: name.trim(),
-        homePage: homePage.trim() || undefined,
-        permissionIds,
+        home_page: homePage.trim() || undefined,
+        permission_ids: permissionIds,
       })
       // useCreateRole redirects to /users/roles on success
     } catch (err: any) {

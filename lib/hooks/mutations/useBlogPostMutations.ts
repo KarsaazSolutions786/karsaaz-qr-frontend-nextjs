@@ -9,9 +9,10 @@ export function useCreateBlogPost() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: CreateBlogPostRequest) => blogPostsAPI.create(data),
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.blogPosts.all() })
-      router.push('/blog-posts')
+      // Redirect to edit page so user can upload featured image (only available after first save)
+      router.push(`/blog-posts/${result.id}`)
     },
   })
 }

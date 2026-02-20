@@ -48,9 +48,9 @@ export const createVCardQRCodeSchema = qrCodeBaseSchema.extend({
 // WiFi QR code
 export const wifiDataSchema = z.object({
   ssid: z.string().min(1, 'Network name is required'),
-  password: z.string().min(8, 'WiFi password must be at least 8 characters'),
-  encryption: z.enum(['WPA', 'WEP', 'nopass']),
-  hidden: z.boolean(),
+  password: z.string().optional().default(''),
+  encryption: z.enum(['WPA', 'WEP', 'nopass']).default('WPA'),
+  hidden: z.boolean().default(false),
 })
 
 export const createWiFiQRCodeSchema = qrCodeBaseSchema.extend({

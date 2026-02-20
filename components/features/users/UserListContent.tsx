@@ -148,6 +148,7 @@ function FilterModal({
 export function UserListContent({ paying }: UserListContentProps) {
   const pathname = usePathname()
   const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(15)
   const [search, setSearch] = useState('')
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [filters, setFilters] = useState({ minQRCodes: '', maxQRCodes: '' })
@@ -164,6 +165,7 @@ export function UserListContent({ paying }: UserListContentProps) {
 
   const { data, isLoading } = useUsers({
     page,
+    per_page: perPage,
     search: search || undefined,
     paying,
     number_of_qrcodes: qrcodesFilter,
@@ -176,6 +178,11 @@ export function UserListContent({ paying }: UserListContentProps) {
   const magicUrlMutation = useGenerateMagicUrl()
 
   const hasActiveFilters = !!(filters.minQRCodes || filters.maxQRCodes)
+
+  const handlePerPageChange = (value: number) => {
+    setPerPage(value)
+    setPage(1)
+  }
 
   const handleApplyFilters = useCallback((f: typeof filters) => {
     setFilters(f)
@@ -444,11 +451,25 @@ export function UserListContent({ paying }: UserListContentProps) {
             </div>
 
             {/* Pagination */}
-            {data.pagination && data.pagination.lastPage > 1 && (
-              <div className="mt-6 flex items-center justify-between">
-                <p className="text-sm text-gray-600">
-                  Showing page {page} of {data.pagination.lastPage} ({data.pagination.total} total)
-                </p>
+            {data.pagination && (
+              <div className="mt-6 flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span>Rows per page:</span>
+                  <select
+                    value={perPage}
+                    onChange={(e) => handlePerPageChange(Number(e.target.value))}
+                    className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    {[10, 15, 25, 50, 100].map((n) => (
+                      <option key={n} value={n}>{n}</option>
+                    ))}
+                  </select>
+                  <span className="ml-2">
+                    {data.pagination.total > 0
+                      ? `${((page - 1) * perPage) + 1}–${Math.min(page * perPage, data.pagination.total)} of ${data.pagination.total}`
+                      : '0 results'}
+                  </span>
+                </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -457,6 +478,9 @@ export function UserListContent({ paying }: UserListContentProps) {
                   >
                     Previous
                   </button>
+                  <span className="flex items-center px-3 text-sm text-gray-600">
+                    Page {page} of {data.pagination.lastPage}
+                  </span>
                   <button
                     onClick={() => setPage((p) => p + 1)}
                     disabled={page >= data.pagination.lastPage}

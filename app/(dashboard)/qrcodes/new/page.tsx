@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
+import { TemplateSelectionAdapter } from '@/components/features/qrcodes/TemplateSelectionAdapter'
 import { QRWizardContainer } from '@/components/features/qrcodes/wizard'
 
 /**
@@ -10,23 +10,29 @@ import { QRWizardContainer } from '@/components/features/qrcodes/wizard'
  * 
  * Route: /qrcodes/new (Home)
  * 
- * Shows the QR type selector bento grid. When a type is selected,
- * transitions to the wizard with that type pre-selected.
+ * Flow (matching original Lit frontend):
+ * 1. Show TemplateSelectionAdapter - choose template or start blank
+ * 2. If "Create Blank" clicked, show QRWizardContainer with 4-step flow:
+ *    Type → Data → Design → Download
+ * 3. If template selected, pre-fill wizard with template data
  */
 export default function CreateQRCodePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const typeParam = searchParams?.get('type')
-  const [selectedType, setSelectedType] = useState<string>(typeParam || '')
+  const blankParam = searchParams?.get('blank')
+  
+  // If type is in URL (from legacy links or direct navigation), pre-select it
+  const [preSelectedType] = useState<string>(typeParam || '')
+  const [showWizard, setShowWizard] = useState<boolean>(blankParam === 'true' || !!typeParam)
 
-  function handleTypeSelect(type: string) {
-    setSelectedType(type)
-    // Navigate to wizard with type pre-selected
-    router.push(`/qrcodes/new?type=${type}`)
+  function handleStartBlank() {
+    setShowWizard(true)
+    router.push('/qrcodes/new?blank=true')
   }
 
-  // If a type is selected (via click or URL param), show the wizard
-  if (selectedType) {
+  // Show wizard if "Create Blank" was clicked or type is in URL
+  if (showWizard) {
     return (
       <div className="relative min-h-screen">
         <div 
@@ -34,13 +40,19 @@ export default function CreateQRCodePage() {
           style={{ backgroundImage: `url('/new-login-background.png')` }}
         />
         <div className="relative z-10 px-4 py-4 sm:px-6 lg:px-8">
-          <QRWizardContainer mode="create" initialData={{ type: selectedType, data: {} }} />
+          <QRWizardContainer 
+            mode="create" 
+            initialData={{ 
+              type: preSelectedType, // Will show Type step if empty 
+              data: {} 
+            }} 
+          />
         </div>
       </div>
     )
   }
 
-  // Default: Show QR type selector grid
+  // Default: Show template selection adapter (choose template vs blank)
   return (
     <div className="relative min-h-screen">
       <div 
@@ -48,10 +60,7 @@ export default function CreateQRCodePage() {
         style={{ backgroundImage: `url('/new-login-background.png')` }}
       />
       <div className="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
-        <QRCodeTypeSelector
-          value=""
-          onChange={handleTypeSelect}
-        />
+        <TemplateSelectionAdapter onStartBlank={handleStartBlank} />
       </div>
     </div>
   )

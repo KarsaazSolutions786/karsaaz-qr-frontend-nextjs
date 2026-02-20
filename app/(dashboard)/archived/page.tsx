@@ -26,10 +26,8 @@ import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
 import {
   Download,
   Trash2,
-  FolderInput,
   ArchiveRestore,
   Copy,
-  FileDown,
 } from 'lucide-react'
 
 export default function ArchivedQRCodesPage() {
@@ -93,9 +91,7 @@ export default function ArchivedQRCodesPage() {
   } = useMultiSelect(qrcodes)
 
   const {
-    isProcessing,
     bulkDownloadQRCodes,
-    moveToFolder,
     bulkDuplicateQRCodes,
     bulkUnarchiveQRCodes,
     bulkDeleteQRCodes,
@@ -111,19 +107,19 @@ export default function ArchivedQRCodesPage() {
       id: 'download',
       label: 'Download',
       icon: <Download className="w-4 h-4" />,
-      onClick: (ids: string[]) => bulkDownloadQRCodes(ids),
+      onClick: async (ids: string[]) => { await bulkDownloadQRCodes(ids) },
     },
     {
       id: 'duplicate',
       label: 'Duplicate',
       icon: <Copy className="w-4 h-4" />,
-      onClick: (ids: string[]) => bulkDuplicateQRCodes(ids),
+      onClick: async (ids: string[]) => { await bulkDuplicateQRCodes(ids) },
     },
     {
       id: 'unarchive',
       label: 'Unarchive',
       icon: <ArchiveRestore className="w-4 h-4" />,
-      onClick: (ids: string[]) => bulkUnarchiveQRCodes(ids).then(() => deselectAll()),
+      onClick: async (ids: string[]) => { await bulkUnarchiveQRCodes(ids); deselectAll() },
     },
     {
       id: 'delete',
@@ -131,7 +127,7 @@ export default function ArchivedQRCodesPage() {
       icon: <Trash2 className="w-4 h-4" />,
       variant: 'danger' as const,
       requiresConfirmation: true,
-      onClick: (ids: string[]) => bulkDeleteQRCodes(ids).then(() => deselectAll()),
+      onClick: async (ids: string[]) => { await bulkDeleteQRCodes(ids); deselectAll() },
     },
   ], [bulkDownloadQRCodes, bulkDuplicateQRCodes, bulkUnarchiveQRCodes, bulkDeleteQRCodes, deselectAll])
 

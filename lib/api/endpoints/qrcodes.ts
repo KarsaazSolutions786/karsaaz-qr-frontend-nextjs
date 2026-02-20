@@ -72,7 +72,7 @@ export interface CreateQRCodeRequest {
   name: string
   data: any
   customization?: any
-  designerConfig?: any // New: Advanced designer configuration
+  design?: any // Backend expects 'design' field for QR design configuration
   stickerConfig?: any // New: Sticker configuration
   folderId?: string | null // New: Folder assignment
   status?: 'active' | 'inactive' | 'archived' // New: Status
@@ -85,7 +85,7 @@ export interface UpdateQRCodeRequest {
   name?: string
   data?: any
   customization?: any
-  designerConfig?: any // New: Advanced designer configuration
+  design?: any // Backend expects 'design' field for QR design configuration
   stickerConfig?: any // New: Sticker configuration
   folderId?: string | null // New: Folder assignment
   status?: 'active' | 'inactive' | 'archived' // New: Status

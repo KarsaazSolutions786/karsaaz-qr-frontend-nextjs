@@ -108,17 +108,43 @@ export async function getTotalScans(): Promise<number> {
 }
 
 /**
- * Get user's current plan
- * Matches Lit frontend currentPlan()
+ * Get user's current plan from user data
+ * Matches Lit frontend currentPlan() logic - extracts plan from user's subscriptions
  */
-export async function getCurrentPlan(): Promise<Plan | null> {
-  try {
-    const response = await apiClient.get('/user/subscription')
-    return response.data?.plan || response.data || null
-  } catch (error) {
-    console.error('Failed to fetch current plan:', error)
+export function getCurrentPlanFromUser(user: any): Plan | null {
+  if (!user?.subscriptions || !Array.isArray(user.subscriptions)) {
     return null
   }
+
+  // Find active subscription first
+  const activeSubscription = user.subscriptions.find(
+    (sub: any) => sub.statuses?.[0]?.status === 'active'
+  )
+
+  if (activeSubscription?.subscription_plan) {
+    return activeSubscription.subscription_plan
+  }
+
+  // If no active, get the most recent subscription
+  if (user.subscriptions.length > 0) {
+    const sorted = [...user.subscriptions].sort((a: any, b: any) => {
+      const dateA = new Date(a.updated_at || a.created_at).getTime()
+      const dateB = new Date(b.updated_at || b.created_at).getTime()
+      return dateB - dateA
+    })
+    return sorted[0]?.subscription_plan || null
+  }
+
+  return null
+}
+
+/**
+ * Get user's current plan (legacy, now no-op - use getCurrentPlanFromUser instead)
+ * @deprecated Use getCurrentPlanFromUser with user object from auth context
+ */
+export async function getCurrentPlan(): Promise<Plan | null> {
+  // This endpoint doesn't exist - return null and let consumer use getCurrentPlanFromUser
+  return null
 }
 
 /**

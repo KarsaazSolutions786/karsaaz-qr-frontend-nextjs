@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LanguagePicker } from '@/components/common/LanguagePicker'
@@ -53,7 +53,7 @@ import {
   getSidebarTemplateCategories,
   getDynamicQRCodeCount,
   getTotalScans,
-  getCurrentPlan,
+  getCurrentPlanFromUser,
   formatLimit,
   type Plan
 } from '@/lib/api/sidebar'
@@ -171,10 +171,17 @@ export default function DashboardLayout({
 }) {
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { user, isLoading, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Set mounted to true after initial render to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   
   // Dynamic sidebar data
   const [folders, setFolders] = useState<Folder[]>([])
@@ -222,15 +229,15 @@ export default function DashboardLayout({
     const fetchStats = async () => {
       setStatsLoading(true)
       try {
-        const [qrCountData, scansData, planData] = await Promise.all([
+        const [qrCountData, scansData] = await Promise.all([
           getDynamicQRCodeCount(),
-          getTotalScans(),
-          getCurrentPlan()
+          getTotalScans()
         ])
         
         setQrCount(qrCountData)
         setScanCount(scansData)
-        setPlan(planData)
+        // Get plan from user object (subscriptions are loaded with /myself)
+        setPlan(getCurrentPlanFromUser(user))
       } catch (error) {
         console.error('Failed to fetch account stats:', error)
       } finally {
@@ -265,8 +272,9 @@ export default function DashboardLayout({
     const [itemPath, itemQueryString = ''] = href.split('?')
     const itemParams = new URLSearchParams(itemQueryString)
     
-    // Parse current location
-    const windowParams = new URLSearchParams(window.location.search)
+    // Use searchParams from Next.js hook (SSR-safe)
+    const currentSearchParams = searchParams?.toString() || ''
+    const windowParams = new URLSearchParams(currentSearchParams)
     
     // Check pathname match
     const pathMatch = pathname === itemPath || pathname.startsWith(`${itemPath}/`)
@@ -308,7 +316,18 @@ export default function DashboardLayout({
     }
   }
 
-  if (!isLoading && !user) {
+  // Show minimal loading state during SSR and initial mount to prevent hydration mismatch
+  if (!mounted || isLoading) {
+    return (
+      <div className="flex h-screen bg-gray-50">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
     return null
   }
 

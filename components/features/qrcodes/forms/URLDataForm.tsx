@@ -1,41 +1,39 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { urlDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
+
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'
+const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'
+const ERROR = 'mt-1 text-xs text-red-500'
 
 type URLDataFormData = z.infer<typeof urlDataSchema>
 
 interface URLDataFormProps {
-  defaultValues?: URLDataFormData
-  onSubmit: (data: URLDataFormData) => void
+  defaultValues?: Partial<URLDataFormData>
+  onChange?: (data: Partial<URLDataFormData>) => void
 }
 
-export function URLDataForm({ defaultValues, onSubmit }: URLDataFormProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<URLDataFormData>({
-    resolver: zodResolver(urlDataSchema),
+export function URLDataForm({ defaultValues, onChange }: URLDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<URLDataFormData>({
+    schema: urlDataSchema,
     defaultValues,
+    onChange,
   })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="url" className="block text-sm font-medium text-gray-700">
-          URL *
-        </label>
+        <label htmlFor="url" className={LABEL}>Website URL *</label>
         <input
           {...register('url')}
           id="url"
           type="url"
           placeholder="https://example.com"
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+          className={INPUT}
         />
-        {errors.url && <p className="mt-1 text-sm text-red-600">{errors.url.message}</p>}
+        {errors.url && <p className={ERROR}>{errors.url.message}</p>}
       </div>
     </form>
   )

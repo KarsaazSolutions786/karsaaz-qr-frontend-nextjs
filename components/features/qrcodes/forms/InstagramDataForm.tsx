@@ -1,29 +1,18 @@
 'use client'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { instagramDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'; const ERROR = 'mt-1 text-xs text-red-500'
 type InstagramDataFormData = z.infer<typeof instagramDataSchema>
-
-interface InstagramDataFormProps {
-  defaultValues?: InstagramDataFormData
-  onSubmit: (data: InstagramDataFormData) => void
-}
-
-export function InstagramDataForm({ defaultValues, onSubmit }: InstagramDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<InstagramDataFormData>({
-    resolver: zodResolver(instagramDataSchema),
-    defaultValues,
-  })
-
+interface InstagramDataFormProps { defaultValues?: Partial<InstagramDataFormData>; onChange?: (data: Partial<InstagramDataFormData>) => void }
+export function InstagramDataForm({ defaultValues, onChange }: InstagramDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<InstagramDataFormData>({ schema: instagramDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="instagram" className="block text-sm font-medium text-gray-700">Instagram Username or URL</label>
-        <input {...register('instagram')} id="instagram" type="text" placeholder="e.g. @username or https://instagram.com/username" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.instagram && <p className="mt-1 text-sm text-red-600">{errors.instagram.message}</p>}
+        <label htmlFor="instagram" className={LABEL}>Instagram Username or URL</label>
+        <input {...register('instagram')} id="instagram" type="text" placeholder="@username  or  https://instagram.com/username" className={INPUT} />
+        {errors.instagram && <p className={ERROR}>{errors.instagram.message}</p>}
       </div>
     </form>
   )

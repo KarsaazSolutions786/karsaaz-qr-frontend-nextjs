@@ -1,39 +1,26 @@
 'use client'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { dynamicSMSDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const TEXTAREA = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100 resize-none'; const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'; const ERROR = 'mt-1 text-xs text-red-500'
 type DynamicSMSDataFormData = z.infer<typeof dynamicSMSDataSchema>
-
-interface DynamicSMSDataFormProps {
-  defaultValues?: DynamicSMSDataFormData
-  onSubmit: (data: DynamicSMSDataFormData) => void
-}
-
-export function DynamicSMSDataForm({ defaultValues, onSubmit }: DynamicSMSDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<DynamicSMSDataFormData>({
-    resolver: zodResolver(dynamicSMSDataSchema),
-    defaultValues,
-  })
-
+interface DynamicSMSDataFormProps { defaultValues?: Partial<DynamicSMSDataFormData>; onChange?: (data: Partial<DynamicSMSDataFormData>) => void }
+export function DynamicSMSDataForm({ defaultValues, onChange }: DynamicSMSDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<DynamicSMSDataFormData>({ schema: dynamicSMSDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-        <input {...register('phone')} id="phone" type="text" placeholder="e.g. +1234567890" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>}
+        <label htmlFor="phone" className={LABEL}>Phone Number</label>
+        <input {...register('phone')} id="phone" type="tel" placeholder="+1 234 567 8900" className={INPUT} />
+        {errors.phone && <p className={ERROR}>{errors.phone.message}</p>}
       </div>
       <div>
-        <label htmlFor="message" className="block text-sm font-medium text-gray-700">Message</label>
-        <textarea {...register('message')} id="message" rows={3} placeholder="SMS message..." className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.message && <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>}
+        <label htmlFor="message" className={LABEL}>Message</label>
+        <textarea {...register('message')} id="message" rows={3} placeholder="Pre-filled message..." className={TEXTAREA} />
       </div>
       <div>
-        <label htmlFor="expires_at" className="block text-sm font-medium text-gray-700">Expires At</label>
-        <input {...register('expires_at')} id="expires_at" type="date" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.expires_at && <p className="mt-1 text-sm text-red-600">{errors.expires_at.message}</p>}
+        <label htmlFor="expires_at" className={LABEL}>Expiry Date</label>
+        <input {...register('expires_at')} id="expires_at" type="date" className={INPUT} />
       </div>
     </form>
   )

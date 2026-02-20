@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from 'react'
 import {
-  Download,
   Upload,
   CheckCircle,
   XCircle,
@@ -16,9 +15,41 @@ import {
   Loader2,
   HardDrive,
   Cloud,
+  AlertCircle,
 } from 'lucide-react'
-import { useCloudConnections, useBackupJobs, useBackupJob, useCloudStorageMutations } from '@/lib/hooks/queries/useCloudStorage'
-import type { CloudProvider, CloudConnection, BackupJob } from '@/lib/api/endpoints/cloud-storage'
+import { useCloudConnections, useBackupJobs, useBackupJob, useCloudStorageMutations, useOAuthPopup } from '@/lib/hooks/queries/useCloudStorage'
+import type { CloudProvider, CloudConnection, BackupJob, BackupJobStatusLegacy } from '@/lib/api/endpoints/cloud-storage'
+
+// ─── Helper Functions ───────────────────────────────────────────────────
+
+/**
+ * Get normalized connection status from backend fields
+ * Per CLOUD_STORAGE_DOCUMENTATION.md Section 9
+ */
+function getConnectionStatus(connection: CloudConnection): 'connected' | 'expired' | 'inactive' {
+  // Support legacy status field
+  if (connection.status) {
+    return connection.status === 'error' ? 'inactive' : connection.status
+  }
+  // Use backend fields
+  if (!connection.is_active) return 'inactive'
+  if (connection.is_token_expired) return 'expired'
+  return 'connected'
+}
+
+/**
+ * Get connection email (handles both field names)
+ */
+function getConnectionEmail(connection: CloudConnection): string | undefined {
+  return connection.account_email || connection.email
+}
+
+/**
+ * Check if backup job is in progress
+ */
+function isJobInProgress(status: BackupJobStatusLegacy): boolean {
+  return status === 'pending' || status === 'processing' || status === 'in_progress'
+}
 
 // ─── Provider Metadata ──────────────────────────────────────────────────
 
@@ -84,38 +115,89 @@ const PROVIDERS: ProviderInfo[] = [
 
 // ─── Backup Modal ────────────────────────────────────────────────────────
 
+/**
+ * Backup Modal per CLOUD_STORAGE_DOCUMENTATION.md Section 10
+ * Options:
+ * - include_designs: QR code design data (default: true)
+ * - include_analytics: Scan statistics (default: true)
+ * - include_images: SVG + PNG images (default: false, increases backup size)
+ */
 function BackupModal({
   connections,
   onClose,
   onStart,
   isStarting,
+  qrCodeCount,
 }: {
   connections: CloudConnection[]
   onClose: () => void
-  onStart: (connectionId: string, format: string, includeImages: boolean, includeAnalytics: boolean) => void
+  onStart: (config: {
+    connectionId: string
+    format: string
+    includeDesigns: boolean
+    includeAnalytics: boolean
+    includeImages: boolean
+  }) => void
   isStarting: boolean
+  qrCodeCount?: number // If provided, shows "Backing up N selected QR codes"
 }) {
-  const [selectedConnection, setSelectedConnection] = useState(connections[0]?.id || '')
-  const [format, setFormat] = useState('zip')
-  const [includeImages, setIncludeImages] = useState(true)
+  // Filter to only active, non-expired connections
+  const activeConnections = connections.filter(c => {
+    const status = getConnectionStatus(c)
+    return status === 'connected'
+  })
+
+  const [selectedConnection, setSelectedConnection] = useState(activeConnections[0]?.id || '')
+  const [format, setFormat] = useState<'json' | 'zip'>('json') // Per docs: default json
+  const [includeDesigns, setIncludeDesigns] = useState(true)
   const [includeAnalytics, setIncludeAnalytics] = useState(true)
+  const [includeImages, setIncludeImages] = useState(false) // Per docs: default false
+
+  if (activeConnections.length === 0) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6">
+          <div className="flex items-start gap-3 text-amber-700 bg-amber-50 p-4 rounded-lg mb-4">
+            <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-medium">No active cloud connections</p>
+              <p className="text-sm mt-1">Please connect a cloud provider first.</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Start Backup</h3>
 
+        {/* Info about what's being backed up */}
+        <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+          {qrCodeCount
+            ? `Backing up ${qrCodeCount} selected QR code${qrCodeCount > 1 ? 's' : ''}`
+            : 'Backing up all QR codes'}
+        </div>
+
         {/* Connection selector */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Destination</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Cloud Provider</label>
           <select
             value={selectedConnection}
             onChange={(e) => setSelectedConnection(e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
-            {connections.map((c) => (
+            {activeConnections.map((c) => (
               <option key={c.id} value={c.id}>
-                {PROVIDERS.find(p => p.id === c.provider)?.name || c.provider} — {c.email || c.name}
+                {PROVIDERS.find(p => p.id === c.provider)?.name || c.provider} — {getConnectionEmail(c) || c.name || 'Connected'}
               </option>
             ))}
           </select>
@@ -123,15 +205,14 @@ function BackupModal({
 
         {/* Format */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Format</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Export Format</label>
           <select
             value={format}
-            onChange={(e) => setFormat(e.target.value)}
+            onChange={(e) => setFormat(e.target.value as 'json' | 'zip')}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
-            <option value="zip">ZIP Archive</option>
-            <option value="json">JSON</option>
-            <option value="csv">CSV</option>
+            <option value="json">JSON (data only)</option>
+            <option value="zip">ZIP Archive (bundled)</option>
           </select>
         </div>
 
@@ -140,11 +221,11 @@ function BackupModal({
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
-              checked={includeImages}
-              onChange={(e) => setIncludeImages(e.target.checked)}
+              checked={includeDesigns}
+              onChange={(e) => setIncludeDesigns(e.target.checked)}
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <span className="text-sm text-gray-700">Include QR code images</span>
+            <span className="text-sm text-gray-700">Include QR code designs</span>
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -154,6 +235,18 @@ function BackupModal({
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
             <span className="text-sm text-gray-700">Include analytics data</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={includeImages}
+              onChange={(e) => setIncludeImages(e.target.checked)}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <div>
+              <span className="text-sm text-gray-700">Include QR code images (SVG + PNG)</span>
+              <p className="text-xs text-gray-500">Increases backup size significantly</p>
+            </div>
           </label>
         </div>
 
@@ -166,7 +259,13 @@ function BackupModal({
             Cancel
           </button>
           <button
-            onClick={() => onStart(selectedConnection, format, includeImages, includeAnalytics)}
+            onClick={() => onStart({
+              connectionId: selectedConnection,
+              format,
+              includeDesigns,
+              includeAnalytics,
+              includeImages,
+            })}
             disabled={isStarting || !selectedConnection}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -242,6 +341,100 @@ function MegaConnectModal({
   )
 }
 
+// ─── Backup Progress Component ───────────────────────────────────────────
+
+/**
+ * Real-time backup progress tracker per CLOUD_STORAGE_DOCUMENTATION.md Section 11
+ * - Polls every 2s while pending/processing
+ * - Shows progress bar with percentage
+ * - Displays "{processed}/{total} QR codes"
+ * - Shows file size on completion
+ */
+function BackupProgress({
+  job,
+  onCancel,
+  isCancelling,
+}: {
+  job: BackupJob
+  onCancel: () => void
+  isCancelling: boolean
+}) {
+  // Get progress percentage from various backend field names
+  const progressPercent = job.progress ?? job.progress_percentage ?? 0
+  const isInProgress = isJobInProgress(job.status)
+  
+  // Format file size
+  const formatSize = (bytes?: number) => {
+    if (!bytes) return '—'
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`
+  }
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          {isInProgress && <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />}
+          {job.status === 'completed' && <CheckCircle className="w-5 h-5 text-green-600" />}
+          {job.status === 'failed' && <XCircle className="w-5 h-5 text-red-600" />}
+          {job.status === 'cancelled' && <XCircle className="w-5 h-5 text-amber-600" />}
+          <span className="font-medium text-gray-900">
+            {job.status === 'pending' && 'Preparing backup...'}
+            {job.status === 'processing' && 'Backing up...'}
+            {job.status === 'in_progress' && 'Backing up...'}
+            {job.status === 'completed' && 'Backup completed'}
+            {job.status === 'failed' && 'Backup failed'}
+            {job.status === 'cancelled' && 'Backup cancelled'}
+          </span>
+        </div>
+        {isInProgress && (
+          <button
+            onClick={onCancel}
+            disabled={isCancelling}
+            className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
+          >
+            {isCancelling ? 'Cancelling...' : 'Cancel'}
+          </button>
+        )}
+      </div>
+
+      {/* Progress bar for in-progress jobs */}
+      {isInProgress && (
+        <>
+          <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+            <div
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <p className="text-sm text-gray-600">
+            {progressPercent.toFixed(0)}%
+            {job.processed_qr_codes != null && job.total_qr_codes != null && (
+              <span className="ml-2">
+                ({job.processed_qr_codes}/{job.total_qr_codes} QR codes)
+              </span>
+            )}
+          </p>
+        </>
+      )}
+
+      {/* Completed info */}
+      {job.status === 'completed' && (
+        <p className="text-sm text-gray-600">
+          File size: {formatSize(job.file_size || job.size_bytes)}
+        </p>
+      )}
+
+      {/* Error message */}
+      {job.status === 'failed' && job.error_message && (
+        <p className="text-sm text-red-600 mt-2">{job.error_message}</p>
+      )}
+    </div>
+  )
+}
+
 // ─── Main Page ───────────────────────────────────────────────────────────
 
 export default function CloudStoragePage() {
@@ -251,16 +444,21 @@ export default function CloudStoragePage() {
   const [pollingJobId, setPollingJobId] = useState<string | null>(null)
 
   // Real data from API
-  const { data: connections, isLoading: connectionsLoading } = useCloudConnections()
+  const { data: connections, isLoading: connectionsLoading, refetch: refetchConnections } = useCloudConnections()
   const { data: backupJobs, isLoading: backupsLoading } = useBackupJobs()
   const { data: pollingJob } = useBackupJob(pollingJobId)
+
+  // OAuth popup hook for proper message handling
+  const { openPopup: openOAuthPopup, isProcessing: isOAuthProcessing } = useOAuthPopup(() => {
+    refetchConnections()
+  })
 
   const {
     deleteConnection,
     testConnection,
-    connectOAuth,
     connectMega,
     createBackup,
+    cancelBackupJob,
     deleteBackupJob,
     refreshToken,
   } = useCloudStorageMutations()
@@ -272,19 +470,20 @@ export default function CloudStoragePage() {
   const getProviderInfo = (provider: CloudProvider) =>
     PROVIDERS.find(p => p.id === provider)
 
-  // Check if a provider is already connected
-  const isProviderConnected = (provider: CloudProvider) =>
-    connectedProviders.some(c => c.provider === provider && c.status === 'connected')
-
-  // Handle connect button click
-  const handleConnect = useCallback((provider: ProviderInfo) => {
+  // Handle connect button click (use new OAuth popup hook)
+  const handleConnect = useCallback(async (provider: ProviderInfo) => {
     if (provider.isOAuth) {
-      connectOAuth.mutate(provider.id as Exclude<CloudProvider, 'mega'>)
+      try {
+        await openOAuthPopup(provider.id as Exclude<CloudProvider, 'mega'>)
+      } catch (error) {
+        console.error('OAuth popup error:', error)
+        // Show error to user
+      }
     } else {
       // MEGA — show credentials modal
       setShowMegaModal(true)
     }
-  }, [connectOAuth])
+  }, [openOAuthPopup])
 
   // Handle MEGA connect
   const handleMegaConnect = useCallback((email: string, password: string) => {
@@ -293,18 +492,20 @@ export default function CloudStoragePage() {
     })
   }, [connectMega])
 
-  // Handle start backup
-  const handleStartBackup = useCallback((
-    connectionId: string,
-    format: string,
-    includeImages: boolean,
+  // Handle start backup (updated for new modal props)
+  const handleStartBackup = useCallback((config: {
+    connectionId: string
+    format: string
+    includeDesigns: boolean
     includeAnalytics: boolean
-  ) => {
+    includeImages: boolean
+  }) => {
     createBackup.mutate({
-      connection_id: connectionId,
-      format: format as 'json' | 'csv' | 'zip',
-      include_images: includeImages,
-      include_analytics: includeAnalytics,
+      connection_id: config.connectionId,
+      format: config.format as 'json' | 'zip',
+      include_designs: config.includeDesigns,
+      include_analytics: config.includeAnalytics,
+      include_images: config.includeImages,
     }, {
       onSuccess: (job) => {
         setShowBackupModal(false)
@@ -320,6 +521,12 @@ export default function CloudStoragePage() {
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
     if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`
+  }
+
+  // Clear polling job when it completes
+  if (pollingJob && !isJobInProgress(pollingJob.status)) {
+    // Job finished, stop polling after a short delay
+    setTimeout(() => setPollingJobId(null), 3000)
   }
 
   return (
@@ -388,6 +595,15 @@ export default function CloudStoragePage() {
       {/* ── Connections Tab ── */}
       {activeTab === 'connections' && (
         <div className="mt-8 space-y-4">
+          {/* Active backup progress banner */}
+          {pollingJob && isJobInProgress(pollingJob.status) && (
+            <BackupProgress
+              job={pollingJob}
+              onCancel={() => cancelBackupJob.mutate(pollingJob.id)}
+              isCancelling={cancelBackupJob.isPending}
+            />
+          )}
+
           {connectionsLoading ? (
             <div className="space-y-4">
               {[1, 2, 3, 4].map(i => (
@@ -405,8 +621,12 @@ export default function CloudStoragePage() {
           ) : (
             PROVIDERS.map((provider) => {
               const connection = connectedProviders.find(c => c.provider === provider.id)
-              const isConnected = connection?.status === 'connected'
-              const isExpired = connection?.status === 'expired'
+              // Use helper function to get normalized status
+              const connectionStatus = connection ? getConnectionStatus(connection) : null
+              const isConnected = connectionStatus === 'connected'
+              const isExpired = connectionStatus === 'expired'
+              const isInactive = connectionStatus === 'inactive'
+              const email = connection ? getConnectionEmail(connection) : undefined
 
               return (
                 <div
@@ -414,6 +634,7 @@ export default function CloudStoragePage() {
                   className={`overflow-hidden rounded-lg border bg-white shadow-sm ${
                     isConnected ? 'border-green-300 ring-1 ring-green-200' :
                     isExpired ? 'border-yellow-300 ring-1 ring-yellow-200' :
+                    isInactive ? 'border-red-300 ring-1 ring-red-200' :
                     'border-gray-200'
                   }`}
                 >
@@ -425,8 +646,8 @@ export default function CloudStoragePage() {
                         <p className="text-sm text-gray-500">{provider.description}</p>
                         {connection && (
                           <p className="text-xs text-gray-400 mt-1">
-                            {connection.email && `${connection.email} · `}
-                            Connected {new Date(connection.connected_at).toLocaleDateString()}
+                            {email && `${email} · `}
+                            {connection.connected_at && `Connected ${new Date(connection.connected_at).toLocaleDateString()}`}
                           </p>
                         )}
                       </div>
@@ -467,7 +688,7 @@ export default function CloudStoragePage() {
                         <>
                           <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
                             <Clock className="w-3 h-3" />
-                            Expired
+                            Token Expired
                           </span>
                           {provider.isOAuth && (
                             <button
@@ -491,13 +712,31 @@ export default function CloudStoragePage() {
                           </button>
                         </>
                       )}
+                      {isInactive && (
+                        <>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                            <XCircle className="w-3 h-3" />
+                            Inactive
+                          </span>
+                          <button
+                            onClick={() => {
+                              if (confirm(`Remove ${provider.name} connection?`)) {
+                                deleteConnection.mutate(connection!.id)
+                              }
+                            }}
+                            className="text-sm font-medium text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
                       {!connection && (
                         <button
                           onClick={() => handleConnect(provider)}
-                          disabled={connectOAuth.isPending || connectMega.isPending}
+                          disabled={isOAuthProcessing || connectMega.isPending}
                           className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
                         >
-                          {(connectOAuth.isPending || connectMega.isPending) ? (
+                          {(isOAuthProcessing || connectMega.isPending) ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
                           ) : (
                             <ExternalLink className="w-4 h-4" />
@@ -535,20 +774,12 @@ export default function CloudStoragePage() {
       {activeTab === 'history' && (
         <div className="mt-8">
           {/* Active polling job banner */}
-          {pollingJob && (pollingJob.status === 'pending' || pollingJob.status === 'in_progress') && (
-            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-center gap-3">
-                <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
-                <div>
-                  <p className="text-sm font-medium text-blue-900">
-                    Backup in progress...
-                  </p>
-                  <p className="text-sm text-blue-700">
-                    {pollingJob.status === 'pending' ? 'Preparing backup...' : 'Uploading files...'}
-                  </p>
-                </div>
-              </div>
-            </div>
+          {pollingJob && isJobInProgress(pollingJob.status) && (
+            <BackupProgress
+              job={pollingJob}
+              onCancel={() => cancelBackupJob.mutate(pollingJob.id)}
+              isCancelling={cancelBackupJob.isPending}
+            />
           )}
 
           {/* Backup List */}
@@ -589,6 +820,8 @@ export default function CloudStoragePage() {
               <div className="divide-y divide-gray-200">
                 {backups.map((backup) => {
                   const providerInfo = getProviderInfo(backup.provider)
+                  const backupInProgress = isJobInProgress(backup.status)
+                  
                   return (
                     <div key={backup.id} className="p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex items-start justify-between">
@@ -605,7 +838,12 @@ export default function CloudStoragePage() {
                                 <XCircle className="w-5 h-5 text-red-600" />
                               </div>
                             )}
-                            {(backup.status === 'pending' || backup.status === 'in_progress') && (
+                            {backup.status === 'cancelled' && (
+                              <div className="p-2 bg-amber-100 rounded-lg">
+                                <XCircle className="w-5 h-5 text-amber-600" />
+                              </div>
+                            )}
+                            {backupInProgress && (
                               <div className="p-2 bg-blue-100 rounded-lg">
                                 <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
                               </div>
@@ -621,33 +859,40 @@ export default function CloudStoragePage() {
                                     ? 'bg-green-100 text-green-700'
                                     : backup.status === 'failed'
                                     ? 'bg-red-100 text-red-700'
+                                    : backup.status === 'cancelled'
+                                    ? 'bg-amber-100 text-amber-700'
                                     : 'bg-blue-100 text-blue-700'
                                 }`}
                               >
                                 {backup.status === 'completed' && 'Completed'}
                                 {backup.status === 'failed' && 'Failed'}
+                                {backup.status === 'cancelled' && 'Cancelled'}
                                 {backup.status === 'pending' && 'Pending'}
+                                {backup.status === 'processing' && 'Processing'}
                                 {backup.status === 'in_progress' && 'In Progress'}
                               </span>
                               <span className="text-sm text-gray-500">
                                 {providerInfo?.name || backup.provider}
                               </span>
+                              {backup.format && (
+                                <span className="text-xs text-gray-400 uppercase">{backup.format}</span>
+                              )}
                             </div>
                             <div className="flex items-center gap-4 text-sm text-gray-600">
                               <span className="flex items-center gap-1">
                                 <Calendar className="w-3.5 h-3.5" />
                                 {new Date(backup.created_at).toLocaleString()}
                               </span>
-                              {backup.files_count != null && (
+                              {(backup.total_qr_codes != null || backup.files_count != null) && (
                                 <span className="flex items-center gap-1">
                                   <Database className="w-3.5 h-3.5" />
-                                  {backup.files_count} files
+                                  {backup.total_qr_codes ?? backup.files_count} QR codes
                                 </span>
                               )}
-                              {backup.size_bytes != null && (
+                              {(backup.size_bytes != null || backup.file_size != null) && (
                                 <span className="flex items-center gap-1">
                                   <ArrowUpDown className="w-3.5 h-3.5" />
-                                  {formatSize(backup.size_bytes)}
+                                  {formatSize(backup.size_bytes ?? backup.file_size ?? 0)}
                                 </span>
                               )}
                               {backup.completed_at && backup.started_at && (

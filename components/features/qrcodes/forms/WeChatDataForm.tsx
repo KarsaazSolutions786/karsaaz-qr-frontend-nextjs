@@ -1,29 +1,18 @@
 'use client'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { wechatDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'; const ERROR = 'mt-1 text-xs text-red-500'
 type WeChatDataFormData = z.infer<typeof wechatDataSchema>
-
-interface WeChatDataFormProps {
-  defaultValues?: WeChatDataFormData
-  onSubmit: (data: WeChatDataFormData) => void
-}
-
-export function WeChatDataForm({ defaultValues, onSubmit }: WeChatDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<WeChatDataFormData>({
-    resolver: zodResolver(wechatDataSchema),
-    defaultValues,
-  })
-
+interface WeChatDataFormProps { defaultValues?: Partial<WeChatDataFormData>; onChange?: (data: Partial<WeChatDataFormData>) => void }
+export function WeChatDataForm({ defaultValues, onChange }: WeChatDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<WeChatDataFormData>({ schema: wechatDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="username" className="block text-sm font-medium text-gray-700">WeChat Username</label>
-        <input {...register('username')} id="username" type="text" placeholder="e.g. your_wechat_id" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>}
+        <label htmlFor="username" className={LABEL}>WeChat ID or Username</label>
+        <input {...register('username')} id="username" type="text" placeholder="Your WeChat ID" className={INPUT} />
+        {errors.username && <p className={ERROR}>{errors.username.message}</p>}
       </div>
     </form>
   )

@@ -5,7 +5,7 @@
  * (square, rounded, dots, circular, diamond, etc.)
  */
 
-import { ModuleShape } from '@/types/entities/designer';
+// ModuleShape type handled via string for backward compatibility with client-side renderer
 import { getModuleNeighbors } from './qrcode-utils';
 
 export interface ModuleRenderContext {
@@ -201,15 +201,18 @@ export function renderClassyRoundedModule(ctx: ModuleRenderContext): string {
  * Main module renderer - selects appropriate shape renderer
  */
 export function renderModule(
-  shape: ModuleShape,
+  shape: string,
   ctx: ModuleRenderContext
 ): string {
   switch (shape) {
     case 'square':
+    case 'default':
       return renderSquareModule(ctx);
     case 'rounded':
+    case 'roundness':
       return renderRoundedModule(ctx);
     case 'dots':
+    case 'circle':
       return renderDotModule(ctx);
     case 'circular':
       return renderCircularModule(ctx);
@@ -228,31 +231,27 @@ export function renderModule(
  * Batch render modules (optimized for performance)
  */
 export function renderModuleBatch(
-  shape: ModuleShape,
+  shape: string,
   contexts: ModuleRenderContext[]
 ): string {
-  // For simple shapes, we can use a single path element
-  if (shape === 'square' || shape === 'rounded' || shape === 'dots' || shape === 'circular') {
-    return contexts.map(ctx => renderModule(shape, ctx)).join('\n');
-  }
-
-  // For complex shapes, render individually
   return contexts.map(ctx => renderModule(shape, ctx)).join('\n');
 }
 
 /**
  * Get module shape description (for UI)
  */
-export function getModuleShapeDescription(shape: ModuleShape): string {
-  const descriptions: Record<ModuleShape, string> = {
+export function getModuleShapeDescription(shape: string): string {
+  const descriptions: Record<string, string> = {
     square: 'Classic square modules',
     rounded: 'Rounded corner modules',
+    roundness: 'Rounded corner modules',
     dots: 'Circular dots',
+    circle: 'Circular dots',
     circular: 'Smooth circles',
     diamond: 'Diamond shapes',
     classy: 'Contextual rounded corners',
     'classy-rounded': 'Smooth contextual rounding',
   };
 
-  return descriptions[shape] || 'Unknown shape';
+  return descriptions[shape] || shape;
 }

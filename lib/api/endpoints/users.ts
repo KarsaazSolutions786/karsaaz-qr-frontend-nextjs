@@ -13,7 +13,7 @@ export interface UserListResponse {
 
 export const usersAPI = {
   // Get all users
-  getAll: async (params?: { page?: number; search?: string; paying?: 'paying' | 'non-paying'; number_of_qrcodes?: string }) => {
+  getAll: async (params?: { page?: number; per_page?: number; search?: string; paying?: 'paying' | 'non-paying'; number_of_qrcodes?: string }) => {
     const response = await apiClient.get<UserListResponse>('/users', { params })
     return response.data
   },
@@ -72,29 +72,42 @@ export const usersAPI = {
   },
 
   // ── Sub-User Management ──
+  // Backend endpoints: /users/{user}/sub-users, /users/{user}/invite-sub-user
 
-  // Get sub-users for a user
+  /**
+   * Get all sub-users for a specific parent user.
+   * Endpoint: GET /users/:userId/sub-users
+   */
   getSubUsers: async (userId: number) => {
     const response = await apiClient.get<User[]>(`/users/${userId}/sub-users`)
     return response.data
   },
 
-  // Invite a sub-user
+  /**
+   * Invite a new sub-user under the specified parent user.
+   * Endpoint: POST /users/:userId/invite-sub-user
+   */
   inviteSubUser: async (userId: number, data: { name: string; email: string; mobile?: string; folder_id: string }) => {
     const response = await apiClient.post<User>(`/users/${userId}/invite-sub-user`, data)
     return response.data
   },
 
-  // Update sub-user folder access
-  updateSubUserFolders: async (userId: number, subUserId: number, folderIds: string[]) => {
-    const response = await apiClient.post(`/users/${userId}/sub-users/${subUserId}/update-folders`, {
+  /**
+   * Update which folders a sub-user can access.
+   * Endpoint: POST /users/:parentId/sub-users/:subUserId/update-folders
+   */
+  updateSubUserFolders: async (parentId: number, subUserId: number, folderIds: string[]) => {
+    const response = await apiClient.post(`/users/${parentId}/sub-users/${subUserId}/update-folders`, {
       folder_ids: folderIds,
     })
     return response.data
   },
 
-  // Delete sub-user
-  deleteSubUser: async (userId: number, subUserId: number) => {
-    await apiClient.delete(`/users/${userId}/sub-users/${subUserId}`)
+  /**
+   * Delete a sub-user.
+   * Endpoint: DELETE /users/:parentId/sub-users/:subUserId
+   */
+  deleteSubUser: async (parentId: number, subUserId: number) => {
+    await apiClient.delete(`/users/${parentId}/sub-users/${subUserId}`)
   },
 }

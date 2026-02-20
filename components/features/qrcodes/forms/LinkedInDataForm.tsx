@@ -1,29 +1,18 @@
 'use client'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { linkedinDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'; const ERROR = 'mt-1 text-xs text-red-500'
 type LinkedInDataFormData = z.infer<typeof linkedinDataSchema>
-
-interface LinkedInDataFormProps {
-  defaultValues?: LinkedInDataFormData
-  onSubmit: (data: LinkedInDataFormData) => void
-}
-
-export function LinkedInDataForm({ defaultValues, onSubmit }: LinkedInDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<LinkedInDataFormData>({
-    resolver: zodResolver(linkedinDataSchema),
-    defaultValues,
-  })
-
+interface LinkedInDataFormProps { defaultValues?: Partial<LinkedInDataFormData>; onChange?: (data: Partial<LinkedInDataFormData>) => void }
+export function LinkedInDataForm({ defaultValues, onChange }: LinkedInDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<LinkedInDataFormData>({ schema: linkedinDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="linkedin" className="block text-sm font-medium text-gray-700">LinkedIn Profile URL</label>
-        <input {...register('linkedin')} id="linkedin" type="text" placeholder="e.g. https://linkedin.com/in/yourprofile" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.linkedin && <p className="mt-1 text-sm text-red-600">{errors.linkedin.message}</p>}
+        <label htmlFor="linkedin" className={LABEL}>LinkedIn Profile URL or Username</label>
+        <input {...register('linkedin')} id="linkedin" type="text" placeholder="https://linkedin.com/in/username" className={INPUT} />
+        {errors.linkedin && <p className={ERROR}>{errors.linkedin.message}</p>}
       </div>
     </form>
   )

@@ -45,8 +45,8 @@ export function useQRActions() {
   /** Invalidate QR-related caches after mutations */
   const invalidateQRCaches = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.all }),
-      queryClient.invalidateQueries({ queryKey: queryKeys.folders.all }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.all() }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.folders.all() }),
     ]);
   }, [queryClient]);
 

@@ -58,7 +58,7 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
   }, [menuOpen])
 
   const status = qrcode.status || 'active'
-  const statusStyle = STATUS_STYLES[status] || STATUS_STYLES.active
+  const statusStyle = (STATUS_STYLES[status] ?? STATUS_STYLES.active) as { bg: string; text: string; dot: string }
 
   const handleAction = (action: string) => {
     setMenuOpen(false)

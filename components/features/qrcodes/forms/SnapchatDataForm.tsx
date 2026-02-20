@@ -1,29 +1,18 @@
 'use client'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { snapchatDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'; const ERROR = 'mt-1 text-xs text-red-500'
 type SnapchatDataFormData = z.infer<typeof snapchatDataSchema>
-
-interface SnapchatDataFormProps {
-  defaultValues?: SnapchatDataFormData
-  onSubmit: (data: SnapchatDataFormData) => void
-}
-
-export function SnapchatDataForm({ defaultValues, onSubmit }: SnapchatDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<SnapchatDataFormData>({
-    resolver: zodResolver(snapchatDataSchema),
-    defaultValues,
-  })
-
+interface SnapchatDataFormProps { defaultValues?: Partial<SnapchatDataFormData>; onChange?: (data: Partial<SnapchatDataFormData>) => void }
+export function SnapchatDataForm({ defaultValues, onChange }: SnapchatDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<SnapchatDataFormData>({ schema: snapchatDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="snapchat" className="block text-sm font-medium text-gray-700">Snapchat Username</label>
-        <input {...register('snapchat')} id="snapchat" type="text" placeholder="e.g. your_username" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.snapchat && <p className="mt-1 text-sm text-red-600">{errors.snapchat.message}</p>}
+        <label htmlFor="snapchat" className={LABEL}>Snapchat Username</label>
+        <input {...register('snapchat')} id="snapchat" type="text" placeholder="@yoursnapchat" className={INPUT} />
+        {errors.snapchat && <p className={ERROR}>{errors.snapchat.message}</p>}
       </div>
     </form>
   )

@@ -36,7 +36,6 @@ import {
   Copy,
   Eye,
   EyeOff,
-  FileDown,
 } from 'lucide-react'
 
 
@@ -106,7 +105,6 @@ export default function QRCodesPage() {
   } = useMultiSelect(qrcodes)
 
   const {
-    isProcessing,
     bulkDownloadQRCodes,
     moveToFolder,
     bulkDuplicateQRCodes,

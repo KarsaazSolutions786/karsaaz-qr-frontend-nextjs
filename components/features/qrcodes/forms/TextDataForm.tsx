@@ -1,29 +1,33 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { textDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
+
+const TEXTAREA = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100 resize-none'
+const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'
+const ERROR = 'mt-1 text-xs text-red-500'
 
 type TextDataFormData = z.infer<typeof textDataSchema>
 
 interface TextDataFormProps {
-  defaultValues?: TextDataFormData
-  onSubmit: (data: TextDataFormData) => void
+  defaultValues?: Partial<TextDataFormData>
+  onChange?: (data: Partial<TextDataFormData>) => void
 }
 
-export function TextDataForm({ defaultValues, onSubmit }: TextDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<TextDataFormData>({
-    resolver: zodResolver(textDataSchema),
+export function TextDataForm({ defaultValues, onChange }: TextDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<TextDataFormData>({
+    schema: textDataSchema,
     defaultValues,
+    onChange,
   })
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="text" className="block text-sm font-medium text-gray-700">Text *</label>
-        <textarea {...register('text')} id="text" rows={5} placeholder="Enter your text..." className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.text && <p className="mt-1 text-sm text-red-600">{errors.text.message}</p>}
+        <label htmlFor="text" className={LABEL}>Text / URL</label>
+        <textarea {...register('text')} id="text" rows={5} placeholder="Enter your text or URL..." className={TEXTAREA} />
+        {errors.text && <p className={ERROR}>{errors.text.message}</p>}
       </div>
     </form>
   )

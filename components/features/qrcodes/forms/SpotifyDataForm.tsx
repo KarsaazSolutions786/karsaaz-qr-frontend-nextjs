@@ -1,29 +1,18 @@
 'use client'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { spotifyDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'; const ERROR = 'mt-1 text-xs text-red-500'
 type SpotifyDataFormData = z.infer<typeof spotifyDataSchema>
-
-interface SpotifyDataFormProps {
-  defaultValues?: SpotifyDataFormData
-  onSubmit: (data: SpotifyDataFormData) => void
-}
-
-export function SpotifyDataForm({ defaultValues, onSubmit }: SpotifyDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<SpotifyDataFormData>({
-    resolver: zodResolver(spotifyDataSchema),
-    defaultValues,
-  })
-
+interface SpotifyDataFormProps { defaultValues?: Partial<SpotifyDataFormData>; onChange?: (data: Partial<SpotifyDataFormData>) => void }
+export function SpotifyDataForm({ defaultValues, onChange }: SpotifyDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<SpotifyDataFormData>({ schema: spotifyDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="spotify" className="block text-sm font-medium text-gray-700">Spotify URL</label>
-        <input {...register('spotify')} id="spotify" type="text" placeholder="e.g. https://open.spotify.com/..." className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.spotify && <p className="mt-1 text-sm text-red-600">{errors.spotify.message}</p>}
+        <label htmlFor="spotify" className={LABEL}>Spotify URL</label>
+        <input {...register('spotify')} id="spotify" type="url" placeholder="https://open.spotify.com/track/..." className={INPUT} />
+        {errors.spotify && <p className={ERROR}>{errors.spotify.message}</p>}
       </div>
     </form>
   )

@@ -25,8 +25,8 @@ export default function EditRolePage() {
   useEffect(() => {
     if (role) {
       setName(role.name)
-      setHomePage(role.homePage || '')
-      setPermissionIds(role.permissionIds || [])
+      setHomePage(role.home_page || '')
+      setPermissionIds(role.permission_ids || [])
     }
   }, [role])
 
@@ -45,8 +45,8 @@ export default function EditRolePage() {
         id: roleId,
         data: {
           name: name.trim(),
-          homePage: homePage.trim() || undefined,
-          permissionIds,
+          home_page: homePage.trim() || undefined,
+          permission_ids: permissionIds,
         },
       })
       setSaved(true)
@@ -97,7 +97,7 @@ export default function EditRolePage() {
             <p className="mt-1 text-sm text-gray-500">ID: {role.id}</p>
           </div>
           <div className="flex items-center gap-2">
-            {role.readOnly && (
+            {role.read_only && (
               <span className="inline-flex rounded-full bg-yellow-100 px-2.5 py-1 text-xs font-semibold text-yellow-800">
                 Read Only
               </span>
@@ -132,7 +132,7 @@ export default function EditRolePage() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={role.readOnly}
+              disabled={role.read_only}
               className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
             />
           </div>

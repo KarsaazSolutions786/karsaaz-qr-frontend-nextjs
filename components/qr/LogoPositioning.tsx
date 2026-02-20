@@ -10,15 +10,7 @@
 import React from 'react';
 import { ColorPicker } from '../ui/ColorPicker';
 
-export interface LogoConfig {
-  url: string;
-  size: number; // 0-0.5 (percentage of QR size)
-  margin: number; // 0-0.3 (margin around logo for clearing)
-  shape: 'square' | 'circle';
-  backgroundColor?: string;
-  borderColor?: string;
-  borderWidth?: number;
-}
+import { LogoConfig } from '@/types/entities/designer';
 
 export interface LogoPositioningProps {
   value: LogoConfig;

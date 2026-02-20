@@ -51,8 +51,8 @@ export function generateQRCodeSVG(options: SVGRenderOptions): string {
   const foregroundColor = getForegroundColor(config);
   svg += '<g class="qr-corners">';
   svg += renderAllCorners(
-    config.cornerFrameStyle,
-    config.cornerDotStyle,
+    config.finder || config.cornerFrameStyle || 'default',
+    config.finderDot || config.cornerDotStyle || 'default',
     moduleSize,
     moduleCount,
     config.margin,

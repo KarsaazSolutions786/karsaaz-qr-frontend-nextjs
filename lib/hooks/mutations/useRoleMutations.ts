@@ -7,7 +7,7 @@ export function useCreateRole() {
   const router = useRouter()
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: { name: string; homePage?: string; permissionIds: number[] }) =>
+    mutationFn: (data: { name: string; home_page?: string; permission_ids: number[] }) =>
       rolesAPI.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.roles.all() })

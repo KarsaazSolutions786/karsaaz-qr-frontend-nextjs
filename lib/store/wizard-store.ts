@@ -7,7 +7,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { DesignerConfig } from '@/types/entities/designer';
+import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer';
 import { StickerConfig } from '@/types/entities/sticker';
 
 // Wizard step types
@@ -85,25 +85,7 @@ export interface WizardState {
 // Step order for navigation
 const STEP_ORDER: WizardStep[] = ['type', 'content', 'design', 'sticker', 'preview', 'download'];
 
-// Default designer config
-const DEFAULT_DESIGNER_CONFIG: DesignerConfig = {
-  moduleShape: 'square',
-  cornerFrameStyle: 'square',
-  cornerDotStyle: 'square',
-  foregroundFill: {
-    type: 'solid',
-    color: '#000000',
-  },
-  background: {
-    type: 'transparent',
-  },
-  size: 600,
-  margin: 4,
-  errorCorrectionLevel: 'M',
-  logo: undefined,
-  outline: undefined,
-  aiDesign: undefined,
-};
+// Uses DEFAULT_DESIGNER_CONFIG from types/entities/designer.ts
 
 // Generate session ID
 function generateSessionId(): string {

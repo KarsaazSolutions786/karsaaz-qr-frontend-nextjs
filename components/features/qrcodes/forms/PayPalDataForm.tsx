@@ -1,86 +1,57 @@
 'use client'
-
-import { useForm, useWatch } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { paypalDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'
+const SELECT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition cursor-pointer focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'
+const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'
+const ERROR = 'mt-1 text-xs text-red-500'
 type PayPalDataFormData = z.infer<typeof paypalDataSchema>
-
-interface PayPalDataFormProps {
-  defaultValues?: PayPalDataFormData
-  onSubmit: (data: PayPalDataFormData) => void
-}
-
-const CURRENCIES = [
-  'USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY', 'CNY', 'INR', 'BRL', 'MXN',
-  'CHF', 'SEK', 'NOK', 'DKK', 'NZD', 'SGD', 'HKD', 'KRW', 'TWD', 'THB',
-]
-
-export function PayPalDataForm({ defaultValues, onSubmit }: PayPalDataFormProps) {
-  const { register, handleSubmit, control, formState: { errors } } = useForm<PayPalDataFormData>({
-    resolver: zodResolver(paypalDataSchema),
-    defaultValues: { type: '_xclick', currency: 'USD', ...defaultValues },
-  })
-
-  const paymentType = useWatch({ control, name: 'type' })
-
+interface PayPalDataFormProps { defaultValues?: Partial<PayPalDataFormData>; onChange?: (data: Partial<PayPalDataFormData>) => void }
+export function PayPalDataForm({ defaultValues, onChange }: PayPalDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<PayPalDataFormData>({ schema: paypalDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="type" className="block text-sm font-medium text-gray-700">Payment Type</label>
-        <select {...register('type')} id="type" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500">
+        <label htmlFor="type" className={LABEL}>Type</label>
+        <select {...register('type')} id="type" className={SELECT}>
           <option value="_xclick">Buy Now</option>
-          <option value="_donations">Donation</option>
+          <option value="_donations">Donate</option>
           <option value="_cart">Add to Cart</option>
         </select>
-        {errors.type && <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>}
+        {errors.type && <p className={ERROR}>{errors.type.message}</p>}
       </div>
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700">PayPal Email</label>
-        <input {...register('email')} id="email" type="email" placeholder="your@paypal.com" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+        <label htmlFor="email" className={LABEL}>PayPal Email</label>
+        <input {...register('email')} id="email" type="email" className={INPUT} />
+        {errors.email && <p className={ERROR}>{errors.email.message}</p>}
       </div>
       <div>
-        <label htmlFor="item_name" className="block text-sm font-medium text-gray-700">Item Name</label>
-        <input {...register('item_name')} id="item_name" type="text" placeholder="e.g. Product Name" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.item_name && <p className="mt-1 text-sm text-red-600">{errors.item_name.message}</p>}
+        <label htmlFor="item_name" className={LABEL}>Item Name <span className="text-gray-400 font-normal">(optional)</span></label>
+        <input {...register('item_name')} id="item_name" type="text" className={INPUT} />
+        {errors.item_name && <p className={ERROR}>{errors.item_name.message}</p>}
       </div>
       <div>
-        <label htmlFor="item_id" className="block text-sm font-medium text-gray-700">Item ID</label>
-        <input {...register('item_id')} id="item_id" type="text" placeholder="e.g. SKU-001" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.item_id && <p className="mt-1 text-sm text-red-600">{errors.item_id.message}</p>}
+        <label htmlFor="amount" className={LABEL}>Amount <span className="text-gray-400 font-normal">(optional)</span></label>
+        <input {...register('amount', { valueAsNumber: true })} id="amount" type="number" step="0.01" placeholder="0.00" className={INPUT} />
+        {errors.amount && <p className={ERROR}>{errors.amount.message}</p>}
       </div>
       <div>
-        <label htmlFor="amount" className="block text-sm font-medium text-gray-700">Amount</label>
-        <input {...register('amount', { valueAsNumber: true })} id="amount" type="number" step="0.01" placeholder="0.00" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.amount && <p className="mt-1 text-sm text-red-600">{errors.amount.message}</p>}
-      </div>
-      <div>
-        <label htmlFor="currency" className="block text-sm font-medium text-gray-700">Currency</label>
-        <select {...register('currency')} id="currency" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500">
-          {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
+        <label htmlFor="currency" className={LABEL}>Currency</label>
+        <select {...register('currency')} id="currency" className={SELECT}>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="AUD">AUD</option>
+          <option value="CAD">CAD</option>
+          <option value="INR">INR</option>
         </select>
-        {errors.currency && <p className="mt-1 text-sm text-red-600">{errors.currency.message}</p>}
+        {errors.currency && <p className={ERROR}>{errors.currency.message}</p>}
       </div>
-      {paymentType !== '_donations' && (
-        <>
-          <div>
-            <label htmlFor="shipping" className="block text-sm font-medium text-gray-700">Shipping</label>
-            <input {...register('shipping', { valueAsNumber: true })} id="shipping" type="number" step="0.01" placeholder="0.00" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-            {errors.shipping && <p className="mt-1 text-sm text-red-600">{errors.shipping.message}</p>}
-          </div>
-          <div>
-            <label htmlFor="tax" className="block text-sm font-medium text-gray-700">Tax</label>
-            <input {...register('tax', { valueAsNumber: true })} id="tax" type="number" step="0.01" placeholder="0.00" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-            {errors.tax && <p className="mt-1 text-sm text-red-600">{errors.tax.message}</p>}
-          </div>
-        </>
-      )}
       <div>
-        <label htmlFor="expires_at" className="block text-sm font-medium text-gray-700">Expires At</label>
-        <input {...register('expires_at')} id="expires_at" type="date" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.expires_at && <p className="mt-1 text-sm text-red-600">{errors.expires_at.message}</p>}
+        <label htmlFor="expires_at" className={LABEL}>Expires At <span className="text-gray-400 font-normal">(optional)</span></label>
+        <input {...register('expires_at')} id="expires_at" type="date" className={INPUT} />
+        {errors.expires_at && <p className={ERROR}>{errors.expires_at.message}</p>}
       </div>
     </form>
   )

@@ -3,7 +3,7 @@ import { usersAPI } from '@/lib/api/endpoints/users'
 import { queryKeys } from '@/lib/query/keys'
 
 // Get all users
-export function useUsers(params?: { page?: number; search?: string; paying?: 'paying' | 'non-paying'; number_of_qrcodes?: string }) {
+export function useUsers(params?: { page?: number; per_page?: number; search?: string; paying?: 'paying' | 'non-paying'; number_of_qrcodes?: string }) {
   return useQuery({
     queryKey: queryKeys.users.list(params),
     queryFn: () => usersAPI.getAll(params),

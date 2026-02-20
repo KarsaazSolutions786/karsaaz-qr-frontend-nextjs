@@ -1,43 +1,30 @@
 'use client'
-
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { googleReviewDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
-
+const INPUT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const SELECT = 'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition cursor-pointer focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'; const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'; const ERROR = 'mt-1 text-xs text-red-500'
 type GoogleReviewDataFormData = z.infer<typeof googleReviewDataSchema>
-
-interface GoogleReviewDataFormProps {
-  defaultValues?: GoogleReviewDataFormData
-  onSubmit: (data: GoogleReviewDataFormData) => void
-}
-
-export function GoogleReviewDataForm({ defaultValues, onSubmit }: GoogleReviewDataFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<GoogleReviewDataFormData>({
-    resolver: zodResolver(googleReviewDataSchema),
-    defaultValues: { url_type: 'my-business', ...defaultValues },
-  })
-
+interface GoogleReviewDataFormProps { defaultValues?: Partial<GoogleReviewDataFormData>; onChange?: (data: Partial<GoogleReviewDataFormData>) => void }
+export function GoogleReviewDataForm({ defaultValues, onChange }: GoogleReviewDataFormProps) {
+  const { register, formState: { errors } } = useQRFormWatch<GoogleReviewDataFormData>({ schema: googleReviewDataSchema, defaultValues, onChange })
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form className="space-y-5">
       <div>
-        <label htmlFor="place" className="block text-sm font-medium text-gray-700">Google Place</label>
-        <input {...register('place')} id="place" type="text" placeholder="Enter Google Place name or ID" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.place && <p className="mt-1 text-sm text-red-600">{errors.place.message}</p>}
+        <label htmlFor="place" className={LABEL}>Google Business Place ID or URL</label>
+        <input {...register('place')} id="place" type="text" placeholder="ChIJ... or https://g.page/..." className={INPUT} />
+        {errors.place && <p className={ERROR}>{errors.place.message}</p>}
       </div>
       <div>
-        <label htmlFor="url_type" className="block text-sm font-medium text-gray-700">URL Type</label>
-        <select {...register('url_type')} id="url_type" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500">
-          <option value="my-business">Google My Business Page</option>
+        <label htmlFor="url_type" className={LABEL}>Review Link Type</label>
+        <select {...register('url_type')} id="url_type" className={SELECT}>
+          <option value="my-business">My Business</option>
           <option value="review-list">Review List</option>
           <option value="review-request">Review Request</option>
         </select>
-        {errors.url_type && <p className="mt-1 text-sm text-red-600">{errors.url_type.message}</p>}
       </div>
       <div>
-        <label htmlFor="expires_at" className="block text-sm font-medium text-gray-700">Expires At</label>
-        <input {...register('expires_at')} id="expires_at" type="date" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500" />
-        {errors.expires_at && <p className="mt-1 text-sm text-red-600">{errors.expires_at.message}</p>}
+        <label htmlFor="expires_at" className={LABEL}>Expiry Date</label>
+        <input {...register('expires_at')} id="expires_at" type="date" className={INPUT} />
       </div>
     </form>
   )

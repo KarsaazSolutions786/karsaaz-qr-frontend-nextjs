@@ -101,6 +101,10 @@ export default function NewTranslationPage() {
           <p className="mt-1 text-xs text-gray-500">Optional flag icon displayed in the language picker</p>
         </div>
 
+        <div className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
+          Translation JSON file upload is available after the language is first saved.
+        </div>
+
         <div className="flex items-center justify-end gap-4 border-t pt-4">
           <button type="button" onClick={() => router.back()}
             className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>

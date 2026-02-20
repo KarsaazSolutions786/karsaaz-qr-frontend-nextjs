@@ -1,15 +1,27 @@
 import apiClient from '../client'
 
+/**
+ * Role entity — matches backend snake_case convention.
+ * super_admin: truthy means this role bypasses all permission checks.
+ * read_only: system roles that cannot be modified/deleted.
+ */
 export interface RoleEntity {
   id: number
   name: string
-  homePage?: string
-  permissionIds: number[]
-  permissionCount?: number
-  userCount?: number
-  readOnly?: boolean
-  createdAt: string
-  updatedAt: string
+  /** Default landing page after login for users with this role */
+  home_page?: string
+  /** Whether this role bypasses all RBAC permission checks */
+  super_admin?: boolean | number
+  /** Array of permission IDs assigned to this role */
+  permission_ids: number[]
+  /** Number of permissions (computed field) */
+  permission_count?: number
+  /** Number of users with this role (computed field) */
+  user_count?: number
+  /** System role — cannot be edited or deleted */
+  read_only?: boolean
+  created_at: string
+  updated_at: string
 }
 
 export interface PermissionGroup {

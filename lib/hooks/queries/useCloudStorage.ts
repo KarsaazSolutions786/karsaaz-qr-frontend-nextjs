@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useRef, useCallback, useEffect } from 'react'
 import { cloudStorageAPI, type CreateBackupData, type OAuthCallbackData, type MegaCredentials, type CloudProvider } from '@/lib/api/endpoints/cloud-storage'
 import { queryKeys } from '@/lib/query/keys'
 
@@ -40,6 +41,7 @@ export function useBackupJobs() {
 
 /**
  * Hook to get a single backup job (for polling progress)
+ * Polls every 2s while job is pending/processing per CLOUD_STORAGE_DOCUMENTATION.md
  */
 export function useBackupJob(id: string | null) {
   return useQuery({
@@ -47,14 +49,120 @@ export function useBackupJob(id: string | null) {
     queryFn: () => cloudStorageAPI.getBackupJob(id!),
     enabled: !!id,
     refetchInterval: (query) => {
-      // Poll every 3s while backup is in progress
+      // Poll every 2s while backup is in progress (per docs)
       const data = query.state.data
-      if (data && (data.status === 'pending' || data.status === 'in_progress')) {
-        return 3000
+      if (data && (data.status === 'pending' || data.status === 'processing' || data.status === 'in_progress')) {
+        return 2000
       }
       return false
     },
   })
+}
+
+/**
+ * OAuth Popup Status
+ */
+export type OAuthPopupStatus = 'idle' | 'waiting' | 'success' | 'error'
+
+/**
+ * Hook to manage OAuth popup flow with message listening
+ * Per CLOUD_STORAGE_DOCUMENTATION.md Section 7
+ */
+export function useOAuthPopup(onComplete?: () => void) {
+  const queryClient = useQueryClient()
+  const popupRef = useRef<Window | null>(null)
+  const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  
+  const handleOAuthCallback = useMutation({
+    mutationFn: ({ provider, data }: { provider: Exclude<CloudProvider, 'mega'>; data: OAuthCallbackData }) =>
+      cloudStorageAPI.handleCallback(provider, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.cloudStorage.connections() })
+      onComplete?.()
+    },
+  })
+
+  // Cleanup function
+  const cleanup = useCallback(() => {
+    if (checkIntervalRef.current) {
+      clearInterval(checkIntervalRef.current)
+      checkIntervalRef.current = null
+    }
+    popupRef.current = null
+  }, [])
+
+  // Message handler for OAuth callback
+  const handleMessage = useCallback((event: MessageEvent) => {
+    // Verify origin for security
+    if (event.origin !== window.location.origin) return
+    
+    const data = event.data
+    if (data?.type !== 'cloud-oauth-callback') return
+
+    const { code, state, provider } = data
+    if (!code || !provider) return
+
+    // Process the OAuth callback
+    handleOAuthCallback.mutate({
+      provider: provider as Exclude<CloudProvider, 'mega'>,
+      data: { code, state },
+    })
+
+    cleanup()
+  }, [handleOAuthCallback, cleanup])
+
+  // Setup message listener
+  useEffect(() => {
+    window.addEventListener('message', handleMessage)
+    return () => {
+      window.removeEventListener('message', handleMessage)
+      cleanup()
+    }
+  }, [handleMessage, cleanup])
+
+  // Open OAuth popup
+  const openPopup = useCallback(async (provider: Exclude<CloudProvider, 'mega'>) => {
+    try {
+      const { url } = await cloudStorageAPI.getAuthUrl(provider)
+      
+      // Open OAuth popup (600x700 per docs)
+      const width = 600
+      const height = 700
+      const left = window.screenX + (window.outerWidth - width) / 2
+      const top = window.screenY + (window.outerHeight - height) / 2
+      
+      const popup = window.open(
+        url,
+        'cloud-oauth-popup',
+        `width=${width},height=${height},left=${left},top=${top},toolbar=no,menubar=no,scrollbars=yes`
+      )
+
+      if (!popup) {
+        throw new Error('Popup was blocked. Please allow popups for this site.')
+      }
+
+      popupRef.current = popup
+
+      // Start popup close detection (500ms interval per docs)
+      checkIntervalRef.current = setInterval(() => {
+        if (popupRef.current?.closed) {
+          cleanup()
+        }
+      }, 500)
+
+      return { popup, provider }
+    } catch (error) {
+      cleanup()
+      throw error
+    }
+  }, [cleanup])
+
+  return {
+    openPopup,
+    isProcessing: handleOAuthCallback.isPending,
+    error: handleOAuthCallback.error,
+    isSuccess: handleOAuthCallback.isSuccess,
+  }
 }
 
 /**
@@ -117,7 +225,15 @@ export function useCloudStorageMutations() {
     },
   })
 
-  /** Delete a backup job */
+  /** Cancel an in-progress backup job */
+  const cancelBackupJob = useMutation({
+    mutationFn: (id: string) => cloudStorageAPI.cancelBackupJob(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.cloudStorage.backupJobs() })
+    },
+  })
+
+  /** Delete a backup job (alias for cancelBackupJob for backward compatibility) */
   const deleteBackupJob = useMutation({
     mutationFn: (id: string) => cloudStorageAPI.deleteBackupJob(id),
     onSuccess: () => {
@@ -138,6 +254,7 @@ export function useCloudStorageMutations() {
     handleOAuthCallback,
     connectMega,
     createBackup,
+    cancelBackupJob,
     deleteBackupJob,
     refreshToken,
   }

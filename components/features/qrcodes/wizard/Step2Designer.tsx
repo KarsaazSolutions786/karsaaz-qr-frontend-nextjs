@@ -5,16 +5,22 @@ import { QRCodePreview, QRCodePreviewRef } from '@/components/qr/QRCodePreview'
 import { GradientBuilder } from '@/components/ui/GradientBuilder'
 import { LogoUpload } from '@/components/qr/LogoUpload'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { encodeQRData } from '@/lib/utils/qr-data-encoder'
 import {
   DesignerConfig,
   DEFAULT_DESIGNER_CONFIG,
   DESIGN_PRESETS,
-  ModuleShape,
-  CornerFrameStyle,
-  CornerDotStyle,
 } from '@/types/entities/designer'
+import {
+  MODULE_SHAPES,
+  FINDER_STYLES,
+  FINDER_DOT_STYLES,
+  OUTLINED_SHAPES,
+  ADVANCED_SHAPES,
+  PRESET_LOGOS,
+} from '@/lib/constants/qr-shapes'
 import {
   Palette,
   Image as ImageIcon,
@@ -22,6 +28,9 @@ import {
   RotateCcw,
   Boxes,
   CircleDot,
+  Shapes,
+  Sticker,
+  Wand2,
 } from 'lucide-react'
 
 interface Step2DesignerProps {
@@ -30,30 +39,6 @@ interface Step2DesignerProps {
   qrType: string
   qrData: Record<string, any>
 }
-
-const MODULE_SHAPES: { value: ModuleShape; label: string; icon: string }[] = [
-  { value: 'square', label: 'Square', icon: '⬛' },
-  { value: 'rounded', label: 'Rounded', icon: '🔲' },
-  { value: 'dots', label: 'Dots', icon: '⚫' },
-  { value: 'circular', label: 'Circular', icon: '🔵' },
-  { value: 'diamond', label: 'Diamond', icon: '💎' },
-  { value: 'classy', label: 'Classy', icon: '🔷' },
-  { value: 'classy-rounded', label: 'Classy Rounded', icon: '🟦' },
-]
-
-const CORNER_FRAME_STYLES: { value: CornerFrameStyle; label: string }[] = [
-  { value: 'square', label: 'Square' },
-  { value: 'rounded', label: 'Rounded' },
-  { value: 'extra-rounded', label: 'Extra Rounded' },
-  { value: 'circular', label: 'Circular' },
-  { value: 'dot', label: 'Dot' },
-]
-
-const CORNER_DOT_STYLES: { value: CornerDotStyle; label: string }[] = [
-  { value: 'square', label: 'Square' },
-  { value: 'rounded', label: 'Rounded' },
-  { value: 'dot', label: 'Dot' },
-]
 
 export default function Step2Designer({
   design,
@@ -64,16 +49,11 @@ export default function Step2Designer({
   const [activeTab, setActiveTab] = useState('shape')
   const previewRef = useRef<QRCodePreviewRef>(null)
 
-  // Merge with defaults for preview
-  const mergedConfig: DesignerConfig = useMemo(
-    () => ({
-      ...DEFAULT_DESIGNER_CONFIG,
-      ...design,
-    }),
+  const mergedConfig = useMemo(
+    () => ({ ...DEFAULT_DESIGNER_CONFIG, ...design }),
     [design]
   )
 
-  // Encode QR data for live preview
   const previewData = encodeQRData(qrType, qrData)
 
   const handleChange = (field: string, value: any) => {
@@ -85,18 +65,17 @@ export default function Step2Designer({
   }
 
   const resetToDefaults = () => {
-    onChange({
-      ...DEFAULT_DESIGNER_CONFIG,
-    })
+    onChange({ ...DEFAULT_DESIGNER_CONFIG })
   }
+
+  // Get current sticker config for conditional controls
+  const currentSticker = ADVANCED_SHAPES.find(s => s.value === mergedConfig.advancedShape)
 
   return (
     <div className="space-y-6">
       {/* Design Presets */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">
-          Quick Presets
-        </h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Presets</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {DESIGN_PRESETS.map((preset) => {
             const presetColor = preset.config.foregroundFill?.type === 'solid'
@@ -105,7 +84,6 @@ export default function Step2Designer({
             const presetBg = preset.config.background?.type === 'solid'
               ? preset.config.background?.color || '#FFFFFF'
               : '#FFFFFF'
-
             return (
               <Button
                 key={preset.id}
@@ -113,19 +91,8 @@ export default function Step2Designer({
                 variant="outline"
                 className="h-auto py-3 flex flex-col items-center gap-2 hover:border-blue-400 transition-colors"
               >
-                <div
-                  className="w-12 h-12 rounded border-2"
-                  style={{
-                    backgroundColor: presetBg,
-                    borderColor: presetColor,
-                  }}
-                >
-                  <div
-                    className="w-full h-full flex items-center justify-center text-lg"
-                    style={{ color: presetColor }}
-                  >
-                    ⊞
-                  </div>
+                <div className="w-12 h-12 rounded border-2" style={{ backgroundColor: presetBg, borderColor: presetColor }}>
+                  <div className="w-full h-full flex items-center justify-center text-lg" style={{ color: presetColor }}>⊞</div>
                 </div>
                 <span className="text-xs font-medium">{preset.name}</span>
               </Button>
@@ -138,60 +105,63 @@ export default function Step2Designer({
         {/* Design Controls */}
         <div className="lg:col-span-3">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Customize Design
-            </h3>
-            <Button
-              onClick={resetToDefaults}
-              variant="ghost"
-              size="sm"
-              className="gap-2"
-            >
+            <h3 className="text-lg font-semibold text-gray-900">Customize Design</h3>
+            <Button onClick={resetToDefaults} variant="ghost" size="sm" className="gap-2">
               <RotateCcw className="w-4 h-4" />
               Reset
             </Button>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="shape" className="gap-1 text-xs sm:text-sm">
-                <Boxes className="w-4 h-4" />
-                Shape
+            <TabsList className="grid w-full grid-cols-7">
+              <TabsTrigger value="shape" className="gap-1 text-[10px] sm:text-xs">
+                <Boxes className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Shape</span>
               </TabsTrigger>
-              <TabsTrigger value="fill" className="gap-1 text-xs sm:text-sm">
-                <Palette className="w-4 h-4" />
-                Fill
+              <TabsTrigger value="fill" className="gap-1 text-[10px] sm:text-xs">
+                <Palette className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Fill</span>
               </TabsTrigger>
-              <TabsTrigger value="corners" className="gap-1 text-xs sm:text-sm">
-                <CircleDot className="w-4 h-4" />
-                Corners
+              <TabsTrigger value="corners" className="gap-1 text-[10px] sm:text-xs">
+                <CircleDot className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Eyes</span>
               </TabsTrigger>
-              <TabsTrigger value="logo" className="gap-1 text-xs sm:text-sm">
-                <ImageIcon className="w-4 h-4" />
-                Logo
+              <TabsTrigger value="logo" className="gap-1 text-[10px] sm:text-xs">
+                <ImageIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Logo</span>
+              </TabsTrigger>
+              <TabsTrigger value="shapes" className="gap-1 text-[10px] sm:text-xs">
+                <Shapes className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Outline</span>
+              </TabsTrigger>
+              <TabsTrigger value="stickers" className="gap-1 text-[10px] sm:text-xs">
+                <Sticker className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Sticker</span>
+              </TabsTrigger>
+              <TabsTrigger value="ai" className="gap-1 text-[10px] sm:text-xs">
+                <Wand2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">AI</span>
               </TabsTrigger>
             </TabsList>
 
-            {/* Shape Tab */}
+            {/* ======================= SHAPE TAB ======================= */}
             <TabsContent value="shape" className="space-y-6 mt-6">
+              {/* Module Pattern */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Module Pattern
-                </label>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">Module Pattern</label>
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                   {MODULE_SHAPES.map((shape) => (
                     <button
                       key={shape.value}
                       type="button"
                       onClick={() => handleChange('moduleShape', shape.value)}
-                      className={`flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all ${
+                      className={`flex flex-col items-center gap-1 p-2 rounded-lg border-2 transition-all text-xs ${
                         mergedConfig.moduleShape === shape.value
                           ? 'border-blue-500 bg-blue-50 shadow-sm'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <span className="text-xl">{shape.icon}</span>
-                      <span className="text-xs font-medium text-gray-700">{shape.label}</span>
+                      <span className="font-medium text-gray-700">{shape.label}</span>
                     </button>
                   ))}
                 </div>
@@ -203,29 +173,20 @@ export default function Step2Designer({
                   Size: {mergedConfig.size}px
                 </label>
                 <input
-                  type="range"
-                  min="200"
-                  max="2000"
-                  step="50"
+                  type="range" min="200" max="2000" step="50"
                   value={mergedConfig.size}
                   onChange={(e) => handleChange('size', parseInt(e.target.value))}
                   className="w-full accent-blue-500"
                 />
-                <div className="flex justify-between text-xs text-gray-400 mt-1">
-                  <span>200px</span>
-                  <span>2000px</span>
-                </div>
               </div>
 
               {/* Margin */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Margin (Quiet Zone): {mergedConfig.margin} modules
+                  Margin: {mergedConfig.margin} modules
                 </label>
                 <input
-                  type="range"
-                  min="0"
-                  max="10"
+                  type="range" min="0" max="10"
                   value={mergedConfig.margin}
                   onChange={(e) => handleChange('margin', parseInt(e.target.value))}
                   className="w-full accent-blue-500"
@@ -234,14 +195,11 @@ export default function Step2Designer({
 
               {/* Error Correction */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Error Correction Level
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Error Correction</label>
                 <div className="grid grid-cols-4 gap-2">
                   {(['L', 'M', 'Q', 'H'] as const).map((level) => (
                     <button
-                      key={level}
-                      type="button"
+                      key={level} type="button"
                       onClick={() => handleChange('errorCorrectionLevel', level)}
                       className={`p-2 rounded-lg border-2 text-sm font-medium transition-all ${
                         mergedConfig.errorCorrectionLevel === level
@@ -256,65 +214,42 @@ export default function Step2Designer({
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Higher levels allow more damage tolerance but increase QR density. Use H when adding a logo.
-                </p>
               </div>
             </TabsContent>
 
-            {/* Fill Tab */}
+            {/* ======================= FILL TAB ======================= */}
             <TabsContent value="fill" className="space-y-6 mt-6">
-              {/* Foreground Fill */}
+              {/* Foreground Color */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Foreground Color
-                </label>
-                {mergedConfig.foregroundFill.type === 'solid' ? (
+                <label className="block text-sm font-medium text-gray-700 mb-3">Foreground Color</label>
+                {mergedConfig.foregroundFill.type === 'solid' && (
                   <div className="flex items-center gap-3">
                     <input
                       type="color"
                       value={(mergedConfig.foregroundFill as any).color || '#000000'}
-                      onChange={(e) =>
-                        handleChange('foregroundFill', {
-                          type: 'solid',
-                          color: e.target.value,
-                        })
-                      }
+                      onChange={(e) => handleChange('foregroundFill', { type: 'solid', color: e.target.value })}
                       className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
                     />
                     <input
                       type="text"
                       value={(mergedConfig.foregroundFill as any).color || '#000000'}
-                      onChange={(e) =>
-                        handleChange('foregroundFill', {
-                          type: 'solid',
-                          color: e.target.value,
-                        })
-                      }
+                      onChange={(e) => handleChange('foregroundFill', { type: 'solid', color: e.target.value })}
                       className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
-                      placeholder="#000000"
                     />
                   </div>
-                ) : null}
+                )}
                 <div className="mt-3">
                   <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
+                    variant="outline" size="sm" className="gap-2"
                     onClick={() => {
                       if (mergedConfig.foregroundFill.type === 'solid') {
                         handleChange('foregroundFill', {
-                          type: 'gradient',
-                          gradientType: 'linear',
+                          type: 'gradient', gradientType: 'linear',
                           startColor: (mergedConfig.foregroundFill as any).color || '#000000',
-                          endColor: '#333333',
-                          rotation: 45,
+                          endColor: '#333333', rotation: 45,
                         })
                       } else {
-                        handleChange('foregroundFill', {
-                          type: 'solid',
-                          color: '#000000',
-                        })
+                        handleChange('foregroundFill', { type: 'solid', color: '#000000' })
                       }
                     }}
                   >
@@ -322,7 +257,6 @@ export default function Step2Designer({
                     {mergedConfig.foregroundFill.type === 'solid' ? 'Use Gradient' : 'Use Solid Color'}
                   </Button>
                 </div>
-
                 {mergedConfig.foregroundFill.type === 'gradient' && (
                   <div className="mt-4">
                     <GradientBuilder
@@ -334,10 +268,8 @@ export default function Step2Designer({
                       }}
                       onChange={(gradient) =>
                         handleChange('foregroundFill', {
-                          type: 'gradient',
-                          gradientType: gradient.type,
-                          startColor: gradient.startColor,
-                          endColor: gradient.endColor,
+                          type: 'gradient', gradientType: gradient.type,
+                          startColor: gradient.startColor, endColor: gradient.endColor,
                           rotation: gradient.rotation,
                         })
                       }
@@ -346,56 +278,70 @@ export default function Step2Designer({
                 )}
               </div>
 
+              {/* Eye External Color */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Eye External Color</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={mergedConfig.eyeExternalColor || '#000000'}
+                    onChange={(e) => handleChange('eyeExternalColor', e.target.value)}
+                    className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={mergedConfig.eyeExternalColor || '#000000'}
+                    onChange={(e) => handleChange('eyeExternalColor', e.target.value)}
+                    className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
+                  />
+                </div>
+              </div>
+
+              {/* Eye Internal Color */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Eye Internal Color</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="color"
+                    value={mergedConfig.eyeInternalColor || '#000000'}
+                    onChange={(e) => handleChange('eyeInternalColor', e.target.value)}
+                    className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
+                  />
+                  <input
+                    type="text"
+                    value={mergedConfig.eyeInternalColor || '#000000'}
+                    onChange={(e) => handleChange('eyeInternalColor', e.target.value)}
+                    className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
+                  />
+                </div>
+              </div>
+
               {/* Background */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Background
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Background</label>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <input
-                      type="checkbox"
-                      id="transparentBg"
+                      type="checkbox" id="transparentBg"
                       checked={mergedConfig.background.type === 'transparent'}
-                      onChange={(e) =>
-                        handleChange(
-                          'background',
-                          e.target.checked
-                            ? { type: 'transparent' }
-                            : { type: 'solid', color: '#FFFFFF' }
-                        )
-                      }
+                      onChange={(e) => handleChange('background', e.target.checked ? { type: 'transparent' } : { type: 'solid', color: '#FFFFFF' })}
                       className="rounded border-gray-300"
                     />
-                    <label htmlFor="transparentBg" className="text-sm text-gray-700">
-                      Transparent background
-                    </label>
+                    <label htmlFor="transparentBg" className="text-sm text-gray-700">Transparent background</label>
                   </div>
-
                   {mergedConfig.background.type !== 'transparent' && (
                     <div className="flex items-center gap-3">
                       <input
                         type="color"
                         value={mergedConfig.background.color || '#FFFFFF'}
-                        onChange={(e) =>
-                          handleChange('background', {
-                            type: 'solid',
-                            color: e.target.value,
-                          })
-                        }
+                        onChange={(e) => handleChange('background', { type: 'solid', color: e.target.value })}
                         className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
                       />
                       <input
                         type="text"
                         value={mergedConfig.background.color || '#FFFFFF'}
-                        onChange={(e) =>
-                          handleChange('background', {
-                            type: 'solid',
-                            color: e.target.value,
-                          })
-                        }
+                        onChange={(e) => handleChange('background', { type: 'solid', color: e.target.value })}
                         className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
-                        placeholder="#FFFFFF"
                       />
                     </div>
                   )}
@@ -403,44 +349,18 @@ export default function Step2Designer({
               </div>
             </TabsContent>
 
-            {/* Corners Tab */}
+            {/* ======================= EYES (CORNERS) TAB ======================= */}
             <TabsContent value="corners" className="space-y-6 mt-6">
-              {/* Corner Frame Style */}
+              {/* Finder Frame Style */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Corner Frame Style
-                </label>
-                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                  {CORNER_FRAME_STYLES.map((style) => (
-                    <button
-                      key={style.value}
-                      type="button"
-                      onClick={() => handleChange('cornerFrameStyle', style.value)}
-                      className={`p-2 rounded-lg border-2 text-xs font-medium transition-all ${
-                        mergedConfig.cornerFrameStyle === style.value
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
-                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                      }`}
-                    >
-                      {style.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Corner Dot Style */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Corner Dot Style
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Finder Frame Style</label>
                 <div className="grid grid-cols-3 gap-2">
-                  {CORNER_DOT_STYLES.map((style) => (
+                  {FINDER_STYLES.map((style) => (
                     <button
-                      key={style.value}
-                      type="button"
-                      onClick={() => handleChange('cornerDotStyle', style.value)}
+                      key={style.value} type="button"
+                      onClick={() => handleChange('finder', style.value)}
                       className={`p-2 rounded-lg border-2 text-xs font-medium transition-all ${
-                        mergedConfig.cornerDotStyle === style.value
+                        mergedConfig.finder === style.value
                           ? 'border-blue-500 bg-blue-50 text-blue-700'
                           : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
@@ -451,99 +371,134 @@ export default function Step2Designer({
                 </div>
               </div>
 
-              {/* Outline */}
+              {/* Finder Dot Style */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Outline
-                </label>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      id="outlineEnabled"
-                      checked={mergedConfig.outline?.enabled || false}
-                      onChange={(e) =>
-                        handleChange('outline', {
-                          enabled: e.target.checked,
-                          color: mergedConfig.outline?.color || '#000000',
-                          width: mergedConfig.outline?.width || 1,
-                        })
-                      }
-                      className="rounded border-gray-300"
-                    />
-                    <label htmlFor="outlineEnabled" className="text-sm text-gray-700">
-                      Add outline to modules
-                    </label>
-                  </div>
-
-                  {mergedConfig.outline?.enabled && (
-                    <div className="flex items-center gap-3 pl-6">
-                      <input
-                        type="color"
-                        value={mergedConfig.outline.color || '#000000'}
-                        onChange={(e) =>
-                          handleChange('outline', {
-                            ...mergedConfig.outline,
-                            color: e.target.value,
-                          })
-                        }
-                        className="h-8 w-14 rounded border border-gray-300 cursor-pointer"
-                      />
-                      <div className="flex-1">
-                        <label className="text-xs text-gray-500">
-                          Width: {mergedConfig.outline.width || 1}px
-                        </label>
-                        <input
-                          type="range"
-                          min="0.5"
-                          max="3"
-                          step="0.5"
-                          value={mergedConfig.outline.width || 1}
-                          onChange={(e) =>
-                            handleChange('outline', {
-                              ...mergedConfig.outline,
-                              width: parseFloat(e.target.value),
-                            })
-                          }
-                          className="w-full accent-blue-500"
-                        />
-                      </div>
-                    </div>
-                  )}
+                <label className="block text-sm font-medium text-gray-700 mb-3">Finder Dot Style</label>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  {FINDER_DOT_STYLES.map((style) => (
+                    <button
+                      key={style.value} type="button"
+                      onClick={() => handleChange('finderDot', style.value)}
+                      className={`p-2 rounded-lg border-2 text-xs font-medium transition-all ${
+                        mergedConfig.finderDot === style.value
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      {style.label}
+                    </button>
+                  ))}
                 </div>
               </div>
             </TabsContent>
 
-            {/* Logo Tab */}
+            {/* ======================= LOGO TAB ======================= */}
             <TabsContent value="logo" className="space-y-6 mt-6">
+              {/* Logo Type Toggle */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Upload Logo
-                </label>
-                <LogoUpload
-                  value={mergedConfig.logo?.url ?? null}
-                  onChange={(url) => {
-                    if (url) {
-                      handleChange('logo', {
-                        ...mergedConfig.logo,
-                        url,
-                        size: mergedConfig.logo?.size || 0.2,
-                        margin: mergedConfig.logo?.margin || 1,
-                        shape: mergedConfig.logo?.shape || 'square',
-                      })
-                      // Auto-switch to H error correction for logo visibility
-                      if (mergedConfig.errorCorrectionLevel !== 'H') {
-                        handleChange('errorCorrectionLevel', 'H')
-                      }
-                    } else {
-                      handleChange('logo', undefined)
-                    }
-                  }}
-                />
-                <p className="text-xs text-gray-500 mt-2">
-                  Tip: Error correction is automatically set to High when using a logo.
-                </p>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Logo Source</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {(['preset', 'custom'] as const).map((type) => (
+                    <button key={type} type="button"
+                      onClick={() => {
+                        if (type === 'custom') {
+                          handleChange('logo', { ...mergedConfig.logo, logoType: 'custom' })
+                        } else {
+                          handleChange('logo', { ...mergedConfig.logo, logoType: 'preset', url: mergedConfig.logo?.url || '' })
+                        }
+                      }}
+                      className={`p-2 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
+                        (mergedConfig.logo?.logoType || 'preset') === type
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >{type === 'preset' ? 'Preset Logo' : 'Your Logo'}</button>
+                  ))}
+                </div>
               </div>
+
+              {/* Preset Logo Picker */}
+              {(mergedConfig.logo?.logoType || 'preset') === 'preset' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Select Preset</label>
+                  <div className="grid grid-cols-6 gap-2 max-h-[300px] overflow-y-auto p-1">
+                    {/* None option */}
+                    <button type="button"
+                      onClick={() => handleChange('logo', undefined)}
+                      className={`aspect-square rounded-lg border-2 flex items-center justify-center text-xs transition-all ${
+                        !mergedConfig.logo?.url
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >None</button>
+                    {PRESET_LOGOS.map((logo) => (
+                      <button key={logo.value} type="button"
+                        onClick={() => {
+                          const logoUrl = `/images/logos/${logo.value}.png`
+                          handleChange('logo', {
+                            url: logoUrl,
+                            logoType: 'preset' as const,
+                            size: mergedConfig.logo?.size || 0.2,
+                            margin: mergedConfig.logo?.margin || 1,
+                            shape: mergedConfig.logo?.shape || 'circle',
+                            positionX: mergedConfig.logo?.positionX ?? 0.5,
+                            positionY: mergedConfig.logo?.positionY ?? 0.5,
+                            rotate: mergedConfig.logo?.rotate ?? 0,
+                            backgroundEnabled: mergedConfig.logo?.backgroundEnabled ?? true,
+                            backgroundFill: mergedConfig.logo?.backgroundFill || '#ffffff',
+                            backgroundScale: mergedConfig.logo?.backgroundScale ?? 1.3,
+                            backgroundShape: mergedConfig.logo?.backgroundShape || 'circle',
+                          })
+                          if (mergedConfig.errorCorrectionLevel !== 'H') {
+                            handleChange('errorCorrectionLevel', 'H')
+                          }
+                        }}
+                        title={logo.label}
+                        className={`aspect-square rounded-lg border-2 flex items-center justify-center p-1 transition-all ${
+                          mergedConfig.logo?.url?.includes(logo.value)
+                            ? 'border-blue-500 bg-blue-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <span className="text-[10px] text-center leading-tight truncate">{logo.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Custom Logo Upload */}
+              {(mergedConfig.logo?.logoType) === 'custom' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Upload Logo</label>
+                  <LogoUpload
+                    value={mergedConfig.logo?.url ?? null}
+                    onChange={(url) => {
+                      if (url) {
+                        handleChange('logo', {
+                          url,
+                          logoType: 'custom' as const,
+                          size: mergedConfig.logo?.size || 0.2,
+                          margin: mergedConfig.logo?.margin || 1,
+                          shape: mergedConfig.logo?.shape || 'circle',
+                          positionX: mergedConfig.logo?.positionX ?? 0.5,
+                          positionY: mergedConfig.logo?.positionY ?? 0.5,
+                          rotate: mergedConfig.logo?.rotate ?? 0,
+                          backgroundEnabled: mergedConfig.logo?.backgroundEnabled ?? true,
+                          backgroundFill: mergedConfig.logo?.backgroundFill || '#ffffff',
+                          backgroundScale: mergedConfig.logo?.backgroundScale ?? 1.3,
+                          backgroundShape: mergedConfig.logo?.backgroundShape || 'circle',
+                        })
+                        if (mergedConfig.errorCorrectionLevel !== 'H') {
+                          handleChange('errorCorrectionLevel', 'H')
+                        }
+                      } else {
+                        handleChange('logo', undefined)
+                      }
+                    }}
+                  />
+                </div>
+              )}
 
               {mergedConfig.logo?.url && (
                 <>
@@ -552,68 +507,363 @@ export default function Step2Designer({
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Logo Size: {Math.round((mergedConfig.logo.size || 0.2) * 100)}%
                     </label>
-                    <input
-                      type="range"
-                      min="0.1"
-                      max="0.4"
-                      step="0.02"
+                    <input type="range" min="0.05" max="1" step="0.01"
                       value={mergedConfig.logo.size || 0.2}
-                      onChange={(e) =>
-                        handleChange('logo', {
-                          ...mergedConfig.logo,
-                          size: parseFloat(e.target.value),
-                        })
-                      }
+                      onChange={(e) => handleChange('logo', { ...mergedConfig.logo, size: parseFloat(e.target.value) })}
                       className="w-full accent-blue-500"
                     />
                   </div>
 
-                  {/* Logo Shape */}
+                  {/* Logo Position X */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Logo Shape
+                      Horizontal Position: {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
                     </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      {(['square', 'circle'] as const).map((shape) => (
-                        <button
-                          key={shape}
-                          type="button"
-                          onClick={() =>
-                            handleChange('logo', {
-                              ...mergedConfig.logo,
-                              shape,
-                            })
-                          }
-                          className={`p-3 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
-                            mergedConfig.logo?.shape === shape
-                              ? 'border-blue-500 bg-blue-50 text-blue-700'
-                              : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                          }`}
-                        >
-                          {shape}
-                        </button>
-                      ))}
+                    <input type="range" min="0" max="1" step="0.01"
+                      value={mergedConfig.logo.positionX ?? 0.5}
+                      onChange={(e) => handleChange('logo', { ...mergedConfig.logo, positionX: parseFloat(e.target.value) })}
+                      className="w-full accent-blue-500"
+                    />
+                  </div>
+
+                  {/* Logo Position Y */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Vertical Position: {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
+                    </label>
+                    <input type="range" min="0" max="1" step="0.01"
+                      value={mergedConfig.logo.positionY ?? 0.5}
+                      onChange={(e) => handleChange('logo', { ...mergedConfig.logo, positionY: parseFloat(e.target.value) })}
+                      className="w-full accent-blue-500"
+                    />
+                  </div>
+
+                  {/* Logo Rotation */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Rotation: {mergedConfig.logo.rotate ?? 0}°
+                    </label>
+                    <input type="range" min="0" max="360" step="1"
+                      value={mergedConfig.logo.rotate ?? 0}
+                      onChange={(e) => handleChange('logo', { ...mergedConfig.logo, rotate: parseInt(e.target.value) })}
+                      className="w-full accent-blue-500"
+                    />
+                  </div>
+
+                  {/* Logo Background Toggle */}
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      id="logoBackgroundEnabled"
+                      checked={mergedConfig.logo.backgroundEnabled ?? true}
+                      onChange={(e) => handleChange('logo', { ...mergedConfig.logo, backgroundEnabled: e.target.checked })}
+                      className="w-4 h-4 rounded border-gray-300 accent-blue-500"
+                    />
+                    <label htmlFor="logoBackgroundEnabled" className="text-sm font-medium text-gray-700">Show Logo Background</label>
+                  </div>
+
+                  {(mergedConfig.logo.backgroundEnabled ?? true) && (
+                    <>
+                      {/* Logo Background Shape */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Background Shape</label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {(['circle', 'square'] as const).map((shape) => (
+                            <button key={shape} type="button"
+                              onClick={() => handleChange('logo', { ...mergedConfig.logo, backgroundShape: shape })}
+                              className={`p-3 rounded-lg border-2 text-sm font-medium capitalize transition-all ${
+                                (mergedConfig.logo?.backgroundShape || 'circle') === shape
+                                  ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                              }`}
+                            >{shape}</button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Logo Background Color */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
+                        <input type="color"
+                          value={mergedConfig.logo.backgroundFill || '#ffffff'}
+                          onChange={(e) => handleChange('logo', { ...mergedConfig.logo, backgroundFill: e.target.value })}
+                          className="w-full h-10 rounded border border-gray-300 cursor-pointer"
+                        />
+                      </div>
+
+                      {/* Logo Background Scale */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Background Size: {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
+                        </label>
+                        <input type="range" min="0.3" max="2" step="0.1"
+                          value={mergedConfig.logo.backgroundScale ?? 1.3}
+                          onChange={(e) => handleChange('logo', { ...mergedConfig.logo, backgroundScale: parseFloat(e.target.value) })}
+                          className="w-full accent-blue-500"
+                        />
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+            </TabsContent>
+
+            {/* ======================= OUTLINED SHAPES TAB ======================= */}
+            <TabsContent value="shapes" className="space-y-6 mt-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Outlined Shape</label>
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 max-h-[400px] overflow-y-auto pr-1">
+                  {OUTLINED_SHAPES.map((shape) => (
+                    <button
+                      key={shape.value} type="button"
+                      onClick={() => handleChange('shape', shape.value)}
+                      className={`p-2 rounded-lg border-2 text-[10px] font-medium transition-all text-center ${
+                        mergedConfig.shape === shape.value
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      {shape.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Frame Color — shown when a shape is selected */}
+              {mergedConfig.shape && mergedConfig.shape !== 'none' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Frame Color</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={mergedConfig.frameColor || '#000000'}
+                      onChange={(e) => handleChange('frameColor', e.target.value)}
+                      className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
+                    />
+                    <input
+                      type="text"
+                      value={mergedConfig.frameColor || '#000000'}
+                      onChange={(e) => handleChange('frameColor', e.target.value)}
+                      className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm font-mono"
+                    />
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* ======================= STICKERS TAB ======================= */}
+            <TabsContent value="stickers" className="space-y-6 mt-6">
+              {/* Sticker Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">Advanced Shape / Sticker</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {ADVANCED_SHAPES.map((shape) => (
+                    <button
+                      key={shape.value} type="button"
+                      onClick={() => handleChange('advancedShape', shape.value)}
+                      className={`p-2 rounded-lg border-2 text-xs font-medium transition-all ${
+                        mergedConfig.advancedShape === shape.value
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                      }`}
+                    >
+                      {shape.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sticker-specific controls */}
+              {mergedConfig.advancedShape && mergedConfig.advancedShape !== 'none' && (
+                <>
+                  {/* Healthcare-specific */}
+                  {mergedConfig.advancedShape === 'healthcare' && (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Frame Color</label>
+                        <input type="color" value={mergedConfig.healthcareFrameColor || '#000000'}
+                          onChange={(e) => handleChange('healthcareFrameColor', e.target.value)}
+                          className="h-10 w-20 rounded border border-gray-300 cursor-pointer" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Heart Color</label>
+                        <input type="color" value={mergedConfig.healthcareHeartColor || '#ff0000'}
+                          onChange={(e) => handleChange('healthcareHeartColor', e.target.value)}
+                          className="h-10 w-20 rounded border border-gray-300 cursor-pointer" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Review Collector specific */}
+                  {mergedConfig.advancedShape === 'review-collector' && (
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Circle Color</label>
+                        <input type="color" value={mergedConfig.reviewCollectorCircleColor || '#000000'}
+                          onChange={(e) => handleChange('reviewCollectorCircleColor', e.target.value)}
+                          className="h-10 w-20 rounded border border-gray-300 cursor-pointer" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Stars Color</label>
+                        <input type="color" value={mergedConfig.reviewCollectorStarsColor || '#FFD700'}
+                          onChange={(e) => handleChange('reviewCollectorStarsColor', e.target.value)}
+                          className="h-10 w-20 rounded border border-gray-300 cursor-pointer" />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Coupon specific */}
+                  {mergedConfig.advancedShape === 'coupon' && (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Left Color</label>
+                          <input type="color" value={mergedConfig.couponLeftColor || '#1c57cb'}
+                            onChange={(e) => handleChange('couponLeftColor', e.target.value)}
+                            className="h-10 w-full rounded border border-gray-300 cursor-pointer" />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Right Color</label>
+                          <input type="color" value={mergedConfig.couponRightColor || '#1c57cb'}
+                            onChange={(e) => handleChange('couponRightColor', e.target.value)}
+                            className="h-10 w-full rounded border border-gray-300 cursor-pointer" />
+                        </div>
+                      </div>
+                      <Input placeholder="Coupon Line 1" value={mergedConfig.couponTextLine1 || ''}
+                        onChange={(e) => handleChange('couponTextLine1', e.target.value)} />
+                      <Input placeholder="Coupon Line 2" value={mergedConfig.couponTextLine2 || ''}
+                        onChange={(e) => handleChange('couponTextLine2', e.target.value)} />
+                      <Input placeholder="Coupon Line 3" value={mergedConfig.couponTextLine3 || ''}
+                        onChange={(e) => handleChange('couponTextLine3', e.target.value)} />
+                    </div>
+                  )}
+
+                  {/* Rect-frame / Four-corners specific */}
+                  {(mergedConfig.advancedShape?.startsWith('rect-frame') || mergedConfig.advancedShape?.startsWith('four-corners')) && (
+                    <div>
+                      {mergedConfig.advancedShape?.startsWith('rect-frame') ? (
+                        <div className="flex items-center gap-3">
+                          <input type="checkbox" id="dropShadow"
+                            checked={mergedConfig.advancedShapeDropShadow}
+                            onChange={(e) => handleChange('advancedShapeDropShadow', e.target.checked)}
+                            className="rounded border-gray-300" />
+                          <label htmlFor="dropShadow" className="text-sm text-gray-700">Drop Shadow</label>
+                        </div>
+                      ) : (
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Frame Color</label>
+                          <input type="color" value={mergedConfig.advancedShapeFrameColor || '#000000'}
+                            onChange={(e) => handleChange('advancedShapeFrameColor', e.target.value)}
+                            className="h-10 w-20 rounded border border-gray-300 cursor-pointer" />
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Text controls (for stickers that have text, except coupon which has its own) */}
+                  {currentSticker?.hasText && mergedConfig.advancedShape !== 'coupon' && (
+                    <div className="space-y-3 border-t border-gray-200 pt-4">
+                      <h4 className="text-sm font-semibold text-gray-900">Sticker Text</h4>
+                      <Input placeholder="Text (e.g., SCAN ME)" value={mergedConfig.text || 'SCAN ME'}
+                        onChange={(e) => handleChange('text', e.target.value)} />
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">Text Color</label>
+                          <input type="color" value={mergedConfig.textColor || '#ffffff'}
+                            onChange={(e) => handleChange('textColor', e.target.value)}
+                            className="h-8 w-full rounded border border-gray-300 cursor-pointer" />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">Background</label>
+                          <input type="color" value={mergedConfig.textBackgroundColor || '#1c57cb'}
+                            onChange={(e) => handleChange('textBackgroundColor', e.target.value)}
+                            className="h-8 w-full rounded border border-gray-300 cursor-pointer" />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">
+                          Text Size: {mergedConfig.textSize || 1}x
+                        </label>
+                        <input type="range" min="0.5" max="3" step="0.1"
+                          value={mergedConfig.textSize || 1}
+                          onChange={(e) => handleChange('textSize', parseFloat(e.target.value))}
+                          className="w-full accent-blue-500" />
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </TabsContent>
+
+            {/* ======================= AI TAB ======================= */}
+            <TabsContent value="ai" className="space-y-6 mt-6">
+              {/* AI Enable Toggle */}
+              <div className="flex items-center gap-3 p-4 rounded-lg border border-purple-200 bg-purple-50">
+                <input
+                  type="checkbox"
+                  id="aiEnabled"
+                  checked={mergedConfig.isAi || false}
+                  onChange={(e) => handleChange('isAi', e.target.checked)}
+                  className="w-5 h-5 rounded border-gray-300 accent-purple-600"
+                />
+                <label htmlFor="aiEnabled" className="text-sm font-medium text-purple-800">
+                  <Wand2 className="w-4 h-4 inline mr-1" />
+                  Enable AI-Enhanced QR Design
+                </label>
+              </div>
+
+              {mergedConfig.isAi && (
+                <>
+                  {/* AI Prompt */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">AI Image Prompt</label>
+                    <textarea
+                      value={mergedConfig.aiPrompt || ''}
+                      onChange={(e) => handleChange('aiPrompt', e.target.value)}
+                      placeholder="Describe the image you want (e.g., 'a beautiful sunset over mountains')"
+                      rows={4}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  {/* AI Strength */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      QR Strength: {(mergedConfig.aiStrength ?? 1.8).toFixed(1)}
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">Lower = more artistic, Higher = better scanability</p>
+                    <input type="range" min="0.1" max="3" step="0.1"
+                      value={mergedConfig.aiStrength ?? 1.8}
+                      onChange={(e) => handleChange('aiStrength', parseFloat(e.target.value))}
+                      className="w-full accent-purple-500"
+                    />
+                    <div className="flex justify-between text-xs text-gray-400 mt-1">
+                      <span>Artistic</span>
+                      <span>Scannable</span>
                     </div>
                   </div>
 
-                  {/* Logo Margin */}
+                  {/* AI Steps */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Logo Padding: {mergedConfig.logo.margin || 1} modules
+                      Generation Steps: {mergedConfig.aiSteps ?? 18}
                     </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="4"
-                      value={mergedConfig.logo.margin || 1}
-                      onChange={(e) =>
-                        handleChange('logo', {
-                          ...mergedConfig.logo,
-                          margin: parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full accent-blue-500"
+                    <p className="text-xs text-gray-500 mb-2">More steps = higher quality but slower</p>
+                    <input type="range" min="10" max="20" step="1"
+                      value={mergedConfig.aiSteps ?? 18}
+                      onChange={(e) => handleChange('aiSteps', parseInt(e.target.value))}
+                      className="w-full accent-purple-500"
                     />
+                    <div className="flex justify-between text-xs text-gray-400 mt-1">
+                      <span>10 (Fast)</span>
+                      <span>20 (Quality)</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+                    <p className="text-xs text-yellow-700">
+                      💡 AI generation will run when you save/download. The QR code will be processed server-side.
+                    </p>
                   </div>
                 </>
               )}
@@ -623,9 +873,7 @@ export default function Step2Designer({
 
         {/* Live Preview (sticky sidebar) */}
         <div className="lg:col-span-2">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Live Preview
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>
           <div className="bg-white rounded-lg border-2 border-gray-200 p-6 sticky top-6">
             <div className="flex flex-col items-center gap-4">
               {previewData ? (
@@ -643,9 +891,7 @@ export default function Step2Designer({
                   </div>
                 </div>
               )}
-              <p className="text-xs text-gray-500 text-center">
-                Scan with your phone to test
-              </p>
+              <p className="text-xs text-gray-500 text-center">Scan with your phone to test</p>
             </div>
           </div>
         </div>

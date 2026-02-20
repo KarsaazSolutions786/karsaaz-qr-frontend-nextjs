@@ -63,7 +63,9 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
 
   const handleExportCsv = () => {
     if (responses.length === 0) return
-    const headers = getFields(responses[0]).map((f) => f.question)
+    const firstResponse = responses[0]
+    if (!firstResponse) return
+    const headers = getFields(firstResponse).map((f) => f.question)
     const rows = responses.map((r) => getFields(r).map((f) => f.value))
     const csv = arrayToCsv([headers, ...rows])
     downloadCsv(csv, todayFilename())

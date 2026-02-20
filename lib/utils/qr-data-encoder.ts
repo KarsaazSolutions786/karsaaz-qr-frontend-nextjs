@@ -1,7 +1,8 @@
 /**
  * QR Data Encoder
- * 
+ *
  * Converts structured form data into QR-encodable strings based on type.
+ * Field names match the Vue.js backend API schemas exactly.
  * Used for live preview rendering during the wizard flow.
  */
 
@@ -11,12 +12,15 @@ export function encodeQRData(type: string, data: Record<string, any>): string {
   }
 
   switch (type) {
+    // ── Static simple types ──────────────────────────────────────────
+
     case 'url':
       return data.url || ''
 
     case 'text':
       return data.text || data.content || ''
 
+    case 'call':
     case 'phone':
       return data.phone ? `tel:${data.phone}` : ''
 
@@ -24,6 +28,7 @@ export function encodeQRData(type: string, data: Record<string, any>): string {
       return formatMailto(data)
 
     case 'sms':
+      // schema field: phone
       return data.phone ? `smsto:${data.phone}:${data.message || ''}` : ''
 
     case 'wifi':
@@ -40,109 +45,185 @@ export function encodeQRData(type: string, data: Record<string, any>): string {
     case 'calendar':
       return formatCalendar(data)
 
-    case 'whatsapp':
-      return data.phone
-        ? `https://wa.me/${data.phone.replace(/[^0-9]/g, '')}${data.message ? `?text=${encodeURIComponent(data.message)}` : ''}`
-        : ''
+    // ── Messaging / Social – schema field names are the type id ───────
 
+    // WhatsApp – schema field: mobile_number
+    case 'whatsapp': {
+      const num = data.mobile_number || data.phone || ''
+      if (!num) return ''
+      const clean = num.replace(/[^0-9+]/g, '')
+      const msg = data.message ? `?text=${encodeURIComponent(data.message)}` : ''
+      return `https://wa.me/${clean}${msg}`
+    }
+
+    // Telegram – schema field: username
     case 'telegram':
-      return data.username
-        ? `https://t.me/${data.username}`
-        : ''
+      return data.username ? `https://t.me/${data.username.replace(/^@/, '')}` : ''
 
-    case 'instagram':
-      return data.username
-        ? `https://instagram.com/${data.username}`
-        : ''
+    // Instagram – schema field: instagram
+    case 'instagram': {
+      const val = data.instagram || data.username || ''
+      if (!val) return ''
+      if (val.startsWith('http')) return val
+      return `https://instagram.com/${val.replace(/^@/, '')}`
+    }
 
-    case 'facebook':
-      return data.url || (data.username ? `https://facebook.com/${data.username}` : '')
+    // Facebook – schema field: facebook
+    case 'facebook': {
+      const val = data.facebook || data.url || data.username || ''
+      if (!val) return ''
+      if (val.startsWith('http')) return val
+      return `https://facebook.com/${val}`
+    }
 
-    case 'youtube':
-      return data.url || (data.channelId ? `https://youtube.com/channel/${data.channelId}` : '')
+    // YouTube – schema field: youtube
+    case 'youtube': {
+      const val = data.youtube || data.url || ''
+      if (!val) return ''
+      if (val.startsWith('http')) return val
+      return `https://youtube.com/@${val}`
+    }
 
-    case 'linkedin':
-      return data.url || (data.username ? `https://linkedin.com/in/${data.username}` : '')
+    // LinkedIn – schema field: linkedin
+    case 'linkedin': {
+      const val = data.linkedin || data.url || data.username || ''
+      if (!val) return ''
+      if (val.startsWith('http')) return val
+      return `https://linkedin.com/in/${val}`
+    }
 
-    case 'snapchat':
-      return data.username
-        ? `https://snapchat.com/add/${data.username}`
-        : ''
+    // Snapchat – schema field: snapchat
+    case 'snapchat': {
+      const val = data.snapchat || data.username || ''
+      if (!val) return ''
+      if (val.startsWith('http')) return val
+      return `https://snapchat.com/add/${val.replace(/^@/, '')}`
+    }
 
-    case 'spotify':
-      return data.url || ''
+    // Spotify – schema field: spotify
+    case 'spotify': {
+      const val = data.spotify || data.url || ''
+      return val
+    }
 
-    case 'tiktok':
-      return data.username
-        ? `https://tiktok.com/@${data.username}`
-        : data.url || ''
+    // TikTok – schema field: tiktok
+    case 'tiktok': {
+      const val = data.tiktok || data.username || data.url || ''
+      if (!val) return ''
+      if (val.startsWith('http')) return val
+      return `https://tiktok.com/@${val.replace(/^@/, '')}`
+    }
 
-    case 'x':
-      return data.username
-        ? `https://x.com/${data.username}`
-        : data.url || ''
+    // Twitter / X – schema field: x
+    case 'x': {
+      const val = data.x || data.username || data.url || ''
+      if (!val) return ''
+      if (val.startsWith('http')) return val
+      return `https://x.com/${val.replace(/^@/, '')}`
+    }
 
-    case 'facebookmessenger':
-      return data.username
-        ? `https://m.me/${data.username}`
-        : ''
+    // Facebook Messenger – schema field: facebook_page_name
+    case 'facebookmessenger': {
+      const val = data.facebook_page_name || data.username || ''
+      if (!val) return ''
+      if (val.startsWith('http')) return val
+      return `https://m.me/${val}`
+    }
 
-    case 'viber':
-      return data.phone
-        ? `viber://chat?number=${data.phone.replace(/[^0-9]/g, '')}`
-        : ''
+    // Viber – schema field: viber_number
+    case 'viber': {
+      const num = data.viber_number || data.phone || ''
+      if (!num) return ''
+      return `viber://chat?number=${num.replace(/[^0-9+]/g, '')}`
+    }
 
-    case 'facetime':
-      return data.phone || data.email
-        ? `facetime:${data.phone || data.email}`
-        : ''
+    // FaceTime – schema field: target
+    case 'facetime': {
+      const val = data.target || data.phone || data.email || ''
+      return val ? `facetime:${val}` : ''
+    }
 
+    // WeChat – schema field: username
     case 'wechat':
-      return data.wechatId || data.username || ''
+      return data.username || ''
 
-    case 'skype':
-      return data.username
-        ? `skype:${data.username}?chat`
-        : ''
+    // Skype – schema field: skype_name, type = call|chat
+    case 'skype': {
+      const name = data.skype_name || data.username || ''
+      if (!name) return ''
+      const action = data.type || 'chat'
+      return `skype:${name}?${action}`
+    }
 
-    case 'zoom':
-      return data.meetingUrl || data.url || ''
+    // Zoom – schema fields: meeting_id, meeting_password
+    case 'zoom': {
+      const id = (data.meeting_id || '').replace(/\s/g, '')
+      if (!id) return data.url || ''
+      const pwd = data.meeting_password ? `?pwd=${data.meeting_password}` : ''
+      return `https://zoom.us/j/${id}${pwd}`
+    }
 
-    case 'paypal':
-      return data.url || (data.email ? `https://paypal.me/${data.email}` : '')
+    // PayPal – schema fields: type, email, item_name, amount, currency
+    case 'paypal': {
+      const email = data.email || ''
+      if (!email) return data.url || ''
+      const payType = data.type || '_xclick'
+      const params = new URLSearchParams({
+        cmd: payType,
+        business: email,
+      })
+      if (data.item_name) params.append('item_name', data.item_name)
+      if (data.amount) params.append('amount', String(data.amount))
+      if (data.currency) params.append('currency_code', data.currency)
+      return `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`
+    }
 
     case 'crypto':
       return formatCrypto(data)
 
+    // BrazilPIX – schema field: key
     case 'brazilpix':
-      return data.pixKey || ''
+      return data.key || data.pixKey || ''
 
-    case 'googlemaps':
-      return data.url || (data.query ? `https://maps.google.com/?q=${encodeURIComponent(data.query)}` : '')
+    // Google Maps – schema field: googlemaps (URL)
+    case 'googlemaps': {
+      const val = data.googlemaps || data.url || ''
+      if (!val) return ''
+      if (val.startsWith('http')) return val
+      return `https://maps.google.com/?q=${encodeURIComponent(val)}`
+    }
 
-    case 'google-review':
-      return data.url || ''
+    // Google Review – schema field: place (URL/place ID)
+    case 'google-review': {
+      const val = data.place || data.url || ''
+      return val
+    }
 
+    // App Download – schema fields: iosUrl, androidUrl, appName
     case 'app-store':
-      return data.url || data.appStoreUrl || data.playStoreUrl || ''
+    case 'app-download':
+      return data.iosUrl || data.androidUrl || data.url || data.appStoreUrl || data.playStoreUrl || ''
 
+    // Dynamic Email – schema fields: email, subject, message
     case 'email-dynamic':
-      return formatMailto(data)
+      return formatMailto({ email: data.email, subject: data.subject, body: data.message })
 
+    // Dynamic SMS – schema fields: phone, message
     case 'sms-dynamic':
       return data.phone ? `smsto:${data.phone}:${data.message || ''}` : ''
 
+    // File Upload – returns backend reference (no static encoding)
     case 'file-upload':
       return data.fileUrl || data.url || ''
 
+    // UPI Dynamic – schema fields: upi_id, payee_name, amount
     case 'upi-dynamic':
     case 'upi':
       return formatUPI(data)
 
     default:
-      // For complex types (business-profile, vcard-plus, restaurant, etc.)
-      // fall back to the first URL-like field or JSON representation
-      return data.url || data.link || data.website || JSON.stringify(data)
+      // Complex dynamic types (business-profile, vcard-plus, etc.) rely on backend URL
+      return data.url || data.link || data.website || ''
   }
 }
 
@@ -166,20 +247,30 @@ function formatWifi(data: Record<string, any>): string {
 
 function formatVCard(data: Record<string, any>): string {
   const lines: string[] = ['BEGIN:VCARD', 'VERSION:3.0']
-  
+
   const fn = data.firstName || ''
   const ln = data.lastName || ''
   if (fn || ln) {
     lines.push(`N:${ln};${fn};;;`)
     lines.push(`FN:${fn} ${ln}`.trim())
   }
-  if (data.organization) lines.push(`ORG:${data.organization}`)
-  if (data.title) lines.push(`TITLE:${data.title}`)
-  if (data.phone) lines.push(`TEL:${data.phone}`)
-  if (data.email) lines.push(`EMAIL:${data.email}`)
-  if (data.website) lines.push(`URL:${data.website}`)
+  // organization / company
+  const org = data.organization || data.company || ''
+  if (org) lines.push(`ORG:${org}`)
+  // title / job
+  const title = data.title || data.job || ''
+  if (title) lines.push(`TITLE:${title}`)
+  // phones (Vue.js stores as `phones`; vCard standard stores as `phone`)
+  const phone = data.phone || data.phones || ''
+  if (phone) lines.push(`TEL:${phone}`)
+  // emails (Vue.js stores as `emails`; standard field is `email`)
+  const email = data.email || data.emails || ''
+  if (email) lines.push(`EMAIL:${email}`)
+  // website (Vue.js stores as `website_list`)
+  const website = data.website || data.website_list || ''
+  if (website) lines.push(`URL:${website}`)
   if (data.address) lines.push(`ADR:;;${data.address};;;;`)
-  
+
   lines.push('END:VCARD')
   return lines.join('\n')
 }
@@ -193,8 +284,11 @@ function formatCalendar(data: Record<string, any>): string {
   if (data.title || data.summary) lines.push(`SUMMARY:${data.title || data.summary}`)
   if (data.location) lines.push(`LOCATION:${data.location}`)
   if (data.description) lines.push(`DESCRIPTION:${data.description}`)
-  if (data.startDate) lines.push(`DTSTART:${formatICSDate(data.startDate)}`)
-  if (data.endDate) lines.push(`DTEND:${formatICSDate(data.endDate)}`)
+  // schema uses startTime / endTime (ISO datetime strings)
+  const start = data.startTime || data.startDate || ''
+  const end = data.endTime || data.endDate || ''
+  if (start) lines.push(`DTSTART:${formatICSDate(start)}`)
+  if (end) lines.push(`DTEND:${formatICSDate(end)}`)
   lines.push('END:VEVENT', 'END:VCALENDAR')
   return lines.join('\n')
 }
@@ -222,11 +316,13 @@ function formatCrypto(data: Record<string, any>): string {
 }
 
 function formatUPI(data: Record<string, any>): string {
-  const pa = data.vpa || data.upiId || ''
+  // schema fields: upi_id, payee_name, amount
+  const pa = data.upi_id || data.vpa || data.upiId || ''
   if (!pa) return ''
-  
-  let uri = `upi://pay?pa=${pa}`
-  if (data.name || data.payeeName) uri += `&pn=${encodeURIComponent(data.name || data.payeeName)}`
+
+  let uri = `upi://pay?pa=${encodeURIComponent(pa)}`
+  const pn = data.payee_name || data.name || data.payeeName || ''
+  if (pn) uri += `&pn=${encodeURIComponent(pn)}`
   if (data.amount) uri += `&am=${data.amount}`
   if (data.note || data.transactionNote) uri += `&tn=${encodeURIComponent(data.note || data.transactionNote)}`
   return uri

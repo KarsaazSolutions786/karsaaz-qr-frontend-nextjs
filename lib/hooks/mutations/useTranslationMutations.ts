@@ -9,9 +9,10 @@ export function useCreateTranslation() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: CreateTranslationRequest) => translationsAPI.create(data),
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.translations.all() })
-      router.push('/translations')
+      // Redirect to edit page so user can upload translation JSON file (only available after first save)
+      router.push(`/translations/${result.id}`)
     },
   })
 }

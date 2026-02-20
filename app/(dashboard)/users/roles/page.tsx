@@ -12,7 +12,7 @@ function RoleNameCell({ role }: { role: RoleEntity }) {
   return (
     <div className="flex items-center gap-2 flex-wrap">
       <span className="font-medium text-gray-900">{role.name}</span>
-      {role.readOnly && (
+      {role.read_only && (
         <span className="inline-flex rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-semibold text-yellow-800">
           Read Only
         </span>
@@ -98,16 +98,16 @@ export default function RolesPage() {
                         <RoleNameCell role={role} />
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {role.homePage || '—'}
+                        {role.home_page || '—'}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {role.permissionCount ?? role.permissionIds?.length ?? 0}
+                        {role.permission_count ?? role.permission_ids?.length ?? 0}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {role.userCount ?? 0}
+                        {role.user_count ?? 0}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {role.createdAt ? new Date(role.createdAt).toLocaleDateString() : '—'}
+                        {role.created_at ? new Date(role.created_at).toLocaleDateString() : '—'}
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                         <Link
@@ -118,8 +118,8 @@ export default function RolesPage() {
                         </Link>
                         <button
                           onClick={() => handleDelete(role.id, role.name)}
-                          disabled={role.readOnly || deleteMutation.isPending}
-                          title={role.readOnly ? 'Read-only roles cannot be deleted' : undefined}
+                          disabled={role.read_only || deleteMutation.isPending}
+                          title={role.read_only ? 'Read-only roles cannot be deleted' : undefined}
                           className="text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           Delete

@@ -152,7 +152,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
             <div className="space-y-2">
               <button
                 className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
-                onClick={() => qrcode && downloadQRCode(qrcode.id, qrcode.name)}
+                onClick={() => qrcode && downloadQRCode(qrcode.id, 'png', qrcode.name)}
               >
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 Download QR Code
