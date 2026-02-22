@@ -54,13 +54,15 @@ export function ForgotPasswordForm() {
           id="email"
           type="email"
           autoComplete="email"
+          aria-invalid={!!errors.email}
+          aria-describedby={errors.email ? 'email-error' : undefined}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
-        {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+        {errors.email && <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
       </div>
 
       {forgotPasswordMutation.isError && (
-        <div className="rounded-md bg-red-50 p-4">
+        <div role="alert" className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
             {(forgotPasswordMutation.error as any)?.message ||
               'Failed to send reset email. Please try again.'}

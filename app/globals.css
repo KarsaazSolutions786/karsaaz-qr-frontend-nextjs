@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Accessible focus indicators */
+*:focus-visible {
+  outline: 2px solid #8368dc;
+  outline-offset: 2px;
+}
+
+/* Remove default outline only when not using keyboard */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Accessible text colors — darken primary/accent on white for WCAG AA (4.5:1) */
+.text-primary-accessible {
+  color: #6b52b8;
+}
+.text-accent-accessible {
+  color: #6b4a78;
+}
+
 /* RTL Support */
 [dir='rtl'] {
   direction: rtl;

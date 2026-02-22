@@ -34,6 +34,8 @@ export function LanguagePicker({ variant = 'light' }: LanguagePickerProps) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
+        aria-label="Select language"
+        aria-expanded={open}
         className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
           isDark
             ? 'text-white/80 hover:bg-white/10'

@@ -28,5 +28,5 @@ export default function AuthLayout({
   }
 
   // Show the auth form (even during loading to prevent hydration issues)
-  return <>{children}</>
+  return <main id="main-content">{children}</main>
 }

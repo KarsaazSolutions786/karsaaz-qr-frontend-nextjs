@@ -65,6 +65,7 @@ export function DebouncedSearch({
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
           autoFocus={autoFocus}
+          aria-label="Search"
           className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         
@@ -205,6 +206,7 @@ export function SearchWithSuggestions({
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             placeholder={placeholder}
+            aria-label="Search"
             className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           

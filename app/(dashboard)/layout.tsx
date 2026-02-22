@@ -377,7 +377,7 @@ export default function DashboardLayout({
         <div className="mx-4 border-t border-white/20" />
 
         {/* Navigation (scrollable) */}
-        <nav className="flex-1 overflow-y-auto px-2 py-3 scrollbar-hide">
+        <nav aria-label="Main navigation" className="flex-1 overflow-y-auto px-2 py-3 scrollbar-hide">
           {/* Separator line (matches Lit .sidebar-top) */}
           <div className="mx-3 mb-2 border-t border-dotted border-purple-300/30" />
           
@@ -667,6 +667,8 @@ export default function DashboardLayout({
             type="button"
             onClick={() => setSidebarOpen(true)}
             className="-m-2.5 p-2.5 text-gray-700"
+            aria-label="Toggle navigation menu"
+            aria-expanded={sidebarOpen}
           >
             <Bars3Icon className="h-6 w-6" />
           </button>
@@ -678,7 +680,7 @@ export default function DashboardLayout({
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+        <main id="main-content" role="main" className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
           {children}
         </main>
       </div>

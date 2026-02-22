@@ -10,6 +10,7 @@ import { PluginProvider } from '@/lib/plugins'
 import { ThemeProvider } from '@/lib/providers/theme-provider'
 import { devToolsProtection } from '@/lib/services/devtools-protection'
 import { iframeDetector } from '@/lib/services/iframe-detector'
+import { WebVitalsReporter } from '@/components/common/WebVitalsReporter'
 
 /** Initialize client-side protection services (T021) */
 function ProtectionInitializer() {
@@ -32,6 +33,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <TranslationProvider>
             <PluginProvider>
               <ProtectionInitializer />
+              <WebVitalsReporter />
               {children}
             </PluginProvider>
           </TranslationProvider>

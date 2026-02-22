@@ -51,10 +51,12 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
           id="name"
           type="text"
           autoComplete="name"
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? 'name-error' : undefined}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
           placeholder="John Doe"
         />
-        {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
+        {errors.name && <p id="name-error" role="alert" className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
       </div>
 
       <div>
@@ -66,10 +68,12 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
           id="email"
           type="email"
           autoComplete="email"
+          aria-invalid={!!errors.email}
+          aria-describedby={errors.email ? 'email-error' : undefined}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
           placeholder="you@example.com"
         />
-        {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+        {errors.email && <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
       </div>
 
       <div>
@@ -82,6 +86,8 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
             id="password"
             type={showPassword ? 'text' : 'password'}
             autoComplete="new-password"
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? 'password-error' : undefined}
             className="block w-full rounded-md border border-gray-300 px-3 py-2 pr-20 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
             placeholder="••••••••"
           />
@@ -94,7 +100,7 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
           </button>
         </div>
         {errors.password && (
-          <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+          <p id="password-error" role="alert" className="mt-1 text-sm text-red-600">{errors.password.message}</p>
         )}
         
         {/* Password strength indicator */}
@@ -110,11 +116,13 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
           id="confirmPassword"
           type={showPassword ? 'text' : 'password'}
           autoComplete="new-password"
+          aria-invalid={!!errors.confirmPassword}
+          aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
           placeholder="••••••••"
         />
         {errors.confirmPassword && (
-          <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
+          <p id="confirmPassword-error" role="alert" className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
         )}
       </div>
 
@@ -146,7 +154,7 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
       </div>
 
       {registerMutation.isError && (
-        <div className="rounded-md bg-red-50 p-4">
+        <div role="alert" className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
             {(registerMutation.error as any)?.message ||
               'Registration failed. Please try again.'}
