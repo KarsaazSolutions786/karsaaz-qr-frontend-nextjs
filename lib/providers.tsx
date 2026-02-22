@@ -7,6 +7,7 @@ import { queryClient } from '@/lib/query/client'
 import { AuthProvider } from '@/lib/context/AuthContext'
 import { TranslationProvider } from '@/lib/i18n'
 import { PluginProvider } from '@/lib/plugins'
+import { ThemeProvider } from '@/lib/providers/theme-provider'
 import { devToolsProtection } from '@/lib/services/devtools-protection'
 import { iframeDetector } from '@/lib/services/iframe-detector'
 
@@ -25,16 +26,18 @@ function ProtectionInitializer() {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TranslationProvider>
-          <PluginProvider>
-            <ProtectionInitializer />
-            {children}
-          </PluginProvider>
-        </TranslationProvider>
-        {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
-      </AuthProvider>
-    </QueryClientProvider>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TranslationProvider>
+            <PluginProvider>
+              <ProtectionInitializer />
+              {children}
+            </PluginProvider>
+          </TranslationProvider>
+          {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
+        </AuthProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   )
 }

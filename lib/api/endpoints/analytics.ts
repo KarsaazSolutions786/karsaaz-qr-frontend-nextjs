@@ -12,6 +12,68 @@ import type {
 import { dateRangeToQueryParams } from '@/lib/utils/date-range'
 import { PaginatedResponse } from '@/types/api'
 
+// --- Advanced Analytics Types ---
+
+export interface FunnelStep {
+  name: string
+  count: number
+  percentage: number
+}
+
+export interface FunnelData {
+  id: string
+  name: string
+  steps: FunnelStep[]
+  total_entered: number
+  total_converted: number
+  conversion_rate: number
+  period: string
+}
+
+export interface ABTestVariant {
+  id: string
+  name: string
+  visitors: number
+  conversions: number
+  conversion_rate: number
+  is_control: boolean
+  confidence_level?: number
+}
+
+export interface ABTestData {
+  id: string
+  name: string
+  status: 'running' | 'completed' | 'paused'
+  start_date: string
+  end_date?: string
+  variants: ABTestVariant[]
+  winner?: string
+}
+
+// --- Advanced Analytics API ---
+
+export const advancedAnalyticsAPI = {
+  getFunnels: async (params?: { period?: string }): Promise<FunnelData[]> => {
+    const response = await apiClient.get<{ data: FunnelData[] }>('/analytics/funnels', { params })
+    return response.data.data
+  },
+
+  getFunnelById: async (id: string): Promise<FunnelData> => {
+    const response = await apiClient.get<{ data: FunnelData }>(`/analytics/funnels/${id}`)
+    return response.data.data
+  },
+
+  getABTests: async (params?: { status?: string }): Promise<ABTestData[]> => {
+    const response = await apiClient.get<{ data: ABTestData[] }>('/analytics/ab-tests', { params })
+    return response.data.data
+  },
+
+  getABTestById: async (id: string): Promise<ABTestData> => {
+    const response = await apiClient.get<{ data: ABTestData }>(`/analytics/ab-tests/${id}`)
+    return response.data.data
+  },
+}
+
 export const analyticsAPI = {
   // Get analytics overview
   getOverview: async (dateRange: DateRange): Promise<AnalyticsOverview> => {

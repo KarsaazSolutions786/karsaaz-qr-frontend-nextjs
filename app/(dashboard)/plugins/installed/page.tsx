@@ -1,31 +1,29 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-
-interface InstalledPlugin {
-  id: string
-  name: string
-  version: string
-  status: 'active' | 'inactive'
-  installedAt: string
-}
+import { pluginsAPI, type PluginInfo } from '@/lib/api/endpoints/plugins'
+import { Settings, Loader2 } from 'lucide-react'
 
 export default function PluginsInstalledPage() {
-  const [plugins, setPlugins] = useState<InstalledPlugin[]>([])
+  const [plugins, setPlugins] = useState<PluginInfo[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const toggleStatus = (id: string) => {
-    setPlugins((prev) =>
-      prev.map((p) =>
-        p.id === id
-          ? { ...p, status: p.status === 'active' ? 'inactive' : 'active' }
-          : p
-      )
+  useEffect(() => {
+    pluginsAPI
+      .getInstalled()
+      .then((data) => setPlugins(Array.isArray(data) ? data : []))
+      .catch(() => setError('Failed to load installed plugins'))
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
     )
-  }
-
-  const uninstall = (id: string) => {
-    setPlugins((prev) => prev.filter((p) => p.id !== id))
   }
 
   return (
@@ -44,6 +42,10 @@ export default function PluginsInstalledPage() {
           </Link>
         </div>
       </div>
+
+      {error && (
+        <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>
+      )}
 
       <div className="mt-8">
         {plugins.length === 0 ? (
@@ -79,59 +81,37 @@ export default function PluginsInstalledPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Plugin
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Version
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Installed
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Actions
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Plugin</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Tags</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {plugins.map((plugin) => (
-                  <tr key={plugin.id}>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                      {plugin.name}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                      v{plugin.version}
-                    </td>
+                  <tr key={plugin.slug}>
                     <td className="whitespace-nowrap px-6 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                          plugin.status === 'active'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {plugin.status === 'active' ? 'Active' : 'Inactive'}
-                      </span>
+                      <p className="text-sm font-medium text-gray-900">{plugin.name}</p>
+                      {plugin.description && (
+                        <p className="text-xs text-gray-500">{plugin.description}</p>
+                      )}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                      {plugin.installedAt}
+                    <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-1">
+                        {plugin.tags?.map((tag) => (
+                          <span key={tag} className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">{tag}</span>
+                        ))}
+                      </div>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
-                      <button
-                        onClick={() => toggleStatus(plugin.id)}
-                        className="mr-3 font-medium text-blue-600 hover:text-blue-500"
-                      >
-                        {plugin.status === 'active' ? 'Deactivate' : 'Activate'}
-                      </button>
-                      <button
-                        onClick={() => uninstall(plugin.id)}
-                        className="font-medium text-red-600 hover:text-red-500"
-                      >
-                        Uninstall
-                      </button>
+                      {plugin.show_settings_link !== false && (
+                        <Link
+                          href={`/plugins/${plugin.slug}`}
+                          className="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-500"
+                        >
+                          <Settings className="h-3.5 w-3.5" />
+                          Settings
+                        </Link>
+                      )}
                     </td>
                   </tr>
                 ))}

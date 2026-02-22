@@ -8,10 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Upload, X } from 'lucide-react';
 
 export interface PatternSettings {
-  type: 'dots' | 'squares' | 'custom' | 'none';
+  type: 'dots' | 'squares' | 'hexagons' | 'diamonds' | 'stripes-h' | 'stripes-v' | 'triangles' | 'waves' | 'custom' | 'none';
   color: string;
   density: number;
   customImage?: string;
+  rotation?: number;
+  scale?: number;
 }
 
 interface PatternLibraryProps {
@@ -83,6 +85,90 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
       ),
     },
     {
+      type: 'hexagons' as const,
+      name: 'Hexagons',
+      preview: (
+        <svg className="w-full h-full" viewBox="0 0 60 60">
+          <defs>
+            <pattern id="hex-preview" width="20" height="17.32" patternUnits="userSpaceOnUse">
+              <polygon points="10,0 20,5 20,12.32 10,17.32 0,12.32 0,5" fill="none" stroke={pattern.color} strokeWidth="0.5" />
+            </pattern>
+          </defs>
+          <rect width="60" height="60" fill="white" />
+          <rect width="60" height="60" fill={`url(#hex-preview)`} />
+        </svg>
+      ),
+    },
+    {
+      type: 'diamonds' as const,
+      name: 'Diamonds',
+      preview: (
+        <svg className="w-full h-full" viewBox="0 0 60 60">
+          <defs>
+            <pattern id="diamond-preview" width="12" height="12" patternUnits="userSpaceOnUse">
+              <polygon points="6,0 12,6 6,12 0,6" fill={pattern.color} opacity="0.4" />
+            </pattern>
+          </defs>
+          <rect width="60" height="60" fill="white" />
+          <rect width="60" height="60" fill={`url(#diamond-preview)`} />
+        </svg>
+      ),
+    },
+    {
+      type: 'stripes-h' as const,
+      name: 'H-Stripes',
+      preview: (
+        <div
+          className="w-full h-full bg-white"
+          style={{
+            backgroundImage: `repeating-linear-gradient(0deg, ${pattern.color} 0px, ${pattern.color} 2px, transparent 2px, transparent 10px)`,
+          }}
+        />
+      ),
+    },
+    {
+      type: 'stripes-v' as const,
+      name: 'V-Stripes',
+      preview: (
+        <div
+          className="w-full h-full bg-white"
+          style={{
+            backgroundImage: `repeating-linear-gradient(90deg, ${pattern.color} 0px, ${pattern.color} 2px, transparent 2px, transparent 10px)`,
+          }}
+        />
+      ),
+    },
+    {
+      type: 'triangles' as const,
+      name: 'Triangles',
+      preview: (
+        <svg className="w-full h-full" viewBox="0 0 60 60">
+          <defs>
+            <pattern id="tri-preview" width="14" height="12" patternUnits="userSpaceOnUse">
+              <polygon points="7,0 14,12 0,12" fill={pattern.color} opacity="0.35" />
+            </pattern>
+          </defs>
+          <rect width="60" height="60" fill="white" />
+          <rect width="60" height="60" fill={`url(#tri-preview)`} />
+        </svg>
+      ),
+    },
+    {
+      type: 'waves' as const,
+      name: 'Waves',
+      preview: (
+        <svg className="w-full h-full" viewBox="0 0 60 60">
+          <defs>
+            <pattern id="wave-preview" width="60" height="12" patternUnits="userSpaceOnUse">
+              <path d="M0,6 Q15,0 30,6 Q45,12 60,6" fill="none" stroke={pattern.color} strokeWidth="1.5" />
+            </pattern>
+          </defs>
+          <rect width="60" height="60" fill="white" />
+          <rect width="60" height="60" fill={`url(#wave-preview)`} />
+        </svg>
+      ),
+    },
+    {
       type: 'custom' as const,
       name: 'Custom',
       preview: pattern.customImage ? (
@@ -99,6 +185,13 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
   ];
 
   const getPatternPreview = () => {
+    const rotation = pattern.rotation ?? 0;
+    const scale = (pattern.scale ?? 100) / 100;
+    const transformStyle = {
+      transform: `rotate(${rotation}deg) scale(${scale})`,
+      transformOrigin: 'center center',
+    };
+
     switch (pattern.type) {
       case 'dots':
         return (
@@ -107,6 +200,7 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
             style={{
               backgroundImage: `radial-gradient(circle, ${pattern.color} ${pattern.density / 25}px, transparent ${pattern.density / 25}px)`,
               backgroundSize: `${pattern.density / 4}px ${pattern.density / 4}px`,
+              ...transformStyle,
             }}
           />
         );
@@ -120,8 +214,73 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
                 linear-gradient(180deg, ${pattern.color} 1px, transparent 1px)
               `,
               backgroundSize: `${pattern.density / 5}px ${pattern.density / 5}px`,
+              ...transformStyle,
             }}
           />
+        );
+      case 'hexagons':
+        return (
+          <svg className="w-full h-full" viewBox="0 0 120 120" style={transformStyle}>
+            <defs>
+              <pattern id="hex-full" width="20" height="17.32" patternUnits="userSpaceOnUse">
+                <polygon points="10,0 20,5 20,12.32 10,17.32 0,12.32 0,5" fill="none" stroke={pattern.color} strokeWidth="0.5" opacity={pattern.density / 100} />
+              </pattern>
+            </defs>
+            <rect width="120" height="120" fill={`url(#hex-full)`} />
+          </svg>
+        );
+      case 'diamonds':
+        return (
+          <svg className="w-full h-full" viewBox="0 0 120 120" style={transformStyle}>
+            <defs>
+              <pattern id="diamond-full" width="12" height="12" patternUnits="userSpaceOnUse">
+                <polygon points="6,0 12,6 6,12 0,6" fill={pattern.color} opacity={pattern.density / 200} />
+              </pattern>
+            </defs>
+            <rect width="120" height="120" fill={`url(#diamond-full)`} />
+          </svg>
+        );
+      case 'stripes-h':
+        return (
+          <div
+            className="w-full h-full"
+            style={{
+              backgroundImage: `repeating-linear-gradient(0deg, ${pattern.color} 0px, ${pattern.color} 2px, transparent 2px, transparent ${pattern.density / 5}px)`,
+              ...transformStyle,
+            }}
+          />
+        );
+      case 'stripes-v':
+        return (
+          <div
+            className="w-full h-full"
+            style={{
+              backgroundImage: `repeating-linear-gradient(90deg, ${pattern.color} 0px, ${pattern.color} 2px, transparent 2px, transparent ${pattern.density / 5}px)`,
+              ...transformStyle,
+            }}
+          />
+        );
+      case 'triangles':
+        return (
+          <svg className="w-full h-full" viewBox="0 0 120 120" style={transformStyle}>
+            <defs>
+              <pattern id="tri-full" width="14" height="12" patternUnits="userSpaceOnUse">
+                <polygon points="7,0 14,12 0,12" fill={pattern.color} opacity={pattern.density / 200} />
+              </pattern>
+            </defs>
+            <rect width="120" height="120" fill={`url(#tri-full)`} />
+          </svg>
+        );
+      case 'waves':
+        return (
+          <svg className="w-full h-full" viewBox="0 0 120 120" style={transformStyle}>
+            <defs>
+              <pattern id="wave-full" width="60" height="12" patternUnits="userSpaceOnUse">
+                <path d="M0,6 Q15,0 30,6 Q45,12 60,6" fill="none" stroke={pattern.color} strokeWidth="1.5" opacity={pattern.density / 100} />
+              </pattern>
+            </defs>
+            <rect width="120" height="120" fill={`url(#wave-full)`} />
+          </svg>
         );
       case 'custom':
         return pattern.customImage ? (
@@ -130,6 +289,7 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
             style={{
               backgroundImage: `url(${pattern.customImage})`,
               opacity: pattern.density / 100,
+              ...transformStyle,
             }}
           />
         ) : null;
@@ -142,7 +302,7 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
     <div className="space-y-6">
       <div>
         <Label className="mb-3 block">Pattern Type</Label>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {patternOptions.map((option) => (
             <button
               key={option.type}
@@ -199,6 +359,36 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
               value={pattern.density}
               onChange={(e) => updatePattern({ density: parseInt(e.target.value) })}
             />
+          </div>
+
+          {/* Rotation & Scale */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="pattern-rotation">
+                Rotation: {pattern.rotation ?? 0}°
+              </Label>
+              <Input
+                id="pattern-rotation"
+                type="range"
+                min="0"
+                max="360"
+                value={pattern.rotation ?? 0}
+                onChange={(e) => updatePattern({ rotation: parseInt(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="pattern-scale">
+                Scale: {pattern.scale ?? 100}%
+              </Label>
+              <Input
+                id="pattern-scale"
+                type="range"
+                min="50"
+                max="200"
+                value={pattern.scale ?? 100}
+                onChange={(e) => updatePattern({ scale: parseInt(e.target.value) })}
+              />
+            </div>
           </div>
 
           {/* Custom Pattern Upload */}

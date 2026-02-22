@@ -8,8 +8,16 @@ export function middleware(_request: NextRequest) {
   // - (dashboard)/layout.tsx - protects dashboard routes
   // - (auth)/layout.tsx - redirects if already logged in
   
-  // Allow all requests through - auth protection happens client-side
-  return NextResponse.next()
+  const response = NextResponse.next()
+
+  // Dynamic security headers
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  response.headers.set('X-XSS-Protection', '1; mode=block')
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+
+  return response
 }
 
 export const config = {

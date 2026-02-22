@@ -197,6 +197,11 @@ export const queryKeys = {
     backupJob: (id: string) => ['cloud-storage', 'backup-jobs', id] as const,
   },
 
+  // Banner Settings
+  bannerSettings: {
+    all: () => ['banner-settings'] as const,
+  },
+
   // Passwordless Auth
   passwordless: {
     status: () => ['passwordless', 'status'] as const,

@@ -59,6 +59,8 @@ export const ROUTES = {
     PAYMENT_GATEWAYS: '/payment-gateways',
     PAYMENT_METHODS: '/payment-methods',
     CURRENCIES: '/currencies',
+    ACCOUNT_CREDITS: '/account-credits',
+    CHECKOUT_ACCOUNT_CREDIT: '/checkout-account-credit',
   },
 
   // Content

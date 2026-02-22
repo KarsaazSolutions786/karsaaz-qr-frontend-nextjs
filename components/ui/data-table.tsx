@@ -115,10 +115,10 @@ export function DataTable<T extends Record<string, any>>({
   }
 
   return (
-    <div className={cn('w-full overflow-auto rounded-lg border border-gray-200', className)}>
-      <table className="w-full text-sm">
+    <div className={cn('w-full overflow-auto rounded-lg border border-gray-200 dark:border-gray-700', className)}>
+      <table className="w-full text-sm dark:bg-gray-800 dark:text-gray-100">
         <thead>
-          <tr className="border-b bg-gray-50">
+          <tr className="border-b bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
             {onRowSelect && (
               <th className="w-10 px-4 py-3">
                 <input
@@ -133,7 +133,7 @@ export function DataTable<T extends Record<string, any>>({
               <th
                 key={col.key}
                 className={cn(
-                  'px-4 py-3 text-left font-medium text-gray-500',
+                  'px-4 py-3 text-left font-medium text-gray-500 dark:text-gray-300',
                   sortable && col.sortable !== false && 'cursor-pointer select-none hover:text-gray-700'
                 )}
                 onClick={() => sortable && col.sortable !== false && handleSort(col.key)}
@@ -174,7 +174,7 @@ export function DataTable<T extends Record<string, any>>({
                   </td>
                 )}
                 {columns.map((col) => (
-                  <td key={col.key} className="px-4 py-3 text-gray-700">
+                  <td key={col.key} className="px-4 py-3 text-gray-700 dark:text-gray-200">
                     {col.render ? col.render(row[col.key], row) : row[col.key]}
                   </td>
                 ))}

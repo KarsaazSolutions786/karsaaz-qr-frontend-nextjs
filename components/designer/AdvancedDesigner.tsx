@@ -6,10 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Download, Upload, RotateCcw, Palette, Shapes, Image as ImageIcon, Settings, Sparkles } from 'lucide-react';
+import { Download, Upload, RotateCcw, Palette, Shapes, Image as ImageIcon, Settings, Sparkles, Layers } from 'lucide-react';
 import GradientEditor from './GradientEditor';
 import PatternLibrary from './PatternLibrary';
 import ShapeLibrary from './ShapeLibrary';
+import ShadowEffects from './effects/ShadowEffects';
+import StrokeEffects from './effects/StrokeEffects';
+import DepthEffects from './effects/DepthEffects';
 import { QRCodeSVG } from 'qrcode.react';
 
 export interface QRDesign {
@@ -29,10 +32,12 @@ export interface QRDesign {
   
   // Pattern
   pattern?: {
-    type: 'dots' | 'squares' | 'custom' | 'none';
+    type: 'dots' | 'squares' | 'hexagons' | 'diamonds' | 'stripes-h' | 'stripes-v' | 'triangles' | 'waves' | 'custom' | 'none';
     color: string;
     density: number;
     customImage?: string;
+    rotation?: number;
+    scale?: number;
   };
   
   // Logo
@@ -48,6 +53,29 @@ export interface QRDesign {
   quietZone: number;
   roundedCorners: boolean;
   cornerRadius: number;
+
+  // Effects
+  shadow?: {
+    enabled: boolean;
+    offsetX: number;
+    offsetY: number;
+    blur: number;
+    spread: number;
+    color: string;
+    opacity: number;
+  };
+  stroke?: {
+    enabled: boolean;
+    width: number;
+    color: string;
+    opacity: number;
+  };
+  depth?: {
+    enabled: boolean;
+    perspective: number;
+    rotateX: number;
+    rotateY: number;
+  };
 }
 
 interface AdvancedDesignerProps {
@@ -208,7 +236,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
 
             {/* Tabbed Interface */}
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid grid-cols-5 w-full">
+              <TabsList className="grid grid-cols-6 w-full">
                 <TabsTrigger value="colors">
                   <Palette className="w-4 h-4 mr-2" />
                   <span className="hidden sm:inline">Colors</span>
@@ -224,6 +252,10 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                 <TabsTrigger value="advanced">
                   <Settings className="w-4 h-4 mr-2" />
                   <span className="hidden sm:inline">Advanced</span>
+                </TabsTrigger>
+                <TabsTrigger value="effects">
+                  <Layers className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Effects</span>
                 </TabsTrigger>
                 <TabsTrigger value="ai">
                   <Sparkles className="w-4 h-4 mr-2" />
@@ -463,6 +495,24 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                 </div>
               </TabsContent>
 
+              {/* Effects Tab */}
+              <TabsContent value="effects" className="space-y-6 mt-6">
+                <ShadowEffects
+                  shadow={design.shadow}
+                  onChange={(shadow) => onChange({ ...design, shadow })}
+                />
+                <div className="border-t pt-4" />
+                <StrokeEffects
+                  stroke={design.stroke}
+                  onChange={(stroke) => onChange({ ...design, stroke })}
+                />
+                <div className="border-t pt-4" />
+                <DepthEffects
+                  depth={design.depth}
+                  onChange={(depth) => onChange({ ...design, depth })}
+                />
+              </TabsContent>
+
               {/* AI Tab */}
               <TabsContent value="ai" className="space-y-6 mt-6">
                 <div className="text-center py-12">
@@ -490,7 +540,21 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
           </CardHeader>
           <CardContent>
             <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 flex items-center justify-center">
-              <div className="bg-white p-4 rounded-lg shadow-lg">
+              <div
+                  className="bg-white p-4 rounded-lg"
+                  style={{
+                    boxShadow: design.shadow?.enabled
+                      ? `${design.shadow.offsetX}px ${design.shadow.offsetY}px ${design.shadow.blur}px ${design.shadow.spread}px ${design.shadow.color}${Math.round(design.shadow.opacity * 2.55).toString(16).padStart(2, '0')}`
+                      : '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                    outline: design.stroke?.enabled
+                      ? `${design.stroke.width}px solid ${design.stroke.color}${Math.round(design.stroke.opacity * 2.55).toString(16).padStart(2, '0')}`
+                      : undefined,
+                    transform: design.depth?.enabled
+                      ? `perspective(${design.depth.perspective}px) rotateX(${design.depth.rotateX}deg) rotateY(${design.depth.rotateY}deg)`
+                      : undefined,
+                    transition: 'all 0.3s ease',
+                  }}
+                >
                 <QRCodeSVG
                   value={qrData || 'https://karsaaz.com'}
                   size={200}
@@ -532,6 +596,24 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                 <div className="flex justify-between">
                   <span>Gradient:</span>
                   <span className="font-medium text-foreground capitalize">{design.gradient.type}</span>
+                </div>
+              )}
+              {design.shadow?.enabled && (
+                <div className="flex justify-between">
+                  <span>Shadow:</span>
+                  <span className="font-medium text-foreground">On</span>
+                </div>
+              )}
+              {design.stroke?.enabled && (
+                <div className="flex justify-between">
+                  <span>Stroke:</span>
+                  <span className="font-medium text-foreground">{design.stroke.width}px</span>
+                </div>
+              )}
+              {design.depth?.enabled && (
+                <div className="flex justify-between">
+                  <span>3D:</span>
+                  <span className="font-medium text-foreground">On</span>
                 </div>
               )}
             </div>

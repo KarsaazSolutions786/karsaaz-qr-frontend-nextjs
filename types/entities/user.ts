@@ -64,6 +64,7 @@ export interface User {
   mobile_number?: string
   qrcodes_count?: number
   scans?: number
+  account_balance?: number
   /**
    * For sub-users: the parent account owner.
    * Sub users navigate to parent_user.roles[0].home_page instead of their own.

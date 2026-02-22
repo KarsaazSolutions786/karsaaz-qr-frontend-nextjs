@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { pluginsAPI } from '@/lib/api/endpoints/plugins'
 
 interface Plugin {
   id: string
@@ -9,81 +10,58 @@ interface Plugin {
   author: string
   version: string
   category: string
-  installed: boolean
+  price?: string
+  tags?: string[]
 }
 
 const availablePlugins: Plugin[] = [
   {
-    id: 'seo-tools',
-    name: 'SEO Tools',
-    description: 'Optimize pages with meta tags, sitemaps, structured data, and keyword analysis.',
+    id: 'affiliates-coupons',
+    name: 'Affiliates & Coupons',
+    description: 'Referral affiliate program with coupon code discounts for subscriptions.',
     author: 'Karsaaz',
-    version: '1.2.0',
+    version: '1.0.0',
     category: 'Marketing',
-    installed: false,
+    tags: ['affiliate', 'coupon', 'discount'],
   },
   {
-    id: 'social-media-links',
-    name: 'Social Media Links',
-    description: 'Add social media profile links and share buttons to bio pages.',
+    id: 'pre-printed-qr-codes',
+    name: 'Pre-Printed QR Codes',
+    description: 'Generate and manage pre-printed QR codes for physical media distribution.',
     author: 'Karsaaz',
-    version: '1.0.3',
-    category: 'Social',
-    installed: false,
+    version: '1.0.0',
+    category: 'QR Codes',
+    tags: ['print', 'bulk', 'physical'],
   },
   {
-    id: 'custom-domains',
-    name: 'Custom Domains',
-    description: 'Allow users to connect their own domains to their bio link pages.',
+    id: 'product-store',
+    name: 'Product Store',
+    description: 'Create and manage a product store with QR code integration.',
     author: 'Karsaaz',
-    version: '2.0.1',
-    category: 'Infrastructure',
-    installed: false,
-  },
-  {
-    id: 'advanced-analytics',
-    name: 'Advanced Analytics',
-    description: 'Detailed analytics with geographic data, device breakdown, and conversion tracking.',
-    author: 'Karsaaz',
-    version: '1.5.0',
-    category: 'Analytics',
-    installed: false,
-  },
-  {
-    id: 'email-marketing',
-    name: 'Email Marketing',
-    description: 'Collect email subscribers and send newsletters from your dashboard.',
-    author: 'Karsaaz',
-    version: '1.1.0',
-    category: 'Marketing',
-    installed: false,
-  },
-  {
-    id: 'form-builder',
-    name: 'Form Builder',
-    description: 'Create custom forms with drag & drop fields, validation, and submissions inbox.',
-    author: 'Community',
-    version: '0.9.2',
-    category: 'Productivity',
-    installed: false,
+    version: '1.0.0',
+    category: 'E-Commerce',
+    tags: ['store', 'products', 'commerce'],
   },
 ]
 
 export default function PluginsAvailablePage() {
-  const [plugins, setPlugins] = useState<Plugin[]>(availablePlugins)
   const [search, setSearch] = useState('')
+  const [installedSlugs, setInstalledSlugs] = useState<string[]>([])
+  const [, setLoading] = useState(true)
 
-  const filtered = plugins.filter(
+  useEffect(() => {
+    pluginsAPI
+      .getInstalled()
+      .then((plugins) => setInstalledSlugs(plugins.map((p) => p.slug)))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  const filtered = availablePlugins.filter(
     (p) =>
       p.name.toLowerCase().includes(search.toLowerCase()) ||
       p.description.toLowerCase().includes(search.toLowerCase())
   )
-
-  const installPlugin = (id: string) => {
-    setPlugins((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, installed: true } : p))
-    )
-  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -96,7 +74,6 @@ export default function PluginsAvailablePage() {
         </div>
       </div>
 
-      {/* Search */}
       <div className="mt-6">
         <div className="relative max-w-md">
           <svg
@@ -117,43 +94,56 @@ export default function PluginsAvailablePage() {
         </div>
       </div>
 
-      {/* Plugins Grid */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((plugin) => (
-          <div
-            key={plugin.id}
-            className="flex flex-col justify-between rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
-          >
-            <div>
-              <div className="flex items-start justify-between">
-                <h3 className="text-base font-semibold text-gray-900">{plugin.name}</h3>
-                <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-                  {plugin.category}
-                </span>
+        {filtered.map((plugin) => {
+          const isInstalled = installedSlugs.includes(plugin.id)
+          return (
+            <div
+              key={plugin.id}
+              className="flex flex-col justify-between rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+            >
+              <div>
+                <div className="flex items-start justify-between">
+                  <h3 className="text-base font-semibold text-gray-900">{plugin.name}</h3>
+                  <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
+                    {plugin.category}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-gray-500">{plugin.description}</p>
+                {plugin.tags && plugin.tags.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {plugin.tags.map((tag) => (
+                      <span key={tag} className="rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div className="mt-3 flex items-center space-x-3 text-xs text-gray-400">
+                  <span>v{plugin.version}</span>
+                  <span>·</span>
+                  <span>by {plugin.author}</span>
+                </div>
               </div>
-              <p className="mt-2 text-sm text-gray-500">{plugin.description}</p>
-              <div className="mt-3 flex items-center space-x-3 text-xs text-gray-400">
-                <span>v{plugin.version}</span>
-                <span>·</span>
-                <span>by {plugin.author}</span>
+              <div className="mt-5">
+                {isInstalled ? (
+                  <span className="inline-flex w-full items-center justify-center rounded-md bg-green-50 py-2 text-sm font-medium text-green-700">
+                    ✓ Installed
+                  </span>
+                ) : (
+                  <a
+                    href="https://karsaazqr.com/plugins"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+                  >
+                    {plugin.price ? `Buy — ${plugin.price}` : 'Get Plugin'}
+                  </a>
+                )}
               </div>
             </div>
-            <div className="mt-5">
-              {plugin.installed ? (
-                <span className="inline-flex w-full items-center justify-center rounded-md bg-green-50 py-2 text-sm font-medium text-green-700">
-                  ✓ Installed
-                </span>
-              ) : (
-                <button
-                  onClick={() => installPlugin(plugin.id)}
-                  className="w-full rounded-md bg-blue-600 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Install
-                </button>
-              )}
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {filtered.length === 0 && (

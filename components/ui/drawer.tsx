@@ -42,7 +42,7 @@ export function Drawer({ open, onClose, title, size = 'md', children, className 
       {/* Panel */}
       <div
         className={cn(
-          'relative flex w-full flex-col bg-white shadow-xl',
+          'relative flex w-full flex-col bg-white dark:bg-gray-800 dark:text-gray-100 shadow-xl',
           'animate-[slideIn_0.3s_ease-out]',
           sizeClasses[size],
           className
@@ -51,8 +51,8 @@ export function Drawer({ open, onClose, title, size = 'md', children, className 
         aria-modal="true"
         aria-label={title}
       >
-        <div className="flex items-center justify-between border-b px-6 py-4">
-          {title && <h2 className="text-lg font-semibold text-gray-900">{title}</h2>}
+        <div className="flex items-center justify-between border-b dark:border-gray-700 px-6 py-4">
+          {title && <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>}
           <button
             onClick={onClose}
             className="ml-auto rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"

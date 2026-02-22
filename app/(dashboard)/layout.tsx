@@ -5,6 +5,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LanguagePicker } from '@/components/common/LanguagePicker'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { ActAsBanner } from '@/components/common/ActAsBanner'
 import {
   QrCodeIcon,
@@ -324,7 +325,7 @@ export default function DashboardLayout({
   // Show minimal loading state during SSR and initial mount to prevent hydration mismatch
   if (!mounted || isLoading) {
     return (
-      <div className="flex h-screen bg-gray-50">
+      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
         </div>
@@ -337,7 +338,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
@@ -350,7 +351,7 @@ export default function DashboardLayout({
       <aside
         className={`
           fixed inset-y-0 left-0 z-50 w-60 flex flex-col
-          bg-gradient-to-b from-[#8368dc] to-[#b664c6]
+          bg-gradient-to-b from-[#8368dc] to-[#b664c6] dark:from-[#6b52b8] dark:to-[#9a4fa8]
           transform transition-transform duration-300 ease-in-out
           lg:translate-x-0 lg:static lg:inset-auto
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -661,7 +662,7 @@ export default function DashboardLayout({
         {/* Impersonation banner */}
         <ActAsBanner />
         {/* Mobile header */}
-        <div className="sticky top-0 z-10 flex h-14 items-center gap-x-4 bg-white border-b border-gray-200 px-4 shadow-sm lg:hidden">
+        <div className="sticky top-0 z-10 flex h-14 items-center gap-x-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 shadow-sm lg:hidden">
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
@@ -672,11 +673,12 @@ export default function DashboardLayout({
           <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
             Karsaaz QR
           </div>
+          <ThemeToggle />
           <LanguagePicker />
         </div>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
           {children}
         </main>
       </div>
