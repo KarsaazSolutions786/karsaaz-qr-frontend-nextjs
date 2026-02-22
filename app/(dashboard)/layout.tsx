@@ -47,6 +47,8 @@ import {
   RectangleGroupIcon,
   FolderIcon,
   TagIcon,
+  TicketIcon,
+  WrenchScrewdriverIcon,
 } from '@heroicons/react/24/outline'
 import {
   getSidebarFolders,
@@ -115,6 +117,8 @@ const navigationGroups: NavGroup[] = [
       { name: 'Billing', href: '/billing', icon: BanknotesIcon },
       { name: 'Transactions', href: '/transactions', icon: CurrencyDollarIcon },
       { name: 'Payment Processors', href: '/payment-processors', icon: BanknotesIcon },
+      { name: 'Payment Gateways', href: '/payment-gateways', icon: WrenchScrewdriverIcon },
+      { name: 'Payment Methods', href: '/payment-methods', icon: CreditCardIcon },
       { name: 'Currencies', href: '/currencies', icon: CircleStackIcon },
     ],
   },
@@ -136,6 +140,7 @@ const navigationGroups: NavGroup[] = [
     items: [
       { name: 'Contact Form', href: '/contacts', icon: EnvelopeIcon },
       { name: 'Lead Forms', href: '/lead-forms', icon: ClipboardDocumentListIcon },
+      { name: 'Support Tickets', href: '/support-tickets', icon: TicketIcon },
     ],
   },
   {

@@ -1,30 +1,48 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import apiClient from '@/lib/api/client'
 
 type ReportStatus = 'pending' | 'reviewed' | 'resolved' | 'dismissed'
 
 interface AbuseReport {
-  id: string
+  id: number
   reporter: string
-  reportedUrl: string
+  reported_url: string
   reason: string
   status: ReportStatus
-  date: string
+  created_at: string
   details: string
 }
 
 export default function AbuseReportsPage() {
   const [reports, setReports] = useState<AbuseReport[]>([])
+  const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<'all' | ReportStatus>('all')
+  const [page, setPage] = useState(1)
+  const [lastPage, setLastPage] = useState(1)
 
-  const filtered =
-    statusFilter === 'all' ? reports : reports.filter((r) => r.status === statusFilter)
+  const fetchReports = useCallback(async () => {
+    try {
+      const params: Record<string, any> = { page }
+      if (statusFilter !== 'all') params.status = statusFilter
+      const res = await apiClient.get('/admin/abuse-reports', { params })
+      const data = res.data as any
+      setReports(Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [])
+      if (data.last_page) setLastPage(data.last_page)
+    } catch { /* empty */ }
+    setLoading(false)
+  }, [page, statusFilter])
 
-  const updateStatus = (id: string, status: ReportStatus) => {
-    setReports((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status } : r))
-    )
+  useEffect(() => { fetchReports() }, [fetchReports])
+
+  const updateStatus = async (id: number, status: ReportStatus) => {
+    try {
+      await apiClient.put(`/admin/abuse-reports/${id}`, { status })
+      setReports((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status } : r))
+      )
+    } catch { /* toast error */ }
   }
 
   const statusCounts = {
@@ -80,7 +98,11 @@ export default function AbuseReportsPage() {
       </div>
 
       <div className="mt-6">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-yellow-200 border-t-yellow-600" />
+          </div>
+        ) : reports.length === 0 ? (
           <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
             <svg
               className="mx-auto h-12 w-12 text-gray-400"
@@ -128,14 +150,14 @@ export default function AbuseReportsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filtered.map((report) => (
+                {reports.map((report) => (
                   <tr key={report.id}>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
                       {report.reporter}
                     </td>
                     <td className="max-w-xs truncate px-6 py-4 text-sm text-blue-600 hover:underline">
-                      <a href={report.reportedUrl} target="_blank" rel="noopener noreferrer">
-                        {report.reportedUrl}
+                      <a href={report.reported_url} target="_blank" rel="noopener noreferrer">
+                        {report.reported_url}
                       </a>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
@@ -151,7 +173,7 @@ export default function AbuseReportsPage() {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                      {report.date}
+                      {report.created_at ? new Date(report.created_at).toLocaleDateString() : '—'}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
                       {report.status === 'pending' && (
@@ -186,6 +208,27 @@ export default function AbuseReportsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {lastPage > 1 && (
+          <div className="mt-4 flex items-center justify-between">
+            <button
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="rounded bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="text-sm text-gray-500">Page {page} of {lastPage}</span>
+            <button
+              disabled={page >= lastPage}
+              onClick={() => setPage((p) => p + 1)}
+              className="rounded bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         )}
       </div>

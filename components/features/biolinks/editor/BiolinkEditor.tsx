@@ -127,7 +127,7 @@ export default function BiolinkEditor({ blocks, onChange }: BiolinkEditorProps) 
 
   const addBlock = (type: BlockType) => {
     const newBlock = createBlock(type, blocks.length)
-    onChange([...blocks, newBlock])
+    onChange([...blocks, newBlock as BlockData])
     setShowBlockSelector(false)
   }
 

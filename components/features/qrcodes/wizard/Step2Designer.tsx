@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useMemo } from 'react'
-import { QRCodePreview, QRCodePreviewRef } from '@/components/qr/QRCodePreview'
+import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
 import { GradientBuilder } from '@/components/ui/GradientBuilder'
 import { LogoUpload } from '@/components/qr/LogoUpload'
 import { Button } from '@/components/ui/button'
@@ -47,7 +47,7 @@ export default function Step2Designer({
   qrData,
 }: Step2DesignerProps) {
   const [activeTab, setActiveTab] = useState('shape')
-  const previewRef = useRef<QRCodePreviewRef>(null)
+  const previewRef = useRef<BackendQRPreviewRef>(null)
 
   const mergedConfig = useMemo(
     () => ({ ...DEFAULT_DESIGNER_CONFIG, ...design }),
@@ -877,9 +877,10 @@ export default function Step2Designer({
           <div className="bg-white rounded-lg border-2 border-gray-200 p-6 sticky top-6">
             <div className="flex flex-col items-center gap-4">
               {previewData ? (
-                <QRCodePreview
+                <BackendQRPreview
                   ref={previewRef}
                   data={previewData}
+                  qrType={qrType}
                   config={design}
                   className="w-full max-w-[280px] mx-auto"
                 />

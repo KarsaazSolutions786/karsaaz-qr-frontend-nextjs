@@ -1,6 +1,15 @@
 import type { BlockType, BlockDefinition } from '@/types/entities/biolink'
+import type { DynamicBiolinkBlock, BiolinkBlockField } from '@/types/entities/dynamic-biolink-block'
+import type { ComponentType } from 'react'
 
-export const blockRegistry: Record<BlockType, BlockDefinition> = {
+// Extended definition supporting dynamic blocks with field configuration
+export interface DynamicBlockDefinition extends BlockDefinition {
+  isDynamic?: boolean
+  fields?: BiolinkBlockField[]
+  component?: ComponentType<any>
+}
+
+export const blockRegistry: Record<string, DynamicBlockDefinition> = {
   link: {
     type: 'link',
     label: 'Link Button',
@@ -78,12 +87,63 @@ export const blockRegistry: Record<BlockType, BlockDefinition> = {
   },
 }
 
-export function createBlock(type: BlockType, order: number) {
+/**
+ * Register a dynamic block type from a DynamicBiolinkBlock definition.
+ */
+export function registerDynamicBlock(
+  slug: string,
+  dynamicBlock: DynamicBiolinkBlock,
+  component?: ComponentType<any>
+) {
+  const defaultData: Record<string, string> = {}
+  if (dynamicBlock.fields) {
+    dynamicBlock.fields.forEach((field) => {
+      defaultData[field.name] = ''
+    })
+  }
+
+  blockRegistry[slug] = {
+    type: slug as BlockType,
+    label: dynamicBlock.name,
+    icon: '🧩',
+    category: 'content',
+    defaultData,
+    isDynamic: true,
+    fields: dynamicBlock.fields,
+    component,
+  }
+}
+
+/**
+ * Unregister a dynamic block type.
+ */
+export function unregisterDynamicBlock(slug: string) {
+  const definition = blockRegistry[slug]
+  if (definition?.isDynamic) {
+    delete blockRegistry[slug]
+  }
+}
+
+/**
+ * Get all registered block definitions, optionally filtered by category or dynamic flag.
+ */
+export function getBlockDefinitions(filter?: {
+  category?: string
+  dynamicOnly?: boolean
+}): DynamicBlockDefinition[] {
+  return Object.values(blockRegistry).filter((def) => {
+    if (filter?.category && def.category !== filter.category) return false
+    if (filter?.dynamicOnly && !def.isDynamic) return false
+    return true
+  })
+}
+
+export function createBlock(type: BlockType | string, order: number) {
   const definition = blockRegistry[type]
   return {
     id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     type,
     order,
-    data: definition.defaultData,
+    data: definition ? { ...definition.defaultData } : {},
   }
 }

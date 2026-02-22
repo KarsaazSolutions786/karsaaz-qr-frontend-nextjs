@@ -7,6 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LeadForm, LeadFormField } from '@/types/entities/lead-form';
 import { submitLeadForm } from '@/lib/api/public-qrcodes';
+import RatingQuestion from './questions/RatingQuestion';
+import StarsQuestion from './questions/StarsQuestion';
+import ChoicesQuestion from './questions/ChoicesQuestion';
 
 interface FormDisplayProps {
   form: LeadForm;
@@ -299,6 +302,81 @@ export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
                 </label>
               ))}
             </div>
+            {error && (
+              <p className="text-sm text-red-600 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {error}
+              </p>
+            )}
+          </div>
+        );
+
+      case 'rating':
+        return (
+          <div key={field.id} className="space-y-2">
+            <RatingQuestion
+              label={`${field.label}${field.required ? ' *' : ''}`}
+              value={typeof value === 'number' ? value : 0}
+              onChange={(v) => handleChange(field.name, v)}
+              min={field.validation?.min}
+              max={field.validation?.max}
+            />
+            {error && (
+              <p className="text-sm text-red-600 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {error}
+              </p>
+            )}
+          </div>
+        );
+
+      case 'stars':
+        return (
+          <div key={field.id} className="space-y-2">
+            <StarsQuestion
+              label={`${field.label}${field.required ? ' *' : ''}`}
+              value={typeof value === 'number' ? value : 0}
+              onChange={(v) => handleChange(field.name, v)}
+              maxStars={field.validation?.max}
+            />
+            {error && (
+              <p className="text-sm text-red-600 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {error}
+              </p>
+            )}
+          </div>
+        );
+
+      case 'choices':
+        return (
+          <div key={field.id} className="space-y-2">
+            <ChoicesQuestion
+              label={`${field.label}${field.required ? ' *' : ''}`}
+              value={value || (field.options ? '' : [])}
+              onChange={(v) => handleChange(field.name, v)}
+              options={field.options || []}
+              multiple={false}
+            />
+            {error && (
+              <p className="text-sm text-red-600 flex items-center gap-1">
+                <AlertCircle className="w-4 h-4" />
+                {error}
+              </p>
+            )}
+          </div>
+        );
+
+      case 'multi-choices':
+        return (
+          <div key={field.id} className="space-y-2">
+            <ChoicesQuestion
+              label={`${field.label}${field.required ? ' *' : ''}`}
+              value={Array.isArray(value) ? value : []}
+              onChange={(v) => handleChange(field.name, v)}
+              options={field.options || []}
+              multiple={true}
+            />
             {error && (
               <p className="text-sm text-red-600 flex items-center gap-1">
                 <AlertCircle className="w-4 h-4" />

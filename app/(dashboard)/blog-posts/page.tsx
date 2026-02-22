@@ -2,19 +2,26 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useBlogPosts } from '@/lib/hooks/queries/useBlogPosts'
 import { useDeleteBlogPost } from '@/lib/hooks/mutations/useBlogPostMutations'
+import BlogPostList from '@/components/features/blog/BlogPostList'
 import type { BlogPost } from '@/types/entities/blog-post'
 
 export default function BlogPostsPage() {
+  const router = useRouter()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const { data, isLoading } = useBlogPosts({ page, search: search || undefined })
   const deleteMutation = useDeleteBlogPost()
 
-  const handleDelete = async (id: number, title: string) => {
-    if (confirm(`Are you sure you want to delete "${title}"?`)) {
-      await deleteMutation.mutateAsync(id)
+  const handleEdit = (post: BlogPost) => {
+    router.push(`/blog-posts/${post.id}`)
+  }
+
+  const handleDelete = async (post: BlogPost) => {
+    if (confirm(`Are you sure you want to delete "${post.title}"?`)) {
+      await deleteMutation.mutateAsync(post.id)
     }
   }
 
@@ -30,7 +37,7 @@ export default function BlogPostsPage() {
             href="/blog-posts/new"
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
-            Create Post
+            New Post
           </Link>
         </div>
       </div>
@@ -53,51 +60,11 @@ export default function BlogPostsPage() {
           </div>
         ) : data && data.data.length > 0 ? (
           <>
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="w-12 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">ID</th>
-                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Title</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Language</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Published at</th>
-                    <th className="relative py-3.5 pl-3 pr-4">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {data.data.map((post: BlogPost) => (
-                    <tr key={post.id}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-500">{post.id}</td>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
-                        {post.title}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {post.translation?.name ?? 'English (default)'}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : '---'}
-                      </td>
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
-                        <Link
-                          href={`/blog-posts/${post.id}`}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
-                        >
-                          Edit
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(post.id, post.title)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <BlogPostList
+              posts={data.data}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
 
             {data.pagination && data.pagination.lastPage > 1 && (
               <div className="mt-6 flex items-center justify-between">
@@ -143,7 +110,7 @@ export default function BlogPostsPage() {
                 href="/blog-posts/new"
                 className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
               >
-                Create Post
+                New Post
               </Link>
             </div>
           </div>

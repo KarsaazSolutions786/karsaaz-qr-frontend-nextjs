@@ -35,7 +35,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
   const { data: qrcode, isLoading } = useQRCode(params.id)
   const { data: stats } = useQRCodeStats(params.id)
   const deleteMutation = useDeleteQRCode()
-  const { duplicateQRCode, archiveQRCode, transferQRCode, convertQRType, addPINProtection, downloadQRCode } = useQRActions()
+  const { duplicateQRCode, archiveQRCode, transferQRCode, convertQRType, downloadQRCode } = useQRActions()
 
   const handleDelete = async () => {
     try {
@@ -66,17 +66,10 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
     }
   }
 
-  const handleConvertType = async (newType: string, newData: Record<string, any>) => {
+  const handleConvertType = async (newType: string) => {
     if (qrcode) {
-      await convertQRType(qrcode.id, newType, newData)
+      await convertQRType(qrcode.id, newType, {})
       setShowTypeConversion(false)
-    }
-  }
-
-  const handleAddPIN = async (pin: string, confirmPin: string, expiresAt?: Date) => {
-    if (qrcode) {
-      await addPINProtection(qrcode.id, { pin, confirmPin, expiresAt })
-      setShowPINProtection(false)
     }
   }
 
@@ -273,10 +266,10 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
       {qrcode && (
         <>
           <TypeConversionModal
-            isOpen={showTypeConversion}
-            onClose={() => setShowTypeConversion(false)}
+            qrCodeId={qrcode.id}
             currentType={qrcode.type || 'url'}
-            currentData={(qrcode.data as Record<string, any>) || {}}
+            open={showTypeConversion}
+            onClose={() => setShowTypeConversion(false)}
             onConvert={handleConvertType}
           />
           
@@ -304,10 +297,11 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
           />
           
           <PINProtectionModal
-            isOpen={showPINProtection}
+            qrCodeId={qrcode.id}
+            hasPIN={false}
+            open={showPINProtection}
             onClose={() => setShowPINProtection(false)}
-            mode="add"
-            onAddPIN={handleAddPIN}
+            onSuccess={() => setShowPINProtection(false)}
           />
         </>
       )}

@@ -12,9 +12,38 @@ const getApiBaseURL = () => {
     : 'https://app.karsaazqr.com/api';
 };
 
+// API Timeout Configuration (T020 — per research.md R7)
+export const API_TIMEOUTS = {
+  DEFAULT: 60000,   // 60s
+  FAST: 25000,      // 25s — quick reads
+  HEAVY: 120000,    // 120s — bulk operations, exports
+  AUTH: 90000,      // 90s — login, register
+  UPLOAD: 180000,   // 180s — file uploads
+} as const;
+
+// Route-specific timeout mapping
+const getTimeoutForUrl = (url?: string): number => {
+  if (!url) return API_TIMEOUTS.DEFAULT;
+  if (/\/(login|register|logout|verify-otp|forgot-password|reset-password)/.test(url)) return API_TIMEOUTS.AUTH;
+  if (/\/upload|\/import|\/bulk/.test(url)) return API_TIMEOUTS.UPLOAD;
+  if (/\/export|\/generate|\/report/.test(url)) return API_TIMEOUTS.HEAVY;
+  if (/^\/(qrcodes|folders|templates)\?/.test(url) || /\/count/.test(url)) return API_TIMEOUTS.FAST;
+  return API_TIMEOUTS.DEFAULT;
+};
+
+// Check if on slow connection and double timeout
+const adjustForSlowConnection = (timeout: number): number => {
+  if (typeof navigator === 'undefined') return timeout;
+  const conn = (navigator as any).connection;
+  if (!conn) return timeout;
+  const type = conn.effectiveType;
+  if (type === 'slow-2g' || type === '2g') return timeout * 2;
+  return timeout;
+};
+
 const apiClient: AxiosInstance = axios.create({
   baseURL: getApiBaseURL(),
-  timeout: 60000, // 60s timeout (matches Lit frontend default)
+  timeout: API_TIMEOUTS.DEFAULT,
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
@@ -22,7 +51,7 @@ const apiClient: AxiosInstance = axios.create({
   withCredentials: true, // Send cookies with requests
 })
 
-// Request interceptor: Attach JWT token from localStorage
+// Request interceptor: Attach JWT token and smart timeout
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // Get Sanctum token from localStorage and attach to request
@@ -32,6 +61,10 @@ apiClient.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`
       }
     }
+
+    // Smart timeout: route-specific + slow-connection adjustment (T020)
+    const routeTimeout = getTimeoutForUrl(config.url)
+    config.timeout = adjustForSlowConnection(routeTimeout)
     
     // Optional: Add request timestamp for debugging
     if (process.env.NODE_ENV === 'development') {
@@ -87,3 +120,29 @@ apiClient.interceptors.response.use(
 )
 
 export default apiClient
+
+// Retry with exponential backoff (T020 — 3 retries: 1s, 2s, 4s)
+const MAX_RETRIES = 3;
+const RETRY_DELAY_BASE = 1000;
+
+export async function apiWithRetry<T>(
+  fn: () => Promise<T>,
+  retries = MAX_RETRIES
+): Promise<T> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      const isRetryable =
+        error.code === 'ECONNABORTED' ||
+        error.code === 'ERR_NETWORK' ||
+        (error.response?.status && error.response.status >= 500);
+
+      if (!isRetryable || attempt === retries) throw error;
+
+      const delay = RETRY_DELAY_BASE * Math.pow(2, attempt);
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+  throw new Error('Retry exhausted');
+}

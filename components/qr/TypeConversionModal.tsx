@@ -1,71 +1,63 @@
-/**
- * TypeConversionModal Component
- * 
- * Modal for converting QR code from one type to another.
- */
-
 'use client';
 
 import React, { useState } from 'react';
 import { X, RefreshCw, AlertCircle } from 'lucide-react';
 
 export interface TypeConversionModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  qrCodeId: number | string;
   currentType: string;
-  currentData: Record<string, any>;
-  onConvert: (newType: string, newData: Record<string, any>) => Promise<void>;
+  open: boolean;
+  onClose: () => void;
+  onConvert: (newType: string) => void;
 }
 
-const QR_TYPES = [
-  { value: 'url', label: 'URL', fields: ['url'] },
-  { value: 'text', label: 'Text', fields: ['text'] },
-  { value: 'email', label: 'Email', fields: ['email', 'subject', 'body'] },
-  { value: 'phone', label: 'Phone', fields: ['phone'] },
-  { value: 'sms', label: 'SMS', fields: ['phone', 'message'] },
-  { value: 'wifi', label: 'WiFi', fields: ['ssid', 'password', 'encryption'] },
-  { value: 'vcard', label: 'vCard', fields: ['name', 'phone', 'email', 'organization'] },
-  { value: 'location', label: 'Location', fields: ['latitude', 'longitude'] },
-];
+const STATIC_TYPES = ['url', 'text', 'email', 'phone', 'sms', 'wifi', 'vcard', 'location'];
+const DYNAMIC_TYPES = ['dynamic_url', 'dynamic_vcard', 'dynamic_pdf', 'dynamic_menu', 'dynamic_landing'];
+
+function getCompatibleTypes(currentType: string): string[] {
+  if (DYNAMIC_TYPES.includes(currentType)) {
+    return DYNAMIC_TYPES.filter((t) => t !== currentType);
+  }
+  return STATIC_TYPES.filter((t) => t !== currentType);
+}
+
+function formatTypeName(type: string): string {
+  return type
+    .replace(/^dynamic_/, '')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 export function TypeConversionModal({
-  isOpen,
-  onClose,
+  qrCodeId: _qrCodeId,
   currentType,
-  currentData: _currentData,
+  open,
+  onClose,
   onConvert,
 }: TypeConversionModalProps) {
-  const [selectedType, setSelectedType] = useState(currentType);
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [selectedType, setSelectedType] = useState('');
   const [isConverting, setIsConverting] = useState(false);
-  const [error, setError] = useState('');
-  
-  if (!isOpen) return null;
-  
-  const selectedTypeConfig = QR_TYPES.find(t => t.value === selectedType);
-  const canConvert = selectedType !== currentType;
-  
+
+  if (!open) return null;
+
+  const compatibleTypes = getCompatibleTypes(currentType);
+  const canConvert = selectedType !== '' && selectedType !== currentType;
+  const isDynamic = DYNAMIC_TYPES.includes(currentType);
+
   const handleConvert = async () => {
+    if (!canConvert) return;
     setIsConverting(true);
-    setError('');
-    
     try {
-      await onConvert(selectedType, formData);
+      onConvert(selectedType);
       onClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Conversion failed');
     } finally {
       setIsConverting(false);
     }
   };
-  
-  const updateFormData = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-  
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-lg w-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
@@ -73,9 +65,9 @@ export function TypeConversionModal({
               <RefreshCw className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Convert QR Code Type</h2>
+              <h2 className="text-lg font-bold text-gray-900">Convert QR Code Type</h2>
               <p className="text-sm text-gray-500">
-                Change from <span className="font-medium">{currentType}</span> to another type
+                Change from <span className="font-medium capitalize">{formatTypeName(currentType)}</span> to another type
               </p>
             </div>
           </div>
@@ -87,95 +79,55 @@ export function TypeConversionModal({
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="space-y-6">
-            {/* Warning */}
-            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-yellow-800">Important</p>
-                <p className="text-xs text-yellow-700 mt-1">
-                  Converting the QR code type will replace the current data. This action cannot be undone.
-                  Make sure to save any important information before proceeding.
-                </p>
-              </div>
-            </div>
-            
-            {/* Current Type */}
+        <div className="p-6 space-y-5">
+          {/* Warning */}
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Current Type
-              </label>
-              <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
-                <span className="font-medium text-gray-900 capitalize">{currentType}</span>
-              </div>
+              <p className="text-sm font-medium text-yellow-800">Data will change</p>
+              <p className="text-xs text-yellow-700 mt-1">
+                Converting the QR code type will replace the current data. This action cannot be undone.
+              </p>
             </div>
-            
-            {/* New Type Selector */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Convert To
-              </label>
-              <div className="grid grid-cols-4 gap-2">
-                {QR_TYPES.map(type => (
-                  <button
-                    key={type.value}
-                    onClick={() => setSelectedType(type.value)}
-                    disabled={type.value === currentType}
-                    className={`
-                      px-4 py-3 rounded-lg border-2 font-medium text-sm transition-all
-                      ${selectedType === type.value
-                        ? 'border-purple-500 bg-purple-50 text-purple-700'
-                        : type.value === currentType
-                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                      }
-                    `}
-                  >
-                    {type.label}
-                  </button>
-                ))}
-              </div>
+          </div>
+
+          {/* Current Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Current Type</label>
+            <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
+              <span className="font-medium text-gray-900 capitalize">{formatTypeName(currentType)}</span>
+              <span className="ml-2 text-xs text-gray-500">
+                ({isDynamic ? 'Dynamic' : 'Static'})
+              </span>
             </div>
-            
-            {/* Form Fields */}
-            {canConvert && selectedTypeConfig && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  {selectedTypeConfig.label} Data
-                </label>
-                <div className="space-y-3">
-                  {selectedTypeConfig.fields.map(field => (
-                    <div key={field}>
-                      <label className="block text-xs text-gray-600 mb-1 capitalize">
-                        {field.replace(/([A-Z])/g, ' $1').trim()}
-                      </label>
-                      <input
-                        type="text"
-                        value={formData[field] || ''}
-                        onChange={(e) => updateFormData(field, e.target.value)}
-                        placeholder={`Enter ${field}`}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            {/* Error */}
-            {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-800">{error}</p>
-              </div>
-            )}
+          </div>
+
+          {/* Target Type Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Convert To</label>
+            <div className="grid grid-cols-3 gap-2">
+              {compatibleTypes.map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setSelectedType(type)}
+                  className={`px-3 py-2.5 rounded-lg border-2 font-medium text-sm transition-all capitalize ${
+                    selectedType === type
+                      ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  {formatTypeName(type)}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-        
+
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50 rounded-b-lg">
           <button
             onClick={onClose}
             disabled={isConverting}
@@ -191,12 +143,12 @@ export function TypeConversionModal({
             {isConverting ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Converting...</span>
+                Converting…
               </>
             ) : (
               <>
                 <RefreshCw className="w-4 h-4" />
-                <span>Convert QR Code</span>
+                Convert
               </>
             )}
           </button>

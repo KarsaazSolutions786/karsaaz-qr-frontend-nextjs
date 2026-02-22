@@ -5,11 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { Suspense } from 'react'
 import { User } from '@/types/entities/user'
+import { authWorkflowEngine, type OAuthProviderName } from '@/lib/services/auth-workflow'
 
 /**
  * OAuth callback page — handles redirect from server-side OAuth flow.
- * The server redirects here with base64-encoded user and token data:
- *   /auth-callback?user=<base64>&token=<base64>
+ * Supports two modes:
+ *   1. Base64: /auth-callback?user=<base64>&token=<base64> (existing flow)
+ *   2. Code exchange: /auth-callback?code=<code>&provider=<provider> (new OAuth code flow)
  */
 function AuthCallbackContent() {
   const router = useRouter()
@@ -18,32 +20,46 @@ function AuthCallbackContent() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    try {
-      const userParam = searchParams.get('user')
-      const tokenParam = searchParams.get('token')
+    async function processCallback() {
+      try {
+        const code = searchParams.get('code')
+        const provider = searchParams.get('provider') as OAuthProviderName | null
+        const userParam = searchParams.get('user')
+        const tokenParam = searchParams.get('token')
 
-      if (!userParam || !tokenParam) {
-        setError('Invalid callback parameters. Please try logging in again.')
-        return
+        let userData: User
+        let token: string
+
+        if (code && provider) {
+          // OAuth code exchange flow
+          const result = await authWorkflowEngine.handleCallback(provider, code)
+          userData = result.user as unknown as User
+          token = result.token
+        } else if (userParam && tokenParam) {
+          // Base64 encoded flow (existing)
+          userData = JSON.parse(atob(userParam))
+          token = atob(tokenParam)
+        } else {
+          setError('Invalid callback parameters. Please try logging in again.')
+          return
+        }
+
+        // Store auth data
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('user', JSON.stringify(userData))
+          localStorage.setItem('token', token)
+        }
+        setUser(userData)
+
+        // Redirect to user's home page
+        const homePage = userData.roles?.[0]?.home_page || '/qrcodes'
+        router.push(homePage)
+      } catch {
+        setError('Failed to process login. Please try again.')
       }
-
-      // Decode base64 data
-      const userData: User = JSON.parse(atob(userParam))
-      const token = atob(tokenParam)
-
-      // Store auth data
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('user', JSON.stringify(userData))
-        localStorage.setItem('token', token)
-      }
-      setUser(userData)
-
-      // Redirect to user's home page
-      const homePage = userData.roles?.[0]?.home_page || '/qrcodes'
-      router.push(homePage)
-    } catch {
-      setError('Failed to process login. Please try again.')
     }
+
+    processCallback()
   }, [searchParams, router, setUser])
 
   if (error) {
@@ -73,6 +89,7 @@ function AuthCallbackContent() {
   )
 }
 
+// T145: OAuth callback route supporting both base64 and code-exchange flows
 export default function AuthCallbackPage() {
   return (
     <Suspense

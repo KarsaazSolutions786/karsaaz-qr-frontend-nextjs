@@ -1,283 +1,163 @@
-/**
- * ScreenshotModal Component
- * 
- * Advanced screenshot/export options with customization.
- */
-
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { X, Download, Camera } from 'lucide-react';
-import { QRCode } from '@/types/entities/qrcode';
 
-export type ScreenshotFormat = 'PNG' | 'JPG' | 'SVG' | 'PDF';
-export type ScreenshotSize = 'small' | 'medium' | 'large' | 'custom';
+export type ExportFormat = 'PNG' | 'SVG' | 'PDF';
+export type SizePreset = 'S' | 'M' | 'L' | 'XL';
 
-export interface ScreenshotModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  qrcode: QRCode;
-  onExport?: (options: ScreenshotOptions) => Promise<void>;
-}
-
-export interface ScreenshotOptions {
-  format: ScreenshotFormat;
-  size: ScreenshotSize;
-  customWidth?: number;
-  customHeight?: number;
-  quality: number;
-  dpi: number;
-  includeBackground: boolean;
-  watermark: boolean;
-}
-
-const SIZE_PRESETS = {
-  small: { width: 512, height: 512, label: '512x512 (Social Media)' },
-  medium: { width: 1024, height: 1024, label: '1024x1024 (Web)' },
-  large: { width: 2048, height: 2048, label: '2048x2048 (Print)' },
-  custom: { width: 1024, height: 1024, label: 'Custom Size' },
+const SIZE_MAP: Record<SizePreset, { px: number; label: string }> = {
+  S: { px: 256, label: '256 px' },
+  M: { px: 512, label: '512 px' },
+  L: { px: 1024, label: '1024 px' },
+  XL: { px: 2048, label: '2048 px' },
 };
 
-const DPI_PRESETS = [
-  { value: 72, label: '72 DPI (Screen)' },
-  { value: 150, label: '150 DPI (Standard)' },
-  { value: 300, label: '300 DPI (Print)' },
-  { value: 600, label: '600 DPI (High Quality)' },
-];
+export interface ScreenshotModalProps {
+  qrCodeId: number;
+  qrSvg: string;
+  open: boolean;
+  onClose: () => void;
+}
 
 export function ScreenshotModal({
-  isOpen,
+  qrCodeId: _qrCodeId,
+  qrSvg,
+  open,
   onClose,
-  qrcode,
-  onExport,
 }: ScreenshotModalProps) {
-  const [format, setFormat] = useState<ScreenshotFormat>('PNG');
-  const [size, setSize] = useState<ScreenshotSize>('medium');
-  const [customWidth, setCustomWidth] = useState(1024);
-  const [customHeight, setCustomHeight] = useState(1024);
-  const [quality, setQuality] = useState(90);
-  const [dpi, setDpi] = useState(72);
-  const [includeBackground, setIncludeBackground] = useState(true);
-  const [watermark, setWatermark] = useState(false);
+  const [format, setFormat] = useState<ExportFormat>('PNG');
+  const [size, setSize] = useState<SizePreset>('M');
   const [isExporting, setIsExporting] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
 
-  if (!isOpen) return null;
+  if (!open) return null;
 
-  const handleExport = async () => {
-    if (!onExport) return;
-
+  const handleDownload = async () => {
     setIsExporting(true);
     try {
-      await onExport({
-        format,
-        size,
-        customWidth: size === 'custom' ? customWidth : undefined,
-        customHeight: size === 'custom' ? customHeight : undefined,
-        quality,
-        dpi,
-        includeBackground,
-        watermark,
+      const dim = SIZE_MAP[size].px;
+
+      if (format === 'SVG') {
+        const blob = new Blob([qrSvg], { type: 'image/svg+xml' });
+        downloadBlob(blob, `qrcode.svg`);
+        return;
+      }
+
+      // Render SVG to canvas for PNG/PDF
+      const canvas = document.createElement('canvas');
+      canvas.width = dim;
+      canvas.height = dim;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const svgBlob = new Blob([qrSvg], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+      const img = new Image();
+
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, dim, dim);
+          ctx.drawImage(img, 0, 0, dim, dim);
+          URL.revokeObjectURL(url);
+          resolve();
+        };
+        img.onerror = reject;
+        img.src = url;
       });
-      onClose();
-    } catch (error) {
-      console.error('Export failed:', error);
+
+      if (format === 'PNG') {
+        canvas.toBlob((blob) => {
+          if (blob) downloadBlob(blob, `qrcode.png`);
+        }, 'image/png');
+      } else if (format === 'PDF') {
+        // Simple PDF wrapper around the PNG image
+        const dataUrl = canvas.toDataURL('image/png');
+        const blob = new Blob(
+          [buildMinimalPdfWithImage(dataUrl, dim)],
+          { type: 'application/pdf' }
+        );
+        downloadBlob(blob, `qrcode.pdf`);
+      }
+    } catch (err) {
+      console.error('Export failed:', err);
     } finally {
       setIsExporting(false);
     }
   };
 
-  const currentSize = size === 'custom' 
-    ? { width: customWidth, height: customHeight }
-    : SIZE_PRESETS[size];
-
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-lg w-full">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Camera className="w-5 h-5 text-primary-600" />
-            <h2 className="text-xl font-bold text-gray-900">Export QR Code</h2>
+            <h2 className="text-lg font-bold text-gray-900">Download QR Code</h2>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition"
-          >
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600 transition">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Left Column - Preview */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                Preview
-              </label>
-              <div className={`aspect-square rounded-lg border-2 border-gray-200 ${includeBackground ? 'bg-white' : 'bg-transparent'} p-6 relative`}>
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-center text-gray-500">
-                    <div className="text-sm font-medium">{qrcode.name}</div>
-                    <div className="text-xs mt-1">
-                      {currentSize.width} × {currentSize.height}
-                    </div>
-                    <div className="text-xs text-gray-400 mt-2">
-                      {format} • {dpi} DPI
-                    </div>
-                  </div>
-                </div>
-                {watermark && (
-                  <div className="absolute bottom-2 right-2 text-xs text-gray-400">
-                    Karsaaz QR
-                  </div>
-                )}
-              </div>
+        <div className="p-6 space-y-5">
+          {/* Preview */}
+          <div className="flex justify-center">
+            <div
+              ref={previewRef}
+              className="w-48 h-48 border-2 border-gray-200 rounded-lg bg-white p-3 flex items-center justify-center"
+              dangerouslySetInnerHTML={{ __html: qrSvg }}
+            />
+          </div>
+
+          {/* Format */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Format</label>
+            <div className="grid grid-cols-3 gap-2">
+              {(['PNG', 'SVG', 'PDF'] as ExportFormat[]).map((fmt) => (
+                <button
+                  key={fmt}
+                  type="button"
+                  onClick={() => setFormat(fmt)}
+                  className={`px-3 py-2 rounded-lg border-2 text-sm font-medium transition ${
+                    format === fmt
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                  }`}
+                >
+                  {fmt}
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* Right Column - Options */}
-            <div className="space-y-4">
-              {/* Format */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Format
-                </label>
-                <div className="grid grid-cols-4 gap-2">
-                  {(['PNG', 'JPG', 'SVG', 'PDF'] as ScreenshotFormat[]).map((fmt) => (
-                    <button
-                      key={fmt}
-                      type="button"
-                      onClick={() => setFormat(fmt)}
-                      className={`px-3 py-2 rounded-lg border-2 text-sm font-medium transition ${
-                        format === fmt
-                          ? 'border-primary-500 bg-primary-50 text-primary-700'
-                          : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                      }`}
-                    >
-                      {fmt}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Size */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Size
-                </label>
-                <select
-                  value={size}
-                  onChange={(e) => setSize(e.target.value as ScreenshotSize)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+          {/* Size */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
+            <div className="grid grid-cols-4 gap-2">
+              {(Object.keys(SIZE_MAP) as SizePreset[]).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setSize(s)}
+                  className={`px-3 py-2 rounded-lg border-2 text-sm font-medium transition ${
+                    size === s
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                  }`}
                 >
-                  {Object.entries(SIZE_PRESETS).map(([key, preset]) => (
-                    <option key={key} value={key}>
-                      {preset.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Custom Size */}
-              {size === 'custom' && (
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Width (px)
-                    </label>
-                    <input
-                      type="number"
-                      value={customWidth}
-                      onChange={(e) => setCustomWidth(parseInt(e.target.value) || 1024)}
-                      min="100"
-                      max="4096"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Height (px)
-                    </label>
-                    <input
-                      type="number"
-                      value={customHeight}
-                      onChange={(e) => setCustomHeight(parseInt(e.target.value) || 1024)}
-                      min="100"
-                      max="4096"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Quality (for JPG/PNG) */}
-              {(format === 'JPG' || format === 'PNG') && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Quality: {quality}%
-                  </label>
-                  <input
-                    type="range"
-                    min="10"
-                    max="100"
-                    step="5"
-                    value={quality}
-                    onChange={(e) => setQuality(parseInt(e.target.value))}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>Smaller file</span>
-                    <span>Better quality</span>
-                  </div>
-                </div>
-              )}
-
-              {/* DPI */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  DPI/Resolution
-                </label>
-                <select
-                  value={dpi}
-                  onChange={(e) => setDpi(parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                >
-                  {DPI_PRESETS.map((preset) => (
-                    <option key={preset.value} value={preset.value}>
-                      {preset.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Options */}
-              <div className="space-y-2 pt-2 border-t border-gray-200">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={includeBackground}
-                    onChange={(e) => setIncludeBackground(e.target.checked)}
-                    className="rounded"
-                  />
-                  <span className="text-sm text-gray-700">Include background</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={watermark}
-                    onChange={(e) => setWatermark(e.target.checked)}
-                    className="rounded"
-                  />
-                  <span className="text-sm text-gray-700">Add watermark</span>
-                </label>
-              </div>
+                  <span className="block font-bold">{s}</span>
+                  <span className="block text-xs text-gray-500">{SIZE_MAP[s].label}</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between gap-3">
+        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-end gap-3">
           <button
             type="button"
             onClick={onClose}
@@ -287,19 +167,19 @@ export function ScreenshotModal({
           </button>
           <button
             type="button"
-            onClick={handleExport}
+            onClick={handleDownload}
             disabled={isExporting}
             className="px-6 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isExporting ? (
               <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                Exporting...
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                Exporting…
               </>
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                Export {format}
+                Download {format}
               </>
             )}
           </button>
@@ -307,4 +187,39 @@ export function ScreenshotModal({
       </div>
     </div>
   );
+}
+
+/* ------------------------------------------------------------------ */
+/* Helpers                                                            */
+/* ------------------------------------------------------------------ */
+
+function downloadBlob(blob: Blob, filename: string) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+/** Produces a minimal single-page PDF containing the image (data-url). */
+function buildMinimalPdfWithImage(_dataUrl: string, dim: number): string {
+  // Minimal PDF with an embedded page of given dimensions
+  const w = dim;
+  const h = dim;
+  return `%PDF-1.4
+1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj
+2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj
+3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${w} ${h}]>>endobj
+xref
+0 4
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+trailer<</Size 4/Root 1 0 R>>
+startxref
+190
+%%EOF`;
 }

@@ -17,7 +17,7 @@ export interface LeadForm {
 
 export interface LeadFormField {
   id: string
-  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'number' | 'date'
+  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'radio' | 'number' | 'date' | 'rating' | 'stars' | 'choices' | 'multi-choices'
   label: string
   name: string
   placeholder?: string

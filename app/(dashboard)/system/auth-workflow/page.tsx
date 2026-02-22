@@ -1,6 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import apiClient from '@/lib/api/client'
+import { AuthSettingsForm, type AuthSettingsFormData } from '@/components/features/auth/AuthSettingsForm'
 
 interface AuthOption {
   key: string
@@ -20,6 +22,9 @@ const authOptions: AuthOption[] = [
 
 export default function AuthWorkflowPage() {
   const [saved, setSaved] = useState(false)
+  const [providerDefaults, setProviderDefaults] = useState<Partial<AuthSettingsFormData>>()
+  const [providerLoading, setProviderLoading] = useState(true)
+  const [providerSaving, setProviderSaving] = useState(false)
   const [settings, setSettings] = useState<Record<string, boolean>>({
     emailVerification: true,
     twoFactor: true,
@@ -29,6 +34,22 @@ export default function AuthWorkflowPage() {
     passwordReset: true,
     magicLink: false,
   })
+
+  const fetchAuthConfig = useCallback(async () => {
+    setProviderLoading(true)
+    try {
+      const { data } = await apiClient.get<Partial<AuthSettingsFormData>>('/api/system/auth-settings')
+      setProviderDefaults(data)
+    } catch {
+      // Use empty defaults on failure
+    } finally {
+      setProviderLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchAuthConfig()
+  }, [fetchAuthConfig])
 
   const toggle = (key: string) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }))
@@ -40,6 +61,19 @@ export default function AuthWorkflowPage() {
     setTimeout(() => setSaved(false), 3000)
   }
 
+  const handleProviderSubmit = async (data: AuthSettingsFormData) => {
+    setProviderSaving(true)
+    try {
+      await apiClient.put('/api/system/auth-settings', data)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } catch {
+      // Error handled by API client interceptor
+    } finally {
+      setProviderSaving(false)
+    }
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div>
@@ -47,6 +81,7 @@ export default function AuthWorkflowPage() {
         <p className="mt-2 text-sm text-gray-600">Configure authentication and registration settings</p>
       </div>
 
+      {/* General auth toggles */}
       <div className="mt-8 overflow-hidden rounded-lg bg-white shadow">
         <div className="divide-y divide-gray-200">
           {authOptions.map((option) => (
@@ -78,6 +113,26 @@ export default function AuthWorkflowPage() {
         >
           Save Settings
         </button>
+      </div>
+
+      {/* OAuth Provider Configuration */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold text-gray-900">OAuth Providers</h2>
+        <p className="mt-1 text-sm text-gray-600">Configure social login provider credentials</p>
+        <div className="mt-6">
+          {providerLoading ? (
+            <div className="flex items-center gap-2 text-sm text-gray-400 py-8">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-200 border-t-indigo-600" />
+              Loading provider settings...
+            </div>
+          ) : (
+            <AuthSettingsForm
+              defaultValues={providerDefaults}
+              onSubmit={handleProviderSubmit}
+              isLoading={providerSaving}
+            />
+          )}
+        </div>
       </div>
     </div>
   )

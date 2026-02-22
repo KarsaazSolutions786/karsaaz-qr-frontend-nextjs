@@ -19,6 +19,8 @@ import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth
 import { EmailOtpLoginForm } from './EmailOtpLoginForm'
 import { LoginForm } from './LoginForm'
 import { GoogleLoginButton } from './GoogleLoginButton'
+import { TwitterLoginButton } from './TwitterLoginButton'
+import { FacebookLoginButton } from './FacebookLoginButton'
 import { Auth0LoginButton } from './Auth0LoginButton'
 
 export function LoginTypeSelector() {
@@ -70,6 +72,10 @@ function TraditionalLoginView() {
       </div>
 
       <GoogleLoginButton />
+
+      <TwitterLoginButton />
+
+      <FacebookLoginButton />
 
       <Auth0LoginButton />
 

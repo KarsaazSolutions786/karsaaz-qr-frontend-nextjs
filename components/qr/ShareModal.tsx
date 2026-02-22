@@ -1,9 +1,3 @@
-/**
- * ShareModal Component
- * 
- * Social sharing modal for QR codes with multiple platforms.
- */
-
 'use client';
 
 import React, { useState } from 'react';
@@ -12,46 +6,40 @@ import {
   Share2,
   Facebook,
   Twitter,
-  Linkedin,
   MessageCircle,
   Mail,
   Copy,
-  Download,
   Check,
 } from 'lucide-react';
-import { QRCode } from '@/types/entities/qrcode';
 
 export interface ShareModalProps {
-  isOpen: boolean;
+  url: string;
+  title: string;
+  open: boolean;
   onClose: () => void;
-  qrcode: QRCode;
-  onDownload?: () => void;
 }
 
-export function ShareModal({
-  isOpen,
-  onClose,
-  qrcode,
-  onDownload,
-}: ShareModalProps) {
+export function ShareModal({ url, title, open, onClose }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
-  
-  if (!isOpen) return null;
 
-  // Generate share URL (this would be the public URL for the QR code)
-  const shareUrl = typeof window !== 'undefined' 
-    ? `${window.location.origin}/qr/${qrcode.id}` 
-    : '';
-  const shareTitle = `Check out my QR code: ${qrcode.name}`;
-  const shareDescription = `Scan this QR code for ${qrcode.type}`;
+  if (!open) return null;
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      console.error('Failed to copy:', error);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -60,67 +48,44 @@ export function ShareModal({
       name: 'Facebook',
       icon: Facebook,
       color: 'bg-blue-600 hover:bg-blue-700',
-      onClick: () => {
-        window.open(
-          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
-          '_blank',
-          'width=600,height=400'
-        );
-      },
+      href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
     },
     {
-      name: 'Twitter',
+      name: 'X / Twitter',
       icon: Twitter,
       color: 'bg-sky-500 hover:bg-sky-600',
-      onClick: () => {
-        window.open(
-          `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`,
-          '_blank',
-          'width=600,height=400'
-        );
-      },
-    },
-    {
-      name: 'LinkedIn',
-      icon: Linkedin,
-      color: 'bg-blue-700 hover:bg-blue-800',
-      onClick: () => {
-        window.open(
-          `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`,
-          '_blank',
-          'width=600,height=400'
-        );
-      },
+      href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
     },
     {
       name: 'WhatsApp',
       icon: MessageCircle,
       color: 'bg-green-600 hover:bg-green-700',
-      onClick: () => {
-        window.open(
-          `https://wa.me/?text=${encodeURIComponent(`${shareTitle} ${shareUrl}`)}`,
-          '_blank'
-        );
-      },
+      href: `https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`,
     },
     {
       name: 'Email',
       icon: Mail,
       color: 'bg-gray-600 hover:bg-gray-700',
-      onClick: () => {
-        window.location.href = `mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(`${shareDescription}\n\n${shareUrl}`)}`;
-      },
+      href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`,
+    },
+    {
+      name: 'Copy Link',
+      icon: copied ? Check : Copy,
+      color: copied
+        ? 'bg-green-600 hover:bg-green-700'
+        : 'bg-indigo-600 hover:bg-indigo-700',
+      onClick: handleCopyLink,
     },
   ];
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Share2 className="w-5 h-5 text-primary-600" />
-            <h2 className="text-xl font-bold text-gray-900">Share QR Code</h2>
+            <h2 className="text-lg font-bold text-gray-900">Share</h2>
           </div>
           <button
             type="button"
@@ -133,104 +98,44 @@ export function ShareModal({
 
         {/* Content */}
         <div className="p-6">
-          {/* QR Code Preview */}
-          <div className="mb-6 text-center">
-            <div className="inline-block p-4 bg-gray-50 rounded-lg">
-              <div className="w-40 h-40 bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center">
-                <div className="text-sm text-gray-500">
-                  QR Preview
-                  <br />
-                  {qrcode.name}
-                </div>
-              </div>
-            </div>
-            <div className="mt-3">
-              <h3 className="font-semibold text-gray-900">{qrcode.name}</h3>
-              <p className="text-sm text-gray-500 capitalize">
-                {qrcode.type} QR Code
-              </p>
-              <p className="text-xs text-gray-400 mt-1">
-                {qrcode.scans} scans • Created {new Date(qrcode.createdAt).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
+          <p className="text-sm text-gray-600 mb-1 truncate">{title}</p>
+          <p className="text-xs text-gray-400 mb-5 truncate">{url}</p>
 
-          {/* Share URL */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Share Link
-            </label>
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                value={shareUrl}
-                readOnly
-                className="flex-1 px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm text-gray-600"
-              />
-              <button
-                type="button"
-                onClick={handleCopyLink}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition flex items-center gap-2"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
+          {/* Share Buttons Grid */}
+          <div className="grid grid-cols-3 gap-3">
+            {shareButtons.map((btn) => {
+              const Icon = btn.icon;
+              const isLink = 'href' in btn && btn.href;
 
-          {/* Share Buttons */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Share on Social Media
-            </label>
-            <div className="grid grid-cols-3 gap-3">
-              {shareButtons.map((button) => (
+              if (isLink) {
+                return (
+                  <a
+                    key={btn.name}
+                    href={btn.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${btn.color} text-white p-3 rounded-lg transition flex flex-col items-center gap-2`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="text-xs font-medium">{btn.name}</span>
+                  </a>
+                );
+              }
+
+              return (
                 <button
-                  key={button.name}
+                  key={btn.name}
                   type="button"
-                  onClick={button.onClick}
-                  className={`${button.color} text-white p-3 rounded-lg transition flex flex-col items-center gap-2`}
+                  onClick={(btn as any).onClick}
+                  className={`${btn.color} text-white p-3 rounded-lg transition flex flex-col items-center gap-2`}
                 >
-                  <button.icon className="w-5 h-5" />
-                  <span className="text-xs font-medium">{button.name}</span>
+                  <Icon className="w-5 h-5" />
+                  <span className="text-xs font-medium">
+                    {copied && btn.name === 'Copy Link' ? 'Copied!' : btn.name}
+                  </span>
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Download for Sharing */}
-          {onDownload && (
-            <div>
-              <button
-                type="button"
-                onClick={onDownload}
-                className="w-full px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center justify-center gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Download QR Code for Sharing
-              </button>
-            </div>
-          )}
-
-          {/* Meta Info */}
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h4 className="text-sm font-semibold text-blue-900 mb-2">
-              Social Media Preview
-            </h4>
-            <div className="text-xs text-blue-800 space-y-1">
-              <p><strong>Title:</strong> {shareTitle}</p>
-              <p><strong>Description:</strong> {shareDescription}</p>
-              <p><strong>URL:</strong> {shareUrl}</p>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>

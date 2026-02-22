@@ -54,7 +54,10 @@ export const ROUTES = {
     SUBSCRIPTIONS: '/subscriptions',
     BILLING: '/billing',
     TRANSACTIONS: '/transactions',
+    TRANSACTION_DETAIL: (id: string | number) => `/transactions/${id}`,
     PAYMENT_PROCESSORS: '/payment-processors',
+    PAYMENT_GATEWAYS: '/payment-gateways',
+    PAYMENT_METHODS: '/payment-methods',
     CURRENCIES: '/currencies',
   },
 
@@ -102,10 +105,37 @@ export const ROUTES = {
 
   // Support
   SUPPORT: {
-    LIST: '/support',
-    TICKET: (id: string) => `/support/${id}`,
+    LIST: '/support-tickets',
+    NEW: '/support-tickets/new',
+    TICKET: (id: string | number) => `/support-tickets/${id}`,
   },
 
   // Referrals
-  REFERRALS: '/referrals',
+  REFERRALS: {
+    DASHBOARD: '/referral',
+    WITHDRAWALS: '/referral/withdrawals',
+  },
+
+  // Payment Gateways
+  PAYMENT_GATEWAYS: {
+    LIST: '/payment-gateways',
+    NEW: '/payment-gateways/new',
+    EDIT: (id: string | number) => `/payment-gateways/${id}`,
+  },
+
+  // Payment Methods
+  PAYMENT_METHODS: '/payment-methods',
+
+  // Domains
+  DOMAINS: {
+    LIST: '/domains',
+    NEW: '/domains/new',
+    EDIT: (id: string | number) => `/domains/${id}`,
+  },
+
+  // Installation
+  INSTALL: '/install',
+
+  // QR Redirect
+  QR_REDIRECT: (slug: string) => `/s/${slug}`,
 } as const

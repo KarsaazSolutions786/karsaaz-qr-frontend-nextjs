@@ -16,5 +16,12 @@ export interface DNSRecord {
   type: 'A' | 'CNAME' | 'TXT'
   name: string // e.g., "@" or "qr"
   value: string // Expected value
-  status: 'pending' | 'verified' | 'failed'
+  status: 'pending' | 'verified' | 'failed' | 'valid' | 'invalid'
+}
+
+export interface DomainConnectivity {
+  is_connected: boolean
+  dns_records: DNSRecord[]
+  ssl_status: 'pending' | 'active' | 'expired' | 'error'
+  last_checked_at: string
 }

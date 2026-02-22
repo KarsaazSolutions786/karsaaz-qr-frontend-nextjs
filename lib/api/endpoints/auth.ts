@@ -260,6 +260,18 @@ export const authAPI = {
     return `${rootUrl}/auth-workflow/google/redirect`
   },
 
+  // Twitter/X OAuth
+  getTwitterRedirectUrl: () => {
+    const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+    return `${rootUrl}/auth-workflow/twitter/redirect`
+  },
+
+  // Facebook OAuth
+  getFacebookRedirectUrl: () => {
+    const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+    return `${rootUrl}/auth-workflow/facebook/redirect`
+  },
+
   // Update profile
   updateProfile: async (data: UpdateProfileRequest) => {
     const response = await apiClient.put<UpdateProfileResponse>('/account', data)
