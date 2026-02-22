@@ -3,6 +3,7 @@
 
 const DEVTOOLS_THRESHOLD = 160;
 
+
 class DevToolsProtection {
   private static instance: DevToolsProtection;
   private intervalId: ReturnType<typeof setInterval> | null = null;
