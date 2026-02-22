@@ -1,6 +1,7 @@
 import React from 'react';
 import { Code, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { EmbedBlock as EmbedBlockType } from '@/types/entities/biolinks';
+import { sanitizeHTML } from '@/lib/utils/dom-safety';
 
 interface EmbedBlockProps {
   block: EmbedBlockType;
@@ -70,7 +71,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
               style={{ height: block.height ? `${block.height}px` : '400px' }}
             >
               <div
-                dangerouslySetInnerHTML={{ __html: block.embedCode }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHTML(block.embedCode) }}
                 className="w-full h-full"
               />
             </div>

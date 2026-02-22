@@ -8,6 +8,7 @@ import SocialShare from '@/components/public/shared/SocialShare';
 import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
 import FormDisplay from './FormDisplay';
 import { LeadForm } from '@/types/entities/lead-form';
+import { isSafeUrl } from '@/lib/utils/dom-safety';
 
 interface FormPreviewProps {
   form: LeadForm;
@@ -24,7 +25,7 @@ export default function FormPreview({ form }: FormPreviewProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Redirect if configured
-    if (form.settings.redirectUrl) {
+    if (form.settings.redirectUrl && isSafeUrl(form.settings.redirectUrl)) {
       setTimeout(() => {
         window.location.href = form.settings.redirectUrl!;
       }, 2000);

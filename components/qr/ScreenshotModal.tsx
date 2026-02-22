@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { X, Download, Camera } from 'lucide-react';
+import { sanitizeSvg } from '@/lib/utils/dom-safety';
 
 export type ExportFormat = 'PNG' | 'SVG' | 'PDF';
 export type SizePreset = 'S' | 'M' | 'L' | 'XL';
@@ -108,7 +109,7 @@ export function ScreenshotModal({
             <div
               ref={previewRef}
               className="w-48 h-48 border-2 border-gray-200 rounded-lg bg-white p-3 flex items-center justify-center"
-              dangerouslySetInnerHTML={{ __html: qrSvg }}
+              dangerouslySetInnerHTML={{ __html: sanitizeSvg(qrSvg) }}
             />
           </div>
 

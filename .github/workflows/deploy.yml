@@ -1,0 +1,31 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deployment info
+        run: |
+          echo "Deploying to: ${{ github.event.inputs.environment }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+
+      # TODO: Add actual deployment steps here, e.g.:
+      # - Download build artifact from CI workflow
+      # - Configure cloud provider credentials (AWS/GCP/Azure)
+      # - Deploy to target environment (Vercel, Docker registry, K8s, etc.)
+      # - Run smoke tests against deployed environment
+      # - Notify team on success/failure (Slack, Discord, etc.)

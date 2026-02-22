@@ -22,6 +22,7 @@ import React, {
 import apiClient from '@/lib/api/client'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer'
 import { transformDesignToBackend } from '@/lib/qr/design-transformer'
+import { sanitizeSvg } from '@/lib/utils/dom-safety'
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -267,7 +268,7 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
       <div className={`qr-backend-preview ${className}`}>
         <div
           className="qr-backend-preview__svg"
-          dangerouslySetInnerHTML={{ __html: svg }}
+          dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg ?? '') }}
           style={{
             width: '100%',
             height: '100%',

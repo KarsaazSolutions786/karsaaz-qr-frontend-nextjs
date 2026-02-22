@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation'
 import { blogPostsAPI } from '@/lib/api/endpoints/blog-posts'
 import type { BlogPost } from '@/types/entities/blog-post'
 import { Loader2, ArrowLeft, Calendar } from 'lucide-react'
+import { sanitizeHTML } from '@/lib/utils/dom-safety'
 
 export default function BlogPostPage() {
   const params = useParams()
@@ -78,7 +79,7 @@ export default function BlogPostPage() {
 
       <div
         className="prose prose-gray max-w-none prose-headings:text-gray-900 prose-a:text-purple-600 prose-img:rounded-lg"
-        dangerouslySetInnerHTML={{ __html: post.content }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHTML(post.content) }}
       />
     </article>
   )

@@ -13,6 +13,7 @@ import { StickerConfig } from '@/types/entities/sticker';
 import { generateQRCodeSync } from '@/lib/utils/qrcode-generator';
 import { generateQRCodeSVG } from '@/lib/utils/svg-renderer';
 import { downloadPNG, downloadSVG, downloadPDF, downloadEPS } from '@/lib/utils/download-utils';
+import { sanitizeSvg } from '@/lib/utils/dom-safety';
 
 export interface QRCodePreviewProps {
   data: string;
@@ -158,7 +159,7 @@ export const QRCodePreview = React.forwardRef<QRCodePreviewRef, QRCodePreviewPro
       <div className={`qr-preview ${className}`} data-qr-size={mergedConfig.size}>
         <div
           className="qr-preview-container"
-          dangerouslySetInnerHTML={{ __html: qrResult.svg }}
+          dangerouslySetInnerHTML={{ __html: sanitizeSvg(qrResult.svg) }}
           style={{
             width: '100%',
             height: '100%',
