@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { usePlan } from '@/lib/hooks/queries/usePlans'
 import { useUpdatePlan } from '@/lib/hooks/mutations/usePlanMutations'
+import { PlanFeaturesEditor } from '@/components/features/plans/PlanFeaturesEditor'
 
 const FREQUENCIES = [
   { value: 'monthly', label: 'Monthly' },
@@ -34,6 +35,7 @@ export default function EditPlanPage() {
     showAds: false,
     adsTimeout: 5,
     adsCode: '',
+    features: [] as string[],
   })
 
   // Population on load
@@ -54,6 +56,7 @@ export default function EditPlanPage() {
         showAds: plan.showAds ?? false,
         adsTimeout: plan.adsTimeout ?? 5,
         adsCode: '',
+        features: plan.features ?? [],
       })
     }
   }, [plan])
@@ -78,6 +81,7 @@ export default function EditPlanPage() {
         numberOfCustomDomains: Number(form.numberOfCustomDomains),
         fileSizeLimit: Number(form.fileSizeLimit),
         showAds: form.showAds,
+        features: form.features,
       },
     })
     setSaved(true)
@@ -277,6 +281,18 @@ export default function EditPlanPage() {
               />
             </div>
           </div>
+        </section>
+
+        {/* Plan Features */}
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">Plan Features</h2>
+          <p className="mb-4 text-sm text-gray-500">
+            Features displayed on the pricing page for this plan.
+          </p>
+          <PlanFeaturesEditor
+            features={form.features}
+            onChange={(features) => set('features', features)}
+          />
         </section>
 
         {/* Ads Settings */}

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useCreatePlan } from '@/lib/hooks/mutations/usePlanMutations'
+import { PlanFeaturesEditor } from '@/components/features/plans/PlanFeaturesEditor'
 
 const FREQUENCIES = [
   { value: 'monthly', label: 'Monthly' },
@@ -208,6 +209,18 @@ export default function NewPlanPage() {
               />
             </div>
           </div>
+        </section>
+
+        {/* Section 3.5: Plan Features */}
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">Plan Features</h2>
+          <p className="mb-4 text-sm text-gray-500">
+            Features displayed on the pricing page for this plan.
+          </p>
+          <PlanFeaturesEditor
+            features={form.features}
+            onChange={(features) => set('features', features)}
+          />
         </section>
 
         {/* Section 4: Ads Settings */}

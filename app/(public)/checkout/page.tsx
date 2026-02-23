@@ -5,6 +5,8 @@ import { Suspense, useState, useEffect } from 'react'
 import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { StripeCheckoutForm } from '@/components/features/subscriptions/StripeCheckoutForm'
 import { PayPalButton } from '@/components/features/payment/PayPalButton'
+import { BillingAddressForm, DEFAULT_BILLING_ADDRESS, type BillingAddress } from '@/components/features/payment/BillingAddressForm'
+import { TaxSummary } from '@/components/features/payment/TaxSummary'
 import { getPaymentProcessors, type PaymentProcessor } from '@/lib/api/endpoints/paypal'
 import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
 import Link from 'next/link'
@@ -22,6 +24,7 @@ function CheckoutContent() {
   const [gateway, setGateway] = useState<PaymentGateway>('stripe')
   const [processors, setProcessors] = useState<PaymentProcessor[]>([])
   const [paypalClientId, setPaypalClientId] = useState<string>('')
+  const [billingAddress, setBillingAddress] = useState<BillingAddress>(DEFAULT_BILLING_ADDRESS)
 
   useEffect(() => {
     getPaymentProcessors()
@@ -75,7 +78,7 @@ function CheckoutContent() {
         </div>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-3">
-          {/* Order Summary */}
+          {/* Order Summary with Tax */}
           <div className="lg:col-span-1">
             <div className="rounded-lg border border-gray-200 bg-white p-6">
               <h2 className="text-lg font-semibold text-gray-900">Order Summary</h2>
@@ -88,13 +91,17 @@ function CheckoutContent() {
                   <dt className="text-sm text-gray-600">Billing</dt>
                   <dd className="text-sm font-medium text-gray-900">Monthly</dd>
                 </div>
-                <div className="flex justify-between border-t border-gray-200 pt-3">
-                  <dt className="text-base font-semibold text-gray-900">Total</dt>
-                  <dd className="text-base font-semibold text-gray-900">
-                    ${(selectedPlan.price / 100).toFixed(2)}/month
-                  </dd>
-                </div>
               </dl>
+
+              {/* Tax-aware pricing */}
+              <div className="mt-4 border-t border-gray-200 pt-3">
+                <TaxSummary
+                  planId={Number(planId)}
+                  planPrice={selectedPlan.price}
+                  country={billingAddress.country}
+                  state={billingAddress.state || undefined}
+                />
+              </div>
 
               <div className="mt-6 space-y-2 text-xs text-gray-500">
                 <p>✓ Cancel anytime</p>
@@ -106,6 +113,11 @@ function CheckoutContent() {
 
           {/* Checkout Form */}
           <div className="lg:col-span-2">
+            {/* Billing Address */}
+            <div className="rounded-lg border border-gray-200 bg-white p-6 mb-6">
+              <BillingAddressForm value={billingAddress} onChange={setBillingAddress} />
+            </div>
+
             <div className="rounded-lg border border-gray-200 bg-white p-6">
               {/* Gateway Selector */}
               {hasStripe && hasPayPal && (

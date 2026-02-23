@@ -11,6 +11,9 @@ import { ThemeProvider } from '@/lib/providers/theme-provider'
 import { devToolsProtection } from '@/lib/services/devtools-protection'
 import { iframeDetector } from '@/lib/services/iframe-detector'
 import { WebVitalsReporter } from '@/components/common/WebVitalsReporter'
+import { OfflineIndicator } from '@/components/common/OfflineIndicator'
+import { SessionTimeout } from '@/components/common/SessionTimeout'
+import { Toaster } from 'sonner'
 
 /** Initialize client-side protection services (T021) */
 function ProtectionInitializer() {
@@ -34,6 +37,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <PluginProvider>
               <ProtectionInitializer />
               <WebVitalsReporter />
+              <OfflineIndicator />
+              <SessionTimeout />
+              <Toaster position="top-right" richColors />
               {children}
             </PluginProvider>
           </TranslationProvider>

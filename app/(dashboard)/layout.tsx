@@ -50,7 +50,13 @@ import {
   TagIcon,
   TicketIcon,
   WrenchScrewdriverIcon,
+  InboxStackIcon,
+  ArrowPathIcon,
+  BookOpenIcon,
+  CommandLineIcon,
 } from '@heroicons/react/24/outline'
+import { GlobalSearch } from '@/components/common/GlobalSearch'
+import { QuickActions } from '@/components/common/QuickActions'
 import {
   getSidebarFolders,
   getSidebarTemplateCategories,
@@ -166,9 +172,18 @@ const navigationGroups: NavGroup[] = [
       { name: 'Abuse Reports', href: '/admin/abuse-reports', icon: ExclamationTriangleIcon },
       { name: 'Domains', href: '/domains', icon: GlobeAltIcon },
       { name: 'Template Categories', href: '/template-categories', icon: RectangleGroupIcon },
+      { name: 'Email Templates', href: '/system/email-templates', icon: EnvelopeIcon },
+      { name: 'Webhooks', href: '/system/webhooks', icon: CommandLineIcon },
+      { name: 'API Docs', href: '/system/api-docs', icon: BookOpenIcon },
+      { name: 'Scheduled Tasks', href: '/system/scheduled-tasks', icon: ArrowPathIcon },
+      { name: 'Queues', href: '/system/queues', icon: InboxStackIcon },
+      { name: 'Backups', href: '/system/backups', icon: CircleStackIcon },
     ],
   },
 ]
+
+// Nav groups that require admin role
+const adminOnlyGroups = new Set(['Users', 'Finance', 'System', 'Plugins'])
 
 export default function DashboardLayout({
   children,
@@ -183,6 +198,12 @@ export default function DashboardLayout({
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [mounted, setMounted] = useState(false)
+
+  // Permission-based filtering: show admin groups only for admin users
+  const isAdmin = Boolean(user?.roles?.[0]?.super_admin)
+  const filteredNavigationGroups = navigationGroups.filter(
+    (group) => !adminOnlyGroups.has(group.name) || isAdmin
+  )
 
   // Set mounted to true after initial render to prevent hydration mismatch
   useEffect(() => {
@@ -256,7 +277,7 @@ export default function DashboardLayout({
 
   // Auto-expand group that contains active route
   useEffect(() => {
-    navigationGroups.forEach((group) => {
+    filteredNavigationGroups.forEach((group) => {
       if (group.items.some((item) => isItemActive(item.href))) {
         setExpandedGroups((prev) => ({ ...prev, [group.name]: true }))
       }
@@ -515,7 +536,7 @@ export default function DashboardLayout({
 
           {/* Collapsible Navigation Groups */}
           <div className="space-y-1">
-            {navigationGroups.map((group) => {
+            {filteredNavigationGroups.map((group) => {
               const isExpanded = expandedGroups[group.name] ?? false
               const groupActive = isGroupActive(group)
               return (
@@ -672,8 +693,17 @@ export default function DashboardLayout({
           >
             <Bars3Icon className="h-6 w-6" />
           </button>
-          <div className="flex-1 text-sm font-semibold leading-6 text-gray-900">
-            Karsaaz QR
+          <div className="flex-1">
+            <GlobalSearch />
+          </div>
+          <ThemeToggle />
+          <LanguagePicker />
+        </div>
+
+        {/* Desktop header bar */}
+        <div className="hidden lg:flex sticky top-0 z-10 h-14 items-center gap-x-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 shadow-sm">
+          <div className="flex-1">
+            <GlobalSearch />
           </div>
           <ThemeToggle />
           <LanguagePicker />
@@ -683,6 +713,9 @@ export default function DashboardLayout({
         <main id="main-content" role="main" className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
           {children}
         </main>
+
+        {/* Quick Actions FAB */}
+        <QuickActions />
       </div>
     </div>
   )

@@ -207,4 +207,34 @@ export const queryKeys = {
     status: () => ['passwordless', 'status'] as const,
     preference: () => ['passwordless', 'preference'] as const,
   },
+
+  // Email Templates (Admin)
+  emailTemplates: {
+    all: () => ['system', 'email-templates'] as const,
+    detail: (id: number) => ['system', 'email-templates', id] as const,
+  },
+
+  // Webhooks (Admin)
+  webhooks: {
+    all: () => ['system', 'webhooks'] as const,
+    detail: (id: number) => ['system', 'webhooks', id] as const,
+  },
+
+  // Scheduled Tasks (Admin)
+  scheduledTasks: {
+    all: () => ['system', 'scheduled-tasks'] as const,
+    detail: (id: number) => ['system', 'scheduled-tasks', id] as const,
+  },
+
+  // Queues (Admin)
+  queues: {
+    stats: () => ['system', 'queues', 'stats'] as const,
+    failed: () => ['system', 'queues', 'failed'] as const,
+  },
+
+  // Backups (Admin)
+  backups: {
+    all: () => ['system', 'backups'] as const,
+    detail: (id: number) => ['system', 'backups', id] as const,
+  },
 }
