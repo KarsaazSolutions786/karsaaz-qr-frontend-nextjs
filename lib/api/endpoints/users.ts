@@ -1,21 +1,44 @@
 import apiClient from '../client'
+import { normalizePagination, type PaginatedResponse } from '../pagination'
 import type { User } from '@/types/entities/user'
 
-export interface UserListResponse {
-  data: User[]
-  pagination: {
-    total: number
-    perPage: number
-    currentPage: number
-    lastPage: number
-  }
-}
+// Normalized pagination for frontend consumption
+export type UserListResponse = PaginatedResponse<User>
 
 export const usersAPI = {
-  // Get all users
-  getAll: async (params?: { page?: number; per_page?: number; search?: string; paying?: 'paying' | 'non-paying'; number_of_qrcodes?: string; role_id?: string; status?: string; plan_id?: string; date_from?: string; date_to?: string }) => {
-    const response = await apiClient.get<UserListResponse>('/users', { params })
-    return response.data
+  // Get all users with proper backend param mapping
+  getAll: async (params?: {
+    page?: number
+    per_page?: number
+    search?: string
+    paying?: 'paying' | 'non-paying'
+    number_of_qrcodes?: string
+    role_id?: string
+    status?: string
+    plan_id?: string
+    date_from?: string
+    date_to?: string
+  }) => {
+    // Map frontend params to backend expected format
+    const apiParams: Record<string, any> = { page: params?.page || 1 }
+
+    // Backend uses 'keyword' not 'search'
+    if (params?.search) apiParams.keyword = params.search
+
+    // Backend expects paying as boolean: true = paying, false = non-paying
+    if (params?.paying === 'paying') apiParams.paying = true
+    else if (params?.paying === 'non-paying') apiParams.paying = false
+
+    // Pass through other filters
+    if (params?.number_of_qrcodes) apiParams.number_of_qrcodes = params.number_of_qrcodes
+    if (params?.role_id) apiParams.role_id = params.role_id
+    if (params?.status) apiParams.status = params.status
+    if (params?.plan_id) apiParams.plan_id = params.plan_id
+    if (params?.date_from) apiParams.date_from = params.date_from
+    if (params?.date_to) apiParams.date_to = params.date_to
+
+    const response = await apiClient.get('/users', { params: apiParams })
+    return normalizePagination<User>(response.data)
   },
 
   // Get single user
@@ -55,7 +78,9 @@ export const usersAPI = {
 
   // Generate magic login URL
   generateMagicUrl: async (id: number) => {
-    const response = await apiClient.post<{ url: string }>(`/account/generate-magic-login-url/${id}`)
+    const response = await apiClient.post<{ url: string }>(
+      `/account/generate-magic-login-url/${id}`
+    )
     return response.data
   },
 
@@ -87,7 +112,10 @@ export const usersAPI = {
    * Invite a new sub-user under the specified parent user.
    * Endpoint: POST /users/:userId/invite-sub-user
    */
-  inviteSubUser: async (userId: number, data: { name: string; email: string; mobile?: string; folder_id: string }) => {
+  inviteSubUser: async (
+    userId: number,
+    data: { name: string; email: string; mobile?: string; folder_id: string }
+  ) => {
     const response = await apiClient.post<User>(`/users/${userId}/invite-sub-user`, data)
     return response.data
   },
@@ -97,9 +125,12 @@ export const usersAPI = {
    * Endpoint: POST /users/:parentId/sub-users/:subUserId/update-folders
    */
   updateSubUserFolders: async (parentId: number, subUserId: number, folderIds: string[]) => {
-    const response = await apiClient.post(`/users/${parentId}/sub-users/${subUserId}/update-folders`, {
-      folder_ids: folderIds,
-    })
+    const response = await apiClient.post(
+      `/users/${parentId}/sub-users/${subUserId}/update-folders`,
+      {
+        folder_ids: folderIds,
+      }
+    )
     return response.data
   },
 

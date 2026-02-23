@@ -26,6 +26,13 @@ export type BlockType =
   | 'image-grid'
   | 'audio'
   | 'profile'
+  | 'custom-code'
+  | 'copyable-data'
+  | 'file'
+  | 'information-popup'
+  | 'paragraph'
+  | 'share'
+  | 'upi'
 
 // Base Block Interface
 export interface BlockBase {
@@ -233,6 +240,7 @@ export interface TableBlockData extends BlockBase {
   data: {
     tableData: string
     textColor?: string
+    bordered?: boolean
   }
 }
 
@@ -250,6 +258,8 @@ export interface ImageGridBlockData extends BlockBase {
     title?: string
     items: Array<{ url: string; alt?: string; link?: string }>
     gridGap?: number
+    columns?: 2 | 3 | 4
+    lightbox?: boolean
   }
 }
 
@@ -258,6 +268,7 @@ export interface AudioBlockData extends BlockBase {
   data: {
     audioUrl: string
     title?: string
+    autoplay?: boolean
   }
 }
 
@@ -269,6 +280,67 @@ export interface ProfileBlockData extends BlockBase {
     text?: string
     borderStyle?: 'circle' | 'default'
     size?: number
+  }
+}
+
+export interface CustomCodeBlockData extends BlockBase {
+  type: 'custom-code'
+  data: {
+    htmlCode?: string
+    cssCode?: string
+    jsCode?: string
+  }
+}
+
+export interface CopyableDataBlockData extends BlockBase {
+  type: 'copyable-data'
+  data: {
+    label: string
+    value: string
+  }
+}
+
+export interface FileBlockData extends BlockBase {
+  type: 'file'
+  data: {
+    fileUrl: string
+    fileName: string
+    fileSize?: string
+    downloadCount?: number
+  }
+}
+
+export interface InformationPopupBlockData extends BlockBase {
+  type: 'information-popup'
+  data: {
+    triggerText: string
+    title: string
+    content: string
+  }
+}
+
+export interface ParagraphBlockData extends BlockBase {
+  type: 'paragraph'
+  data: {
+    content: string
+  }
+}
+
+export interface ShareBlockData extends BlockBase {
+  type: 'share'
+  data: {
+    url: string
+    title?: string
+  }
+}
+
+export interface UPIBlockData extends BlockBase {
+  type: 'upi'
+  data: {
+    vpa: string
+    amount?: number
+    name?: string
+    note?: string
   }
 }
 
@@ -298,6 +370,13 @@ export type BlockData =
   | ImageGridBlockData
   | AudioBlockData
   | ProfileBlockData
+  | CustomCodeBlockData
+  | CopyableDataBlockData
+  | FileBlockData
+  | InformationPopupBlockData
+  | ParagraphBlockData
+  | ShareBlockData
+  | UPIBlockData
 
 // Biolink Theme
 export interface BiolinkTheme {

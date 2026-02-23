@@ -1,15 +1,12 @@
 import apiClient from '../client'
-import type {
-  SubscriptionPlan,
-  SubscriptionPlanListResponse,
-  CreateSubscriptionPlanRequest,
-} from '@/types/entities/plan'
+import { normalizePagination, mapSearchParams } from '../pagination'
+import type { SubscriptionPlan, CreateSubscriptionPlanRequest } from '@/types/entities/plan'
 
 export const plansAPI = {
   // Get all subscription plans
   getAll: async (params?: { page?: number; search?: string }) => {
-    const response = await apiClient.get<SubscriptionPlanListResponse>('/subscription-plans', { params })
-    return response.data
+    const response = await apiClient.get('/subscription-plans', { params: mapSearchParams(params) })
+    return normalizePagination<SubscriptionPlan>(response.data)
   },
 
   // Get single subscription plan

@@ -14,6 +14,16 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 
+export interface VCardItem {
+  property: string
+  value: string
+  parameters?: Record<string, string>
+}
+
+export interface VCardCollection {
+  items: VCardItem[]
+}
+
 export interface VCardEntry {
   id: string
   name: string
@@ -21,6 +31,20 @@ export interface VCardEntry {
   email: string
   organization: string
   title: string
+}
+
+export function toVCardItems(entry: VCardEntry): VCardItem[] {
+  return [
+    { property: 'FN', value: entry.name },
+    { property: 'TEL', value: entry.phone, parameters: { TYPE: 'CELL' } },
+    { property: 'EMAIL', value: entry.email },
+    { property: 'ORG', value: entry.organization },
+    { property: 'TITLE', value: entry.title },
+  ].filter(item => item.value.trim() !== '')
+}
+
+export function toVCardCollection(entries: VCardEntry[]): VCardCollection {
+  return { items: entries.flatMap(toVCardItems) }
 }
 
 interface VCardListInputProps {
@@ -67,7 +91,7 @@ export function VCardListInput({ value, onChange, className }: VCardListInputPro
   }, [])
 
   const handleSaveEdit = useCallback(() => {
-    onChange(value.map((e) => (e.id === draft.id ? { ...draft } : e)))
+    onChange(value.map(e => (e.id === draft.id ? { ...draft } : e)))
     setEditingId(null)
     setDraft(createEmptyEntry())
   }, [draft, value, onChange])
@@ -79,7 +103,7 @@ export function VCardListInput({ value, onChange, className }: VCardListInputPro
 
   const handleRemove = useCallback(
     (id: string) => {
-      onChange(value.filter((e) => e.id !== id))
+      onChange(value.filter(e => e.id !== id))
       if (editingId === id) setEditingId(null)
     },
     [value, onChange, editingId]
@@ -105,43 +129,40 @@ export function VCardListInput({ value, onChange, className }: VCardListInputPro
     [value, onChange]
   )
 
-  const updateDraft = useCallback(
-    (field: keyof VCardEntry, val: string) => {
-      setDraft((prev) => ({ ...prev, [field]: val }))
-    },
-    []
-  )
+  const updateDraft = useCallback((field: keyof VCardEntry, val: string) => {
+    setDraft(prev => ({ ...prev, [field]: val }))
+  }, [])
 
   const renderForm = (onSave: () => void, onCancel: () => void) => (
     <div className="space-y-2 rounded-lg border border-blue-200 bg-blue-50/50 p-3">
       <Input
         placeholder="Name"
         value={draft.name}
-        onChange={(e) => updateDraft('name', e.target.value)}
+        onChange={e => updateDraft('name', e.target.value)}
       />
       <div className="grid grid-cols-2 gap-2">
         <Input
           placeholder="Phone"
           value={draft.phone}
-          onChange={(e) => updateDraft('phone', e.target.value)}
+          onChange={e => updateDraft('phone', e.target.value)}
         />
         <Input
           placeholder="Email"
           type="email"
           value={draft.email}
-          onChange={(e) => updateDraft('email', e.target.value)}
+          onChange={e => updateDraft('email', e.target.value)}
         />
       </div>
       <div className="grid grid-cols-2 gap-2">
         <Input
           placeholder="Organization"
           value={draft.organization}
-          onChange={(e) => updateDraft('organization', e.target.value)}
+          onChange={e => updateDraft('organization', e.target.value)}
         />
         <Input
           placeholder="Title"
           value={draft.title}
-          onChange={(e) => updateDraft('title', e.target.value)}
+          onChange={e => updateDraft('title', e.target.value)}
         />
       </div>
       <div className="flex justify-end gap-2">
@@ -225,13 +246,7 @@ export function VCardListInput({ value, onChange, className }: VCardListInputPro
       {isAdding && renderForm(handleSaveNew, handleCancelNew)}
 
       {!isAdding && (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="w-full"
-          onClick={handleAdd}
-        >
+        <Button type="button" variant="outline" size="sm" className="w-full" onClick={handleAdd}>
           <PlusIcon className="mr-1 h-4 w-4" />
           Add Entry
         </Button>

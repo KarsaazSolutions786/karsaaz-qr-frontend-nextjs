@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -64,7 +64,7 @@ import {
   getTotalScans,
   getCurrentPlanFromUser,
   formatLimit,
-  type Plan
+  type Plan,
 } from '@/lib/api/sidebar'
 import type { Folder } from '@/types/entities/folder'
 import type { TemplateCategory } from '@/types/entities/template'
@@ -100,9 +100,8 @@ const navigationGroups: NavGroup[] = [
     name: 'Referrals',
     icon: CurrencyDollarIcon,
     items: [
-      { name: 'Commission Summary', href: '/referrals', icon: ChartBarIcon },
-      { name: 'Withdrawal History', href: '/referrals?tab=history', icon: ClockIcon },
-      { name: 'Request Withdrawal', href: '/referrals?tab=withdraw', icon: BanknotesIcon },
+      { name: 'Commission Summary', href: '/referral', icon: ChartBarIcon },
+      { name: 'Withdrawal History', href: '/referral/withdrawals', icon: ClockIcon },
     ],
   },
   {
@@ -110,9 +109,9 @@ const navigationGroups: NavGroup[] = [
     icon: UsersIcon,
     items: [
       { name: 'All Users', href: '/users', icon: UsersIcon },
-      { name: 'Paying Users', href: '/users?paying=true', icon: CreditCardIcon },
-      { name: 'Non Paying Users', href: '/users?paying=false', icon: UserGroupIcon },
-      { name: 'Roles', href: '/roles', icon: ShieldCheckIcon },
+      { name: 'Paying Users', href: '/users/paying', icon: CreditCardIcon },
+      { name: 'Non Paying Users', href: '/users/non-paying', icon: UserGroupIcon },
+      { name: 'Roles', href: '/users/roles', icon: ShieldCheckIcon },
     ],
   },
   {
@@ -167,10 +166,10 @@ const navigationGroups: NavGroup[] = [
       { name: 'Logs', href: '/system/logs', icon: ClockIcon },
       { name: 'Cache', href: '/system/cache', icon: CircleStackIcon },
       { name: 'Notifications', href: '/system/notifications', icon: BellIcon },
-      { name: 'Sms Portals', href: '/system/sms', icon: DevicePhoneMobileIcon },
+      { name: 'Sms Portals', href: '/system/sms-portals', icon: DevicePhoneMobileIcon },
       { name: 'Auth Workflow', href: '/system/auth-workflow', icon: ShieldCheckIcon },
-      { name: 'Abuse Reports', href: '/admin/abuse-reports', icon: ExclamationTriangleIcon },
-      { name: 'Domains', href: '/domains', icon: GlobeAltIcon },
+      { name: 'Abuse Reports', href: '/system/abuse-reports', icon: ExclamationTriangleIcon },
+      { name: 'Domains', href: '/system/domains', icon: GlobeAltIcon },
       { name: 'Template Categories', href: '/template-categories', icon: RectangleGroupIcon },
       { name: 'Email Templates', href: '/system/email-templates', icon: EnvelopeIcon },
       { name: 'Webhooks', href: '/system/webhooks', icon: CommandLineIcon },
@@ -185,11 +184,23 @@ const navigationGroups: NavGroup[] = [
 // Nav groups that require admin role
 const adminOnlyGroups = new Set(['Users', 'Finance', 'System', 'Plugins'])
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+          <div className="flex-1 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+          </div>
+        </div>
+      }
+    >
+      <DashboardLayoutInner>{children}</DashboardLayoutInner>
+    </Suspense>
+  )
+}
+
+function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -202,18 +213,18 @@ export default function DashboardLayout({
   // Permission-based filtering: show admin groups only for admin users
   const isAdmin = Boolean(user?.roles?.[0]?.super_admin)
   const filteredNavigationGroups = navigationGroups.filter(
-    (group) => !adminOnlyGroups.has(group.name) || isAdmin
+    group => !adminOnlyGroups.has(group.name) || isAdmin
   )
 
   // Set mounted to true after initial render to prevent hydration mismatch
   useEffect(() => {
     setMounted(true)
   }, [])
-  
+
   // Dynamic sidebar data
   const [folders, setFolders] = useState<Folder[]>([])
   const [templateCategories, setTemplateCategories] = useState<TemplateCategory[]>([])
-  
+
   // Account widget stats
   const [qrCount, setQrCount] = useState<number>(0)
   const [scanCount, setScanCount] = useState<number>(0)
@@ -236,9 +247,9 @@ export default function DashboardLayout({
         // Fetch folders and template categories in parallel
         const [foldersData, categoriesData] = await Promise.all([
           getSidebarFolders(user.id),
-          getSidebarTemplateCategories()
+          getSidebarTemplateCategories(),
         ])
-        
+
         setFolders(foldersData)
         setTemplateCategories(categoriesData)
       } catch (error) {
@@ -258,9 +269,9 @@ export default function DashboardLayout({
       try {
         const [qrCountData, scansData] = await Promise.all([
           getDynamicQRCodeCount(),
-          getTotalScans()
+          getTotalScans(),
         ])
-        
+
         setQrCount(qrCountData)
         setScanCount(scansData)
         // Get plan from user object (subscriptions are loaded with /myself)
@@ -277,16 +288,16 @@ export default function DashboardLayout({
 
   // Auto-expand group that contains active route
   useEffect(() => {
-    filteredNavigationGroups.forEach((group) => {
-      if (group.items.some((item) => isItemActive(item.href))) {
-        setExpandedGroups((prev) => ({ ...prev, [group.name]: true }))
+    filteredNavigationGroups.forEach(group => {
+      if (group.items.some(item => isItemActive(item.href))) {
+        setExpandedGroups(prev => ({ ...prev, [group.name]: true }))
       }
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
 
   const toggleGroup = (groupName: string) => {
-    setExpandedGroups((prev) => ({
+    setExpandedGroups(prev => ({
       ...prev,
       [groupName]: !prev[groupName],
     }))
@@ -294,43 +305,43 @@ export default function DashboardLayout({
 
   const isItemActive = (href: string) => {
     if (!pathname) return false
-    
+
     // Parse item href
     const [itemPath, itemQueryString = ''] = href.split('?')
     const itemParams = new URLSearchParams(itemQueryString)
-    
+
     // Use searchParams from Next.js hook (SSR-safe)
     const currentSearchParams = searchParams?.toString() || ''
     const windowParams = new URLSearchParams(currentSearchParams)
-    
+
     // Check pathname match
     const pathMatch = pathname === itemPath || pathname.startsWith(`${itemPath}/`)
-    
+
     if (!pathMatch) return false
-    
+
     // If no query params in item href, just check pathname
     if (!itemQueryString) {
       return pathMatch
     }
-    
+
     // Check all item query params match window params
     const paramsMatch = Array.from(itemParams.keys()).every(
       key => itemParams.get(key) === windowParams.get(key)
     )
-    
+
     if (!paramsMatch) return false
-    
+
     // Check window doesn't have extra params (except 'page')
     const ignoredKeys = ['page']
     const hasExtraParams = Array.from(windowParams.keys()).some(
       key => !ignoredKeys.includes(key) && !itemParams.has(key)
     )
-    
+
     return !hasExtraParams
   }
 
   const isGroupActive = (group: NavGroup) => {
-    return group.items.some((item) => isItemActive(item.href))
+    return group.items.some(item => isItemActive(item.href))
   }
 
   const handleLogout = async () => {
@@ -398,13 +409,16 @@ export default function DashboardLayout({
         <div className="mx-4 border-t border-white/20" />
 
         {/* Navigation (scrollable) */}
-        <nav aria-label="Main navigation" className="flex-1 overflow-y-auto px-2 py-3 scrollbar-hide">
+        <nav
+          aria-label="Main navigation"
+          className="flex-1 overflow-y-auto px-2 py-3 scrollbar-hide"
+        >
           {/* Separator line (matches Lit .sidebar-top) */}
           <div className="mx-3 mb-2 border-t border-dotted border-purple-300/30" />
-          
+
           {/* Top-level items (locked group - always visible) */}
           <div className="space-y-0.5 mb-3">
-            {topNavigation.map((item) => {
+            {topNavigation.map(item => {
               const active = isItemActive(item.href)
               return (
                 <Link
@@ -412,9 +426,10 @@ export default function DashboardLayout({
                   href={item.href}
                   className={`
                     flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors
-                    ${active
-                      ? 'bg-black/20 text-white font-medium'
-                      : 'text-white/90 hover:bg-white/10 hover:text-white'
+                    ${
+                      active
+                        ? 'bg-black/20 text-white font-medium'
+                        : 'text-white/90 hover:bg-white/10 hover:text-white'
                     }
                   `}
                   onClick={() => setSidebarOpen(false)}
@@ -429,10 +444,12 @@ export default function DashboardLayout({
           {/* Cloud Storage locked group */}
           <div className="mb-3">
             <div className="px-3 mb-1.5">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">Cloud Storage</span>
+              <span className="text-xs font-bold text-white uppercase tracking-wider">
+                Cloud Storage
+              </span>
             </div>
             <div className="space-y-0.5">
-              {cloudStorageNavigation.map((item) => {
+              {cloudStorageNavigation.map(item => {
                 const active = isItemActive(item.href)
                 return (
                   <Link
@@ -440,9 +457,10 @@ export default function DashboardLayout({
                     href={item.href}
                     className={`
                       flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors
-                      ${active
-                        ? 'bg-black/20 text-white font-medium'
-                        : 'text-white/90 hover:bg-white/10 hover:text-white'
+                      ${
+                        active
+                          ? 'bg-black/20 text-white font-medium'
+                          : 'text-white/90 hover:bg-white/10 hover:text-white'
                       }
                     `}
                     onClick={() => setSidebarOpen(false)}
@@ -459,10 +477,12 @@ export default function DashboardLayout({
           {folders.length > 0 && (
             <div className="mb-3">
               <div className="px-3 mb-1.5">
-                <span className="text-xs font-bold text-white uppercase tracking-wider">Folders</span>
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  Folders
+                </span>
               </div>
               <div className="space-y-0.5">
-                {folders.map((folder) => {
+                {folders.map(folder => {
                   const folderHref = `/qrcodes?folder_id=${folder.id}`
                   const active = isItemActive(folderHref)
                   return (
@@ -471,9 +491,10 @@ export default function DashboardLayout({
                       href={folderHref}
                       className={`
                         flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-md transition-colors
-                        ${active
-                          ? 'bg-black/20 text-white font-medium'
-                          : 'text-white/90 hover:bg-white/10 hover:text-white'
+                        ${
+                          active
+                            ? 'bg-black/20 text-white font-medium'
+                            : 'text-white/90 hover:bg-white/10 hover:text-white'
                         }
                       `}
                       onClick={() => setSidebarOpen(false)}
@@ -483,13 +504,12 @@ export default function DashboardLayout({
                         <span className="truncate">{folder.name}</span>
                       </div>
                       {/* QR Count Badge - matches Lit folder-menu-item.js */}
-                      <div className={`
+                      <div
+                        className={`
                         flex items-center justify-center min-w-[2rem] h-5 px-2 rounded-full text-xs font-bold
-                        ${active 
-                          ? 'bg-white/20 text-white' 
-                          : 'bg-white/90 text-purple-700'
-                        }
-                      `}>
+                        ${active ? 'bg-white/20 text-white' : 'bg-white/90 text-purple-700'}
+                      `}
+                      >
                         {folder.qrCodeCount || 0}
                       </div>
                     </Link>
@@ -503,10 +523,12 @@ export default function DashboardLayout({
           {templateCategories.length > 0 && (
             <div className="mb-3">
               <div className="px-3 mb-1.5">
-                <span className="text-xs font-bold text-white uppercase tracking-wider">Categories</span>
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  Categories
+                </span>
               </div>
               <div className="space-y-0.5">
-                {templateCategories.map((category) => {
+                {templateCategories.map(category => {
                   const categoryHref = `/qrcodes/new?template-category-id=${category.id}`
                   const active = isItemActive(categoryHref)
                   return (
@@ -515,9 +537,10 @@ export default function DashboardLayout({
                       href={categoryHref}
                       className={`
                         flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors
-                        ${active
-                          ? 'bg-black/20 text-white font-medium'
-                          : 'text-white/90 hover:bg-white/10 hover:text-white'
+                        ${
+                          active
+                            ? 'bg-black/20 text-white font-medium'
+                            : 'text-white/90 hover:bg-white/10 hover:text-white'
                         }
                       `}
                       onClick={() => setSidebarOpen(false)}
@@ -536,7 +559,7 @@ export default function DashboardLayout({
 
           {/* Collapsible Navigation Groups */}
           <div className="space-y-1">
-            {filteredNavigationGroups.map((group) => {
+            {filteredNavigationGroups.map(group => {
               const isExpanded = expandedGroups[group.name] ?? false
               const groupActive = isGroupActive(group)
               return (
@@ -546,11 +569,12 @@ export default function DashboardLayout({
                     className={`
                       w-full flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-md
                       transition-colors cursor-pointer
-                      ${isExpanded
-                        ? 'bg-black/20 text-white font-bold'
-                        : groupActive
-                          ? 'text-white font-semibold hover:bg-white/10'
-                          : 'text-white/80 hover:bg-white/10 hover:text-white'
+                      ${
+                        isExpanded
+                          ? 'bg-black/20 text-white font-bold'
+                          : groupActive
+                            ? 'text-white font-semibold hover:bg-white/10'
+                            : 'text-white/80 hover:bg-white/10 hover:text-white'
                       }
                     `}
                   >
@@ -568,7 +592,7 @@ export default function DashboardLayout({
                   {/* Group Items — shown when expanded */}
                   {isExpanded && (
                     <div className="mt-0.5 ml-3 space-y-0.5 border-l border-white/20 pl-3 pb-1">
-                      {group.items.map((item) => {
+                      {group.items.map(item => {
                         const active = isItemActive(item.href)
                         return (
                           <Link
@@ -576,9 +600,10 @@ export default function DashboardLayout({
                             href={item.href}
                             className={`
                               flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors
-                              ${active
-                                ? 'bg-black/20 text-white font-medium'
-                                : 'text-white/80 hover:bg-white/10 hover:text-white'
+                              ${
+                                active
+                                  ? 'bg-black/20 text-white font-medium'
+                                  : 'text-white/80 hover:bg-white/10 hover:text-white'
                               }
                             `}
                             onClick={() => setSidebarOpen(false)}
@@ -710,7 +735,11 @@ export default function DashboardLayout({
         </div>
 
         {/* Page content */}
-        <main id="main-content" role="main" className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 dark:text-gray-100">
+        <main
+          id="main-content"
+          role="main"
+          className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 dark:text-gray-100"
+        >
           {children}
         </main>
 

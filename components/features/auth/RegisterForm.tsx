@@ -1,16 +1,32 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { registerSchema, type RegisterFormData } from '@/lib/validations/auth'
 import { useRegister } from '@/lib/hooks/mutations/useRegister'
 import { PasswordStrengthBar } from '@/lib/utils/password-strength'
+import { extractReferralCode, storeReferralCode } from '@/lib/utils/referral-tracking'
 
-export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisabled?: () => void } = {}) {
+export function RegisterForm({
+  onRegistrationDisabled,
+}: { onRegistrationDisabled?: () => void } = {}) {
   const [showPassword, setShowPassword] = useState(false)
   const registerMutation = useRegister()
+  const searchParams = useSearchParams()
+
+  // T269: Detect referral code from URL params and store it
+  useEffect(() => {
+    const refCode = searchParams?.get('ref')
+    if (refCode) {
+      storeReferralCode(refCode)
+    } else if (typeof window !== 'undefined') {
+      const fromUrl = extractReferralCode(window.location.href)
+      if (fromUrl) storeReferralCode(fromUrl)
+    }
+  }, [searchParams])
 
   const {
     register,
@@ -56,7 +72,11 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
           placeholder="John Doe"
         />
-        {errors.name && <p id="name-error" role="alert" className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
+        {errors.name && (
+          <p id="name-error" role="alert" className="mt-1 text-sm text-red-600">
+            {errors.name.message}
+          </p>
+        )}
       </div>
 
       <div>
@@ -73,7 +93,11 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
           placeholder="you@example.com"
         />
-        {errors.email && <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+        {errors.email && (
+          <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
       <div>
@@ -100,9 +124,11 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
           </button>
         </div>
         {errors.password && (
-          <p id="password-error" role="alert" className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+          <p id="password-error" role="alert" className="mt-1 text-sm text-red-600">
+            {errors.password.message}
+          </p>
         )}
-        
+
         {/* Password strength indicator */}
         <PasswordStrengthBar password={password} />
       </div>
@@ -122,7 +148,9 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
           placeholder="••••••••"
         />
         {errors.confirmPassword && (
-          <p id="confirmPassword-error" role="alert" className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
+          <p id="confirmPassword-error" role="alert" className="mt-1 text-sm text-red-600">
+            {errors.confirmPassword.message}
+          </p>
         )}
       </div>
 
@@ -139,11 +167,19 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
         <div className="ml-3 text-sm">
           <label htmlFor="termsConsent" className="text-gray-600">
             I agree to the{' '}
-            <a href="/terms" target="_blank" className="font-medium text-blue-600 hover:text-blue-500">
+            <a
+              href="/terms"
+              target="_blank"
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
               Terms of Service
-            </a>
-            {' '}and{' '}
-            <a href="/privacy" target="_blank" className="font-medium text-blue-600 hover:text-blue-500">
+            </a>{' '}
+            and{' '}
+            <a
+              href="/privacy"
+              target="_blank"
+              className="font-medium text-blue-600 hover:text-blue-500"
+            >
               Privacy Policy
             </a>
           </label>
@@ -156,8 +192,7 @@ export function RegisterForm({ onRegistrationDisabled }: { onRegistrationDisable
       {registerMutation.isError && (
         <div role="alert" className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
-            {(registerMutation.error as any)?.message ||
-              'Registration failed. Please try again.'}
+            {(registerMutation.error as any)?.message || 'Registration failed. Please try again.'}
           </p>
         </div>
       )}

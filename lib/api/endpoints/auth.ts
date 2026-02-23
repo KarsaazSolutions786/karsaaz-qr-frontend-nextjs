@@ -19,6 +19,7 @@ export interface RegisterRequest {
   password: string
   password_confirmation: string
   terms_consent: boolean
+  referral_code?: string
 }
 
 export interface RegisterResponse {
@@ -193,9 +194,7 @@ export const authAPI = {
 
   // Passwordless auth — check if feature is enabled globally
   passwordlessStatus: async () => {
-    const response = await apiClient.get<PasswordlessStatusResponse>(
-      '/passwordless-auth/status'
-    )
+    const response = await apiClient.get<PasswordlessStatusResponse>('/passwordless-auth/status')
     return response.data
   },
 
@@ -210,10 +209,7 @@ export const authAPI = {
 
   // Passwordless auth — initialize OTP flow (sends email with 5-digit code)
   passwordlessInit: async (data: PasswordlessInitRequest) => {
-    const response = await apiClient.post<PasswordlessInitResponse>(
-      '/passwordless-auth/init',
-      data
-    )
+    const response = await apiClient.post<PasswordlessInitResponse>('/passwordless-auth/init', data)
     return response.data
   },
 

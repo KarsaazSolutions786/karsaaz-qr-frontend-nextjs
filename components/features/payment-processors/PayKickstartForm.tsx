@@ -21,21 +21,56 @@ export function PayKickstartForm({ settings, onChange }: Props) {
           id="paykickstart-api-key"
           type="password"
           value={settings.api_key ?? ''}
-          onChange={(e) => onChange('api_key', e.target.value)}
+          onChange={e => onChange('api_key', e.target.value)}
           placeholder="Enter API Key"
           className={inputClass}
         />
       </div>
       <div>
-        <label htmlFor="paykickstart-secret-key" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="paykickstart-secret-key"
+          className="block text-sm font-medium text-gray-700"
+        >
           Secret Key
         </label>
         <input
           id="paykickstart-secret-key"
           type="password"
           value={settings.secret_key ?? ''}
-          onChange={(e) => onChange('secret_key', e.target.value)}
+          onChange={e => onChange('secret_key', e.target.value)}
           placeholder="Enter Secret Key"
+          className={inputClass}
+        />
+      </div>
+      <div>
+        <label
+          htmlFor="paykickstart-campaign-id"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Campaign ID
+        </label>
+        <input
+          id="paykickstart-campaign-id"
+          type="text"
+          value={settings.campaign_id ?? ''}
+          onChange={e => onChange('campaign_id', e.target.value)}
+          placeholder="Enter Campaign ID"
+          className={inputClass}
+        />
+      </div>
+      <div>
+        <label
+          htmlFor="paykickstart-webhook-url"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Webhook URL
+        </label>
+        <input
+          id="paykickstart-webhook-url"
+          type="text"
+          value={settings.webhook_url ?? ''}
+          onChange={e => onChange('webhook_url', e.target.value)}
+          placeholder="https://example.com/api/webhooks/paykickstart"
           className={inputClass}
         />
       </div>

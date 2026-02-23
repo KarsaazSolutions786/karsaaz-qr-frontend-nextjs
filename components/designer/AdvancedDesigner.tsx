@@ -1,87 +1,108 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Download, Upload, RotateCcw, Palette, Shapes, Image as ImageIcon, Settings, Sparkles, Layers } from 'lucide-react';
-import GradientEditor from './GradientEditor';
-import PatternLibrary from './PatternLibrary';
-import ShapeLibrary from './ShapeLibrary';
-import ShadowEffects from './effects/ShadowEffects';
-import StrokeEffects from './effects/StrokeEffects';
-import DepthEffects from './effects/DepthEffects';
-import { QRCodeSVG } from 'qrcode.react';
+import React, { useState } from 'react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import {
+  Download,
+  Upload,
+  RotateCcw,
+  Palette,
+  Shapes,
+  Image as ImageIcon,
+  Settings,
+  Sparkles,
+  Layers,
+} from 'lucide-react'
+import GradientEditor from './GradientEditor'
+import PatternLibrary from './PatternLibrary'
+import ShapeLibrary from './ShapeLibrary'
+import ShadowEffects from './effects/ShadowEffects'
+import StrokeEffects from './effects/StrokeEffects'
+import DepthEffects from './effects/DepthEffects'
+import { ColorFields, EyeShapeFields, CornerFields } from './fields'
+import { QRCodeSVG } from 'qrcode.react'
 
 export interface QRDesign {
   // Colors
-  foregroundColor: string;
-  backgroundColor: string;
+  foregroundColor: string
+  backgroundColor: string
   gradient?: {
-    type: 'linear' | 'radial' | 'none';
-    colors: Array<{ color: string; position: number }>;
-    angle?: number;
-  };
-  
+    type: 'linear' | 'radial' | 'none'
+    colors: Array<{ color: string; position: number }>
+    angle?: number
+  }
+
   // Shapes
-  moduleShape: 'square' | 'rounded' | 'dots' | 'hearts' | 'stars' | 'custom';
-  moduleSize: number;
-  moduleSpacing: number;
-  
+  moduleShape: 'square' | 'rounded' | 'dots' | 'hearts' | 'stars' | 'custom'
+  moduleSize: number
+  moduleSpacing: number
+
   // Pattern
   pattern?: {
-    type: 'dots' | 'squares' | 'hexagons' | 'diamonds' | 'stripes-h' | 'stripes-v' | 'triangles' | 'waves' | 'custom' | 'none';
-    color: string;
-    density: number;
-    customImage?: string;
-    rotation?: number;
-    scale?: number;
-  };
-  
+    type:
+      | 'dots'
+      | 'squares'
+      | 'hexagons'
+      | 'diamonds'
+      | 'stripes-h'
+      | 'stripes-v'
+      | 'triangles'
+      | 'waves'
+      | 'custom'
+      | 'none'
+    color: string
+    density: number
+    customImage?: string
+    rotation?: number
+    scale?: number
+  }
+
   // Logo
   logo?: {
-    url: string;
-    size: number;
-    padding: number;
-    backgroundColor?: string;
-  };
-  
+    url: string
+    size: number
+    padding: number
+    backgroundColor?: string
+  }
+
   // Advanced
-  errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
-  quietZone: number;
-  roundedCorners: boolean;
-  cornerRadius: number;
+  errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'
+  quietZone: number
+  roundedCorners: boolean
+  cornerRadius: number
 
   // Effects
   shadow?: {
-    enabled: boolean;
-    offsetX: number;
-    offsetY: number;
-    blur: number;
-    spread: number;
-    color: string;
-    opacity: number;
-  };
+    enabled: boolean
+    offsetX: number
+    offsetY: number
+    blur: number
+    spread: number
+    color: string
+    opacity: number
+  }
   stroke?: {
-    enabled: boolean;
-    width: number;
-    color: string;
-    opacity: number;
-  };
+    enabled: boolean
+    width: number
+    color: string
+    opacity: number
+  }
   depth?: {
-    enabled: boolean;
-    perspective: number;
-    rotateX: number;
-    rotateY: number;
-  };
+    enabled: boolean
+    perspective: number
+    rotateX: number
+    rotateY: number
+  }
 }
 
 interface AdvancedDesignerProps {
-  design: QRDesign;
-  onChange: (design: QRDesign) => void;
-  qrData: string;
+  design: QRDesign
+  onChange: (design: QRDesign) => void
+  qrData: string
 }
 
 const defaultDesign: QRDesign = {
@@ -94,7 +115,7 @@ const defaultDesign: QRDesign = {
   quietZone: 4,
   roundedCorners: false,
   cornerRadius: 0,
-};
+}
 
 const designPresets = [
   {
@@ -140,45 +161,45 @@ const designPresets = [
       },
     },
   },
-];
+]
 
 export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedDesignerProps) {
-  const [activeTab, setActiveTab] = useState('colors');
+  const [activeTab, setActiveTab] = useState('colors')
 
   const handleExport = () => {
-    const dataStr = JSON.stringify(design, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'qr-design.json';
-    link.click();
-    URL.revokeObjectURL(url);
-  };
+    const dataStr = JSON.stringify(design, null, 2)
+    const dataBlob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(dataBlob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'qr-design.json'
+    link.click()
+    URL.revokeObjectURL(url)
+  }
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const file = event.target.files?.[0]
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
+      const reader = new FileReader()
+      reader.onload = e => {
         try {
-          const importedDesign = JSON.parse(e.target?.result as string);
-          onChange({ ...design, ...importedDesign });
+          const importedDesign = JSON.parse(e.target?.result as string)
+          onChange({ ...design, ...importedDesign })
         } catch (error) {
-          console.error('Invalid design file:', error);
+          console.error('Invalid design file:', error)
         }
-      };
-      reader.readAsText(file);
+      }
+      reader.readAsText(file)
     }
-  };
+  }
 
   const handleReset = () => {
-    onChange(defaultDesign);
-  };
+    onChange(defaultDesign)
+  }
 
   const applyPreset = (preset: QRDesign) => {
-    onChange(preset);
-  };
+    onChange(preset)
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -221,7 +242,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
             <div className="mb-6">
               <Label className="mb-3 block">Quick Presets</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {designPresets.map((preset) => (
+                {designPresets.map(preset => (
                   <Button
                     key={preset.name}
                     variant="outline"
@@ -266,58 +287,19 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
               {/* Colors Tab */}
               <TabsContent value="colors" className="space-y-6 mt-6">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="foreground">Foreground Color</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="foreground"
-                          type="color"
-                          value={design.foregroundColor}
-                          onChange={(e) =>
-                            onChange({ ...design, foregroundColor: e.target.value })
-                          }
-                          className="h-10 w-20"
-                        />
-                        <Input
-                          type="text"
-                          value={design.foregroundColor}
-                          onChange={(e) =>
-                            onChange({ ...design, foregroundColor: e.target.value })
-                          }
-                          className="flex-1"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="background">Background Color</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="background"
-                          type="color"
-                          value={design.backgroundColor}
-                          onChange={(e) =>
-                            onChange({ ...design, backgroundColor: e.target.value })
-                          }
-                          className="h-10 w-20"
-                        />
-                        <Input
-                          type="text"
-                          value={design.backgroundColor}
-                          onChange={(e) =>
-                            onChange({ ...design, backgroundColor: e.target.value })
-                          }
-                          className="flex-1"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <ColorFields
+                    foregroundColor={design.foregroundColor}
+                    backgroundColor={design.backgroundColor}
+                    onChange={(fg, bg) =>
+                      onChange({ ...design, foregroundColor: fg, backgroundColor: bg })
+                    }
+                  />
 
                   <div className="border-t pt-4">
                     <Label className="mb-3 block">Gradient Settings</Label>
                     <GradientEditor
                       gradient={design.gradient}
-                      onChange={(gradient) => onChange({ ...design, gradient })}
+                      onChange={gradient => onChange({ ...design, gradient })}
                     />
                   </div>
                 </div>
@@ -340,7 +322,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                 />
                 <PatternLibrary
                   selectedPattern={design.pattern}
-                  onChange={(pattern) => onChange({ ...design, pattern })}
+                  onChange={pattern => onChange({ ...design, pattern })}
                 />
               </TabsContent>
 
@@ -354,10 +336,15 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                       type="url"
                       placeholder="https://example.com/logo.png"
                       value={design.logo?.url || ''}
-                      onChange={(e) =>
+                      onChange={e =>
                         onChange({
                           ...design,
-                          logo: { ...design.logo, url: e.target.value, size: design.logo?.size || 60, padding: design.logo?.padding || 10 },
+                          logo: {
+                            ...design.logo,
+                            url: e.target.value,
+                            size: design.logo?.size || 60,
+                            padding: design.logo?.padding || 10,
+                          },
                         })
                       }
                     />
@@ -372,7 +359,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                           min="20"
                           max="100"
                           value={design.logo.size}
-                          onChange={(e) =>
+                          onChange={e =>
                             onChange({
                               ...design,
                               logo: { ...design.logo!, size: parseInt(e.target.value) },
@@ -388,7 +375,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                           min="0"
                           max="20"
                           value={design.logo.padding}
-                          onChange={(e) =>
+                          onChange={e =>
                             onChange({
                               ...design,
                               logo: { ...design.logo!, padding: parseInt(e.target.value) },
@@ -403,7 +390,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                             id="logo-bg"
                             type="color"
                             value={design.logo.backgroundColor || '#ffffff'}
-                            onChange={(e) =>
+                            onChange={e =>
                               onChange({
                                 ...design,
                                 logo: { ...design.logo!, backgroundColor: e.target.value },
@@ -415,8 +402,9 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              const { backgroundColor, ...rest } = design.logo!;
-                              onChange({ ...design, logo: rest });
+                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                              const { backgroundColor, ...rest } = design.logo!
+                              onChange({ ...design, logo: rest })
                             }}
                           >
                             Clear
@@ -436,7 +424,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                     <select
                       id="error-correction"
                       value={design.errorCorrectionLevel}
-                      onChange={(e) =>
+                      onChange={e =>
                         onChange({
                           ...design,
                           errorCorrectionLevel: e.target.value as 'L' | 'M' | 'Q' | 'H',
@@ -458,9 +446,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                       min="0"
                       max="20"
                       value={design.quietZone}
-                      onChange={(e) =>
-                        onChange({ ...design, quietZone: parseInt(e.target.value) })
-                      }
+                      onChange={e => onChange({ ...design, quietZone: parseInt(e.target.value) })}
                     />
                   </div>
                   <div className="space-y-2">
@@ -469,9 +455,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                         type="checkbox"
                         id="rounded-corners"
                         checked={design.roundedCorners}
-                        onChange={(e) =>
-                          onChange({ ...design, roundedCorners: e.target.checked })
-                        }
+                        onChange={e => onChange({ ...design, roundedCorners: e.target.checked })}
                         className="w-4 h-4"
                       />
                       <Label htmlFor="rounded-corners">Rounded Corners</Label>
@@ -486,12 +470,42 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                         min="0"
                         max="20"
                         value={design.cornerRadius}
-                        onChange={(e) =>
+                        onChange={e =>
                           onChange({ ...design, cornerRadius: parseInt(e.target.value) })
                         }
                       />
                     </div>
                   )}
+
+                  <div className="border-t pt-4">
+                    <Label className="mb-3 block">Eye Shape</Label>
+                    <EyeShapeFields
+                      eyeSettings={{
+                        outerShape: 'square',
+                        innerShape: 'square',
+                        useCustomColor: false,
+                      }}
+                      onChange={() => {}}
+                    />
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <Label className="mb-3 block">Corner Style</Label>
+                    <CornerFields
+                      cornerSettings={{
+                        style: design.roundedCorners ? 'rounded' : 'square',
+                        radius: design.cornerRadius,
+                        applyToAll: true,
+                      }}
+                      onChange={settings =>
+                        onChange({
+                          ...design,
+                          roundedCorners: settings.style !== 'square',
+                          cornerRadius: settings.radius,
+                        })
+                      }
+                    />
+                  </div>
                 </div>
               </TabsContent>
 
@@ -499,17 +513,17 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
               <TabsContent value="effects" className="space-y-6 mt-6">
                 <ShadowEffects
                   shadow={design.shadow}
-                  onChange={(shadow) => onChange({ ...design, shadow })}
+                  onChange={shadow => onChange({ ...design, shadow })}
                 />
                 <div className="border-t pt-4" />
                 <StrokeEffects
                   stroke={design.stroke}
-                  onChange={(stroke) => onChange({ ...design, stroke })}
+                  onChange={stroke => onChange({ ...design, stroke })}
                 />
                 <div className="border-t pt-4" />
                 <DepthEffects
                   depth={design.depth}
-                  onChange={(depth) => onChange({ ...design, depth })}
+                  onChange={depth => onChange({ ...design, depth })}
                 />
               </TabsContent>
 
@@ -521,9 +535,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                   <p className="text-sm text-muted-foreground mb-4">
                     Coming soon: Generate unique QR designs with AI
                   </p>
-                  <Button disabled>
-                    Generate with AI
-                  </Button>
+                  <Button disabled>Generate with AI</Button>
                 </div>
               </TabsContent>
             </Tabs>
@@ -541,20 +553,28 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
           <CardContent>
             <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 flex items-center justify-center">
               <div
-                  className="bg-white p-4 rounded-lg"
-                  style={{
-                    boxShadow: design.shadow?.enabled
-                      ? `${design.shadow.offsetX}px ${design.shadow.offsetY}px ${design.shadow.blur}px ${design.shadow.spread}px ${design.shadow.color}${Math.round(design.shadow.opacity * 2.55).toString(16).padStart(2, '0')}`
-                      : '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                    outline: design.stroke?.enabled
-                      ? `${design.stroke.width}px solid ${design.stroke.color}${Math.round(design.stroke.opacity * 2.55).toString(16).padStart(2, '0')}`
-                      : undefined,
-                    transform: design.depth?.enabled
-                      ? `perspective(${design.depth.perspective}px) rotateX(${design.depth.rotateX}deg) rotateY(${design.depth.rotateY}deg)`
-                      : undefined,
-                    transition: 'all 0.3s ease',
-                  }}
-                >
+                className="bg-white p-4 rounded-lg"
+                style={{
+                  boxShadow: design.shadow?.enabled
+                    ? `${design.shadow.offsetX}px ${design.shadow.offsetY}px ${design.shadow.blur}px ${design.shadow.spread}px ${design.shadow.color}${Math.round(
+                        design.shadow.opacity * 2.55
+                      )
+                        .toString(16)
+                        .padStart(2, '0')}`
+                    : '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                  outline: design.stroke?.enabled
+                    ? `${design.stroke.width}px solid ${design.stroke.color}${Math.round(
+                        design.stroke.opacity * 2.55
+                      )
+                        .toString(16)
+                        .padStart(2, '0')}`
+                    : undefined,
+                  transform: design.depth?.enabled
+                    ? `perspective(${design.depth.perspective}px) rotateX(${design.depth.rotateX}deg) rotateY(${design.depth.rotateY}deg)`
+                    : undefined,
+                  transition: 'all 0.3s ease',
+                }}
+              >
                 <QRCodeSVG
                   value={qrData || 'https://karsaaz.com'}
                   size={200}
@@ -595,7 +615,9 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
               {design.gradient && design.gradient.type !== 'none' && (
                 <div className="flex justify-between">
                   <span>Gradient:</span>
-                  <span className="font-medium text-foreground capitalize">{design.gradient.type}</span>
+                  <span className="font-medium text-foreground capitalize">
+                    {design.gradient.type}
+                  </span>
                 </div>
               )}
               {design.shadow?.enabled && (
@@ -621,5 +643,5 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
         </Card>
       </div>
     </div>
-  );
+  )
 }

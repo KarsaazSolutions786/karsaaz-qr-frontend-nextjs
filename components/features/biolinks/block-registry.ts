@@ -237,6 +237,7 @@ export const blockRegistry: Record<string, DynamicBlockDefinition> = {
     defaultData: {
       tableData: '',
       textColor: '#000000',
+      bordered: true,
     },
   },
   list: {
@@ -258,6 +259,8 @@ export const blockRegistry: Record<string, DynamicBlockDefinition> = {
       title: '',
       items: [],
       gridGap: 8,
+      columns: 3,
+      lightbox: false,
     },
   },
   audio: {
@@ -268,6 +271,7 @@ export const blockRegistry: Record<string, DynamicBlockDefinition> = {
     defaultData: {
       audioUrl: '',
       title: '',
+      autoplay: false,
     },
   },
   profile: {
@@ -282,6 +286,81 @@ export const blockRegistry: Record<string, DynamicBlockDefinition> = {
       size: 7,
     },
   },
+  'custom-code': {
+    type: 'custom-code',
+    label: 'Custom Code',
+    icon: '💻',
+    category: 'content',
+    defaultData: {
+      htmlCode: '',
+      cssCode: '',
+      jsCode: '',
+    },
+  },
+  'copyable-data': {
+    type: 'copyable-data',
+    label: 'Copyable Data',
+    icon: '📋',
+    category: 'content',
+    defaultData: {
+      label: '',
+      value: '',
+    },
+  },
+  file: {
+    type: 'file',
+    label: 'File',
+    icon: '📄',
+    category: 'content',
+    defaultData: {
+      fileUrl: '',
+      fileName: '',
+      fileSize: '',
+      downloadCount: 0,
+    },
+  },
+  'information-popup': {
+    type: 'information-popup',
+    label: 'Info Popup',
+    icon: 'ℹ️',
+    category: 'content',
+    defaultData: {
+      triggerText: 'More Info',
+      title: '',
+      content: '',
+    },
+  },
+  paragraph: {
+    type: 'paragraph',
+    label: 'Paragraph',
+    icon: '📄',
+    category: 'content',
+    defaultData: {
+      content: '',
+    },
+  },
+  share: {
+    type: 'share',
+    label: 'Share',
+    icon: '🔗',
+    category: 'social',
+    defaultData: {
+      url: '',
+      title: '',
+    },
+  },
+  upi: {
+    type: 'upi',
+    label: 'UPI Payment',
+    icon: '💸',
+    category: 'business',
+    defaultData: {
+      vpa: '',
+      amount: 0,
+      name: '',
+      note: '',
+    },
+  },
 }
 
 /**
@@ -294,7 +373,7 @@ export function registerDynamicBlock(
 ) {
   const defaultData: Record<string, string> = {}
   if (dynamicBlock.fields) {
-    dynamicBlock.fields.forEach((field) => {
+    dynamicBlock.fields.forEach(field => {
       defaultData[field.name] = ''
     })
   }
@@ -328,7 +407,7 @@ export function getBlockDefinitions(filter?: {
   category?: string
   dynamicOnly?: boolean
 }): DynamicBlockDefinition[] {
-  return Object.values(blockRegistry).filter((def) => {
+  return Object.values(blockRegistry).filter(def => {
     if (filter?.category && def.category !== filter.category) return false
     if (filter?.dynamicOnly && !def.isDynamic) return false
     return true

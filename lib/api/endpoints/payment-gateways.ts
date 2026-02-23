@@ -1,21 +1,12 @@
 import apiClient from '../client'
+import { normalizePagination, mapSearchParams } from '../pagination'
 import type { PaymentGateway } from '@/types/entities/payment-gateway'
-
-export interface PaymentGatewayListResponse {
-  data: PaymentGateway[]
-  pagination: {
-    total: number
-    perPage: number
-    currentPage: number
-    lastPage: number
-  }
-}
 
 export const paymentGatewaysAPI = {
   // List all payment gateways
   list: async (params?: { page?: number; search?: string }) => {
-    const response = await apiClient.get<PaymentGatewayListResponse>('/payment-gateways', { params })
-    return response.data
+    const response = await apiClient.get('/payment-gateways', { params: mapSearchParams(params) })
+    return normalizePagination<PaymentGateway>(response.data)
   },
 
   // Get a single payment gateway
@@ -31,7 +22,10 @@ export const paymentGatewaysAPI = {
   },
 
   // Update a payment gateway
-  update: async (id: number, data: Partial<Omit<PaymentGateway, 'id' | 'created_at' | 'updated_at'>>) => {
+  update: async (
+    id: number,
+    data: Partial<Omit<PaymentGateway, 'id' | 'created_at' | 'updated_at'>>
+  ) => {
     const response = await apiClient.put<PaymentGateway>(`/payment-gateways/${id}`, data)
     return response.data
   },

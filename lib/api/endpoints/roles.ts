@@ -1,4 +1,5 @@
 import apiClient from '../client'
+import { normalizePagination, mapSearchParams } from '../pagination'
 
 /**
  * Role entity — matches backend snake_case convention.
@@ -33,21 +34,11 @@ export interface PermissionGroup {
   }[]
 }
 
-export interface RoleListResponse {
-  data: RoleEntity[]
-  pagination: {
-    total: number
-    perPage: number
-    currentPage: number
-    lastPage: number
-  }
-}
-
 export const rolesAPI = {
   // Get all roles
   getAll: async (params?: { page?: number; search?: string }) => {
-    const response = await apiClient.get<RoleListResponse>('/roles', { params })
-    return response.data
+    const response = await apiClient.get('/roles', { params: mapSearchParams(params) })
+    return normalizePagination<RoleEntity>(response.data)
   },
 
   // Get single role

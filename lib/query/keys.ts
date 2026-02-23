@@ -1,6 +1,6 @@
 /**
  * Query Key Factory
- * 
+ *
  * Standardized query keys for React Query
  * Pattern: ['resource', id, 'sub-resource']
  */
@@ -73,7 +73,9 @@ export const queryKeys = {
   // Referrals
   referrals: {
     all: () => ['referrals'] as const,
+    list: (params?: Record<string, unknown>) => ['referrals', 'list', params] as const,
     stats: () => ['referrals', 'stats'] as const,
+    code: () => ['referrals', 'code'] as const,
   },
 
   // Lead Forms
@@ -82,7 +84,9 @@ export const queryKeys = {
     list: (filters?: Record<string, unknown>) => ['lead-forms', 'list', filters] as const,
     detail: (id: number) => ['lead-forms', id] as const,
     responses: (formId?: number, params?: Record<string, unknown>) =>
-      formId ? ['lead-forms', formId, 'responses', params] as const : ['lead-forms', 'responses'] as const,
+      formId
+        ? (['lead-forms', formId, 'responses', params] as const)
+        : (['lead-forms', 'responses'] as const),
   },
 
   // Billing
@@ -177,7 +181,8 @@ export const queryKeys = {
   // Dynamic Biolink Blocks
   dynamicBiolinkBlocks: {
     all: () => ['dynamic-biolink-blocks'] as const,
-    list: (filters?: Record<string, unknown>) => ['dynamic-biolink-blocks', 'list', filters] as const,
+    list: (filters?: Record<string, unknown>) =>
+      ['dynamic-biolink-blocks', 'list', filters] as const,
     detail: (id: number) => ['dynamic-biolink-blocks', id] as const,
   },
 

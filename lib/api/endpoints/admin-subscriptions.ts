@@ -1,4 +1,5 @@
 import apiClient from '../client'
+import { normalizePagination } from '../pagination'
 
 export interface AdminSubscription {
   id: number
@@ -13,16 +14,6 @@ export interface AdminSubscription {
   statuses: Array<{ id: number; status: string; created_at: string }>
 }
 
-export interface AdminSubscriptionListResponse {
-  data: AdminSubscription[]
-  pagination: {
-    total: number
-    perPage: number
-    currentPage: number
-    lastPage: number
-  }
-}
-
 export interface CreateAdminSubscriptionRequest {
   user_id: number
   subscription_plan_id: number
@@ -33,8 +24,8 @@ export interface CreateAdminSubscriptionRequest {
 export const adminSubscriptionsAPI = {
   // Paginated list of all subscriptions (admin)
   getAll: async (params?: { page?: number; keyword?: string }) => {
-    const response = await apiClient.get<AdminSubscriptionListResponse>('/subscriptions', { params })
-    return response.data
+    const response = await apiClient.get('/subscriptions', { params })
+    return normalizePagination<AdminSubscription>(response.data)
   },
 
   // Single subscription (admin)

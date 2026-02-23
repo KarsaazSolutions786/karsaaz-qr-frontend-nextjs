@@ -7,7 +7,7 @@ interface AudioBlockProps {
 }
 
 export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockProps) {
-  const { audioUrl, title } = block.data
+  const { audioUrl, title, autoplay } = block.data
 
   if (isEditing) {
     return (
@@ -17,7 +17,7 @@ export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockPro
           <input
             type="url"
             value={audioUrl}
-            onChange={(e) => onUpdate?.({ ...block.data, audioUrl: e.target.value })}
+            onChange={e => onUpdate?.({ ...block.data, audioUrl: e.target.value })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             placeholder="https://example.com/audio.mp3"
           />
@@ -27,9 +27,21 @@ export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockPro
           <input
             type="text"
             value={title || ''}
-            onChange={(e) => onUpdate?.({ ...block.data, title: e.target.value })}
+            onChange={e => onUpdate?.({ ...block.data, title: e.target.value })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
           />
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id={`autoplay-${block.id}`}
+            checked={autoplay || false}
+            onChange={e => onUpdate?.({ ...block.data, autoplay: e.target.checked })}
+            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+          />
+          <label htmlFor={`autoplay-${block.id}`} className="text-sm font-medium text-gray-700">
+            Autoplay
+          </label>
         </div>
       </div>
     )
@@ -46,7 +58,7 @@ export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockPro
   return (
     <div className="space-y-2">
       {title && <h3 className="text-center text-lg font-semibold text-gray-900">🎵 {title}</h3>}
-      <audio controls className="w-full" preload="metadata">
+      <audio controls autoPlay={autoplay} className="w-full" preload="metadata">
         <source src={audioUrl} />
         Your browser does not support the audio element.
       </audio>

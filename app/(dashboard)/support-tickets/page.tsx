@@ -12,6 +12,7 @@ export default function SupportTicketsPage() {
   const [tickets, setTickets] = useState<SupportTicket[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [statusFilter, setStatusFilter] = useState<string>('all')
 
   useEffect(() => {
     if (!user?.email) return
@@ -32,6 +33,9 @@ export default function SupportTicketsPage() {
     fetchTickets()
   }, [user?.email])
 
+  const filteredTickets =
+    statusFilter === 'all' ? tickets : tickets.filter(t => t.status === statusFilter)
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
@@ -49,6 +53,22 @@ export default function SupportTicketsPage() {
         </div>
       </div>
 
+      {/* T220: Ticket status filter */}
+      <div className="mt-6 flex items-center gap-2">
+        <label className="text-sm font-medium text-gray-700">Status:</label>
+        <select
+          value={statusFilter}
+          onChange={e => setStatusFilter(e.target.value)}
+          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+        >
+          <option value="all">All</option>
+          <option value="OPEN">Open</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="RESOLVED">Resolved</option>
+          <option value="CLOSED">Closed</option>
+        </select>
+      </div>
+
       <div className="mt-8">
         {isLoading ? (
           <div className="text-center py-12">
@@ -60,7 +80,7 @@ export default function SupportTicketsPage() {
             <p className="text-sm text-red-700">{error}</p>
           </div>
         ) : (
-          <SupportTicketList tickets={tickets} />
+          <SupportTicketList tickets={filteredTickets} />
         )}
       </div>
     </div>

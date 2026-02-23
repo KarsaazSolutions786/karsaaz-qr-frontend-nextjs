@@ -1,15 +1,12 @@
 import apiClient from '../client'
-import type {
-  Currency,
-  CurrencyListResponse,
-  CreateCurrencyRequest,
-} from '@/types/entities/currency'
+import { normalizePagination, mapSearchParams } from '../pagination'
+import type { Currency, CreateCurrencyRequest } from '@/types/entities/currency'
 
 export const currenciesAPI = {
   // Get all currencies
   getAll: async (params?: { page?: number; search?: string }) => {
-    const response = await apiClient.get<CurrencyListResponse>('/currencies', { params })
-    return response.data
+    const response = await apiClient.get('/currencies', { params: mapSearchParams(params) })
+    return normalizePagination<Currency>(response.data)
   },
 
   // Get single currency

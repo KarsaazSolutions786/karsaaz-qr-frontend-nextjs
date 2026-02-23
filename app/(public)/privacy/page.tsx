@@ -1,9 +1,14 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import { generateOGMetadata } from '@/lib/utils/og-metadata'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy - Karsaaz QR',
-  description: 'Karsaaz QR Privacy Policy — how we collect, use, and protect your data.',
+  ...generateOGMetadata(
+    'Privacy Policy - Karsaaz QR',
+    'Karsaaz QR Privacy Policy — how we collect, use, and protect your data.',
+    undefined,
+    '/privacy'
+  ),
 }
 
 export default function PrivacyPage() {
@@ -11,16 +16,20 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-white">
       <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <Link
-            href="/"
-            className="text-sm font-medium text-blue-600 hover:text-blue-500"
-          >
+          <Link href="/" className="text-sm font-medium text-blue-600 hover:text-blue-500">
             &larr; Back to home
           </Link>
         </div>
 
         <h1 className="text-3xl font-bold text-gray-900">Privacy Policy</h1>
-        <p className="mt-2 text-sm text-gray-500">Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p className="mt-2 text-sm text-gray-500">
+          Last updated:{' '}
+          {new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </p>
 
         <div className="prose prose-gray mt-8 max-w-none">
           <h2>1. Information We Collect</h2>
@@ -31,8 +40,8 @@ export default function PrivacyPage() {
               create an account.
             </li>
             <li>
-              <strong>Payment Information:</strong> Billing details processed securely through
-              our payment provider (Stripe). We do not store your full card details.
+              <strong>Payment Information:</strong> Billing details processed securely through our
+              payment provider (Stripe). We do not store your full card details.
             </li>
             <li>
               <strong>QR Code Data:</strong> Content and configuration for QR codes you create
@@ -57,8 +66,8 @@ export default function PrivacyPage() {
 
           <h2>3. QR Code Scan Data</h2>
           <p>
-            When a QR code created through our Service is scanned, we may collect analytics
-            data including:
+            When a QR code created through our Service is scanned, we may collect analytics data
+            including:
           </p>
           <ul>
             <li>Date and time of the scan.</li>
@@ -67,8 +76,8 @@ export default function PrivacyPage() {
             <li>Referring source (if applicable).</li>
           </ul>
           <p>
-            This data is used to provide analytics features to QR code owners and is not used
-            to personally identify individual scanners.
+            This data is used to provide analytics features to QR code owners and is not used to
+            personally identify individual scanners.
           </p>
 
           <h2>4. Information Sharing</h2>
@@ -82,28 +91,27 @@ export default function PrivacyPage() {
               the Service (e.g., payment processing, hosting, analytics).
             </li>
             <li>
-              <strong>Legal Requirements:</strong> When required by law, court order, or
-              government regulation.
+              <strong>Legal Requirements:</strong> When required by law, court order, or government
+              regulation.
             </li>
             <li>
-              <strong>Business Transfers:</strong> In connection with a merger, acquisition, or
-              sale of assets.
+              <strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale
+              of assets.
             </li>
           </ul>
 
           <h2>5. Data Security</h2>
           <p>
             We implement appropriate security measures to protect your information, including
-            encryption of data in transit and at rest, secure authentication mechanisms, and
-            regular security audits. However, no method of transmission over the internet is
-            100% secure.
+            encryption of data in transit and at rest, secure authentication mechanisms, and regular
+            security audits. However, no method of transmission over the internet is 100% secure.
           </p>
 
           <h2>6. Data Retention</h2>
           <p>
-            We retain your information for as long as your account is active or as needed to
-            provide the Service. You may request deletion of your account and associated data
-            at any time through the account settings.
+            We retain your information for as long as your account is active or as needed to provide
+            the Service. You may request deletion of your account and associated data at any time
+            through the account settings.
           </p>
 
           <h2>7. Your Rights</h2>
@@ -119,15 +127,15 @@ export default function PrivacyPage() {
           <h2>8. Cookies and Tracking</h2>
           <p>
             We use cookies and similar technologies to maintain your session, remember your
-            preferences, and analyze Service usage. You can control cookie settings through
-            your browser preferences.
+            preferences, and analyze Service usage. You can control cookie settings through your
+            browser preferences.
           </p>
 
           <h2>9. Children&apos;s Privacy</h2>
           <p>
-            The Service is not directed to children under 13. We do not knowingly collect
-            personal information from children under 13. If we become aware of such collection,
-            we will take steps to delete the information.
+            The Service is not directed to children under 13. We do not knowingly collect personal
+            information from children under 13. If we become aware of such collection, we will take
+            steps to delete the information.
           </p>
 
           <h2>10. Changes to This Policy</h2>
@@ -139,9 +147,8 @@ export default function PrivacyPage() {
 
           <h2>11. Contact</h2>
           <p>
-            If you have questions about this Privacy Policy or wish to exercise your data
-            rights, please contact us through the support channels available in the Service
-            dashboard.
+            If you have questions about this Privacy Policy or wish to exercise your data rights,
+            please contact us through the support channels available in the Service dashboard.
           </p>
         </div>
       </div>

@@ -23,11 +23,11 @@ export type SubscriptionStatus = 'active' | 'canceled' | 'expired' | 'trial' | '
  */
 export interface UserRole {
   id?: number
-  name: string              // e.g. 'Client', 'Sub User', 'Admin'
-  home_page: string         // e.g. '/qrcodes', '/dashboard/system/status'
-  super_admin: boolean | number  // truthy = bypass all permissions
-  read_only?: boolean | number   // cannot be edited/deleted in UI
-  permissions: PermissionObject[]  // full permission objects from API
+  name: string // e.g. 'Client', 'Sub User', 'Admin'
+  home_page: string // e.g. '/qrcodes', '/dashboard/system/status'
+  super_admin: boolean | number // truthy = bypass all permissions
+  read_only?: boolean | number // cannot be edited/deleted in UI
+  permissions: PermissionObject[] // full permission objects from API
   permission_count?: number
   user_count?: number
   created_at?: string
@@ -77,6 +77,8 @@ export interface User {
     qr_codes_limit?: number | null
     scans_limit?: number | null
   }
+  /** Transactions loaded by backend for admin user list */
+  transactions?: { id: number; user_id?: number; status?: string; amount?: number }[]
   // Computed/convenience properties (set by client-side logic)
   role?: string
   permissions?: PermissionSlug[]

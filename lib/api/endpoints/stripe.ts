@@ -65,6 +65,11 @@ export async function removePaymentMethod(paymentMethodId: string) {
   return apiClient.post(`/stripe/payment-methods/${paymentMethodId}`, { _method: 'DELETE' })
 }
 
+// T223: Update/add a new payment method
+export async function updatePaymentMethod(paymentMethodId: string) {
+  return apiClient.post('/stripe/payment-methods/update', { payment_method_id: paymentMethodId })
+}
+
 // ── Invoices ─────────────────────────────────────────────────────────────
 
 export async function getInvoices(limit: number = 10) {

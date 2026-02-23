@@ -49,13 +49,21 @@ import { VCardPlusDataForm } from './forms/VCardPlusDataForm'
 import { UPIStaticDataForm } from './forms/UPIStaticDataForm'
 import { BiolinksDataForm } from './forms/BiolinksDataForm'
 import { BusinessProfileDataForm } from './forms/BusinessProfileDataForm'
+import { DomainSelector } from './DomainSelector'
 
 interface QRCodeFormProps {
   initialType?: string
   initialName?: string
   initialData?: any
   initialCustomization?: any
-  onSubmit: (data: { name: string; type: string; data: any; customization?: any }) => void
+  initialDomainId?: string
+  onSubmit: (data: {
+    name: string
+    type: string
+    data: any
+    customization?: any
+    domainId?: string
+  }) => void
   submitLabel?: string
   isSubmitting?: boolean
 }
@@ -65,6 +73,7 @@ export function QRCodeForm({
   initialName = '',
   initialData,
   initialCustomization,
+  initialDomainId = '',
   onSubmit,
   submitLabel = 'Create QR Code',
   isSubmitting = false,
@@ -73,10 +82,11 @@ export function QRCodeForm({
   const [type, setType] = useState(initialType)
   const [data, setData] = useState(initialData)
   const [customization, setCustomization] = useState(initialCustomization || {})
+  const [domainId, setDomainId] = useState(initialDomainId)
 
   const handleSubmit = () => {
     if (!name || !data) return
-    onSubmit({ name, type, data, customization })
+    onSubmit({ name, type, data, customization, domainId: domainId || undefined })
   }
 
   const renderDataForm = () => {
@@ -194,19 +204,27 @@ export function QRCodeForm({
           id="name"
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={e => setName(e.target.value)}
           placeholder="e.g., My Website Link"
           className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
       </div>
 
+      {/* T182: Domain Selection */}
+      <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <DomainSelector value={domainId} onChange={setDomainId} />
+      </div>
+
       {/* Type Selector */}
       {!initialType && (
         <div className="rounded-lg border border-gray-200 bg-white p-6">
-          <QRCodeTypeSelector value={type} onChange={(newType) => {
-            setType(newType)
-            setData(null) // Reset data when type changes
-          }} />
+          <QRCodeTypeSelector
+            value={type}
+            onChange={newType => {
+              setType(newType)
+              setData(null) // Reset data when type changes
+            }}
+          />
         </div>
       )}
 

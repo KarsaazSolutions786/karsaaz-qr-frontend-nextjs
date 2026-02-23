@@ -14,6 +14,7 @@ export interface ListQRCodesParams {
   statuses?: string[] // Multiple statuses filter
   search_archived?: boolean // true = show archived QRs, false = show active QRs
   folderId?: string | null // Folder filter
+  domainId?: string // T184: Domain filter
   tags?: string[] // Tags filter
   createdFrom?: string // ISO 8601
   createdTo?: string // ISO 8601
@@ -42,7 +43,9 @@ interface BackendPaginatedResponse<T> {
 }
 
 // Transform backend response to frontend format
-function transformPaginatedResponse<T>(response: BackendPaginatedResponse<T>): PaginatedResponse<T> {
+function transformPaginatedResponse<T>(
+  response: BackendPaginatedResponse<T>
+): PaginatedResponse<T> {
   // Handle case where response or pagination is undefined
   if (!response || !response.pagination) {
     return {
@@ -55,7 +58,7 @@ function transformPaginatedResponse<T>(response: BackendPaginatedResponse<T>): P
       },
     }
   }
-  
+
   return {
     data: response.data || [],
     pagination: {
@@ -135,14 +138,12 @@ export const qrcodesAPI = {
 
       // Build query params using backend's expected param names
       const queryParams: Record<string, unknown> = {
-        ...restParams,                          // page, type, status, tags, etc.
-        page_size: perPage,                     // backend uses page_size
-        keyword: search,                        // backend uses keyword
-        folder_id: folderId,                    // backend uses folder_id
+        ...restParams, // page, type, status, tags, etc.
+        page_size: perPage, // backend uses page_size
+        keyword: search, // backend uses keyword
+        folder_id: folderId, // backend uses folder_id
         // Convert sortBy+sortOrder to Vue-compatible sort param (-field = desc)
-        sort: sortBy
-          ? (sortOrder === 'desc' ? `-${sortBy}` : sortBy)
-          : undefined,
+        sort: sortBy ? (sortOrder === 'desc' ? `-${sortBy}` : sortBy) : undefined,
         ...(scansMin != null ? { scans_min: scansMin } : {}),
         ...(scansMax != null ? { scans_max: scansMax } : {}),
         ...(createdFrom ? { created_from: createdFrom } : {}),
@@ -167,7 +168,7 @@ export const qrcodesAPI = {
         console.warn('No data in response')
         return transformPaginatedResponse({ data: [], pagination: null as any })
       }
-      
+
       return transformPaginatedResponse(response.data)
     } catch (error) {
       console.error('QR Codes fetch error:', error)

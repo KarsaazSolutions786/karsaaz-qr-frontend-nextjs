@@ -21,7 +21,7 @@ export function OrangeBillingForm({ settings, onChange }: Props) {
           id="orange-merchant-key"
           type="password"
           value={settings.merchant_key ?? ''}
-          onChange={(e) => onChange('merchant_key', e.target.value)}
+          onChange={e => onChange('merchant_key', e.target.value)}
           placeholder="Enter Merchant Key"
           className={inputClass}
         />
@@ -34,7 +34,7 @@ export function OrangeBillingForm({ settings, onChange }: Props) {
           id="orange-api-url"
           type="text"
           value={settings.api_url ?? ''}
-          onChange={(e) => onChange('api_url', e.target.value)}
+          onChange={e => onChange('api_url', e.target.value)}
           placeholder="Enter API URL"
           className={inputClass}
         />
@@ -47,8 +47,47 @@ export function OrangeBillingForm({ settings, onChange }: Props) {
           id="orange-return-url"
           type="text"
           value={settings.return_url ?? ''}
-          onChange={(e) => onChange('return_url', e.target.value)}
+          onChange={e => onChange('return_url', e.target.value)}
           placeholder="Enter Return URL"
+          className={inputClass}
+        />
+      </div>
+      <div>
+        <label htmlFor="orange-cancel-url" className="block text-sm font-medium text-gray-700">
+          Cancel URL
+        </label>
+        <input
+          id="orange-cancel-url"
+          type="text"
+          value={settings.cancel_url ?? ''}
+          onChange={e => onChange('cancel_url', e.target.value)}
+          placeholder="Enter Cancel URL"
+          className={inputClass}
+        />
+      </div>
+      <div>
+        <label htmlFor="orange-country-code" className="block text-sm font-medium text-gray-700">
+          Country Code
+        </label>
+        <input
+          id="orange-country-code"
+          type="text"
+          value={settings.country_code ?? ''}
+          onChange={e => onChange('country_code', e.target.value)}
+          placeholder="e.g. BF, CI, SN"
+          className={inputClass}
+        />
+      </div>
+      <div>
+        <label htmlFor="orange-currency" className="block text-sm font-medium text-gray-700">
+          Currency
+        </label>
+        <input
+          id="orange-currency"
+          type="text"
+          value={settings.currency ?? ''}
+          onChange={e => onChange('currency', e.target.value)}
+          placeholder="e.g. XOF"
           className={inputClass}
         />
       </div>

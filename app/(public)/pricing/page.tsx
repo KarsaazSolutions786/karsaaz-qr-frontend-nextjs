@@ -1,9 +1,14 @@
 import { Metadata } from 'next'
 import { PricingPageContent } from '@/components/features/subscriptions/PricingPageContent'
+import { generateOGMetadata } from '@/lib/utils/og-metadata'
 
 export const metadata: Metadata = {
-  title: 'Pricing - Karsaaz QR',
-  description: 'Choose the perfect plan for your QR code needs',
+  ...generateOGMetadata(
+    'Pricing - Karsaaz QR',
+    'Choose the perfect plan for your QR code needs. Simple, transparent pricing with free tier available.',
+    undefined,
+    '/pricing'
+  ),
 }
 
 export default function PricingPage() {
@@ -32,11 +37,10 @@ export default function PricingPage() {
           </h2>
           <dl className="mt-8 space-y-6">
             <div>
-              <dt className="text-lg font-medium text-gray-900">
-                Can I change my plan later?
-              </dt>
+              <dt className="text-lg font-medium text-gray-900">Can I change my plan later?</dt>
               <dd className="mt-2 text-base text-gray-600">
-                Yes! You can upgrade or downgrade your plan at any time. Changes take effect immediately, and we'll prorate the charges.
+                Yes! You can upgrade or downgrade your plan at any time. Changes take effect
+                immediately, and we'll prorate the charges.
               </dd>
             </div>
             <div>
@@ -44,15 +48,15 @@ export default function PricingPage() {
                 What payment methods do you accept?
               </dt>
               <dd className="mt-2 text-base text-gray-600">
-                We accept all major credit cards (Visa, Mastercard, American Express) via Stripe's secure payment processing.
+                We accept all major credit cards (Visa, Mastercard, American Express) via Stripe's
+                secure payment processing.
               </dd>
             </div>
             <div>
-              <dt className="text-lg font-medium text-gray-900">
-                Can I cancel my subscription?
-              </dt>
+              <dt className="text-lg font-medium text-gray-900">Can I cancel my subscription?</dt>
               <dd className="mt-2 text-base text-gray-600">
-                Yes, you can cancel at any time. You'll continue to have access until the end of your billing period, with no refunds for partial months.
+                Yes, you can cancel at any time. You'll continue to have access until the end of
+                your billing period, with no refunds for partial months.
               </dd>
             </div>
           </dl>

@@ -1,24 +1,29 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Providers } from '@/lib/providers'
+import { generateOGMetadata } from '@/lib/utils/og-metadata'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Karsaaz QR - QR Code Management Platform',
-  description: 'Create, manage, and track QR codes with advanced analytics',
+  ...generateOGMetadata(
+    'Karsaaz QR - QR Code Management Platform',
+    'Create, manage, and track QR codes with advanced analytics',
+    undefined,
+    '/'
+  ),
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
+      <head />
       <body className={inter.className}>
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-md focus:outline-none">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-md focus:outline-none"
+        >
           Skip to main content
         </a>
         <Providers>{children}</Providers>

@@ -1,21 +1,14 @@
 import apiClient from '../client'
+import { normalizePagination, mapSearchParams, type PaginatedResponse } from '../pagination'
 import type { Transaction } from '@/types/entities/transaction'
 
-export interface TransactionListResponse {
-  data: Transaction[]
-  pagination: {
-    total: number
-    perPage: number
-    currentPage: number
-    lastPage: number
-  }
-}
+export type TransactionListResponse = PaginatedResponse<Transaction>
 
 export const transactionsAPI = {
   // Get all transactions
   getAll: async (params?: { page?: number; search?: string }) => {
-    const response = await apiClient.get<TransactionListResponse>('/transactions', { params })
-    return response.data
+    const response = await apiClient.get('/transactions', { params: mapSearchParams(params) })
+    return normalizePagination<Transaction>(response.data)
   },
 
   // Get single transaction

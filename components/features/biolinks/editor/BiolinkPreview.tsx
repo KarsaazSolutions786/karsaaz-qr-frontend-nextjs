@@ -26,6 +26,14 @@ import ListBlock from '../blocks/ListBlock'
 import ImageGridBlock from '../blocks/ImageGridBlock'
 import AudioBlock from '../blocks/AudioBlock'
 import ProfileBlock from '../blocks/ProfileBlock'
+import CustomCodeBlock from '../blocks/CustomCodeBlock'
+import CopyableDataBlock from '../blocks/CopyableDataBlock'
+import FileBlock from '../blocks/FileBlock'
+import InformationPopupBlock from '../blocks/InformationPopupBlock'
+import ParagraphBlock from '../blocks/ParagraphBlock'
+import ShareBlock from '../blocks/ShareBlock'
+import UPIBlock from '../blocks/UPIBlock'
+import { blockRegistry } from '../block-registry'
 import SimplePagination from '@/components/common/SimplePagination'
 
 interface BiolinkPreviewProps {
@@ -50,7 +58,7 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
   const showPagination = totalBlocks > BLOCKS_PER_PAGE
 
   const handleLoadMore = () => {
-    setVisibleBlocksCount((prev) => Math.min(prev + BLOCKS_PER_PAGE, totalBlocks))
+    setVisibleBlocksCount(prev => Math.min(prev + BLOCKS_PER_PAGE, totalBlocks))
   }
 
   const renderBlock = (block: BlockData) => {
@@ -103,8 +111,33 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
         return <AudioBlock key={block.id} block={block} />
       case 'profile':
         return <ProfileBlock key={block.id} block={block} />
-      default:
+      case 'custom-code':
+        return <CustomCodeBlock key={block.id} block={block} />
+      case 'copyable-data':
+        return <CopyableDataBlock key={block.id} block={block} />
+      case 'file':
+        return <FileBlock key={block.id} block={block} />
+      case 'information-popup':
+        return <InformationPopupBlock key={block.id} block={block} />
+      case 'paragraph':
+        return <ParagraphBlock key={block.id} block={block} />
+      case 'share':
+        return <ShareBlock key={block.id} block={block} />
+      case 'upi':
+        return <UPIBlock key={block.id} block={block} />
+      default: {
+        // Check block registry for dynamic/custom block types
+        const dynamicBlock = block as BlockData
+        const definition = blockRegistry[dynamicBlock.type]
+        if (definition) {
+          return (
+            <div key={dynamicBlock.id} className="rounded-lg border p-4 text-sm text-gray-500">
+              Unsupported block: {definition.label}
+            </div>
+          )
+        }
         return null
+      }
     }
   }
 
@@ -137,7 +170,7 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
           </div>
         ) : (
           <>
-            {visibleBlocks.map((block) => renderBlock(block))}
+            {visibleBlocks.map(block => renderBlock(block))}
             {showPagination && (
               <div className="pt-4">
                 <SimplePagination

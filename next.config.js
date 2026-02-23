@@ -9,15 +9,21 @@ const nextConfig = {
   swcMinify: true,
   images: {
     domains: ['app.karsaazqr.com', 'localhost'],
+    formats: ['image/avif', 'image/webp'],
   },
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
   },
   experimental: {
+    missingSuspenseWithCSRBailout: false,
     serverActions: {
       bodySizeLimit: '5mb',
     },
+    optimizePackageImports: ['lucide-react', '@tanstack/react-query'],
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
   async headers() {
     return [

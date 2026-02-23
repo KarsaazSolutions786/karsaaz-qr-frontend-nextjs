@@ -42,14 +42,15 @@ function MagicUrlModal({ url, onClose }: { url: string; onClose: () => void }) {
           </button>
         </div>
         <p className="text-sm text-gray-600 mb-3">
-          This URL is valid for <strong>24 hours</strong>. Share it with the user for one-time access.
+          This URL is valid for <strong>24 hours</strong>. Share it with the user for one-time
+          access.
         </p>
         <div className="flex gap-2">
           <input
             readOnly
             value={url}
             className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700 bg-gray-50 select-all"
-            onClick={(e) => (e.target as HTMLInputElement).select()}
+            onClick={e => (e.target as HTMLInputElement).select()}
           />
           <button
             onClick={handleCopy}
@@ -97,9 +98,7 @@ function FilterModal({
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Number of QR Codes
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Number of QR Codes</label>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-gray-500 mb-1">Min</label>
@@ -107,7 +106,7 @@ function FilterModal({
                 type="number"
                 min={0}
                 value={min}
-                onChange={(e) => setMin(e.target.value)}
+                onChange={e => setMin(e.target.value)}
                 placeholder="0"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
@@ -118,7 +117,7 @@ function FilterModal({
                 type="number"
                 min={0}
                 value={max}
-                onChange={(e) => setMax(e.target.value)}
+                onChange={e => setMax(e.target.value)}
                 placeholder="No limit"
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
@@ -159,15 +158,16 @@ export function UserListContent({ paying }: UserListContentProps) {
   const [advancedFilters, setAdvancedFilters] = useState<UserFilters>({})
   const [balanceUser, setBalanceUser] = useState<User | null>(null)
 
-  // Build API params - match backend expectations
-  const qrcodesFilter = (filters.minQRCodes || filters.maxQRCodes)
-    ? JSON.stringify({
-        ...(filters.minQRCodes ? { min: Number(filters.minQRCodes) } : {}),
-        ...(filters.maxQRCodes ? { max: Number(filters.maxQRCodes) } : {}),
-      })
-    : undefined
+  // Build API params - match backend expectations (uses 'from'/'to' keys)
+  const qrcodesFilter =
+    filters.minQRCodes || filters.maxQRCodes
+      ? JSON.stringify({
+          ...(filters.minQRCodes ? { from: Number(filters.minQRCodes) } : {}),
+          ...(filters.maxQRCodes ? { to: Number(filters.maxQRCodes) } : {}),
+        })
+      : undefined
 
-  const { data, isLoading } = useUsers({
+  const { data, isLoading, isError, error } = useUsers({
     page,
     per_page: perPage,
     search: search || undefined,
@@ -175,6 +175,10 @@ export function UserListContent({ paying }: UserListContentProps) {
     number_of_qrcodes: qrcodesFilter,
     ...advancedFilters,
   })
+
+  // Safely extract users array and pagination from API response
+  const users: User[] = data?.data ?? []
+  const pagination = data?.pagination ?? { total: 0, perPage: 10, currentPage: 1, lastPage: 1 }
 
   const deleteMutation = useDeleteUser()
   const actAsMutation = useActAsUser()
@@ -211,7 +215,11 @@ export function UserListContent({ paying }: UserListContentProps) {
   }
 
   const handleActAs = async (user: User) => {
-    if (confirm(`Impersonate "${user.name || user.email}"? You will be redirected to their dashboard.`)) {
+    if (
+      confirm(
+        `Impersonate "${user.name || user.email}"? You will be redirected to their dashboard.`
+      )
+    ) {
       setPendingAction(`actas-${user.id}`)
       try {
         await actAsMutation.mutateAsync(Number(user.id))
@@ -222,7 +230,9 @@ export function UserListContent({ paying }: UserListContentProps) {
   }
 
   const handleResetRole = async (user: User) => {
-    if (confirm(`Reset role for "${user.name || user.email}"? This will clear their assigned role.`)) {
+    if (
+      confirm(`Reset role for "${user.name || user.email}"? This will clear their assigned role.`)
+    ) {
       setPendingAction(`resetrole-${user.id}`)
       try {
         await resetRoleMutation.mutateAsync(Number(user.id))
@@ -281,7 +291,7 @@ export function UserListContent({ paying }: UserListContentProps) {
       {/* Paying Filter Tabs */}
       <div className="mt-6 border-b border-gray-200">
         <nav className="-mb-px flex gap-6">
-          {tabs.map((tab) => (
+          {tabs.map(tab => (
             <Link
               key={tab.href}
               href={tab.href}
@@ -303,7 +313,7 @@ export function UserListContent({ paying }: UserListContentProps) {
           type="search"
           placeholder="Search by name or email..."
           value={search}
-          onChange={(e) => {
+          onChange={e => {
             setSearch(e.target.value)
             setPage(1)
           }}
@@ -339,26 +349,69 @@ export function UserListContent({ paying }: UserListContentProps) {
             <Loader2 className="inline-block h-8 w-8 animate-spin text-gray-400" />
             <p className="mt-2 text-sm text-gray-600">Loading users...</p>
           </div>
-        ) : data && data.data.length > 0 ? (
+        ) : isError ? (
+          <div className="text-center py-12">
+            <svg
+              className="mx-auto h-12 w-12 text-red-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">Failed to load users</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              {(error as Error)?.message || 'An error occurred while fetching user data.'}
+            </p>
+          </div>
+        ) : users.length > 0 ? (
           <>
             <div className="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="py-3.5 pl-4 pr-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide w-12">ID</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Name</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Email</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Mobile</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Role</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">QRs</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Scans</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Main User</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Created</th>
-                    <th className="relative py-3.5 pl-3 pr-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide w-12">
+                      ID
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      Name
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      Email
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      Mobile
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      Role
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      Plan
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      QRs
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      Scans
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      Main User
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      Created
+                    </th>
+                    <th className="relative py-3.5 pl-3 pr-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {data.data.map((user: User) => (
+                  {users.map((user: User) => (
                     <tr key={user.id} className="hover:bg-gray-50">
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-500">
                         {user.id}
@@ -377,6 +430,17 @@ export function UserListContent({ paying }: UserListContentProps) {
                           {user.roles?.[0]?.name || user.role || '—'}
                         </span>
                       </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm">
+                        {user.plan?.name || (user.transactions && user.transactions.length > 0) ? (
+                          <span className="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">
+                            {user.plan?.name || 'Paid'}
+                          </span>
+                        ) : (
+                          <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-500">
+                            Free / Trial
+                          </span>
+                        )}
+                      </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {user.qrcodes_count ?? '—'}
                       </td>
@@ -387,7 +451,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                         {user.parent_user?.name || '—'}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {(user.created_at || user.createdAt)
+                        {user.created_at || user.createdAt
                           ? new Date(user.created_at || user.createdAt!).toLocaleDateString()
                           : '—'}
                       </td>
@@ -474,39 +538,41 @@ export function UserListContent({ paying }: UserListContentProps) {
             </div>
 
             {/* Pagination */}
-            {data.pagination && (
+            {pagination.lastPage > 1 && (
               <div className="mt-6 flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <span>Rows per page:</span>
                   <select
                     value={perPage}
-                    onChange={(e) => handlePerPageChange(Number(e.target.value))}
+                    onChange={e => handlePerPageChange(Number(e.target.value))}
                     className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
-                    {[10, 15, 25, 50, 100].map((n) => (
-                      <option key={n} value={n}>{n}</option>
+                    {[10, 15, 25, 50, 100].map(n => (
+                      <option key={n} value={n}>
+                        {n}
+                      </option>
                     ))}
                   </select>
                   <span className="ml-2">
-                    {data.pagination.total > 0
-                      ? `${((page - 1) * perPage) + 1}–${Math.min(page * perPage, data.pagination.total)} of ${data.pagination.total}`
+                    {pagination.total > 0
+                      ? `${(page - 1) * perPage + 1}–${Math.min(page * perPage, pagination.total)} of ${pagination.total}`
                       : '0 results'}
                   </span>
                 </div>
                 <div className="flex gap-2">
                   <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page === 1}
                     className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Previous
                   </button>
                   <span className="flex items-center px-3 text-sm text-gray-600">
-                    Page {page} of {data.pagination.lastPage}
+                    Page {page} of {pagination.lastPage}
                   </span>
                   <button
-                    onClick={() => setPage((p) => p + 1)}
-                    disabled={page >= data.pagination.lastPage}
+                    onClick={() => setPage(p => p + 1)}
+                    disabled={page >= pagination.lastPage}
                     className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     Next
@@ -514,11 +580,27 @@ export function UserListContent({ paying }: UserListContentProps) {
                 </div>
               </div>
             )}
+            {/* Always show total count */}
+            {pagination.lastPage <= 1 && pagination.total > 0 && (
+              <div className="mt-4 text-sm text-gray-500 text-center">
+                Showing {pagination.total} user{pagination.total !== 1 ? 's' : ''}
+              </div>
+            )}
           </>
         ) : (
           <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
             <h3 className="mt-2 text-sm font-medium text-gray-900">No users found</h3>
             <p className="mt-1 text-sm text-gray-500">
@@ -536,9 +618,7 @@ export function UserListContent({ paying }: UserListContentProps) {
           onClose={() => setShowFilterModal(false)}
         />
       )}
-      {magicUrl && (
-        <MagicUrlModal url={magicUrl} onClose={() => setMagicUrl(null)} />
-      )}
+      {magicUrl && <MagicUrlModal url={magicUrl} onClose={() => setMagicUrl(null)} />}
       {balanceUser && (
         <UserBalanceModal
           user={balanceUser}
