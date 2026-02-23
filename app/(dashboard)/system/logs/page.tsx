@@ -1,118 +1,127 @@
 'use client'
 
-import { useState } from 'react'
-
-type LogLevel = 'info' | 'warning' | 'error' | 'debug'
-
-interface LogEntry {
-  id: number
-  timestamp: string
-  level: LogLevel
-  message: string
-  source: string
-}
-
-const mockLogs: LogEntry[] = [
-  { id: 1, timestamp: '2026-02-18 14:32:05', level: 'info', message: 'User authentication successful for admin@karsaaz.com', source: 'AuthService' },
-  { id: 2, timestamp: '2026-02-18 14:30:12', level: 'warning', message: 'Rate limit threshold reached for IP 192.168.1.45 (85/100 requests)', source: 'RateLimiter' },
-  { id: 3, timestamp: '2026-02-18 14:28:44', level: 'error', message: 'Failed to send email notification: SMTP connection timeout after 30s', source: 'MailService' },
-  { id: 4, timestamp: '2026-02-18 14:25:33', level: 'info', message: 'QR code batch generation completed — 150 codes processed in 4.2s', source: 'QRGenerator' },
-  { id: 5, timestamp: '2026-02-18 14:22:18', level: 'debug', message: 'Cache miss for key user:profile:4821, fetching from database', source: 'CacheManager' },
-  { id: 6, timestamp: '2026-02-18 14:20:01', level: 'info', message: 'Scheduled task "cleanup_expired_sessions" executed successfully', source: 'TaskScheduler' },
-  { id: 7, timestamp: '2026-02-18 14:15:47', level: 'warning', message: 'Database connection pool usage at 78% (39/50 connections)', source: 'DatabasePool' },
-  { id: 8, timestamp: '2026-02-18 14:10:09', level: 'error', message: 'Payment webhook signature verification failed for event evt_3Ks8jP', source: 'PaymentGateway' },
-]
+import { useState, useEffect, useRef } from 'react'
+import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 
 export default function SystemLogsPage() {
-  const [levelFilter, setLevelFilter] = useState<'all' | LogLevel>('all')
+  const [logContent, setLogContent] = useState('')
+  const [fileSize, setFileSize] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+  const [feedback, setFeedback] = useState<string | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const filteredLogs = levelFilter === 'all'
-    ? mockLogs
-    : mockLogs.filter((log) => log.level === levelFilter)
+  const showFeedback = (msg: string) => {
+    setFeedback(msg)
+    setTimeout(() => setFeedback(null), 3000)
+  }
 
-  const levelBadge = (level: LogLevel) => {
-    switch (level) {
-      case 'info': return 'bg-blue-50 text-blue-700'
-      case 'warning': return 'bg-yellow-50 text-yellow-700'
-      case 'error': return 'bg-red-50 text-red-700'
-      case 'debug': return 'bg-gray-100 text-gray-600'
+  const fetchLogs = async () => {
+    setIsLoading(true)
+    try {
+      const data = await systemConfigsAPI.getLogs()
+      setLogContent(data.content || '')
+      setFileSize(data.size || 0)
+      // Auto-scroll to bottom
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.scrollTop = textareaRef.current.scrollHeight
+        }
+      }, 100)
+    } catch {
+      setLogContent('Failed to load logs.')
+    } finally {
+      setIsLoading(false)
     }
+  }
+
+  useEffect(() => {
+    fetchLogs()
+  }, [])
+
+  const handleDownload = async () => {
+    try {
+      const blob = await systemConfigsAPI.downloadLogFile()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `system-logs-${new Date().toISOString().split('T')[0]}.log`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      showFeedback('Failed to download log file.')
+    }
+  }
+
+  const handleClear = async () => {
+    if (!confirm('Are you sure you want to clear the log file? This cannot be undone.')) return
+    try {
+      await systemConfigsAPI.clearLogFile()
+      setLogContent('')
+      setFileSize(0)
+      showFeedback('Log file cleared successfully.')
+    } catch {
+      showFeedback('Failed to clear log file.')
+    }
+  }
+
+  const formatSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">System Logs</h1>
-        <p className="mt-2 text-sm text-gray-600">View system activity and error logs</p>
-      </div>
-
-      {/* Filters */}
-      <div className="mt-6 flex flex-wrap items-center gap-4">
+      <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Log Level</label>
-          <select
-            value={levelFilter}
-            onChange={(e) => setLevelFilter(e.target.value as 'all' | LogLevel)}
-            className="mt-1 block w-40 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          <h1 className="text-3xl font-bold text-gray-900">System Logs</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            View system activity and error logs
+            {fileSize > 0 && <span className="ml-2 text-gray-400">({formatSize(fileSize)})</span>}
+          </p>
+        </div>
+        <div className="mt-4 flex items-center gap-3 sm:mt-0">
+          {feedback && <span className="text-sm font-medium text-green-600">{feedback}</span>}
+          <button
+            type="button"
+            onClick={fetchLogs}
+            disabled={isLoading}
+            className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50"
           >
-            <option value="all">All Levels</option>
-            <option value="info">Info</option>
-            <option value="warning">Warning</option>
-            <option value="error">Error</option>
-            <option value="debug">Debug</option>
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">From</label>
-          <input
-            type="date"
-            defaultValue="2026-02-18"
-            className="mt-1 block rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">To</label>
-          <input
-            type="date"
-            defaultValue="2026-02-18"
-            className="mt-1 block rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
+            {isLoading ? 'Loading…' : 'Refresh'}
+          </button>
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={!logContent}
+            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50"
+          >
+            Download
+          </button>
+          <button
+            type="button"
+            onClick={handleClear}
+            disabled={!logContent}
+            className="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50"
+          >
+            Clear Logs
+          </button>
         </div>
       </div>
 
-      {/* Table */}
       <div className="mt-6 overflow-hidden rounded-lg bg-white shadow">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Timestamp</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Level</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Message</th>
-              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Source</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {filteredLogs.map((log) => (
-              <tr key={log.id}>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 font-mono">{log.timestamp}</td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${levelBadge(log.level)}`}>
-                    {log.level.charAt(0).toUpperCase() + log.level.slice(1)}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-900 max-w-md truncate">{log.message}</td>
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{log.source}</td>
-              </tr>
-            ))}
-            {filteredLogs.length === 0 && (
-              <tr>
-                <td colSpan={4} className="px-6 py-10 text-center text-sm text-gray-500">
-                  No log entries match the selected filter.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        {isLoading ? (
+          <div className="flex min-h-96 items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+          </div>
+        ) : (
+          <textarea
+            ref={textareaRef}
+            readOnly
+            value={logContent || 'No logs available.'}
+            className="h-[600px] w-full resize-none border-0 bg-gray-900 p-6 font-mono text-xs leading-relaxed text-green-400 focus:outline-none"
+          />
+        )}
       </div>
     </div>
   )

@@ -111,6 +111,8 @@ export default async function UniversalQRPage({
     'app-download': `/app/${actualSlug}`,
     app: `/app/${actualSlug}`,
     download: `/app/${actualSlug}`,
+    'file-upload': `/file-upload/${actualSlug}`,
+    file: `/file-upload/${actualSlug}`,
   };
 
   // Get the redirect path for this QR type

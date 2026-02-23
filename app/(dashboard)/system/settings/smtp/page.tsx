@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
+import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 
 const CONFIG_KEYS = [
   'mail.mailers.smtp.host',
@@ -21,6 +22,11 @@ export default function SmtpSettingsPage() {
   const { mutateAsync: save, isPending: isSaving, error } = useSaveSystemConfigs(CONFIG_KEYS)
   const [formData, setFormData] = useState<Record<string, string>>({})
   const [saved, setSaved] = useState(false)
+  const [testEmail, setTestEmail] = useState('')
+  const [testSubject, setTestSubject] = useState('SMTP Test Email')
+  const [testMessage, setTestMessage] = useState('This is a test email from Karsaaz QR.')
+  const [testResult, setTestResult] = useState<{ success: boolean; debug?: string } | null>(null)
+  const [isTesting, setIsTesting] = useState(false)
 
   useEffect(() => {
     if (configs) {
@@ -187,6 +193,77 @@ export default function SmtpSettingsPage() {
           </button>
         </div>
       </form>
+
+      {/* SMTP Test Section */}
+      <section className="mt-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">Test SMTP Connection</h2>
+        <p className="mb-4 text-sm text-gray-600">
+          Send a test email to verify your SMTP settings are working correctly.
+        </p>
+        <div className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Recipient Email</label>
+            <input
+              type="email"
+              value={testEmail}
+              onChange={(e) => setTestEmail(e.target.value)}
+              placeholder="test@example.com"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Subject</label>
+            <input
+              type="text"
+              value={testSubject}
+              onChange={(e) => setTestSubject(e.target.value)}
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Message</label>
+            <textarea
+              value={testMessage}
+              onChange={(e) => setTestMessage(e.target.value)}
+              rows={3}
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+          <button
+            type="button"
+            disabled={isTesting || !testEmail}
+            onClick={async () => {
+              setIsTesting(true)
+              setTestResult(null)
+              try {
+                const result = await systemConfigsAPI.testSmtp({
+                  email: testEmail,
+                  subject: testSubject,
+                  message: testMessage,
+                })
+                setTestResult(result)
+              } catch {
+                setTestResult({ success: false, debug: 'Failed to send test email. Check your settings and try again.' })
+              } finally {
+                setIsTesting(false)
+              }
+            }}
+            className="rounded-md bg-green-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
+          >
+            {isTesting ? 'Sending…' : 'Send Test Email'}
+          </button>
+          {testResult && (
+            <div className={`mt-4 rounded-md p-4 text-sm ${testResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+              <p className="font-medium">{testResult.success ? '✅ Test email sent successfully!' : '❌ Failed to send test email'}</p>
+              {testResult.debug && (
+                <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded bg-gray-100 p-3 text-xs text-gray-700">
+                  {testResult.debug}
+                </pre>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   )
 }

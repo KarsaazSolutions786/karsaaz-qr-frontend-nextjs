@@ -38,6 +38,17 @@ import { DynamicSMSDataForm } from './forms/DynamicSMSDataForm'
 import { GoogleReviewDataForm } from './forms/GoogleReviewDataForm'
 import { FileUploadDataForm } from './forms/FileUploadDataForm'
 import { UPIDynamicDataForm } from './forms/UPIDynamicDataForm'
+import { RestaurantMenuDataForm } from './forms/RestaurantMenuDataForm'
+import { ProductCatalogueDataForm } from './forms/ProductCatalogueDataForm'
+import { ResumeDataForm } from './forms/ResumeDataForm'
+import { WebsiteBuilderDataForm } from './forms/WebsiteBuilderDataForm'
+import { BusinessReviewDataForm } from './forms/BusinessReviewDataForm'
+import { LeadFormDataForm } from './forms/LeadFormDataForm'
+import { EventDataForm } from './forms/EventDataForm'
+import { VCardPlusDataForm } from './forms/VCardPlusDataForm'
+import { UPIStaticDataForm } from './forms/UPIStaticDataForm'
+import { BiolinksDataForm } from './forms/BiolinksDataForm'
+import { BusinessProfileDataForm } from './forms/BusinessProfileDataForm'
 
 interface QRCodeFormProps {
   initialType?: string
@@ -145,6 +156,28 @@ export function QRCodeForm({
         return <FileUploadDataForm {...formProps} />
       case 'upi-dynamic':
         return <UPIDynamicDataForm {...formProps} />
+      case 'restaurant-menu':
+        return <RestaurantMenuDataForm {...formProps} />
+      case 'product-catalogue':
+        return <ProductCatalogueDataForm {...formProps} />
+      case 'resume':
+        return <ResumeDataForm {...formProps} />
+      case 'website-builder':
+        return <WebsiteBuilderDataForm {...formProps} />
+      case 'business-review':
+        return <BusinessReviewDataForm {...formProps} />
+      case 'lead-form':
+        return <LeadFormDataForm {...formProps} />
+      case 'event':
+        return <EventDataForm {...formProps} />
+      case 'vcard-plus':
+        return <VCardPlusDataForm {...formProps} />
+      case 'upi':
+        return <UPIStaticDataForm {...formProps} />
+      case 'biolinks':
+        return <BiolinksDataForm {...formProps} />
+      case 'business-profile':
+        return <BusinessProfileDataForm {...formProps} />
       default:
         return <div className="text-sm text-gray-500">Unknown QR code type</div>
     }

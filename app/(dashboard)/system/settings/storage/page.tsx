@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
+import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 
 const CONFIG_KEYS = [
   'app.storage_type',
@@ -19,6 +20,8 @@ export default function StorageSettingsPage() {
   const { mutateAsync: save, isPending: isSaving, error } = useSaveSystemConfigs(CONFIG_KEYS)
   const [formData, setFormData] = useState<Record<string, string>>({})
   const [saved, setSaved] = useState(false)
+  const [isTesting, setIsTesting] = useState(false)
+  const [testResult, setTestResult] = useState<{ success: boolean; message?: string } | null>(null)
 
   useEffect(() => {
     if (configs) {
@@ -154,7 +157,26 @@ export default function StorageSettingsPage() {
           </section>
         )}
 
-        <div className="flex justify-end">
+        <div className="flex items-center gap-4 justify-end">
+          <button
+            type="button"
+            disabled={isTesting}
+            onClick={async () => {
+              setIsTesting(true)
+              setTestResult(null)
+              try {
+                const result = await systemConfigsAPI.testStorage()
+                setTestResult(result)
+              } catch {
+                setTestResult({ success: false, message: 'Connection test failed. Verify your storage settings.' })
+              } finally {
+                setIsTesting(false)
+              }
+            }}
+            className="rounded-md bg-green-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
+          >
+            {isTesting ? 'Testing…' : 'Test Connection'}
+          </button>
           <button
             type="submit"
             disabled={isSaving}
@@ -163,6 +185,12 @@ export default function StorageSettingsPage() {
             {isSaving ? 'Saving…' : 'Save Settings'}
           </button>
         </div>
+        {testResult && (
+          <div className={`rounded-md p-4 text-sm ${testResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+            <p className="font-medium">{testResult.success ? '✅ Storage connection successful!' : '❌ Storage connection failed'}</p>
+            {testResult.message && <p className="mt-1">{testResult.message}</p>}
+          </div>
+        )}
       </form>
     </div>
   )

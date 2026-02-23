@@ -454,6 +454,195 @@ export const createUPIDynamicQRCodeSchema = qrCodeBaseSchema.extend({
   customization: qrCustomizationSchema.optional(),
 })
 
+// Restaurant Menu QR code
+export const restaurantMenuDataSchema = z.object({
+  restaurant_name: z.string().min(1, 'Restaurant name is required'),
+  phone: z.string().optional(),
+  email: z.string().email('Invalid email').optional().or(z.literal('')),
+  website: z.string().url('Invalid URL').optional().or(z.literal('')),
+  address: z.string().optional(),
+  review_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  maps_url: z.string().optional(),
+  socialProfiles: z.string().optional(),
+  opening_hours_enabled: z.enum(['enabled', 'disabled']).default('disabled'),
+  expires_at: z.string().optional(),
+})
+
+export const createRestaurantMenuQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('restaurant-menu'),
+  data: restaurantMenuDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// Product Catalogue QR code
+export const productCatalogueDataSchema = z.object({
+  business_name: z.string().min(1, 'Business name is required'),
+  phone: z.string().optional(),
+  email: z.string().email('Invalid email').optional().or(z.literal('')),
+  website: z.string().url('Invalid URL').optional().or(z.literal('')),
+  address: z.string().optional(),
+  maps_url: z.string().optional(),
+  socialProfiles: z.string().optional(),
+  opening_hours_enabled: z.enum(['enabled', 'disabled']).default('disabled'),
+  expires_at: z.string().optional(),
+})
+
+export const createProductCatalogueQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('product-catalogue'),
+  data: productCatalogueDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// Resume QR code
+export const resumeDataSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  resume_file_id: z.string().optional(),
+  expires_at: z.string().optional(),
+})
+
+export const createResumeQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('resume'),
+  data: resumeDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// Website Builder QR code
+export const websiteBuilderDataSchema = z.object({
+  website_name: z.string().min(1, 'Website name is required'),
+  expires_at: z.string().optional(),
+})
+
+export const createWebsiteBuilderQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('website-builder'),
+  data: websiteBuilderDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// Business Review QR code
+export const businessReviewDataSchema = z.object({
+  businessName: z.string().min(1, 'Business name is required'),
+  totalNumberOfStars: z.number().min(1).default(5),
+  numberOfStarsToRedirect: z.number().min(1).default(3),
+  action: z.enum(['google_review', 'review_url']).default('google_review'),
+  show_final_review_link: z.enum(['enabled', 'disabled']).default('enabled'),
+  google_place: z.string().optional(),
+  review_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  expires_at: z.string().optional(),
+})
+
+export const createBusinessReviewQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('business-review'),
+  data: businessReviewDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// Lead Form QR code
+export const leadFormDataSchema = z.object({
+  form_name: z.string().min(1, 'Form name is required'),
+  expires_at: z.string().optional(),
+})
+
+export const createLeadFormQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('lead-form'),
+  data: leadFormDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// Event QR code
+export const eventDataSchema = z.object({
+  event_name: z.string().min(1, 'Event name is required'),
+  organizer_name: z.string().optional(),
+  description: z.string().optional(),
+  registration_url: z.string().url('Invalid URL').optional().or(z.literal('')),
+  contact_name: z.string().optional(),
+  contact_mobile: z.string().optional(),
+  contact_email: z.string().email('Invalid email').optional().or(z.literal('')),
+  location: z.string().optional(),
+  location_url: z.string().optional(),
+  timezone: z.string().optional(),
+  socialProfiles: z.string().optional(),
+  expires_at: z.string().optional(),
+})
+
+export const createEventQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('event'),
+  data: eventDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// VCard Plus QR code
+export const vcardPlusDataSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().optional(),
+  phones: z.string().optional(),
+  emails: z.string().optional(),
+  whatsapp_number: z.string().optional(),
+  company: z.string().optional(),
+  job: z.string().optional(),
+  bio: z.string().optional(),
+  website: z.string().url('Invalid URL').optional().or(z.literal('')),
+  street: z.string().optional(),
+  zip: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  country: z.string().optional(),
+  maps_url: z.string().optional(),
+  socialProfiles: z.string().optional(),
+  openingHoursEnabled: z.enum(['enabled', 'disabled']).default('disabled'),
+  expires_at: z.string().optional(),
+})
+
+export const createVCardPlusQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('vcard-plus'),
+  data: vcardPlusDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// UPI Static QR code
+export const upiStaticDataSchema = z.object({
+  payee_name: z.string().min(1, 'Payee name is required'),
+  upi_id: z.string().min(1, 'UPI ID is required'),
+  amount: z.number().min(1).optional(),
+})
+
+export const createUPIStaticQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('upi'),
+  data: upiStaticDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// Biolinks QR code (simple schema for QR wizard data step)
+export const biolinksDataSchema = z.object({
+  page_name: z.string().min(1, 'Page name is required'),
+  expires_at: z.string().optional(),
+})
+
+export const createBiolinksQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('biolinks'),
+  data: biolinksDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
+// Business Profile QR code (simple schema for QR wizard data step)
+export const businessProfileDataSchema = z.object({
+  business_name: z.string().min(1, 'Business name is required'),
+  phone: z.string().optional(),
+  email: z.string().email('Invalid email').optional().or(z.literal('')),
+  website: z.string().url('Invalid URL').optional().or(z.literal('')),
+  address: z.string().optional(),
+  description: z.string().optional(),
+  maps_url: z.string().optional(),
+  socialProfiles: z.string().optional(),
+  opening_hours_enabled: z.enum(['enabled', 'disabled']).default('disabled'),
+  expires_at: z.string().optional(),
+})
+
+export const createBusinessProfileQRCodeSchema = qrCodeBaseSchema.extend({
+  type: z.literal('business-profile'),
+  data: businessProfileDataSchema,
+  customization: qrCustomizationSchema.optional(),
+})
+
 // Union type for all QR code creation schemas
 export const createQRCodeSchema = z.discriminatedUnion('type', [
   createURLQRCodeSchema,
@@ -491,6 +680,17 @@ export const createQRCodeSchema = z.discriminatedUnion('type', [
   createGoogleReviewQRCodeSchema,
   createFileUploadQRCodeSchema,
   createUPIDynamicQRCodeSchema,
+  createRestaurantMenuQRCodeSchema,
+  createProductCatalogueQRCodeSchema,
+  createResumeQRCodeSchema,
+  createWebsiteBuilderQRCodeSchema,
+  createBusinessReviewQRCodeSchema,
+  createLeadFormQRCodeSchema,
+  createEventQRCodeSchema,
+  createVCardPlusQRCodeSchema,
+  createUPIStaticQRCodeSchema,
+  createBiolinksQRCodeSchema,
+  createBusinessProfileQRCodeSchema,
 ])
 
 export type CreateQRCodeFormData = z.infer<typeof createQRCodeSchema>

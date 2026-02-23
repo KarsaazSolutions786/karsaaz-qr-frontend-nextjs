@@ -36,6 +36,17 @@ import { DynamicSMSDataForm } from '@/components/features/qrcodes/forms/DynamicS
 import { GoogleReviewDataForm } from '@/components/features/qrcodes/forms/GoogleReviewDataForm'
 import { FileUploadDataForm } from '@/components/features/qrcodes/forms/FileUploadDataForm'
 import { UPIDynamicDataForm } from '@/components/features/qrcodes/forms/UPIDynamicDataForm'
+import { RestaurantMenuDataForm } from '@/components/features/qrcodes/forms/RestaurantMenuDataForm'
+import { ProductCatalogueDataForm } from '@/components/features/qrcodes/forms/ProductCatalogueDataForm'
+import { ResumeDataForm } from '@/components/features/qrcodes/forms/ResumeDataForm'
+import { WebsiteBuilderDataForm } from '@/components/features/qrcodes/forms/WebsiteBuilderDataForm'
+import { BusinessReviewDataForm } from '@/components/features/qrcodes/forms/BusinessReviewDataForm'
+import { LeadFormDataForm } from '@/components/features/qrcodes/forms/LeadFormDataForm'
+import { EventDataForm } from '@/components/features/qrcodes/forms/EventDataForm'
+import { VCardPlusDataForm } from '@/components/features/qrcodes/forms/VCardPlusDataForm'
+import { UPIStaticDataForm } from '@/components/features/qrcodes/forms/UPIStaticDataForm'
+import { BiolinksDataForm } from '@/components/features/qrcodes/forms/BiolinksDataForm'
+import { BusinessProfileDataForm } from '@/components/features/qrcodes/forms/BusinessProfileDataForm'
 import { QRCodePreview } from '@/components/qr/QRCodePreview'
 import { encodeQRData } from '@/lib/utils/qr-data-encoder'
 import { QR_TYPES } from '@/lib/constants/qr-types'
@@ -142,6 +153,28 @@ export default function Step1DataEntry({
         return <FileUploadDataForm {...commonProps} />
       case 'upi-dynamic':
         return <UPIDynamicDataForm {...commonProps} />
+      case 'restaurant-menu':
+        return <RestaurantMenuDataForm {...commonProps} />
+      case 'product-catalogue':
+        return <ProductCatalogueDataForm {...commonProps} />
+      case 'resume':
+        return <ResumeDataForm {...commonProps} />
+      case 'website-builder':
+        return <WebsiteBuilderDataForm {...commonProps} />
+      case 'business-review':
+        return <BusinessReviewDataForm {...commonProps} />
+      case 'lead-form':
+        return <LeadFormDataForm {...commonProps} />
+      case 'event':
+        return <EventDataForm {...commonProps} />
+      case 'vcard-plus':
+        return <VCardPlusDataForm {...commonProps} />
+      case 'upi':
+        return <UPIStaticDataForm {...commonProps} />
+      case 'biolinks':
+        return <BiolinksDataForm {...commonProps} />
+      case 'business-profile':
+        return <BusinessProfileDataForm {...commonProps} />
       default:
         return (
           <div className="text-center py-8 text-gray-500">
