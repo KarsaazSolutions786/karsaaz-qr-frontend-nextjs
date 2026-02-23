@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import BusinessProfilePreview from '@/components/public/business-profile/BusinessProfilePreview'
-import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
+import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
 async function getBusinessProfile(slug: string) {
   try {
@@ -15,6 +15,8 @@ async function getBusinessProfile(slug: string) {
     if (qrData.type !== 'business-profile' && qrData.type !== 'business') {
       return null
     }
+    
+    trackQRView(slug)
     
     return qrData.data
   } catch (error) {

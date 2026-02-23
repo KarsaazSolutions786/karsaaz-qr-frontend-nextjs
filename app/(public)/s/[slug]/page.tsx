@@ -92,6 +92,7 @@ export default async function UniversalQRPage({
     catalog: `/products/${actualSlug}`,
     catalogue: `/products/${actualSlug}`,
     'business-review': `/review/${actualSlug}`,
+    'google-review': `/review/${actualSlug}`,
     review: `/review/${actualSlug}`,
     rating: `/review/${actualSlug}`,
     event: `/event/${actualSlug}`,

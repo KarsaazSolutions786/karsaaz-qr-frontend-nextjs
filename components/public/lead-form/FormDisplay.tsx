@@ -1,117 +1,93 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, useCallback, FormEvent } from 'react';
 import { ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { LeadForm, LeadFormField } from '@/types/entities/lead-form';
+import { LeadForm, LeadFormField, ValidationRule } from '@/types/entities/lead-form';
 import { submitLeadForm } from '@/lib/api/public-qrcodes';
-import RatingQuestion from './questions/RatingQuestion';
-import StarsQuestion from './questions/StarsQuestion';
-import ChoicesQuestion from './questions/ChoicesQuestion';
+import QuestionRenderer from '@/components/features/lead-forms/questions/QuestionRenderer';
 
 interface FormDisplayProps {
   form: LeadForm;
   onSuccess: () => void;
 }
 
+function validateField(field: LeadFormField, value: unknown): string | null {
+  if (
+    field.required &&
+    (!value ||
+      (typeof value === 'string' && !value.trim()) ||
+      (Array.isArray(value) && value.length === 0))
+  ) {
+    return `${field.label} is required`;
+  }
+  if (!value) return null;
+
+  const validation: ValidationRule | undefined = field.validation;
+  if (!validation) return null;
+
+  if (typeof value === 'string') {
+    if (field.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return 'Please enter a valid email address';
+    }
+    if (field.type === 'tel' && !/^[\d\s\-+()]+$/.test(value)) {
+      return 'Please enter a valid phone number';
+    }
+    if (validation.minLength && value.length < validation.minLength) {
+      return `${field.label} must be at least ${validation.minLength} characters`;
+    }
+    if (validation.maxLength && value.length > validation.maxLength) {
+      return `${field.label} must be no more than ${validation.maxLength} characters`;
+    }
+    if (validation.pattern) {
+      try {
+        if (!new RegExp(validation.pattern).test(value)) {
+          return `${field.label} format is invalid`;
+        }
+      } catch {
+        // Invalid regex
+      }
+    }
+  }
+
+  if (field.type === 'number' && typeof value === 'string') {
+    const num = parseFloat(value);
+    if (isNaN(num)) return 'Please enter a valid number';
+    if (validation.min !== undefined && num < validation.min) {
+      return `${field.label} must be at least ${validation.min}`;
+    }
+    if (validation.max !== undefined && num > validation.max) {
+      return `${field.label} must be no more than ${validation.max}`;
+    }
+  }
+
+  return null;
+}
+
 export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Sort fields by order
   const sortedFields = [...form.fields].sort((a, b) => a.order - b.order);
 
-  const handleChange = (fieldName: string, value: any) => {
+  const handleChange = useCallback((fieldName: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [fieldName]: value }));
-    // Clear error when user starts typing
-    if (errors[fieldName]) {
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[fieldName];
-        return newErrors;
-      });
-    }
-  };
-
-  const validateField = (field: LeadFormField, value: any): string | null => {
-    // Required validation
-    if (field.required && (!value || (typeof value === 'string' && !value.trim()))) {
-      return `${field.label} is required`;
-    }
-
-    if (!value) return null;
-
-    const validation = field.validation;
-    if (!validation) return null;
-
-    // Type-specific validation
-    if (field.type === 'email') {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(value)) {
-        return 'Please enter a valid email address';
-      }
-    }
-
-    if (field.type === 'tel') {
-      const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-      if (!phoneRegex.test(value)) {
-        return 'Please enter a valid phone number';
-      }
-    }
-
-    // Length validation
-    if (validation.minLength && value.length < validation.minLength) {
-      return `${field.label} must be at least ${validation.minLength} characters`;
-    }
-
-    if (validation.maxLength && value.length > validation.maxLength) {
-      return `${field.label} must be no more than ${validation.maxLength} characters`;
-    }
-
-    // Number validation
-    if (field.type === 'number') {
-      const numValue = parseFloat(value);
-      if (isNaN(numValue)) {
-        return 'Please enter a valid number';
-      }
-      if (validation.min !== undefined && numValue < validation.min) {
-        return `${field.label} must be at least ${validation.min}`;
-      }
-      if (validation.max !== undefined && numValue > validation.max) {
-        return `${field.label} must be no more than ${validation.max}`;
-      }
-    }
-
-    // Pattern validation
-    if (validation.pattern) {
-      try {
-        const regex = new RegExp(validation.pattern);
-        if (!regex.test(value)) {
-          return `${field.label} format is invalid`;
-        }
-      } catch (e) {
-        console.error('Invalid regex pattern:', validation.pattern);
-      }
-    }
-
-    return null;
-  };
+    setErrors(prev => {
+      if (!prev[fieldName]) return prev;
+      const next = { ...prev };
+      delete next[fieldName];
+      return next;
+    });
+  }, []);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
-
     sortedFields.forEach(field => {
-      const value = formData[field.name];
-      const error = validateField(field, value);
-      if (error) {
-        newErrors[field.name] = error;
-      }
+      const error = validateField(field, formData[field.name]);
+      if (error) newErrors[field.name] = error;
     });
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -119,19 +95,14 @@ export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
-
     try {
       await submitLeadForm(form.slug, {
         data: formData,
         fingerprint: generateFingerprint(),
       });
-
       onSuccess();
     } catch (error) {
       console.error('Form submission error:', error);
@@ -141,260 +112,17 @@ export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
     }
   };
 
-  const renderField = (field: LeadFormField) => {
-    const error = errors[field.name];
-    const value = formData[field.name] || '';
-
-    const fieldId = `field-${field.id}`;
-    const commonClasses = `w-full px-4 py-3 border rounded-xl transition-all ${
-      error 
-        ? 'border-red-300 bg-red-50 focus:border-red-500 focus:ring-red-500' 
-        : 'border-gray-300 bg-white focus:border-blue-500 focus:ring-blue-500'
-    } focus:ring-2 focus:outline-none`;
-
-    switch (field.type) {
-      case 'text':
-      case 'email':
-      case 'tel':
-      case 'number':
-      case 'date':
-        return (
-          <div key={field.id} className="space-y-2">
-            <Label htmlFor={fieldId} className="text-gray-700 font-medium">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </Label>
-            <Input
-              id={fieldId}
-              type={field.type}
-              name={field.name}
-              placeholder={field.placeholder}
-              value={value}
-              onChange={(e) => handleChange(field.name, e.target.value)}
-              required={field.required}
-              className={commonClasses}
-              min={field.validation?.min}
-              max={field.validation?.max}
-            />
-            {error && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </p>
-            )}
-          </div>
-        );
-
-      case 'textarea':
-        return (
-          <div key={field.id} className="space-y-2">
-            <Label htmlFor={fieldId} className="text-gray-700 font-medium">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </Label>
-            <textarea
-              id={fieldId}
-              name={field.name}
-              placeholder={field.placeholder}
-              value={value}
-              onChange={(e) => handleChange(field.name, e.target.value)}
-              required={field.required}
-              rows={4}
-              className={commonClasses}
-            />
-            {error && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </p>
-            )}
-          </div>
-        );
-
-      case 'select':
-        return (
-          <div key={field.id} className="space-y-2">
-            <Label htmlFor={fieldId} className="text-gray-700 font-medium">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </Label>
-            <select
-              id={fieldId}
-              name={field.name}
-              value={value}
-              onChange={(e) => handleChange(field.name, e.target.value)}
-              required={field.required}
-              className={commonClasses}
-            >
-              <option value="">Select an option</option>
-              {field.options?.map((option, index) => (
-                <option key={index} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            {error && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </p>
-            )}
-          </div>
-        );
-
-      case 'checkbox':
-        return (
-          <div key={field.id} className="space-y-3">
-            <Label className="text-gray-700 font-medium">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </Label>
-            <div className="space-y-2">
-              {field.options?.map((option, index) => (
-                <label key={index} className="flex items-center gap-3 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    name={field.name}
-                    value={option}
-                    checked={Array.isArray(value) && value.includes(option)}
-                    onChange={(e) => {
-                      const currentValues = Array.isArray(value) ? value : [];
-                      const newValues = e.target.checked
-                        ? [...currentValues, option]
-                        : currentValues.filter(v => v !== option);
-                      handleChange(field.name, newValues);
-                    }}
-                    className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700 group-hover:text-gray-900">{option}</span>
-                </label>
-              ))}
-            </div>
-            {error && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </p>
-            )}
-          </div>
-        );
-
-      case 'radio':
-        return (
-          <div key={field.id} className="space-y-3">
-            <Label className="text-gray-700 font-medium">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </Label>
-            <div className="space-y-2">
-              {field.options?.map((option, index) => (
-                <label key={index} className="flex items-center gap-3 cursor-pointer group">
-                  <input
-                    type="radio"
-                    name={field.name}
-                    value={option}
-                    checked={value === option}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    required={field.required}
-                    className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-2 focus:ring-blue-500"
-                  />
-                  <span className="text-gray-700 group-hover:text-gray-900">{option}</span>
-                </label>
-              ))}
-            </div>
-            {error && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </p>
-            )}
-          </div>
-        );
-
-      case 'rating':
-        return (
-          <div key={field.id} className="space-y-2">
-            <RatingQuestion
-              label={`${field.label}${field.required ? ' *' : ''}`}
-              value={typeof value === 'number' ? value : 0}
-              onChange={(v) => handleChange(field.name, v)}
-              min={field.validation?.min}
-              max={field.validation?.max}
-            />
-            {error && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </p>
-            )}
-          </div>
-        );
-
-      case 'stars':
-        return (
-          <div key={field.id} className="space-y-2">
-            <StarsQuestion
-              label={`${field.label}${field.required ? ' *' : ''}`}
-              value={typeof value === 'number' ? value : 0}
-              onChange={(v) => handleChange(field.name, v)}
-              maxStars={field.validation?.max}
-            />
-            {error && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </p>
-            )}
-          </div>
-        );
-
-      case 'choices':
-        return (
-          <div key={field.id} className="space-y-2">
-            <ChoicesQuestion
-              label={`${field.label}${field.required ? ' *' : ''}`}
-              value={value || (field.options ? '' : [])}
-              onChange={(v) => handleChange(field.name, v)}
-              options={field.options || []}
-              multiple={false}
-            />
-            {error && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </p>
-            )}
-          </div>
-        );
-
-      case 'multi-choices':
-        return (
-          <div key={field.id} className="space-y-2">
-            <ChoicesQuestion
-              label={`${field.label}${field.required ? ' *' : ''}`}
-              value={Array.isArray(value) ? value : []}
-              onChange={(v) => handleChange(field.name, v)}
-              options={field.options || []}
-              multiple={true}
-            />
-            {error && (
-              <p className="text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {error}
-              </p>
-            )}
-          </div>
-        );
-
-      default:
-        return null;
-    }
-  };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Render all fields */}
-      {sortedFields.map(renderField)}
+      {sortedFields.map((field) => (
+        <QuestionRenderer
+          key={field.id}
+          field={field}
+          value={formData[field.name] ?? ''}
+          onChange={(v) => handleChange(field.name, v)}
+          error={errors[field.name]}
+        />
+      ))}
 
       {/* Submit Error */}
       {submitError && (

@@ -8,7 +8,7 @@ async function getBusinessReview(slug: string) {
     const qrData = await getQRCodeRedirect(slug)
     
     // Validate type is business-review, review, or rating
-    const validTypes = ['business-review', 'review', 'rating']
+    const validTypes = ['business-review', 'google-review', 'review', 'rating']
     if (!validTypes.includes(qrData.type)) {
       console.error(`Invalid QR type for business review: ${qrData.type}`)
       return null

@@ -39,6 +39,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${data.personalInfo?.name || 'Resume'} - Professional CV`,
     description: data.personalInfo?.summary || 'Professional Resume/CV',
+    openGraph: {
+      title: `${data.personalInfo?.name || 'Resume'} - Professional CV`,
+      description: data.personalInfo?.summary || 'Professional Resume/CV',
+      images: data.personalInfo?.photo ? [data.personalInfo.photo] : [],
+      type: 'profile',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${data.personalInfo?.name || 'Resume'} - Professional CV`,
+      description: data.personalInfo?.summary || 'Professional Resume/CV',
+      images: data.personalInfo?.photo ? [data.personalInfo.photo] : [],
+    },
   };
 }
 

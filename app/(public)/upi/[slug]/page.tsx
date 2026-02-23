@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import UPIPreview from '@/components/public/upi/UPIPreview'
-import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
+import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
 async function getUPIPayment(slug: string) {
   try {
@@ -12,9 +12,11 @@ async function getUPIPayment(slug: string) {
     }
     
     // Validate type is 'upi-dynamic', 'upi', or 'payment'
-    if (!['upi-dynamic', 'upi', 'payment'].includes(qrData.data.type)) {
+    if (!['upi-dynamic', 'upi', 'payment'].includes(qrData.type)) {
       return null
     }
+    
+    trackQRView(slug)
     
     return qrData.data
   } catch (error) {

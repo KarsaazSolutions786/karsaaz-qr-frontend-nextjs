@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import MenuPreview from '@/components/public/restaurant-menu/MenuPreview'
-import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
+import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
 async function getRestaurantMenu(slug: string) {
   try {
@@ -15,6 +15,8 @@ async function getRestaurantMenu(slug: string) {
     if (qrData.type !== 'restaurant-menu' && qrData.type !== 'menu') {
       return null
     }
+    
+    trackQRView(slug)
     
     return qrData.data
   } catch (error) {
@@ -35,6 +37,18 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: `${menu.restaurantName || 'Restaurant'} Menu`,
     description: menu.description || `View the menu for ${menu.restaurantName}`,
+    openGraph: {
+      title: `${menu.restaurantName || 'Restaurant'} Menu`,
+      description: menu.description || `View the menu for ${menu.restaurantName}`,
+      images: menu.logo ? [menu.logo] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${menu.restaurantName || 'Restaurant'} Menu`,
+      description: menu.description || `View the menu for ${menu.restaurantName}`,
+      images: menu.logo ? [menu.logo] : [],
+    },
   }
 }
 

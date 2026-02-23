@@ -56,5 +56,17 @@ export async function generateMetadata({ params }: ProductCataloguePageProps) {
   return {
     title: `${data.storeName || 'Product Catalogue'} - Shop Now`,
     description: data.storeDescription || 'Browse our product catalogue',
+    openGraph: {
+      title: `${data.storeName || 'Product Catalogue'} - Shop Now`,
+      description: data.storeDescription || 'Browse our product catalogue',
+      images: data.logo ? [data.logo] : [],
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${data.storeName || 'Product Catalogue'} - Shop Now`,
+      description: data.storeDescription || 'Browse our product catalogue',
+      images: data.logo ? [data.logo] : [],
+    },
   };
 }
