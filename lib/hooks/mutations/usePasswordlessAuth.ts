@@ -22,7 +22,7 @@ function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): 
   }
   const homePage = user.roles?.[0]?.home_page
   if (homePage) return homePage
-  return '/qrcodes'
+  return '/qrcodes/new'
 }
 
 /**

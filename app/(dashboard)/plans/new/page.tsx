@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useCreatePlan } from '@/lib/hooks/mutations/usePlanMutations'
 import { PlanFeaturesEditor } from '@/components/features/plans/PlanFeaturesEditor'
+import { PlanCheckpoints, type Checkpoint } from '@/components/features/plans/PlanCheckpoints'
+import { QrTypeLimitsEditor, type QrTypeLimit } from '@/components/features/plans/QrTypeLimitsEditor'
 
 const FREQUENCIES = [
   { value: 'monthly', label: 'Monthly' },
@@ -30,6 +32,8 @@ export default function NewPlanPage() {
     adsTimeout: 5,
     adsCode: '',
     features: [] as string[],
+    checkpoints: [] as Checkpoint[],
+    qrTypeLimits: [] as QrTypeLimit[],
   })
 
   const set = (field: string, value: unknown) =>
@@ -51,6 +55,8 @@ export default function NewPlanPage() {
       fileSizeLimit: Number(form.fileSizeLimit),
       showAds: form.showAds,
       features: form.features,
+      checkpoints: form.checkpoints,
+      qrTypeLimits: form.qrTypeLimits,
     })
   }
 
@@ -220,6 +226,27 @@ export default function NewPlanPage() {
           <PlanFeaturesEditor
             features={form.features}
             onChange={(features) => set('features', features)}
+          />
+        </section>
+
+        {/* Section 3.6: Plan Checkpoints */}
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">Plan Checkpoints</h2>
+          <p className="mb-4 text-sm text-gray-500">
+            Displayed on the pricing page as plan milestones.
+          </p>
+          <PlanCheckpoints
+            checkpoints={form.checkpoints}
+            onChange={(checkpoints) => set('checkpoints', checkpoints)}
+          />
+        </section>
+
+        {/* Section 3.7: QR Type Limits */}
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">QR Type Limits</h2>
+          <QrTypeLimitsEditor
+            limits={form.qrTypeLimits}
+            onChange={(qrTypeLimits) => set('qrTypeLimits', qrTypeLimits)}
           />
         </section>
 

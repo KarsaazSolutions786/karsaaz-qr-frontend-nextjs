@@ -52,7 +52,7 @@ function AuthCallbackContent() {
         setUser(userData)
 
         // Redirect to user's home page
-        const homePage = userData.roles?.[0]?.home_page || '/qrcodes'
+        const homePage = userData.roles?.[0]?.home_page || '/qrcodes/new'
         router.push(homePage)
       } catch {
         setError('Failed to process login. Please try again.')

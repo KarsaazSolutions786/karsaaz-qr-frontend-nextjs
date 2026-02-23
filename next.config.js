@@ -37,7 +37,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://app.karsaazqr.com https://www.google.com",
+              "connect-src 'self' https://app.karsaazqr.com https://www.google.com http://localhost:8000 http://127.0.0.1:8000",
               "frame-src 'self' https://www.google.com https://www.paypal.com",
             ].join('; '),
           },

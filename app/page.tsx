@@ -14,7 +14,7 @@ export default function HomePage() {
     if (!isLoading) {
       if (user) {
         // User is authenticated, redirect to dashboard
-        router.push('/qrcodes')
+        router.push('/qrcodes/new')
       } else {
         // User is not authenticated, redirect to login
         router.push('/login')

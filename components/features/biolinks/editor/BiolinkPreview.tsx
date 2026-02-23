@@ -9,6 +9,23 @@ import TitleBlock from '../blocks/TitleBlock'
 import SocialLinksBlock from '../blocks/SocialLinksBlock'
 import VideoBlock from '../blocks/VideoBlock'
 import DividerBlock from '../blocks/DividerBlock'
+import ContactBlock from '../blocks/ContactBlock'
+import EmailBlock from '../blocks/EmailBlock'
+import PhoneBlock from '../blocks/PhoneBlock'
+import LocationBlock from '../blocks/LocationBlock'
+import EmbedBlock from '../blocks/EmbedBlock'
+import DownloadBlock from '../blocks/DownloadBlock'
+import PaymentBlock from '../blocks/PaymentBlock'
+import NewsletterBlock from '../blocks/NewsletterBlock'
+import FAQsBlock from '../blocks/FAQsBlock'
+import VCardBlock from '../blocks/VCardBlock'
+import LeadFormBlock from '../blocks/LeadFormBlock'
+import OpeningHoursBlock from '../blocks/OpeningHoursBlock'
+import TableBlock from '../blocks/TableBlock'
+import ListBlock from '../blocks/ListBlock'
+import ImageGridBlock from '../blocks/ImageGridBlock'
+import AudioBlock from '../blocks/AudioBlock'
+import ProfileBlock from '../blocks/ProfileBlock'
 import SimplePagination from '@/components/common/SimplePagination'
 
 interface BiolinkPreviewProps {
@@ -52,6 +69,40 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
         return <VideoBlock key={block.id} block={block} />
       case 'divider':
         return <DividerBlock key={block.id} block={block} />
+      case 'contact':
+        return <ContactBlock key={block.id} block={block} />
+      case 'email':
+        return <EmailBlock key={block.id} block={block} />
+      case 'phone':
+        return <PhoneBlock key={block.id} block={block} />
+      case 'location':
+        return <LocationBlock key={block.id} block={block} />
+      case 'embed':
+        return <EmbedBlock key={block.id} block={block} />
+      case 'download':
+        return <DownloadBlock key={block.id} block={block} />
+      case 'payment':
+        return <PaymentBlock key={block.id} block={block} />
+      case 'newsletter':
+        return <NewsletterBlock key={block.id} block={block} />
+      case 'faqs':
+        return <FAQsBlock key={block.id} block={block} />
+      case 'vcard':
+        return <VCardBlock key={block.id} block={block} />
+      case 'lead-form':
+        return <LeadFormBlock key={block.id} block={block} />
+      case 'opening-hours':
+        return <OpeningHoursBlock key={block.id} block={block} />
+      case 'table':
+        return <TableBlock key={block.id} block={block} />
+      case 'list':
+        return <ListBlock key={block.id} block={block} />
+      case 'image-grid':
+        return <ImageGridBlock key={block.id} block={block} />
+      case 'audio':
+        return <AudioBlock key={block.id} block={block} />
+      case 'profile':
+        return <ProfileBlock key={block.id} block={block} />
       default:
         return null
     }

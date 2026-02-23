@@ -23,6 +23,7 @@ interface ProcessorDef {
   fields: ProcessorField[]
   hasWebhook?: boolean
   hasTestCredentials?: boolean
+  showWebhookUrl?: boolean
 }
 
 const PROCESSORS: ProcessorDef[] = [
@@ -36,8 +37,9 @@ const PROCESSORS: ProcessorDef[] = [
     ],
   },
   {
-    id: 'paypal', slug: 'paypal', name: 'PayPal', hasTestCredentials: true,
+    id: 'paypal', slug: 'paypal', name: 'PayPal', hasWebhook: true, hasTestCredentials: true,
     fields: [
+      { key: 'paypal_mode', label: 'Mode', type: 'select', options: [{ value: 'sandbox', label: 'Sandbox' }, { value: 'live', label: 'Live' }] },
       { key: 'paypal_client_id', label: 'Client ID', type: 'password', placeholder: 'AeA...' },
       { key: 'paypal_client_secret', label: 'Client Secret', type: 'password' },
     ],
@@ -45,13 +47,17 @@ const PROCESSORS: ProcessorDef[] = [
   {
     id: 'payu-international', slug: 'payu-international', name: 'PayU International', hasTestCredentials: true,
     fields: [
-      { key: 'payu-international_merchant_key', label: 'Merchant Key', type: 'password' },
-      { key: 'payu-international_merchant_salt', label: 'Merchant Salt', type: 'password' },
+      { key: 'payu-international_mode', label: 'Mode', type: 'select', options: [{ value: 'sandbox', label: 'Sandbox' }, { value: 'production', label: 'Production' }] },
+      { key: 'payu-international_pos_id', label: 'POS ID', type: 'text', placeholder: '458***' },
+      { key: 'payu-international_second_key', label: 'Second Key (MD5)', type: 'password', placeholder: '05dbc4a507c0e256...' },
+      { key: 'payu-international_client_id', label: 'OAuth Client ID', type: 'text', placeholder: '4568***' },
+      { key: 'payu-international_client_secret', label: 'OAuth Client Secret', type: 'password' },
     ],
   },
   {
-    id: 'paddle', slug: 'paddle', name: 'Paddle (Classic)', hasWebhook: true, hasTestCredentials: true,
+    id: 'paddle', slug: 'paddle', name: 'Paddle (Classic)', showWebhookUrl: true, hasTestCredentials: true,
     fields: [
+      { key: 'paddle_mode', label: 'Mode', type: 'select', options: [{ value: 'sandbox', label: 'Sandbox' }, { value: 'live', label: 'Live' }] },
       { key: 'paddle_vendor_id', label: 'Vendor ID', type: 'text' },
       { key: 'paddle_vendor_auth_code', label: 'Vendor Auth Code', type: 'password' },
       { key: 'paddle_public_key', label: 'Public Key', type: 'textarea' },
@@ -60,16 +66,20 @@ const PROCESSORS: ProcessorDef[] = [
   {
     id: 'paddle-billing', slug: 'paddle-billing', name: 'Paddle (Billing)', hasWebhook: true, hasTestCredentials: true,
     fields: [
+      { key: 'paddle-billing_mode', label: 'Mode', type: 'select', options: [{ value: 'sandbox', label: 'Sandbox' }, { value: 'live', label: 'Live' }] },
+      { key: 'paddle-billing_seller_id', label: 'Seller ID', type: 'text', placeholder: '123456...' },
       { key: 'paddle-billing_api_key', label: 'API Key', type: 'password' },
       { key: 'paddle-billing_client_side_token', label: 'Client Side Token', type: 'password' },
       { key: 'paddle-billing_webhook_secret', label: 'Webhook Secret', type: 'password' },
     ],
   },
   {
-    id: 'razorpay', slug: 'razorpay', name: 'Razorpay', hasWebhook: true, hasTestCredentials: true,
+    id: 'razorpay', slug: 'razorpay', name: 'Razorpay', showWebhookUrl: true, hasTestCredentials: true,
     fields: [
-      { key: 'razorpay_key_id', label: 'Key ID', type: 'password' },
+      { key: 'razorpay_integration_type', label: 'Integration Type', type: 'select', options: [{ value: 'onetime', label: 'One Time' }, { value: 'recurring', label: 'Recurring' }] },
+      { key: 'razorpay_key_id', label: 'Key ID', type: 'password', placeholder: 'rzp_***' },
       { key: 'razorpay_key_secret', label: 'Key Secret', type: 'password' },
+      { key: 'razorpay_webhook_secret', label: 'Webhook Secret', type: 'password' },
     ],
   },
   {
@@ -80,24 +90,27 @@ const PROCESSORS: ProcessorDef[] = [
     ],
   },
   {
-    id: 'paytr', slug: 'paytr', name: 'PayTR', hasTestCredentials: true,
+    id: 'paytr', slug: 'paytr', name: 'PayTR', showWebhookUrl: true, hasTestCredentials: false,
     fields: [
+      { key: 'paytr_mode', label: 'Mode', type: 'select', options: [{ value: 'test', label: 'Test' }, { value: 'production', label: 'Production' }] },
       { key: 'paytr_merchant_id', label: 'Merchant ID', type: 'text' },
       { key: 'paytr_merchant_key', label: 'Merchant Key', type: 'password' },
       { key: 'paytr_merchant_salt', label: 'Merchant Salt', type: 'password' },
     ],
   },
   {
-    id: 'payfast', slug: 'payfast', name: 'PayFast', hasTestCredentials: true,
+    id: 'payfast', slug: 'payfast', name: 'PayFast', hasTestCredentials: false,
     fields: [
+      { key: 'payfast_mode', label: 'Mode', type: 'select', options: [{ value: 'sandbox', label: 'Sandbox' }, { value: 'live', label: 'Live' }] },
       { key: 'payfast_merchant_id', label: 'Merchant ID', type: 'text' },
       { key: 'payfast_merchant_key', label: 'Merchant Key', type: 'password' },
       { key: 'payfast_passphrase', label: 'Passphrase', type: 'password' },
     ],
   },
   {
-    id: 'xendit', slug: 'xendit', name: 'Xendit', hasWebhook: true, hasTestCredentials: true,
+    id: 'xendit', slug: 'xendit', name: 'Xendit', showWebhookUrl: true, hasTestCredentials: true,
     fields: [
+      { key: 'xendit_public_key', label: 'Public Key', type: 'password' },
       { key: 'xendit_secret_key', label: 'Secret Key', type: 'password' },
       { key: 'xendit_webhook_verification_token', label: 'Webhook Verification Token', type: 'password' },
     ],
@@ -106,10 +119,12 @@ const PROCESSORS: ProcessorDef[] = [
     id: 'mollie', slug: 'mollie', name: 'Mollie', hasTestCredentials: true,
     fields: [
       { key: 'mollie_api_key', label: 'API Key', type: 'password', placeholder: 'live_...' },
+      { key: 'mollie_partner_id', label: 'Partner ID', type: 'text' },
+      { key: 'mollie_profile_id', label: 'Profile ID', type: 'text' },
     ],
   },
   {
-    id: 'paystack', slug: 'paystack', name: 'PayStack', hasTestCredentials: true,
+    id: 'paystack', slug: 'paystack', name: 'PayStack', showWebhookUrl: true, hasTestCredentials: true,
     fields: [
       { key: 'paystack_public_key', label: 'Public Key', type: 'password', placeholder: 'pk_live_...' },
       { key: 'paystack_secret_key', label: 'Secret Key', type: 'password', placeholder: 'sk_live_...' },
@@ -118,34 +133,44 @@ const PROCESSORS: ProcessorDef[] = [
   {
     id: 'alipay-china', slug: 'alipay-china', name: 'Alipay China', hasTestCredentials: true,
     fields: [
+      { key: 'alipay-china_mode', label: 'Mode', type: 'select', options: [{ value: 'sandbox', label: 'Sandbox' }, { value: 'live', label: 'Live' }] },
       { key: 'alipay-china_app_id', label: 'App ID', type: 'text' },
-      { key: 'alipay-china_private_key', label: 'Private Key', type: 'textarea' },
-      { key: 'alipay-china_public_key', label: 'Public Key', type: 'textarea' },
+      { key: 'alipay-china_app_secret_cert', label: 'App Secret Cert', type: 'textarea' },
+      { key: 'alipay-china_app_public_cert', label: 'App Public Certificate', type: 'textarea' },
+      { key: 'alipay-china_alipay_public_cert', label: 'AliPay Public Cert', type: 'textarea' },
+      { key: 'alipay-china_alipay_root_cert', label: 'AliPay Root Cert', type: 'textarea' },
+      { key: 'alipay-china_app_auth_token', label: 'App Auth Token', type: 'text', placeholder: 'Optional' },
     ],
   },
   {
-    id: 'yookassa', slug: 'yookassa', name: 'YooKassa', hasTestCredentials: true,
+    id: 'yookassa', slug: 'yookassa', name: 'YooKassa', showWebhookUrl: true, hasTestCredentials: true,
     fields: [
       { key: 'yookassa_shop_id', label: 'Shop ID', type: 'text' },
       { key: 'yookassa_secret_key', label: 'Secret Key', type: 'password' },
     ],
   },
   {
-    id: 'paykickstart', slug: 'paykickstart', name: 'PayKickstart', hasTestCredentials: true,
+    id: 'paykickstart', slug: 'paykickstart', name: 'PayKickstart', showWebhookUrl: true, hasTestCredentials: false,
     fields: [
-      { key: 'paykickstart_api_key', label: 'API Key', type: 'password' },
+      { key: 'paykickstart_mode', label: 'Mode', type: 'select', options: [{ value: 'test', label: 'Test' }, { value: 'live', label: 'Live' }] },
+      { key: 'paykickstart_secret_key', label: 'Secret Key', type: 'password', placeholder: 'Secret key' },
+      { key: 'paykickstart_email_template', label: 'New Registration Email Template', type: 'textarea' },
+      { key: 'paykickstart_upgrade_email_template', label: 'Upsale Email Template', type: 'textarea' },
     ],
   },
   {
-    id: 'orange-bf', slug: 'orange-bf', name: 'Orange (Mobile Money)', hasTestCredentials: true,
+    id: 'orange-bf', slug: 'orange-bf', name: 'Orange (Mobile Money)', hasTestCredentials: false,
     fields: [
-      { key: 'orange-bf_client_id', label: 'Client ID', type: 'text' },
-      { key: 'orange-bf_client_secret', label: 'Client Secret', type: 'password' },
+      { key: 'orange-bf_mode', label: 'Mode', type: 'select', options: [{ value: 'test', label: 'Test' }, { value: 'production', label: 'Production' }] },
+      { key: 'orange-bf_merchant', label: 'Merchant', type: 'text' },
+      { key: 'orange-bf_login_id', label: 'Login ID', type: 'text' },
+      { key: 'orange-bf_password', label: 'Password', type: 'password' },
     ],
   },
   {
-    id: 'payu-latam', slug: 'payu-latam', name: 'PayU Latam', hasTestCredentials: true,
+    id: 'payu-latam', slug: 'payu-latam', name: 'PayU Latam', hasTestCredentials: false,
     fields: [
+      { key: 'payu-latam_mode', label: 'Mode', type: 'select', options: [{ value: 'sandbox', label: 'Sandbox' }, { value: 'production', label: 'Production' }] },
       { key: 'payu-latam_api_key', label: 'API Key', type: 'password' },
       { key: 'payu-latam_api_login', label: 'API Login', type: 'text' },
       { key: 'payu-latam_merchant_id', label: 'Merchant ID', type: 'text' },
@@ -153,38 +178,45 @@ const PROCESSORS: ProcessorDef[] = [
     ],
   },
   {
-    id: '2checkout', slug: '2checkout', name: '2Checkout', hasTestCredentials: true,
+    id: '2checkout', slug: '2checkout', name: '2Checkout', showWebhookUrl: true, hasTestCredentials: false,
     fields: [
+      { key: '2checkout_mode', label: 'Mode', type: 'select', options: [{ value: 'test', label: 'Test' }, { value: 'production', label: 'Production' }] },
       { key: '2checkout_seller_id', label: 'Seller ID', type: 'text' },
       { key: '2checkout_publishable_key', label: 'Publishable Key', type: 'password' },
       { key: '2checkout_private_key', label: 'Private Key', type: 'password' },
     ],
   },
   {
-    id: 'dintero', slug: 'dintero', name: 'Dintero', hasTestCredentials: true,
+    id: 'dintero', slug: 'dintero', name: 'Dintero', hasTestCredentials: false,
     fields: [
+      { key: 'dintero_mode', label: 'Mode', type: 'select', options: [{ value: 'test', label: 'Test' }, { value: 'production', label: 'Production' }] },
       { key: 'dintero_account_id', label: 'Account ID', type: 'text' },
       { key: 'dintero_client_id', label: 'Client ID', type: 'text' },
       { key: 'dintero_client_secret', label: 'Client Secret', type: 'password' },
+      { key: 'dintero_profile_id', label: 'Profile ID', type: 'text', placeholder: 'default' },
+      { key: 'dintero_vat', label: 'VAT Percentage', type: 'text', placeholder: 'E.g. 25' },
+      { key: 'dintero_reference', label: 'Reference Prefix', type: 'text', placeholder: 'e.g. SUBSCRIPTION-' },
     ],
   },
   {
     id: 'fib', slug: 'fib', name: 'FIB', hasTestCredentials: true,
     fields: [
+      { key: 'fib_mode', label: 'Mode', type: 'select', options: [{ value: 'staging', label: 'Staging' }, { value: 'production', label: 'Production' }] },
       { key: 'fib_client_id', label: 'Client ID', type: 'text' },
       { key: 'fib_client_secret', label: 'Client Secret', type: 'password' },
     ],
   },
   {
-    id: 'postfinance', slug: 'postfinance', name: 'Post Finance', hasTestCredentials: true,
+    id: 'postfinance', slug: 'postfinance', name: 'Post Finance', showWebhookUrl: true, hasTestCredentials: false,
     fields: [
-      { key: 'postfinance_psp_id', label: 'PSP ID', type: 'text' },
-      { key: 'postfinance_api_username', label: 'API Username', type: 'text' },
-      { key: 'postfinance_api_password', label: 'API Password', type: 'password' },
+      { key: 'postfinance_space_id', label: 'Space ID', type: 'text' },
+      { key: 'postfinance_user_id', label: 'User ID', type: 'text' },
+      { key: 'postfinance_secret', label: 'Secret', type: 'password' },
+      { key: 'postfinance_tax_percentage', label: 'Tax Percentage', type: 'text', placeholder: '10' },
     ],
   },
   {
-    id: 'flutterwave', slug: 'flutterwave', name: 'Flutter Wave', hasWebhook: true, hasTestCredentials: true,
+    id: 'flutterwave', slug: 'flutterwave', name: 'Flutter Wave', showWebhookUrl: true, hasTestCredentials: false,
     fields: [
       { key: 'flutterwave_public_key', label: 'Public Key', type: 'password' },
       { key: 'flutterwave_secret_key', label: 'Secret Key', type: 'password' },
@@ -205,11 +237,13 @@ const PROCESSORS: ProcessorDef[] = [
 function ProcessorForm({ processor }: { processor: ProcessorDef }) {
   const enabledKey = `${processor.slug}_enabled`
   const displayNameKey = `${processor.slug}_display_name`
+  const payButtonTextKey = `${processor.slug}_pay_button_text`
   const sortOrderKey = `${processor.slug}_sort_order`
 
   const allKeys = [
     enabledKey,
     displayNameKey,
+    payButtonTextKey,
     sortOrderKey,
     ...processor.fields.map((f) => f.key),
   ]
@@ -286,6 +320,28 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
         </div>
       )}
 
+      {/* Manual webhook URL for processors that don't auto-register */}
+      {processor.showWebhookUrl && (
+        <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+          <p className="font-medium mb-1">Add the following webhook URL in your payment processor dashboard:</p>
+          <div className="flex items-center gap-2 mt-2">
+            <code className="rounded bg-white px-2 py-1 text-xs break-all select-all">
+              {typeof window !== 'undefined' ? `${window.location.origin}/api/webhooks/${processor.slug}` : `/api/webhooks/${processor.slug}`}
+            </code>
+            <button
+              type="button"
+              onClick={() => {
+                const webhookUrl = `${window.location.origin}/api/webhooks/${processor.slug}`
+                navigator.clipboard.writeText(webhookUrl)
+              }}
+              className="shrink-0 rounded border border-amber-300 px-2 py-1 text-xs font-medium hover:bg-amber-100"
+            >
+              Copy
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-4">
         {/* Enabled toggle */}
         <div>
@@ -352,6 +408,18 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
             )}
           </div>
         ))}
+
+        {/* Pay Button Text */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Pay Button Text</label>
+          <input
+            type="text"
+            value={values[payButtonTextKey] ?? ''}
+            onChange={(e) => set(payButtonTextKey, e.target.value)}
+            placeholder="Pay Now"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
+          />
+        </div>
 
         {/* Sort Order */}
         <div>

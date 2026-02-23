@@ -13,6 +13,8 @@ import {
 } from '@/lib/hooks/mutations/useUserMutations'
 import { Filter, Plus, Copy, Check, X, Loader2 } from 'lucide-react'
 import type { User } from '@/types/entities/user'
+import { UserFilterPanel, type UserFilters } from './UserFilterPanel'
+import { UserBalanceModal } from './UserBalanceModal'
 
 interface UserListContentProps {
   paying?: 'paying' | 'non-paying'
@@ -154,6 +156,8 @@ export function UserListContent({ paying }: UserListContentProps) {
   const [filters, setFilters] = useState({ minQRCodes: '', maxQRCodes: '' })
   const [magicUrl, setMagicUrl] = useState<string | null>(null)
   const [pendingAction, setPendingAction] = useState<string | null>(null)
+  const [advancedFilters, setAdvancedFilters] = useState<UserFilters>({})
+  const [balanceUser, setBalanceUser] = useState<User | null>(null)
 
   // Build API params - match backend expectations
   const qrcodesFilter = (filters.minQRCodes || filters.maxQRCodes)
@@ -169,6 +173,7 @@ export function UserListContent({ paying }: UserListContentProps) {
     search: search || undefined,
     paying,
     number_of_qrcodes: qrcodesFilter,
+    ...advancedFilters,
   })
 
   const deleteMutation = useDeleteUser()
@@ -188,6 +193,11 @@ export function UserListContent({ paying }: UserListContentProps) {
     setFilters(f)
     setPage(1)
     setShowFilterModal(false)
+  }, [])
+
+  const handleAdvancedFilters = useCallback((f: UserFilters) => {
+    setAdvancedFilters(f)
+    setPage(1)
   }, [])
 
   const handleDelete = async (user: User) => {
@@ -317,6 +327,11 @@ export function UserListContent({ paying }: UserListContentProps) {
         </button>
       </div>
 
+      {/* Advanced Filters */}
+      <div className="mt-3">
+        <UserFilterPanel onChange={handleAdvancedFilters} />
+      </div>
+
       {/* Table */}
       <div className="mt-6">
         {isLoading ? (
@@ -408,6 +423,14 @@ export function UserListContent({ paying }: UserListContentProps) {
                               <Loader2 className="w-3 h-3 animate-spin inline" />
                             ) : null}{' '}
                             Magic Link
+                          </button>
+
+                          {/* Balance */}
+                          <button
+                            onClick={() => setBalanceUser(user)}
+                            className="text-emerald-600 hover:text-emerald-900 text-xs"
+                          >
+                            Balance
                           </button>
 
                           {/* Delete */}
@@ -515,6 +538,13 @@ export function UserListContent({ paying }: UserListContentProps) {
       )}
       {magicUrl && (
         <MagicUrlModal url={magicUrl} onClose={() => setMagicUrl(null)} />
+      )}
+      {balanceUser && (
+        <UserBalanceModal
+          user={balanceUser}
+          isOpen={!!balanceUser}
+          onClose={() => setBalanceUser(null)}
+        />
       )}
     </div>
   )

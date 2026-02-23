@@ -28,7 +28,7 @@ export function useVerifyOTP() {
 
       // Redirect based on user's role home_page
       const homePage = response.user?.roles?.[0]?.home_page
-      router.push(homePage || '/qrcodes')
+      router.push(homePage || '/qrcodes/new')
     },
   })
 }

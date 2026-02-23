@@ -57,11 +57,11 @@ export function isSubUser(user: User | null | undefined): boolean {
  * Matches original: userHomePage()
  */
 export function userHomePage(user: User | null | undefined): string {
-  if (!user) return '/qrcodes'
+  if (!user) return '/qrcodes/new'
   if (user.is_sub && user.parent_user?.roles?.[0]?.home_page) {
     return user.parent_user.roles[0].home_page
   }
-  return user.roles?.[0]?.home_page || '/qrcodes'
+  return user.roles?.[0]?.home_page || '/qrcodes/new'
 }
 
 /**

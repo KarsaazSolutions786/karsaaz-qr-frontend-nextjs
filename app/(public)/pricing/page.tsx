@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { PricingPlans } from '@/components/features/subscriptions/PricingPlans'
+import { PricingPageContent } from '@/components/features/subscriptions/PricingPageContent'
 
 export const metadata: Metadata = {
   title: 'Pricing - Karsaaz QR',
@@ -20,9 +20,9 @@ export default function PricingPage() {
           </p>
         </div>
 
-        {/* Pricing Cards */}
+        {/* Billing Toggle + Pricing Cards */}
         <div className="mt-12">
-          <PricingPlans />
+          <PricingPageContent />
         </div>
 
         {/* FAQ Section */}

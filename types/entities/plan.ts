@@ -18,6 +18,8 @@ export interface SubscriptionPlan {
   adsTimeout?: number
   qrTypes: string[]
   features: string[]
+  checkpoints?: { id: string; text: string; available: boolean }[]
+  qrTypeLimits?: { typeId: string; limit: number }[]
   createdAt: string
   updatedAt: string
 }
@@ -36,6 +38,8 @@ export interface CreateSubscriptionPlanRequest {
   fileSizeLimit?: number
   showAds?: boolean
   features?: string[]
+  checkpoints?: { id: string; text: string; available: boolean }[]
+  qrTypeLimits?: { typeId: string; limit: number }[]
 }
 
 export interface SubscriptionPlanListResponse {

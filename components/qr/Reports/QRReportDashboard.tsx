@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import apiClient from '@/lib/api/client';
 import { LineChartWrapper } from '@/components/ui/charts';
 import { DoughnutChartWrapper } from '@/components/ui/charts';
+import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage';
+import { ScansPerHour } from '@/components/analytics/ScansPerHour';
 
 interface AnalyticsData {
   totalScans: number;
@@ -104,6 +106,18 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
             title="Device Breakdown"
           />
         </div>
+      </div>
+
+      {/* Language & Hourly Distribution */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ScansPerLanguage
+          data={(data as any).scansByLanguage ?? []}
+          loading={loading}
+        />
+        <ScansPerHour
+          data={(data as any).scansByHour ?? []}
+          loading={loading}
+        />
       </div>
 
       {/* Bottom Row */}

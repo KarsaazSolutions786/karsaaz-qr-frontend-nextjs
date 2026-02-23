@@ -14,6 +14,8 @@ import { RealtimeStatsWidget } from '@/components/analytics/RealtimeStatsWidget'
 import { LocationMap } from '@/components/analytics/LocationMap'
 import { DeviceBrowserCharts } from '@/components/analytics/DeviceBrowserCharts'
 import { ReferrerTracker } from '@/components/analytics/ReferrerTracker'
+import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage'
+import { ScansPerHour } from '@/components/analytics/ScansPerHour'
 import type { DateRange } from '@/types/entities/analytics'
 
 export default function AnalyticsPage() {
@@ -68,6 +70,21 @@ export default function AnalyticsPage() {
     { url: 'https://twitter.com', domain: 'twitter.com', scans: 421, lastSeen: new Date() },
     { url: 'https://instagram.com', domain: 'instagram.com', scans: 312, lastSeen: new Date() },
   ]
+
+  const mockLanguageData = [
+    { language: 'English', count: 2340, percentage: 46.8 },
+    { language: 'Spanish', count: 890, percentage: 17.8 },
+    { language: 'French', count: 520, percentage: 10.4 },
+    { language: 'German', count: 410, percentage: 8.2 },
+    { language: 'Japanese', count: 340, percentage: 6.8 },
+    { language: 'Chinese', count: 280, percentage: 5.6 },
+    { language: 'Arabic', count: 220, percentage: 4.4 },
+  ]
+
+  const mockHourlyData = Array.from({ length: 24 }, (_, i) => ({
+    hour: i,
+    count: Math.round(50 + 200 * Math.sin((i - 6) * Math.PI / 12) ** 2 + (i >= 9 && i <= 17 ? 80 : 0)),
+  }))
 
   const totalScans = overview?.totalScans || 5000
 
@@ -172,6 +189,12 @@ export default function AnalyticsPage() {
         directScans={1234}
         unknownScans={543}
       />
+
+      {/* Language & Hourly Distribution */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ScansPerLanguage data={mockLanguageData} />
+        <ScansPerHour data={mockHourlyData} />
+      </div>
 
       {/* Breakdown Charts */}
       <div className="grid gap-6 lg:grid-cols-2">

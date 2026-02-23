@@ -6,6 +6,9 @@ import Link from 'next/link'
 import { usePlan } from '@/lib/hooks/queries/usePlans'
 import { useUpdatePlan } from '@/lib/hooks/mutations/usePlanMutations'
 import { PlanFeaturesEditor } from '@/components/features/plans/PlanFeaturesEditor'
+import { PlanCheckpoints, type Checkpoint } from '@/components/features/plans/PlanCheckpoints'
+import { CheckoutLinkGenerator } from '@/components/features/plans/CheckoutLinkGenerator'
+import { QrTypeLimitsEditor, type QrTypeLimit } from '@/components/features/plans/QrTypeLimitsEditor'
 
 const FREQUENCIES = [
   { value: 'monthly', label: 'Monthly' },
@@ -36,6 +39,8 @@ export default function EditPlanPage() {
     adsTimeout: 5,
     adsCode: '',
     features: [] as string[],
+    checkpoints: [] as Checkpoint[],
+    qrTypeLimits: [] as QrTypeLimit[],
   })
 
   // Population on load
@@ -57,6 +62,8 @@ export default function EditPlanPage() {
         adsTimeout: plan.adsTimeout ?? 5,
         adsCode: '',
         features: plan.features ?? [],
+        checkpoints: (plan as any).checkpoints ?? [],
+        qrTypeLimits: (plan as any).qrTypeLimits ?? [],
       })
     }
   }, [plan])
@@ -82,6 +89,8 @@ export default function EditPlanPage() {
         fileSizeLimit: Number(form.fileSizeLimit),
         showAds: form.showAds,
         features: form.features,
+        checkpoints: form.checkpoints,
+        qrTypeLimits: form.qrTypeLimits,
       },
     })
     setSaved(true)
@@ -116,19 +125,9 @@ export default function EditPlanPage() {
         <h1 className="text-2xl font-bold text-gray-900">Edit Plan</h1>
       </div>
 
-      {/* Checkout Link */}
-      <div className="mb-6 rounded-md bg-blue-50 p-4">
-        <p className="text-sm text-blue-800">
-          <span className="font-medium">Direct Checkout URL: </span>
-          <a
-            href={`/checkout?plan-id=${planId}`}
-            className="underline hover:text-blue-600"
-            target="_blank"
-            rel="noreferrer"
-          >
-            /checkout?plan-id={planId}
-          </a>
-        </p>
+      {/* Checkout Link Generator */}
+      <div className="mb-6">
+        <CheckoutLinkGenerator planId={planId} planName={form.name || plan.name} />
       </div>
 
       {updateMutation.error && (
@@ -292,6 +291,27 @@ export default function EditPlanPage() {
           <PlanFeaturesEditor
             features={form.features}
             onChange={(features) => set('features', features)}
+          />
+        </section>
+
+        {/* Plan Checkpoints */}
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">Plan Checkpoints</h2>
+          <p className="mb-4 text-sm text-gray-500">
+            Displayed on the pricing page as plan milestones.
+          </p>
+          <PlanCheckpoints
+            checkpoints={form.checkpoints}
+            onChange={(checkpoints) => set('checkpoints', checkpoints)}
+          />
+        </section>
+
+        {/* QR Type Limits */}
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">QR Type Limits</h2>
+          <QrTypeLimitsEditor
+            limits={form.qrTypeLimits}
+            onChange={(qrTypeLimits) => set('qrTypeLimits', qrTypeLimits)}
           />
         </section>
 

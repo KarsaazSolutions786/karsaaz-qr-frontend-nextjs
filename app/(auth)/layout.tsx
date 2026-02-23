@@ -15,7 +15,7 @@ export default function AuthLayout({
   useEffect(() => {
     // Redirect to user's home page if already authenticated
     if (!isLoading && user) {
-      const homePage = user.roles?.[0]?.home_page || '/qrcodes'
+      const homePage = user.roles?.[0]?.home_page || '/qrcodes/new'
       router.push(homePage)
     }
   }, [user, isLoading, router])
