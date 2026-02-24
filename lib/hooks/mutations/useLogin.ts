@@ -16,7 +16,11 @@ function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): 
     if (from) return from
   }
   // Use the home_page from user's first role (matches original frontend)
-  const homePage = user.roles?.[0]?.home_page
+  let homePage = user.roles?.[0]?.home_page
+  // Strip legacy /dashboard prefix (old Lit frontend used /dashboard/qrcodes, Next.js uses /qrcodes)
+  if (homePage?.startsWith('/dashboard')) {
+    homePage = homePage.replace('/dashboard', '')
+  }
   if (homePage) return homePage
   // Default fallback
   return '/qrcodes/new'
@@ -35,7 +39,7 @@ export function useLogin() {
         password: data.password,
       })
     },
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Store user in AuthContext and localStorage
       setUser(response.user)
       if (typeof window !== 'undefined') {

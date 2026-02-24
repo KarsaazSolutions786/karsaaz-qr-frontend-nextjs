@@ -2,6 +2,27 @@
 
 import { useForm, Controller } from 'react-hook-form'
 import PaymentProcessorFormBase from './PaymentProcessorFormBase'
+import { StripeForm } from '../payment-processors/StripeForm'
+import { RazorpayForm } from '../payment-processors/RazorpayForm'
+import { AlipayForm } from '../payment-processors/AlipayForm'
+import { FlutterwaveForm } from '../payment-processors/FlutterwaveForm'
+import { MercadoPagoForm } from '../payment-processors/MercadoPagoForm'
+import { MollieForm } from '../payment-processors/MollieForm'
+import { PayFastForm } from '../payment-processors/PayFastForm'
+import { PayStackForm } from '../payment-processors/PayStackForm'
+import { PayUInternationalForm } from '../payment-processors/PayUInternationalForm'
+import { PayULatamForm } from '../payment-processors/PayULatamForm'
+import { PostFinanceForm } from '../payment-processors/PostFinanceForm'
+import { TwoCheckoutForm } from '../payment-processors/TwoCheckoutForm'
+import { XenditForm } from '../payment-processors/XenditForm'
+import { YookassaForm } from '../payment-processors/YookassaForm'
+import { DinteroForm } from '../payment-processors/DinteroForm'
+import { PayTRForm } from '../payment-processors/PayTRForm'
+import { FIBForm } from '../payment-processors/FIBForm'
+import { OrangeBillingForm } from '../payment-processors/OrangeBillingForm'
+import { PaddleForm } from '../payment-processors/PaddleForm'
+import { PayKickstartForm } from '../payment-processors/PayKickstartForm'
+import { OfflinePaymentForm } from '../payment-processors/OfflinePaymentForm'
 import type { PaymentGateway, PaymentProcessorSlug } from '@/types/entities/payment-gateway'
 
 const PROCESSOR_SLUGS: { value: PaymentProcessorSlug; label: string }[] = [
@@ -44,8 +65,72 @@ interface PaymentGatewayFormProps {
   isSubmitting?: boolean
 }
 
-export default function PaymentGatewayForm({ initialData, onSubmit, isSubmitting }: PaymentGatewayFormProps) {
-  const { register, handleSubmit, control, watch, setValue, formState: { errors } } = useForm<PaymentGatewayFormValues>({
+function renderProcessorForm(
+  slug: string,
+  settings: Record<string, string>,
+  onChange: (key: string, value: string) => void
+) {
+  switch (slug) {
+    case 'stripe':
+      return <StripeForm settings={settings} onChange={onChange} />
+    case 'razorpay':
+      return <RazorpayForm settings={settings} onChange={onChange} />
+    case 'alipay':
+      return <AlipayForm settings={settings} onChange={onChange} />
+    case 'flutterwave':
+      return <FlutterwaveForm settings={settings} onChange={onChange} />
+    case 'mercadopago':
+      return <MercadoPagoForm settings={settings} onChange={onChange} />
+    case 'mollie':
+      return <MollieForm settings={settings} onChange={onChange} />
+    case 'payfast':
+      return <PayFastForm settings={settings} onChange={onChange} />
+    case 'paystack':
+      return <PayStackForm settings={settings} onChange={onChange} />
+    case 'payu-international':
+      return <PayUInternationalForm settings={settings} onChange={onChange} />
+    case 'payu-latam':
+      return <PayULatamForm settings={settings} onChange={onChange} />
+    case 'postfinance':
+      return <PostFinanceForm settings={settings} onChange={onChange} />
+    case '2checkout':
+      return <TwoCheckoutForm settings={settings} onChange={onChange} />
+    case 'xendit':
+      return <XenditForm settings={settings} onChange={onChange} />
+    case 'yookassa':
+      return <YookassaForm settings={settings} onChange={onChange} />
+    case 'dintero':
+      return <DinteroForm settings={settings} onChange={onChange} />
+    case 'paytr':
+      return <PayTRForm settings={settings} onChange={onChange} />
+    case 'fib':
+      return <FIBForm settings={settings} onChange={onChange} />
+    case 'orange-bf':
+      return <OrangeBillingForm settings={settings} onChange={onChange} />
+    case 'paddle':
+      return <PaddleForm settings={settings} onChange={onChange} />
+    case 'paykickstart':
+      return <PayKickstartForm settings={settings} onChange={onChange} />
+    case 'offline':
+      return <OfflinePaymentForm settings={settings} onChange={onChange} />
+    default:
+      return <PaymentProcessorFormBase slug={slug} settings={settings} onChange={onChange} />
+  }
+}
+
+export default function PaymentGatewayForm({
+  initialData,
+  onSubmit,
+  isSubmitting,
+}: PaymentGatewayFormProps) {
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<PaymentGatewayFormValues>({
     defaultValues: {
       name: initialData?.name ?? '',
       slug: initialData?.slug ?? '',
@@ -68,7 +153,9 @@ export default function PaymentGatewayForm({ initialData, onSubmit, isSubmitting
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-4">
         {/* Name */}
         <div>
-          <label htmlFor="gw-name" className="block text-sm font-medium text-gray-700">Gateway Name</label>
+          <label htmlFor="gw-name" className="block text-sm font-medium text-gray-700">
+            Gateway Name
+          </label>
           <input
             id="gw-name"
             type="text"
@@ -81,15 +168,19 @@ export default function PaymentGatewayForm({ initialData, onSubmit, isSubmitting
 
         {/* Slug selector */}
         <div>
-          <label htmlFor="gw-slug" className="block text-sm font-medium text-gray-700">Processor</label>
+          <label htmlFor="gw-slug" className="block text-sm font-medium text-gray-700">
+            Processor
+          </label>
           <select
             id="gw-slug"
             {...register('slug', { required: 'Processor is required' })}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
           >
             <option value="">Select a processor…</option>
-            {PROCESSOR_SLUGS.map((p) => (
-              <option key={p.value} value={p.value}>{p.label}</option>
+            {PROCESSOR_SLUGS.map(p => (
+              <option key={p.value} value={p.value}>
+                {p.label}
+              </option>
             ))}
           </select>
           {errors.slug && <p className="mt-1 text-xs text-red-600">{errors.slug.message}</p>}
@@ -129,7 +220,9 @@ export default function PaymentGatewayForm({ initialData, onSubmit, isSubmitting
             {...register('supports_recurring')}
             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
-          <label htmlFor="gw-recurring" className="text-sm text-gray-700">Supports recurring payments</label>
+          <label htmlFor="gw-recurring" className="text-sm text-gray-700">
+            Supports recurring payments
+          </label>
         </div>
       </div>
 
@@ -137,11 +230,7 @@ export default function PaymentGatewayForm({ initialData, onSubmit, isSubmitting
       {slug && (
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
           <h3 className="mb-4 text-sm font-semibold text-gray-900">Processor Settings</h3>
-          <PaymentProcessorFormBase
-            slug={slug}
-            settings={settings}
-            onChange={handleSettingChange}
-          />
+          {renderProcessorForm(slug, settings, handleSettingChange)}
         </div>
       )}
 

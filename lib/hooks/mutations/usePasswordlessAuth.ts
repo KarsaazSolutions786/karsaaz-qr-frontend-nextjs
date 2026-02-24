@@ -20,7 +20,11 @@ function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): 
     const from = params.get('from')
     if (from) return from
   }
-  const homePage = user.roles?.[0]?.home_page
+  let homePage = user.roles?.[0]?.home_page
+  // Strip legacy /dashboard prefix (old Lit frontend used /dashboard/qrcodes, Next.js uses /qrcodes)
+  if (homePage?.startsWith('/dashboard')) {
+    homePage = homePage.replace('/dashboard', '')
+  }
   if (homePage) return homePage
   return '/qrcodes/new'
 }
@@ -72,7 +76,7 @@ export function usePasswordlessVerify() {
 
   return useMutation({
     mutationFn: (data: PasswordlessVerifyRequest) => authAPI.passwordlessVerify(data),
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Store user in AuthContext and localStorage (same as traditional login)
       setUser(response.user)
       if (typeof window !== 'undefined') {
@@ -120,8 +124,7 @@ export function usePasswordlessSetPreference() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: PasswordlessSetPreferenceRequest) =>
-      authAPI.passwordlessSetPreference(data),
+    mutationFn: (data: PasswordlessSetPreferenceRequest) => authAPI.passwordlessSetPreference(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['passwordless-preference'] })
     },

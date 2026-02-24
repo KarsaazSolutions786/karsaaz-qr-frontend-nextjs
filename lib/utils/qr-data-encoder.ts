@@ -38,9 +38,7 @@ export function encodeQRData(type: string, data: Record<string, any>): string {
       return formatVCard(data)
 
     case 'location':
-      return data.latitude && data.longitude
-        ? `geo:${data.latitude},${data.longitude}`
-        : ''
+      return data.latitude && data.longitude ? `geo:${data.latitude},${data.longitude}` : ''
 
     case 'calendar':
       return formatCalendar(data)
@@ -202,7 +200,9 @@ export function encodeQRData(type: string, data: Record<string, any>): string {
     // App Download – schema fields: iosUrl, androidUrl, appName
     case 'app-store':
     case 'app-download':
-      return data.iosUrl || data.androidUrl || data.url || data.appStoreUrl || data.playStoreUrl || ''
+      return (
+        data.iosUrl || data.androidUrl || data.url || data.appStoreUrl || data.playStoreUrl || ''
+      )
 
     // Dynamic Email – schema fields: email, subject, message
     case 'email-dynamic':
@@ -232,7 +232,8 @@ function formatMailto(data: Record<string, any>): string {
   let mailto = `mailto:${data.email}`
   const params: string[] = []
   if (data.subject) params.push(`subject=${encodeURIComponent(data.subject)}`)
-  if (data.body || data.message) params.push(`body=${encodeURIComponent(data.body || data.message)}`)
+  if (data.body || data.message)
+    params.push(`body=${encodeURIComponent(data.body || data.message)}`)
   if (params.length > 0) mailto += `?${params.join('&')}`
   return mailto
 }
@@ -269,26 +270,41 @@ function formatVCard(data: Record<string, any>): string {
   // website (Vue.js stores as `website_list`)
   const website = data.website || data.website_list || ''
   if (website) lines.push(`URL:${website}`)
-  if (data.address) lines.push(`ADR:;;${data.address};;;;`)
+  // Address — P1 uses separate fields: street, city, state, zip, country
+  const street = data.street || ''
+  const city = data.city || ''
+  const state = data.state || ''
+  const zip = data.zip || ''
+  const country = data.country || ''
+  if (street || city || state || zip || country) {
+    lines.push(`ADR:;;${street};${city};${state};${zip};${country}`)
+  } else if (data.address) {
+    lines.push(`ADR:;;${data.address};;;;`)
+  }
 
   lines.push('END:VCARD')
   return lines.join('\n')
 }
 
 function formatCalendar(data: Record<string, any>): string {
-  const lines: string[] = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'BEGIN:VEVENT',
-  ]
-  if (data.title || data.summary) lines.push(`SUMMARY:${data.title || data.summary}`)
+  const lines: string[] = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'BEGIN:VEVENT']
+  const summary = data.event_name || data.title || data.summary || ''
+  if (summary) lines.push(`SUMMARY:${summary}`)
+  if (data.organizer_name)
+    lines.push(
+      `ORGANIZER;CN=${data.organizer_name}:${data.organizer_email ? `mailto:${data.organizer_email}` : ''}`
+    )
   if (data.location) lines.push(`LOCATION:${data.location}`)
   if (data.description) lines.push(`DESCRIPTION:${data.description}`)
-  // schema uses startTime / endTime (ISO datetime strings)
-  const start = data.startTime || data.startDate || ''
-  const end = data.endTime || data.endDate || ''
+  if (data.website) lines.push(`URL:${data.website}`)
+  // schema uses starts_at / ends_at (or legacy startTime / endTime)
+  const start = data.starts_at || data.startTime || data.startDate || ''
+  const end = data.ends_at || data.endTime || data.endDate || ''
   if (start) lines.push(`DTSTART:${formatICSDate(start)}`)
   if (end) lines.push(`DTEND:${formatICSDate(end)}`)
+  if (data.frequency && data.frequency !== 'none') {
+    lines.push(`RRULE:FREQ=${data.frequency.toUpperCase()}`)
+  }
   lines.push('END:VEVENT', 'END:VCALENDAR')
   return lines.join('\n')
 }
@@ -305,7 +321,7 @@ function formatCrypto(data: Record<string, any>): string {
   const currency = (data.currency || data.coin || 'bitcoin').toLowerCase()
   const address = data.address || ''
   if (!address) return ''
-  
+
   let uri = `${currency}:${address}`
   const params: string[] = []
   if (data.amount) params.push(`amount=${data.amount}`)
@@ -324,6 +340,7 @@ function formatUPI(data: Record<string, any>): string {
   const pn = data.payee_name || data.name || data.payeeName || ''
   if (pn) uri += `&pn=${encodeURIComponent(pn)}`
   if (data.amount) uri += `&am=${data.amount}`
-  if (data.note || data.transactionNote) uri += `&tn=${encodeURIComponent(data.note || data.transactionNote)}`
+  if (data.note || data.transactionNote)
+    uri += `&tn=${encodeURIComponent(data.note || data.transactionNote)}`
   return uri
 }

@@ -4,18 +4,17 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const { user, isLoading } = useAuth()
 
   useEffect(() => {
     // Redirect to user's home page if already authenticated
     if (!isLoading && user) {
-      const homePage = user.roles?.[0]?.home_page || '/qrcodes/new'
+      let homePage = user.roles?.[0]?.home_page || '/qrcodes/new'
+      if (homePage.startsWith('/dashboard')) {
+        homePage = homePage.replace('/dashboard', '')
+      }
       router.push(homePage)
     }
   }, [user, isLoading, router])

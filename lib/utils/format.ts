@@ -5,11 +5,15 @@ import { format, formatDistance, formatRelative, parseISO } from 'date-fns'
  * @param dateString ISO 8601 date string
  * @param formatStr date-fns format string (default: "MMM dd, yyyy")
  */
-export function formatDate(dateString: string, formatStr: string = 'MMM dd, yyyy'): string {
+export function formatDate(
+  dateString: string | undefined | null,
+  formatStr: string = 'MMM dd, yyyy'
+): string {
+  if (!dateString) return '—'
   try {
     const date = parseISO(dateString)
     return format(date, formatStr)
-  } catch (error) {
+  } catch {
     console.error('Invalid date string:', dateString)
     return 'Invalid date'
   }
@@ -19,7 +23,7 @@ export function formatDate(dateString: string, formatStr: string = 'MMM dd, yyyy
  * Format ISO date string to date and time
  * @param dateString ISO 8601 date string
  */
-export function formatDateTime(dateString: string): string {
+export function formatDateTime(dateString: string | undefined | null): string {
   return formatDate(dateString, 'MMM dd, yyyy HH:mm')
 }
 
@@ -27,11 +31,12 @@ export function formatDateTime(dateString: string): string {
  * Format ISO date string to relative time (e.g., "2 hours ago")
  * @param dateString ISO 8601 date string
  */
-export function formatRelativeTime(dateString: string): string {
+export function formatRelativeTime(dateString: string | undefined | null): string {
+  if (!dateString) return '—'
   try {
     const date = parseISO(dateString)
     return formatDistance(date, new Date(), { addSuffix: true })
-  } catch (error) {
+  } catch {
     console.error('Invalid date string:', dateString)
     return 'Invalid date'
   }
@@ -41,11 +46,12 @@ export function formatRelativeTime(dateString: string): string {
  * Format ISO date string to relative format (e.g., "yesterday at 3:21 PM")
  * @param dateString ISO 8601 date string
  */
-export function formatRelativeDate(dateString: string): string {
+export function formatRelativeDate(dateString: string | undefined | null): string {
+  if (!dateString) return '—'
   try {
     const date = parseISO(dateString)
     return formatRelative(date, new Date())
-  } catch (error) {
+  } catch {
     console.error('Invalid date string:', dateString)
     return 'Invalid date'
   }

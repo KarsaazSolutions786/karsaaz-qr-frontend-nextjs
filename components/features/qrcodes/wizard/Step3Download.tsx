@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useRef, useMemo, useCallback } from 'react'
-import { QRCodePreview, QRCodePreviewRef, DownloadFormat } from '@/components/qr/QRCodePreview'
+import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { encodeQRData } from '@/lib/utils/qr-data-encoder'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer'
 import {
   Download,
@@ -55,7 +54,7 @@ export default function Step3Download({
   isSubmitting,
   isSaved,
 }: Step3DownloadProps) {
-  const previewRef = useRef<QRCodePreviewRef>(null)
+  const previewRef = useRef<BackendQRPreviewRef>(null)
   const [downloadingFormat, setDownloadingFormat] = useState<string | null>(null)
   const [downloadedFormats, setDownloadedFormats] = useState<Set<string>>(new Set())
   const [selectedSize, setSelectedSize] = useState(1000)
@@ -72,29 +71,85 @@ export default function Step3Download({
     [design]
   )
 
-  // Encode QR data for preview
-  const previewData = encodeQRData(qrType, qrData)
+  // Check if qrData has at least one non-empty value
+  const hasPreviewData =
+    Object.keys(qrData).length > 0 &&
+    Object.values(qrData).some(v => v !== '' && v !== null && v !== undefined)
 
   const handleSettingsChange = (field: string, value: any) => {
     onSettingsChange({ ...settings, [field]: value })
   }
 
   const handleDownload = useCallback(
-    async (format: DownloadFormat) => {
+    async (format: string) => {
       if (!previewRef.current) return
 
       setDownloadingFormat(format)
       try {
         const filename = settings.name || `qr-code-${qrType}`
-        await previewRef.current.download(format, filename)
-        setDownloadedFormats((prev) => new Set([...prev, format]))
+        const svgStr = previewRef.current.getSVG()
+        if (!svgStr) {
+          throw new Error('No QR code preview available')
+        }
+
+        if (format === 'svg') {
+          const blob = new Blob([svgStr], { type: 'image/svg+xml' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `${filename}.svg`
+          a.click()
+          URL.revokeObjectURL(url)
+        } else if (format === 'png') {
+          const dataURL = previewRef.current.getDataURL()
+          if (!dataURL) throw new Error('Cannot generate data URL')
+          // Create canvas from SVG for PNG export at selected size
+          const img = new Image()
+          img.onload = () => {
+            const canvas = document.createElement('canvas')
+            canvas.width = selectedSize
+            canvas.height = selectedSize
+            const ctx = canvas.getContext('2d')
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, selectedSize, selectedSize)
+              canvas.toBlob(blob => {
+                if (blob) {
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = `${filename}.png`
+                  a.click()
+                  URL.revokeObjectURL(url)
+                }
+                setDownloadingFormat(null)
+                setDownloadedFormats(prev => new Set([...prev, format]))
+              }, 'image/png')
+            }
+          }
+          img.onerror = () => {
+            setDownloadingFormat(null)
+          }
+          img.src = dataURL
+          return // PNG download completes asynchronously in img.onload
+        } else {
+          // PDF/EPS — download SVG as fallback
+          const blob = new Blob([svgStr], { type: 'image/svg+xml' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = `${filename}.${format}`
+          a.click()
+          URL.revokeObjectURL(url)
+        }
+
+        setDownloadedFormats(prev => new Set([...prev, format]))
       } catch (error) {
         console.error(`Download ${format} failed:`, error)
       } finally {
         setDownloadingFormat(null)
       }
     },
-    [settings.name, qrType]
+    [settings.name, qrType, selectedSize]
   )
 
   const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -117,9 +172,7 @@ export default function Step3Download({
     )
   }
 
-  const selectedFolder = settings.folderId
-    ? folderManager.getFolder(settings.folderId)
-    : null
+  const selectedFolder = settings.folderId ? folderManager.getFolder(settings.folderId) : null
 
   return (
     <div className="space-y-8">
@@ -128,17 +181,14 @@ export default function Step3Download({
         <div className="lg:col-span-3 space-y-6">
           {/* QR Code Name */}
           <div>
-            <label
-              htmlFor="qr-name"
-              className="block text-sm font-semibold text-gray-900 mb-2"
-            >
+            <label htmlFor="qr-name" className="block text-sm font-semibold text-gray-900 mb-2">
               QR Code Name *
             </label>
             <Input
               id="qr-name"
               type="text"
               value={settings.name || ''}
-              onChange={(e) => handleSettingsChange('name', e.target.value)}
+              onChange={e => handleSettingsChange('name', e.target.value)}
               placeholder="e.g., My Website QR Code"
               className="text-base"
               autoFocus
@@ -188,7 +238,7 @@ export default function Step3Download({
                       <FolderTree
                         folders={[]}
                         selectedFolderId={settings.folderId}
-                        onSelectFolder={(folderId) => {
+                        onSelectFolder={folderId => {
                           handleSettingsChange('folderId', folderId)
                           setShowFolderPicker(false)
                         }}
@@ -209,7 +259,7 @@ export default function Step3Download({
                       type="checkbox"
                       id="pinProtection"
                       checked={settings.pinProtected || false}
-                      onChange={(e) => handleSettingsChange('pinProtected', e.target.checked)}
+                      onChange={e => handleSettingsChange('pinProtected', e.target.checked)}
                       className="rounded border-gray-300"
                     />
                     <label htmlFor="pinProtection" className="text-sm text-gray-700">
@@ -220,7 +270,7 @@ export default function Step3Download({
                     <Input
                       type="password"
                       value={settings.pin || ''}
-                      onChange={(e) => handleSettingsChange('pin', e.target.value)}
+                      onChange={e => handleSettingsChange('pin', e.target.value)}
                       placeholder="Enter 4-6 digit PIN"
                       maxLength={6}
                       className="mt-2"
@@ -239,7 +289,7 @@ export default function Step3Download({
                       type="checkbox"
                       id="hasExpiration"
                       checked={settings.hasExpiration || false}
-                      onChange={(e) => handleSettingsChange('hasExpiration', e.target.checked)}
+                      onChange={e => handleSettingsChange('hasExpiration', e.target.checked)}
                       className="rounded border-gray-300"
                     />
                     <label htmlFor="hasExpiration" className="text-sm text-gray-700">
@@ -250,7 +300,7 @@ export default function Step3Download({
                     <Input
                       type="datetime-local"
                       value={settings.expiresAt || ''}
-                      onChange={(e) => handleSettingsChange('expiresAt', e.target.value)}
+                      onChange={e => handleSettingsChange('expiresAt', e.target.value)}
                       min={new Date().toISOString().slice(0, 16)}
                       className="mt-2"
                     />
@@ -295,11 +345,9 @@ export default function Step3Download({
 
           {/* Size Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
-              Download Size
-            </label>
+            <label className="block text-sm font-semibold text-gray-900 mb-3">Download Size</label>
             <div className="grid grid-cols-2 gap-2">
-              {SIZE_OPTIONS.map((option) => (
+              {SIZE_OPTIONS.map(option => (
                 <button
                   key={option.value}
                   type="button"
@@ -310,9 +358,7 @@ export default function Step3Download({
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  <span className="block text-sm font-medium text-gray-900">
-                    {option.label}
-                  </span>
+                  <span className="block text-sm font-medium text-gray-900">{option.label}</span>
                   <span className="block text-xs text-gray-500">{option.desc}</span>
                 </button>
               ))}
@@ -328,7 +374,7 @@ export default function Step3Download({
               {/* PNG */}
               <Button
                 onClick={() => handleDownload('png')}
-                disabled={!previewData || !!downloadingFormat || isSubmitting || !isSaved}
+                disabled={!hasPreviewData || !!downloadingFormat || isSubmitting || !isSaved}
                 variant="outline"
                 className="h-auto py-4 flex flex-col items-center gap-2 hover:border-blue-400 hover:bg-blue-50 transition-all"
               >
@@ -348,7 +394,7 @@ export default function Step3Download({
               {/* SVG */}
               <Button
                 onClick={() => handleDownload('svg')}
-                disabled={!previewData || !!downloadingFormat || isSubmitting || !isSaved}
+                disabled={!hasPreviewData || !!downloadingFormat || isSubmitting || !isSaved}
                 variant="outline"
                 className="h-auto py-4 flex flex-col items-center gap-2 hover:border-green-400 hover:bg-green-50 transition-all"
               >
@@ -368,7 +414,7 @@ export default function Step3Download({
               {/* PDF */}
               <Button
                 onClick={() => handleDownload('pdf')}
-                disabled={!previewData || !!downloadingFormat || isSubmitting || !isSaved}
+                disabled={!hasPreviewData || !!downloadingFormat || isSubmitting || !isSaved}
                 variant="outline"
                 className="h-auto py-4 flex flex-col items-center gap-2 hover:border-red-400 hover:bg-red-50 transition-all"
               >
@@ -388,7 +434,7 @@ export default function Step3Download({
               {/* EPS */}
               <Button
                 onClick={() => handleDownload('eps')}
-                disabled={!previewData || !!downloadingFormat || isSubmitting || !isSaved}
+                disabled={!hasPreviewData || !!downloadingFormat || isSubmitting || !isSaved}
                 variant="outline"
                 className="h-auto py-4 flex flex-col items-center gap-2 hover:border-purple-400 hover:bg-purple-50 transition-all"
               >
@@ -416,19 +462,15 @@ export default function Step3Download({
 
         {/* Right: QR Preview */}
         <div className="lg:col-span-2">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Your QR Code
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Your QR Code</h3>
           <div className="bg-white rounded-xl border-2 border-gray-200 p-8 sticky top-6 shadow-sm">
             <div className="flex flex-col items-center gap-4">
-              {previewData ? (
-                <QRCodePreview
+              {hasPreviewData ? (
+                <BackendQRPreview
                   ref={previewRef}
-                  data={previewData}
-                  config={{
-                    ...mergedConfig,
-                    size: selectedSize,
-                  }}
+                  data={qrData}
+                  qrType={qrType}
+                  config={mergedConfig}
                   className="w-full max-w-[300px] mx-auto"
                 />
               ) : (
@@ -438,9 +480,7 @@ export default function Step3Download({
               )}
 
               {settings.name && (
-                <p className="text-sm font-medium text-gray-700 text-center">
-                  {settings.name}
-                </p>
+                <p className="text-sm font-medium text-gray-700 text-center">{settings.name}</p>
               )}
             </div>
           </div>

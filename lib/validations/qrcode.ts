@@ -9,8 +9,14 @@ export const qrCodeBaseSchema = z.object({
 
 // Customization schema
 export const qrCustomizationSchema = z.object({
-  foregroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color').default('#000000'),
-  backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color').default('#FFFFFF'),
+  foregroundColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color')
+    .default('#000000'),
+  backgroundColor: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Invalid hex color')
+    .default('#FFFFFF'),
   logoUrl: z.string().url('Invalid logo URL').optional(),
   style: z.enum(['squares', 'dots', 'rounded']).default('squares'),
   size: z.number().min(100).max(2000).default(500),
@@ -19,6 +25,7 @@ export const qrCustomizationSchema = z.object({
 // URL QR code
 export const urlDataSchema = z.object({
   url: z.string().url('Invalid URL'),
+  expires_at: z.string().optional(),
 })
 
 export const createURLQRCodeSchema = qrCodeBaseSchema.extend({
@@ -31,12 +38,16 @@ export const createURLQRCodeSchema = qrCodeBaseSchema.extend({
 export const vcardDataSchema = z.object({
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().email('Invalid email').optional(),
-  phone: z.string().optional(),
-  organization: z.string().optional(),
-  title: z.string().optional(),
-  address: z.string().optional(),
-  website: z.string().url('Invalid website URL').optional(),
+  phones: z.string().optional(),
+  emails: z.string().email('Invalid email').optional().or(z.literal('')),
+  website_list: z.string().url('Invalid URL').optional().or(z.literal('')),
+  company: z.string().optional(),
+  job: z.string().optional(),
+  street: z.string().optional(),
+  city: z.string().optional(),
+  zip: z.string().optional(),
+  state: z.string().optional(),
+  country: z.string().optional(),
 })
 
 export const createVCardQRCodeSchema = qrCodeBaseSchema.extend({
@@ -111,6 +122,7 @@ export const locationDataSchema = z.object({
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
   address: z.string().optional(),
+  application: z.enum(['default', 'googlemaps', 'waze']).default('default'),
 })
 
 export const createLocationQRCodeSchema = qrCodeBaseSchema.extend({
@@ -121,11 +133,18 @@ export const createLocationQRCodeSchema = qrCodeBaseSchema.extend({
 
 // Calendar QR code
 export const calendarDataSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string().optional(),
+  event_name: z.string().min(1, 'Event name is required'),
+  organizer_name: z.string().optional(),
+  organizer_email: z.string().email('Invalid email').optional().or(z.literal('')),
   location: z.string().optional(),
-  startTime: z.string().datetime('Invalid start time'),
-  endTime: z.string().datetime('Invalid end time'),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+  website: z.string().url('Invalid URL').optional().or(z.literal('')),
+  starts_at: z.string().min(1, 'Start time is required'),
+  ends_at: z.string().min(1, 'End time is required'),
+  timezone: z.string().optional(),
+  description: z.string().optional(),
+  frequency: z.enum(['none', 'daily', 'weekly', 'monthly', 'yearly']).default('none'),
 })
 
 export const createCalendarQRCodeSchema = qrCodeBaseSchema.extend({
@@ -137,8 +156,11 @@ export const createCalendarQRCodeSchema = qrCodeBaseSchema.extend({
 // App Store QR code
 export const appStoreDataSchema = z.object({
   appName: z.string().min(1, 'App name is required'),
-  iosUrl: z.string().url('Invalid iOS URL').optional(),
-  androidUrl: z.string().url('Invalid Android URL').optional(),
+  app_description: z.string().optional(),
+  iosUrl: z.string().url('Invalid iOS URL').optional().or(z.literal('')),
+  androidUrl: z.string().url('Invalid Android URL').optional().or(z.literal('')),
+  expires_at: z.string().optional(),
+  socialProfiles: z.string().optional(),
 })
 
 export const createAppStoreQRCodeSchema = qrCodeBaseSchema.extend({
@@ -348,7 +370,7 @@ export const createPayPalQRCodeSchema = qrCodeBaseSchema.extend({
 
 // Crypto QR code
 export const cryptoDataSchema = z.object({
-  coin: z.enum(['bitcoin', 'ethereum', 'litecoin', 'bitcoincash']).optional(),
+  coin: z.enum(['bitcoin', 'ethereum', 'litecoin', 'bitcoincash', 'dash']).optional(),
   address: z.string().optional(),
   amount: z.number().optional(),
   message: z.string().optional(),
@@ -614,6 +636,7 @@ export const createUPIStaticQRCodeSchema = qrCodeBaseSchema.extend({
 // Biolinks QR code (simple schema for QR wizard data step)
 export const biolinksDataSchema = z.object({
   page_name: z.string().min(1, 'Page name is required'),
+  email: z.string().email('Invalid email').optional().or(z.literal('')),
   expires_at: z.string().optional(),
 })
 
@@ -625,6 +648,7 @@ export const createBiolinksQRCodeSchema = qrCodeBaseSchema.extend({
 
 // Business Profile QR code (simple schema for QR wizard data step)
 export const businessProfileDataSchema = z.object({
+  business_type: z.string().default('other'),
   business_name: z.string().min(1, 'Business name is required'),
   phone: z.string().optional(),
   email: z.string().email('Invalid email').optional().or(z.literal('')),
@@ -716,7 +740,9 @@ const updateSnapchatQRCodeSchema = createSnapchatQRCodeSchema.partial().required
 const updateSpotifyQRCodeSchema = createSpotifyQRCodeSchema.partial().required({ type: true })
 const updateTikTokQRCodeSchema = createTikTokQRCodeSchema.partial().required({ type: true })
 const updateTwitterXQRCodeSchema = createTwitterXQRCodeSchema.partial().required({ type: true })
-const updateFacebookMessengerQRCodeSchema = createFacebookMessengerQRCodeSchema.partial().required({ type: true })
+const updateFacebookMessengerQRCodeSchema = createFacebookMessengerQRCodeSchema
+  .partial()
+  .required({ type: true })
 const updateViberQRCodeSchema = createViberQRCodeSchema.partial().required({ type: true })
 const updateFaceTimeQRCodeSchema = createFaceTimeQRCodeSchema.partial().required({ type: true })
 const updateWeChatQRCodeSchema = createWeChatQRCodeSchema.partial().required({ type: true })
@@ -726,9 +752,13 @@ const updatePayPalQRCodeSchema = createPayPalQRCodeSchema.partial().required({ t
 const updateCryptoQRCodeSchema = createCryptoQRCodeSchema.partial().required({ type: true })
 const updateBrazilPIXQRCodeSchema = createBrazilPIXQRCodeSchema.partial().required({ type: true })
 const updateGoogleMapsQRCodeSchema = createGoogleMapsQRCodeSchema.partial().required({ type: true })
-const updateDynamicEmailQRCodeSchema = createDynamicEmailQRCodeSchema.partial().required({ type: true })
+const updateDynamicEmailQRCodeSchema = createDynamicEmailQRCodeSchema
+  .partial()
+  .required({ type: true })
 const updateDynamicSMSQRCodeSchema = createDynamicSMSQRCodeSchema.partial().required({ type: true })
-const updateGoogleReviewQRCodeSchema = createGoogleReviewQRCodeSchema.partial().required({ type: true })
+const updateGoogleReviewQRCodeSchema = createGoogleReviewQRCodeSchema
+  .partial()
+  .required({ type: true })
 const updateFileUploadQRCodeSchema = createFileUploadQRCodeSchema.partial().required({ type: true })
 const updateUPIDynamicQRCodeSchema = createUPIDynamicQRCodeSchema.partial().required({ type: true })
 

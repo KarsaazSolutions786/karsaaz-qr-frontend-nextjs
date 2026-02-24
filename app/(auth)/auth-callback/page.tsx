@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { Suspense } from 'react'
 import { User } from '@/types/entities/user'
 import { authWorkflowEngine, type OAuthProviderName } from '@/lib/services/auth-workflow'
+import Link from 'next/link'
 
 /**
  * OAuth callback page — handles redirect from server-side OAuth flow.
@@ -52,7 +53,10 @@ function AuthCallbackContent() {
         setUser(userData)
 
         // Redirect to user's home page
-        const homePage = userData.roles?.[0]?.home_page || '/qrcodes/new'
+        let homePage = userData.roles?.[0]?.home_page || '/qrcodes/new'
+        if (homePage.startsWith('/dashboard')) {
+          homePage = homePage.replace('/dashboard', '')
+        }
         router.push(homePage)
       } catch {
         setError('Failed to process login. Please try again.')
@@ -68,12 +72,12 @@ function AuthCallbackContent() {
         <div className="w-full max-w-md text-center space-y-4">
           <h2 className="text-2xl font-bold text-gray-900">Login Failed</h2>
           <p className="text-sm text-gray-600">{error}</p>
-          <a
+          <Link
             href="/login"
             className="inline-block rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
           >
             Back to Login
-          </a>
+          </Link>
         </div>
       </div>
     )

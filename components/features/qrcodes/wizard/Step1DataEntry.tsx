@@ -47,10 +47,7 @@ import { VCardPlusDataForm } from '@/components/features/qrcodes/forms/VCardPlus
 import { UPIStaticDataForm } from '@/components/features/qrcodes/forms/UPIStaticDataForm'
 import { BiolinksDataForm } from '@/components/features/qrcodes/forms/BiolinksDataForm'
 import { BusinessProfileDataForm } from '@/components/features/qrcodes/forms/BusinessProfileDataForm'
-import { QRCodePreview } from '@/components/qr/QRCodePreview'
-import { encodeQRData } from '@/lib/utils/qr-data-encoder'
 import { QR_TYPES } from '@/lib/constants/qr-types'
-import { Info } from 'lucide-react'
 
 interface Step1DataEntryProps {
   qrType: string
@@ -58,20 +55,16 @@ interface Step1DataEntryProps {
   onChange: (data: Record<string, any>) => void
 }
 
-export default function Step1DataEntry({
-  qrType,
-  data,
-  onChange,
-}: Step1DataEntryProps) {
+export default function Step1DataEntry({ qrType, data, onChange }: Step1DataEntryProps) {
   // Get the type info for display
   const typeInfo = QR_TYPES.find(t => t.id === qrType)
 
-  // Encode data for live preview
-  const previewData = encodeQRData(qrType, data)
-
-  const handleDataChange = useCallback((formData: any) => {
-    onChange(formData)
-  }, [onChange])
+  const handleDataChange = useCallback(
+    (formData: any) => {
+      onChange(formData)
+    },
+    [onChange]
+  )
 
   const renderDataForm = () => {
     const commonProps = {
@@ -211,49 +204,10 @@ export default function Step1DataEntry({
         </div>
       )}
 
-      {/* Data Form + Preview Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-        {/* Data Form (takes more space) */}
-        <div className="lg:col-span-3">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Enter QR Code Data
-          </h3>
-          <div
-            className="bg-gray-50 rounded-lg p-6 border border-gray-200"
-          >
-            {renderDataForm()}
-          </div>
-        </div>
-
-        {/* Live Preview (sticky sidebar) */}
-        <div className="lg:col-span-2">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Live Preview
-          </h3>
-          <div className="bg-white rounded-lg p-6 border border-gray-200 sticky top-6">
-            <div className="flex flex-col items-center gap-4">
-              {previewData ? (
-                <QRCodePreview
-                  data={previewData}
-                  className="w-full max-w-[256px] mx-auto"
-                />
-              ) : (
-                <div className="w-[256px] h-[256px] bg-gray-100 rounded-lg flex items-center justify-center">
-                  <div className="text-center text-gray-400">
-                    <div className="text-5xl mb-2">⬜</div>
-                    <p className="text-sm">Fill in the form to<br />see your QR code</p>
-                  </div>
-                </div>
-              )}
-              <div className="flex items-start gap-2 text-xs text-gray-500 bg-blue-50 border border-blue-200 rounded-md p-3 w-full">
-                <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-600" />
-                <p>
-                  Preview updates as you fill in the form. You&apos;ll customize the design in the next step.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Data Form — full width, no preview (preview shows in Design tab) */}
+      <div className="max-w-2xl">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Enter QR Code Data</h3>
+        <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">{renderDataForm()}</div>
       </div>
     </div>
   )

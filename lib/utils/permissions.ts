@@ -58,10 +58,17 @@ export function isSubUser(user: User | null | undefined): boolean {
  */
 export function userHomePage(user: User | null | undefined): string {
   if (!user) return '/qrcodes/new'
+  let homePage: string | undefined
   if (user.is_sub && user.parent_user?.roles?.[0]?.home_page) {
-    return user.parent_user.roles[0].home_page
+    homePage = user.parent_user.roles[0].home_page
+  } else {
+    homePage = user.roles?.[0]?.home_page
   }
-  return user.roles?.[0]?.home_page || '/qrcodes/new'
+  // Strip legacy /dashboard prefix (old Lit frontend paths)
+  if (homePage?.startsWith('/dashboard')) {
+    homePage = homePage.replace('/dashboard', '')
+  }
+  return homePage || '/qrcodes/new'
 }
 
 /**
@@ -105,20 +112,14 @@ export function hasPermission(user: User | null | undefined, permission: string)
 /**
  * Check if user has all of the specified permissions
  */
-export function hasAllPermissions(
-  user: User | null | undefined,
-  permissions: string[]
-): boolean {
+export function hasAllPermissions(user: User | null | undefined, permissions: string[]): boolean {
   return permissions.every(p => permitted(user, p))
 }
 
 /**
  * Check if user has any of the specified permissions
  */
-export function hasAnyPermission(
-  user: User | null | undefined,
-  permissions: string[]
-): boolean {
+export function hasAnyPermission(user: User | null | undefined, permissions: string[]): boolean {
   return permissions.some(p => permitted(user, p))
 }
 

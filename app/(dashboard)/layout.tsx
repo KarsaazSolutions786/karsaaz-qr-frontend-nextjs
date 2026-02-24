@@ -3,71 +3,29 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LanguagePicker } from '@/components/common/LanguagePicker'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { ActAsBanner } from '@/components/common/ActAsBanner'
 import {
   QrCodeIcon,
-  LinkIcon,
-  NewspaperIcon,
-  Squares2X2Icon,
-  ClipboardDocumentListIcon,
-  CreditCardIcon,
   Bars3Icon,
   XMarkIcon,
   ArchiveBoxIcon,
   CloudIcon,
-  CurrencyDollarIcon,
-  SparklesIcon,
   ChevronRightIcon,
-  ChevronDownIcon,
   ArrowRightOnRectangleIcon,
   UsersIcon,
   BanknotesIcon,
   DocumentTextIcon,
-  LanguageIcon,
-  CodeBracketIcon,
-  DocumentDuplicateIcon,
   EnvelopeIcon,
   PuzzlePieceIcon,
-  Cog6ToothIcon,
   ServerIcon,
-  ClockIcon,
-  BellIcon,
-  DevicePhoneMobileIcon,
-  ShieldCheckIcon,
-  ExclamationTriangleIcon,
-  GlobeAltIcon,
   HomeIcon,
-  SignalIcon,
-  UserGroupIcon,
-  CircleStackIcon,
-  ChartBarIcon,
-  UserCircleIcon,
-  RectangleGroupIcon,
-  FolderIcon,
-  TagIcon,
-  TicketIcon,
-  WrenchScrewdriverIcon,
-  InboxStackIcon,
-  ArrowPathIcon,
-  BookOpenIcon,
-  CommandLineIcon,
 } from '@heroicons/react/24/outline'
 import { GlobalSearch } from '@/components/common/GlobalSearch'
 import { QuickActions } from '@/components/common/QuickActions'
-import {
-  getSidebarFolders,
-  getSidebarTemplateCategories,
-  getDynamicQRCodeCount,
-  getTotalScans,
-  getCurrentPlanFromUser,
-  formatLimit,
-  type Plan,
-} from '@/lib/api/sidebar'
-import type { Folder } from '@/types/entities/folder'
-import type { TemplateCategory } from '@/types/entities/template'
 
 // Navigation types
 interface NavItem {
@@ -76,113 +34,128 @@ interface NavItem {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
 }
 
-interface NavGroup {
-  name: string
+interface FigmaNavItem {
+  key: string
+  label: string
+  href: string
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
-  items: NavItem[]
+  adminOnly?: boolean
 }
 
-// Top-level standalone items (locked groups - always visible, matches Lit qrcodesGroup + cloudStorageGroup)
-const topNavigation: NavItem[] = [
-  { name: 'Home', href: '/qrcodes/new', icon: HomeIcon },
-  { name: 'Existing QRs', href: '/qrcodes', icon: QrCodeIcon },
-  { name: 'Archived', href: '/archived', icon: ArchiveBoxIcon },
-]
+interface FigmaNavSection {
+  key: string
+  label: string
+  href: string
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  items: NavItem[]
+  adminOnly?: boolean
+}
 
-// Cloud Storage locked group (separate from collapsible groups)
-const cloudStorageNavigation: NavItem[] = [
-  { name: 'Connections', href: '/cloud-storage', icon: CloudIcon },
-]
-
-// Collapsible navigation groups (matches Lit menu-store groups exactly)
-const navigationGroups: NavGroup[] = [
+const figmaPrimaryNav: FigmaNavItem[] = [
+  { key: 'home', label: 'Home', href: '/qrcodes/new', icon: HomeIcon },
+  { key: 'existing-qr', label: 'Existing QR', href: '/qrcodes', icon: QrCodeIcon },
+  { key: 'archived', label: 'Archived', href: '/archived', icon: ArchiveBoxIcon },
   {
-    name: 'Referrals',
-    icon: CurrencyDollarIcon,
-    items: [
-      { name: 'Commission Summary', href: '/referral', icon: ChartBarIcon },
-      { name: 'Withdrawal History', href: '/referral/withdrawals', icon: ClockIcon },
-    ],
+    key: 'storage-connections',
+    label: 'Storage Connections',
+    href: '/cloud-storage',
+    icon: CloudIcon,
   },
+]
+
+const figmaSectionNav: FigmaNavSection[] = [
   {
-    name: 'Users',
+    key: 'users',
+    label: 'Users',
+    href: '/users',
     icon: UsersIcon,
+    adminOnly: true,
     items: [
       { name: 'All Users', href: '/users', icon: UsersIcon },
-      { name: 'Paying Users', href: '/users/paying', icon: CreditCardIcon },
-      { name: 'Non Paying Users', href: '/users/non-paying', icon: UserGroupIcon },
-      { name: 'Roles', href: '/users/roles', icon: ShieldCheckIcon },
+      { name: 'Paying Users', href: '/users/paying', icon: UsersIcon },
+      { name: 'Non Paying Users', href: '/users/non-paying', icon: UsersIcon },
+      { name: 'Roles', href: '/users/roles', icon: UsersIcon },
     ],
   },
   {
-    name: 'Finance',
+    key: 'finance',
+    label: 'Finance',
+    href: '/plans',
     icon: BanknotesIcon,
+    adminOnly: true,
     items: [
-      { name: 'Pricing Plans', href: '/plans', icon: SparklesIcon },
-      { name: 'Subscriptions', href: '/subscriptions', icon: CreditCardIcon },
+      { name: 'Pricing Plans', href: '/plans', icon: BanknotesIcon },
+      { name: 'Subscriptions', href: '/subscriptions', icon: BanknotesIcon },
       { name: 'Billing', href: '/billing', icon: BanknotesIcon },
-      { name: 'Transactions', href: '/transactions', icon: CurrencyDollarIcon },
+      { name: 'Transactions', href: '/transactions', icon: BanknotesIcon },
       { name: 'Payment Processors', href: '/payment-processors', icon: BanknotesIcon },
-      { name: 'Payment Gateways', href: '/payment-gateways', icon: WrenchScrewdriverIcon },
-      { name: 'Payment Methods', href: '/payment-methods', icon: CreditCardIcon },
-      { name: 'Currencies', href: '/currencies', icon: CircleStackIcon },
+      { name: 'Payment Gateways', href: '/payment-gateways', icon: BanknotesIcon },
+      { name: 'Payment Methods', href: '/payment-methods', icon: BanknotesIcon },
+      { name: 'Currencies', href: '/currencies', icon: BanknotesIcon },
     ],
   },
   {
-    name: 'Content',
+    key: 'content',
+    label: 'Content',
+    href: '/blog-posts',
     icon: DocumentTextIcon,
     items: [
-      { name: 'Blog Posts', href: '/blog-posts', icon: NewspaperIcon },
-      { name: 'Content Blocks', href: '/content-blocks', icon: Squares2X2Icon },
-      { name: 'Translations', href: '/translations', icon: LanguageIcon },
-      { name: 'Custom Code', href: '/custom-codes', icon: CodeBracketIcon },
-      { name: 'Pages', href: '/pages', icon: DocumentDuplicateIcon },
-      { name: 'Dynamic BioLinks', href: '/dynamic-biolink-blocks', icon: LinkIcon },
+      { name: 'Blog Posts', href: '/blog-posts', icon: DocumentTextIcon },
+      { name: 'Content Blocks', href: '/content-blocks', icon: DocumentTextIcon },
+      { name: 'Translations', href: '/translations', icon: DocumentTextIcon },
+      { name: 'Custom Code', href: '/custom-codes', icon: DocumentTextIcon },
+      { name: 'Pages', href: '/pages', icon: DocumentTextIcon },
+      { name: 'Dynamic BioLinks', href: '/dynamic-biolink-blocks', icon: DocumentTextIcon },
     ],
   },
   {
-    name: 'Contacts',
+    key: 'contacts',
+    label: 'Contacts',
+    href: '/contacts',
     icon: EnvelopeIcon,
     items: [
       { name: 'Contact Form', href: '/contacts', icon: EnvelopeIcon },
-      { name: 'Lead Forms', href: '/lead-forms', icon: ClipboardDocumentListIcon },
-      { name: 'Support Tickets', href: '/support-tickets', icon: TicketIcon },
+      { name: 'Lead Forms', href: '/lead-forms', icon: EnvelopeIcon },
+      { name: 'Support Tickets', href: '/support-tickets', icon: EnvelopeIcon },
     ],
   },
   {
-    name: 'Plugins',
+    key: 'plugins',
+    label: 'Plugins',
+    href: '/plugins/available',
     icon: PuzzlePieceIcon,
+    adminOnly: true,
     items: [
       { name: 'Available Plugins', href: '/plugins/available', icon: PuzzlePieceIcon },
-      { name: 'Installed Plugins', href: '/plugins/installed', icon: Cog6ToothIcon },
+      { name: 'Installed Plugins', href: '/plugins/installed', icon: PuzzlePieceIcon },
     ],
   },
   {
-    name: 'System',
+    key: 'system',
+    label: 'System',
+    href: '/system/status',
     icon: ServerIcon,
+    adminOnly: true,
     items: [
-      { name: 'Status', href: '/system/status', icon: SignalIcon },
-      { name: 'Settings', href: '/system/settings', icon: Cog6ToothIcon },
-      { name: 'Logs', href: '/system/logs', icon: ClockIcon },
-      { name: 'Cache', href: '/system/cache', icon: CircleStackIcon },
-      { name: 'Notifications', href: '/system/notifications', icon: BellIcon },
-      { name: 'Sms Portals', href: '/system/sms-portals', icon: DevicePhoneMobileIcon },
-      { name: 'Auth Workflow', href: '/system/auth-workflow', icon: ShieldCheckIcon },
-      { name: 'Abuse Reports', href: '/system/abuse-reports', icon: ExclamationTriangleIcon },
-      { name: 'Domains', href: '/system/domains', icon: GlobeAltIcon },
-      { name: 'Template Categories', href: '/template-categories', icon: RectangleGroupIcon },
-      { name: 'Email Templates', href: '/system/email-templates', icon: EnvelopeIcon },
-      { name: 'Webhooks', href: '/system/webhooks', icon: CommandLineIcon },
-      { name: 'API Docs', href: '/system/api-docs', icon: BookOpenIcon },
-      { name: 'Scheduled Tasks', href: '/system/scheduled-tasks', icon: ArrowPathIcon },
-      { name: 'Queues', href: '/system/queues', icon: InboxStackIcon },
-      { name: 'Backups', href: '/system/backups', icon: CircleStackIcon },
+      { name: 'Status', href: '/system/status', icon: ServerIcon },
+      { name: 'Settings', href: '/system/settings', icon: ServerIcon },
+      { name: 'Logs', href: '/system/logs', icon: ServerIcon },
+      { name: 'Cache', href: '/system/cache', icon: ServerIcon },
+      { name: 'Notifications', href: '/system/notifications', icon: ServerIcon },
+      { name: 'Sms Portals', href: '/system/sms-portals', icon: ServerIcon },
+      { name: 'Auth Workflow', href: '/system/auth-workflow', icon: ServerIcon },
+      { name: 'Abuse Reports', href: '/system/abuse-reports', icon: ServerIcon },
+      { name: 'Domains', href: '/system/domains', icon: ServerIcon },
+      { name: 'Template Categories', href: '/template-categories', icon: ServerIcon },
+      { name: 'Email Templates', href: '/system/email-templates', icon: ServerIcon },
+      { name: 'Webhooks', href: '/system/webhooks', icon: ServerIcon },
+      { name: 'API Docs', href: '/system/api-docs', icon: ServerIcon },
+      { name: 'Scheduled Tasks', href: '/system/scheduled-tasks', icon: ServerIcon },
+      { name: 'Queues', href: '/system/queues', icon: ServerIcon },
+      { name: 'Backups', href: '/system/backups', icon: ServerIcon },
     ],
   },
 ]
-
-// Nav groups that require admin role
-const adminOnlyGroups = new Set(['Users', 'Finance', 'System', 'Plugins'])
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -206,30 +179,37 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const searchParams = useSearchParams()
   const { user, isLoading, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   // Permission-based filtering: show admin groups only for admin users
   const isAdmin = Boolean(user?.roles?.[0]?.super_admin)
-  const filteredNavigationGroups = navigationGroups.filter(
-    group => !adminOnlyGroups.has(group.name) || isAdmin
-  )
+  const filteredSectionNav = figmaSectionNav.filter(item => !item.adminOnly || isAdmin)
+  const collapsedNavItems: NavItem[] = [
+    ...figmaPrimaryNav.map(item => ({ name: item.label, href: item.href, icon: item.icon })),
+    ...filteredSectionNav.map(item => ({ name: item.label, href: item.href, icon: item.icon })),
+  ]
+
+  useEffect(() => {
+    const nextExpanded: Record<string, boolean> = {}
+    filteredSectionNav.forEach(section => {
+      const isActiveInSection = section.items.some(item => isItemActive(item.href))
+      if (isActiveInSection) {
+        nextExpanded[section.key] = true
+      }
+    })
+    if (Object.keys(nextExpanded).length > 0) {
+      setExpandedSections(prev => ({ ...prev, ...nextExpanded }))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, searchParams, filteredSectionNav.length])
 
   // Set mounted to true after initial render to prevent hydration mismatch
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  // Dynamic sidebar data
-  const [folders, setFolders] = useState<Folder[]>([])
-  const [templateCategories, setTemplateCategories] = useState<TemplateCategory[]>([])
-
-  // Account widget stats
-  const [qrCount, setQrCount] = useState<number>(0)
-  const [scanCount, setScanCount] = useState<number>(0)
-  const [plan, setPlan] = useState<Plan | null>(null)
-  const [statsLoading, setStatsLoading] = useState(true)
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -237,71 +217,6 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       router.push(`/login?from=${encodeURIComponent(currentPath)}`)
     }
   }, [user, isLoading, router])
-
-  // Fetch dynamic sidebar data
-  useEffect(() => {
-    if (!user) return
-
-    const fetchSidebarData = async () => {
-      try {
-        // Fetch folders and template categories in parallel
-        const [foldersData, categoriesData] = await Promise.all([
-          getSidebarFolders(user.id),
-          getSidebarTemplateCategories(),
-        ])
-
-        setFolders(foldersData)
-        setTemplateCategories(categoriesData)
-      } catch (error) {
-        console.error('Failed to fetch sidebar data:', error)
-      }
-    }
-
-    fetchSidebarData()
-  }, [user])
-
-  // Fetch account stats
-  useEffect(() => {
-    if (!user) return
-
-    const fetchStats = async () => {
-      setStatsLoading(true)
-      try {
-        const [qrCountData, scansData] = await Promise.all([
-          getDynamicQRCodeCount(),
-          getTotalScans(),
-        ])
-
-        setQrCount(qrCountData)
-        setScanCount(scansData)
-        // Get plan from user object (subscriptions are loaded with /myself)
-        setPlan(getCurrentPlanFromUser(user))
-      } catch (error) {
-        console.error('Failed to fetch account stats:', error)
-      } finally {
-        setStatsLoading(false)
-      }
-    }
-
-    fetchStats()
-  }, [user])
-
-  // Auto-expand group that contains active route
-  useEffect(() => {
-    filteredNavigationGroups.forEach(group => {
-      if (group.items.some(item => isItemActive(item.href))) {
-        setExpandedGroups(prev => ({ ...prev, [group.name]: true }))
-      }
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname])
-
-  const toggleGroup = (groupName: string) => {
-    setExpandedGroups(prev => ({
-      ...prev,
-      [groupName]: !prev[groupName],
-    }))
-  }
 
   const isItemActive = (href: string) => {
     if (!pathname) return false
@@ -340,10 +255,6 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     return !hasExtraParams
   }
 
-  const isGroupActive = (group: NavGroup) => {
-    return group.items.some(item => isItemActive(item.href))
-  }
-
   const handleLogout = async () => {
     if (isLoggingOut) return
     setIsLoggingOut(true)
@@ -352,6 +263,13 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoggingOut(false)
     }
+  }
+
+  const toggleSection = (sectionKey: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionKey]: !prev[sectionKey],
+    }))
   }
 
   // Show minimal loading state during SSR and initial mount to prevent hydration mismatch
@@ -379,328 +297,216 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         />
       )}
 
-      {/* Sidebar — purple gradient matching original */}
+      {/* Figma Sidebar: opened (264px) / closed (115px) */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 w-60 flex flex-col
-          bg-gradient-to-b from-[#8368dc] to-[#b664c6] dark:from-[#6b52b8] dark:to-[#9a4fa8]
-          transform transition-transform duration-300 ease-in-out
+          fixed inset-y-0 left-0 z-50 flex flex-col
+          border-r-2 border-white bg-white/90 backdrop-blur-[25px]
+          transition-all duration-300 ease-in-out transform
           lg:translate-x-0 lg:static lg:inset-auto
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${sidebarCollapsed ? 'w-[115px]' : 'w-[264px]'}
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
-        {/* Logo */}
-        <div className="flex h-14 items-center justify-between px-4 shrink-0">
-          <Link href="/qrcodes" className="flex items-center gap-2">
-            <QrCodeIcon className="h-7 w-7 text-white" />
-            <span className="text-lg font-bold text-white">
-              Karsaaz <span className="text-white/80">QR</span>
-            </span>
-          </Link>
-          <button
-            className="lg:hidden text-white/70 hover:text-white"
+        <div className="relative h-[154px] shrink-0">
+          <Link
+            href="/qrcodes/new"
+            className={`absolute flex items-center gap-2 ${sidebarCollapsed ? 'left-1/2 top-[71px] -translate-x-1/2' : 'left-5 top-[72px]'}`}
             onClick={() => setSidebarOpen(false)}
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[#B36AC5]/10 text-[#8c4ea3]">
+              <Image
+                src="/sidebar-assets/sidebar-logo.svg"
+                alt="Karsaaz QR"
+                width={22}
+                height={22}
+              />
+            </div>
+            {!sidebarCollapsed && (
+              <span className="text-[17px] font-semibold text-[#1b1b1b]">Karsaaz QR</span>
+            )}
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => setSidebarCollapsed(prev => !prev)}
+            className="hidden lg:flex absolute right-5 top-[77px] h-7 w-7 items-center justify-center rounded-md text-[#6d6d6d] hover:bg-[#f3e8ff]"
+            aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <ChevronRightIcon
+              className={`h-4 w-4 transition-transform ${sidebarCollapsed ? '' : 'rotate-180'}`}
+            />
+          </button>
+
+          <button
+            type="button"
+            className="lg:hidden absolute right-5 top-[77px] text-[#6d6d6d] hover:text-[#1b1b1b]"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close sidebar"
           >
             <XMarkIcon className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Separator line (matches original .sidebar-top dotted border) */}
-        <div className="mx-4 border-t border-white/20" />
-
-        {/* Navigation (scrollable) */}
-        <nav
-          aria-label="Main navigation"
-          className="flex-1 overflow-y-auto px-2 py-3 scrollbar-hide"
-        >
-          {/* Separator line (matches Lit .sidebar-top) */}
-          <div className="mx-3 mb-2 border-t border-dotted border-purple-300/30" />
-
-          {/* Top-level items (locked group - always visible) */}
-          <div className="space-y-0.5 mb-3">
-            {topNavigation.map(item => {
-              const active = isItemActive(item.href)
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`
-                    flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors
-                    ${
-                      active
-                        ? 'bg-black/20 text-white font-medium'
-                        : 'text-white/90 hover:bg-white/10 hover:text-white'
-                    }
-                  `}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <item.icon className="h-4 w-4 shrink-0" />
-                  {item.name}
-                </Link>
-              )
-            })}
-          </div>
-
-          {/* Cloud Storage locked group */}
-          <div className="mb-3">
-            <div className="px-3 mb-1.5">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Cloud Storage
-              </span>
-            </div>
-            <div className="space-y-0.5">
-              {cloudStorageNavigation.map(item => {
+        <nav aria-label="Main navigation" className="flex-1 overflow-y-auto px-2 pb-4">
+          {sidebarCollapsed ? (
+            <div className="flex flex-col items-center gap-[20px] pt-0">
+              {collapsedNavItems.map(item => {
                 const active = isItemActive(item.href)
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
+                    onClick={() => setSidebarOpen(false)}
                     className={`
-                      flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors
+                      flex items-center justify-center transition-colors
                       ${
                         active
-                          ? 'bg-black/20 text-white font-medium'
-                          : 'text-white/90 hover:bg-white/10 hover:text-white'
+                          ? 'h-[50px] w-[72px] rounded-[8px] bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] text-white'
+                          : 'h-[25.54px] w-[25.54px] rounded-[6px] text-[#6d6d6d] hover:bg-[#f7f1fb]'
                       }
                     `}
-                    onClick={() => setSidebarOpen(false)}
+                    title={item.name}
                   >
-                    <item.icon className="h-4 w-4 shrink-0" />
-                    {item.name}
+                    <item.icon className={active ? 'h-5 w-5' : 'h-[22px] w-[22px]'} />
                   </Link>
                 )
               })}
             </div>
-          </div>
-
-          {/* Folders Group (Dynamic) - matches Lit frontend */}
-          {folders.length > 0 && (
-            <div className="mb-3">
-              <div className="px-3 mb-1.5">
-                <span className="text-xs font-bold text-white uppercase tracking-wider">
-                  Folders
-                </span>
-              </div>
-              <div className="space-y-0.5">
-                {folders.map(folder => {
-                  const folderHref = `/qrcodes?folder_id=${folder.id}`
-                  const active = isItemActive(folderHref)
-                  return (
-                    <Link
-                      key={folder.id}
-                      href={folderHref}
-                      className={`
-                        flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-md transition-colors
-                        ${
-                          active
-                            ? 'bg-black/20 text-white font-medium'
-                            : 'text-white/90 hover:bg-white/10 hover:text-white'
-                        }
-                      `}
-                      onClick={() => setSidebarOpen(false)}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <FolderIcon className="h-4 w-4 shrink-0" />
-                        <span className="truncate">{folder.name}</span>
-                      </div>
-                      {/* QR Count Badge - matches Lit folder-menu-item.js */}
-                      <div
-                        className={`
-                        flex items-center justify-center min-w-[2rem] h-5 px-2 rounded-full text-xs font-bold
-                        ${active ? 'bg-white/20 text-white' : 'bg-white/90 text-purple-700'}
-                      `}
-                      >
-                        {folder.qrCodeCount || 0}
-                      </div>
-                    </Link>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Template Categories Group (Dynamic) - matches Lit frontend */}
-          {templateCategories.length > 0 && (
-            <div className="mb-3">
-              <div className="px-3 mb-1.5">
-                <span className="text-xs font-bold text-white uppercase tracking-wider">
-                  Categories
-                </span>
-              </div>
-              <div className="space-y-0.5">
-                {templateCategories.map(category => {
-                  const categoryHref = `/qrcodes/new?template-category-id=${category.id}`
-                  const active = isItemActive(categoryHref)
-                  return (
-                    <Link
-                      key={category.id}
-                      href={categoryHref}
-                      className={`
-                        flex items-center gap-2 px-3 py-2.5 text-sm rounded-md transition-colors
-                        ${
-                          active
-                            ? 'bg-black/20 text-white font-medium'
-                            : 'text-white/90 hover:bg-white/10 hover:text-white'
-                        }
-                      `}
-                      onClick={() => setSidebarOpen(false)}
-                    >
-                      <TagIcon className="h-4 w-4 shrink-0" />
-                      {category.name}
-                    </Link>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Separator */}
-          <div className="mx-3 my-3 border-t border-white/20" />
-
-          {/* Collapsible Navigation Groups */}
-          <div className="space-y-1">
-            {filteredNavigationGroups.map(group => {
-              const isExpanded = expandedGroups[group.name] ?? false
-              const groupActive = isGroupActive(group)
-              return (
-                <div key={group.name}>
-                  <button
-                    onClick={() => toggleGroup(group.name)}
+          ) : (
+            <div className="space-y-1 px-2">
+              {figmaPrimaryNav.map(item => {
+                const active = isItemActive(item.href)
+                return (
+                  <Link
+                    key={item.key}
+                    href={item.href}
+                    onClick={() => setSidebarOpen(false)}
                     className={`
-                      w-full flex items-center justify-between gap-2 px-3 py-2 text-sm rounded-md
-                      transition-colors cursor-pointer
+                      flex h-[50.4px] items-center gap-3 px-4 text-[12px] font-medium transition-colors
                       ${
-                        isExpanded
-                          ? 'bg-black/20 text-white font-bold'
-                          : groupActive
-                            ? 'text-white font-semibold hover:bg-white/10'
-                            : 'text-white/80 hover:bg-white/10 hover:text-white'
+                        active
+                          ? 'rounded-[12px] bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] text-white'
+                          : 'rounded-[26px] text-[#6d6d6d] hover:bg-[#f7f1fb]'
                       }
                     `}
                   >
-                    <div className="flex items-center gap-2">
-                      <group.icon className="h-4 w-4 shrink-0" />
-                      <span>{group.name}</span>
+                    <div
+                      className={`flex h-7 w-7 items-center justify-center rounded-[6px] ${active ? 'bg-white text-[#8f55a6]' : ''}`}
+                    >
+                      <item.icon className="h-4 w-4" />
                     </div>
-                    {isExpanded ? (
-                      <ChevronDownIcon className="h-3.5 w-3.5 opacity-60" />
-                    ) : (
-                      <ChevronRightIcon className="h-3.5 w-3.5 opacity-60" />
+                    <span className="truncate">{item.label}</span>
+                  </Link>
+                )
+              })}
+
+              {filteredSectionNav.map(item => {
+                const sectionActive = item.items.some(sectionItem => isItemActive(sectionItem.href))
+                const expanded = expandedSections[item.key] || false
+                return (
+                  <div key={item.key}>
+                    <button
+                      type="button"
+                      onClick={() => toggleSection(item.key)}
+                      className={`
+                      w-full flex h-[50.4px] items-center gap-3 rounded-[26px] px-4 text-[12px] font-medium transition-colors
+                      ${sectionActive ? 'bg-[#f5e7fb] text-[#1b1b1b]' : 'text-[#6d6d6d] hover:bg-[#f7f1fb]'}
+                    `}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="flex-1 truncate text-left">{item.label}</span>
+                      <ChevronRightIcon
+                        className={`h-3.5 w-3.5 transition-transform ${expanded ? 'rotate-90' : ''}`}
+                      />
+                    </button>
+
+                    {expanded && (
+                      <div className="ml-6 mt-1 space-y-1 border-l border-[#d9d9d9] pl-3">
+                        {item.items.map(sectionItem => {
+                          const childActive = isItemActive(sectionItem.href)
+                          return (
+                            <Link
+                              key={sectionItem.href}
+                              href={sectionItem.href}
+                              onClick={() => setSidebarOpen(false)}
+                              className={`
+                                block rounded-[10px] px-3 py-2 text-[11px] transition-colors
+                                ${childActive ? 'bg-[#f5e7fb] text-[#1b1b1b] font-medium' : 'text-[#6d6d6d] hover:bg-[#f7f1fb]'}
+                              `}
+                            >
+                              {sectionItem.name}
+                            </Link>
+                          )
+                        })}
+                      </div>
                     )}
-                  </button>
-
-                  {/* Group Items — shown when expanded */}
-                  {isExpanded && (
-                    <div className="mt-0.5 ml-3 space-y-0.5 border-l border-white/20 pl-3 pb-1">
-                      {group.items.map(item => {
-                        const active = isItemActive(item.href)
-                        return (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            className={`
-                              flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors
-                              ${
-                                active
-                                  ? 'bg-black/20 text-white font-medium'
-                                  : 'text-white/80 hover:bg-white/10 hover:text-white'
-                              }
-                            `}
-                            onClick={() => setSidebarOpen(false)}
-                          >
-                            <item.icon className="h-3.5 w-3.5 shrink-0" />
-                            {item.name}
-                          </Link>
-                        )
-                      })}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Bottom spacing for scrolling */}
-          <div className="h-24" />
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </nav>
 
-        {/* Language Picker */}
-        <div className="shrink-0 px-3 py-2 border-t border-white/10">
-          <LanguagePicker variant="dark" />
-        </div>
-
-        {/* Account section (matches Lit sidebar-account.js) */}
-        {user && (
-          <div className="shrink-0 bg-black/20 px-3 py-3">
-            {/* Stats (matches Lit detailed view) */}
-            {!statsLoading && plan && (
-              <div className="mb-2 grid grid-cols-2 gap-2 text-xs">
-                <div className="bg-purple-900/30 rounded px-2 py-1.5">
-                  <div className="text-white/60 font-bold uppercase text-[0.65rem] mb-0.5 truncate">
-                    Dynamic QRs
-                  </div>
-                  <div className="text-white font-semibold truncate">
-                    {qrCount} / {formatLimit(plan.number_of_dynamic_qrcodes)}
-                  </div>
-                </div>
-                <div className="bg-purple-900/30 rounded px-2 py-1.5">
-                  <div className="text-white/60 font-bold uppercase text-[0.65rem] mb-0.5 truncate">
-                    Scans
-                  </div>
-                  <div className="text-white font-semibold truncate">
-                    {scanCount.toLocaleString()} / {formatLimit(plan.number_of_scans)}
-                  </div>
+        <div
+          className={`${sidebarCollapsed ? 'px-5 pb-3 space-y-2' : 'px-5 pb-3 flex items-center justify-between gap-1'}`}
+        >
+          {sidebarCollapsed ? (
+            <>
+              <div className="flex h-[35px] w-[31px] items-center justify-center rounded-[4px] border border-[#1b1b1b0a] bg-white">
+                <Image src="/sidebar-assets/apple.svg" alt="App Store" width={16} height={16} />
+              </div>
+              <div className="flex h-[35px] w-[35px] items-center justify-center rounded-[4px] border border-[#1b1b1b0a] bg-white">
+                <Image
+                  src="/sidebar-assets/google-play.svg"
+                  alt="Google Play"
+                  width={16}
+                  height={16}
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex h-[35px] w-[109px] items-center gap-2 rounded-[4px] border border-[#1b1b1b0a] bg-white px-2">
+                <Image src="/sidebar-assets/apple.svg" alt="App Store" width={16} height={16} />
+                <div className="leading-none text-black">
+                  <p className="text-[7px] font-normal">Download on the</p>
+                  <p className="text-[10px] font-medium">App Store</p>
                 </div>
               </div>
+              <div className="flex h-[35px] w-[109px] items-center gap-2 rounded-[4px] border border-[#1b1b1b0a] bg-white px-2">
+                <Image
+                  src="/sidebar-assets/google-play.svg"
+                  alt="Google Play"
+                  width={16}
+                  height={16}
+                />
+                <div className="leading-none text-black">
+                  <p className="text-[7px] font-normal uppercase">Get it on</p>
+                  <p className="text-[10px] font-medium">Google Play</p>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="px-3 pb-4">
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className={`
+              flex h-[50px] w-full items-center rounded-[12px] border border-[#bd6bff52] bg-white text-[#6d6d6d]
+              transition-colors hover:bg-[#f7f1fb] disabled:opacity-60
+              ${sidebarCollapsed ? 'justify-center px-0' : 'justify-start gap-3 px-4'}
+            `}
+          >
+            <ArrowRightOnRectangleIcon className="h-5 w-5" />
+            {!sidebarCollapsed && (
+              <span className="text-base">{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
             )}
-
-            {/* Email */}
-            <p className="text-xs text-white/80 truncate mb-2">{user.email}</p>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              {/* Trial upgrade button (matches Lit) */}
-              {plan?.is_trial ? (
-                <>
-                  <div className="flex-1 flex items-center justify-center px-2 py-1.5 text-xs font-semibold bg-purple-900/30 text-white rounded-md">
-                    <span className="truncate">Trial</span>
-                  </div>
-                  <Link
-                    href="/account/upgrade"
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold
-                      bg-yellow-400 text-purple-900 rounded-md hover:bg-yellow-300 transition-colors"
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    <SparklesIcon className="h-3.5 w-3.5" />
-                    Upgrade
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/account"
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold
-                      bg-white text-purple-700 rounded-md hover:bg-white/90 transition-colors"
-                    onClick={() => setSidebarOpen(false)}
-                  >
-                    <UserCircleIcon className="h-3.5 w-3.5" />
-                    Account
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    disabled={isLoggingOut}
-                    className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold
-                      bg-red-500/80 text-white rounded-md hover:bg-red-500 transition-colors
-                      disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ArrowRightOnRectangleIcon className="h-3.5 w-3.5" />
-                    {isLoggingOut ? 'Logging out...' : 'Logout'}
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
+          </button>
+        </div>
       </aside>
 
       {/* Main content */}

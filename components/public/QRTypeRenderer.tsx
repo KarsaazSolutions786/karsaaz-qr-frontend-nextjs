@@ -1,70 +1,49 @@
-'use client';
+'use client'
 
-import React, { Suspense } from 'react';
-import dynamic from 'next/dynamic';
-import { hasLandingPage } from '@/lib/utils/qr-preview-router';
+import React, { Suspense } from 'react'
+import dynamic from 'next/dynamic'
+import { hasLandingPage } from '@/lib/utils/qr-preview-router'
 
 // Dynamically import preview components
 const BusinessProfilePreview = dynamic(
   () => import('@/components/public/business-profile/BusinessProfilePreview')
-);
-const VCardPreview = dynamic(
-  () => import('@/components/public/vcard/VCardPreview')
-);
-const MenuPreview = dynamic(
-  () => import('@/components/public/restaurant-menu/MenuPreview')
-);
+)
+const VCardPreview = dynamic(() => import('@/components/public/vcard/VCardPreview'))
+const MenuPreview = dynamic(() => import('@/components/public/restaurant-menu/MenuPreview'))
 const CataloguePreview = dynamic(
   () => import('@/components/public/product-catalogue/CataloguePreview')
-);
-const ReviewPreview = dynamic(
-  () => import('@/components/public/business-review/ReviewPreview')
-);
-const EventPreview = dynamic(
-  () => import('@/components/public/event/EventPreview')
-);
-const FormPreview = dynamic(
-  () => import('@/components/public/lead-form/FormPreview')
-);
-const WebsitePreview = dynamic(
-  () => import('@/components/public/website-builder/WebsitePreview')
-);
-const ResumePreview = dynamic(
-  () => import('@/components/public/resume/ResumePreview')
-);
-const UPIPreview = dynamic(
-  () => import('@/components/public/upi/UPIPreview')
-);
-const AppPreview = dynamic(
-  () => import('@/components/public/app-download/AppPreview')
-);
-const BiolinkPreview = dynamic(
-  () => import('@/components/features/biolinks/editor/BiolinkPreview')
-);
+)
+const ReviewPreview = dynamic(() => import('@/components/public/business-review/ReviewPreview'))
+const EventPreview = dynamic(() => import('@/components/public/event/EventPreview'))
+const FormPreview = dynamic(() => import('@/components/public/lead-form/FormPreview'))
+const WebsitePreview = dynamic(() => import('@/components/public/website-builder/WebsitePreview'))
+const ResumePreview = dynamic(() => import('@/components/public/resume/ResumePreview'))
+const UPIPreview = dynamic(() => import('@/components/public/upi/UPIPreview'))
+const AppPreview = dynamic(() => import('@/components/public/app-download/AppPreview'))
+const BiolinkPreview = dynamic(() => import('@/components/features/biolinks/editor/BiolinkPreview'))
+const FileUploadPreview = dynamic(() => import('@/components/public/file-upload/FileUploadPreview'))
 
 interface QRTypeRendererProps {
-  qrType: string;
-  data: any;
-  slug: string;
+  qrType: string
+  data: any
+  slug: string
 }
 
 export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
-  const normalizedType = qrType.toLowerCase().trim();
+  const normalizedType = qrType.toLowerCase().trim()
 
   // Check if type has a landing page
   if (!hasLandingPage(normalizedType)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Unsupported QR Type
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Unsupported QR Type</h1>
           <p className="text-gray-600">
             This QR code type ({qrType}) does not have a landing page.
           </p>
         </div>
       </div>
-    );
+    )
   }
 
   // Render appropriate preview component based on type
@@ -72,73 +51,76 @@ export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
     switch (normalizedType) {
       case 'biolinks':
       case 'biolink':
-        return <BiolinkPreview biolink={data} blocks={data?.blocks || []} />;
-      
+        return <BiolinkPreview biolink={data} blocks={data?.blocks || []} />
+
       case 'business-profile':
       case 'business':
-        return <BusinessProfilePreview profile={data} />;
-      
+        return <BusinessProfilePreview profile={data} />
+
       case 'vcard-plus':
       case 'vcard':
       case 'contact':
-        return <VCardPreview vcard={data} />;
-      
+        return <VCardPreview vcard={data} />
+
       case 'restaurant-menu':
       case 'menu':
-        return <MenuPreview menu={data} />;
-      
+        return <MenuPreview menu={data} />
+
       case 'product-catalogue':
       case 'products':
       case 'catalog':
       case 'catalogue':
-        return <CataloguePreview data={data} />;
-      
+        return <CataloguePreview data={data} />
+
       case 'business-review':
       case 'review':
       case 'rating':
-        return <ReviewPreview review={data} />;
-      
+        return <ReviewPreview review={data} />
+
       case 'event':
-        return <EventPreview event={data} />;
-      
+        return <EventPreview event={data} />
+
       case 'lead-form':
       case 'form':
       case 'contact-form':
-        return <FormPreview form={data} />;
-      
+        return <FormPreview form={data} />
+
       case 'website-builder':
       case 'website':
       case 'site':
-        return <WebsitePreview website={data} />;
-      
+        return <WebsitePreview website={data} />
+
       case 'resume':
       case 'cv':
       case 'curriculum-vitae':
-        return <ResumePreview data={data} />;
-      
+        return <ResumePreview data={data} />
+
       case 'upi-dynamic':
       case 'upi':
       case 'payment':
-        return <UPIPreview upiData={data} />;
-      
+        return <UPIPreview upiData={data} />
+
       case 'app-download':
       case 'app':
       case 'download':
-        return <AppPreview app={data} />;
-      
+        return <AppPreview app={data} />
+
+      case 'file-upload':
+      case 'file':
+      case 'download-file':
+        return <FileUploadPreview fileUpload={data} />
+
       default:
         return (
           <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Unknown QR Type
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Unknown QR Type</h1>
               <p className="text-gray-600">Type: {qrType}</p>
             </div>
           </div>
-        );
+        )
     }
-  };
+  }
 
   return (
     <Suspense
@@ -153,5 +135,5 @@ export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
     >
       {renderPreview()}
     </Suspense>
-  );
+  )
 }

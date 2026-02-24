@@ -29,8 +29,8 @@ import { sanitizeSvg } from '@/lib/utils/dom-safety'
 /* ------------------------------------------------------------------ */
 
 export interface BackendQRPreviewProps {
-  /** Encoded QR data string (output of encodeQRData) */
-  data: string
+  /** Raw form data object — sent as JSON to backend (matching P1's this.data) */
+  data: Record<string, any>
   /** QR code type key, e.g. 'url', 'vcard', 'wifi' */
   qrType?: string
   /** DesignerConfig from the wizard store */
@@ -91,7 +91,7 @@ function cacheSet(key: string, svg: string) {
 export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreviewProps>(
   function BackendQRPreview(
     { data, qrType = 'url', config = {}, qrId, className = '', debounce = 500 },
-    ref,
+    ref
   ) {
     const [svg, setSvg] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
@@ -108,12 +108,16 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
 
     /* ---- build the same URL params the legacy Lit frontend uses ---- */
     const buildParams = useCallback((): URLSearchParams | null => {
-      if (!data || !data.trim()) return null
+      // P1 sends the raw form data object as JSON (e.g., {"text":"hello"})
+      if (!data || Object.keys(data).length === 0) return null
+      // Check at least one value is non-empty
+      const hasValue = Object.values(data).some(v => v !== '' && v !== null && v !== undefined)
+      if (!hasValue) return null
 
       const backendDesign = transformDesignToBackend(mergedConfig)
 
       const params = new URLSearchParams()
-      params.set('data', data)
+      params.set('data', JSON.stringify(data))
       params.set('type', qrType)
       params.set('design', JSON.stringify(backendDesign))
       params.set('renderText', 'false')
@@ -125,7 +129,7 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
 
       return params
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data, qrType, qrId, JSON.stringify(config)])
+    }, [JSON.stringify(data), qrType, qrId, JSON.stringify(config)])
 
     /* ---- fetch SVG from backend ---- */
     const fetchPreview = useCallback(async () => {
@@ -225,15 +229,19 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
     }, [])
 
     /* ---- expose ref methods ---- */
-    useImperativeHandle(ref, () => ({
-      getSVG: () => svg,
-      getDataURL: () => {
-        if (!svg) return null
-        const encoded = encodeURIComponent(svg).replace(/'/g, '%27').replace(/"/g, '%22')
-        return `data:image/svg+xml,${encoded}`
-      },
-      refresh: () => fetchPreview(),
-    }), [svg, fetchPreview])
+    useImperativeHandle(
+      ref,
+      () => ({
+        getSVG: () => svg,
+        getDataURL: () => {
+          if (!svg) return null
+          const encoded = encodeURIComponent(svg).replace(/'/g, '%27').replace(/"/g, '%22')
+          return `data:image/svg+xml,${encoded}`
+        },
+        refresh: () => fetchPreview(),
+      }),
+      [svg, fetchPreview]
+    )
 
     /* ---- render ---- */
 

@@ -1,6 +1,6 @@
 import apiClient from '@/lib/api/client'
 import { QRCode } from '@/types/entities/qrcode'
-import { PaginatedResponse } from '@/types/api'
+import { normalizePagination, PaginatedResponse } from '@/lib/api/pagination'
 
 // QR Code API Endpoints
 
@@ -26,47 +26,30 @@ export interface ListQRCodesParams {
   sortOrder?: 'asc' | 'desc'
 }
 
-// Backend response (snake_case)
-interface BackendPaginationResponse {
-  current_page: number
-  per_page: number
-  total: number
-  last_page: number
-  from?: number
-  to?: number
-}
-
-interface BackendPaginatedResponse<T> {
-  success?: boolean
-  data: T[]
-  pagination: BackendPaginationResponse
-}
-
-// Transform backend response to frontend format
-function transformPaginatedResponse<T>(
-  response: BackendPaginatedResponse<T>
-): PaginatedResponse<T> {
-  // Handle case where response or pagination is undefined
-  if (!response || !response.pagination) {
-    return {
-      data: response?.data || [],
-      pagination: {
-        currentPage: 1,
-        perPage: 15,
-        total: 0,
-        lastPage: 1,
-      },
-    }
-  }
-
+/**
+ * Map a single backend QR code (snake_case) to frontend QRCode (camelCase).
+ * Only maps known fields; passes everything else through unchanged so new
+ * backend fields don't get silently dropped.
+ */
+function mapQRCode(raw: any): QRCode {
   return {
-    data: response.data || [],
-    pagination: {
-      currentPage: response.pagination.current_page || 1,
-      perPage: response.pagination.per_page || 15,
-      total: response.pagination.total || 0,
-      lastPage: response.pagination.last_page || 1,
-    },
+    ...raw,
+    id: String(raw.id),
+    userId: raw.user_id ?? raw.userId,
+    name: raw.name ?? '',
+    type: raw.type ?? 'url',
+    data: raw.data,
+    customization: raw.customization ?? raw.design ?? {},
+    designerConfig: raw.design ?? raw.designerConfig,
+    folderId: raw.folder_id ?? raw.folderId ?? null,
+    status: raw.status ?? (raw.archived ? 'archived' : 'active'),
+    domainId: raw.domain_id ?? raw.domainId,
+    screenshotUrl:
+      raw.qrcode_screenshot_url ?? raw.simple_png_url ?? raw.screenshotUrl ?? raw.screenshot_url,
+    createdAt: raw.created_at ?? raw.createdAt ?? '',
+    updatedAt: raw.updated_at ?? raw.updatedAt ?? '',
+    scans: raw.scans_count ?? raw.scans ?? 0,
+    tags: raw.tags ?? [],
   }
 }
 
@@ -157,19 +140,16 @@ export const qrcodesAPI = {
         queryParams.search_archived = search_archived
       }
 
-      const response = await apiClient.get<BackendPaginatedResponse<QRCode>>('/qrcodes', {
+      const response = await apiClient.get('/qrcodes', {
         params: queryParams,
       })
 
-      console.log('QR Codes API Response:', response.data)
-
-      // Check if response has the expected structure
-      if (!response.data) {
-        console.warn('No data in response')
-        return transformPaginatedResponse({ data: [], pagination: null as any })
-      }
-
-      return transformPaginatedResponse(response.data)
+      // Normalize flat Laravel pagination and map QR codes
+      const normalized = normalizePagination<any>(response.data)
+      return {
+        data: normalized.data.map(mapQRCode),
+        pagination: normalized.pagination,
+      } as PaginatedResponse<QRCode>
     } catch (error) {
       console.error('QR Codes fetch error:', error)
       throw error
@@ -178,20 +158,20 @@ export const qrcodesAPI = {
 
   // Get single QR code
   get: async (id: string) => {
-    const response = await apiClient.get<QRCode>(`/qrcodes/${id}`)
-    return response.data
+    const response = await apiClient.get(`/qrcodes/${id}`)
+    return mapQRCode(response.data)
   },
 
   // Create QR code
   create: async (data: CreateQRCodeRequest) => {
-    const response = await apiClient.post<QRCode>('/qrcodes', data)
-    return response.data
+    const response = await apiClient.post('/qrcodes', data)
+    return mapQRCode(response.data)
   },
 
   // Update QR code
   update: async (id: string, data: UpdateQRCodeRequest) => {
-    const response = await apiClient.put<QRCode>(`/qrcodes/${id}`, data)
-    return response.data
+    const response = await apiClient.put(`/qrcodes/${id}`, data)
+    return mapQRCode(response.data)
   },
 
   // Delete QR code
@@ -201,8 +181,8 @@ export const qrcodesAPI = {
 
   // Change QR code type
   changeType: async (id: string, data: ChangeQRTypeRequest) => {
-    const response = await apiClient.put<QRCode>(`/qrcodes/${id}/type`, data)
-    return response.data
+    const response = await apiClient.put(`/qrcodes/${id}/type`, data)
+    return mapQRCode(response.data)
   },
 
   // Bulk create QR codes
@@ -228,36 +208,36 @@ export const qrcodesAPI = {
 
   // Clone QR code
   clone: async (id: string) => {
-    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/clone`)
-    return response.data
+    const response = await apiClient.post(`/qrcodes/${id}/clone`)
+    return mapQRCode(response.data)
   },
 
   // Archive QR code
   archive: async (id: string) => {
-    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/archive`)
-    return response.data
+    const response = await apiClient.post(`/qrcodes/${id}/archive`)
+    return mapQRCode(response.data)
   },
 
   // Unarchive QR code
   unarchive: async (id: string) => {
-    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/unarchive`)
-    return response.data
+    const response = await apiClient.post(`/qrcodes/${id}/unarchive`)
+    return mapQRCode(response.data)
   },
 
   // Transfer ownership
   transferOwnership: async (id: string, newOwnerId: string) => {
-    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/transfer`, {
+    const response = await apiClient.post(`/qrcodes/${id}/transfer`, {
       user_id: newOwnerId,
     })
-    return response.data
+    return mapQRCode(response.data)
   },
 
   // Set/Remove PIN protection
   setPIN: async (id: string, pin: string | null) => {
-    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/pin`, {
+    const response = await apiClient.post(`/qrcodes/${id}/pin`, {
       pin,
     })
-    return response.data
+    return mapQRCode(response.data)
   },
 
   // Get QR code redirect data (for public preview pages)
@@ -274,24 +254,24 @@ export const qrcodesAPI = {
 
   // Change QR code status
   changeStatus: async (id: string, status: 'active' | 'inactive') => {
-    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/change-status`, {
+    const response = await apiClient.post(`/qrcodes/${id}/change-status`, {
       status,
     })
-    return response.data
+    return mapQRCode(response.data)
   },
 
   // Change QR code user/owner
   changeUser: async (id: string, userId: string) => {
-    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/change-user`, {
+    const response = await apiClient.post(`/qrcodes/${id}/change-user`, {
       user_id: userId,
     })
-    return response.data
+    return mapQRCode(response.data)
   },
 
   // Copy/Duplicate QR code (alternative to clone)
   copy: async (id: string) => {
-    const response = await apiClient.post<QRCode>(`/qrcodes/${id}/copy`)
-    return response.data
+    const response = await apiClient.post(`/qrcodes/${id}/copy`)
+    return mapQRCode(response.data)
   },
 
   // Get compatible SVG

@@ -1,22 +1,22 @@
 /**
  * ColorPicker Component
- * 
+ *
  * Color picker with hex input, presets, and opacity support.
  * Supports both solid colors and alpha channel.
  */
 
-'use client';
+'use client'
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react'
 
 export interface ColorPickerProps {
-  value: string;
-  onChange: (color: string) => void;
-  label?: string;
-  showPresets?: boolean;
-  showOpacity?: boolean;
-  presets?: string[];
-  className?: string;
+  value: string
+  onChange: (color: string) => void
+  label?: string
+  showPresets?: boolean
+  showOpacity?: boolean
+  presets?: string[]
+  className?: string
 }
 
 const DEFAULT_PRESETS = [
@@ -36,27 +36,27 @@ const DEFAULT_PRESETS = [
   '#DFE6E9', // Light Gray
   '#74B9FF', // Soft Blue
   '#A29BFE', // Lavender
-];
+]
 
 /**
  * Validate hex color
  */
 function isValidHex(hex: string): boolean {
-  return /^#[0-9A-F]{6}$/i.test(hex);
+  return /^#[0-9A-F]{6}$/i.test(hex)
 }
 
 /**
  * Extract RGB from hex
  */
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return result
     ? {
         r: parseInt(result[1] ?? '0', 16),
         g: parseInt(result[2] ?? '0', 16),
         b: parseInt(result[3] ?? '0', 16),
       }
-    : null;
+    : null
 }
 
 export function ColorPicker({
@@ -68,51 +68,51 @@ export function ColorPicker({
   presets = DEFAULT_PRESETS,
   className = '',
 }: ColorPickerProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [inputValue, setInputValue] = useState(value);
+  const [isOpen, setIsOpen] = useState(false)
+  const [inputValue, setInputValue] = useState(value)
 
   // Validate and update
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.target.value;
-      setInputValue(newValue);
+      const newValue = e.target.value
+      setInputValue(newValue)
 
       if (isValidHex(newValue)) {
-        onChange(newValue);
+        onChange(newValue)
       }
     },
     [onChange]
-  );
+  )
 
   // Handle preset click
   const handlePresetClick = useCallback(
     (preset: string) => {
-      setInputValue(preset);
-      onChange(preset);
-      setIsOpen(false);
+      setInputValue(preset)
+      onChange(preset)
+      setIsOpen(false)
     },
     [onChange]
-  );
+  )
 
   // Handle native color input
   const handleNativeColorChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const color = e.target.value;
-      setInputValue(color);
-      onChange(color);
+      const color = e.target.value
+      setInputValue(color)
+      onChange(color)
     },
     [onChange]
-  );
+  )
 
   // Get brightness for contrast
   const getBrightness = useCallback((hex: string): number => {
-    const rgb = hexToRgb(hex);
-    if (!rgb) return 128;
-    return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-  }, []);
+    const rgb = hexToRgb(hex)
+    if (!rgb) return 128
+    return (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000
+  }, [])
 
-  const brightness = useMemo(() => getBrightness(value), [value, getBrightness]);
-  const textColor = brightness > 128 ? '#000000' : '#FFFFFF';
+  const brightness = useMemo(() => getBrightness(value), [value, getBrightness])
+  const textColor = brightness > 128 ? '#000000' : '#FFFFFF'
 
   return (
     <div className={`color-picker ${className}`}>
@@ -191,10 +191,7 @@ export function ColorPicker({
 
       {/* Color info */}
       <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
-        <div
-          className="px-2 py-1 rounded"
-          style={{ backgroundColor: value, color: textColor }}
-        >
+        <div className="px-2 py-1 rounded" style={{ backgroundColor: value, color: textColor }}>
           Preview
         </div>
         {isValidHex(value) && (
@@ -204,7 +201,142 @@ export function ColorPicker({
         )}
       </div>
     </div>
-  );
+  )
+}
+
+/* ------------------------------------------------------------------ */
+/*  QRColorPicker — matches legacy Lit frontend qrcg-color-picker     */
+/* ------------------------------------------------------------------ */
+
+function randomHex(): string {
+  return (
+    '#' +
+    Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, '0')
+  )
+}
+
+function generatePalette(count: number): string[] {
+  return Array.from({ length: count }, () => randomHex())
+}
+
+/**
+ * QR Color Picker — inline swatches + HEX button + native picker + refresh
+ * Matches the legacy P1 color picker pattern exactly.
+ */
+export function QRColorPicker({
+  value,
+  onChange,
+  label,
+  swatchCount = 4,
+}: {
+  value: string
+  onChange: (color: string) => void
+  label?: string
+  swatchCount?: number
+}) {
+  const [palette, setPalette] = useState<string[]>(() => generatePalette(swatchCount))
+  const [showHex, setShowHex] = useState(false)
+  const [hexDraft, setHexDraft] = useState(value)
+
+  const refreshPalette = useCallback(() => {
+    setPalette(generatePalette(swatchCount))
+  }, [swatchCount])
+
+  const commitHex = useCallback(() => {
+    const c = hexDraft.startsWith('#') ? hexDraft : `#${hexDraft}`
+    if (/^#[0-9a-fA-F]{6}$/.test(c)) onChange(c)
+    setShowHex(false)
+  }, [hexDraft, onChange])
+
+  return (
+    <div>
+      {label && <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>}
+      <div className="flex items-center gap-2 flex-wrap">
+        {/* Random swatches */}
+        {palette.map((c, i) => (
+          <button
+            key={`${c}-${i}`}
+            type="button"
+            onClick={() => onChange(c)}
+            className={`w-9 h-9 rounded-md border-2 transition-all shrink-0 ${
+              value?.toLowerCase() === c.toLowerCase()
+                ? 'border-blue-500 ring-2 ring-blue-200 scale-110'
+                : 'border-gray-300 hover:border-gray-400'
+            }`}
+            style={{ backgroundColor: c }}
+            title={c}
+          />
+        ))}
+
+        {/* HEX button / inline input */}
+        {showHex ? (
+          <input
+            type="text"
+            autoFocus
+            value={hexDraft}
+            onChange={e => setHexDraft(e.target.value)}
+            onBlur={commitHex}
+            onKeyDown={e => e.key === 'Enter' && commitHex()}
+            className="w-24 h-9 rounded-md border-2 border-blue-400 px-2 text-xs font-mono text-center focus:outline-none focus:ring-2 focus:ring-blue-300"
+            placeholder="#000000"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              setHexDraft(value)
+              setShowHex(true)
+            }}
+            className="h-9 px-2 rounded-md border-2 border-gray-300 text-[11px] font-semibold text-gray-600 hover:border-gray-400 transition-colors shrink-0"
+          >
+            HEX
+          </button>
+        )}
+
+        {/* Native color picker */}
+        <div className="relative w-9 h-9 shrink-0">
+          <div
+            className="w-9 h-9 rounded-md border-2 border-gray-300"
+            style={{ backgroundColor: value }}
+          />
+          <input
+            type="color"
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
+        </div>
+
+        {/* Refresh palette */}
+        <button
+          type="button"
+          onClick={refreshPalette}
+          className="w-9 h-9 rounded-md border-2 border-gray-300 flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-colors shrink-0"
+          title="Randomize colors"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-gray-500"
+          >
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+            <path d="M16 16h5v5" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  )
 }
 
 /**
@@ -217,11 +349,11 @@ export function ColorSwatchPicker({
   label,
   className = '',
 }: {
-  value: string;
-  onChange: (color: string) => void;
-  colors: string[];
-  label?: string;
-  className?: string;
+  value: string
+  onChange: (color: string) => void
+  colors: string[]
+  label?: string
+  className?: string
 }) {
   return (
     <div className={`color-swatch-picker ${className}`}>
@@ -244,5 +376,5 @@ export function ColorSwatchPicker({
         ))}
       </div>
     </div>
-  );
+  )
 }

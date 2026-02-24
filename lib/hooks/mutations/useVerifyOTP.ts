@@ -13,7 +13,7 @@ export function useVerifyOTP() {
 
   return useMutation({
     mutationFn: (data: VerifyOTPRequest) => authAPI.verifyOTP(data),
-    onSuccess: (response) => {
+    onSuccess: response => {
       // Store the verified user and token
       if (response.user) {
         setUser(response.user)
@@ -27,8 +27,11 @@ export function useVerifyOTP() {
       }
 
       // Redirect based on user's role home_page
-      const homePage = response.user?.roles?.[0]?.home_page
-      router.push(homePage || '/qrcodes/new')
+      let homePage = response.user?.roles?.[0]?.home_page || '/qrcodes/new'
+      if (homePage.startsWith('/dashboard')) {
+        homePage = homePage.replace('/dashboard', '')
+      }
+      router.push(homePage)
     },
   })
 }

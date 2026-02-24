@@ -1,14 +1,14 @@
 /**
  * QR Preview Router Utility
- * 
+ *
  * Handles dynamic routing of QR codes based on their type.
  * Detects QR type and returns the appropriate preview route.
  */
 
 export interface QRTypeRoute {
-  type: string;
-  route: string;
-  aliases?: string[];
+  type: string
+  route: string
+  aliases?: string[]
 }
 
 export const QR_TYPE_ROUTES: QRTypeRoute[] = [
@@ -24,45 +24,44 @@ export const QR_TYPE_ROUTES: QRTypeRoute[] = [
   { type: 'resume', route: '/resume', aliases: ['cv', 'curriculum-vitae'] },
   { type: 'upi-dynamic', route: '/upi', aliases: ['upi', 'payment'] },
   { type: 'app-download', route: '/app', aliases: ['app', 'download'] },
-];
+  { type: 'file-upload', route: '/file', aliases: ['file', 'download-file'] },
+]
 
 /**
  * Get preview route for a QR type
  */
 export function getPreviewRoute(qrType: string, slug: string): string | null {
-  const normalizedType = qrType.toLowerCase().trim();
+  const normalizedType = qrType.toLowerCase().trim()
 
   // Find route by type or alias
   const route = QR_TYPE_ROUTES.find(
-    (r) =>
-      r.type === normalizedType ||
-      r.aliases?.includes(normalizedType)
-  );
+    r => r.type === normalizedType || r.aliases?.includes(normalizedType)
+  )
 
   if (!route) {
-    return null;
+    return null
   }
 
   // Biolinks uses root path
   if (route.type === 'biolinks') {
-    return `/${slug}`;
+    return `/${slug}`
   }
 
-  return `${route.route}/${slug}`;
+  return `${route.route}/${slug}`
 }
 
 /**
  * Check if QR type has a landing page
  */
 export function hasLandingPage(qrType: string): boolean {
-  return getPreviewRoute(qrType, 'test') !== null;
+  return getPreviewRoute(qrType, 'test') !== null
 }
 
 /**
  * Get all supported QR types with landing pages
  */
 export function getSupportedQRTypes(): string[] {
-  return QR_TYPE_ROUTES.map((r) => r.type);
+  return QR_TYPE_ROUTES.map(r => r.type)
 }
 
 /**
@@ -83,9 +82,9 @@ export function isStaticQRType(qrType: string): boolean {
     'twitter',
     'linkedin',
     'whatsapp',
-  ];
+  ]
 
-  return staticTypes.includes(qrType.toLowerCase().trim());
+  return staticTypes.includes(qrType.toLowerCase().trim())
 }
 
 /**
@@ -95,18 +94,18 @@ export function buildPreviewUrl(
   qrType: string,
   slug: string,
   options: {
-    preview?: boolean;
-    baseUrl?: string;
+    preview?: boolean
+    baseUrl?: string
   } = {}
 ): string {
-  const { preview = false, baseUrl = '' } = options;
+  const { preview = false, baseUrl = '' } = options
 
-  const route = getPreviewRoute(qrType, slug);
+  const route = getPreviewRoute(qrType, slug)
 
   if (!route) {
-    return `${baseUrl}/404`;
+    return `${baseUrl}/404`
   }
 
-  const url = `${baseUrl}${route}`;
-  return preview ? `${url}?preview=true` : url;
+  const url = `${baseUrl}${route}`
+  return preview ? `${url}?preview=true` : url
 }

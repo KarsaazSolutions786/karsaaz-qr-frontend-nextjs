@@ -3,10 +3,7 @@
 import { useState, useCallback, useMemo } from 'react'
 import Image from 'next/image'
 import { ChevronDown, ChevronUp, Search } from 'lucide-react'
-import {
-  QR_TYPES,
-  QRCodeTypeDefinition,
-} from '@/lib/constants/qr-types'
+import { QR_TYPES, QRCodeTypeDefinition } from '@/lib/constants/qr-types'
 
 interface QRCodeTypeSelectorProps {
   value: string
@@ -41,15 +38,10 @@ export function QRCodeTypeSelector({
     if (!keyword.trim()) return QR_TYPES
     const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const pattern = new RegExp(escaped, 'i')
-    return QR_TYPES.filter(
-      (type) => pattern.test(type.name) || pattern.test(type.id)
-    )
+    return QR_TYPES.filter(type => pattern.test(type.name) || pattern.test(type.id))
   }, [keyword])
 
-  const isTypeDisabled = useCallback(
-    (id: string) => disabledTypes.includes(id),
-    [disabledTypes]
-  )
+  const isTypeDisabled = useCallback((id: string) => disabledTypes.includes(id), [disabledTypes])
 
   const handleTypeClick = useCallback(
     (typeId: string) => {
@@ -69,48 +61,29 @@ export function QRCodeTypeSelector({
   const rightTypes = bentoTypes.slice(8, 16)
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-[1114px] mx-auto">
       {/* ── Search Box Header ──────────────────────────────── */}
       {showSearch && (
-        <div className="flex flex-col md:flex-row flex-wrap justify-between items-center mb-8 gap-4">
-          {/* Spacer for centering (hidden below xl) */}
-          <div className="flex-1 hidden xl:block" />
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <h1 className="text-[39px] font-semibold leading-none text-[#3b3b3b]">Create QR Code</h1>
 
-          {/* Gradient Title */}
-          <div className="flex-1 flex justify-center">
-            <h1
-              className="text-2xl md:text-4xl font-semibold"
-              style={{
-                background:
-                  'linear-gradient(90.77deg, #b048b0 9.76%, #a550b9 31.16%, #8073e0 98.02%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                fontFamily: 'Poppins, sans-serif',
-              }}
-            >
-              Create QR Code
-            </h1>
-          </div>
-
-          {/* Search Input */}
-          <div className="flex-1 flex justify-center md:justify-end w-full md:w-auto">
-            <div className="flex items-center bg-white rounded-xl px-4 py-2 border border-purple-500 gap-2 w-full max-w-[280px]">
+          <div className="w-full md:w-auto">
+            <div className="flex h-[47px] w-full max-w-[292px] items-center gap-3 rounded-[12px] border border-[#d3b6ef] bg-white px-4">
+              <Search className="h-[21px] w-[21px] text-[#8f55a6]" />
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder="Search"
                 value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                className="flex-1 outline-none text-sm bg-transparent text-gray-700 placeholder:text-gray-400"
+                onChange={e => setKeyword(e.target.value)}
+                className="flex-1 bg-transparent text-[16px] text-[#6d6d6d] outline-none placeholder:text-[#9a9a9a]"
               />
-              <Search className="w-5 h-5 text-purple-500 flex-shrink-0" />
             </div>
           </div>
         </div>
       )}
 
       {/* ── Bento Grid — 2 columns ────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Left Column */}
         <BentoColumn
           types={leftTypes}
@@ -133,7 +106,7 @@ export function QRCodeTypeSelector({
         <>
           {showMore && (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-4">
-              {extraTypes.map((type) => (
+              {extraTypes.map(type => (
                 <TypeCard
                   key={type.id}
                   type={type}
@@ -148,19 +121,10 @@ export function QRCodeTypeSelector({
           <div className="flex justify-center my-10">
             <button
               onClick={() => setShowMore(!showMore)}
-              className="inline-flex items-center justify-center gap-2 px-6 py-2 rounded-full text-white font-normal text-base cursor-pointer border-none"
-              style={{
-                background: 'linear-gradient(to bottom, #c084fc, #8b5cf6)',
-                width: '180px',
-                height: '40px',
-              }}
+              className="inline-flex h-[30px] items-center justify-center gap-2 rounded-[8px] px-4 text-[12px] font-medium text-[#5a5a5a] hover:bg-[#f3eef7]"
             >
               {showMore ? 'View Less' : 'View More'}
-              {showMore ? (
-                <ChevronUp className="w-5 h-5" />
-              ) : (
-                <ChevronDown className="w-5 h-5" />
-              )}
+              {showMore ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
             </button>
           </div>
         </>
@@ -186,12 +150,7 @@ interface BentoColumnProps {
  *   Row 2 [1-4]:   [Tall card] + [card + social_first(2fr 1fr)]
  *   Row 3 [5-7]:   [Card]       + [social_second(1fr 2fr)]
  */
-function BentoColumn({
-  types,
-  selectedType,
-  onTypeClick,
-  isTypeDisabled,
-}: BentoColumnProps) {
+function BentoColumn({ types, selectedType, onTypeClick, isTypeDisabled }: BentoColumnProps) {
   if (types.length === 0) return null
 
   // Assign to local consts so TypeScript can narrow properly
@@ -317,21 +276,17 @@ interface TypeCardProps {
  * Standard type card — icon + name + right chevron.
  * Matches original `.card` styles.
  */
-function TypeCard({
-  type,
-  isSelected,
-  isDisabled,
-  onClick,
-}: TypeCardProps) {
+function TypeCard({ type, isSelected, isDisabled, onClick }: TypeCardProps) {
   return (
     <div
       role="button"
       tabIndex={0}
       onClick={onClick}
-      onKeyDown={(e) => e.key === 'Enter' && onClick()}
+      onKeyDown={e => e.key === 'Enter' && onClick()}
       className={`
         flex items-center justify-between
         rounded-[20px] px-3 py-3
+        h-[86px]
         cursor-pointer select-none
         transition-all duration-200 ease-in-out
         hover:-translate-y-0.5
@@ -340,8 +295,7 @@ function TypeCard({
       `}
       style={{
         background: 'linear-gradient(90deg, #fff 0%, #f6f6f6 100%)',
-        boxShadow:
-          '0 4px 4px 0 rgba(0,0,0,0), 0 -4px 11px 0 #d5d5d5, 0 4px 4px 0 #cecece',
+        boxShadow: '0 4px 4px 0 rgba(0,0,0,0), 0 -4px 11px 0 #d5d5d5, 0 4px 4px 0 #cecece',
       }}
     >
       <div className="flex items-center gap-2.5">
@@ -385,21 +339,20 @@ function TallCard({ type, isSelected, isDisabled, onClick }: TallCardProps) {
       role="button"
       tabIndex={0}
       onClick={onClick}
-      onKeyDown={(e) => e.key === 'Enter' && onClick()}
+      onKeyDown={e => e.key === 'Enter' && onClick()}
       className={`
         flex items-center justify-between
         rounded-[20px] px-3 py-3
         cursor-pointer select-none
         transition-all duration-200 ease-in-out
         hover:-translate-y-0.5
-        h-[163px]
+        h-[180px]
         ${isSelected ? 'ring-2 ring-purple-600' : ''}
         ${isDisabled ? 'opacity-50 pointer-events-none' : ''}
       `}
       style={{
         background: 'linear-gradient(90deg, #fff 0%, #f6f6f6 100%)',
-        boxShadow:
-          '0 4px 4px 0 rgba(0,0,0,0), 0 -4px 11px 0 #d5d5d5, 0 4px 4px 0 #cecece',
+        boxShadow: '0 4px 4px 0 rgba(0,0,0,0), 0 -4px 11px 0 #d5d5d5, 0 4px 4px 0 #cecece',
       }}
     >
       <div className="flex items-center gap-2.5">
@@ -439,18 +392,13 @@ interface SocialIconCardProps {
  * Used in the 2:1 / 1:2 sub-grids of the bento layout.
  * Matches original `.social_icon_container` styles.
  */
-function SocialIconCard({
-  type,
-  isSelected,
-  isDisabled,
-  onClick,
-}: SocialIconCardProps) {
+function SocialIconCard({ type, isSelected, isDisabled, onClick }: SocialIconCardProps) {
   return (
     <div
       role="button"
       tabIndex={0}
       onClick={onClick}
-      onKeyDown={(e) => e.key === 'Enter' && onClick()}
+      onKeyDown={e => e.key === 'Enter' && onClick()}
       className={`
         flex items-center justify-center
         rounded-2xl px-3 py-3
@@ -463,8 +411,7 @@ function SocialIconCard({
       `}
       style={{
         background: 'linear-gradient(to right, #ffffff, #f9f8fc)',
-        boxShadow:
-          '0 4px 4px 0 rgba(0,0,0,0), 0 -4px 11px 0 #d5d5d5, 0 4px 4px 0 #cecece',
+        boxShadow: '0 4px 4px 0 rgba(0,0,0,0), 0 -4px 11px 0 #d5d5d5, 0 4px 4px 0 #cecece',
       }}
     >
       <div className="w-[47px] h-[47px] flex items-center justify-center">
