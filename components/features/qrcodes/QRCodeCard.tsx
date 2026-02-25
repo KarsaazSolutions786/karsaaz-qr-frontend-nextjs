@@ -2,19 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { QRCode } from '@/types/entities/qrcode'
 import { formatDate } from '@/lib/utils/format'
-import {
-  MoreVertical,
-  Copy,
-  Archive,
-  Trash2,
-  Download,
-  Eye,
-  Edit,
-  BarChart3,
-} from 'lucide-react'
+import { MoreVertical, Copy, Archive, Trash2, Download, Eye, Edit, BarChart3 } from 'lucide-react'
 
 interface QRCodeCardProps {
   qrcode: QRCode
@@ -58,25 +48,33 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
   }, [menuOpen])
 
   const status = qrcode.status || 'active'
-  const statusStyle = (STATUS_STYLES[status] ?? STATUS_STYLES.active) as { bg: string; text: string; dot: string }
+  const statusStyle = (STATUS_STYLES[status] ?? STATUS_STYLES.active) as {
+    bg: string
+    text: string
+    dot: string
+  }
 
   const handleAction = (action: string) => {
     setMenuOpen(false)
     onAction?.(action, qrcode.id)
   }
 
+  // Use svgUrl (actual QR image) as primary, screenshotUrl as fallback
+  const previewUrl = qrcode.svgUrl || qrcode.screenshotUrl
+
   return (
     <div className="group relative rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md hover:border-gray-300">
       {/* QR Preview */}
       <Link href={`/qrcodes/${qrcode.id}`} className="block p-4 pb-3">
         <div className="flex justify-center mb-3">
-          {qrcode.screenshotUrl ? (
-            <Image
-              src={qrcode.screenshotUrl}
+          {previewUrl ? (
+            <img
+              src={previewUrl}
               alt={qrcode.name}
               width={120}
               height={120}
-              className="rounded-md"
+              className="rounded-md object-contain"
+              loading="lazy"
             />
           ) : (
             <div className="w-[120px] h-[120px] bg-gray-100 rounded-md flex items-center justify-center">
@@ -87,8 +85,16 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
                 stroke="currentColor"
                 strokeWidth={1.5}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z"
+                />
               </svg>
             </div>
           )}
@@ -100,7 +106,9 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
           <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
             {TYPE_LABELS[qrcode.type] || qrcode.type}
           </span>
-          <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${statusStyle.bg} ${statusStyle.text}`}>
+          <span
+            className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${statusStyle.bg} ${statusStyle.text}`}
+          >
             <span className={`inline-block w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
             {status.charAt(0).toUpperCase() + status.slice(1)}
           </span>
@@ -120,7 +128,7 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
         {/* Action Menu */}
         <div ref={menuRef} className="relative">
           <button
-            onClick={(e) => {
+            onClick={e => {
               e.preventDefault()
               e.stopPropagation()
               setMenuOpen(!menuOpen)
@@ -132,23 +140,41 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
 
           {menuOpen && (
             <div className="absolute right-0 bottom-full mb-1 w-40 bg-white rounded-lg border border-gray-200 shadow-lg z-50 py-1">
-              <button onClick={() => handleAction('view')} className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">
+              <button
+                onClick={() => handleAction('view')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
                 <Eye className="w-3.5 h-3.5" /> View
               </button>
-              <button onClick={() => handleAction('edit')} className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">
+              <button
+                onClick={() => handleAction('edit')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
                 <Edit className="w-3.5 h-3.5" /> Edit
               </button>
-              <button onClick={() => handleAction('duplicate')} className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">
+              <button
+                onClick={() => handleAction('duplicate')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
                 <Copy className="w-3.5 h-3.5" /> Duplicate
               </button>
-              <button onClick={() => handleAction('download')} className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50">
+              <button
+                onClick={() => handleAction('download')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
                 <Download className="w-3.5 h-3.5" /> Download
               </button>
               <hr className="my-1 border-gray-100" />
-              <button onClick={() => handleAction('archive')} className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-orange-600 hover:bg-orange-50">
+              <button
+                onClick={() => handleAction('archive')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-orange-600 hover:bg-orange-50"
+              >
                 <Archive className="w-3.5 h-3.5" /> Archive
               </button>
-              <button onClick={() => handleAction('delete')} className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50">
+              <button
+                onClick={() => handleAction('delete')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
+              >
                 <Trash2 className="w-3.5 h-3.5" /> Delete
               </button>
             </div>

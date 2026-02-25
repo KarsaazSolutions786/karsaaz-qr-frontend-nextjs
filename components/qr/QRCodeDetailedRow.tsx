@@ -1,29 +1,22 @@
 /**
  * QRCodeDetailedRow Component
- * 
+ *
  * Full details row for table/list view mode.
  */
 
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import { QRCode } from '@/types/entities/qrcode';
-import { RowActionsModal, QRAction } from './RowActionsModal';
-import {
-  MoreVertical,
-  Eye,
-  Download,
-  Share2,
-  BarChart3,
-  Calendar,
-} from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import React, { useState } from 'react'
+import { QRCode } from '@/types/entities/qrcode'
+import { RowActionsModal, QRAction } from './RowActionsModal'
+import { MoreVertical, Eye, Download, Share2, BarChart3, Calendar } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
 
 export interface QRCodeDetailedRowProps {
-  qrcode: QRCode;
-  isSelected: boolean;
-  onToggleSelect: (id: string) => void;
-  onAction: (action: QRAction, qrcode: QRCode) => void;
+  qrcode: QRCode
+  isSelected: boolean
+  onToggleSelect: (id: string) => void
+  onAction: (action: QRAction, qrcode: QRCode) => void
 }
 
 export function QRCodeDetailedRow({
@@ -32,13 +25,13 @@ export function QRCodeDetailedRow({
   onToggleSelect,
   onAction,
 }: QRCodeDetailedRowProps) {
-  const [isActionsOpen, setIsActionsOpen] = useState(false);
-  const [showQuickActions, setShowQuickActions] = useState(false);
+  const [isActionsOpen, setIsActionsOpen] = useState(false)
+  const [showQuickActions, setShowQuickActions] = useState(false)
 
   const handleAction = (action: QRAction) => {
-    onAction(action, qrcode);
-    setIsActionsOpen(false);
-  };
+    onAction(action, qrcode)
+    setIsActionsOpen(false)
+  }
 
   const getTypeLabel = (type: string) => {
     const typeMap: Record<string, string> = {
@@ -50,9 +43,9 @@ export function QRCodeDetailedRow({
       wifi: 'WiFi',
       vcard: 'vCard',
       location: 'Location',
-    };
-    return typeMap[type] || type.toUpperCase();
-  };
+    }
+    return typeMap[type] || type.toUpperCase()
+  }
 
   const getTypeBadgeColor = (type: string) => {
     const colorMap: Record<string, string> = {
@@ -64,9 +57,9 @@ export function QRCodeDetailedRow({
       wifi: 'bg-cyan-100 text-cyan-700',
       vcard: 'bg-pink-100 text-pink-700',
       location: 'bg-red-100 text-red-700',
-    };
-    return colorMap[type] || 'bg-gray-100 text-gray-700';
-  };
+    }
+    return colorMap[type] || 'bg-gray-100 text-gray-700'
+  }
 
   return (
     <>
@@ -92,9 +85,9 @@ export function QRCodeDetailedRow({
         {/* QR Preview */}
         <td className="px-4 py-3 w-20">
           <div className="w-12 h-12 bg-gray-50 rounded border border-gray-200 overflow-hidden flex items-center justify-center">
-            {qrcode.screenshotUrl ? (
+            {qrcode.svgUrl || qrcode.screenshotUrl ? (
               <img
-                src={qrcode.screenshotUrl}
+                src={qrcode.svgUrl || qrcode.screenshotUrl}
                 alt={qrcode.name}
                 className="w-full h-full object-contain"
               />
@@ -107,13 +100,9 @@ export function QRCodeDetailedRow({
         {/* Name */}
         <td className="px-4 py-3">
           <div className="flex flex-col">
-            <span className="font-medium text-gray-900 truncate max-w-xs">
-              {qrcode.name}
-            </span>
+            <span className="font-medium text-gray-900 truncate max-w-xs">{qrcode.name}</span>
             {qrcode.name && (
-              <span className="text-xs text-gray-500 truncate max-w-xs mt-0.5">
-                {qrcode.type}
-              </span>
+              <span className="text-xs text-gray-500 truncate max-w-xs mt-0.5">{qrcode.type}</span>
             )}
           </div>
         </td>
@@ -133,9 +122,7 @@ export function QRCodeDetailedRow({
         <td className="px-4 py-3">
           <div className="flex items-center gap-1.5">
             <BarChart3 className="w-4 h-4 text-gray-400" />
-            <span className="text-sm text-gray-900">
-              {qrcode.scans || 0}
-            </span>
+            <span className="text-sm text-gray-900">{qrcode.scans || 0}</span>
           </div>
         </td>
 
@@ -198,5 +185,5 @@ export function QRCodeDetailedRow({
         onAction={handleAction}
       />
     </>
-  );
+  )
 }

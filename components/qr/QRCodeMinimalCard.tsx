@@ -1,22 +1,22 @@
 /**
  * QRCodeMinimalCard Component
- * 
+ *
  * Compact QR card for minimal view mode.
  */
 
-'use client';
+'use client'
 
-import React from 'react';
-import { QRCode } from '@/types/entities/qrcode';
-import { Eye } from 'lucide-react';
+import React from 'react'
+import { QRCode } from '@/types/entities/qrcode'
+import { Eye } from 'lucide-react'
 
 export interface QRCodeMinimalCardProps {
-  qrcode: QRCode;
-  onSelect: (qrcode: QRCode) => void;
+  qrcode: QRCode
+  onSelect: (qrcode: QRCode) => void
 }
 
 export function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) {
-  const scanCount = qrcode.scans || 0;
+  const scanCount = qrcode.scans || 0
 
   return (
     <button
@@ -25,9 +25,9 @@ export function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) 
     >
       {/* QR Code Preview */}
       <div className="relative aspect-square mb-2 bg-gray-50 rounded-md overflow-hidden">
-        {qrcode.screenshotUrl ? (
+        {qrcode.svgUrl || qrcode.screenshotUrl ? (
           <img
-            src={qrcode.screenshotUrl}
+            src={qrcode.svgUrl || qrcode.screenshotUrl}
             alt={qrcode.name}
             className="w-full h-full object-contain"
           />
@@ -36,7 +36,7 @@ export function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) 
             <Eye className="w-8 h-8" />
           </div>
         )}
-        
+
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transition-opacity">
@@ -48,15 +48,11 @@ export function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) 
       </div>
 
       {/* Name */}
-      <h3 className="text-sm font-medium text-gray-900 truncate mb-1">
-        {qrcode.name}
-      </h3>
+      <h3 className="text-sm font-medium text-gray-900 truncate mb-1">{qrcode.name}</h3>
 
       {/* Scan Count */}
       <div className="flex items-center justify-center">
-        <span className="text-xs font-medium text-gray-600">
-          {`${scanCount} scans`}
-        </span>
+        <span className="text-xs font-medium text-gray-600">{`${scanCount} scans`}</span>
       </div>
 
       {/* Status Indicator */}
@@ -66,5 +62,5 @@ export function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) 
         </div>
       )}
     </button>
-  );
+  )
 }

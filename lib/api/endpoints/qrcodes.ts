@@ -46,6 +46,7 @@ function mapQRCode(raw: any): QRCode {
     domainId: raw.domain_id ?? raw.domainId,
     screenshotUrl:
       raw.qrcode_screenshot_url ?? raw.simple_png_url ?? raw.screenshotUrl ?? raw.screenshot_url,
+    svgUrl: raw.svg_url ?? raw.svgUrl,
     createdAt: raw.created_at ?? raw.createdAt ?? '',
     updatedAt: raw.updated_at ?? raw.updatedAt ?? '',
     scans: raw.scans_count ?? raw.scans ?? 0,

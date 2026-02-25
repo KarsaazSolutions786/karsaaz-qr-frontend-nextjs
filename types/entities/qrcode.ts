@@ -1,5 +1,5 @@
-import { DesignerConfig } from './designer';
-import { StickerConfig } from './sticker';
+import { DesignerConfig } from './designer'
+import { StickerConfig } from './sticker'
 
 export type QRCodeType =
   | 'url'
@@ -109,6 +109,7 @@ export interface QRCode {
   domainId?: string // Custom domain (optional)
   password?: string // PIN protection (hashed, optional)
   screenshotUrl?: string // Landing page screenshot (optional)
+  svgUrl?: string // QR code SVG image URL (optional)
   createdAt: string // ISO 8601 timestamp
   updatedAt: string // ISO 8601 timestamp
   scans: number // Total scan count (cached)
