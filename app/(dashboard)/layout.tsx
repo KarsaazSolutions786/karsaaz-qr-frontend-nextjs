@@ -269,8 +269,15 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     const currentSearchParams = searchParams?.toString() || ''
     const windowParams = new URLSearchParams(currentSearchParams)
 
-    // Check pathname match
-    const pathMatch = pathname === itemPath || pathname.startsWith(`${itemPath}/`)
+    // Check pathname match — use exact match for leaf paths that could collide
+    // e.g. /qrcodes should NOT match /qrcodes/new
+    const exactMatch = pathname === itemPath
+    const prefixMatch = pathname.startsWith(`${itemPath}/`)
+    // If another primary nav item exactly matches the current path, only allow exact matches
+    const anotherPrimaryExactMatch = figmaPrimaryNav.some(
+      nav => nav.href !== href && pathname === nav.href.split('?')[0]
+    )
+    const pathMatch = exactMatch || (prefixMatch && !anotherPrimaryExactMatch)
 
     if (!pathMatch) return false
 
