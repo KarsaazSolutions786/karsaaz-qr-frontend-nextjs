@@ -26,6 +26,31 @@ import {
 } from '@heroicons/react/24/outline'
 import { GlobalSearch } from '@/components/common/GlobalSearch'
 import { QuickActions } from '@/components/common/QuickActions'
+import { isSuperAdmin } from '@/lib/utils/permissions'
+
+// Admin-only route prefixes — regular users are redirected away
+const ADMIN_ROUTE_PREFIXES = [
+  '/users',
+  '/plans',
+  '/subscriptions',
+  '/billing',
+  '/transactions',
+  '/payment-processors',
+  '/payment-gateways',
+  '/payment-methods',
+  '/currencies',
+  '/plugins',
+  '/system',
+  '/blog-posts',
+  '/content-blocks',
+  '/translations',
+  '/custom-codes',
+  '/pages',
+  '/dynamic-biolink-blocks',
+  '/contacts',
+  '/lead-forms',
+  '/support-tickets',
+]
 
 // Navigation types
 interface NavItem {
@@ -99,6 +124,7 @@ const figmaSectionNav: FigmaNavSection[] = [
     label: 'Content',
     href: '/blog-posts',
     icon: DocumentTextIcon,
+    adminOnly: true,
     items: [
       { name: 'Blog Posts', href: '/blog-posts', icon: DocumentTextIcon },
       { name: 'Content Blocks', href: '/content-blocks', icon: DocumentTextIcon },
@@ -113,6 +139,7 @@ const figmaSectionNav: FigmaNavSection[] = [
     label: 'Contacts',
     href: '/contacts',
     icon: EnvelopeIcon,
+    adminOnly: true,
     items: [
       { name: 'Contact Form', href: '/contacts', icon: EnvelopeIcon },
       { name: 'Lead Forms', href: '/lead-forms', icon: EnvelopeIcon },
@@ -217,6 +244,19 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       router.push(`/login?from=${encodeURIComponent(currentPath)}`)
     }
   }, [user, isLoading, router])
+
+  // Admin route guard: redirect non-admin users away from admin-only pages
+  useEffect(() => {
+    if (isLoading || !user || !pathname) return
+    if (isSuperAdmin(user)) return // admins can access everything
+
+    const isAdminRoute = ADMIN_ROUTE_PREFIXES.some(
+      prefix => pathname === prefix || pathname.startsWith(`${prefix}/`)
+    )
+    if (isAdminRoute) {
+      router.replace('/qrcodes')
+    }
+  }, [user, isLoading, pathname, router])
 
   const isItemActive = (href: string) => {
     if (!pathname) return false

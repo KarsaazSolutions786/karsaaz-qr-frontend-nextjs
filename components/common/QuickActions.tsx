@@ -23,16 +23,18 @@ export function QuickActions() {
   const [open, setOpen] = useState(false)
   const { user } = useAuth()
 
+  // Only show FAB to admin users
   const isAdmin = user?.roles?.[0]?.super_admin ? true : false
+  if (!isAdmin) return null
 
-  const visibleActions = actions.filter((a) => !a.adminOnly || isAdmin)
+  const visibleActions = actions.filter(a => !a.adminOnly || isAdmin)
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
       {/* Action items */}
       {open && (
         <div className="mb-2 flex flex-col gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
-          {visibleActions.map((action) => (
+          {visibleActions.map(action => (
             <Link
               key={action.name}
               href={action.href}
@@ -48,7 +50,7 @@ export function QuickActions() {
 
       {/* FAB button */}
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen(o => !o)}
         className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         aria-label="Quick actions"
       >
