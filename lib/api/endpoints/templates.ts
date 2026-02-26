@@ -92,3 +92,34 @@ export async function hasTemplates(): Promise<boolean> {
     return false
   }
 }
+
+/**
+ * Get a single template category by ID
+ */
+export async function getTemplateCategory(id: number | string): Promise<TemplateCategory> {
+  const response = await apiClient.get(`template-categories/${id}`)
+  return response.data
+}
+
+/**
+ * Create a new template category
+ */
+export async function createTemplateCategory(data: { name: string; text_color?: string; sort_order?: number }): Promise<TemplateCategory> {
+  const response = await apiClient.post('template-categories', data)
+  return response.data
+}
+
+/**
+ * Update a template category
+ */
+export async function updateTemplateCategory(id: number | string, data: { name?: string; text_color?: string; sort_order?: number }): Promise<TemplateCategory> {
+  const response = await apiClient.put(`template-categories/${id}`, data)
+  return response.data
+}
+
+/**
+ * Delete a template category
+ */
+export async function deleteTemplateCategory(id: number | string): Promise<void> {
+  await apiClient.delete(`template-categories/${id}`)
+}

@@ -7,6 +7,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { Printer, Settings, Eye, Loader2 } from 'lucide-react';
 import {
   printQRCode,
@@ -49,7 +50,7 @@ export function PrintButton({
       await printQRCode(svgElement, printOptions, metadata);
     } catch (error) {
       console.error('Print failed:', error);
-      alert('Failed to print. Please check your browser settings and allow popups.');
+      toast.error('Unable to print. Please allow popups in your browser settings.');
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +64,7 @@ export function PrintButton({
       await printPreview(svgElement, printOptions, metadata);
     } catch (error) {
       console.error('Preview failed:', error);
-      alert('Failed to open preview. Please check your browser settings and allow popups.');
+      toast.error('Unable to open print preview. Please allow popups in your browser.');
     } finally {
       setIsLoading(false);
     }
@@ -251,7 +252,7 @@ export function PrintButtonCompact({
       await printQRCode(svgElement, options, metadata);
     } catch (error) {
       console.error('Print failed:', error);
-      alert('Failed to print. Please try again.');
+      toast.error('Print failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

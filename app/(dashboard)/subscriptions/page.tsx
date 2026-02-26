@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { useAdminSubscriptions } from '@/lib/hooks/queries/useAdminSubscriptions'
 import { useDeletePendingSubscriptions } from '@/lib/hooks/mutations/useAdminSubscriptionMutations'
 import type { AdminSubscription } from '@/lib/api/endpoints/admin-subscriptions'
@@ -31,7 +32,7 @@ export default function SubscriptionsPage() {
   const handleDeletePending = async () => {
     if (!confirm('Delete all pending subscriptions? This cannot be undone.')) return
     const result = await deletePendingMutation.mutateAsync()
-    alert(`Deleted ${result?.deleted ?? 0} pending subscription(s).`)
+    toast.success(`Deleted ${result?.deleted ?? 0} pending subscription(s).`)
   }
 
   return (

@@ -30,6 +30,8 @@ import { useFolders } from '@/lib/hooks/queries/useFolders'
 import { useDomains } from '@/lib/hooks/queries/useDomains'
 import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
 import { Download, Trash2, FolderInput, Archive, Copy, Eye, EyeOff } from 'lucide-react'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { isSuperAdmin } from '@/lib/utils/permissions'
 
 export default function QRCodesPage() {
   const [search, setSearch] = useState('')
@@ -74,10 +76,12 @@ export default function QRCodesPage() {
   })
 
   // Real user/subscription data
+  const { user } = useAuth()
+  const isAdmin = isSuperAdmin(user)
   const { data: currentUser } = useCurrentUser()
   const { data: subscription } = useSubscription()
   const { data: foldersData } = useFolders()
-  const { data: domainsData } = useDomains()
+  const { data: domainsData } = useDomains(undefined, { enabled: isAdmin })
   const domains = domainsData?.data ?? []
 
   const plan = subscription?.plan?.name || currentUser?.plan?.name || 'free'

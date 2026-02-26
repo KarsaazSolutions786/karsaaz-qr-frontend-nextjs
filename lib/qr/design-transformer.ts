@@ -101,7 +101,7 @@ export function transformDesignToBackend(design: Partial<DesignerConfig>): Backe
         ],
         angle: gradient.rotation || 0,
       }
-    } else if (foregroundFill.type === 'image') {
+    } else if (foregroundFill.type === 'image' || (foregroundFill as any).type === 'foreground_image') {
       fillType = 'foreground_image'
     }
   }

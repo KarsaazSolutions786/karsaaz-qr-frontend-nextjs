@@ -274,6 +274,28 @@ export const authAPI = {
     return response.data
   },
 
+  // Update user by ID (P1: PUT /users/{id})
+  updateUser: async (userId: number | string, data: Record<string, any>) => {
+    const response = await apiClient.put(`/users/${userId}`, data)
+    return response.data
+  },
+
+  // Change password (P1: PUT /users/{id}/password)
+  changePassword: async (userId: number | string, data: {
+    current_password: string
+    password: string
+    password_confirmation: string
+  }) => {
+    const response = await apiClient.put(`/users/${userId}/password`, data)
+    return response.data
+  },
+
+  // Cancel subscription (P1: POST /account/cancel-subscription)
+  cancelSubscription: async () => {
+    const response = await apiClient.post('/account/cancel-subscription')
+    return response.data
+  },
+
   // Delete account
   deleteAccount: async (password: string) => {
     const response = await apiClient.delete('/account', { data: { password } })

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { paymentGatewaysAPI } from '@/lib/api/endpoints/payment-gateways'
 import PaymentGatewayList from '@/components/features/payment-gateway/PaymentGatewayList'
@@ -33,7 +34,7 @@ export default function PaymentGatewaysPage() {
       await paymentGatewaysAPI.update(id, { enabled })
       setGateways((prev) => prev.map((gw) => (gw.id === id ? { ...gw, enabled } : gw)))
     } catch {
-      alert('Failed to update gateway status.')
+      toast.error('Unable to update gateway status. Please try again.')
     }
   }
 
@@ -47,7 +48,7 @@ export default function PaymentGatewaysPage() {
       await paymentGatewaysAPI.delete(id)
       setGateways((prev) => prev.filter((gw) => gw.id !== id))
     } catch {
-      alert('Failed to delete gateway.')
+      toast.error('Unable to delete gateway. Please try again.')
     }
   }
 

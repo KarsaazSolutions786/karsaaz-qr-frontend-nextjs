@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/context/AuthContext'
 import { supportTicketsAPI } from '@/lib/api/endpoints/support-tickets'
@@ -19,7 +20,7 @@ export default function NewTicketPage() {
       router.push('/support-tickets')
     } catch (err) {
       console.error('Failed to create ticket:', err)
-      alert('Failed to create ticket. Please try again.')
+      toast.error('Unable to create support ticket. Please try again.')
     } finally {
       setIsLoading(false)
     }

@@ -8,7 +8,7 @@
 
 import React from 'react'
 import { QRCode } from '@/types/entities/qrcode'
-import { Eye } from 'lucide-react'
+import { QRPreviewImage } from '@/components/qr/QRPreviewImage'
 
 export interface QRCodeMinimalCardProps {
   qrcode: QRCode
@@ -24,18 +24,14 @@ export function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) 
       className="group relative w-full bg-white border border-gray-200 rounded-lg p-3 hover:border-blue-500 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
     >
       {/* QR Code Preview */}
-      <div className="relative aspect-square mb-2 bg-gray-50 rounded-md overflow-hidden">
-        {qrcode.svgUrl || qrcode.screenshotUrl ? (
-          <img
-            src={qrcode.svgUrl || qrcode.screenshotUrl}
-            alt={qrcode.name}
-            className="w-full h-full object-contain"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <Eye className="w-8 h-8" />
-          </div>
-        )}
+      <div className="relative aspect-square mb-2 bg-gray-50 rounded-md overflow-hidden flex items-center justify-center">
+        <QRPreviewImage
+          svgUrl={qrcode.svgUrl}
+          fallbackUrl={qrcode.screenshotUrl}
+          alt={qrcode.name}
+          size={100}
+          className="w-full h-full"
+        />
 
         {/* Hover Overlay */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">

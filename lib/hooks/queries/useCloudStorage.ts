@@ -182,6 +182,16 @@ export function useCloudStorageMutations() {
     onSuccess: () => invalidateAll(),
   })
 
+  /** Update a connection */
+  const updateConnection = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { provider?: string; name?: string; access_key?: string; secret_key?: string; bucket?: string; region?: string } }) =>
+      cloudStorageAPI.updateConnection(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.cloudStorage.connections() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.cloudStorage.connection(variables.id) })
+    },
+  })
+
   /** Test a connection */
   const testConnection = useMutation({
     mutationFn: (id: string) => cloudStorageAPI.testConnection(id),
@@ -249,6 +259,7 @@ export function useCloudStorageMutations() {
 
   return {
     deleteConnection,
+    updateConnection,
     testConnection,
     connectOAuth,
     handleOAuthCallback,

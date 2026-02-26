@@ -8,9 +8,13 @@ import {
   getTemplates,
   getTemplate,
   getTemplateCategories,
+  getTemplateCategory,
   createTemplate,
   updateTemplate,
   deleteTemplate,
+  createTemplateCategory,
+  updateTemplateCategory,
+  deleteTemplateCategory,
   useTemplate as useTemplateApi,
 } from '@/lib/api/endpoints/templates'
 import type {
@@ -137,6 +141,75 @@ export function useUseTemplate(
 ) {
   return useMutation({
     mutationFn: useTemplateApi,
+    ...options,
+  })
+}
+
+// ─── Template Category Hooks ──────────────────────────────────────────────────
+
+/**
+ * Get a single template category by ID
+ */
+export function useTemplateCategory(
+  id: number | string | null,
+  options?: Omit<UseQueryOptions<TemplateCategory>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: [...templatesKeys.categories, id],
+    queryFn: () => getTemplateCategory(id!),
+    enabled: !!id && id !== 'new',
+    ...options,
+  })
+}
+
+/**
+ * Create a new template category
+ */
+export function useCreateTemplateCategory(
+  options?: UseMutationOptions<TemplateCategory, Error, { name: string; text_color?: string; sort_order?: number }>
+) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: createTemplateCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: templatesKeys.categories })
+    },
+    ...options,
+  })
+}
+
+/**
+ * Update an existing template category
+ */
+export function useUpdateTemplateCategory(
+  options?: UseMutationOptions<TemplateCategory, Error, { id: number | string; data: { name?: string; text_color?: string; sort_order?: number } }>
+) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, data }) => updateTemplateCategory(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: templatesKeys.categories })
+      queryClient.invalidateQueries({ queryKey: [...templatesKeys.categories, variables.id] })
+    },
+    ...options,
+  })
+}
+
+/**
+ * Delete a template category
+ */
+export function useDeleteTemplateCategory(
+  options?: UseMutationOptions<void, Error, number | string>
+) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: deleteTemplateCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: templatesKeys.categories })
+    },
     ...options,
   })
 }

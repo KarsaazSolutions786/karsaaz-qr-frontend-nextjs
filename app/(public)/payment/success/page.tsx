@@ -3,15 +3,19 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { useQueryClient } from '@tanstack/react-query'
 import apiClient from '@/lib/api/client'
+import { authAPI } from '@/lib/api/endpoints/auth'
+import { queryKeys } from '@/lib/query/keys'
 
 type PageState = 'loading' | 'success' | 'error'
 
 function PaymentSuccessContent() {
   const searchParams = useSearchParams()
+  const queryClient = useQueryClient()
   const [state, setState] = useState<PageState>('loading')
   const [message, setMessage] = useState('')
-  const [countdown, setCountdown] = useState(3)
+  const [countdown, setCountdown] = useState(5)
 
   useEffect(() => {
     verifyPayment()
@@ -23,7 +27,13 @@ function PaymentSuccessContent() {
       return () => clearTimeout(timer)
     }
     if (state !== 'loading' && countdown === 0) {
-      window.location.href = '/login'
+      // Check if user is logged in - redirect to account page, otherwise to login
+      const token = localStorage.getItem('token')
+      if (token) {
+        window.location.href = '/dashboard/qrcodes'
+      } else {
+        window.location.href = '/login'
+      }
     }
   }, [state, countdown])
 
@@ -42,8 +52,32 @@ function PaymentSuccessContent() {
         localStorage.removeItem('user')
       }
 
-      if (data?.refresh_user_data && data?.user_data) {
+      // Always fetch fresh user data after successful payment
+      const token = localStorage.getItem('token')
+      if (token) {
+        try {
+          // Fetch fresh user data from /myself endpoint
+          const freshUser = await authAPI.getCurrentUser()
+          // Handle nested data response: { data: User } or User directly
+          const userData = (freshUser as any)?.data ?? freshUser
+          if (userData) {
+            localStorage.setItem('user', JSON.stringify(userData))
+            // Update TanStack Query cache and trigger refetch
+            queryClient.setQueryData(queryKeys.auth.currentUser(), userData)
+            queryClient.invalidateQueries({ queryKey: queryKeys.auth.currentUser() })
+          }
+        } catch (refreshError) {
+          console.error('Failed to refresh user data:', refreshError)
+          // Fallback to API response data if available
+          if (data?.user_data) {
+            localStorage.setItem('user', JSON.stringify(data.user_data))
+            queryClient.setQueryData(queryKeys.auth.currentUser(), data.user_data)
+            queryClient.invalidateQueries({ queryKey: queryKeys.auth.currentUser() })
+          }
+        }
+      } else if (data?.refresh_user_data && data?.user_data) {
         localStorage.setItem('user', JSON.stringify(data.user_data))
+        queryClient.setQueryData(queryKeys.auth.currentUser(), data.user_data)
       }
 
       setMessage(data?.message || 'Your payment has been processed successfully.')
@@ -74,7 +108,10 @@ function PaymentSuccessContent() {
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
             <p className="text-gray-600 mb-6">{message}</p>
-            <p className="text-sm text-gray-400">Redirecting you to login page in {countdown} seconds...</p>
+            <p className="text-sm text-gray-400">Redirecting you to your dashboard in {countdown} seconds...</p>
+            <Link href="/dashboard/qrcodes" className="mt-4 inline-block text-purple-600 hover:text-purple-700 font-medium">
+              Go to Dashboard Now →
+            </Link>
           </>
         )}
 

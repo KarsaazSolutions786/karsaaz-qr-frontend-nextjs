@@ -54,6 +54,7 @@ export const queryKeys = {
     all: () => ['users'] as const,
     list: (filters?: Record<string, unknown>) => ['users', 'list', filters] as const,
     detail: (id: string) => ['users', id] as const,
+    subUsers: (parentId: number) => ['users', parentId, 'sub-users'] as const,
   },
 
   // Support

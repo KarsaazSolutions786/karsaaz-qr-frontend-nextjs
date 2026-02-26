@@ -87,7 +87,7 @@ export function EmailOtpLoginForm() {
   // ── Helpers ──
   function extractError(error: unknown, fallback: string): string {
     const err = error as { response?: { data?: { message?: string } }; message?: string }
-    return err?.response?.data?.message || err?.message || fallback
+    return err?.response?.data?.message || fallback
   }
 
   const isLoading =

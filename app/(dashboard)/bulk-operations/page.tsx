@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useRef } from 'react'
 import apiClient from '@/lib/api/client'
+import { useBulkImportInstances, useBulkOperationsMutations } from '@/lib/hooks/queries/useBulkOperations'
 
 interface BulkInstance {
   id: number
@@ -19,60 +20,42 @@ const statusStyles: Record<string, string> = {
 }
 
 export default function BulkOperationsPage() {
-  const [instances, setInstances] = useState<BulkInstance[]>([])
-  const [loading, setLoading] = useState(true)
-  const [uploading, setUploading] = useState(false)
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
-  const fetchInstances = useCallback(async () => {
-    try {
-      const res = await apiClient.get('/bulk-operations/import-url-qrcodes/instances')
-      const data = res.data as any
-      setInstances(Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [])
-    } catch { /* empty */ }
-    setLoading(false)
-  }, [])
+  // TanStack Query hooks
+  const { data: instances = [], isLoading: loading } = useBulkImportInstances() as { data: BulkInstance[]; isLoading: boolean }
+  const { createImport, reRunInstance, deleteInstance, deleteAllQRCodes, renameInstance } = useBulkOperationsMutations()
 
-  useEffect(() => { fetchInstances() }, [fetchInstances])
+  const uploading = createImport.isPending
 
   const handleUpload = async () => {
     const file = fileRef.current?.files?.[0]
     if (!file) return
-    setUploading(true)
     try {
-      const form = new FormData()
-      form.append('file', file)
-      await apiClient.post('/bulk-operations/import-url-qrcodes/create', form, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      await createImport.mutateAsync(file)
       if (fileRef.current) fileRef.current.value = ''
-      await fetchInstances()
     } catch { /* error */ }
-    setUploading(false)
   }
 
   const handleReRun = async (id: number) => {
     try {
-      await apiClient.post(`/bulk-operations/${id}/re-run`)
-      await fetchInstances()
+      await reRunInstance.mutateAsync(id)
     } catch { /* error */ }
   }
 
   const handleDelete = async (id: number) => {
     if (!confirm('Delete this bulk operation instance?')) return
     try {
-      await apiClient.delete(`/bulk-operations/${id}`)
-      setInstances((prev) => prev.filter((i) => i.id !== id))
+      await deleteInstance.mutateAsync(id)
     } catch { /* error */ }
   }
 
   const handleDeleteAllQR = async (id: number) => {
     if (!confirm('Delete ALL QR codes from this instance? This cannot be undone.')) return
     try {
-      await apiClient.delete(`/bulk-operations/${id}/all-qrcodes`)
-      await fetchInstances()
+      await deleteAllQRCodes.mutateAsync(id)
     } catch { /* error */ }
   }
 
@@ -86,8 +69,7 @@ export default function BulkOperationsPage() {
 
   const handleRename = async (id: number) => {
     try {
-      await apiClient.post(`/bulk-operations/edit-instance-name/${id}`, { name: editName })
-      setInstances((prev) => prev.map((i) => (i.id === id ? { ...i, name: editName } : i)))
+      await renameInstance.mutateAsync({ id, name: editName })
       setEditingId(null)
     } catch { /* error */ }
   }

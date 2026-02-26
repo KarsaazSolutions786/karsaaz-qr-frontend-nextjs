@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from '@/lib/hooks/queries/useTranslations'
@@ -47,7 +48,7 @@ export default function TranslationsPage() {
     if (!confirm('Start auto-translation? This may take a few minutes.')) return
     autoTranslateMutation.mutate(id, {
       onSuccess: () => {
-        alert('Auto translation started. Check completeness after a few minutes.')
+        toast.success('Auto-translation started. This may take a few minutes to complete.')
       },
     })
   }

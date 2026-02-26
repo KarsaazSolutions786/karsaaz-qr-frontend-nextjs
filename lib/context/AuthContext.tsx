@@ -7,7 +7,6 @@ import apiClient from '@/lib/api/client'
 import { queryKeys } from '@/lib/query/keys'
 import { User } from '@/types/entities/user'
 import { userHomePage as resolveHomePage } from '@/lib/utils/permissions'
-import { useSubscriptionStore } from '@/lib/services/subscription-service'
 
 export interface AuthContextType {
   user: User | null
@@ -90,8 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           localStorage.setItem('user', JSON.stringify(freshUser))
         }
         queryClient.setQueryData(queryKeys.auth.currentUser(), freshUser)
-        // T022: Load subscription data when user is validated
-        useSubscriptionStore.getState().loadSubscription()
+        // Subscription data is now managed by TanStack Query via useSubscription hook
       })
       .catch(() => {
         // Token is invalid — clear everything, matches auth:invalid-token handler
@@ -119,6 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('user', JSON.stringify(freshUser))
       }
       queryClient.setQueryData(queryKeys.auth.currentUser(), freshUser)
+      // Subscription data is automatically updated via TanStack Query when user data changes
       return freshUser
     } catch {
       return null
@@ -137,8 +136,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('token', data.token)
     }
     queryClient.setQueryData(queryKeys.auth.currentUser(), data.user)
-    // T022: Load subscription on login
-    useSubscriptionStore.getState().loadSubscription()
+    // Subscription data is automatically loaded via TanStack Query when user data is set
   }, [queryClient])
 
   /**

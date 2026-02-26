@@ -1,5 +1,6 @@
 'use client'
 
+import { toast } from 'sonner'
 import { QRCode } from '@/types/entities/qrcode'
 
 interface QRCodeDownloaderProps {
@@ -10,7 +11,7 @@ export function QRCodeDownloader({ qrcode }: QRCodeDownloaderProps) {
   const handleDownload = async (format: 'png' | 'svg' | 'pdf') => {
     // In a real implementation, this would call the API to get the image
     console.log(`Downloading QR code ${qrcode.id} as ${format}`)
-    alert(`Download as ${format.toUpperCase()} - Feature coming soon!`)
+    toast.info(`Download as ${format.toUpperCase()} — coming soon!`)
   }
 
   return (

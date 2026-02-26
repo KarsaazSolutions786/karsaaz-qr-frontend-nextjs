@@ -42,7 +42,7 @@ function mapQRCode(raw: any): QRCode {
     customization: raw.customization ?? raw.design ?? {},
     designerConfig: raw.design ?? raw.designerConfig,
     folderId: raw.folder_id ?? raw.folderId ?? null,
-    status: raw.status ?? (raw.archived ? 'archived' : 'active'),
+    status: raw.status === 'enabled' ? 'active' : (raw.status ?? (raw.archived ? 'archived' : 'active')),
     domainId: raw.domain_id ?? raw.domainId,
     screenshotUrl:
       raw.qrcode_screenshot_url ?? raw.simple_png_url ?? raw.screenshotUrl ?? raw.screenshot_url,
@@ -302,6 +302,60 @@ export const qrcodesAPI = {
   // Get reports
   getReports: async (id: string, slug: string) => {
     const response = await apiClient.get(`/qrcodes/${id}/reports/${slug}`)
+    return response.data
+  },
+
+  // Get QR code analytics
+  getAnalytics: async (id: string | number) => {
+    const response = await apiClient.get(`/qrcodes/${id}/analytics`)
+    return response.data?.data ?? response.data
+  },
+
+  // Get QR code link settings
+  getLinkSettings: async (id: string | number) => {
+    const response = await apiClient.get(`/qrcodes/${id}/link-settings`)
+    return response.data
+  },
+
+  // Update QR code link settings
+  updateLinkSettings: async (id: string | number, data: { slug: string; redirectEnabled: boolean }) => {
+    const response = await apiClient.put(`/qrcodes/${id}/link-settings`, data)
+    return response.data
+  },
+
+  // Upload logo for QR code
+  uploadLogo: async (id: string | number, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await apiClient.post(`/qrcodes/${id}/logo`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    return response.data
+  },
+
+  // Delete logo from QR code
+  deleteLogo: async (id: string | number) => {
+    const response = await apiClient.delete(`/qrcodes/${id}/logo`)
+    return response.data
+  },
+
+  // Upload foreground/background image for QR code
+  uploadForegroundImage: async (id: string | number, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const response = await apiClient.post(`/qrcodes/${id}/background-image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    return response.data
+  },
+
+  // Delete foreground image from QR code
+  deleteForegroundImage: async (id: string | number) => {
+    const response = await apiClient.delete(`/qrcodes/${id}/background-image`)
     return response.data
   },
 }

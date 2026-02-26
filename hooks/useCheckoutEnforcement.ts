@@ -9,7 +9,7 @@ import {
   type UserContext,
   type SubscriptionContext,
 } from '@/lib/services/checkout-enforcement'
-import { useSubscriptionStore } from '@/lib/services/subscription-service'
+import { useSubscription } from '@/lib/hooks/useSubscription'
 
 /**
  * Routes that require an active subscription for customers.
@@ -86,7 +86,7 @@ export function useCheckoutEnforcement(options: UseCheckoutEnforcementOptions = 
   const router = useRouter()
   const pathname = usePathname()
   const { user, isLoading } = useAuth()
-  const subscriptionStore = useSubscriptionStore()
+  const { status: subscriptionStatus, plan: subscriptionPlan } = useSubscription()
 
   // Check if current page is exempt from enforcement
   const isExemptPage = useMemo(
@@ -116,9 +116,9 @@ export function useCheckoutEnforcement(options: UseCheckoutEnforcementOptions = 
     }
 
     const subCtx: SubscriptionContext = {
-      status: subscriptionStore.status,
-      plan: subscriptionStore.plan,
-      checkoutCompleted: subscriptionStore.status !== 'expired',
+      status: subscriptionStatus,
+      plan: subscriptionPlan,
+      checkoutCompleted: subscriptionStatus !== 'expired',
     }
 
     return checkoutEnforcement.enforce(userCtx, subCtx)
@@ -126,8 +126,8 @@ export function useCheckoutEnforcement(options: UseCheckoutEnforcementOptions = 
     user,
     isLoading,
     pathname,
-    subscriptionStore.status,
-    subscriptionStore.plan,
+    subscriptionStatus,
+    subscriptionPlan,
     enabled,
     routes,
     isExemptPage,

@@ -1,6 +1,7 @@
 'use client'
 
 import { use, useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import Link from 'next/link'
 import { useAuth } from '@/lib/context/AuthContext'
 import { supportTicketsAPI } from '@/lib/api/endpoints/support-tickets'
@@ -76,7 +77,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
       setMessages((prev) => [...prev, newMsg])
     } catch (err) {
       console.error('Failed to send reply:', err)
-      alert('Failed to send reply. Please try again.')
+      toast.error('Unable to send reply. Please try again.')
     } finally {
       setIsReplying(false)
     }

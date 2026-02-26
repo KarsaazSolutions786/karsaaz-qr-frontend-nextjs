@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { Calendar, Clock, MapPin, Share2, Download, Users, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import EventDetails from './EventDetails';
@@ -117,7 +118,7 @@ export default function EventPreview({ event }: EventPreviewProps) {
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      toast.success('Link copied to clipboard!');
     }
   };
 
@@ -172,11 +173,11 @@ END:VCALENDAR`;
         setIsRegistered(true);
         setFormData({ name: '', email: '', phone: '' });
       } else {
-        alert('Registration failed. Please try again.');
+        toast.error('Registration failed. Please try again.');
       }
     } catch (error) {
       console.error('Registration error:', error);
-      alert('Registration failed. Please try again.');
+      toast.error('Registration failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

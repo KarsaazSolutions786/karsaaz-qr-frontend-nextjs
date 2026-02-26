@@ -139,6 +139,19 @@ export const cloudStorageAPI = {
     await apiClient.delete(`/cloud-storage/connections/${id}`)
   },
 
+  /** Update a cloud storage connection */
+  updateConnection: async (id: string, data: {
+    provider?: string
+    name?: string
+    access_key?: string
+    secret_key?: string
+    bucket?: string
+    region?: string
+  }) => {
+    const response = await apiClient.put(`/cloud-storage/connections/${id}`, data)
+    return response.data
+  },
+
   /** Test an existing connection */
   testConnection: async (id: string) => {
     const response = await apiClient.post<TestConnectionResult>(`/cloud-storage/connections/${id}/test`)

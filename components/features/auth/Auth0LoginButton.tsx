@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import apiClient from '@/lib/api/client'
+import { useAuth0Enabled } from '@/lib/hooks/queries/useAppConfig'
 
 /**
  * Auth0LoginButton — shows "Sign in with Auth0" when Auth0 is enabled in backend config.
@@ -9,22 +8,7 @@ import apiClient from '@/lib/api/client'
  * After Auth0 callback, backend redirects to /auth-callback?user=<b64>&token=<b64>.
  */
 export function Auth0LoginButton() {
-  const [enabled, setEnabled] = useState(false)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Check if Auth0 is enabled via backend config
-    apiClient
-      .get<{ auth0_enabled?: boolean; config?: Record<string, string> }>('/config')
-      .then(({ data }) => {
-        const isEnabled =
-          data?.auth0_enabled === true ||
-          data?.config?.['auth0.enabled'] === 'enabled'
-        setEnabled(isEnabled)
-      })
-      .catch(() => setEnabled(false))
-      .finally(() => setLoading(false))
-  }, [])
+  const { enabled, isLoading: loading } = useAuth0Enabled()
 
   if (loading || !enabled) return null
 

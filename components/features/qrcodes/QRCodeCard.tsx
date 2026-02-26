@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { QRCode } from '@/types/entities/qrcode'
 import { formatDate } from '@/lib/utils/format'
 import { MoreVertical, Copy, Archive, Trash2, Download, Eye, Edit, BarChart3 } from 'lucide-react'
+import { QRPreviewImage } from '@/components/qr/QRPreviewImage'
 
 interface QRCodeCardProps {
   qrcode: QRCode
@@ -59,45 +60,17 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
     onAction?.(action, qrcode.id)
   }
 
-  // Use svgUrl (actual QR image) as primary, screenshotUrl as fallback
-  const previewUrl = qrcode.svgUrl || qrcode.screenshotUrl
-
   return (
     <div className="group relative rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md hover:border-gray-300">
       {/* QR Preview */}
       <Link href={`/qrcodes/${qrcode.id}`} className="block p-4 pb-3">
         <div className="flex justify-center mb-3">
-          {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt={qrcode.name}
-              width={120}
-              height={120}
-              className="rounded-md object-contain"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-[120px] h-[120px] bg-gray-100 rounded-md flex items-center justify-center">
-              <svg
-                className="w-16 h-16 text-gray-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M13.5 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5z"
-                />
-              </svg>
-            </div>
-          )}
+          <QRPreviewImage
+            svgUrl={qrcode.svgUrl}
+            fallbackUrl={qrcode.screenshotUrl}
+            alt={qrcode.name}
+            size={120}
+          />
         </div>
 
         {/* Name + Type */}

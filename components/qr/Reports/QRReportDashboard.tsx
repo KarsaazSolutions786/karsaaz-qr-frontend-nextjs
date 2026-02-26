@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import apiClient from '@/lib/api/client';
+import React from 'react';
+import { useQRCodeAnalytics } from '@/lib/hooks/queries/useQRCodes';
 import { LineChartWrapper } from '@/components/ui/charts';
 import { DoughnutChartWrapper } from '@/components/ui/charts';
 import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage';
@@ -32,29 +32,9 @@ const EMPTY_DATA: AnalyticsData = {
 };
 
 export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
-  const [data, setData] = useState<AnalyticsData>(EMPTY_DATA);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchAnalytics() {
-      setLoading(true);
-      setError('');
-      try {
-        const res = await apiClient.get(`/qrcodes/${qrCodeId}/analytics`);
-        if (!cancelled) setData(res.data?.data ?? res.data ?? EMPTY_DATA);
-      } catch (err: any) {
-        if (!cancelled) setError(err?.response?.data?.message || 'Failed to load analytics');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    fetchAnalytics();
-    return () => { cancelled = true; };
-  }, [qrCodeId]);
+  const { data: rawData, isLoading: loading, error: queryError } = useQRCodeAnalytics(qrCodeId);
+  const data: AnalyticsData = rawData ?? EMPTY_DATA;
+  const error = queryError ? (queryError as any)?.response?.data?.message || 'Failed to load analytics' : '';
 
   if (loading) {
     return (

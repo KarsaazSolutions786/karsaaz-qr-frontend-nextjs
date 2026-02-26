@@ -1,8 +1,8 @@
 'use client'
 
-import { use, useState, useEffect } from 'react'
+import { use } from 'react'
 import Link from 'next/link'
-import apiClient from '@/lib/api/client'
+import { useBulkImportInstance } from '@/lib/hooks/queries/useBulkOperations'
 
 interface BulkInstance {
   id: number
@@ -31,33 +31,9 @@ const statusStyles: Record<string, string> = {
 
 export default function BulkOperationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const [instance, setInstance] = useState<BulkInstance | null>(null)
-  const [results, setResults] = useState<BulkResult[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch instance details
-        const instRes = await apiClient.get(`/bulk-operations/import-url-qrcodes/instances`)
-        const data = instRes.data as any
-        const list = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : []
-        const inst = list.find((i: any) => String(i.id) === id)
-        if (inst) {
-          setInstance(inst)
-          if (inst.results) setResults(inst.results)
-        } else {
-          setError('Bulk operation not found.')
-        }
-      } catch {
-        setError('Failed to load bulk operation details.')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [id])
+  const { data: instance, isLoading: loading, error: queryError } = useBulkImportInstance(id)
+  const error = queryError ? 'Failed to load bulk operation details.' : (!loading && !instance ? 'Bulk operation not found.' : '')
+  const results: BulkResult[] = (instance as BulkInstance)?.results ?? []
 
   if (loading) {
     return (

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { useRouter, useParams } from 'next/navigation'
 import { useBiolink } from '@/lib/hooks/queries/useBiolinks'
 import { useUpdateBiolink, useDeleteBiolink } from '@/lib/hooks/mutations/useBiolinkMutations'
@@ -34,7 +35,7 @@ export default function EditBiolinkPage() {
 
   const handleSave = async (isPublished: boolean) => {
     if (!title || !slug) {
-      alert('Title and slug are required')
+      toast.error('Please enter both a title and slug for the biolink.')
       return
     }
 
@@ -47,10 +48,10 @@ export default function EditBiolinkPage() {
         blocks,
         isPublished,
       })
-      alert('Biolink updated successfully')
+      toast.success('Biolink updated successfully.')
     } catch (error) {
       console.error('Failed to update biolink:', error)
-      alert('Failed to update biolink')
+      toast.error('Unable to update biolink. Please try again.')
     }
   }
 
@@ -61,7 +62,7 @@ export default function EditBiolinkPage() {
         router.push('/biolinks')
       } catch (error) {
         console.error('Failed to delete biolink:', error)
-        alert('Failed to delete biolink')
+        toast.error('Unable to delete biolink. Please try again.')
       }
     }
   }

@@ -8,8 +8,7 @@ import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
 import { DEFAULT_DESIGNER_CONFIG, DesignerConfig } from '@/types/entities/designer'
 import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
 import Step1DataEntry from './Step1DataEntry'
-import Step2Designer from './Step2Designer'
-import Step3Download from './Step3Download'
+import QRDesignStudio from './QRDesignStudio'
 import { toast } from 'sonner'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
 import { transformDesignToBackend, transformDesignFromBackend } from '@/lib/qr/design-transformer'
@@ -22,7 +21,7 @@ interface QRWizardContainerProps {
   onCancel?: () => void
 }
 
-// Steps for CREATE mode: Type → Data → Design → Download (4 steps)
+// Steps for CREATE mode: Type → Data → Design Studio (3 steps)
 const CREATE_WIZARD_STEPS: WizardStep[] = [
   {
     id: 'type',
@@ -36,17 +35,12 @@ const CREATE_WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: 'design',
-    title: 'Design',
-    description: 'Customize the appearance',
-  },
-  {
-    id: 'download',
-    title: 'Download',
-    description: 'Save and download your QR code',
+    title: 'Design & Download',
+    description: 'Customize and download',
   },
 ]
 
-// Steps for EDIT mode: Data → Design → Download (3 steps, no type change)
+// Steps for EDIT mode: Data → Design Studio (2 steps, no type change)
 const EDIT_WIZARD_STEPS: WizardStep[] = [
   {
     id: 'data',
@@ -55,13 +49,8 @@ const EDIT_WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: 'design',
-    title: 'Design',
-    description: 'Customize the appearance',
-  },
-  {
-    id: 'download',
-    title: 'Download',
-    description: 'Save and download your QR code',
+    title: 'Design & Download',
+    description: 'Customize and download',
   },
 ]
 
@@ -317,24 +306,19 @@ export default function QRWizardContainer({
         return <Step1DataEntry qrType={qrType} data={formData} onChange={handleDataChange} />
 
       case 'design':
+      case 'download':
+        // Use unified QRDesignStudio for both design and download steps
         return (
-          <Step2Designer
+          <QRDesignStudio
+            qrType={qrType}
+            qrTypeLabel={qrType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            qrData={formData}
             design={design}
             onChange={handleDesignChange}
-            qrType={qrType}
-            qrData={formData}
-          />
-        )
-
-      case 'download':
-        return (
-          <Step3Download
-            qrType={qrType}
-            qrData={formData}
-            design={design}
             settings={settings}
             onSettingsChange={handleSettingsChange}
-            isSubmitting={isSaving}
+            onBack={() => wizard.previousStep()}
+            isSaving={isSaving}
             isSaved={isSaved}
           />
         )

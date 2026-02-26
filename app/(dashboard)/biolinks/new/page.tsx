@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { useCreateBiolink } from '@/lib/hooks/mutations/useBiolinkMutations'
 import BiolinkEditor from '@/components/features/biolinks/editor/BiolinkEditor'
@@ -19,7 +20,7 @@ export default function NewBiolinkPage() {
 
   const handleSave = async (isPublished: boolean) => {
     if (!title || !slug) {
-      alert('Title and slug are required')
+      toast.error('Please enter both a title and slug for the biolink.')
       return
     }
 
@@ -34,7 +35,7 @@ export default function NewBiolinkPage() {
       router.push('/biolinks')
     } catch (error) {
       console.error('Failed to create biolink:', error)
-      alert('Failed to create biolink')
+      toast.error('Unable to create biolink. Please try again.')
     }
   }
 

@@ -3,7 +3,7 @@
 import { use, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import apiClient from '@/lib/api/client'
+import { useCloudConnection, useCloudStorageMutations } from '@/lib/hooks/queries/useCloudStorage'
 
 type CloudProvider = 'aws_s3' | 'google_cloud' | 'azure' | 'digitalocean'
 
@@ -26,9 +26,6 @@ const PROVIDERS: { value: CloudProvider; label: string }[] = [
 export default function EditCloudStoragePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
   const [form, setForm] = useState<CloudStorageForm>({
     provider: 'aws_s3',
@@ -39,45 +36,45 @@ export default function EditCloudStoragePage({ params }: { params: Promise<{ id:
     region: '',
   })
 
+  // TanStack Query hooks
+  const { data: connectionData, isLoading: queryLoading, error: queryError } = useCloudConnection(id)
+  const { updateConnection } = useCloudStorageMutations()
+
+  // Sync fetched data to local state
   useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const res = await apiClient.get(`/cloud-storage/connections/${id}`)
-        const data = res.data as any
-        const config = data.data ?? data
-        setForm({
-          provider: config.provider ?? 'aws_s3',
-          name: config.name ?? '',
-          access_key: config.access_key ?? '',
-          secret_key: config.secret_key ?? '',
-          bucket: config.bucket ?? '',
-          region: config.region ?? '',
-        })
-      } catch {
-        setError('Failed to load cloud storage configuration.')
-      } finally {
-        setLoading(false)
-      }
+    if (connectionData) {
+      const config = connectionData as any
+      setForm({
+        provider: config.provider ?? 'aws_s3',
+        name: config.name ?? '',
+        access_key: config.access_key ?? '',
+        secret_key: config.secret_key ?? '',
+        bucket: config.bucket ?? '',
+        region: config.region ?? '',
+      })
     }
-    fetchConfig()
-  }, [id])
+  }, [connectionData])
+
+  const loading = queryLoading
+  const saving = updateConnection.isPending
+  const error = queryError
+    ? 'Failed to load cloud storage configuration.'
+    : updateConnection.isError
+      ? (updateConnection.error as any)?.response?.data?.message || 'Failed to update configuration.'
+      : ''
 
   const set = <K extends keyof CloudStorageForm>(key: K, value: CloudStorageForm[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSaving(true)
-    setError('')
     setSaved(false)
     try {
-      await apiClient.put(`/cloud-storage/connections/${id}`, form)
+      await updateConnection.mutateAsync({ id, data: form })
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
-    } catch (err: any) {
-      setError(err?.response?.data?.message || 'Failed to update configuration.')
-    } finally {
-      setSaving(false)
+    } catch {
+      // Error handled by mutation state
     }
   }
 

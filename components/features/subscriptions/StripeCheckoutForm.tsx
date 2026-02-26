@@ -10,7 +10,7 @@ interface StripeCheckoutFormProps {
 }
 
 export function StripeCheckoutForm({ plan }: StripeCheckoutFormProps) {
-  const [promoCode, setPromoCode] = useState<string>()
+  const [_promoCode, setPromoCode] = useState<string>()
   const [discountedPrice, setDiscountedPrice] = useState<number>()
   const subscribe = useSubscribe()
 
@@ -29,11 +29,8 @@ export function StripeCheckoutForm({ plan }: StripeCheckoutFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // In real implementation, this would collect payment method via Stripe Elements
-    // For now, just call the subscribe mutation
     await subscribe.mutateAsync({
-      planId: plan.id,
-      promoCode,
+      subscription_plan_id: plan.id,
     })
   }
 
@@ -71,13 +68,13 @@ export function StripeCheckoutForm({ plan }: StripeCheckoutFormProps) {
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Original Price</span>
             <span className="text-gray-600 line-through">
-              ${(plan.price / 100).toFixed(2)}
+              ${Number(plan.price).toFixed(2)}
             </span>
           </div>
           <div className="mt-1 flex justify-between text-lg font-semibold">
             <span className="text-green-800">Discounted Price</span>
             <span className="text-green-800">
-              ${(discountedPrice / 100).toFixed(2)}
+              ${Number(discountedPrice).toFixed(2)}
             </span>
           </div>
         </div>
@@ -89,7 +86,7 @@ export function StripeCheckoutForm({ plan }: StripeCheckoutFormProps) {
         disabled={subscribe.isPending}
         className="w-full rounded-md bg-blue-600 px-4 py-3 font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {subscribe.isPending ? 'Processing...' : `Subscribe for $${(finalPrice / 100).toFixed(2)}/month`}
+        {subscribe.isPending ? 'Processing...' : `Subscribe for $${Number(finalPrice).toFixed(2)}`}
       </button>
 
       <p className="text-center text-xs text-gray-500">

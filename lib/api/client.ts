@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 import { toast } from 'sonner'
+import { processApiError, getHttpStatusMessage, translateMessage } from '@/lib/utils/error-message-mapper'
 
 // API Base URL Configuration (matches Lit frontend priority)
 // 1. NEXT_PUBLIC_API_URL environment variable
@@ -90,7 +91,7 @@ apiClient.interceptors.response.use(
     return response
   },
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean; _silent?: boolean }
 
     // Handle 401 Unauthorized — clear auth and redirect to login
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -119,12 +120,56 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    // Handle other errors
-    console.error('[API Response Error]', {
-      status: error.response?.status,
-      message: error.message,
-      url: error.config?.url,
-    })
+    // Show user-friendly toast for all other API errors (unless silenced)
+    if (!originalRequest._silent && error.response) {
+      const status = error.response.status
+      const data = error.response.data as any
+
+      // Skip toast for 404 on non-critical endpoints (config, subscriptions/current)
+      const silentUrls = ['/config', '/subscriptions/current', '/domains']
+      const isSilentUrl = silentUrls.some(u => originalRequest.url?.includes(u))
+
+      if (!isSilentUrl && status !== 401) {
+        let userMessage: string
+
+        if (status === 422 && data?.errors) {
+          // Validation errors — show first field error
+          const fields = Object.keys(data.errors)
+          if (fields.length > 0) {
+            const firstField = fields[0] as string
+            const fieldErrors = data.errors[firstField]
+            const firstError = Array.isArray(fieldErrors) ? fieldErrors[0] : fieldErrors
+            userMessage = translateMessage(firstError) || 'Please check your input and try again.'
+          } else {
+            userMessage = 'Please check your input and try again.'
+          }
+        } else if (data?.error_code || data?.code) {
+          userMessage = processApiError(data)
+        } else if (data?.message) {
+          userMessage = translateMessage(data.message)
+        } else {
+          userMessage = getHttpStatusMessage(status)
+        }
+
+        toast.error(userMessage)
+      }
+    } else if (!originalRequest._silent && !error.response) {
+      // Network error — no response received
+      if (error.code === 'ECONNABORTED') {
+        toast.error('Request timed out. Please check your connection and try again.')
+      } else if (error.code === 'ERR_NETWORK') {
+        toast.error('Unable to connect to the server. Please check your internet connection.')
+      }
+    }
+
+    // Log in dev
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[API Response Error]', {
+        status: error.response?.status,
+        message: error.message,
+        url: error.config?.url,
+      })
+    }
 
     return Promise.reject(error)
   }

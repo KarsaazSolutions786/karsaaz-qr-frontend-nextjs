@@ -192,7 +192,7 @@ export function RegisterForm({
       {registerMutation.isError && (
         <div role="alert" className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
-            {(registerMutation.error as any)?.message || 'Registration failed. Please try again.'}
+            {(registerMutation.error as any)?.response?.data?.message || 'Registration failed. Please try again.'}
           </p>
         </div>
       )}

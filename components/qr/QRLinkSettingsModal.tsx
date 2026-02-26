@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import apiClient from '@/lib/api/client'
+import { useQRLinkSettings, useUpdateQRLinkSettings } from '@/lib/hooks/queries/useQRCodes'
 
 interface QRLinkSettingsModalProps {
   qrCodeId: string
@@ -24,41 +24,42 @@ export function QRLinkSettingsModal({ qrCodeId, open, onClose, onSave }: QRLinkS
     redirectEnabled: true,
     targetUrl: '',
   })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
+  // TanStack Query hooks
+  const { data: linkSettingsData, isLoading: queryLoading, error: queryError } = useQRLinkSettings(
+    qrCodeId,
+    { enabled: open && !!qrCodeId }
+  )
+  const updateMutation = useUpdateQRLinkSettings(qrCodeId)
+
+  // Sync fetched data to local state
   useEffect(() => {
-    if (open && qrCodeId) {
-      setLoading(true)
-      setError('')
-      apiClient
-        .get(`/qrcodes/${qrCodeId}/link-settings`)
-        .then((res) => {
-          setSettings({
-            slug: res.data.slug || '',
-            redirectEnabled: res.data.redirectEnabled ?? true,
-            targetUrl: res.data.targetUrl || '',
-          })
-        })
-        .catch(() => setError('Failed to load link settings'))
-        .finally(() => setLoading(false))
+    if (linkSettingsData) {
+      setSettings({
+        slug: linkSettingsData.slug || '',
+        redirectEnabled: linkSettingsData.redirectEnabled ?? true,
+        targetUrl: linkSettingsData.targetUrl || '',
+      })
     }
-  }, [open, qrCodeId])
+  }, [linkSettingsData])
+
+  const loading = queryLoading || updateMutation.isPending
+  const error = queryError
+    ? 'Failed to load link settings'
+    : updateMutation.isError
+      ? 'Failed to save settings'
+      : ''
 
   const handleSave = async () => {
-    setLoading(true)
-    setError('')
     try {
-      await apiClient.put(`/qrcodes/${qrCodeId}/link-settings`, {
+      await updateMutation.mutateAsync({
         slug: settings.slug,
         redirectEnabled: settings.redirectEnabled,
       })
       onSave({ slug: settings.slug, redirectEnabled: settings.redirectEnabled })
       onClose()
     } catch {
-      setError('Failed to save settings')
-    } finally {
-      setLoading(false)
+      // Error handled by mutation state
     }
   }
 

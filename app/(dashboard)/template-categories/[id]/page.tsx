@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import apiClient from '@/lib/api/client'
+import {
+  useTemplateCategory,
+  useCreateTemplateCategory,
+  useUpdateTemplateCategory,
+} from '@/lib/hooks/queries/useTemplates'
 
 const inputClass = 'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
 
@@ -15,38 +19,46 @@ export default function TemplateCategoryEditPage() {
   const [name, setName] = useState('')
   const [textColor, setTextColor] = useState('#000000')
   const [sortOrder, setSortOrder] = useState('')
-  const [loading, setLoading] = useState(!isNew)
-  const [saving, setSaving] = useState(false)
 
+  // TanStack Query hooks
+  const { data: categoryData, isLoading: queryLoading, error: queryError } = useTemplateCategory(
+    isNew ? null : id
+  )
+  const createMutation = useCreateTemplateCategory()
+  const updateMutation = useUpdateTemplateCategory()
+
+  // Sync fetched data to local state
   useEffect(() => {
-    if (!isNew) {
-      apiClient.get(`/template-categories/${id}`)
-        .then((res) => {
-          const d = res.data as any
-          setName(d.name ?? '')
-          setTextColor(d.text_color ?? '#000000')
-          setSortOrder(String(d.sort_order ?? ''))
-        })
-        .catch(() => router.push('/template-categories'))
-        .finally(() => setLoading(false))
+    if (categoryData) {
+      setName(categoryData.name ?? '')
+      setTextColor(categoryData.textColor ?? '#000000')
+      setSortOrder(String(categoryData.sort_order ?? ''))
     }
-  }, [id, isNew, router])
+  }, [categoryData])
+
+  // Redirect on fetch error
+  useEffect(() => {
+    if (queryError && !isNew) {
+      router.push('/template-categories')
+    }
+  }, [queryError, isNew, router])
+
+  const loading = !isNew && queryLoading
+  const saving = createMutation.isPending || updateMutation.isPending
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSaving(true)
-    const body: Record<string, any> = { name, text_color: textColor }
+    const body: { name: string; text_color?: string; sort_order?: number } = { name, text_color: textColor }
     if (sortOrder) body.sort_order = Number(sortOrder)
 
     try {
       if (isNew) {
-        await apiClient.post('/template-categories', body)
+        await createMutation.mutateAsync(body)
       } else {
-        await apiClient.put(`/template-categories/${id}`, body)
+        await updateMutation.mutateAsync({ id, data: body })
       }
       router.push('/template-categories')
     } catch { /* error */ }
-    setSaving(false)
   }
 
   if (loading) {

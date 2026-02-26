@@ -99,7 +99,6 @@ export function LoginForm() {
         <div role="alert" className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
             {(loginMutation.error as any)?.response?.data?.message
-              || (loginMutation.error as any)?.message
               || 'Invalid email or password. Please try again.'}
           </p>
         </div>

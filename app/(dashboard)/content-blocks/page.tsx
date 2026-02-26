@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, Suspense } from 'react'
+import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useContentBlocks } from '@/lib/hooks/queries/useContentBlocks'
@@ -114,7 +115,7 @@ function ContentBlocksPageInner() {
 
   const handleDeleteAll = async () => {
     if (!translationId) {
-      alert('Please select a language to delete all blocks from.')
+      toast.warning('Please select a language first to delete blocks from.')
       return
     }
     const langName = allTranslations.find((t) => t.id === translationId)?.name ?? `ID ${translationId}`

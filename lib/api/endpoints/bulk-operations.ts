@@ -188,4 +188,51 @@ export const bulkOperationsAPI = {
     }>(`/qrcodes/bulk/operations/${operationId}`)
     return response.data
   },
+
+  // Get bulk import URL instances
+  getImportUrlInstances: async () => {
+    const response = await apiClient.get('/bulk-operations/import-url-qrcodes/instances')
+    const data = response.data as any
+    return Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : []
+  },
+
+  // Get single bulk import URL instance
+  getImportUrlInstance: async (id: string) => {
+    const response = await apiClient.get(`/bulk-operations/import-url-qrcodes/instances`)
+    const data = response.data as any
+    const list = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : []
+    return list.find((i: any) => String(i.id) === id) || null
+  },
+
+  // Create bulk import from CSV file
+  createImportFromCsv: async (file: File) => {
+    const form = new FormData()
+    form.append('file', file)
+    const response = await apiClient.post('/bulk-operations/import-url-qrcodes/create', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return response.data
+  },
+
+  // Re-run a bulk operation
+  reRunInstance: async (id: number) => {
+    const response = await apiClient.post(`/bulk-operations/${id}/re-run`)
+    return response.data
+  },
+
+  // Delete a bulk operation instance
+  deleteInstance: async (id: number) => {
+    await apiClient.delete(`/bulk-operations/${id}`)
+  },
+
+  // Delete all QR codes from a bulk operation instance
+  deleteAllQRCodes: async (id: number) => {
+    await apiClient.delete(`/bulk-operations/${id}/all-qrcodes`)
+  },
+
+  // Rename a bulk operation instance
+  renameInstance: async (id: number, name: string) => {
+    const response = await apiClient.post(`/bulk-operations/edit-instance-name/${id}`, { name })
+    return response.data
+  },
 }

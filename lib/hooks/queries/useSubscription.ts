@@ -17,6 +17,11 @@ export function useSubscription() {
         throw error
       }
     },
-    staleTime: 2 * 60 * 1000, // Subscription status can change, refresh every 2 minutes
+    staleTime: 2 * 60 * 1000,
+    retry: (failureCount, error) => {
+      // Don't retry 404s
+      if ((error as any).response?.status === 404) return false
+      return failureCount < 2
+    },
   })
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, Suspense } from 'react'
+import { toast } from 'sonner'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
@@ -580,9 +581,9 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
   const handleRegisterWebhook = async () => {
     try {
       await apiClient.post(`/payment-processors/${processor.slug}/register-webhook`)
-      alert('Webhook registered successfully.')
+      toast.success('Webhook registered successfully.')
     } catch {
-      alert('Failed to register webhook.')
+      toast.error('Unable to register webhook. Please try again.')
     }
   }
 

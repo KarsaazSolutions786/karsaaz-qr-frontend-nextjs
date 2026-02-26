@@ -7,6 +7,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 import { exportSVG } from '@/lib/utils/export-svg';
 import { exportPDF, PDFPageSize, PDFOrientation } from '@/lib/utils/export-pdf';
 import { exportEPS } from '@/lib/utils/export-eps';
@@ -100,7 +101,7 @@ export function DownloadModal({
       onClose();
     } catch (error) {
       console.error('Download failed:', error);
-      alert('Download failed. Please try again.');
+      toast.error('Download failed. Please try again.');
     } finally {
       setIsDownloading(false);
     }

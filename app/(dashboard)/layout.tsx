@@ -23,6 +23,7 @@ import {
   PuzzlePieceIcon,
   ServerIcon,
   HomeIcon,
+  UserCircleIcon,
 } from '@heroicons/react/24/outline'
 import { GlobalSearch } from '@/components/common/GlobalSearch'
 import { QuickActions } from '@/components/common/QuickActions'
@@ -80,6 +81,8 @@ const figmaPrimaryNav: FigmaNavItem[] = [
   { key: 'home', label: 'Home', href: '/qrcodes/new', icon: HomeIcon },
   { key: 'existing-qr', label: 'Existing QR', href: '/qrcodes', icon: QrCodeIcon },
   { key: 'archived', label: 'Archived', href: '/archived', icon: ArchiveBoxIcon },
+  { key: 'plans', label: 'Plans', href: '/pricing', icon: BanknotesIcon },
+  { key: 'my-account', label: 'My Account', href: '/account', icon: UserCircleIcon },
   {
     key: 'storage-connections',
     label: 'Storage Connections',
@@ -496,7 +499,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div
-          className={`${sidebarCollapsed ? 'px-5 pb-3 space-y-2' : 'px-5 pb-3 flex items-center justify-between gap-1'}`}
+          className={`${sidebarCollapsed ? 'px-3 pb-3 flex items-center justify-center gap-2' : 'px-5 pb-3 flex items-center justify-between gap-1'}`}
         >
           {sidebarCollapsed ? (
             <>
@@ -548,7 +551,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
               ${sidebarCollapsed ? 'justify-center px-0' : 'justify-start gap-3 px-4'}
             `}
           >
-            <ArrowRightOnRectangleIcon className="h-5 w-5" />
+            <ArrowRightOnRectangleIcon className="h-5 w-5 text-[#e04f6b]" />
             {!sidebarCollapsed && (
               <span className="text-base">{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
             )}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import apiClient from '@/lib/api/client'
 import PaymentMethodsList from '@/components/features/subscriptions/PaymentMethodsList'
 import type { PaymentMethod } from '@/types/entities/transaction'
@@ -32,7 +33,7 @@ export default function PaymentMethodsPage() {
       await apiClient.delete(`/payment-methods/${id}`)
       setMethods((prev) => prev.filter((m) => m.id !== id))
     } catch {
-      alert('Failed to remove payment method.')
+      toast.error('Unable to remove payment method. Please try again.')
     }
   }
 

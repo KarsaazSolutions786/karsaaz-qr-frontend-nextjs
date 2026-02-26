@@ -10,6 +10,7 @@ export function mapSubscriptionPlanToPlan(sp: SubscriptionPlan): Plan {
     id: String(sp.id),
     name: sp.name,
     price: sp.price,
+    frequency: sp.frequency ?? 'monthly',
     currency: 'USD',
     features: sp.features ?? [],
     limits: {
@@ -20,5 +21,7 @@ export function mapSubscriptionPlanToPlan(sp: SubscriptionPlan): Plan {
       customBranding: true,
       apiAccess: true,
     },
+    isTrial: sp.isTrial ?? false,
+    trialDays: sp.trialDays ?? 0,
   }
 }

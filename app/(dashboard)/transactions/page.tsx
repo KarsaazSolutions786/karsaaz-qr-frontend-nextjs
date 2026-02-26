@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { useTransactions } from '@/lib/hooks/queries/useTransactions'
 import { useApproveTransaction, useRejectTransaction } from '@/lib/hooks/mutations/useTransactionMutations'
 import type { Transaction } from '@/types/entities/transaction'
@@ -55,13 +56,13 @@ export default function TransactionsPage() {
   const handleApprove = async (id: string) => {
     if (!confirm('Approve this transaction?')) return
     await approveMutation.mutateAsync(Number(id))
-    alert('Transaction has been approved!')
+    toast.success('Transaction approved successfully.')
   }
 
   const handleReject = async (id: string) => {
     if (!confirm('Reject this transaction?')) return
     await rejectMutation.mutateAsync(Number(id))
-    alert('Transaction has been rejected!')
+    toast.success('Transaction rejected successfully.')
   }
 
   const handleOpenProof = (transaction: Transaction) => {

@@ -7,20 +7,15 @@ import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
 
 export function PricingPlans({ billingMode }: { billingMode?: string }) {
   const { data: plansData, isLoading, error } = usePlans()
-  const allPlans: Plan[] | undefined = plansData?.data?.map(mapSubscriptionPlanToPlan)
+  const allPlans: Plan[] | undefined = plansData?.data
+    ?.filter((sp) => !sp.isHidden)
+    .map(mapSubscriptionPlanToPlan)
 
-  // Filter plans by billing mode when provided
+  // Filter by frequency when billingMode is specified
   const plans = allPlans?.filter((plan) => {
-    if (!billingMode || billingMode === 'monthly') return true
-    if (billingMode === 'annual') {
-      // Show yearly/life-time plans; fall back to all if none exist
-      const yearlyPlans = allPlans?.filter(
-        (p) => p.name.toLowerCase().includes('year') || p.name.toLowerCase().includes('annual')
-      )
-      return yearlyPlans && yearlyPlans.length > 0
-        ? plan.name.toLowerCase().includes('year') || plan.name.toLowerCase().includes('annual')
-        : true
-    }
+    if (!billingMode || billingMode === 'all') return true
+    if (billingMode === 'monthly') return plan.frequency === 'monthly'
+    if (billingMode === 'annual' || billingMode === 'yearly') return plan.frequency === 'yearly'
     return true
   })
 

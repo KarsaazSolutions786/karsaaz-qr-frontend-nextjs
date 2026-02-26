@@ -1,26 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import apiClient from '@/lib/api/client'
-import type { TemplateCategory } from '@/types/entities/template'
+import { useTemplateCategories, useDeleteTemplateCategory } from '@/lib/hooks/queries/useTemplates'
 
 export default function TemplateCategoriesPage() {
-  const [categories, setCategories] = useState<TemplateCategory[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    apiClient.get('/template-categories?no-pagination=true')
-      .then((res) => setCategories(Array.isArray(res.data) ? res.data : []))
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
+  // TanStack Query hooks
+  const { data: categories = [], isLoading: loading } = useTemplateCategories()
+  const deleteMutation = useDeleteTemplateCategory()
 
   const handleDelete = async (id: number) => {
     if (!confirm('Delete this category?')) return
     try {
-      await apiClient.delete(`/template-categories/${id}`)
-      setCategories((prev) => prev.filter((c) => c.id !== id))
+      await deleteMutation.mutateAsync(id)
     } catch { /* error */ }
   }
 

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { usersAPI } from '@/lib/api/endpoints/users'
 import { queryKeys } from '@/lib/query/keys'
 
@@ -17,5 +17,38 @@ export function useUser(id: string) {
     queryKey: queryKeys.users.detail(id),
     queryFn: () => usersAPI.getById(Number(id)),
     enabled: !!id,
+  })
+}
+
+// Get sub-users for a parent user
+export function useSubUsers(parentId: number | undefined) {
+  return useQuery({
+    queryKey: queryKeys.users.subUsers(parentId!),
+    queryFn: () => usersAPI.getSubUsers(parentId!),
+    enabled: !!parentId,
+    staleTime: 30000,
+  })
+}
+
+// Invite sub-user mutation
+export function useInviteSubUser(parentId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { name: string; email: string; mobile?: string; folder_id: string }) =>
+      usersAPI.inviteSubUser(parentId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.subUsers(parentId) })
+    },
+  })
+}
+
+// Delete sub-user mutation
+export function useDeleteSubUser(parentId: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (subUserId: number) => usersAPI.deleteSubUser(parentId, subUserId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.subUsers(parentId) })
+    },
   })
 }

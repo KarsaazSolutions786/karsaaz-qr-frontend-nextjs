@@ -5,6 +5,7 @@
 'use client';
 
 import React, { Suspense } from 'react';
+import { toast } from 'sonner';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Download, Printer, X } from 'lucide-react';
 
@@ -40,7 +41,7 @@ function PreviewContent() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Failed to download QR code:', error);
-      alert('Failed to download QR code. Please try again.');
+      toast.error('Download failed. Please try again.');
     }
   };
 
@@ -49,7 +50,7 @@ function PreviewContent() {
 
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
-      alert('Please allow popups to print the QR code.');
+      toast.warning('Please allow popups in your browser to print the QR code.');
       return;
     }
 

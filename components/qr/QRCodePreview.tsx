@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useMemo, useCallback } from 'react';
+import { toast } from 'sonner';
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer';
 import { StickerConfig } from '@/types/entities/sticker';
 import { generateQRCodeSync } from '@/lib/utils/qrcode-generator';
@@ -207,7 +208,7 @@ export function QRCodePreviewWithDownload({
       await previewRef.current?.download(format, filename);
     } catch (error) {
       console.error('Download failed:', error);
-      alert('Download failed. Please try again.');
+      toast.error('Download failed. Please try again.');
     }
   };
 

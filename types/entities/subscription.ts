@@ -1,10 +1,13 @@
 export interface Plan {
   id: string // UUID
   name: string // e.g., "Pro", "Enterprise"
-  price: number // Monthly price in cents
+  price: number // Price in dollars (e.g., 29.99)
+  frequency?: 'monthly' | 'yearly' | 'life-time'
   currency: string // e.g., "USD"
   features: string[] // List of features
   limits: PlanLimits // Feature limits
+  isTrial?: boolean
+  trialDays?: number
   stripeProductId?: string // Stripe product ID
   stripePriceId?: string // Stripe price ID
 }

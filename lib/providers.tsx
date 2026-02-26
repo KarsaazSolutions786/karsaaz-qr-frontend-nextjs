@@ -39,7 +39,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               <WebVitalsReporter />
               <OfflineIndicator />
               <SessionTimeout />
-              <Toaster position="top-right" richColors />
+              <Toaster position="top-right" richColors closeButton duration={4000} />
               {children}
             </PluginProvider>
           </TranslationProvider>

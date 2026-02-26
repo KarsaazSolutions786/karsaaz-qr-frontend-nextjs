@@ -11,6 +11,7 @@ import { QRCode } from '@/types/entities/qrcode'
 import { RowActionsModal, QRAction } from './RowActionsModal'
 import { MoreVertical, Eye, Download, Share2, BarChart3, Calendar } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
+import { QRPreviewImage } from '@/components/qr/QRPreviewImage'
 
 export interface QRCodeDetailedRowProps {
   qrcode: QRCode
@@ -85,15 +86,12 @@ export function QRCodeDetailedRow({
         {/* QR Preview */}
         <td className="px-4 py-3 w-20">
           <div className="w-12 h-12 bg-gray-50 rounded border border-gray-200 overflow-hidden flex items-center justify-center">
-            {qrcode.svgUrl || qrcode.screenshotUrl ? (
-              <img
-                src={qrcode.svgUrl || qrcode.screenshotUrl}
-                alt={qrcode.name}
-                className="w-full h-full object-contain"
-              />
-            ) : (
-              <Eye className="w-6 h-6 text-gray-400" />
-            )}
+            <QRPreviewImage
+              svgUrl={qrcode.svgUrl}
+              fallbackUrl={qrcode.screenshotUrl}
+              alt={qrcode.name}
+              size={48}
+            />
           </div>
         </td>
 

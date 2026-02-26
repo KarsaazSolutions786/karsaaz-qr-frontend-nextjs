@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { TrashIcon, UserPlusIcon } from '@heroicons/react/24/outline'
+import { useSubUsers, useDeleteSubUser } from '@/lib/hooks/queries/useUsers'
 
 export interface SubUserEntry {
   id: number | string
@@ -22,7 +23,7 @@ interface SubUserManagementProps {
   onInvite?: (data: InviteData) => void | Promise<void>
   onRemove?: (userId: number | string) => void | Promise<void>
   maxUsers?: number
-  /** Legacy prop: fetches sub-users from API when users prop is not provided */
+  /** Fetches sub-users from API when users prop is not provided */
   userId?: number
 }
 
@@ -44,44 +45,34 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
   const [inviteRole, setInviteRole] = useState('viewer')
   const [saving, setSaving] = useState(false)
   const [removing, setRemoving] = useState<number | string | null>(null)
-  const [apiUsers, setApiUsers] = useState<SubUserEntry[]>([])
-  const [loading, setLoading] = useState(!!userId && !usersProp)
 
-  // Legacy API-based fetching when userId is provided without users prop
-  const useLegacy = !!userId && !usersProp
+  // Use TanStack Query for fetching sub-users when userId is provided
+  const useFetch = !!userId && !usersProp
+  const { data: apiUsersData, isLoading: queryLoading } = useSubUsers(useFetch ? userId : undefined)
+  const deleteSubUserMutation = useDeleteSubUser(userId || 0)
+
+  // Map API data to SubUserEntry format
+  const apiUsers = useMemo(() => {
+    if (!apiUsersData) return []
+    return (Array.isArray(apiUsersData) ? apiUsersData : []).map((u: any) => ({
+      id: Number(u.id),
+      email: u.email || '',
+      name: u.name || undefined,
+      role: u.role || 'viewer',
+      status: 'active' as const,
+      last_login: u.last_login || null,
+    }))
+  }, [apiUsersData])
+
   const users = usersProp ?? apiUsers
-
-  React.useEffect(() => {
-    if (!useLegacy || !userId) return
-    let mounted = true
-    setLoading(true)
-    import('@/lib/api/endpoints/users').then(({ usersAPI }) =>
-      usersAPI.getSubUsers(userId)
-    ).then((data) => {
-      if (mounted) {
-        const mapped: SubUserEntry[] = (Array.isArray(data) ? data : []).map((u) => {
-          const raw = u as unknown as Record<string, unknown>
-          return {
-            id: Number(u.id),
-            email: u.email || '',
-            name: u.name || undefined,
-            role: (raw.role as string) || 'viewer',
-            status: 'active' as const,
-            last_login: (raw.last_login as string) || null,
-          }
-        })
-        setApiUsers(mapped)
-      }
-    }).catch(() => {
-      if (mounted) setApiUsers([])
-    }).finally(() => {
-      if (mounted) setLoading(false)
-    })
-    return () => { mounted = false }
-  }, [useLegacy, userId])
+  const loading = useFetch && queryLoading
 
   const onInvite = onInviteProp ?? (async () => {})
-  const onRemove = onRemoveProp ?? (async () => {})
+  const onRemove = onRemoveProp ?? (async (id: number | string) => {
+    if (userId) {
+      await deleteSubUserMutation.mutateAsync(Number(id))
+    }
+  })
 
   const canInvite = !maxUsers || users.length < maxUsers
 
