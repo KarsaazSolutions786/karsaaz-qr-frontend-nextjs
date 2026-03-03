@@ -1,0 +1,5 @@
+export { default as ColorsTab } from './ColorsTab'
+export { default as LogoTab } from './LogoTab'
+export { default as AdvancedSettingsTab } from './AdvancedSettingsTab'
+export { default as LivePreviewPanel } from './LivePreviewPanel'
+export { type QRDesign, type AdvancedDesignerProps, defaultDesign, designPresets } from './types'
