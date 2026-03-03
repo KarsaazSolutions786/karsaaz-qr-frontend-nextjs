@@ -1,20 +1,14 @@
 'use client'
 
 import { useState, useRef, useMemo, useCallback } from 'react'
+import Link from 'next/link'
 import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
 import { LogoUpload } from '@/components/qr/LogoUpload'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer'
-import {
-  MODULE_SHAPES,
-  FINDER_STYLES,
-  FINDER_DOT_STYLES,
-  OUTLINED_SHAPES,
-  ADVANCED_SHAPES,
-  PRESET_LOGOS,
-} from '@/lib/constants/qr-shapes'
+import { useDesignShapes } from '@/lib/hooks/useDesignShapes'
 import {
   Palette,
   Sparkles,
@@ -91,11 +85,36 @@ const FONT_FAMILIES = [
 
 // Review Collector preset logos
 const REVIEW_COLLECTOR_LOGOS = [
-  'airbnb', 'ebay', 'linkedin', 'tripadvisor', 'yelp', 'aliexpress',
-  'facebook', 'pinterest', 'trustpilot', 'amazon', 'foursquare', 'skype',
-  'twitch', 'youtube', 'appstore', 'google-maps', 'snapchat', 'twitter',
-  'zoom', 'bitcoin', 'google', 'telegram', 'wechat', 'booking',
-  'googleplay', 'tiktok', 'whatsapp', 'discord', 'instagram', 'trendyol',
+  'airbnb',
+  'ebay',
+  'linkedin',
+  'tripadvisor',
+  'yelp',
+  'aliexpress',
+  'facebook',
+  'pinterest',
+  'trustpilot',
+  'amazon',
+  'foursquare',
+  'skype',
+  'twitch',
+  'youtube',
+  'appstore',
+  'google-maps',
+  'snapchat',
+  'twitter',
+  'zoom',
+  'bitcoin',
+  'google',
+  'telegram',
+  'wechat',
+  'booking',
+  'googleplay',
+  'tiktok',
+  'whatsapp',
+  'discord',
+  'instagram',
+  'trendyol',
 ]
 
 export default function QRDesignStudio({
@@ -110,6 +129,14 @@ export default function QRDesignStudio({
   isSaving,
   isSaved,
 }: QRDesignStudioProps) {
+  const {
+    MODULE_SHAPES,
+    FINDER_STYLES,
+    FINDER_DOT_STYLES,
+    OUTLINED_SHAPES,
+    ADVANCED_SHAPES,
+    PRESET_LOGOS,
+  } = useDesignShapes()
   const previewRef = useRef<BackendQRPreviewRef>(null)
   const [activeTab, setActiveTab] = useState<TabId>('color')
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -239,7 +266,9 @@ export default function QRDesignStudio({
             onClick={() => onColorChange(color)}
             className={cn(
               'w-7 h-7 rounded border-2 transition-all',
-              value === color ? 'border-purple-500 scale-110' : 'border-gray-300 hover:border-gray-400'
+              value === color
+                ? 'border-purple-500 scale-110'
+                : 'border-gray-300 hover:border-gray-400'
             )}
             style={{ backgroundColor: color }}
           />
@@ -350,7 +379,10 @@ export default function QRDesignStudio({
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center gap-4">
             {onBack && (
-              <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+              <button
+                onClick={onBack}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
                 <ChevronLeft className="w-5 h-5 text-gray-600" />
               </button>
             )}
@@ -494,7 +526,9 @@ export default function QRDesignStudio({
                 {/* Image Fill */}
                 {(mergedConfig.foregroundFill as any)?.type === 'foreground_image' && (
                   <div className="space-y-3">
-                    <label className="block text-sm font-medium text-gray-700">Foreground Image</label>
+                    <label className="block text-sm font-medium text-gray-700">
+                      Foreground Image
+                    </label>
 
                     {!isSaved ? (
                       // Show message when QR is not saved yet
@@ -502,10 +536,12 @@ export default function QRDesignStudio({
                         <div className="flex items-start gap-3">
                           <div className="text-yellow-600 text-xl">⚠️</div>
                           <div>
-                            <p className="text-sm font-medium text-yellow-800">Save QR Code First</p>
+                            <p className="text-sm font-medium text-yellow-800">
+                              Save QR Code First
+                            </p>
                             <p className="text-xs text-yellow-700 mt-1">
-                              Image fill requires the QR code to be saved first. Click "Next" to save,
-                              then you can upload a foreground image.
+                              Image fill requires the QR code to be saved first. Click "Next" to
+                              save, then you can upload a foreground image.
                             </p>
                           </div>
                         </div>
@@ -830,7 +866,8 @@ export default function QRDesignStudio({
                       {/* Logo Position X */}
                       <div>
                         <label className="block text-sm text-gray-700 mb-2">
-                          Horizontal Position: {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
+                          Horizontal Position:{' '}
+                          {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
                         </label>
                         <input
                           type="range"
@@ -838,7 +875,9 @@ export default function QRDesignStudio({
                           max="1"
                           step="0.01"
                           value={mergedConfig.logo.positionX ?? 0.5}
-                          onChange={e => handleLogoChange({ positionX: parseFloat(e.target.value) })}
+                          onChange={e =>
+                            handleLogoChange({ positionX: parseFloat(e.target.value) })
+                          }
                           className="w-full accent-purple-500"
                         />
                       </div>
@@ -846,7 +885,8 @@ export default function QRDesignStudio({
                       {/* Logo Position Y */}
                       <div>
                         <label className="block text-sm text-gray-700 mb-2">
-                          Vertical Position: {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
+                          Vertical Position:{' '}
+                          {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
                         </label>
                         <input
                           type="range"
@@ -854,7 +894,9 @@ export default function QRDesignStudio({
                           max="1"
                           step="0.01"
                           value={mergedConfig.logo.positionY ?? 0.5}
-                          onChange={e => handleLogoChange({ positionY: parseFloat(e.target.value) })}
+                          onChange={e =>
+                            handleLogoChange({ positionY: parseFloat(e.target.value) })
+                          }
                           className="w-full accent-purple-500"
                         />
                       </div>
@@ -880,7 +922,9 @@ export default function QRDesignStudio({
                         <span className="text-sm text-gray-700">Logo Background</span>
                         <Switch
                           checked={mergedConfig.logo.backgroundEnabled ?? true}
-                          onCheckedChange={checked => handleLogoChange({ backgroundEnabled: checked })}
+                          onCheckedChange={checked =>
+                            handleLogoChange({ backgroundEnabled: checked })
+                          }
                         />
                       </div>
 
@@ -919,7 +963,8 @@ export default function QRDesignStudio({
                           {/* Background Scale */}
                           <div>
                             <label className="block text-sm text-gray-700 mb-2">
-                              Background Size: {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
+                              Background Size:{' '}
+                              {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
                             </label>
                             <input
                               type="range"
@@ -945,7 +990,9 @@ export default function QRDesignStudio({
             {(activeTab === 'sticker' || activeTab === 'look') && (
               <SectionCard title="Sticker" sectionKey="sticker">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Select Sticker</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select Sticker
+                  </label>
                   <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                     {ADVANCED_SHAPES.map(shape => (
                       <button
@@ -961,7 +1008,11 @@ export default function QRDesignStudio({
                         title={shape.label}
                       >
                         {shape.image ? (
-                          <img src={shape.image} alt={shape.label} className="w-full h-full object-contain" />
+                          <img
+                            src={shape.image}
+                            alt={shape.label}
+                            className="w-full h-full object-contain"
+                          />
                         ) : (
                           <span className="text-[8px] text-gray-500">{shape.label}</span>
                         )}
@@ -980,7 +1031,9 @@ export default function QRDesignStudio({
                         <span className="text-sm text-gray-700">Dropshadow</span>
                         <Switch
                           checked={mergedConfig.advancedShapeDropShadow || false}
-                          onCheckedChange={checked => handleChange('advancedShapeDropShadow', checked)}
+                          onCheckedChange={checked =>
+                            handleChange('advancedShapeDropShadow', checked)
+                          }
                         />
                       </div>
                     )}
@@ -1032,7 +1085,12 @@ export default function QRDesignStudio({
                               <button
                                 key={logo}
                                 type="button"
-                                onClick={() => handleChange('reviewCollectorLogoSrc', `/images/review-collector-logos/${logo}.png`)}
+                                onClick={() =>
+                                  handleChange(
+                                    'reviewCollectorLogoSrc',
+                                    `/images/review-collector-logos/${logo}.png`
+                                  )
+                                }
                                 className={cn(
                                   'aspect-square rounded-lg border-2 p-1 transition-all',
                                   mergedConfig.reviewCollectorLogoSrc?.includes(logo)
@@ -1160,7 +1218,9 @@ export default function QRDesignStudio({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Name your QR</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Name your QR
+                  </label>
                   <Input
                     value={settings.name || ''}
                     onChange={e => handleSettingsChange('name', e.target.value)}
@@ -1325,9 +1385,9 @@ export default function QRDesignStudio({
               {/* Terms */}
               <p className="text-xs text-gray-400 text-center mt-4">
                 By clicking "Download QR CODE" you agree to our{' '}
-                <a href="/terms" className="text-purple-500 hover:underline">
+                <Link href="/terms" className="text-purple-500 hover:underline">
                   Terms & Conditions
-                </a>
+                </Link>
                 .
               </p>
             </div>

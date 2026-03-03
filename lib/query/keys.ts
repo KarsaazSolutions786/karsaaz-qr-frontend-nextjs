@@ -243,4 +243,10 @@ export const queryKeys = {
     all: () => ['system', 'backups'] as const,
     detail: (id: number) => ['system', 'backups', id] as const,
   },
+
+  // Design Assets (Admin)
+  designAssets: {
+    all: () => ['design-assets'] as const,
+    list: (type?: string) => ['design-assets', 'list', type] as const,
+  },
 }

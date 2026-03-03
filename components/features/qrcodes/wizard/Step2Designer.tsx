@@ -9,14 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG, DESIGN_PRESETS } from '@/types/entities/designer'
-import {
-  MODULE_SHAPES,
-  FINDER_STYLES,
-  FINDER_DOT_STYLES,
-  OUTLINED_SHAPES,
-  ADVANCED_SHAPES,
-  PRESET_LOGOS,
-} from '@/lib/constants/qr-shapes'
+import { useDesignShapes } from '@/lib/hooks/useDesignShapes'
 import {
   Palette,
   Image as ImageIcon,
@@ -36,6 +29,14 @@ interface Step2DesignerProps {
 }
 
 export default function Step2Designer({ design, onChange, qrType, qrData }: Step2DesignerProps) {
+  const {
+    MODULE_SHAPES,
+    FINDER_STYLES,
+    FINDER_DOT_STYLES,
+    OUTLINED_SHAPES,
+    ADVANCED_SHAPES,
+    PRESET_LOGOS,
+  } = useDesignShapes()
   const [activeTab, setActiveTab] = useState('shape')
   const previewRef = useRef<BackendQRPreviewRef>(null)
 
