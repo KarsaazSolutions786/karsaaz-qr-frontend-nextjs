@@ -32,6 +32,25 @@
   color: #6b4a78;
 }
 
+/* Universal Karsaaz Background — Figma gradient + QR pattern */
+.karsaaz-bg {
+  background: linear-gradient(152deg, rgba(250, 241, 255, 1) 0%, rgba(238, 238, 238, 1) 100%);
+  position: relative;
+}
+.karsaaz-bg::after {
+  content: '';
+  position: fixed;
+  bottom: -100px;
+  right: -100px;
+  width: 773px;
+  height: 773px;
+  background: url('/images/bg-qr-pattern.svg') no-repeat center;
+  background-size: contain;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* RTL Support */
 [dir='rtl'] {
   direction: rtl;

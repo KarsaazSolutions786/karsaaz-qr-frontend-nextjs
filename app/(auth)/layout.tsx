@@ -27,5 +27,9 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   }
 
   // Show the auth form (even during loading to prevent hydration issues)
-  return <main id="main-content">{children}</main>
+  return (
+    <main id="main-content" className="karsaaz-bg min-h-screen">
+      {children}
+    </main>
+  )
 }

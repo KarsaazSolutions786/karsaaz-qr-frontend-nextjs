@@ -191,7 +191,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <Suspense
       fallback={
-        <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="flex h-screen karsaaz-bg dark:bg-gray-900">
           <div className="flex-1 flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
           </div>
@@ -325,7 +325,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   // Show minimal loading state during SSR and initial mount to prevent hydration mismatch
   if (!mounted || isLoading) {
     return (
-      <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex h-screen karsaaz-bg dark:bg-gray-900">
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
         </div>
@@ -338,7 +338,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-screen karsaaz-bg dark:bg-gray-900">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div
@@ -594,7 +594,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         <main
           id="main-content"
           role="main"
-          className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 dark:text-gray-100"
+          className="flex-1 overflow-y-auto dark:bg-gray-900 dark:text-gray-100"
         >
           {children}
         </main>
