@@ -324,6 +324,7 @@ export default function QRWizardContainer({
             onBack={() => wizard.previousStep()}
             isSaving={isSaving}
             isSaved={isSaved}
+            savedQRId={savedQRId}
           />
         )
 

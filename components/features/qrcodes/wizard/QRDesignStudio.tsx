@@ -39,6 +39,7 @@ interface QRDesignStudioProps {
   onBack?: () => void
   isSaving?: boolean
   isSaved?: boolean
+  savedQRId?: string | null
 }
 
 type TabId = 'color' | 'look' | 'sticker' | 'download'
@@ -124,7 +125,8 @@ export default function QRDesignStudio({
   onSettingsChange,
   onBack,
   isSaving,
-  isSaved,
+  isSaved: _isSaved,
+  savedQRId,
 }: QRDesignStudioProps) {
   const {
     MODULE_SHAPES,
@@ -532,7 +534,7 @@ export default function QRDesignStudio({
                       Foreground Image
                     </label>
 
-                    {!isSaved ? (
+                    {!savedQRId ? (
                       // Show message when QR is not saved yet
                       <div className="border-2 border-dashed border-yellow-300 rounded-lg p-4 bg-yellow-50">
                         <div className="flex items-start gap-3">
