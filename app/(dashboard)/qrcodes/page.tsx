@@ -251,7 +251,7 @@ export default function QRCodesPage() {
           </button>
           <BulkCreateButton
             onClick={() => {
-              window.location.href = '/qrcodes/bulk'
+              window.location.href = '/qrcodes/bulk-create'
             }}
           />
           <Link
