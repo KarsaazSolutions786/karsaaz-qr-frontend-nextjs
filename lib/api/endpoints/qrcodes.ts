@@ -353,9 +353,10 @@ export const qrcodesAPI = {
   uploadForegroundImage: async (id: string | number, file: File) => {
     const formData = new FormData()
     formData.append('file', file)
+    // Let browser set Content-Type with correct multipart boundary
     const response = await apiClient.post(`/qrcodes/${id}/background-image`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': undefined,
       },
     })
     return response.data

@@ -153,8 +153,20 @@ export default function QRDesignStudio({
   const [downloadSize, setDownloadSize] = useState('1200x2000')
   const [isDownloading, setIsDownloading] = useState(false)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const [hasUploadedForegroundImage, setHasUploadedForegroundImage] = useState(false)
 
   const mergedConfig = useMemo(() => ({ ...DEFAULT_DESIGNER_CONFIG, ...design }), [design])
+
+  // For the preview, keep solid fill until an image is actually uploaded to backend
+  const previewDesign = useMemo(() => {
+    if (
+      (design.foregroundFill as any)?.type === 'foreground_image' &&
+      !hasUploadedForegroundImage
+    ) {
+      return { ...design, foregroundFill: { type: 'solid' as const, color: '#000000' } }
+    }
+    return design
+  }, [design, hasUploadedForegroundImage])
 
   const hasPreviewData =
     Object.keys(qrData).length > 0 &&
@@ -582,6 +594,7 @@ export default function QRDesignStudio({
                                 try {
                                   setIsUploadingImage(true)
                                   await qrcodesAPI.uploadForegroundImage(savedQRId, file)
+                                  setHasUploadedForegroundImage(true)
                                   // Refresh preview after backend has the image
                                   setTimeout(() => previewRef.current?.refresh(), 300)
                                 } catch (err) {
@@ -634,6 +647,7 @@ export default function QRDesignStudio({
                                 type: 'foreground_image',
                                 imageUrl: '',
                               })
+                              setHasUploadedForegroundImage(false)
                               if (savedQRId) {
                                 try {
                                   await qrcodesAPI.deleteForegroundImage(savedQRId)
@@ -1306,7 +1320,7 @@ export default function QRDesignStudio({
                     ref={previewRef}
                     data={qrData}
                     qrType={qrType}
-                    config={design}
+                    config={previewDesign}
                     qrId={savedQRId || undefined}
                     className="w-full max-w-[280px]"
                   />

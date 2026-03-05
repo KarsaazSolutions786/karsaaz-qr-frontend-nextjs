@@ -69,6 +69,11 @@ apiClient.interceptors.request.use(
       }
     }
 
+    // Let browser set Content-Type with boundary for FormData uploads
+    if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+      config.headers['Content-Type'] = undefined as any
+    }
+
     // Smart timeout: route-specific + slow-connection adjustment (T020)
     const routeTimeout = getTimeoutForUrl(config.url)
     config.timeout = adjustForSlowConnection(routeTimeout)
