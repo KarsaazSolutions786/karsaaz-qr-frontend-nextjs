@@ -126,9 +126,13 @@ export default function QRWizardContainer({
         return true
       }
 
-      // Data step — ensure at least some data is entered
+      // Data step — ensure at least some data is entered with non-empty values
       if (currentStepId === 'data') {
-        if (!formData || Object.keys(formData).length === 0) {
+        const hasData =
+          formData &&
+          Object.keys(formData).length > 0 &&
+          Object.values(formData).some(v => v !== '' && v !== null && v !== undefined)
+        if (!hasData) {
           toast.error('Validation Error', {
             description: 'Please enter the QR code data before continuing.',
           })
@@ -155,7 +159,7 @@ export default function QRWizardContainer({
         name: settings.name || `${qrType} QR Code`,
         data: formData,
         design: backendDesign, // Backend fillable expects 'design', not 'designerConfig'
-        folderId: settings.folderId || null,
+        folder_id: settings.folderId || null, // Backend fillable uses snake_case
         tags: settings.tags,
         password: settings.pinProtected ? settings.pin || undefined : undefined,
       }

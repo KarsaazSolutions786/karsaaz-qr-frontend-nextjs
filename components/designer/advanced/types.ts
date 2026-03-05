@@ -1,4 +1,9 @@
-import type { AdvancedShapeSettings } from '../fields/AdvancedShapesFields'
+// AdvancedShapeConfig is the shape settings type from AdvancedShapesFields
+interface AdvancedShapeSettings {
+  shapeType: 'custom-svg' | 'mixed' | 'geometric'
+  modulePattern: 'uniform' | 'alternating' | 'random' | 'gradient'
+  customSvg?: string
+}
 
 export interface QRDesign {
   // Colors
