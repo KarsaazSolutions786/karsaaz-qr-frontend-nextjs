@@ -55,10 +55,10 @@ const TABS: { id: TabId; label: string; emoji: string }[] = [
 const PRESET_COLORS = ['#FF0000', '#8B5CF6', '#10B981', '#FFFFFF']
 
 const SIZE_OPTIONS = [
-  { value: '600x600', label: '600×600' },
-  { value: '1200x1200', label: '1200×1200' },
-  { value: '1200x2000', label: '1200×2000' },
-  { value: '2000x2000', label: '2000×2000' },
+  { value: '512', label: '512px' },
+  { value: '1024', label: '1024px' },
+  { value: '2048', label: '2048px' },
+  { value: '4096', label: '4k' },
 ]
 
 const FORMAT_OPTIONS = [
@@ -150,7 +150,7 @@ export default function QRDesignStudio({
   const [showAllFinderDots, setShowAllFinderDots] = useState(false)
   const [showAllShapes, setShowAllShapes] = useState(false)
   const [downloadFormat, setDownloadFormat] = useState('png')
-  const [downloadSize, setDownloadSize] = useState('1200x2000')
+  const [downloadSize, setDownloadSize] = useState('1024')
   const [isDownloading, setIsDownloading] = useState(false)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [hasUploadedImage, setHasUploadedImage] = useState(false)
@@ -215,7 +215,8 @@ export default function QRDesignStudio({
       } else if (downloadFormat === 'png') {
         const dataURL = previewRef.current.getDataURL()
         if (!dataURL) throw new Error('Cannot generate data URL')
-        const [width, height] = downloadSize.split('x').map(Number) as [number, number]
+        const size = Number(downloadSize)
+        const [width, height] = [size, size]
         const img = new Image()
         img.onload = () => {
           const canvas = document.createElement('canvas')
