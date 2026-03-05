@@ -153,17 +153,17 @@ export default function QRDesignStudio({
   const [downloadSize, setDownloadSize] = useState('1200x2000')
   const [isDownloading, setIsDownloading] = useState(false)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const [hasUploadedImage, setHasUploadedImage] = useState(false)
 
   const mergedConfig = useMemo(() => ({ ...DEFAULT_DESIGNER_CONFIG, ...design }), [design])
 
-  // For preview, always use solid fill when foreground_image is selected
-  // (backend preview requires Imagick which may not be available)
+  // Keep solid fill for preview until image is uploaded to backend
   const previewDesign = useMemo(() => {
-    if ((design.foregroundFill as any)?.type === 'foreground_image') {
+    if ((design.foregroundFill as any)?.type === 'foreground_image' && !hasUploadedImage) {
       return { ...design, foregroundFill: { type: 'solid' as const, color: '#000000' } }
     }
     return design
-  }, [design])
+  }, [design, hasUploadedImage])
 
   const hasPreviewData =
     Object.keys(qrData).length > 0 &&
@@ -591,6 +591,8 @@ export default function QRDesignStudio({
                                 try {
                                   setIsUploadingImage(true)
                                   await qrcodesAPI.uploadForegroundImage(savedQRId, file)
+                                  setHasUploadedImage(true)
+                                  setTimeout(() => previewRef.current?.refresh(), 300)
                                 } catch (err) {
                                   console.error('[ForegroundImage] Upload failed:', err)
                                 } finally {
@@ -641,6 +643,7 @@ export default function QRDesignStudio({
                                 type: 'foreground_image',
                                 imageUrl: '',
                               })
+                              setHasUploadedImage(false)
                               if (savedQRId) {
                                 try {
                                   await qrcodesAPI.deleteForegroundImage(savedQRId)
