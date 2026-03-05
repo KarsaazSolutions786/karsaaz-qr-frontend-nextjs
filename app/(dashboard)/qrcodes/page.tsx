@@ -213,10 +213,10 @@ export default function QRCodesPage() {
     [archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode, downloadQRCode]
   )
 
-  const handleSearch = (query: string) => {
+  const handleSearch = useCallback((query: string) => {
     setSearch(query)
     setPage(1)
-  }
+  }, [])
 
   if (error) {
     console.error('QR Codes fetch error:', error)
