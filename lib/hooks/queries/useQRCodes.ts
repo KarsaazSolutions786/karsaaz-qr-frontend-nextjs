@@ -7,9 +7,15 @@ import { queryKeys } from '@/lib/query/keys'
 export function useQRCodes(params: ListQRCodesParams = {}) {
   return useQuery({
     queryKey: queryKeys.qrcodes.list(params as Record<string, unknown>),
-    queryFn: () => qrcodesAPI.list(params),
+    queryFn: ({ signal }) => qrcodesAPI.list(params, signal),
     staleTime: 30 * 1000, // 30 seconds
     placeholderData: keepPreviousData,
+    retry: (failureCount, error: any) => {
+      // Don't retry on rate limit (429) or client errors (4xx)
+      const status = error?.response?.status
+      if (status === 429 || (status >= 400 && status < 500)) return false
+      return failureCount < 2
+    },
   })
 }
 

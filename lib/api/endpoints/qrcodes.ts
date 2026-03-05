@@ -42,7 +42,8 @@ function mapQRCode(raw: any): QRCode {
     customization: raw.customization ?? raw.design ?? {},
     designerConfig: raw.design ?? raw.designerConfig,
     folderId: raw.folder_id ?? raw.folderId ?? null,
-    status: raw.status === 'enabled' ? 'active' : (raw.status ?? (raw.archived ? 'archived' : 'active')),
+    status:
+      raw.status === 'enabled' ? 'active' : (raw.status ?? (raw.archived ? 'archived' : 'active')),
     domainId: raw.domain_id ?? raw.domainId,
     screenshotUrl:
       raw.qrcode_screenshot_url ?? raw.simple_png_url ?? raw.screenshotUrl ?? raw.screenshot_url,
@@ -102,7 +103,7 @@ export interface BulkCreateResponse {
 
 export const qrcodesAPI = {
   // List QR codes with pagination
-  list: async (params: ListQRCodesParams = {}) => {
+  list: async (params: ListQRCodesParams = {}, signal?: AbortSignal) => {
     try {
       const {
         sortBy,
@@ -143,6 +144,7 @@ export const qrcodesAPI = {
 
       const response = await apiClient.get('/qrcodes', {
         params: queryParams,
+        signal, // abort in-flight request when page changes
       })
 
       // Normalize flat Laravel pagination and map QR codes
@@ -151,8 +153,11 @@ export const qrcodesAPI = {
         data: normalized.data.map(mapQRCode),
         pagination: normalized.pagination,
       } as PaginatedResponse<QRCode>
-    } catch (error) {
-      console.error('QR Codes fetch error:', error)
+    } catch (error: any) {
+      // Don't log aborted requests (cancelled by page navigation)
+      if (error?.code !== 'ERR_CANCELED') {
+        console.error('QR Codes fetch error:', error)
+      }
       throw error
     }
   },
@@ -318,7 +323,10 @@ export const qrcodesAPI = {
   },
 
   // Update QR code link settings
-  updateLinkSettings: async (id: string | number, data: { slug: string; redirectEnabled: boolean }) => {
+  updateLinkSettings: async (
+    id: string | number,
+    data: { slug: string; redirectEnabled: boolean }
+  ) => {
     const response = await apiClient.put(`/qrcodes/${id}/link-settings`, data)
     return response.data
   },
