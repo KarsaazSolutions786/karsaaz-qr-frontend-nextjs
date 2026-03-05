@@ -132,75 +132,81 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
     }, [JSON.stringify(data), qrType, qrId, JSON.stringify(config)])
 
     /* ---- fetch SVG from backend ---- */
-    const fetchPreview = useCallback(async () => {
-      const params = buildParams()
-      if (!params) {
-        setSvg(null)
-        setError(null)
-        return
-      }
-
-      const cacheKey = params.get('h') || ''
-      const cached = cacheGet(cacheKey)
-      if (cached) {
-        setSvg(cached)
-        setError(null)
-        setLoading(false)
-        return
-      }
-
-      // Cancel any in-flight request
-      abortRef.current?.abort()
-      const controller = new AbortController()
-      abortRef.current = controller
-
-      setLoading(true)
-      setError(null)
-
-      try {
-        // The legacy fetches: GET {APP_URL}/api/qrcodes/preview?{params}
-        // apiClient already has baseURL = {API_URL}/api, so endpoint = /qrcodes/preview
-        const res = await apiClient.get('/qrcodes/preview', {
-          params: Object.fromEntries(params),
-          signal: controller.signal,
-          // The backend returns JSON { content: base64_svg } or raw SVG
-          // Handle both response formats
-          transformResponse: [(raw: string) => raw],
-        })
-
-        if (!mountedRef.current) return
-
-        let svgString: string
-
-        // Try parsing as JSON first (legacy backend returns {content: base64})
-        try {
-          const json = JSON.parse(res.data)
-          if (json.content) {
-            svgString = window.atob(json.content)
-          } else {
-            svgString = res.data
-          }
-        } catch {
-          // Raw SVG response
-          svgString = res.data as string
-        }
-
-        if (svgString && svgString.includes('<svg')) {
-          cacheSet(cacheKey, svgString)
-          setSvg(svgString)
+    const fetchPreview = useCallback(
+      async (skipCache = false) => {
+        const params = buildParams()
+        if (!params) {
+          setSvg(null)
           setError(null)
-        } else {
-          setError('Invalid SVG response')
+          return
         }
-      } catch (err: any) {
-        if (err?.name === 'AbortError' || err?.name === 'CanceledError') return
-        if (!mountedRef.current) return
-        setError('Preview failed')
-        console.error('[BackendQRPreview]', err)
-      } finally {
-        if (mountedRef.current) setLoading(false)
-      }
-    }, [buildParams])
+
+        const cacheKey = params.get('h') || ''
+
+        if (!skipCache) {
+          const cached = cacheGet(cacheKey)
+          if (cached) {
+            setSvg(cached)
+            setError(null)
+            setLoading(false)
+            return
+          }
+        }
+
+        // Cancel any in-flight request
+        abortRef.current?.abort()
+        const controller = new AbortController()
+        abortRef.current = controller
+
+        setLoading(true)
+        setError(null)
+
+        try {
+          // The legacy fetches: GET {APP_URL}/api/qrcodes/preview?{params}
+          // apiClient already has baseURL = {API_URL}/api, so endpoint = /qrcodes/preview
+          const res = await apiClient.get('/qrcodes/preview', {
+            params: Object.fromEntries(params),
+            signal: controller.signal,
+            // The backend returns JSON { content: base64_svg } or raw SVG
+            // Handle both response formats
+            transformResponse: [(raw: string) => raw],
+          })
+
+          if (!mountedRef.current) return
+
+          let svgString: string
+
+          // Try parsing as JSON first (legacy backend returns {content: base64})
+          try {
+            const json = JSON.parse(res.data)
+            if (json.content) {
+              svgString = window.atob(json.content)
+            } else {
+              svgString = res.data
+            }
+          } catch {
+            // Raw SVG response
+            svgString = res.data as string
+          }
+
+          if (svgString && svgString.includes('<svg')) {
+            cacheSet(cacheKey, svgString)
+            setSvg(svgString)
+            setError(null)
+          } else {
+            setError('Invalid SVG response')
+          }
+        } catch (err: any) {
+          if (err?.name === 'AbortError' || err?.name === 'CanceledError') return
+          if (!mountedRef.current) return
+          setError('Preview failed')
+          console.error('[BackendQRPreview]', err)
+        } finally {
+          if (mountedRef.current) setLoading(false)
+        }
+      },
+      [buildParams]
+    )
 
     /* ---- debounced effect ---- */
     useEffect(() => {
@@ -238,7 +244,7 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
           const encoded = encodeURIComponent(svg).replace(/'/g, '%27').replace(/"/g, '%22')
           return `data:image/svg+xml,${encoded}`
         },
-        refresh: () => fetchPreview(),
+        refresh: () => fetchPreview(true),
       }),
       [svg, fetchPreview]
     )

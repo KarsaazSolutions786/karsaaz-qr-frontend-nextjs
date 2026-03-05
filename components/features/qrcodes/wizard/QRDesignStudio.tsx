@@ -4,6 +4,7 @@ import { useState, useRef, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
 import { LogoUpload } from '@/components/qr/LogoUpload'
+import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
@@ -151,6 +152,7 @@ export default function QRDesignStudio({
   const [downloadFormat, setDownloadFormat] = useState('png')
   const [downloadSize, setDownloadSize] = useState('1200x2000')
   const [isDownloading, setIsDownloading] = useState(false)
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
 
   const mergedConfig = useMemo(() => ({ ...DEFAULT_DESIGNER_CONFIG, ...design }), [design])
 
@@ -562,10 +564,10 @@ export default function QRDesignStudio({
                             type="file"
                             accept="image/png,image/jpeg,image/jpg"
                             className="hidden"
-                            onChange={e => {
+                            onChange={async e => {
                               const file = e.target.files?.[0]
-                              if (file) {
-                                // Convert to data URL for local preview
+                              if (file && savedQRId) {
+                                // Show local preview immediately
                                 const reader = new FileReader()
                                 reader.onload = ev => {
                                   const dataUrl = ev.target?.result as string
@@ -575,19 +577,37 @@ export default function QRDesignStudio({
                                   })
                                 }
                                 reader.readAsDataURL(file)
+
+                                // Upload to backend so preview renders correctly
+                                try {
+                                  setIsUploadingImage(true)
+                                  await qrcodesAPI.uploadForegroundImage(savedQRId, file)
+                                  // Refresh preview after backend has the image
+                                  setTimeout(() => previewRef.current?.refresh(), 300)
+                                } catch (err) {
+                                  console.error('[ForegroundImage] Upload failed:', err)
+                                } finally {
+                                  setIsUploadingImage(false)
+                                }
                               }
                             }}
                           />
 
                           {(mergedConfig.foregroundFill as any).imageUrl ? (
                             <div className="flex items-center justify-center gap-3">
-                              <img
-                                src={(mergedConfig.foregroundFill as any).imageUrl}
-                                alt="Foreground preview"
-                                className="w-16 h-16 object-cover rounded"
-                              />
+                              {isUploadingImage ? (
+                                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+                              ) : (
+                                <img
+                                  src={(mergedConfig.foregroundFill as any).imageUrl}
+                                  alt="Foreground preview"
+                                  className="w-16 h-16 object-cover rounded"
+                                />
+                              )}
                               <div className="text-left">
-                                <p className="text-sm font-medium text-gray-900">Image selected</p>
+                                <p className="text-sm font-medium text-gray-900">
+                                  {isUploadingImage ? 'Uploading...' : 'Image selected'}
+                                </p>
                                 <p className="text-xs text-gray-500">Click to replace</p>
                               </div>
                             </div>
@@ -609,12 +629,20 @@ export default function QRDesignStudio({
                         {(mergedConfig.foregroundFill as any).imageUrl && (
                           <button
                             type="button"
-                            onClick={() =>
+                            onClick={async () => {
                               handleChange('foregroundFill', {
                                 type: 'foreground_image',
                                 imageUrl: '',
                               })
-                            }
+                              if (savedQRId) {
+                                try {
+                                  await qrcodesAPI.deleteForegroundImage(savedQRId)
+                                  setTimeout(() => previewRef.current?.refresh(), 300)
+                                } catch {
+                                  // ignore — backend may not have an image to delete
+                                }
+                              }
+                            }}
                             className="text-sm text-red-600 hover:text-red-700"
                           >
                             Remove image
@@ -1279,6 +1307,7 @@ export default function QRDesignStudio({
                     data={qrData}
                     qrType={qrType}
                     config={design}
+                    qrId={savedQRId || undefined}
                     className="w-full max-w-[280px]"
                   />
                 ) : (
