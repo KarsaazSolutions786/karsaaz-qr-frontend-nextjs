@@ -153,20 +153,17 @@ export default function QRDesignStudio({
   const [downloadSize, setDownloadSize] = useState('1200x2000')
   const [isDownloading, setIsDownloading] = useState(false)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
-  const [hasUploadedForegroundImage, setHasUploadedForegroundImage] = useState(false)
 
   const mergedConfig = useMemo(() => ({ ...DEFAULT_DESIGNER_CONFIG, ...design }), [design])
 
-  // For the preview, keep solid fill until an image is actually uploaded to backend
+  // For preview, always use solid fill when foreground_image is selected
+  // (backend preview requires Imagick which may not be available)
   const previewDesign = useMemo(() => {
-    if (
-      (design.foregroundFill as any)?.type === 'foreground_image' &&
-      !hasUploadedForegroundImage
-    ) {
+    if ((design.foregroundFill as any)?.type === 'foreground_image') {
       return { ...design, foregroundFill: { type: 'solid' as const, color: '#000000' } }
     }
     return design
-  }, [design, hasUploadedForegroundImage])
+  }, [design])
 
   const hasPreviewData =
     Object.keys(qrData).length > 0 &&
@@ -594,9 +591,6 @@ export default function QRDesignStudio({
                                 try {
                                   setIsUploadingImage(true)
                                   await qrcodesAPI.uploadForegroundImage(savedQRId, file)
-                                  setHasUploadedForegroundImage(true)
-                                  // Refresh preview after backend has the image
-                                  setTimeout(() => previewRef.current?.refresh(), 300)
                                 } catch (err) {
                                   console.error('[ForegroundImage] Upload failed:', err)
                                 } finally {
@@ -647,11 +641,9 @@ export default function QRDesignStudio({
                                 type: 'foreground_image',
                                 imageUrl: '',
                               })
-                              setHasUploadedForegroundImage(false)
                               if (savedQRId) {
                                 try {
                                   await qrcodesAPI.deleteForegroundImage(savedQRId)
-                                  setTimeout(() => previewRef.current?.refresh(), 300)
                                 } catch {
                                   // ignore — backend may not have an image to delete
                                 }

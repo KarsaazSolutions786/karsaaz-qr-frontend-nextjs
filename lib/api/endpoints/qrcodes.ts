@@ -176,7 +176,21 @@ export const qrcodesAPI = {
 
   // Update QR code
   update: async (id: string, data: UpdateQRCodeRequest) => {
-    const response = await apiClient.put(`/qrcodes/${id}`, data)
+    // Map camelCase fields to snake_case for backend
+    const payload: Record<string, unknown> = { ...data }
+    if ('folderId' in payload) {
+      payload.folder_id = payload.folderId ? Number(payload.folderId) : null
+      delete payload.folderId
+    }
+    if ('domainId' in payload) {
+      payload.domain_id = payload.domainId
+      delete payload.domainId
+    }
+    if ('stickerConfig' in payload) {
+      payload.sticker_config = payload.stickerConfig
+      delete payload.stickerConfig
+    }
+    const response = await apiClient.put(`/qrcodes/${id}`, payload)
     return mapQRCode(response.data)
   },
 
@@ -353,12 +367,7 @@ export const qrcodesAPI = {
   uploadForegroundImage: async (id: string | number, file: File) => {
     const formData = new FormData()
     formData.append('file', file)
-    // Let browser set Content-Type with correct multipart boundary
-    const response = await apiClient.post(`/qrcodes/${id}/background-image`, formData, {
-      headers: {
-        'Content-Type': undefined,
-      },
-    })
+    const response = await apiClient.post(`/qrcodes/${id}/background-image`, formData)
     return response.data
   },
 
