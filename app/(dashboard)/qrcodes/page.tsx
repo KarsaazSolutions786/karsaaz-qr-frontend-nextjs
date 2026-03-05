@@ -67,6 +67,7 @@ export default function QRCodesPage() {
 
   const { data, isLoading, isFetching, error } = useQRCodes({
     page,
+    perPage: 12,
     search: search || undefined,
     folderId: selectedFolder || undefined,
     domainId: selectedDomain || undefined,
