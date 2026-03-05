@@ -77,12 +77,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
     if (!token) {
-      setIsLoading(false)
+      // isLoading already initialized to false when no token exists
       return
     }
 
-    apiClient.get<{ data: User }>('/myself')
-      .then((response) => {
+    apiClient
+      .get<{ data: User }>('/myself')
+      .then(response => {
         const freshUser = (response.data as any).data ?? response.data
         setUser(freshUser as User)
         if (typeof window !== 'undefined') {
@@ -111,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refreshUserData = useCallback(async (): Promise<User | null> => {
     try {
       const response = await apiClient.get<{ data: User }>('/myself')
-      const freshUser = (response.data as any).data ?? response.data as unknown as User
+      const freshUser = (response.data as any).data ?? (response.data as unknown as User)
       setUser(freshUser)
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(freshUser))
@@ -124,20 +125,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [queryClient])
 
-  const login = useCallback(async (email: string, password: string) => {
-    const response = await apiClient.post<{ user: User; token: string }>('/login', {
-      email,
-      password,
-    })
-    const data = response.data
-    setUser(data.user)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('user', JSON.stringify(data.user))
-      localStorage.setItem('token', data.token)
-    }
-    queryClient.setQueryData(queryKeys.auth.currentUser(), data.user)
-    // Subscription data is automatically loaded via TanStack Query when user data is set
-  }, [queryClient])
+  const login = useCallback(
+    async (email: string, password: string) => {
+      const response = await apiClient.post<{ user: User; token: string }>('/login', {
+        email,
+        password,
+      })
+      const data = response.data
+      setUser(data.user)
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(data.user))
+        localStorage.setItem('token', data.token)
+      }
+      queryClient.setQueryData(queryKeys.auth.currentUser(), data.user)
+      // Subscription data is automatically loaded via TanStack Query when user data is set
+    },
+    [queryClient]
+  )
 
   /**
    * Logout — clear credentials and redirect.
@@ -150,19 +154,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const logout = useCallback(async () => {
     // Check if Auth0 is enabled — redirect to Auth0 logout endpoint
-    const auth0Enabled = typeof window !== 'undefined' ? localStorage.getItem('auth0_enabled') : null
+    const auth0Enabled =
+      typeof window !== 'undefined' ? localStorage.getItem('auth0_enabled') : null
     if (auth0Enabled === 'true') {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://app.karsaazqr.com'
       window.location.href = `${apiUrl}/auth0/logout`
       return
     }
 
-    try {
-      await apiClient.post('/logout')
-    } catch {
-      // Ignore — we clear local state regardless
-    }
-
+    // No backend /api/logout route exists — just clear local state (matches LitElement)
     setUser(null)
     setIsActingAs(false)
     if (typeof window !== 'undefined') {
@@ -174,9 +174,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryClient.clear()
 
     // Resolve after_logout_action from app config (stored in localStorage after load)
-    const afterLogoutAction = typeof window !== 'undefined'
-      ? localStorage.getItem('after_logout_action')
-      : null
+    const afterLogoutAction =
+      typeof window !== 'undefined' ? localStorage.getItem('after_logout_action') : null
 
     if (afterLogoutAction === 'redirect_to_home_page') {
       window.location.href = '/'
@@ -189,25 +188,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ── ActAs (Admin Impersonation) ──
   // Matches original: actAs stores mainUser, swaps credentials, navigates + reloads
 
-  const actAs = useCallback((targetUser: User, targetToken: string) => {
-    if (typeof window === 'undefined') return
-    // Save current admin user before switching
-    const mainUser = {
-      user: JSON.parse(localStorage.getItem('user') || 'null'),
-      token: localStorage.getItem('token'),
-    }
-    localStorage.setItem('mainUser', JSON.stringify(mainUser))
-    // Switch to target user
-    localStorage.setItem('user', JSON.stringify(targetUser))
-    localStorage.setItem('token', targetToken)
-    setUser(targetUser)
-    setIsActingAs(true)
-    queryClient.setQueryData(queryKeys.auth.currentUser(), targetUser)
-    // Navigate to target's home page and RELOAD (matches original)
-    const homePage = resolveHomePage(targetUser)
-    router.push(homePage)
-    setTimeout(() => window.location.reload(), 100)
-  }, [queryClient, router])
+  const actAs = useCallback(
+    (targetUser: User, targetToken: string) => {
+      if (typeof window === 'undefined') return
+      // Save current admin user before switching
+      const mainUser = {
+        user: JSON.parse(localStorage.getItem('user') || 'null'),
+        token: localStorage.getItem('token'),
+      }
+      localStorage.setItem('mainUser', JSON.stringify(mainUser))
+      // Switch to target user
+      localStorage.setItem('user', JSON.stringify(targetUser))
+      localStorage.setItem('token', targetToken)
+      setUser(targetUser)
+      setIsActingAs(true)
+      queryClient.setQueryData(queryKeys.auth.currentUser(), targetUser)
+      // Navigate to target's home page and RELOAD (matches original)
+      const homePage = resolveHomePage(targetUser)
+      router.push(homePage)
+      setTimeout(() => window.location.reload(), 100)
+    },
+    [queryClient, router]
+  )
 
   const removeActAs = useCallback(() => {
     if (typeof window === 'undefined') return
@@ -245,11 +247,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     actingAsUser,
   }
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 }
 
 export function useAuth(): AuthContextType {

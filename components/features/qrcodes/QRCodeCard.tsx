@@ -4,7 +4,18 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { QRCode } from '@/types/entities/qrcode'
 import { formatDate } from '@/lib/utils/format'
-import { MoreVertical, Copy, Archive, Trash2, Download, Eye, Edit, BarChart3 } from 'lucide-react'
+import {
+  MoreVertical,
+  Copy,
+  Archive,
+  Trash2,
+  Download,
+  Eye,
+  Edit,
+  BarChart3,
+  FolderInput,
+  Share2,
+} from 'lucide-react'
 import { QRPreviewImage } from '@/components/qr/QRPreviewImage'
 
 interface QRCodeCardProps {
@@ -112,7 +123,7 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 bottom-full mb-1 w-40 bg-white rounded-lg border border-gray-200 shadow-lg z-50 py-1">
+            <div className="absolute right-0 bottom-full mb-1 w-48 bg-white rounded-lg border border-gray-200 shadow-lg z-50 py-1">
               <button
                 onClick={() => handleAction('view')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
@@ -126,6 +137,12 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
                 <Edit className="w-3.5 h-3.5" /> Edit
               </button>
               <button
+                onClick={() => handleAction('stats')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                <BarChart3 className="w-3.5 h-3.5" /> Stats
+              </button>
+              <button
                 onClick={() => handleAction('duplicate')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
@@ -136,6 +153,19 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
                 <Download className="w-3.5 h-3.5" /> Download
+              </button>
+              <hr className="my-1 border-gray-100" />
+              <button
+                onClick={() => handleAction('move-to-folder')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                <FolderInput className="w-3.5 h-3.5" /> Select Folder
+              </button>
+              <button
+                onClick={() => handleAction('share')}
+                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                <Share2 className="w-3.5 h-3.5" /> Share
               </button>
               <hr className="my-1 border-gray-100" />
               <button

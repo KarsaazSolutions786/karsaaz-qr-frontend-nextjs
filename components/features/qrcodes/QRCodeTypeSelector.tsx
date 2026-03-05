@@ -2,13 +2,13 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import Image from 'next/image'
-import { Search, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react'
+import { Search, ChevronDown, ChevronUp } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QR_TYPES, QRCodeTypeDefinition } from '@/lib/constants/qr-types'
 import { filterQrTypes } from '@/lib/constants/qr-type-categories'
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * Card layout configuration — Figma bento grid
+ * Card layout configuration — Figma bento grid (node 3115:4301)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 /** Wide cards spanning half the grid (col-span-4 on 8-col desktop) */
@@ -23,7 +23,6 @@ const ICON_ONLY_TYPES = new Set([
   'telegram',
   'youtube',
   'facebook',
-  'sms',
   'linkedin',
   'instagram',
   'spotify',
@@ -31,6 +30,9 @@ const ICON_ONLY_TYPES = new Set([
 
 /** Compact cards — icon + chevron, no text label */
 const COMPACT_CHEVRON_TYPES = new Set(['call', 'facebookmessenger', 'x', 'snapchat'])
+
+/** SMS gets its own special icon-only treatment in the Figma */
+const SMS_ICON_ONLY = new Set(['sms'])
 
 /** Display order matching the Figma bento grid layout */
 const FIGMA_DISPLAY_ORDER = [
@@ -65,9 +67,24 @@ const FIGMA_DISPLAY_ORDER = [
 const INITIAL_VISIBLE = 26
 
 const CARD_BG = 'linear-gradient(180deg, #fff 0%, #f9f9f9 100%)'
-const ICON_CARD_BG = 'linear-gradient(180deg, #fff 0%, #f9f9f9 100%)'
 const CARD_SHADOW =
   '0px 3.57px 5.35px 0px rgba(0,0,0,0.02), 0px -1.78px 8.92px 0px rgba(0,0,0,0.01)'
+
+/**
+ * Icon background gradients — extracted from the Figma design.
+ * These provide the colored circular/rounded backgrounds behind certain icons.
+ */
+const ICON_BG: Record<string, { bg: string; radius: number }> = {
+  sms: { bg: 'linear-gradient(135deg, #8AB8FF 0%, #00B8DB 100%)', radius: 14 },
+  x: { bg: 'linear-gradient(-45deg, #020202 0%, #070707 43%, #434343 100%)', radius: 14 },
+  spotify: { bg: 'linear-gradient(135deg, #15CC64 0%, #097939 100%)', radius: 14 },
+  email: { bg: 'linear-gradient(135deg, #2196F3 0%, #1798FF 100%)', radius: 11 },
+  crypto: { bg: 'linear-gradient(135deg, #FFCE33 15%, #FF944D 85%)', radius: 14 },
+  facetime: { bg: '#01CA51', radius: 6 },
+  brazilpix: { bg: 'linear-gradient(135deg, #34CAB9 9%, #009F8E 91%)', radius: 14 },
+  paypal: { bg: 'rgba(42,171,238,0.5)', radius: 14 },
+  linkedin: { bg: 'linear-gradient(135deg, #128ECF 15%, #0472AC 85%)', radius: 14 },
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════════
  * Props
@@ -140,18 +157,21 @@ export function QRCodeTypeSelector({
               <button
                 onClick={() => setShowMore(!showMore)}
                 className="inline-flex items-center justify-center
-                  font-medium rounded-full bg-white
-                  hover:bg-purple-50 transition-all duration-200"
+                  font-medium hover:brightness-95 transition-all duration-200"
                 style={{
+                  background: 'rgba(255,255,255,0.9)',
                   border: '0.71px solid #AD46FF',
+                  borderRadius: 8,
                   color: '#834BEB',
                   gap: 13,
                   padding: '7px 24px',
-                  fontSize: 14,
+                  fontSize: 12,
+                  boxShadow:
+                    '0px -1.43px 7.85px 0px rgba(0,0,0,0.03), 0px 2.85px 5px 0px rgba(0,0,0,0.04)',
                 }}
               >
                 {showMore ? 'View Less' : 'View More'}
-                {showMore ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                {showMore ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
               </button>
             </div>
           )}
@@ -162,7 +182,7 @@ export function QRCodeTypeSelector({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * SelectorHeader — gradient title + right-aligned search (Figma match)
+ * SelectorHeader — title + right-aligned glassmorphism search (Figma match)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 function SelectorHeader({
@@ -182,19 +202,20 @@ function SelectorHeader({
       </h1>
 
       <div
-        className="flex items-center px-4 gap-3"
+        className="flex items-center px-5 gap-3"
         style={{
-          // background: 'linear-gradient(130deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.8) 100%)',
-          border: '1.45px solid rgba(211,187,255,1)',
-          borderRadius: 14,
+          background:
+            'linear-gradient(91.46deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.8) 99.5%)',
+          border: '1.45px solid #d3bbff',
+          borderRadius: 11,
           boxShadow: '0px 1.93px 19.32px 0px rgba(188,192,204,0.25)',
-          backdropFilter: 'blur(22px)',
-          WebkitBackdropFilter: 'blur(22px)',
+          backdropFilter: 'blur(11px)',
+          WebkitBackdropFilter: 'blur(11px)',
           height: 47,
           width: 292,
         }}
       >
-        <Search className="h-4 w-4 text-gray-400 shrink-0" />
+        <Search className="h-5 w-5 shrink-0" style={{ color: '#36454f', opacity: 0.5 }} />
         <input
           type="text"
           placeholder="Search"
@@ -203,6 +224,7 @@ function SelectorHeader({
           className="flex-1 text-sm bg-transparent
             text-gray-700 placeholder:text-gray-400
             focus:outline-none"
+          style={{ fontFamily: 'Inter, sans-serif', fontSize: 17 }}
         />
       </div>
     </div>
@@ -235,7 +257,7 @@ function BentoGrid({
         {types.map((type, i) => {
           const isWide = WIDE_TYPES.has(type.id)
           const isTall = TALL_TYPES.has(type.id)
-          const isIconOnly = ICON_ONLY_TYPES.has(type.id)
+          const isIconOnly = ICON_ONLY_TYPES.has(type.id) || SMS_ICON_ONLY.has(type.id)
           const isCompact = COMPACT_CHEVRON_TYPES.has(type.id)
           const isStandard = !isWide && !isTall && !isIconOnly && !isCompact
 
@@ -299,7 +321,7 @@ function BentoGrid({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * Shared card props
+ * Shared card props & helpers
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 interface CardProps {
@@ -314,18 +336,83 @@ const cardBase = (isDisabled: boolean) =>
    hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500
    ${isDisabled ? 'opacity-50 pointer-events-none' : ''}`
 
-const cardStyle = (isSelected: boolean, bg: string = CARD_BG) => ({
-  background: bg,
+const cardStyle = (isSelected: boolean) => ({
+  background: CARD_BG,
   borderRadius: 14,
   boxShadow: CARD_SHADOW,
-  border: isSelected ? '2px dashed #a855f7' : '2px solid transparent',
+  border: isSelected ? '1px solid rgba(173, 70, 255, 0.8)' : '1px solid transparent',
 })
+
+/** Renders an icon with optional colored background (Figma design) */
+function TypeIcon({ type, size = 40 }: { type: QRCodeTypeDefinition; size?: number }) {
+  const bgConfig = ICON_BG[type.id]
+
+  if (bgConfig) {
+    return (
+      <div
+        className="flex items-center justify-center shrink-0"
+        style={{
+          background: bgConfig.bg,
+          borderRadius: bgConfig.radius,
+          width: 49,
+          height: 49,
+        }}
+      >
+        <Image
+          src={type.icon}
+          alt=""
+          width={size * 0.7}
+          height={size * 0.7}
+          className="object-contain"
+          unoptimized
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex items-center justify-center shrink-0" style={{ width: 48, height: 48 }}>
+      <Image
+        src={type.icon}
+        alt=""
+        width={size}
+        height={size}
+        className="object-contain"
+        unoptimized
+      />
+    </div>
+  )
+}
+
+/** Chevron arrow matching Figma style */
+function CardChevron() {
+  return (
+    <svg
+      width="10"
+      height="18"
+      viewBox="0 0 10 18"
+      fill="none"
+      className="shrink-0"
+      style={{ color: '#ae83f9' }}
+    >
+      <path
+        d="M1 1L9 9L1 17"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════════
  * StandardCard — icon + name + purple chevron
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 function StandardCard({ type, isSelected, isDisabled, onClick }: CardProps) {
+  const isVcardPlus = type.id === 'vcard-plus'
+
   return (
     <div
       role="option"
@@ -341,15 +428,22 @@ function StandardCard({ type, isSelected, isDisabled, onClick }: CardProps) {
       className={`flex items-center gap-3 h-full px-3 ${cardBase(isDisabled)}`}
       style={cardStyle(isSelected)}
     >
-      <div className="flex items-center justify-center w-12 h-12 rounded-xl shrink-0">
-        <Image
-          src={type.icon}
-          alt=""
-          width={40}
-          height={40}
-          className="object-contain"
-          unoptimized
-        />
+      <div className="relative">
+        <TypeIcon type={type} />
+        {isVcardPlus && (
+          <span
+            className="absolute -top-1 -left-1 flex items-center justify-center"
+            style={{
+              width: 31,
+              height: 26,
+              color: '#29C1E4',
+              fontSize: 18,
+              fontFamily: 'Inter, sans-serif',
+            }}
+          >
+            +
+          </span>
+        )}
       </div>
 
       <p
@@ -359,13 +453,13 @@ function StandardCard({ type, isSelected, isDisabled, onClick }: CardProps) {
         {type.name}
       </p>
 
-      <ChevronRight className="h-[18px] w-[10px] shrink-0" style={{ color: '#ae83f9' }} />
+      <CardChevron />
     </div>
   )
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * IconOnlyCard — social media compact card (icon only, no label)
+ * IconOnlyCard — social media compact card (icon only, no text, no chevron)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 function IconOnlyCard({ type, isSelected, isDisabled, onClick }: CardProps) {
@@ -382,17 +476,10 @@ function IconOnlyCard({ type, isSelected, isDisabled, onClick }: CardProps) {
         }
       }}
       className={`flex items-center justify-center h-full ${cardBase(isDisabled)}`}
-      style={cardStyle(isSelected, ICON_CARD_BG)}
+      style={cardStyle(isSelected)}
       title={type.name}
     >
-      <Image
-        src={type.icon}
-        alt={type.name}
-        width={49}
-        height={49}
-        className="object-contain"
-        unoptimized
-      />
+      <TypeIcon type={type} size={49} />
     </div>
   )
 }
@@ -418,15 +505,8 @@ function CompactChevronCard({ type, isSelected, isDisabled, onClick }: CardProps
       style={cardStyle(isSelected)}
       title={type.name}
     >
-      <Image
-        src={type.icon}
-        alt={type.name}
-        width={49}
-        height={49}
-        className="object-contain"
-        unoptimized
-      />
-      <ChevronRight className="h-[18px] w-[10px] shrink-0" style={{ color: '#ae83f9' }} />
+      <TypeIcon type={type} />
+      <CardChevron />
     </div>
   )
 }
@@ -448,11 +528,12 @@ function TallCard({ type, isSelected, isDisabled, onClick }: CardProps) {
           onClick()
         }
       }}
-      className={`flex flex-col h-full p-3 ${cardBase(isDisabled)}`}
+      className={`flex flex-col h-full overflow-hidden ${cardBase(isDisabled)}`}
       style={cardStyle(isSelected)}
     >
-      <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-12 h-12 rounded-xl shrink-0">
+      {/* Header row */}
+      <div className="flex items-center gap-3 px-3 pt-3">
+        <div className="flex items-center justify-center w-12 h-12 rounded-xl shrink-0 opacity-70">
           <Image
             src={type.icon}
             alt=""
@@ -468,19 +549,48 @@ function TallCard({ type, isSelected, isDisabled, onClick }: CardProps) {
         >
           {type.name}
         </p>
-        <ChevronRight className="h-[18px] w-[10px] shrink-0" style={{ color: '#ae83f9' }} />
+        <CardChevron />
       </div>
 
-      {/* Preview area — restaurant menu cards */}
-      <div className="mt-2 flex gap-2 flex-1 min-h-0">
+      {/* Preview area — rotated menu cards (Figma node 3115:4525) */}
+      <div className="flex-1 flex items-center justify-center relative min-h-0 mt-1">
         <div
-          className="flex-1 rounded-lg overflow-hidden"
-          style={{ background: 'linear-gradient(180deg, #8B7355 0%, #6B5842 100%)', opacity: 0.7 }}
-        />
+          className="rounded-md overflow-hidden opacity-50"
+          style={{
+            width: 78,
+            height: 137,
+            transform: 'rotate(-15deg)',
+            position: 'absolute',
+            left: '15%',
+          }}
+        >
+          <Image
+            src="/icons/qr-types/restaurant-menu-preview.png"
+            alt=""
+            fill
+            className="object-cover"
+            unoptimized
+          />
+        </div>
         <div
-          className="flex-1 rounded-lg overflow-hidden"
-          style={{ background: 'linear-gradient(180deg, #7B6548 0%, #5E4A36 100%)', opacity: 0.5 }}
-        />
+          className="rounded-md overflow-hidden opacity-50"
+          style={{
+            width: 78,
+            height: 137,
+            transform: 'rotate(15deg)',
+            position: 'absolute',
+            right: '15%',
+          }}
+        >
+          <Image
+            src="/icons/qr-types/restaurant-menu-preview.png"
+            alt=""
+            fill
+            className="object-cover"
+            style={{ objectPosition: 'right center' }}
+            unoptimized
+          />
+        </div>
       </div>
     </div>
   )

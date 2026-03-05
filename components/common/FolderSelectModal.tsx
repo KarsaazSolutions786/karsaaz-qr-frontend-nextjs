@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { foldersAPI } from '@/lib/api/endpoints/folders'
+import { foldersAPI, type Folder } from '@/lib/api/endpoints/folders'
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline'
-import type { Folder } from '@/types/entities/folder'
+import { useAuth } from '@/lib/hooks/useAuth'
 
 interface FolderSelectModalProps {
   /** Currently selected folder IDs */
@@ -22,6 +22,7 @@ export function FolderSelectModal({
   onConfirm,
   onClose,
 }: FolderSelectModalProps) {
+  const { user } = useAuth()
   const [folders, setFolders] = useState<Folder[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set(selectedIds))
   const [loading, setLoading] = useState(true)
@@ -29,15 +30,16 @@ export function FolderSelectModal({
   const [creating, setCreating] = useState(false)
 
   useEffect(() => {
+    if (!user?.id) return
     foldersAPI
-      .list()
-      .then((data) => setFolders(Array.isArray(data) ? data : []))
+      .listByUser(user.id)
+      .then(data => setFolders(Array.isArray(data) ? data : []))
       .catch(() => setFolders([]))
       .finally(() => setLoading(false))
-  }, [])
+  }, [user?.id])
 
   function toggleFolder(id: string) {
-    setSelected((prev) => {
+    setSelected(prev => {
       const next = new Set(prev)
       if (multi) {
         next.has(id) ? next.delete(id) : next.add(id)
@@ -50,17 +52,33 @@ export function FolderSelectModal({
   }
 
   async function handleCreateFolder() {
-    if (!newFolderName.trim()) return
+    if (!newFolderName.trim() || !user?.id) return
     setCreating(true)
     try {
-      const folder = await foldersAPI.create({ name: newFolderName.trim() })
-      setFolders((prev) => [...prev, folder])
-      setSelected((prev) => new Set(prev).add(String(folder.id)))
+      const folder = await foldersAPI.create(user.id, { folder_name: newFolderName.trim() })
+      setFolders(prev => [...prev, folder])
+      setSelected(prev => new Set(prev).add(String(folder.id)))
       setNewFolderName('')
     } catch {
       // Failed
     } finally {
       setCreating(false)
+    }
+  }
+
+  async function handleDeleteFolder(folderId: number) {
+    if (!user?.id) return
+    if (!confirm('Delete this folder?')) return
+    try {
+      await foldersAPI.delete(user.id, folderId)
+      setFolders(prev => prev.filter(f => f.id !== folderId))
+      setSelected(prev => {
+        const next = new Set(prev)
+        next.delete(String(folderId))
+        return next
+      })
+    } catch {
+      // Failed
     }
   }
 
@@ -85,17 +103,21 @@ export function FolderSelectModal({
               Loading folders...
             </div>
           ) : folders.length === 0 ? (
-            <p className="text-sm text-gray-500 py-4 text-center">No folders yet. Create one below.</p>
+            <p className="text-sm text-gray-500 py-4 text-center">
+              No folders yet. Create one below.
+            </p>
           ) : (
             <div className="space-y-1">
-              {folders.map((folder) => {
+              {folders.map(folder => {
                 const fId = String(folder.id)
                 const isSelected = selected.has(fId)
                 return (
                   <label
                     key={fId}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
-                      isSelected ? 'bg-purple-50 border border-purple-200' : 'hover:bg-gray-50 border border-transparent'
+                      isSelected
+                        ? 'bg-purple-50 border border-purple-200'
+                        : 'hover:bg-gray-50 border border-transparent'
                     }`}
                   >
                     <input
@@ -105,7 +127,24 @@ export function FolderSelectModal({
                       onChange={() => toggleFolder(fId)}
                       className="h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
                     />
-                    <span className="text-sm font-medium text-gray-900">{folder.name}</span>
+                    <span className="flex-1 text-sm font-medium text-gray-900">{folder.name}</span>
+                    {folder.qrcode_count > 0 && (
+                      <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
+                        {folder.qrcode_count}
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={e => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleDeleteFolder(folder.id)
+                      }}
+                      className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                      title="Delete folder"
+                    >
+                      <XMarkIcon className="w-4 h-4" />
+                    </button>
                   </label>
                 )
               })}
@@ -119,8 +158,8 @@ export function FolderSelectModal({
             <input
               type="text"
               value={newFolderName}
-              onChange={(e) => setNewFolderName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleCreateFolder()}
+              onChange={e => setNewFolderName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleCreateFolder()}
               placeholder="New folder name..."
               className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-purple-500 focus:ring-purple-500"
             />

@@ -10,15 +10,7 @@ export function useFolders() {
   return useQuery({
     queryKey: queryKeys.folders.all(),
     queryFn: () => foldersAPI.listByUser(user!.id),
-    staleTime: 60 * 1000, // 1 minute
-    enabled: !!user?.id,
-  })
-}
-
-export function useFolderTree() {
-  return useQuery({
-    queryKey: queryKeys.folders.tree(),
-    queryFn: () => foldersAPI.getTree(),
     staleTime: 60 * 1000,
+    enabled: !!user?.id,
   })
 }

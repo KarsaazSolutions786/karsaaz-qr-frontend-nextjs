@@ -4,7 +4,15 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { Plus, Filter, FolderTree as FolderTreeIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import {
+  Plus,
+  Filter,
+  FolderTree as FolderTreeIcon,
+  Folder,
+  Trash2 as TrashIcon,
+  X,
+} from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { useMultiSelect } from '@/hooks/useMultiSelect'
@@ -12,7 +20,6 @@ import { useFilters } from '@/hooks/useFilters'
 import { useQRActions } from '@/hooks/useQRActions'
 import { MultiSelectToolbar, type BulkAction } from '@/components/qr/MultiSelectToolbar'
 import { FilterModal } from '@/components/qr/FilterModal'
-import { FolderTree } from '@/components/qr/FolderTree'
 import { QRCodeCardSkeleton } from '@/components/common/Skeleton'
 import { NoQRCodesEmptyState, NoSearchResultsEmptyState } from '@/components/common/EmptyState'
 import { SortDropdown, type SortOption } from '@/components/qr/SortDropdown'
@@ -29,18 +36,26 @@ import { useSubscription } from '@/lib/hooks/queries/useSubscription'
 import { useFolders } from '@/lib/hooks/queries/useFolders'
 import { useDomains } from '@/lib/hooks/queries/useDomains'
 import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
-import { Download, Trash2, FolderInput, Archive, Copy, Eye, EyeOff } from 'lucide-react'
+import { Download, FolderInput, Archive, Copy, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
+import { foldersAPI } from '@/lib/api/endpoints/folders'
+import { useQueryClient } from '@tanstack/react-query'
+import { queryKeys } from '@/lib/query/keys'
+import { FolderSelectModal } from '@/components/common/FolderSelectModal'
 
 export default function QRCodesPage() {
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [showFilters, setShowFilters] = useState(false)
   const [showFolders, setShowFolders] = useState(false)
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
+  const [newFolderName, setNewFolderName] = useState('')
+  const [folderLoading, setFolderLoading] = useState(false)
   const [selectedDomain, setSelectedDomain] = useState<string>('')
   const [sortBy, setSortBy] = useState<SortOption>('date-desc')
+  const [folderModalQRIds, setFolderModalQRIds] = useState<string[] | null>(null)
   // Load view mode from localStorage
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
     if (typeof window !== 'undefined') {
@@ -82,6 +97,7 @@ export default function QRCodesPage() {
   const { data: currentUser } = useCurrentUser()
   const { data: subscription } = useSubscription()
   const { data: foldersData } = useFolders()
+  const queryClient = useQueryClient()
   const { data: domainsData } = useDomains(undefined, { enabled: isAdmin })
   const domains = domainsData?.data ?? []
 
@@ -103,6 +119,46 @@ export default function QRCodesPage() {
 
   const qrcodes = data?.data || []
   const hasQRCodes = qrcodes.length > 0
+
+  // Folder actions
+  const handleCreateFolder = async () => {
+    if (!newFolderName.trim() || !user?.id) return
+    setFolderLoading(true)
+    try {
+      await foldersAPI.create(user.id, { folder_name: newFolderName.trim() })
+      setNewFolderName('')
+      queryClient.invalidateQueries({ queryKey: queryKeys.folders.all() })
+    } catch (err) {
+      console.error('Failed to create folder:', err)
+    } finally {
+      setFolderLoading(false)
+    }
+  }
+
+  const handleDeleteFolder = async (folderId: number) => {
+    if (!user?.id) return
+    if (
+      !confirm(
+        'Are you sure you want to delete this folder? QR codes inside will be moved to root.'
+      )
+    )
+      return
+    setFolderLoading(true)
+    try {
+      await foldersAPI.delete(user.id, folderId)
+      if (selectedFolder === String(folderId)) {
+        setSelectedFolder(null)
+      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.folders.all() })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.qrcodes.list({} as Record<string, unknown>),
+      })
+    } catch (err) {
+      console.error('Failed to delete folder:', err)
+    } finally {
+      setFolderLoading(false)
+    }
+  }
 
   const { selectedItems, selectedIds, deselectAll, toggleItem } = useMultiSelect(qrcodes)
 
@@ -134,8 +190,7 @@ export default function QRCodesPage() {
         label: 'Move to Folder',
         icon: <FolderInput className="w-4 h-4" />,
         onClick: (ids: string[]) => {
-          const folderId = prompt('Enter folder ID to move to:')
-          if (folderId) moveToFolder(ids, folderId)
+          setFolderModalQRIds(ids)
         },
       },
       {
@@ -165,7 +220,7 @@ export default function QRCodesPage() {
       {
         id: 'delete',
         label: 'Delete',
-        icon: <Trash2 className="w-4 h-4" />,
+        icon: <TrashIcon className="w-4 h-4" />,
         variant: 'danger' as const,
         requiresConfirmation: true,
         onClick: (ids: string[]) => bulkDeleteQRCodes(ids).then(() => deselectAll()),
@@ -173,7 +228,6 @@ export default function QRCodesPage() {
     ],
     [
       bulkDownloadQRCodes,
-      moveToFolder,
       bulkDuplicateQRCodes,
       bulkChangeStatus,
       bulkArchiveQRCodes,
@@ -182,10 +236,36 @@ export default function QRCodesPage() {
     ]
   )
 
-  // Single-item action handler for QRCodeDetailedRow
+  // Single-item action handler for QRCodeCard and QRCodeDetailedRow
   const handleRowAction = useCallback(
     (action: string, qrCodeId: string) => {
       switch (action) {
+        case 'view':
+        case 'preview':
+          router.push(`/qrcodes/${qrCodeId}`)
+          break
+        case 'edit':
+          router.push(`/qrcodes/${qrCodeId}/edit`)
+          break
+        case 'stats':
+        case 'analytics':
+          router.push(`/qrcodes/${qrCodeId}/analytics`)
+          break
+        case 'share': {
+          const shareUrl = `${window.location.origin}/qr/${qrCodeId}`
+          navigator.clipboard
+            .writeText(shareUrl)
+            .then(() => {
+              alert('QR code link copied to clipboard!')
+            })
+            .catch(() => {
+              window.open(shareUrl, '_blank')
+            })
+          break
+        }
+        case 'move-to-folder':
+          setFolderModalQRIds([qrCodeId])
+          break
         case 'archive':
           archiveQRCode(qrCodeId)
           break
@@ -210,7 +290,7 @@ export default function QRCodesPage() {
           break
       }
     },
-    [archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode, downloadQRCode]
+    [router, archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode, downloadQRCode]
   )
 
   const handleSearch = useCallback((query: string) => {
@@ -230,7 +310,7 @@ export default function QRCodesPage() {
           <TrialMessage
             trialEndsAt={trialEndsAt}
             onUpgrade={() => {
-              window.location.href = '/billing'
+              router.push('/billing')
             }}
           />
         </div>
@@ -262,7 +342,7 @@ export default function QRCodesPage() {
           </button>
           <BulkCreateButton
             onClick={() => {
-              window.location.href = '/qrcodes/bulk-create'
+              router.push('/qrcodes/bulk-create')
             }}
           />
           <Link
@@ -294,16 +374,95 @@ export default function QRCodesPage() {
         {showFolders && (
           <div className="w-64 flex-shrink-0">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h3 className="font-semibold text-gray-900 mb-4">Folders</h3>
-              <FolderTree
-                folders={foldersData || []}
-                selectedFolderId={selectedFolder}
-                onSelectFolder={id => {
-                  setSelectedFolder(id)
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900">Folders</h3>
+                <button
+                  onClick={() => setShowFolders(false)}
+                  className="p-1 text-gray-400 hover:text-gray-600 rounded"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* "All QR Codes" option */}
+              <button
+                onClick={() => {
+                  setSelectedFolder(null)
                   setPage(1)
                 }}
-                onToggleExpanded={() => {}}
-              />
+                className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors mb-1 ${
+                  selectedFolder === null
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <Folder className="w-4 h-4" />
+                <span className="flex-1 text-left">All QR Codes</span>
+              </button>
+
+              {/* Folder list */}
+              <div className="space-y-1">
+                {(foldersData || []).map(folder => (
+                  <div
+                    key={folder.id}
+                    className={`group flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
+                      selectedFolder === String(folder.id)
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Folder className="w-4 h-4 flex-shrink-0" />
+                    <button
+                      onClick={() => {
+                        setSelectedFolder(String(folder.id))
+                        setPage(1)
+                      }}
+                      className="flex-1 text-left font-medium truncate"
+                    >
+                      {folder.name}
+                    </button>
+                    {folder.qrcode_count > 0 && (
+                      <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
+                        {folder.qrcode_count}
+                      </span>
+                    )}
+                    <button
+                      onClick={e => {
+                        e.stopPropagation()
+                        handleDeleteFolder(folder.id)
+                      }}
+                      className="p-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity"
+                      title="Delete folder"
+                    >
+                      <TrashIcon className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Create folder input */}
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newFolderName}
+                    onChange={e => setNewFolderName(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') handleCreateFolder()
+                    }}
+                    placeholder="New folder name"
+                    disabled={folderLoading}
+                    className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+                  />
+                  <button
+                    onClick={handleCreateFolder}
+                    disabled={folderLoading || !newFolderName.trim()}
+                    className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -356,7 +515,7 @@ export default function QRCodesPage() {
 
           {/* Empty States */}
           {!isLoading && !hasQRCodes && !search && (
-            <NoQRCodesEmptyState onCreate={() => (window.location.href = '/qrcodes/new')} />
+            <NoQRCodesEmptyState onCreate={() => router.push('/qrcodes/new')} />
           )}
 
           {!isLoading && !hasQRCodes && search && <NoSearchResultsEmptyState query={search} />}
@@ -370,7 +529,11 @@ export default function QRCodesPage() {
               {viewMode === 'grid' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {qrcodes.map(qrcode => (
-                    <QRCodeCard key={qrcode.id} qrcode={qrcode} />
+                    <QRCodeCard
+                      key={qrcode.id}
+                      qrcode={qrcode}
+                      onAction={action => handleRowAction(action, qrcode.id)}
+                    />
                   ))}
                 </div>
               )}
@@ -398,7 +561,7 @@ export default function QRCodesPage() {
                       key={qrcode.id}
                       qrcode={qrcode}
                       onSelect={() => {
-                        window.location.href = `/qrcodes/${qrcode.id}`
+                        router.push(`/qrcodes/${qrcode.id}`)
                       }}
                     />
                   ))}
@@ -432,6 +595,23 @@ export default function QRCodesPage() {
         onFiltersChange={updateFilters}
         onReset={resetFilters}
       />
+
+      {/* Folder Select Modal */}
+      {folderModalQRIds && (
+        <FolderSelectModal
+          selectedIds={[]}
+          multi={false}
+          onConfirm={async folderIds => {
+            const folderId = folderIds[0] || null
+            if (folderId) {
+              await moveToFolder(folderModalQRIds, folderId)
+              deselectAll()
+            }
+            setFolderModalQRIds(null)
+          }}
+          onClose={() => setFolderModalQRIds(null)}
+        />
+      )}
     </div>
   )
 }

@@ -13,6 +13,25 @@ export interface LoginResponse {
   token: string
 }
 
+export interface LoginRequires2FAResponse {
+  requires_2fa: true
+  two_factor_token: string
+}
+
+export type LoginResult = LoginResponse | LoginRequires2FAResponse
+
+// 2FA Login Verification
+export interface TwoFactorLoginVerifyRequest {
+  two_factor_token: string
+  code: string
+}
+
+export interface TwoFactorLoginVerifyResponse {
+  success: boolean
+  token: string
+  user: User
+}
+
 export interface RegisterRequest {
   name: string
   email: string
@@ -125,6 +144,18 @@ export interface PasswordlessSetPreferenceResponse {
   message?: string
 }
 
+// Google OAuth — GSI popup token login
+export interface GoogleTokenLoginRequest {
+  credential: string
+}
+
+export interface GoogleTokenLoginResponse {
+  user: User
+  token: string
+}
+
+export type GoogleTokenLoginResult = GoogleTokenLoginResponse | LoginRequires2FAResponse
+
 export interface UpdateProfileRequest {
   name?: string
   email?: string
@@ -140,9 +171,18 @@ export interface UpdateProfileResponse {
 // Auth API functions
 
 export const authAPI = {
-  // Login with email + password
+  // Login with email + password (may return 2FA challenge)
   login: async (data: LoginRequest) => {
-    const response = await apiClient.post<LoginResponse>('/login', data)
+    const response = await apiClient.post<LoginResult>('/login', data)
+    return response.data
+  },
+
+  // Two-Factor Authentication — verify TOTP during login
+  twoFactorLoginVerify: async (data: TwoFactorLoginVerifyRequest) => {
+    const response = await apiClient.post<TwoFactorLoginVerifyResponse>(
+      '/user/2fa/login-verify',
+      data
+    )
     return response.data
   },
 
@@ -152,13 +192,8 @@ export const authAPI = {
     return response.data
   },
 
-  // Logout — revoke token on backend
+  // Logout — no backend route exists, just clear local state
   logout: async () => {
-    try {
-      await apiClient.post('/logout')
-    } catch {
-      // Ignore errors — we'll clear local state anyway
-    }
     return { success: true }
   },
 
@@ -207,13 +242,13 @@ export const authAPI = {
     return response.data
   },
 
-  // Passwordless auth — initialize OTP flow (sends email with 5-digit code)
+  // Passwordless auth — initialize OTP flow (sends email with 6-digit code)
   passwordlessInit: async (data: PasswordlessInitRequest) => {
     const response = await apiClient.post<PasswordlessInitResponse>('/passwordless-auth/init', data)
     return response.data
   },
 
-  // Passwordless auth — verify 5-digit OTP code and authenticate
+  // Passwordless auth — verify 6-digit OTP code and authenticate
   passwordlessVerify: async (data: PasswordlessVerifyRequest) => {
     const response = await apiClient.post<PasswordlessVerifyResponse>(
       '/passwordless-auth/verify',
@@ -250,7 +285,13 @@ export const authAPI = {
     return response.data
   },
 
-  // Google OAuth — returns the redirect URL for server-side flow
+  // Google OAuth — verify credential JWT from GSI popup (replaces redirect flow)
+  googleTokenLogin: async (data: GoogleTokenLoginRequest): Promise<GoogleTokenLoginResult> => {
+    const response = await apiClient.post<GoogleTokenLoginResult>('/auth/google/verify-token', data)
+    return response.data
+  },
+
+  // Google OAuth — returns the redirect URL for server-side flow (fallback)
   getGoogleRedirectUrl: () => {
     const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
     return `${rootUrl}/auth-workflow/google/redirect`
@@ -281,11 +322,14 @@ export const authAPI = {
   },
 
   // Change password (P1: PUT /users/{id}/password)
-  changePassword: async (userId: number | string, data: {
-    current_password: string
-    password: string
-    password_confirmation: string
-  }) => {
+  changePassword: async (
+    userId: number | string,
+    data: {
+      current_password: string
+      password: string
+      password_confirmation: string
+    }
+  ) => {
     const response = await apiClient.put(`/users/${userId}/password`, data)
     return response.data
   },

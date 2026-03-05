@@ -4,7 +4,8 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useMemo, useCallback } from 'react'
 import Link from 'next/link'
-import { Archive, Filter, FolderTree as FolderTreeIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Archive, Filter, FolderTree as FolderTreeIcon, Folder as FolderIcon } from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { useMultiSelect } from '@/hooks/useMultiSelect'
@@ -12,7 +13,6 @@ import { useFilters } from '@/hooks/useFilters'
 import { useQRActions } from '@/hooks/useQRActions'
 import { MultiSelectToolbar, type BulkAction } from '@/components/qr/MultiSelectToolbar'
 import { FilterModal } from '@/components/qr/FilterModal'
-import { FolderTree } from '@/components/qr/FolderTree'
 import { QRCodeCardSkeleton } from '@/components/common/Skeleton'
 import { NoSearchResultsEmptyState } from '@/components/common/EmptyState'
 import { SortDropdown, type SortOption } from '@/components/qr/SortDropdown'
@@ -22,22 +22,19 @@ import { QRCodeDetailedRow } from '@/components/qr/QRCodeDetailedRow'
 import { QRCodeCard } from '@/components/features/qrcodes/QRCodeCard'
 import { Pagination } from '@/components/common/Pagination'
 import { useFolders } from '@/lib/hooks/queries/useFolders'
+import type { Folder } from '@/lib/api/endpoints/folders'
 import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
-import {
-  Download,
-  Trash2,
-  ArchiveRestore,
-  Copy,
-} from 'lucide-react'
+import { Download, Trash2, ArchiveRestore, Copy } from 'lucide-react'
 
 export default function ArchivedQRCodesPage() {
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [showFilters, setShowFilters] = useState(false)
   const [showFolders, setShowFolders] = useState(false)
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<SortOption>('date-desc')
-  
+
   // Load view mode from localStorage (same as main QR list)
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
     if (typeof window !== 'undefined') {
@@ -45,7 +42,7 @@ export default function ArchivedQRCodesPage() {
     }
     return 'grid'
   })
-  
+
   // Persist view mode to localStorage
   const handleViewModeChange = (mode: 'grid' | 'list' | 'minimal') => {
     setViewMode(mode)
@@ -54,12 +51,8 @@ export default function ArchivedQRCodesPage() {
     }
   }
 
-  const {
-    filters,
-    updateFilters,
-    resetFilters,
-  } = useFilters()
-  
+  const { filters, updateFilters, resetFilters } = useFilters()
+
   // Parse sort option into API params
   const { sortBy: sortField, sortOrder } = useMemo(() => parseSortOption(sortBy), [sortBy])
 
@@ -67,8 +60,8 @@ export default function ArchivedQRCodesPage() {
   const filterParams = useMemo(() => buildApiFilters(filters), [filters])
 
   // Fetch QR codes with archived filter + sort + filters
-  const { data, isLoading, error } = useQRCodes({ 
-    page, 
+  const { data, isLoading, error } = useQRCodes({
+    page,
     search: search || undefined,
     folderId: selectedFolder || undefined,
     sortBy: sortField,
@@ -83,12 +76,7 @@ export default function ArchivedQRCodesPage() {
   const qrcodes = data?.data || []
   const hasQRCodes = qrcodes.length > 0
 
-  const {
-    selectedItems,
-    selectedIds,
-    deselectAll,
-    toggleItem,
-  } = useMultiSelect(qrcodes)
+  const { selectedItems, selectedIds, deselectAll, toggleItem } = useMultiSelect(qrcodes)
 
   const {
     bulkDownloadQRCodes,
@@ -102,49 +90,78 @@ export default function ArchivedQRCodesPage() {
   } = useQRActions()
 
   // Build bulk actions for archived toolbar (unarchive instead of archive)
-  const bulkActions: BulkAction[] = useMemo(() => [
-    {
-      id: 'download',
-      label: 'Download',
-      icon: <Download className="w-4 h-4" />,
-      onClick: async (ids: string[]) => { await bulkDownloadQRCodes(ids) },
-    },
-    {
-      id: 'duplicate',
-      label: 'Duplicate',
-      icon: <Copy className="w-4 h-4" />,
-      onClick: async (ids: string[]) => { await bulkDuplicateQRCodes(ids) },
-    },
-    {
-      id: 'unarchive',
-      label: 'Unarchive',
-      icon: <ArchiveRestore className="w-4 h-4" />,
-      onClick: async (ids: string[]) => { await bulkUnarchiveQRCodes(ids); deselectAll() },
-    },
-    {
-      id: 'delete',
-      label: 'Delete',
-      icon: <Trash2 className="w-4 h-4" />,
-      variant: 'danger' as const,
-      requiresConfirmation: true,
-      onClick: async (ids: string[]) => { await bulkDeleteQRCodes(ids); deselectAll() },
-    },
-  ], [bulkDownloadQRCodes, bulkDuplicateQRCodes, bulkUnarchiveQRCodes, bulkDeleteQRCodes, deselectAll])
+  const bulkActions: BulkAction[] = useMemo(
+    () => [
+      {
+        id: 'download',
+        label: 'Download',
+        icon: <Download className="w-4 h-4" />,
+        onClick: async (ids: string[]) => {
+          await bulkDownloadQRCodes(ids)
+        },
+      },
+      {
+        id: 'duplicate',
+        label: 'Duplicate',
+        icon: <Copy className="w-4 h-4" />,
+        onClick: async (ids: string[]) => {
+          await bulkDuplicateQRCodes(ids)
+        },
+      },
+      {
+        id: 'unarchive',
+        label: 'Unarchive',
+        icon: <ArchiveRestore className="w-4 h-4" />,
+        onClick: async (ids: string[]) => {
+          await bulkUnarchiveQRCodes(ids)
+          deselectAll()
+        },
+      },
+      {
+        id: 'delete',
+        label: 'Delete',
+        icon: <Trash2 className="w-4 h-4" />,
+        variant: 'danger' as const,
+        requiresConfirmation: true,
+        onClick: async (ids: string[]) => {
+          await bulkDeleteQRCodes(ids)
+          deselectAll()
+        },
+      },
+    ],
+    [
+      bulkDownloadQRCodes,
+      bulkDuplicateQRCodes,
+      bulkUnarchiveQRCodes,
+      bulkDeleteQRCodes,
+      deselectAll,
+    ]
+  )
 
   // Single-item action handler for archived rows
-  const handleRowAction = useCallback((action: string, qrCodeId: string) => {
-    switch (action) {
-      case 'unarchive': unarchiveQRCode(qrCodeId); break
-      case 'duplicate': duplicateQRCode(qrCodeId); break
-      case 'delete':
-        if (confirm('Are you sure you want to delete this QR code?')) {
-          deleteQRCode(qrCodeId)
-        }
-        break
-      case 'download': downloadQRCode(qrCodeId); break
-      default: break
-    }
-  }, [unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode])
+  const handleRowAction = useCallback(
+    (action: string, qrCodeId: string) => {
+      switch (action) {
+        case 'unarchive':
+          unarchiveQRCode(qrCodeId)
+          break
+        case 'duplicate':
+          duplicateQRCode(qrCodeId)
+          break
+        case 'delete':
+          if (confirm('Are you sure you want to delete this QR code?')) {
+            deleteQRCode(qrCodeId)
+          }
+          break
+        case 'download':
+          downloadQRCode(qrCodeId)
+          break
+        default:
+          break
+      }
+    },
+    [unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode]
+  )
 
   const handleSearch = (query: string) => {
     setSearch(query)
@@ -166,9 +183,7 @@ export default function ArchivedQRCodesPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Archived QR Codes</h1>
-              <p className="mt-2 text-sm text-gray-600">
-                View and manage your archived QR codes
-              </p>
+              <p className="mt-2 text-sm text-gray-600">View and manage your archived QR codes</p>
             </div>
           </div>
         </div>
@@ -216,12 +231,43 @@ export default function ArchivedQRCodesPage() {
           <div className="w-64 flex-shrink-0">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="font-semibold text-gray-900 mb-4">Folders</h3>
-              <FolderTree
-                folders={foldersData || []}
-                selectedFolderId={selectedFolder}
-                onSelectFolder={(id) => { setSelectedFolder(id); setPage(1) }}
-                onToggleExpanded={() => {}}
-              />
+              <div className="space-y-1">
+                <button
+                  onClick={() => {
+                    setSelectedFolder(null)
+                    setPage(1)
+                  }}
+                  className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                    !selectedFolder
+                      ? 'bg-primary/10 text-primary font-medium'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  All QR Codes
+                </button>
+                {(foldersData || []).map((folder: Folder) => (
+                  <button
+                    key={folder.id}
+                    onClick={() => {
+                      setSelectedFolder(String(folder.id))
+                      setPage(1)
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${
+                      selectedFolder === String(folder.id)
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    <FolderIcon className="w-4 h-4 flex-shrink-0" />
+                    <span className="flex-1 truncate">{folder.name}</span>
+                    {folder.qrcode_count > 0 && (
+                      <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
+                        {folder.qrcode_count}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -236,16 +282,10 @@ export default function ArchivedQRCodesPage() {
               delay={300}
               minLength={0}
             />
-            
+
             <div className="flex items-center justify-between">
-              <SortDropdown
-                currentSort={sortBy}
-                onSortChange={setSortBy}
-              />
-              <ViewModeToggle
-                currentMode={viewMode}
-                onModeChange={handleViewModeChange}
-              />
+              <SortDropdown currentSort={sortBy} onSortChange={setSortBy} />
+              <ViewModeToggle currentMode={viewMode} onModeChange={handleViewModeChange} />
             </div>
           </div>
 
@@ -254,12 +294,10 @@ export default function ArchivedQRCodesPage() {
             <div className="flex items-start gap-3">
               <Archive className="w-5 h-5 text-blue-600 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-blue-900">
-                  These QR codes are archived
-                </p>
+                <p className="text-sm font-medium text-blue-900">These QR codes are archived</p>
                 <p className="text-sm text-blue-700 mt-1">
-                  Archived QR codes are hidden from your active list but can be unarchived at any time. 
-                  They continue to work and track scans.
+                  Archived QR codes are hidden from your active list but can be unarchived at any
+                  time. They continue to work and track scans.
                 </p>
               </div>
             </div>
@@ -278,9 +316,7 @@ export default function ArchivedQRCodesPage() {
           {!isLoading && !hasQRCodes && !search && (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <Archive className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No archived QR codes
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No archived QR codes</h3>
               <p className="text-gray-600 mb-6">
                 You haven't archived any QR codes yet. Archived items will appear here.
               </p>
@@ -293,9 +329,7 @@ export default function ArchivedQRCodesPage() {
             </div>
           )}
 
-          {!isLoading && !hasQRCodes && search && (
-            <NoSearchResultsEmptyState query={search} />
-          )}
+          {!isLoading && !hasQRCodes && search && <NoSearchResultsEmptyState query={search} />}
 
           {/* QR Codes List */}
           {!isLoading && hasQRCodes && (
@@ -303,11 +337,8 @@ export default function ArchivedQRCodesPage() {
               {/* Grid View */}
               {viewMode === 'grid' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {qrcodes.map((qrcode) => (
-                    <QRCodeCard
-                      key={qrcode.id}
-                      qrcode={qrcode}
-                    />
+                  {qrcodes.map(qrcode => (
+                    <QRCodeCard key={qrcode.id} qrcode={qrcode} />
                   ))}
                 </div>
               )}
@@ -315,13 +346,13 @@ export default function ArchivedQRCodesPage() {
               {/* List View */}
               {viewMode === 'list' && (
                 <div className="space-y-3">
-                  {qrcodes.map((qrcode) => (
+                  {qrcodes.map(qrcode => (
                     <QRCodeDetailedRow
                       key={qrcode.id}
                       qrcode={qrcode}
                       isSelected={selectedItems.some(item => item.id === qrcode.id)}
                       onToggleSelect={() => toggleItem(qrcode.id)}
-                      onAction={(action) => handleRowAction(action, qrcode.id)}
+                      onAction={action => handleRowAction(action, qrcode.id)}
                     />
                   ))}
                 </div>
@@ -330,11 +361,13 @@ export default function ArchivedQRCodesPage() {
               {/* Minimal View */}
               {viewMode === 'minimal' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {qrcodes.map((qrcode) => (
+                  {qrcodes.map(qrcode => (
                     <QRCodeMinimalCard
                       key={qrcode.id}
                       qrcode={qrcode}
-                      onSelect={() => { window.location.href = `/qrcodes/${qrcode.id}` }}
+                      onSelect={() => {
+                        router.push(`/qrcodes/${qrcode.id}`)
+                      }}
                     />
                   ))}
                 </div>

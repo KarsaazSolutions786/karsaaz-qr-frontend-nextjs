@@ -39,63 +39,63 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'text',
     name: 'URL / Link',
     cat: 'static',
-    icon: '/icons/qr-types/url.png',
+    icon: '/icons/qr-types/url-link-figma.svg',
     description: 'Link to any website or URL',
   },
   {
     id: 'url',
     name: 'Dynamic URL',
     cat: 'dynamic',
-    icon: '/icons/qr-types/dynamicURL.png',
+    icon: '/icons/qr-types/dynamic-url-figma.svg',
     description: 'Editable URL after printing',
   },
   {
     id: 'business-profile',
     name: 'Business Profile',
     cat: 'dynamic',
-    icon: '/icons/qr-types/businessProfile.png',
+    icon: '/icons/qr-types/business-profile-figma.svg',
     description: 'Complete business information',
   },
   {
     id: 'whatsapp',
     name: 'WhatsApp',
     cat: 'dynamic',
-    icon: '/icons/qr-types/logos_whatsapp-icon.svg',
+    icon: '/icons/qr-types/whatsapp-figma.svg',
     description: 'Start WhatsApp conversation',
   },
   {
     id: 'telegram',
     name: 'Telegram',
     cat: 'static',
-    icon: '/icons/qr-types/logos_telegram.svg',
+    icon: '/icons/qr-types/telegram-figma.svg',
     description: 'Open Telegram chat',
   },
   {
     id: 'email',
     name: 'Email (Static)',
     cat: 'static',
-    icon: '/icons/qr-types/email.png',
+    icon: '/icons/qr-types/email-figma.svg',
     description: 'Pre-filled email',
   },
   {
     id: 'call',
     name: 'Call',
     cat: 'static',
-    icon: '/icons/qr-types/phone.png',
+    icon: '/icons/qr-types/phone-call-figma.svg',
     description: 'Direct phone call',
   },
   {
     id: 'instagram',
     name: 'Instagram',
     cat: 'static',
-    icon: '/icons/qr-types/instagram.svg',
+    icon: '/icons/qr-types/instagram-figma.svg',
     description: 'Open Instagram profile',
   },
   {
     id: 'vcard',
     name: 'VCard',
     cat: 'static',
-    icon: '/icons/qr-types/vcard.png',
+    icon: '/icons/qr-types/vcard-figma.svg',
     description: 'Share contact card',
   },
   {
@@ -109,21 +109,21 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'vcard-plus',
     name: 'vCard Plus',
     cat: 'dynamic',
-    icon: '/icons/qr-types/vcardPlus.png',
+    icon: '/icons/qr-types/vcard-figma.svg',
     description: 'Enhanced digital business card',
   },
   {
     id: 'youtube',
     name: 'Youtube',
     cat: 'static',
-    icon: '/icons/qr-types/logos_youtube-icon.svg',
+    icon: '/icons/qr-types/youtube-figma.svg',
     description: 'Link to YouTube video',
   },
   {
     id: 'facebook',
     name: 'Facebook',
     cat: 'static',
-    icon: '/icons/qr-types/logos_facebook.svg',
+    icon: '/icons/qr-types/facebook-figma.svg',
     description: 'Open Facebook page',
   },
   {
@@ -137,14 +137,14 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'facebookmessenger',
     name: 'Messenger',
     cat: 'static',
-    icon: '/icons/qr-types/FACEBOOK_MESSENGER.svg',
+    icon: '/icons/qr-types/messenger-figma.svg',
     description: 'Open Messenger chat',
   },
   {
     id: 'linkedin',
     name: 'Linkedin',
     cat: 'static',
-    icon: '/icons/qr-types/logos_linkedin-icon.svg',
+    icon: '/icons/qr-types/linkedin-figma.svg',
     description: 'Open LinkedIn profile',
   },
   {
@@ -221,14 +221,14 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'sms',
     name: 'SMS (Static)',
     cat: 'static',
-    icon: '/icons/qr-types/sms.png',
+    icon: '/icons/qr-types/sms-figma.svg',
     description: 'Pre-filled text message',
   },
   {
     id: 'sms-dynamic',
     name: 'SMS (Dynamic)',
     cat: 'dynamic',
-    icon: '/icons/qr-types/sms.png',
+    icon: '/icons/qr-types/sms-figma.svg',
     description: 'Editable SMS link',
   },
   {
@@ -242,7 +242,7 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'facetime',
     name: 'FaceTime',
     cat: 'static',
-    icon: '/icons/qr-types/faceTime.png',
+    icon: '/icons/qr-types/facetime-figma.svg',
     description: 'Start FaceTime call',
   },
   {
@@ -256,14 +256,14 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'crypto',
     name: 'Crypto',
     cat: 'static',
-    icon: '/icons/qr-types/crypto.png',
+    icon: '/icons/qr-types/crypto-coin-figma.svg',
     description: 'Cryptocurrency payment',
   },
   {
     id: 'paypal',
     name: 'PayPal',
     cat: 'dynamic',
-    icon: '/icons/qr-types/paypal.png',
+    icon: '/icons/qr-types/paypal-figma.svg',
     description: 'PayPal payment link',
   },
   {
@@ -291,21 +291,21 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'brazilpix',
     name: 'Brazillian PIX',
     cat: 'static',
-    icon: '/icons/qr-types/brazillian.png',
+    icon: '/icons/qr-types/brazilian-pix-figma.png',
     description: 'PIX payment',
   },
   {
     id: 'viber',
     name: 'Viber Chat',
     cat: 'static',
-    icon: '/icons/qr-types/viberchat.png',
+    icon: '/icons/qr-types/viber-figma.svg',
     description: 'Start Viber conversation',
   },
   {
     id: 'x',
     name: 'X (Twitter)',
     cat: 'static',
-    icon: '/icons/qr-types/twitter.png',
+    icon: '/icons/qr-types/x-twitter-figma.svg',
     description: 'Open X/Twitter profile',
   },
   {
@@ -319,14 +319,14 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'snapchat',
     name: 'Snapchat',
     cat: 'static',
-    icon: '/icons/qr-types/snapChat.png',
+    icon: '/icons/qr-types/snapchat-figma.svg',
     description: 'Open Snapchat profile',
   },
   {
     id: 'spotify',
     name: 'Spotify',
     cat: 'static',
-    icon: '/icons/qr-types/spotify.png',
+    icon: '/icons/qr-types/spotify-figma.svg',
     description: 'Spotify track or playlist',
   },
   {
@@ -345,16 +345,14 @@ export function getAvailableQrCodeTypes(
   category?: 'all' | 'static' | 'dynamic'
 ): QRCodeTypeDefinition[] {
   if (!category || category === 'all') return QR_TYPES
-  return QR_TYPES.filter((t) => t.cat === category)
+  return QR_TYPES.filter(t => t.cat === category)
 }
 
 /**
  * Find a QR code type definition by its slug/id.
  */
-export function findQrCodeType(
-  slug: string
-): QRCodeTypeDefinition | undefined {
-  return QR_TYPES.find((t) => t.id === slug)
+export function findQrCodeType(slug: string): QRCodeTypeDefinition | undefined {
+  return QR_TYPES.find(t => t.id === slug)
 }
 
 /**

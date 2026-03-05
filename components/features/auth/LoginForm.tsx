@@ -1,16 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth'
-import { useLogin } from '@/lib/hooks/mutations/useLogin'
+import { useLogin, useTwoFactorLoginVerify } from '@/lib/hooks/mutations/useLogin'
+import type { LoginRequires2FAResponse } from '@/lib/api/endpoints/auth'
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const [show2fa, setShow2fa] = useState(false)
+  const [twoFactorToken, setTwoFactorToken] = useState('')
+  const [twoFactorCode, setTwoFactorCode] = useState('')
+  const [twoFactorError, setTwoFactorError] = useState('')
+  const twoFactorInputRef = useRef<HTMLInputElement>(null)
+
   const loginMutation = useLogin()
+  const twoFactorVerify = useTwoFactorLoginVerify()
 
   const {
     register,
@@ -20,6 +28,28 @@ export function LoginForm() {
     resolver: zodResolver(loginSchema),
   })
 
+  // Transition to 2FA step when login returns requires_2fa
+  useEffect(() => {
+    if (loginMutation.isSuccess && loginMutation.data && 'requires_2fa' in loginMutation.data) {
+      const data = loginMutation.data as LoginRequires2FAResponse
+      setTwoFactorToken(data.two_factor_token)
+      setShow2fa(true)
+    }
+  }, [loginMutation.isSuccess, loginMutation.data])
+
+  // Focus 2FA input when shown
+  useEffect(() => {
+    if (show2fa) twoFactorInputRef.current?.focus()
+  }, [show2fa])
+
+  // Auto-submit 2FA when 6 digits entered
+  useEffect(() => {
+    if (show2fa && twoFactorCode.length === 6) {
+      handle2faSubmit()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [twoFactorCode, show2fa])
+
   const onSubmit = async (data: LoginFormData) => {
     try {
       await loginMutation.mutateAsync(data)
@@ -28,6 +58,104 @@ export function LoginForm() {
     }
   }
 
+  const handle2faSubmit = async () => {
+    if (!twoFactorCode || twoFactorCode.length < 6) {
+      setTwoFactorError('Please enter the 6-digit authentication code')
+      return
+    }
+    setTwoFactorError('')
+
+    try {
+      await twoFactorVerify.mutateAsync({
+        two_factor_token: twoFactorToken,
+        code: twoFactorCode,
+      })
+    } catch {
+      setTwoFactorError('Invalid authentication code. Please try again.')
+    }
+  }
+
+  // ── 2FA verification view ──
+  if (show2fa) {
+    return (
+      <div className="w-full space-y-3">
+        <div className="rounded-lg bg-white/10 px-4 py-2.5 text-center text-sm text-white/80">
+          Two-factor authentication required
+        </div>
+
+        <div>
+          <label
+            htmlFor="2fa-code"
+            className="mb-1 block text-[12px] font-bold text-white"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Authentication Code
+          </label>
+          <p
+            className="mb-2 text-[11px] text-white/60"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Enter the 6-digit code from your authenticator app
+          </p>
+          <input
+            ref={twoFactorInputRef}
+            id="2fa-code"
+            type="text"
+            inputMode="numeric"
+            autoFocus
+            maxLength={6}
+            placeholder="000000"
+            value={twoFactorCode}
+            onChange={e => {
+              const val = e.target.value.replace(/\D/g, '').slice(0, 6)
+              setTwoFactorCode(val)
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && twoFactorCode.length === 6) handle2faSubmit()
+            }}
+            disabled={twoFactorVerify.isPending}
+            className="block w-full rounded-[8px] border-[0.695px] border-[#ebecef] bg-white/90 px-3 py-3 text-center text-2xl tracking-[8px] font-semibold text-gray-800 focus:border-[#8351e0] focus:outline-none focus:ring-2 focus:ring-[#8351e0]/30 disabled:opacity-50 transition-all"
+          />
+        </div>
+
+        {twoFactorError && (
+          <div role="alert" className="rounded-lg bg-red-500/20 border border-red-400/30 p-3">
+            <p className="text-xs text-red-100">{twoFactorError}</p>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={handle2faSubmit}
+          disabled={twoFactorVerify.isPending || twoFactorCode.length !== 6}
+          className="w-full rounded-[41.843px] text-[16px] font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+          style={{
+            height: 40,
+            backgroundImage: 'linear-gradient(to bottom, #bb9df3, #8351e0)',
+            fontFamily: "'Inter', sans-serif",
+          }}
+        >
+          {twoFactorVerify.isPending ? 'Verifying...' : 'Verify & Sign In'}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setShow2fa(false)
+            setTwoFactorCode('')
+            setTwoFactorToken('')
+            setTwoFactorError('')
+            loginMutation.reset()
+          }}
+          className="text-sm text-white/80 hover:text-white hover:underline flex items-center gap-1"
+        >
+          ← Back to login
+        </button>
+      </div>
+    )
+  }
+
+  // ── Standard login form ──
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-3">
       {/* Email */}

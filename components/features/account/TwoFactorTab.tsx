@@ -1,7 +1,11 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { twoFactorAPI, type TwoFactorStatus, type TwoFactorSetup } from '@/lib/api/endpoints/account'
+import {
+  twoFactorAPI,
+  type TwoFactorStatus,
+  type TwoFactorSetup,
+} from '@/lib/api/endpoints/account'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -16,6 +20,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([])
   const [confirmCode, setConfirmCode] = useState('')
   const [disablePassword, setDisablePassword] = useState('')
+  const [disableCode, setDisableCode] = useState('')
   const [showDisable, setShowDisable] = useState(false)
   const [showRecovery, setShowRecovery] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -72,17 +77,18 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
   }
 
   const handleDisable = async () => {
-    if (!disablePassword) return
+    if (!disablePassword || !disableCode) return
     try {
       setLoading(true)
       setError(null)
-      await twoFactorAPI.disable(userId, disablePassword)
+      await twoFactorAPI.disable(userId, disablePassword, disableCode)
       setShowDisable(false)
       setDisablePassword('')
+      setDisableCode('')
       setSuccess('Two-factor authentication disabled.')
       await fetchStatus()
     } catch {
-      setError('Invalid password. Cannot disable 2FA.')
+      setError('Invalid password or code. Cannot disable 2FA.')
     } finally {
       setLoading(false)
     }
@@ -117,7 +123,9 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
         </p>
 
         {error && <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>}
-        {success && <div className="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700">{success}</div>}
+        {success && (
+          <div className="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700">{success}</div>
+        )}
 
         {/* Setup flow: show QR code */}
         {setup && (
@@ -142,7 +150,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
               <div className="flex gap-2">
                 <Input
                   value={confirmCode}
-                  onChange={(e) => setConfirmCode(e.target.value)}
+                  onChange={e => setConfirmCode(e.target.value)}
                   placeholder="000000"
                   maxLength={6}
                 />
@@ -172,11 +180,15 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
               <div className="rounded-md border border-gray-200 p-4">
                 <h3 className="text-sm font-medium text-gray-900 mb-2">Recovery Codes</h3>
                 <p className="text-xs text-gray-500 mb-3">
-                  Store these codes securely. Each can be used once if you lose access to your authenticator.
+                  Store these codes securely. Each can be used once if you lose access to your
+                  authenticator.
                 </p>
                 <div className="grid grid-cols-2 gap-2">
-                  {recoveryCodes.map((code) => (
-                    <code key={code} className="rounded bg-gray-50 px-3 py-1.5 text-sm font-mono text-center border">
+                  {recoveryCodes.map(code => (
+                    <code
+                      key={code}
+                      className="rounded bg-gray-50 px-3 py-1.5 text-sm font-mono text-center border"
+                    >
                       {code}
                     </code>
                   ))}
@@ -191,20 +203,43 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
               </Button>
             ) : (
               <div className="rounded-md border border-red-200 bg-red-50 p-4 space-y-3">
-                <p className="text-sm text-red-800">Enter your password to disable 2FA:</p>
-                <div className="flex gap-2">
+                <p className="text-sm text-red-800">
+                  Enter your password and authenticator code to disable 2FA:
+                </p>
+                <div className="space-y-2">
                   <Input
                     type="password"
                     value={disablePassword}
-                    onChange={(e) => setDisablePassword(e.target.value)}
+                    onChange={e => setDisablePassword(e.target.value)}
                     placeholder="Current password"
                   />
-                  <Button variant="destructive" onClick={handleDisable} disabled={loading || !disablePassword}>
-                    {loading ? 'Disabling...' : 'Confirm Disable'}
-                  </Button>
-                  <Button variant="outline" onClick={() => { setShowDisable(false); setDisablePassword('') }}>
-                    Cancel
-                  </Button>
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    value={disableCode}
+                    onChange={e => setDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    placeholder="6-digit code"
+                    maxLength={6}
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      variant="destructive"
+                      onClick={handleDisable}
+                      disabled={loading || !disablePassword || disableCode.length < 6}
+                    >
+                      {loading ? 'Disabling...' : 'Confirm Disable'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowDisable(false)
+                        setDisablePassword('')
+                        setDisableCode('')
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}

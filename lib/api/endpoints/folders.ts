@@ -1,113 +1,55 @@
 import apiClient from '@/lib/api/client'
-import { Folder, CreateFolderData, UpdateFolderData } from '@/types/entities/folder'
 
-// Folder API Endpoints
-
-export interface ListFoldersParams {
-  parentId?: string | null // Filter by parent folder
-  includeChildren?: boolean // Include nested folders
+// Backend Folder shape: { id, name, user_id, qrcode_count }
+export interface Folder {
+  id: number
+  name: string
+  user_id: number
+  qrcode_count: number
+  created_at?: string
+  updated_at?: string
 }
 
-export interface MoveFolderRequest {
-  parentId: string | null // New parent folder ID (null for root)
+export interface CreateFolderData {
+  folder_name: string
 }
 
-export interface MoveQRCodesRequest {
-  qrcodeIds: string[] // QR code IDs to move
-  folderId: string | null // Target folder ID (null for root)
+export interface UpdateFolderData {
+  folder_name: string
 }
 
-// Folder API functions
+// Folder API functions — matches backend routes in api.php
 export const foldersAPI = {
-  // List folders for a specific user — matches backend GET /folders/{userId}
-  listByUser: async (userId: number | string) => {
+  // List folders for a user — GET /folders/{userId}
+  listByUser: async (userId: number | string): Promise<Folder[]> => {
     const response = await apiClient.get<Folder[]>(`/folders/${userId}`)
     return response.data
   },
 
-  // List all folders (legacy — kept for backward compatibility)
-  list: async (params: ListFoldersParams = {}) => {
-    const response = await apiClient.get<Folder[]>('/folders', {
-      params: {
-        parent_id: params.parentId,
-        include_children: params.includeChildren,
-      }
-    })
+  // Get single folder — GET /folders/{userId}/{folderId}
+  get: async (userId: number | string, folderId: number | string): Promise<Folder> => {
+    const response = await apiClient.get<Folder>(`/folders/${userId}/${folderId}`)
     return response.data
   },
 
-  // Get single folder
-  get: async (id: string) => {
-    const response = await apiClient.get<Folder>(`/folders/${id}`)
+  // Create folder — POST /folders/{userId}
+  create: async (userId: number | string, data: CreateFolderData): Promise<Folder> => {
+    const response = await apiClient.post<Folder>(`/folders/${userId}`, data)
     return response.data
   },
 
-  // Create folder
-  create: async (data: CreateFolderData) => {
-    const response = await apiClient.post<Folder>('/folders', {
-      name: data.name,
-      color: data.color,
-      parent_id: data.parentId,
-    })
+  // Update folder — PUT /folders/{userId}/{folderId}
+  update: async (
+    userId: number | string,
+    folderId: number | string,
+    data: UpdateFolderData
+  ): Promise<Folder> => {
+    const response = await apiClient.put<Folder>(`/folders/${userId}/${folderId}`, data)
     return response.data
   },
 
-  // Update folder
-  update: async (id: string, data: UpdateFolderData) => {
-    const response = await apiClient.put<Folder>(`/folders/${id}`, {
-      name: data.name,
-      color: data.color,
-      parent_id: data.parentId,
-    })
-    return response.data
-  },
-
-  // Delete folder
-  delete: async (id: string, deleteQRCodes: boolean = false) => {
-    await apiClient.delete(`/folders/${id}`, {
-      params: {
-        delete_qrcodes: deleteQRCodes,
-      }
-    })
-  },
-
-  // Move folder to new parent
-  move: async (id: string, data: MoveFolderRequest) => {
-    const response = await apiClient.post<Folder>(`/folders/${id}/move`, {
-      parent_id: data.parentId,
-    })
-    return response.data
-  },
-
-  // Move QR codes to folder
-  moveQRCodes: async (data: MoveQRCodesRequest) => {
-    const response = await apiClient.post<{ success: boolean; moved: number }>('/folders/move-qrcodes', {
-      qrcode_ids: data.qrcodeIds,
-      folder_id: data.folderId,
-    })
-    return response.data
-  },
-
-  // Get folder statistics
-  getStats: async (id: string) => {
-    const response = await apiClient.get<{
-      totalQRCodes: number
-      directQRCodes: number
-      childFolders: number
-      totalChildFolders: number
-    }>(`/folders/${id}/stats`)
-    return response.data
-  },
-
-  // Get folder tree (hierarchical structure)
-  getTree: async () => {
-    const response = await apiClient.get<Folder[]>('/folders/tree')
-    return response.data
-  },
-
-  // Get breadcrumb path for folder
-  getBreadcrumbs: async (id: string) => {
-    const response = await apiClient.get<Folder[]>(`/folders/${id}/breadcrumbs`)
-    return response.data
+  // Delete folder — DELETE /folders/{userId}/{folderId}
+  delete: async (userId: number | string, folderId: number | string): Promise<void> => {
+    await apiClient.delete(`/folders/${userId}/${folderId}`)
   },
 }

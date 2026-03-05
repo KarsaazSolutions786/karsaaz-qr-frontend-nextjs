@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { authAPI } from '@/lib/api/endpoints/auth'
+import { authAPI, LoginResponse } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LoginFormData } from '@/lib/validations/auth'
@@ -40,16 +40,50 @@ export function useLogin() {
       })
     },
     onSuccess: response => {
-      // Store user in AuthContext and localStorage
+      // Check if 2FA is required — don't redirect, the component will show the 2FA step
+      if ('requires_2fa' in response && response.requires_2fa) {
+        // The two_factor_token is available via mutation.data
+        return
+      }
+
+      // Normal login success (no 2FA)
+      const loginResponse = response as LoginResponse
+      setUser(loginResponse.user)
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(loginResponse.user))
+        localStorage.setItem('token', loginResponse.token)
+      }
+
+      queryClient.setQueryData(queryKeys.auth.currentUser(), loginResponse.user)
+
+      // Check if email is verified — if not, redirect to verification
+      if (loginResponse.user.email_verified_at === null) {
+        router.push(`/verify-email?email=${encodeURIComponent(loginResponse.user.email)}`)
+        return
+      }
+
+      router.push(getPostLoginRedirect(loginResponse.user))
+    },
+  })
+}
+
+export function useTwoFactorLoginVerify() {
+  const router = useRouter()
+  const queryClient = useQueryClient()
+  const { setUser } = useAuth()
+
+  return useMutation({
+    mutationFn: (data: { two_factor_token: string; code: string }) => {
+      return authAPI.twoFactorLoginVerify(data)
+    },
+    onSuccess: response => {
       setUser(response.user)
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(response.user))
         localStorage.setItem('token', response.token)
       }
-
       queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
 
-      // Check if email is verified — if not, redirect to verification
       if (response.user.email_verified_at === null) {
         router.push(`/verify-email?email=${encodeURIComponent(response.user.email)}`)
         return

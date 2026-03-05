@@ -4,14 +4,17 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { usePasswordlessInit, usePasswordlessVerify } from '@/lib/hooks/mutations/usePasswordlessAuth'
+import {
+  usePasswordlessInit,
+  usePasswordlessVerify,
+} from '@/lib/hooks/mutations/usePasswordlessAuth'
 
 const emailSchema = z.object({
   email: z.string().email('Invalid email address'),
 })
 
 const tokenSchema = z.object({
-  otp: z.string().length(5, 'Code must be 5 digits'),
+  otp: z.string().length(6, 'Code must be 6 digits'),
 })
 
 type EmailFormData = z.infer<typeof emailSchema>
@@ -36,7 +39,7 @@ export function PasswordlessLoginButton() {
       await initMutation.mutateAsync(data)
       setEmail(data.email)
       setStep('token')
-    } catch (error) {
+    } catch {
       // Error handled by mutation
     }
   }
@@ -44,7 +47,7 @@ export function PasswordlessLoginButton() {
   const handleTokenSubmit = async (data: TokenFormData) => {
     try {
       await verifyMutation.mutateAsync({ email, otp: data.otp })
-    } catch (error) {
+    } catch {
       // Error handled by mutation
     }
   }
@@ -64,14 +67,12 @@ export function PasswordlessLoginButton() {
               {...tokenForm.register('otp')}
               id="otp"
               type="text"
-              maxLength={5}
-              placeholder="12345"
+              maxLength={6}
+              placeholder="123456"
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-center text-lg tracking-widest shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
             />
             {tokenForm.formState.errors.otp && (
-              <p className="mt-1 text-sm text-red-600">
-                {tokenForm.formState.errors.otp.message}
-              </p>
+              <p className="mt-1 text-sm text-red-600">{tokenForm.formState.errors.otp.message}</p>
             )}
           </div>
 
@@ -117,9 +118,7 @@ export function PasswordlessLoginButton() {
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
         {emailForm.formState.errors.email && (
-          <p className="mt-1 text-sm text-red-600">
-            {emailForm.formState.errors.email.message}
-          </p>
+          <p className="mt-1 text-sm text-red-600">{emailForm.formState.errors.email.message}</p>
         )}
       </div>
 

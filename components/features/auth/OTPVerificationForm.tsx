@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useVerifyOTP, useResendOTP } from '@/lib/hooks/mutations/useVerifyOTP'
 
-const OTP_LENGTH = 5
+const OTP_LENGTH = 6
 
 interface OTPVerificationFormProps {
   email: string
@@ -132,13 +132,15 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
             {otp.map((digit, index) => (
               <input
                 key={index}
-                ref={(el) => { inputRefs.current[index] = el }}
+                ref={el => {
+                  inputRefs.current[index] = el
+                }}
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
                 value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
+                onChange={e => handleChange(index, e.target.value)}
+                onKeyDown={e => handleKeyDown(index, e)}
                 className="w-12 h-14 text-center text-2xl font-bold rounded-lg border-2 border-gray-300 
                   focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none
                   transition-all duration-150"

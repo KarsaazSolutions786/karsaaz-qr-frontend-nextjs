@@ -4,9 +4,8 @@
  */
 
 import apiClient from './client'
-import { foldersAPI } from './endpoints/folders'
+import { foldersAPI, type Folder } from './endpoints/folders'
 import { getTemplateCategories as fetchTemplateCategories } from './endpoints/templates'
-import type { Folder } from '@/types/entities/folder'
 import type { TemplateCategory } from '@/types/entities/template'
 
 // User stats for account widget
@@ -63,18 +62,30 @@ export async function getDynamicQRCodeCount(): Promise<number> {
   try {
     // Dynamic QR types (matching Lit frontend QRCodeTypeManager.getDynamicSlugs())
     const dynamicTypes = [
-      'url', 'vcard', 'wifi', 'email', 'sms', 'phone', 'location',
-      'calendar', 'business-profile', 'restaurant-menu', 'event',
-      'product-catalogue', 'business-review', 'app-download', 'biolink'
+      'url',
+      'vcard',
+      'wifi',
+      'email',
+      'sms',
+      'phone',
+      'location',
+      'calendar',
+      'business-profile',
+      'restaurant-menu',
+      'event',
+      'product-catalogue',
+      'business-review',
+      'app-download',
+      'biolink',
     ].join(',')
-    
+
     const response = await apiClient.get('/qrcodes', {
       params: {
         type: dynamicTypes,
-        per_page: 1 // Only need count, not data
-      }
+        per_page: 1, // Only need count, not data
+      },
     })
-    
+
     // Check if response has pagination data
     return response.data?.meta?.total || response.data?.length || 0
   } catch (error) {
@@ -90,16 +101,28 @@ export async function getDynamicQRCodeCount(): Promise<number> {
 export async function getTotalScans(): Promise<number> {
   try {
     const dynamicTypes = [
-      'url', 'vcard', 'wifi', 'email', 'sms', 'phone', 'location',
-      'calendar', 'business-profile', 'restaurant-menu', 'event',
-      'product-catalogue', 'business-review', 'app-download', 'biolink'
+      'url',
+      'vcard',
+      'wifi',
+      'email',
+      'sms',
+      'phone',
+      'location',
+      'calendar',
+      'business-profile',
+      'restaurant-menu',
+      'event',
+      'product-catalogue',
+      'business-review',
+      'app-download',
+      'biolink',
     ].join(',')
-    
+
     // Matches Lit frontend: GET /qrcodes/count/scans?type=... returns { count: number }
     const response = await apiClient.get('/qrcodes/count/scans', {
-      params: { type: dynamicTypes }
+      params: { type: dynamicTypes },
     })
-    
+
     return response.data?.count || response.data?.total || 0
   } catch (error) {
     console.error('Failed to fetch total scans:', error)
@@ -151,14 +174,11 @@ export async function getCurrentPlan(): Promise<Plan | null> {
  * Get all user stats at once
  */
 export async function getUserStats(): Promise<UserStats> {
-  const [qrCount, scans] = await Promise.all([
-    getDynamicQRCodeCount(),
-    getTotalScans()
-  ])
-  
+  const [qrCount, scans] = await Promise.all([getDynamicQRCodeCount(), getTotalScans()])
+
   return {
     dynamic_qrcodes_count: qrCount,
-    total_scans: scans
+    total_scans: scans,
   }
 }
 
@@ -170,12 +190,12 @@ export function formatLimit(value: number | 'unlimited' | string): string {
   if (value === 'unlimited' || value === '0' || value === 0) {
     return 'Unlimited'
   }
-  
+
   if (typeof value === 'string') {
     const num = parseInt(value, 10)
     if (isNaN(num)) return 'Unlimited'
     return num.toLocaleString()
   }
-  
+
   return value.toLocaleString()
 }

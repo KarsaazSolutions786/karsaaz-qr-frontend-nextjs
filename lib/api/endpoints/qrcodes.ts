@@ -194,6 +194,18 @@ export const qrcodesAPI = {
     return mapQRCode(response.data)
   },
 
+  // Move QR code to folder — fetches QR first to include required 'type' field
+  moveToFolder: async (id: string, folderId: string | number | null) => {
+    const current = await apiClient.get(`/qrcodes/${id}`)
+    // CRUD show() returns the model directly (not wrapped)
+    const qr = current.data
+    const response = await apiClient.put(`/qrcodes/${id}`, {
+      ...qr,
+      folder_id: folderId ? Number(folderId) : null,
+    })
+    return mapQRCode(response.data)
+  },
+
   // Delete QR code
   delete: async (id: string) => {
     await apiClient.delete(`/qrcodes/${id}`)

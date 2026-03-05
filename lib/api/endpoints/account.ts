@@ -14,7 +14,9 @@ export const apiTokensAPI = {
     return response.data
   },
   generate: async (userId: number | string) => {
-    const response = await apiClient.post<{ data: ApiToken & { token: string } }>(`/users/${userId}/api-tokens`)
+    const response = await apiClient.post<{ data: ApiToken & { token: string } }>(
+      `/users/${userId}/api-tokens`
+    )
     return response.data
   },
   revoke: async (userId: number | string, tokenId: number) => {
@@ -35,24 +37,24 @@ export interface TwoFactorSetup {
 }
 
 export const twoFactorAPI = {
-  status: async (userId: number | string) => {
-    const response = await apiClient.get<TwoFactorStatus>(`/users/${userId}/2fa/status`)
+  status: async (_userId?: number | string) => {
+    const response = await apiClient.get<TwoFactorStatus>('/user/2fa/status')
     return response.data
   },
-  enable: async (userId: number | string) => {
-    const response = await apiClient.post<TwoFactorSetup>(`/users/${userId}/2fa/enable`)
+  enable: async (_userId?: number | string) => {
+    const response = await apiClient.post<TwoFactorSetup>('/user/2fa/setup')
     return response.data
   },
-  confirm: async (userId: number | string, code: string) => {
-    const response = await apiClient.post(`/users/${userId}/2fa/confirm`, { code })
+  confirm: async (_userId: number | string | undefined, code: string) => {
+    const response = await apiClient.post('/user/2fa/verify', { code })
     return response.data
   },
-  disable: async (userId: number | string, password: string) => {
-    const response = await apiClient.post(`/users/${userId}/2fa/disable`, { password })
+  disable: async (_userId: number | string | undefined, password: string, code: string) => {
+    const response = await apiClient.post('/user/2fa/disable', { password, code })
     return response.data
   },
-  recoveryCodes: async (userId: number | string) => {
-    const response = await apiClient.get<{ data: string[] }>(`/users/${userId}/2fa/recovery-codes`)
+  recoveryCodes: async (_userId?: number | string) => {
+    const response = await apiClient.get<{ data: string[] }>('/user/2fa/recovery-codes')
     return response.data
   },
 }
@@ -68,11 +70,16 @@ export interface NotificationPreferences {
 
 export const notificationPrefsAPI = {
   get: async (userId: number | string) => {
-    const response = await apiClient.get<NotificationPreferences>(`/users/${userId}/notification-preferences`)
+    const response = await apiClient.get<NotificationPreferences>(
+      `/users/${userId}/notification-preferences`
+    )
     return response.data
   },
   update: async (userId: number | string, prefs: Partial<NotificationPreferences>) => {
-    const response = await apiClient.put<NotificationPreferences>(`/users/${userId}/notification-preferences`, prefs)
+    const response = await apiClient.put<NotificationPreferences>(
+      `/users/${userId}/notification-preferences`,
+      prefs
+    )
     return response.data
   },
 }
@@ -98,7 +105,9 @@ export interface ActivityLogResponse {
 
 export const activityLogAPI = {
   list: async (userId: number | string, page = 1) => {
-    const response = await apiClient.get<ActivityLogResponse>(`/users/${userId}/activity-log`, { params: { page } })
+    const response = await apiClient.get<ActivityLogResponse>(`/users/${userId}/activity-log`, {
+      params: { page },
+    })
     return response.data
   },
 }
@@ -122,7 +131,9 @@ export const sessionsAPI = {
     return response.data
   },
   revokeAllOthers: async (userId: number | string) => {
-    const response = await apiClient.delete(`/users/${userId}/sessions`, { params: { except_current: true } })
+    const response = await apiClient.delete(`/users/${userId}/sessions`, {
+      params: { except_current: true },
+    })
     return response.data
   },
 }
@@ -155,7 +166,9 @@ export interface PlanChangePreview {
 
 export const planChangeAPI = {
   preview: async (newPlanId: number) => {
-    const response = await apiClient.post<PlanChangePreview>('/subscriptions/change-plan/preview', { new_plan_id: newPlanId })
+    const response = await apiClient.post<PlanChangePreview>('/subscriptions/change-plan/preview', {
+      new_plan_id: newPlanId,
+    })
     return response.data
   },
   execute: async (newPlanId: number) => {

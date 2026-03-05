@@ -8,6 +8,7 @@ import { BillingManagementCard } from '@/components/features/account/BillingMana
 import { EditProfileModal } from '@/components/features/account/EditProfileModal'
 import { ResetPasswordModal } from '@/components/features/account/ResetPasswordModal'
 import { SubUserManagement } from '@/components/features/account/SubUserManagement'
+import { TwoFactorTab } from '@/components/features/account/TwoFactorTab'
 import { LoginPreferenceToggle } from '@/components/features/auth/LoginPreferenceToggle'
 import { DeleteAccountDialog } from '@/components/features/auth/DeleteAccountDialog'
 
@@ -41,9 +42,7 @@ export default function AccountPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            Manage your profile and subscription
-          </p>
+          <p className="mt-2 text-sm text-gray-600">Manage your profile and subscription</p>
         </div>
 
         {/* Profile Card */}
@@ -68,16 +67,18 @@ export default function AccountPage() {
           <LoginPreferenceToggle />
         </div>
 
+        {/* Two-Factor Authentication */}
+        <TwoFactorTab userId={Number(user.id)} />
+
         {/* Sub-User Management */}
-        {showSubUsers && (
-          <SubUserManagement userId={Number(user.id)} />
-        )}
+        {showSubUsers && <SubUserManagement userId={Number(user.id)} />}
 
         {/* Danger Zone */}
         <div className="rounded-xl border border-red-200 bg-white p-6 shadow-sm">
           <h2 className="mb-2 text-lg font-semibold text-red-600">Danger Zone</h2>
           <p className="mb-4 text-sm text-gray-600">
-            All of your QR codes will be deleted immediately, you will have no longer access to the platform.
+            All of your QR codes will be deleted immediately, you will have no longer access to the
+            platform.
           </p>
           <button
             type="button"
@@ -90,18 +91,9 @@ export default function AccountPage() {
       </div>
 
       {/* Modals */}
-      <EditProfileModal
-        open={showEditProfile}
-        onClose={() => setShowEditProfile(false)}
-      />
-      <ResetPasswordModal
-        open={showResetPassword}
-        onClose={() => setShowResetPassword(false)}
-      />
-      <DeleteAccountDialog
-        open={showDeleteDialog}
-        onClose={() => setShowDeleteDialog(false)}
-      />
+      <EditProfileModal open={showEditProfile} onClose={() => setShowEditProfile(false)} />
+      <ResetPasswordModal open={showResetPassword} onClose={() => setShowResetPassword(false)} />
+      <DeleteAccountDialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)} />
     </div>
   )
 }

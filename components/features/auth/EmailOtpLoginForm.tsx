@@ -5,7 +5,7 @@
  *
  * Flow:
  *  Step 1 (email):  User enters email → check-preference → either go to OTP or password
- *  Step 2a (otp):   5-digit OTP input, auto-submit on 5 digits, resend with 60s countdown
+ *  Step 2a (otp):   6-digit OTP input, auto-submit on 6 digits, resend with 60s countdown
  *  Step 2b (password): traditional password input (for users who prefer password login)
  *
  * On success: stores token + user in localStorage, redirects to dashboard.
@@ -20,10 +20,10 @@ import {
   usePasswordlessVerify,
   usePasswordlessResend,
 } from '@/lib/hooks/mutations/usePasswordlessAuth'
-import { useLogin } from '@/lib/hooks/mutations/useLogin'
+import { useLogin, useTwoFactorLoginVerify } from '@/lib/hooks/mutations/useLogin'
 import { GoogleLoginButton } from './GoogleLoginButton'
 
-type Step = 'email' | 'otp' | 'password'
+type Step = 'email' | 'otp' | 'password' | '2fa'
 
 export function EmailOtpLoginForm() {
   // ── State ──
@@ -35,11 +35,14 @@ export function EmailOtpLoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [resendCountdown, setResendCountdown] = useState(0)
   const [errorMessage, setErrorMessage] = useState('')
+  const [twoFactorToken, setTwoFactorToken] = useState('')
+  const [twoFactorCode, setTwoFactorCode] = useState('')
 
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const otpInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
   const emailInputRef = useRef<HTMLInputElement>(null)
+  const twoFactorInputRef = useRef<HTMLInputElement>(null)
 
   // ── Mutations ──
   const checkPreference = usePasswordlessCheckPreference()
@@ -47,6 +50,7 @@ export function EmailOtpLoginForm() {
   const verifyOtp = usePasswordlessVerify()
   const resendOtp = usePasswordlessResend()
   const loginMutation = useLogin()
+  const twoFactorVerify = useTwoFactorLoginVerify()
 
   // ── Resend countdown (matches original: 60-second timer) ──
   const startResendCountdown = useCallback(() => {
@@ -75,15 +79,24 @@ export function EmailOtpLoginForm() {
     if (step === 'otp') otpInputRef.current?.focus()
     if (step === 'password') passwordInputRef.current?.focus()
     if (step === 'email') emailInputRef.current?.focus()
+    if (step === '2fa') twoFactorInputRef.current?.focus()
   }, [step])
 
-  // ── Auto-submit OTP when 5 digits are entered (matches original) ──
+  // ── Auto-submit OTP when 6 digits are entered ──
   useEffect(() => {
-    if (step === 'otp' && otp.length === 5) {
+    if (step === 'otp' && otp.length === 6) {
       handleVerifyOtp()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [otp, step])
+
+  // ── Auto-submit 2FA code when 6 digits are entered ──
+  useEffect(() => {
+    if (step === '2fa' && twoFactorCode.length === 6) {
+      handle2faSubmit()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [twoFactorCode, step])
 
   // ── Helpers ──
   function extractError(error: unknown, fallback: string): string {
@@ -96,7 +109,8 @@ export function EmailOtpLoginForm() {
     initOtp.isPending ||
     verifyOtp.isPending ||
     resendOtp.isPending ||
-    loginMutation.isPending
+    loginMutation.isPending ||
+    twoFactorVerify.isPending
 
   // ── Step 1: Email submit → check preference → init OTP or go to password ──
   async function handleEmailSubmit(e?: React.FormEvent) {
@@ -139,8 +153,8 @@ export function EmailOtpLoginForm() {
 
   // ── Step 2a: Verify OTP ──
   async function handleVerifyOtp() {
-    if (!otp || otp.length !== 5) {
-      setErrorMessage('Please enter the 5-digit verification code')
+    if (!otp || otp.length !== 6) {
+      setErrorMessage('Please enter the 6-digit verification code')
       return
     }
     setErrorMessage('')
@@ -182,13 +196,39 @@ export function EmailOtpLoginForm() {
     setErrorMessage('')
 
     try {
-      await loginMutation.mutateAsync({
+      const result = await loginMutation.mutateAsync({
         email,
         password,
       })
+      // Check if 2FA is required
+      if (result && 'requires_2fa' in result && result.requires_2fa) {
+        setTwoFactorToken((result as { two_factor_token: string }).two_factor_token)
+        setStep('2fa')
+        return
+      }
       // On success: useLogin handles storing token + redirect
     } catch (error) {
       setErrorMessage(extractError(error, 'Invalid email or password. Please try again.'))
+    }
+  }
+
+  // ── Step 3: 2FA TOTP verification ──
+  async function handle2faSubmit(e?: React.FormEvent) {
+    e?.preventDefault()
+    if (!twoFactorCode || twoFactorCode.length < 6) {
+      setErrorMessage('Please enter the 6-digit authentication code')
+      return
+    }
+    setErrorMessage('')
+
+    try {
+      await twoFactorVerify.mutateAsync({
+        two_factor_token: twoFactorToken,
+        code: twoFactorCode,
+      })
+      // On success: useTwoFactorLoginVerify handles storing token + redirect
+    } catch (error) {
+      setErrorMessage(extractError(error, 'Invalid authentication code. Please try again.'))
     }
   }
 
@@ -205,31 +245,45 @@ export function EmailOtpLoginForm() {
   // ── Step indicator (matches original exactly: two circles with connecting line) ──
   function renderStepIndicator() {
     const isSecondStep = step === 'otp' || step === 'password'
+    const is2faStep = step === '2fa'
     return (
       <div className="flex items-center justify-center gap-2.5 mb-5">
         <div
           className={`w-[30px] h-[30px] rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
-            isSecondStep
+            isSecondStep || is2faStep
               ? 'bg-green-500 text-white'
               : 'bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-white'
           }`}
         >
-          {isSecondStep ? '✓' : '1'}
+          {isSecondStep || is2faStep ? '✓' : '1'}
         </div>
         <div
           className={`w-[50px] h-[2px] transition-all duration-300 ${
-            isSecondStep ? 'bg-gradient-to-r from-[#bb9df3] to-[#8351e0]' : 'bg-white/30'
+            isSecondStep || is2faStep
+              ? 'bg-gradient-to-r from-[#bb9df3] to-[#8351e0]'
+              : 'bg-white/30'
           }`}
         />
         <div
           className={`w-[30px] h-[30px] rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
-            isSecondStep
-              ? 'bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-white'
-              : 'bg-white/30 text-white/60'
+            is2faStep
+              ? 'bg-green-500 text-white'
+              : isSecondStep
+                ? 'bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-white'
+                : 'bg-white/30 text-white/60'
           }`}
         >
-          2
+          {is2faStep ? '✓' : '2'}
         </div>
+        {/* Show 3rd step indicator when 2FA is active */}
+        {is2faStep && (
+          <>
+            <div className="w-[50px] h-[2px] transition-all duration-300 bg-gradient-to-r from-[#bb9df3] to-[#8351e0]" />
+            <div className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-white">
+              3
+            </div>
+          </>
+        )}
       </div>
     )
   }
@@ -241,6 +295,8 @@ export function EmailOtpLoginForm() {
         return 'Enter the verification code we sent you.'
       case 'password':
         return 'Enter your password to sign in.'
+      case '2fa':
+        return 'Enter your two-factor authentication code.'
       default:
         return 'Sign in or create an account with your email.'
     }
@@ -305,15 +361,15 @@ export function EmailOtpLoginForm() {
             type="text"
             inputMode="numeric"
             autoFocus
-            maxLength={5}
-            placeholder="12345"
+            maxLength={6}
+            placeholder="123456"
             value={otp}
             onChange={e => {
-              const val = e.target.value.replace(/\D/g, '').slice(0, 5)
+              const val = e.target.value.replace(/\D/g, '').slice(0, 6)
               setOtp(val)
             }}
             onKeyDown={e => {
-              if (e.key === 'Enter' && otp.length === 5) handleVerifyOtp()
+              if (e.key === 'Enter' && otp.length === 6) handleVerifyOtp()
             }}
             disabled={isLoading}
             className="block w-full rounded-lg border border-[#ebecef] bg-white/90 px-3 py-3 text-center text-2xl tracking-[8px] font-semibold text-gray-800 focus:border-[#8351e0] focus:outline-none focus:ring-2 focus:ring-[#8351e0]/30 disabled:opacity-50 transition-all"
@@ -325,7 +381,7 @@ export function EmailOtpLoginForm() {
         <button
           type="button"
           onClick={handleVerifyOtp}
-          disabled={isLoading || otp.length !== 5}
+          disabled={isLoading || otp.length !== 6}
           className="h-10 w-full rounded-[41.843px] bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-base font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:from-[#c7aef5] hover:to-[#9366e8] focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
         >
           {verifyOtp.isPending ? 'Verifying...' : 'Verify & Continue'}
@@ -428,6 +484,72 @@ export function EmailOtpLoginForm() {
     )
   }
 
+  // ── 2FA TOTP verification step ──
+  function render2faStep() {
+    if (step !== '2fa') return null
+    return (
+      <div className="space-y-4">
+        <div className="bg-white/10 px-4 py-2.5 rounded-lg text-center text-sm text-white/80">
+          Two-factor authentication is enabled for <strong className="text-white">{email}</strong>
+        </div>
+
+        <div>
+          <label htmlFor="2fa-input" className="mb-1.5 block text-xs font-bold text-white">
+            Authentication Code
+          </label>
+          <p className="mb-2 text-xs text-white/60">
+            Enter the 6-digit code from your authenticator app
+          </p>
+          <input
+            ref={twoFactorInputRef}
+            id="2fa-input"
+            type="text"
+            inputMode="numeric"
+            autoFocus
+            maxLength={6}
+            placeholder="000000"
+            value={twoFactorCode}
+            onChange={e => {
+              const val = e.target.value.replace(/\D/g, '').slice(0, 6)
+              setTwoFactorCode(val)
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && twoFactorCode.length === 6) handle2faSubmit()
+            }}
+            disabled={isLoading}
+            className="block w-full rounded-lg border border-[#ebecef] bg-white/90 px-3 py-3 text-center text-2xl tracking-[8px] font-semibold text-gray-800 focus:border-[#8351e0] focus:outline-none focus:ring-2 focus:ring-[#8351e0]/30 disabled:opacity-50 transition-all"
+          />
+        </div>
+
+        {renderError()}
+
+        <button
+          type="button"
+          onClick={handle2faSubmit}
+          disabled={isLoading || twoFactorCode.length !== 6}
+          className="h-10 w-full rounded-[41.843px] bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-base font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:from-[#c7aef5] hover:to-[#9366e8] focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+        >
+          {twoFactorVerify.isPending ? 'Verifying...' : 'Verify & Sign In'}
+        </button>
+
+        <div className="flex items-center justify-between mt-4">
+          <button
+            type="button"
+            onClick={() => {
+              setStep('password')
+              setTwoFactorCode('')
+              setTwoFactorToken('')
+              setErrorMessage('')
+            }}
+            className="text-sm text-white/80 hover:text-white hover:underline flex items-center gap-1"
+          >
+            ← Back
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   // ── Error display ──
   function renderError() {
     if (!errorMessage) return null
@@ -488,6 +610,7 @@ export function EmailOtpLoginForm() {
       {renderEmailStep()}
       {renderOtpStep()}
       {renderPasswordStep()}
+      {render2faStep()}
     </div>
   )
 }
