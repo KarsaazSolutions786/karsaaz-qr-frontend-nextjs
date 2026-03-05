@@ -361,19 +361,24 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         <div className="relative h-[154px] shrink-0">
           <Link
             href="/qrcodes/new"
-            className={`absolute flex items-center gap-2 ${sidebarCollapsed ? 'left-1/2 top-[71px] -translate-x-1/2' : 'left-5 top-[72px]'}`}
+            className={`absolute flex items-center ${sidebarCollapsed ? 'left-1/2 top-[71px] -translate-x-1/2' : 'left-5 top-[72px]'}`}
             onClick={() => setSidebarOpen(false)}
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-md bg-[#B36AC5]/10 text-[#8c4ea3]">
+            {sidebarCollapsed ? (
               <Image
                 src="/sidebar-assets/sidebar-logo.svg"
                 alt="Karsaaz QR"
-                width={22}
-                height={22}
+                width={36}
+                height={36}
               />
-            </div>
-            {!sidebarCollapsed && (
-              <span className="text-[17px] font-semibold text-[#1b1b1b]">Karsaaz QR</span>
+            ) : (
+              <Image
+                src="/images/auth/karsaaz-logo.svg"
+                alt="Karsaaz QR"
+                width={150}
+                height={32}
+                priority
+              />
             )}
           </Link>
 
