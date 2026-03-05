@@ -351,7 +351,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       <aside
         className={`
           fixed inset-y-0 left-0 z-50 flex flex-col
-          border-r-2 border-white bg-white/90 backdrop-blur-[25px]
+          bg-white shadow-[2px_0_16px_rgba(0,0,0,0.04)]
           transition-all duration-300 ease-in-out transform
           lg:translate-x-0 lg:static lg:inset-auto
           ${sidebarCollapsed ? 'w-[115px]' : 'w-[264px]'}
@@ -418,7 +418,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                       ${
                         active
                           ? 'h-[50px] w-[72px] rounded-[8px] bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] text-white'
-                          : 'h-[25.54px] w-[25.54px] rounded-[6px] text-[#6d6d6d] hover:bg-[#f7f1fb]'
+                          : 'h-[25.54px] w-[25.54px] rounded-[6px] text-[#9b6fb5] hover:bg-[#f7f1fb]'
                       }
                     `}
                     title={item.name}
@@ -438,7 +438,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
                     className={`
-                      flex h-[50.4px] items-center gap-3 px-4 text-[12px] font-medium transition-colors
+                      flex h-[52px] items-center gap-3 px-4 text-[14px] font-medium transition-colors
                       ${
                         active
                           ? 'rounded-[12px] bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] text-white'
@@ -447,7 +447,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                     `}
                   >
                     <div
-                      className={`flex h-7 w-7 items-center justify-center rounded-[6px] ${active ? 'bg-white text-[#8f55a6]' : ''}`}
+                      className={`flex h-7 w-7 items-center justify-center rounded-[6px] ${active ? 'bg-white text-[#8f55a6]' : 'text-[#9b6fb5]'}`}
                     >
                       <item.icon className="h-4 w-4" />
                     </div>
@@ -465,11 +465,13 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                       type="button"
                       onClick={() => toggleSection(item.key)}
                       className={`
-                      w-full flex h-[50.4px] items-center gap-3 rounded-[26px] px-4 text-[12px] font-medium transition-colors
+                      w-full flex h-[52px] items-center gap-3 rounded-[26px] px-4 text-[14px] font-medium transition-colors
                       ${sectionActive ? 'bg-[#f5e7fb] text-[#1b1b1b]' : 'text-[#6d6d6d] hover:bg-[#f7f1fb]'}
                     `}
                     >
-                      <item.icon className="h-5 w-5" />
+                      <item.icon
+                        className={`h-5 w-5 ${sectionActive ? 'text-[#8f55a6]' : 'text-[#9b6fb5]'}`}
+                      />
                       <span className="flex-1 truncate text-left">{item.label}</span>
                       <ChevronRightIcon
                         className={`h-3.5 w-3.5 transition-transform ${expanded ? 'rotate-90' : ''}`}
