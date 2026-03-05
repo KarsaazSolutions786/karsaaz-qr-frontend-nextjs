@@ -9,6 +9,7 @@ import { DEFAULT_DESIGNER_CONFIG, DesignerConfig } from '@/types/entities/design
 import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
 import Step1DataEntry from './Step1DataEntry'
 import QRDesignStudio from './QRDesignStudio'
+import Step4Download from './Step4Download'
 import { toast } from 'sonner'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
 import { transformDesignToBackend, transformDesignFromBackend } from '@/lib/qr/design-transformer'
@@ -21,7 +22,7 @@ interface QRWizardContainerProps {
   onCancel?: () => void
 }
 
-// Steps for CREATE mode: Type → Data → Design Studio (3 steps)
+// Steps for CREATE mode: Type → Data → Design → Download (4 steps)
 const CREATE_WIZARD_STEPS: WizardStep[] = [
   {
     id: 'type',
@@ -35,12 +36,17 @@ const CREATE_WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: 'design',
-    title: 'Design & Download',
-    description: 'Customize and download',
+    title: 'Design',
+    description: 'Customize your QR code',
+  },
+  {
+    id: 'download',
+    title: 'Download',
+    description: 'Download your QR code',
   },
 ]
 
-// Steps for EDIT mode: Data → Design Studio (2 steps, no type change)
+// Steps for EDIT mode: Data → Design → Download (3 steps, no type change)
 const EDIT_WIZARD_STEPS: WizardStep[] = [
   {
     id: 'data',
@@ -49,8 +55,13 @@ const EDIT_WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: 'design',
-    title: 'Design & Download',
-    description: 'Customize and download',
+    title: 'Design',
+    description: 'Customize your QR code',
+  },
+  {
+    id: 'download',
+    title: 'Download',
+    description: 'Download your QR code',
   },
 ]
 
@@ -310,8 +321,6 @@ export default function QRWizardContainer({
         return <Step1DataEntry qrType={qrType} data={formData} onChange={handleDataChange} />
 
       case 'design':
-      case 'download':
-        // Use unified QRDesignStudio for both design and download steps
         return (
           <QRDesignStudio
             qrType={qrType}
@@ -324,6 +333,18 @@ export default function QRWizardContainer({
             onBack={() => wizard.previousStep()}
             isSaving={isSaving}
             isSaved={isSaved}
+            savedQRId={savedQRId}
+          />
+        )
+
+      case 'download':
+        return (
+          <Step4Download
+            qrType={qrType}
+            qrData={formData}
+            design={design}
+            settings={settings}
+            onSettingsChange={(newSettings: any) => handleSettingsChange(newSettings)}
             savedQRId={savedQRId}
           />
         )

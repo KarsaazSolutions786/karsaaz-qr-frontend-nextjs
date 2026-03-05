@@ -1,24 +1,14 @@
 'use client'
 
-import { useState, useRef, useMemo, useCallback } from 'react'
-import Link from 'next/link'
+import { useState, useRef, useMemo } from 'react'
 import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
 import { LogoUpload } from '@/components/qr/LogoUpload'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer'
 import { useDesignShapes } from '@/lib/hooks/useDesignShapes'
-import {
-  Download,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
-  Loader2,
-  Upload,
-} from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Loader2, Upload } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface QRDesignStudioProps {
@@ -43,29 +33,15 @@ interface QRDesignStudioProps {
   savedQRId?: string | null
 }
 
-type TabId = 'color' | 'look' | 'sticker' | 'download'
+type TabId = 'color' | 'look' | 'sticker'
 
 const TABS: { id: TabId; label: string; emoji: string }[] = [
   { id: 'color', label: 'Select color', emoji: '🎨' },
   { id: 'look', label: 'Look & Feel', emoji: '👁' },
   { id: 'sticker', label: 'Sticker', emoji: '🎴' },
-  { id: 'download', label: 'Download', emoji: '⬇️' },
 ]
 
 const PRESET_COLORS = ['#FF0000', '#8B5CF6', '#10B981', '#FFFFFF']
-
-const SIZE_OPTIONS = [
-  { value: '512', label: '512px' },
-  { value: '1024', label: '1024px' },
-  { value: '2048', label: '2048px' },
-  { value: '4096', label: '4k' },
-]
-
-const FORMAT_OPTIONS = [
-  { value: 'png', label: 'PNG' },
-  { value: 'svg', label: 'SVG' },
-  { value: 'pdf', label: 'PDF' },
-]
 
 const FONT_FAMILIES = [
   'Raleway',
@@ -122,10 +98,10 @@ export default function QRDesignStudio({
   qrData,
   design,
   onChange,
-  settings,
-  onSettingsChange,
+  settings: _settings,
+  onSettingsChange: _onSettingsChange,
   onBack,
-  isSaving,
+  isSaving: _isSaving,
   isSaved: _isSaved,
   savedQRId,
 }: QRDesignStudioProps) {
@@ -149,9 +125,6 @@ export default function QRDesignStudio({
   const [showAllFinders, setShowAllFinders] = useState(false)
   const [showAllFinderDots, setShowAllFinderDots] = useState(false)
   const [showAllShapes, setShowAllShapes] = useState(false)
-  const [downloadFormat, setDownloadFormat] = useState('png')
-  const [downloadSize, setDownloadSize] = useState('1024')
-  const [isDownloading, setIsDownloading] = useState(false)
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const [hasUploadedImage, setHasUploadedImage] = useState(false)
 
@@ -183,10 +156,6 @@ export default function QRDesignStudio({
     })
   }
 
-  const handleSettingsChange = (field: string, value: any) => {
-    onSettingsChange({ ...settings, [field]: value })
-  }
-
   const resetToDefaults = () => {
     onChange({ ...DEFAULT_DESIGNER_CONFIG })
   }
@@ -194,68 +163,6 @@ export default function QRDesignStudio({
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }))
   }
-
-  const handleDownload = useCallback(async () => {
-    if (!previewRef.current) return
-    setIsDownloading(true)
-
-    try {
-      const filename = settings.name || `qr-code-${qrType}`
-      const svgStr = previewRef.current.getSVG()
-      if (!svgStr) throw new Error('No QR code preview available')
-
-      if (downloadFormat === 'svg') {
-        const blob = new Blob([svgStr], { type: 'image/svg+xml' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${filename}.svg`
-        a.click()
-        URL.revokeObjectURL(url)
-      } else if (downloadFormat === 'png') {
-        const dataURL = previewRef.current.getDataURL()
-        if (!dataURL) throw new Error('Cannot generate data URL')
-        const size = Number(downloadSize)
-        const [width, height] = [size, size]
-        const img = new Image()
-        img.onload = () => {
-          const canvas = document.createElement('canvas')
-          canvas.width = width
-          canvas.height = height
-          const ctx = canvas.getContext('2d')
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, width, height)
-            canvas.toBlob(blob => {
-              if (blob) {
-                const url = URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.href = url
-                a.download = `${filename}.png`
-                a.click()
-                URL.revokeObjectURL(url)
-              }
-              setIsDownloading(false)
-            }, 'image/png')
-          }
-        }
-        img.onerror = () => setIsDownloading(false)
-        img.src = dataURL
-        return
-      } else {
-        const blob = new Blob([svgStr], { type: 'image/svg+xml' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${filename}.${downloadFormat}`
-        a.click()
-        URL.revokeObjectURL(url)
-      }
-    } catch (error) {
-      console.error('Download failed:', error)
-    } finally {
-      setIsDownloading(false)
-    }
-  }, [settings.name, qrType, downloadFormat, downloadSize])
 
   // Color Picker with presets
   const ColorPickerWithPresets = ({
@@ -1255,55 +1162,6 @@ export default function QRDesignStudio({
                 )}
               </SectionCard>
             )}
-
-            {/* ==================== DOWNLOAD SECTION ==================== */}
-            {activeTab === 'download' && (
-              <SectionCard title="Your Download is Ready!" sectionKey="download">
-                <div className="text-center mb-6 py-4">
-                  <h2 className="text-2xl font-bold text-gray-900">Your Download is</h2>
-                  <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mt-1">
-                    Ready !
-                  </h2>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Name your QR
-                  </label>
-                  <Input
-                    value={settings.name || ''}
-                    onChange={e => handleSettingsChange('name', e.target.value)}
-                    placeholder="My QR Code"
-                    className="text-sm border-gray-300 rounded-lg"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4 pt-4">
-                  <button
-                    onClick={() => {
-                      setDownloadFormat('svg')
-                      setTimeout(handleDownload, 100)
-                    }}
-                    disabled={!hasPreviewData || isDownloading}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download SVG ⬇️
-                  </button>
-                  <button
-                    onClick={() => {
-                      setDownloadFormat('png')
-                      setTimeout(handleDownload, 100)
-                    }}
-                    disabled={!hasPreviewData || isDownloading}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-                  >
-                    <Download className="w-4 h-4" />
-                    Download PNG ⬇️
-                  </button>
-                </div>
-              </SectionCard>
-            )}
           </div>
 
           {/* ==================== RIGHT PANEL - PREVIEW ==================== */}
@@ -1374,54 +1232,6 @@ export default function QRDesignStudio({
                 </div>
               )}
 
-              {/* Format & Size Selects */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Format</label>
-                  <select
-                    value={downloadFormat}
-                    onChange={e => setDownloadFormat(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-400"
-                  >
-                    {FORMAT_OPTIONS.map(opt => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Size</label>
-                  <select
-                    value={downloadSize}
-                    onChange={e => setDownloadSize(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-400"
-                  >
-                    {SIZE_OPTIONS.map(opt => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Download Button */}
-              <Button
-                onClick={handleDownload}
-                disabled={!hasPreviewData || isDownloading || isSaving}
-                className="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-purple-600 hover:from-pink-600 hover:via-purple-600 hover:to-purple-700 text-white py-3 rounded-xl font-semibold shadow-md text-base"
-              >
-                {isDownloading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Downloading...
-                  </>
-                ) : (
-                  'Download QR CODE'
-                )}
-              </Button>
-
               {/* Reset Settings */}
               <button
                 type="button"
@@ -1430,15 +1240,6 @@ export default function QRDesignStudio({
               >
                 Reset Settings
               </button>
-
-              {/* Terms */}
-              <p className="text-xs text-gray-400 text-center mt-4">
-                By clicking "Download QR CODE" you agree to our{' '}
-                <Link href="/terms" className="text-purple-500 hover:underline">
-                  Terms & Conditions
-                </Link>
-                .
-              </p>
             </div>
           </div>
         </div>
@@ -1455,7 +1256,7 @@ export default function QRDesignStudio({
             }}
             className="text-sm text-gray-500 hover:text-gray-700 font-medium mr-auto"
           >
-            {activeTab === 'download' ? 'Finish' : 'Skip'}
+            Skip
           </button>
           <button
             type="button"
