@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import {
   usePasswordlessCheckPreference,
@@ -445,10 +446,21 @@ export function EmailOtpLoginForm() {
     >
       {/* Heading */}
       <div className="text-center mb-4">
-        <h2 className="text-[28px] font-semibold text-white">
-          Welcome to <span className="font-extrabold text-purple-200">Karsaaz</span>{' '}
-          <span className="text-white">QR</span>
-        </h2>
+        <div className="flex items-center justify-center gap-x-2">
+          <h2
+            className="whitespace-nowrap text-[28px] font-semibold leading-normal text-white"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Welcome to
+          </h2>
+          <Image
+            src="/images/auth/karsaaz-logo.svg"
+            alt="Karsaaz QR"
+            width={176.5}
+            height={36.9}
+            priority
+          />
+        </div>
         <p className="mt-2 text-sm text-white/80">{getHeadingText()}</p>
       </div>
 
