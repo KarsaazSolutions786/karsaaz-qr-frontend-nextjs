@@ -8,7 +8,7 @@ import { QR_TYPES, QRCodeTypeDefinition } from '@/lib/constants/qr-types'
 import { filterQrTypes } from '@/lib/constants/qr-type-categories'
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * Card layout configuration — Figma bento grid (node 3115-4301)
+ * Card layout configuration — Figma bento grid
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 /** Wide cards spanning half the grid (col-span-4 on 8-col desktop) */
@@ -65,6 +65,7 @@ const FIGMA_DISPLAY_ORDER = [
 const INITIAL_VISIBLE = 26
 
 const CARD_BG = 'linear-gradient(180deg, #fff 0%, #f9f9f9 100%)'
+const ICON_CARD_BG = 'linear-gradient(180deg, #fff 0%, #f9f9f9 100%)'
 const CARD_SHADOW =
   '0px 3.57px 5.35px 0px rgba(0,0,0,0.02), 0px -1.78px 8.92px 0px rgba(0,0,0,0.01)'
 
@@ -161,7 +162,7 @@ export function QRCodeTypeSelector({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * SelectorHeader — Inter title + glass-morphism search (Figma match)
+ * SelectorHeader — gradient title + right-aligned search (Figma match)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 function SelectorHeader({
@@ -183,8 +184,7 @@ function SelectorHeader({
       <div
         className="flex items-center px-4 gap-3"
         style={{
-          background:
-            'linear-gradient(130deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.8) 100%)',
+          // background: 'linear-gradient(130deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.8) 100%)',
           border: '1.45px solid rgba(211,187,255,1)',
           borderRadius: 14,
           boxShadow: '0px 1.93px 19.32px 0px rgba(188,192,204,0.25)',
@@ -210,7 +210,7 @@ function SelectorHeader({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * BentoGrid — 8-column CSS Grid with varied card spans
+ * BentoGrid — CSS Grid with varied card spans
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 function BentoGrid({
@@ -299,7 +299,7 @@ function BentoGrid({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * Shared card helpers
+ * Shared card props
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 interface CardProps {
@@ -322,7 +322,7 @@ const cardStyle = (isSelected: boolean, bg: string = CARD_BG) => ({
 })
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * StandardCard — icon + name + purple chevron (wide & standard cards)
+ * StandardCard — icon + name + purple chevron
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 function StandardCard({ type, isSelected, isDisabled, onClick }: CardProps) {
@@ -382,7 +382,7 @@ function IconOnlyCard({ type, isSelected, isDisabled, onClick }: CardProps) {
         }
       }}
       className={`flex items-center justify-center h-full ${cardBase(isDisabled)}`}
-      style={cardStyle(isSelected)}
+      style={cardStyle(isSelected, ICON_CARD_BG)}
       title={type.name}
     >
       <Image
@@ -398,7 +398,7 @@ function IconOnlyCard({ type, isSelected, isDisabled, onClick }: CardProps) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
- * CompactChevronCard — icon + chevron, no text (call, messenger, x, snapchat)
+ * CompactChevronCard — icon + chevron, no text label (call, messenger, x, snapchat)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 function CompactChevronCard({ type, isSelected, isDisabled, onClick }: CardProps) {

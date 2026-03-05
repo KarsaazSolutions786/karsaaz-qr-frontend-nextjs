@@ -14,6 +14,9 @@
  *   ?traditional=true → force traditional login
  */
 
+import Image from 'next/image'
+import Link from 'next/link'
+import { Poppins } from 'next/font/google'
 import { useSearchParams } from 'next/navigation'
 import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth'
 import { EmailOtpLoginForm } from './EmailOtpLoginForm'
@@ -23,20 +26,25 @@ import { TwitterLoginButton } from './TwitterLoginButton'
 import { FacebookLoginButton } from './FacebookLoginButton'
 import { Auth0LoginButton } from './Auth0LoginButton'
 
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+})
+
 export function LoginTypeSelector() {
   const searchParams = useSearchParams()
   const { data: statusData, isLoading, isError } = usePasswordlessStatus()
 
-  // ── Loading state (matches original: returns '' while loading) ──
+  // ── Loading state ──
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600" />
+      <div className="flex items-center justify-center rounded-[23px] bg-white/30 p-12 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/30 border-t-white" />
       </div>
     )
   }
 
-  // ── Query param overrides (matches original exactly) ──
+  // ── Query param overrides ──
   const forceDev = searchParams.get('dev') === 'true'
   const forceTraditional = searchParams.get('traditional') === 'true'
 
@@ -54,41 +62,94 @@ export function LoginTypeSelector() {
 }
 
 /**
- * Traditional login view — matches the existing login page layout
- * with Google button + divider + LoginForm.
+ * Traditional login view — card matching Figma design spec exactly
+ *
+ * Card: 447×543, bg rgba(255,255,255,0.3), rounded-[23px],
+ *       shadow 0px 3px 12px 0px rgba(54,54,54,0.3)
  */
 function TraditionalLoginView() {
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Welcome to{' '}
-          <span className="text-purple-600">Karsaaz</span>{' '}
-          <span className="text-gray-700">QR</span>
-        </h2>
-        <p className="mt-2 text-sm text-gray-600">
+    <div
+      className="flex w-full flex-col rounded-[23px] bg-white/30 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)]"
+      style={{ minHeight: 543, padding: '40px 24px 30px' }}
+    >
+      {/* ── Header ── */}
+      <div className="mb-9">
+        {/* "Welcome to" + Karsaaz QR logo inline */}
+        <div className="flex items-center gap-x-2">
+          <h2
+            className="whitespace-nowrap text-[28px] font-semibold leading-normal text-white"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Welcome to
+          </h2>
+          <Image
+            src="/images/auth/karsaaz-logo.svg"
+            alt="Karsaaz QR"
+            width={176.5}
+            height={36.9}
+            priority
+          />
+        </div>
+
+        {/* Subtitle */}
+        <p
+          className={`${poppins.className} mt-2 text-[18px] font-normal leading-normal text-white`}
+        >
           Sign in to your account and join us.
         </p>
       </div>
 
-      <GoogleLoginButton />
+      {/* ── Login form ── */}
+      <LoginForm />
 
-      <TwitterLoginButton />
-
-      <FacebookLoginButton />
-
-      <Auth0LoginButton />
-
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="bg-gray-50 px-2 text-gray-500">Or continue with email</span>
-        </div>
+      {/* ── Divider: lines + "or continue with" ── */}
+      <div className="my-5 flex items-center justify-center gap-3">
+        <img
+          src="/images/auth/divider-line.svg"
+          alt=""
+          className="h-px w-[134px] flex-shrink-0"
+          aria-hidden="true"
+        />
+        <span
+          className="whitespace-nowrap text-[12px] font-medium text-white"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          or continue with
+        </span>
+        <img
+          src="/images/auth/divider-line.svg"
+          alt=""
+          className="h-px w-[134px] flex-shrink-0"
+          aria-hidden="true"
+        />
       </div>
 
-      <LoginForm />
+      {/* ── Social login buttons — side by side ── */}
+      <div className="flex items-center justify-center gap-3">
+        <GoogleLoginButton />
+        <FacebookLoginButton />
+      </div>
+
+      {/* Hidden but functional */}
+      <div className="hidden">
+        <TwitterLoginButton />
+        <Auth0LoginButton />
+      </div>
+
+      {/* ── Bottom text: "Don't have an account? Signup" ── */}
+      <p
+        className="mt-5 text-left text-[12px] font-medium text-white"
+        style={{ fontFamily: "'Inter', sans-serif" }}
+      >
+        Don&apos;t have an account?{' '}
+        <Link
+          href="/signup"
+          className="font-semibold text-white underline decoration-solid hover:text-white/80"
+        >
+          Signup
+        </Link>
+      </p>
     </div>
   )
 }

@@ -10,14 +10,11 @@ import { Switch } from '@/components/ui/switch'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer'
 import { useDesignShapes } from '@/lib/hooks/useDesignShapes'
 import {
-  Palette,
-  Sparkles,
-  Sticker,
   Download,
   ChevronLeft,
+  ChevronRight,
   ChevronDown,
   ChevronUp,
-  Wand2,
   Loader2,
   Upload,
 } from 'lucide-react'
@@ -46,11 +43,11 @@ interface QRDesignStudioProps {
 
 type TabId = 'color' | 'look' | 'sticker' | 'download'
 
-const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: 'color', label: 'Select color', icon: <Palette className="w-4 h-4" /> },
-  { id: 'look', label: 'Look & Feel', icon: <Sparkles className="w-4 h-4" /> },
-  { id: 'sticker', label: 'Sticker', icon: <Sticker className="w-4 h-4" /> },
-  { id: 'download', label: 'Download', icon: <Download className="w-4 h-4" /> },
+const TABS: { id: TabId; label: string; emoji: string }[] = [
+  { id: 'color', label: 'Select color', emoji: '🎨' },
+  { id: 'look', label: 'Look & Feel', emoji: '👁' },
+  { id: 'sticker', label: 'Sticker', emoji: '🎴' },
+  { id: 'download', label: 'Download', emoji: '⬇️' },
 ]
 
 const PRESET_COLORS = ['#FF0000', '#8B5CF6', '#10B981', '#FFFFFF']
@@ -298,17 +295,17 @@ export default function QRDesignStudio({
     sectionKey: string
     children: React.ReactNode
   }) => (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-purple-100 overflow-hidden shadow-sm">
       <button
         type="button"
         onClick={() => toggleSection(sectionKey)}
-        className="w-full flex items-center justify-between px-5 py-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-4 bg-purple-50/30 hover:bg-purple-50/60 transition-colors"
       >
         <h3 className="text-base font-semibold text-gray-900">{title}</h3>
         {expandedSections[sectionKey] ? (
-          <ChevronUp className="w-5 h-5 text-gray-500" />
+          <ChevronUp className="w-5 h-5 text-purple-400" />
         ) : (
-          <ChevronDown className="w-5 h-5 text-gray-500" />
+          <ChevronDown className="w-5 h-5 text-purple-400" />
         )}
       </button>
       {expandedSections[sectionKey] && <div className="px-5 py-4 space-y-4">{children}</div>}
@@ -334,7 +331,7 @@ export default function QRDesignStudio({
     const visibleItems = showAll ? items : items.slice(0, maxVisible)
     return (
       <div>
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-7 gap-2">
           {visibleItems.map(item => (
             <button
               key={item.value}
@@ -377,35 +374,40 @@ export default function QRDesignStudio({
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {onBack && (
               <button
                 onClick={onBack}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="text-purple-600 hover:text-purple-700 transition-colors text-xl font-bold"
               >
-                <ChevronLeft className="w-5 h-5 text-gray-600" />
+                &lt;
               </button>
             )}
-            <h1 className="text-lg font-bold text-gray-900 uppercase">{qrTypeLabel || qrType}</h1>
+            <h1 className="text-lg font-bold text-gray-900 uppercase tracking-wide">
+              {qrTypeLabel || qrType}
+            </h1>
           </div>
 
-          {/* Tabs */}
-          <div className="flex items-center gap-2 mt-3 overflow-x-auto pb-1">
-            {TABS.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap',
-                  activeTab === tab.id
-                    ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                )}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
+          {/* Tabs - Figma pill style with emoji icons */}
+          <div className="flex items-center gap-3 mt-4 pb-2 overflow-x-auto">
+            {TABS.map(tab => {
+              const isActive = activeTab === tab.id
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap',
+                    isActive
+                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                      : 'text-gray-500 hover:text-gray-700'
+                  )}
+                >
+                  {tab.label}
+                  <span className="text-base">{tab.emoji}</span>
+                </button>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -444,7 +446,7 @@ export default function QRDesignStudio({
                         handleChange('foregroundFill', { type: 'foreground_image', imageUrl: '' })
                       }
                     }}
-                    className="px-3 py-1.5 text-sm bg-purple-100 text-purple-700 rounded-full font-medium border-0 focus:ring-2 focus:ring-purple-300"
+                    className="px-4 py-1.5 text-sm bg-purple-100 text-purple-700 rounded-full font-medium border border-purple-200 focus:ring-2 focus:ring-purple-300 appearance-none cursor-pointer"
                   >
                     <option value="solid">Solid Color</option>
                     <option value="gradient">Gradient</option>
@@ -550,7 +552,7 @@ export default function QRDesignStudio({
                       // Show file upload when QR is saved
                       <>
                         <div
-                          className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition hover:border-purple-400 hover:bg-purple-50"
+                          className="border-2 border-dashed border-purple-300 rounded-lg p-6 text-center cursor-pointer transition hover:border-purple-500 hover:bg-purple-50/30"
                           onClick={() => document.getElementById('foreground-image-input')?.click()}
                         >
                           <input
@@ -590,8 +592,13 @@ export default function QRDesignStudio({
                           ) : (
                             <>
                               <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                              <p className="text-sm text-gray-600">Click to upload image</p>
-                              <p className="text-xs text-gray-400 mt-1">PNG, JPG (max 5MB)</p>
+                              <p className="text-sm text-gray-600 font-medium">
+                                Drop your file here
+                              </p>
+                              <p className="text-xs text-gray-400 my-2">or</p>
+                              <span className="inline-block px-4 py-1.5 text-sm font-medium text-white bg-purple-500 rounded-lg hover:bg-purple-600 transition-colors">
+                                Browse Files
+                              </span>
                             </>
                           )}
                         </div>
@@ -746,7 +753,7 @@ export default function QRDesignStudio({
                   {/* Preset Logos */}
                   {(mergedConfig.logo?.logoType || 'preset') === 'preset' && (
                     <div className="mt-3">
-                      <div className="grid grid-cols-6 gap-2 max-h-[200px] overflow-y-auto">
+                      <div className="grid grid-cols-7 gap-2 max-h-[200px] overflow-y-auto">
                         {/* None option */}
                         <button
                           type="button"
@@ -993,7 +1000,7 @@ export default function QRDesignStudio({
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Select Sticker
                   </label>
-                  <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                  <div className="grid grid-cols-7 gap-2">
                     {ADVANCED_SHAPES.map(shape => (
                       <button
                         key={shape.value}
@@ -1212,9 +1219,11 @@ export default function QRDesignStudio({
             {/* ==================== DOWNLOAD SECTION ==================== */}
             {activeTab === 'download' && (
               <SectionCard title="Your Download is Ready!" sectionKey="download">
-                <div className="text-center mb-4">
+                <div className="text-center mb-6 py-4">
                   <h2 className="text-2xl font-bold text-gray-900">Your Download is</h2>
-                  <h2 className="text-3xl font-bold text-purple-500">Ready !</h2>
+                  <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mt-1">
+                    Ready !
+                  </h2>
                 </div>
 
                 <div>
@@ -1225,7 +1234,7 @@ export default function QRDesignStudio({
                     value={settings.name || ''}
                     onChange={e => handleSettingsChange('name', e.target.value)}
                     placeholder="My QR Code"
-                    className="text-sm"
+                    className="text-sm border-gray-300 rounded-lg"
                   />
                 </div>
 
@@ -1236,10 +1245,10 @@ export default function QRDesignStudio({
                       setTimeout(handleDownload, 100)
                     }}
                     disabled={!hasPreviewData || isDownloading}
-                    className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
                   >
                     <Download className="w-4 h-4" />
-                    Download SVG
+                    Download SVG ⬇️
                   </button>
                   <button
                     onClick={() => {
@@ -1247,10 +1256,10 @@ export default function QRDesignStudio({
                       setTimeout(handleDownload, 100)
                     }}
                     disabled={!hasPreviewData || isDownloading}
-                    className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
                   >
                     <Download className="w-4 h-4" />
-                    Download PNG
+                    Download PNG ⬇️
                   </button>
                 </div>
               </SectionCard>
@@ -1259,7 +1268,7 @@ export default function QRDesignStudio({
 
           {/* ==================== RIGHT PANEL - PREVIEW ==================== */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl border border-gray-200 p-6 sticky top-24">
+            <div className="bg-white rounded-xl border border-purple-100 p-6 sticky top-44 shadow-sm">
               {/* QR Preview */}
               <div className="flex justify-center mb-4">
                 {hasPreviewData ? (
@@ -1291,8 +1300,7 @@ export default function QRDesignStudio({
                     : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                 )}
               >
-                <Wand2 className="w-4 h-4" />
-                Create With AI
+                🔮 Create With AI
               </button>
 
               {/* AI Options */}
@@ -1361,7 +1369,7 @@ export default function QRDesignStudio({
               <Button
                 onClick={handleDownload}
                 disabled={!hasPreviewData || isDownloading || isSaving}
-                className="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 rounded-lg font-medium"
+                className="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-purple-600 hover:from-pink-600 hover:via-purple-600 hover:to-purple-700 text-white py-3 rounded-xl font-semibold shadow-md text-base"
               >
                 {isDownloading ? (
                   <>
@@ -1392,6 +1400,50 @@ export default function QRDesignStudio({
               </p>
             </div>
           </div>
+        </div>
+
+        {/* Bottom Navigation - Figma style */}
+        <div className="flex items-center justify-end gap-3 mt-6 pb-6">
+          <button
+            type="button"
+            onClick={() => {
+              const currentIndex = TABS.findIndex(t => t.id === activeTab)
+              if (currentIndex === TABS.length - 1) {
+                // Last step - finish
+              }
+            }}
+            className="text-sm text-gray-500 hover:text-gray-700 font-medium mr-auto"
+          >
+            {activeTab === 'download' ? 'Finish' : 'Skip'}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const currentIndex = TABS.findIndex(t => t.id === activeTab)
+              if (currentIndex > 0) {
+                setActiveTab(TABS[currentIndex - 1]!.id)
+              } else if (onBack) {
+                onBack()
+              }
+            }}
+            className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const currentIndex = TABS.findIndex(t => t.id === activeTab)
+              if (currentIndex < TABS.length - 1) {
+                setActiveTab(TABS[currentIndex + 1]!.id)
+              }
+            }}
+            className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Next
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>

@@ -12,15 +12,22 @@ export function FacebookLoginButton() {
     <button
       type="button"
       onClick={handleFacebookLogin}
-      className="w-full flex items-center justify-center gap-3 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      className="relative flex items-center justify-center gap-2 bg-white text-[12px] text-black"
+      style={{
+        width: 193,
+        height: 40,
+        borderRadius: 20,
+        boxShadow: '0px 4px 7px 0px rgba(0,0,0,0.13)',
+        fontFamily: "'Poppins', sans-serif",
+      }}
     >
-      <svg className="h-5 w-5" viewBox="0 0 24 24">
-        <path
-          fill="#1877F2"
-          d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
-        />
-      </svg>
-      Continue with Facebook
+      {/* Inner shadow overlay */}
+      <span
+        className="pointer-events-none absolute inset-0 rounded-[inherit]"
+        style={{ boxShadow: 'inset 0px 0px 4px 0px rgba(0,0,0,0.29)' }}
+      />
+      <img src="/images/auth/facebook-icon.svg" alt="" style={{ width: 24, height: 24 }} />
+      Facebook
     </button>
   )
 }

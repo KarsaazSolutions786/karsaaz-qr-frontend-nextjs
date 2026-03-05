@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-03-03T09:12:57.950Z",
+  "timestamp": "2026-03-04T08:30:23.485Z",
   "projectRoot": "C:\\Dev\\karsaaz qr\\karsaaz Qr React js",
   "structure": {
     "hasPackageJson": true,
     "hasTsConfig": true,
-    "hasClaudeConfig": false,
+    "hasClaudeConfig": true,
     "hasClaudeFlow": true
   },
-  "scannedAt": 1772529177950
+  "scannedAt": 1772613023485
 }

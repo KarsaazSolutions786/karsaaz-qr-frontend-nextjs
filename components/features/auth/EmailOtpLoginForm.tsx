@@ -52,7 +52,7 @@ export function EmailOtpLoginForm() {
     setResendCountdown(60)
     if (countdownRef.current) clearInterval(countdownRef.current)
     countdownRef.current = setInterval(() => {
-      setResendCountdown((prev) => {
+      setResendCountdown(prev => {
         if (prev <= 1) {
           if (countdownRef.current) clearInterval(countdownRef.current)
           return 0
@@ -148,7 +148,9 @@ export function EmailOtpLoginForm() {
       await verifyOtp.mutateAsync({ email, otp })
       // On success: usePasswordlessVerify handles storing token + redirect
     } catch (error) {
-      setErrorMessage(extractError(error, 'Invalid or expired verification code. Please try again.'))
+      setErrorMessage(
+        extractError(error, 'Invalid or expired verification code. Please try again.')
+      )
     }
   }
 
@@ -208,23 +210,21 @@ export function EmailOtpLoginForm() {
           className={`w-[30px] h-[30px] rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
             isSecondStep
               ? 'bg-green-500 text-white'
-              : 'bg-gradient-to-b from-purple-300 to-purple-600 text-white'
+              : 'bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-white'
           }`}
         >
           {isSecondStep ? '✓' : '1'}
         </div>
         <div
           className={`w-[50px] h-[2px] transition-all duration-300 ${
-            isSecondStep
-              ? 'bg-gradient-to-r from-purple-300 to-purple-600'
-              : 'bg-gray-200'
+            isSecondStep ? 'bg-gradient-to-r from-[#bb9df3] to-[#8351e0]' : 'bg-white/30'
           }`}
         />
         <div
           className={`w-[30px] h-[30px] rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
             isSecondStep
-              ? 'bg-gradient-to-b from-purple-300 to-purple-600 text-white'
-              : 'bg-gray-200 text-gray-500'
+              ? 'bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-white'
+              : 'bg-white/30 text-white/60'
           }`}
         >
           2
@@ -249,9 +249,9 @@ export function EmailOtpLoginForm() {
   function renderEmailStep() {
     if (step !== 'email') return null
     return (
-      <form onSubmit={handleEmailSubmit} className="space-y-5">
+      <form onSubmit={handleEmailSubmit} className="space-y-4">
         <div>
-          <label htmlFor="passwordless-email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="passwordless-email" className="mb-1.5 block text-xs font-bold text-white">
             Enter Your Email
           </label>
           <input
@@ -262,10 +262,12 @@ export function EmailOtpLoginForm() {
             autoComplete="email"
             placeholder="your@email.com"
             value={emailInput}
-            onChange={(e) => setEmailInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') handleEmailSubmit() }}
+            onChange={e => setEmailInput(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleEmailSubmit()
+            }}
             disabled={isLoading}
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-purple-500 disabled:opacity-50"
+            className="block h-10 w-full rounded-lg border border-[#ebecef] bg-white/90 pl-4 pr-4 text-xs text-gray-800 placeholder:text-[#404a60] focus:border-[#8351e0] focus:outline-none focus:ring-2 focus:ring-[#8351e0]/30 disabled:opacity-50 transition-all"
           />
         </div>
 
@@ -274,7 +276,7 @@ export function EmailOtpLoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-md bg-gradient-to-b from-purple-400 to-purple-700 px-4 py-2.5 text-white font-medium hover:from-purple-500 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+          className="h-10 w-full rounded-[41.843px] bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-base font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:from-[#c7aef5] hover:to-[#9366e8] focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
         >
           {isLoading ? 'Please wait...' : 'Continue with Email'}
         </button>
@@ -286,15 +288,14 @@ export function EmailOtpLoginForm() {
   function renderOtpStep() {
     if (step !== 'otp') return null
     return (
-      <div className="space-y-5">
-        {/* Email display badge (matches original email-display) */}
-        <div className="bg-purple-50 px-4 py-2.5 rounded-lg text-center text-sm text-gray-600">
-          We sent a verification code to{' '}
-          <strong className="text-purple-600">{email}</strong>
+      <div className="space-y-4">
+        {/* Email display badge */}
+        <div className="bg-white/10 px-4 py-2.5 rounded-lg text-center text-sm text-white/80">
+          We sent a verification code to <strong className="text-white">{email}</strong>
         </div>
 
         <div>
-          <label htmlFor="otp-input" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="otp-input" className="mb-1.5 block text-xs font-bold text-white">
             Enter Verification Code
           </label>
           <input
@@ -306,14 +307,15 @@ export function EmailOtpLoginForm() {
             maxLength={5}
             placeholder="12345"
             value={otp}
-            onChange={(e) => {
-              // Only allow digits
+            onChange={e => {
               const val = e.target.value.replace(/\D/g, '').slice(0, 5)
               setOtp(val)
             }}
-            onKeyDown={(e) => { if (e.key === 'Enter' && otp.length === 5) handleVerifyOtp() }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && otp.length === 5) handleVerifyOtp()
+            }}
             disabled={isLoading}
-            className="block w-full rounded-md border border-gray-300 px-3 py-3 text-center text-2xl tracking-[8px] font-semibold shadow-sm focus:border-purple-500 focus:outline-none focus:ring-purple-500 disabled:opacity-50"
+            className="block w-full rounded-lg border border-[#ebecef] bg-white/90 px-3 py-3 text-center text-2xl tracking-[8px] font-semibold text-gray-800 focus:border-[#8351e0] focus:outline-none focus:ring-2 focus:ring-[#8351e0]/30 disabled:opacity-50 transition-all"
           />
         </div>
 
@@ -323,31 +325,29 @@ export function EmailOtpLoginForm() {
           type="button"
           onClick={handleVerifyOtp}
           disabled={isLoading || otp.length !== 5}
-          className="w-full rounded-md bg-gradient-to-b from-purple-400 to-purple-700 px-4 py-2.5 text-white font-medium hover:from-purple-500 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+          className="h-10 w-full rounded-[41.843px] bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-base font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:from-[#c7aef5] hover:to-[#9366e8] focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
         >
           {verifyOtp.isPending ? 'Verifying...' : 'Verify & Continue'}
         </button>
 
-        {/* Bottom actions: change email + resend (matches original otp-actions) */}
+        {/* Bottom actions */}
         <div className="flex items-center justify-between mt-4">
           <button
             type="button"
             onClick={goBackToEmail}
-            className="text-sm text-purple-600 hover:underline flex items-center gap-1"
+            className="text-sm text-white/80 hover:text-white hover:underline flex items-center gap-1"
           >
             ← Change Email
           </button>
 
           {resendCountdown > 0 ? (
-            <span className="text-sm text-gray-400">
-              Resend in {resendCountdown}s
-            </span>
+            <span className="text-sm text-white/50">Resend in {resendCountdown}s</span>
           ) : (
             <button
               type="button"
               onClick={handleResendOtp}
               disabled={resendOtp.isPending}
-              className="text-sm text-purple-600 hover:underline disabled:opacity-50"
+              className="text-sm text-white/80 hover:text-white hover:underline disabled:opacity-50"
             >
               {resendOtp.isPending ? 'Sending...' : 'Resend Code'}
             </button>
@@ -361,15 +361,14 @@ export function EmailOtpLoginForm() {
   function renderPasswordStep() {
     if (step !== 'password') return null
     return (
-      <form onSubmit={handlePasswordSubmit} className="space-y-5">
+      <form onSubmit={handlePasswordSubmit} className="space-y-4">
         {/* Email display badge */}
-        <div className="bg-purple-50 px-4 py-2.5 rounded-lg text-center text-sm text-gray-600">
-          Logging in as{' '}
-          <strong className="text-purple-600">{email}</strong>
+        <div className="bg-white/10 px-4 py-2.5 rounded-lg text-center text-sm text-white/80">
+          Logging in as <strong className="text-white">{email}</strong>
         </div>
 
         <div>
-          <label htmlFor="password-input" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password-input" className="mb-1.5 block text-xs font-bold text-white">
             Enter Your Password
           </label>
           <div className="relative">
@@ -381,15 +380,17 @@ export function EmailOtpLoginForm() {
               autoComplete="current-password"
               placeholder="Enter your password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') handlePasswordSubmit() }}
+              onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') handlePasswordSubmit()
+              }}
               disabled={isLoading}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-purple-500 disabled:opacity-50"
+              className="block h-[41px] w-full rounded-lg border border-[#ebecef] bg-white/90 pl-4 pr-10 text-xs text-gray-800 placeholder:text-[#404a60] focus:border-[#8351e0] focus:outline-none focus:ring-2 focus:ring-[#8351e0]/30 disabled:opacity-50 transition-all"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-2 text-sm text-gray-600 hover:text-gray-800"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#404a60] hover:text-gray-700"
             >
               {showPassword ? 'Hide' : 'Show'}
             </button>
@@ -401,23 +402,23 @@ export function EmailOtpLoginForm() {
         <button
           type="submit"
           disabled={isLoading || !password}
-          className="w-full rounded-md bg-gradient-to-b from-purple-400 to-purple-700 px-4 py-2.5 text-white font-medium hover:from-purple-500 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+          className="h-10 w-full rounded-[41.843px] bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-base font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:from-[#c7aef5] hover:to-[#9366e8] focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
         >
           {loginMutation.isPending ? 'Signing in...' : 'Login'}
         </button>
 
-        {/* Bottom actions: change email + forgot password */}
+        {/* Bottom actions */}
         <div className="flex items-center justify-between mt-4">
           <button
             type="button"
             onClick={goBackToEmail}
-            className="text-sm text-purple-600 hover:underline flex items-center gap-1"
+            className="text-sm text-white/80 hover:text-white hover:underline flex items-center gap-1"
           >
             ← Change Email
           </button>
           <Link
             href="/forgot-password"
-            className="text-sm text-purple-600 hover:underline"
+            className="text-xs font-medium text-white hover:text-white/80 transition-colors"
           >
             Forgot Password?
           </Link>
@@ -430,38 +431,42 @@ export function EmailOtpLoginForm() {
   function renderError() {
     if (!errorMessage) return null
     return (
-      <div className="rounded-md bg-red-50 p-3">
-        <p className="text-sm text-red-800">{errorMessage}</p>
+      <div className="rounded-lg bg-red-500/20 border border-red-400/30 p-3">
+        <p className="text-xs text-red-100">{errorMessage}</p>
       </div>
     )
   }
 
-  // ── Main render (matches original renderForm structure exactly) ──
+  // ── Main render — wrapped in glassmorphism card matching Figma design ──
   return (
-    <div className="space-y-6">
-      {/* Heading (matches original heading section) */}
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Welcome to{' '}
-          <span className="text-purple-600">Karsaaz</span>{' '}
-          <span className="text-gray-700">QR</span>
+    <div
+      className="flex flex-col w-[447px] max-w-full rounded-[23px] bg-white/30 px-8 py-8 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)]"
+      style={{ minHeight: 543 }}
+    >
+      {/* Heading */}
+      <div className="text-center mb-4">
+        <h2 className="text-[28px] font-semibold text-white">
+          Welcome to <span className="font-extrabold text-purple-200">Karsaaz</span>{' '}
+          <span className="text-white">QR</span>
         </h2>
-        <p className="mt-2 text-sm text-gray-600">{getHeadingText()}</p>
+        <p className="mt-2 text-sm text-white/80">{getHeadingText()}</p>
       </div>
 
       {/* Step indicator */}
       {renderStepIndicator()}
 
-      {/* Google OAuth — only shown on email step (matches original) */}
+      {/* Google OAuth — only shown on email step */}
       {step === 'email' && (
         <>
-          <GoogleLoginButton />
-          <div className="relative">
+          <div className="flex justify-center">
+            <GoogleLoginButton />
+          </div>
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-white/20" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-gray-50 px-2 text-gray-500">OR</span>
+              <span className="bg-transparent px-3 text-white/60">OR</span>
             </div>
           </div>
         </>

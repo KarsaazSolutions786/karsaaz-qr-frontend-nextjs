@@ -31,17 +31,44 @@ function CreateQRCodeInner() {
     router.replace(`/qrcodes/new?type=${encodeURIComponent(type)}`, { scroll: false })
   }
 
-  if (showWizard && selectedType) {
-    return (
-      <div className="px-4 py-4 sm:px-6 lg:px-8">
-        <QRWizardContainer mode="create" initialData={{ type: selectedType, data: {} }} />
-      </div>
-    )
-  }
-
   return (
-    <div className="px-4 py-6 sm:px-6 lg:px-8">
-      <QRCodeTypeSelector value={selectedType} onChange={handleTypeSelect} />
+    <div
+      className="min-h-full relative"
+      style={{ background: 'linear-gradient(152deg, #faf1ff 0%, #eeeeee 100%)' }}
+    >
+      {/* Decorative background shapes (Figma: semi-transparent purple circles) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: 773,
+            height: 773,
+            background: 'rgba(213, 218, 255, 0.4)',
+            right: -100,
+            top: -50,
+            filter: 'blur(80px)',
+          }}
+        />
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: 773,
+            height: 773,
+            background: 'rgba(213, 218, 255, 0.3)',
+            right: -200,
+            top: 150,
+            filter: 'blur(80px)',
+          }}
+        />
+      </div>
+
+      <div className="relative px-4 py-6 sm:px-6 lg:px-8">
+        {showWizard && selectedType ? (
+          <QRWizardContainer mode="create" initialData={{ type: selectedType, data: {} }} />
+        ) : (
+          <QRCodeTypeSelector value={selectedType} onChange={handleTypeSelect} />
+        )}
+      </div>
     </div>
   )
 }

@@ -594,7 +594,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         <main
           id="main-content"
           role="main"
-          className="flex-1 overflow-y-auto dark:bg-gray-900 dark:text-gray-100"
+          className="flex-1 overflow-y-auto dark:bg-gray-900 dark:text-gray-100 relative z-[1]"
         >
           {children}
         </main>
