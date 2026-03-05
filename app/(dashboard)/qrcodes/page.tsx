@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { Plus, Filter, FolderTree as FolderTreeIcon } from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
@@ -65,7 +65,7 @@ export default function QRCodesPage() {
   // Build filter params for API
   const filterParams = useMemo(() => buildApiFilters(filters), [filters])
 
-  const { data, isLoading, error } = useQRCodes({
+  const { data, isLoading, isFetching, error } = useQRCodes({
     page,
     search: search || undefined,
     folderId: selectedFolder || undefined,
@@ -83,6 +83,16 @@ export default function QRCodesPage() {
   const { data: foldersData } = useFolders()
   const { data: domainsData } = useDomains(undefined, { enabled: isAdmin })
   const domains = domainsData?.data ?? []
+
+  // Scroll to top when page changes
+  const isFirstRender = useRef(true)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [page])
 
   const plan = subscription?.plan?.name || currentUser?.plan?.name || 'free'
   const qrCodesUsed = data?.pagination?.total || 0
@@ -352,7 +362,9 @@ export default function QRCodesPage() {
 
           {/* QR Codes List */}
           {!isLoading && hasQRCodes && (
-            <>
+            <div
+              className={`transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
+            >
               {/* Grid View */}
               {viewMode === 'grid' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -391,21 +403,22 @@ export default function QRCodesPage() {
                   ))}
                 </div>
               )}
+            </div>
+          )}
 
-              {/* Pagination */}
-              {data?.pagination && data.pagination.total > data.pagination.perPage && (
-                <div className="mt-8">
-                  <Pagination
-                    currentPage={page}
-                    totalPages={data.pagination.lastPage}
-                    pageSize={data.pagination.perPage}
-                    totalItems={data.pagination.total}
-                    onPageChange={setPage}
-                    showPageSize={false}
-                  />
-                </div>
-              )}
-            </>
+          {/* Pagination - rendered outside isLoading block so it stays visible during page changes */}
+          {data?.pagination && data.pagination.total > data.pagination.perPage && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={page}
+                totalPages={data.pagination.lastPage}
+                pageSize={data.pagination.perPage}
+                totalItems={data.pagination.total}
+                onPageChange={setPage}
+                showPageSize={false}
+                disabled={isFetching}
+              />
+            </div>
           )}
         </div>
       </div>
