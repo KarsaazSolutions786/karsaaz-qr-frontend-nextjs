@@ -51,6 +51,7 @@ export function useDesignShapes() {
     queryKey: queryKeys.designAssets.all(),
     queryFn: () => designAssetsAPI.getAll(),
     staleTime: 5 * 60_000,
+    retry: false, // Admin-only endpoint — don't retry 403 for regular users
   })
 
   if (!allAssets || allAssets.length === 0) {
