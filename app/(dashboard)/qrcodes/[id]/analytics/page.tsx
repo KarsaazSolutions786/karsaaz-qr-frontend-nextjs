@@ -1,21 +1,28 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
-import { format } from 'date-fns'
+import { ArrowLeft, Download } from 'lucide-react'
 import { getPresetDateRange } from '@/lib/utils/date-range'
 import { useQRCodeStats, useQRCodeScans } from '@/lib/hooks/queries/useAnalytics'
 import { useQRCode } from '@/lib/hooks/queries/useQRCode'
 import MetricCard from '@/components/analytics/MetricCard'
 import ChartContainer from '@/components/analytics/charts/ChartContainer'
-import LineChart from '@/components/analytics/charts/LineChart'
 import PieChart from '@/components/analytics/charts/PieChart'
 import ActivityFeed from '@/components/analytics/ActivityFeed'
 import DateRangePicker from '@/components/analytics/DateRangePicker'
+import { ScansPerDayChart } from '@/components/analytics/ScansPerDayChart'
+import { ScansPerCountryChart } from '@/components/analytics/ScansPerCountryChart'
+import { ScansPerCityChart } from '@/components/analytics/ScansPerCityChart'
+import { ScansPerOSChart } from '@/components/analytics/ScansPerOSChart'
 import type { DateRange } from '@/types/entities/analytics'
+import type { ChartDatePreset } from '@/lib/hooks/useAnalyticsCharts'
+import { chartPresetToDateRange } from '@/lib/hooks/useAnalyticsCharts'
+import { useTranslation } from '@/lib/i18n'
+import { exportAnalyticsCsv } from '@/lib/utils/export-analytics-csv'
 
 export default function QRCodeAnalyticsPage() {
+  const { t } = useTranslation()
   const params = useParams()
   const router = useRouter()
   const qrcodeId = parseInt(params.id as string, 10)
@@ -24,22 +31,37 @@ export default function QRCodeAnalyticsPage() {
     getPresetDateRange('last30days')
   )
 
+  // Chart-specific preset state for ScansPerDayChart (its own date range)
+  const [dayChartPreset, setDayChartPreset] = useState<ChartDatePreset>('30d')
+  const dayChartDateRange = useMemo(
+    () => chartPresetToDateRange(dayChartPreset),
+    [dayChartPreset]
+  )
+
   const { data: qrcode } = useQRCode(params.id as string)
 
+  // Main stats query (used by metric cards and most charts)
   const {
     data: stats,
     isLoading: statsLoading,
     error: statsError,
   } = useQRCodeStats(qrcodeId, dateRange)
 
+  // Separate stats query for the day chart when it has a different date range
+  const {
+    data: dayStats,
+    isLoading: dayStatsLoading,
+  } = useQRCodeStats(qrcodeId, dayChartDateRange)
+
   const {
     data: scansData,
     isLoading: scansLoading,
-  } = useQRCodeScans(qrcodeId, {
-    page: 1,
-    perPage: 10,
-    ...dateRange,
-  })
+  } = useQRCodeScans(qrcodeId, { perPage: 10 })
+
+  const handleExportCsv = useCallback(() => {
+    if (!stats) return
+    exportAnalyticsCsv(stats)
+  }, [stats])
 
   return (
     <div className="space-y-6">
@@ -54,59 +76,86 @@ export default function QRCodeAnalyticsPage() {
           </button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              {qrcode?.name ?? 'QR Code Analytics'}
+              {qrcode?.name ?? t('QR Code Analytics')}
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              Detailed performance metrics
+              {t('Detailed performance metrics')}
             </p>
           </div>
         </div>
-        <DateRangePicker value={dateRange} onChange={setDateRange} />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportCsv}
+            disabled={statsLoading || !stats}
+            className="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Download className="h-4 w-4" />
+            {t('Export CSV')}
+          </button>
+          <DateRangePicker value={dateRange} onChange={setDateRange} />
+        </div>
       </div>
 
       {/* Metrics Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          title="Total Scans"
+          title={t('Total Scans')}
           value={stats?.totalScans.toLocaleString() ?? '0'}
           isLoading={statsLoading}
         />
         <MetricCard
-          title="Unique Scans"
+          title={t('Unique Scans')}
           value={stats?.uniqueScans.toLocaleString() ?? '0'}
           isLoading={statsLoading}
         />
         <MetricCard
-          title="Last Scan"
-          value={stats?.lastScan ? format(new Date(stats.lastScan), 'MMM d, yyyy') : 'Never'}
+          title={t('Last Scan')}
+          value={stats?.lastScan ?? t('Never')}
           isLoading={statsLoading}
         />
         <MetricCard
-          title="Avg. Daily Scans"
-          value={stats?.scansByDay ? (stats.totalScans / stats.scansByDay.length).toFixed(1) : '0'}
+          title={t('Avg. Daily Scans')}
+          value={
+            stats?.scansByDay && stats.scansByDay.length > 0
+              ? (stats.totalScans / stats.scansByDay.length).toFixed(1)
+              : '0'
+          }
           isLoading={statsLoading}
         />
       </div>
 
-      {/* Scans Over Time */}
-      <ChartContainer
-        title="Scans Over Time"
-        description="Daily scan activity for this QR code"
-        isLoading={statsLoading}
-        error={statsError}
-      >
-        <LineChart
-          data={stats?.scansByDay ?? []}
-          dataKey="count"
-          xAxisKey="date"
-          color="#3b82f6"
-        />
-      </ChartContainer>
+      {/* 1. Scans Per Day Chart (with its own date range selector) */}
+      <ScansPerDayChart
+        data={dayStats?.scansByDay ?? []}
+        isLoading={dayStatsLoading}
+        preset={dayChartPreset}
+        onPresetChange={setDayChartPreset}
+      />
 
-      {/* Breakdown Charts */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      {/* 2. Scans by Country + 3. Scans by City (side by side) */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <ScansPerCountryChart
+          data={stats?.countryBreakdown ?? []}
+          totalScans={stats?.totalScans ?? 0}
+          isLoading={statsLoading}
+        />
+        <ScansPerCityChart
+          data={stats?.cityBreakdown ?? []}
+          isLoading={statsLoading}
+        />
+      </div>
+
+      {/* 4. Scans by OS (full width) */}
+      <ScansPerOSChart
+        data={stats?.osBreakdown ?? []}
+        totalScans={stats?.totalScans ?? 0}
+        isLoading={statsLoading}
+      />
+
+      {/* Remaining breakdown charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
         <ChartContainer
-          title="Devices"
+          title={t('Devices')}
           isLoading={statsLoading}
           error={statsError}
         >
@@ -114,15 +163,7 @@ export default function QRCodeAnalyticsPage() {
         </ChartContainer>
 
         <ChartContainer
-          title="Locations"
-          isLoading={statsLoading}
-          error={statsError}
-        >
-          <PieChart data={stats?.locationBreakdown ?? []} height={250} />
-        </ChartContainer>
-
-        <ChartContainer
-          title="Browsers"
+          title={t('Browsers')}
           isLoading={statsLoading}
           error={statsError}
         >
@@ -132,8 +173,8 @@ export default function QRCodeAnalyticsPage() {
 
       {/* Recent Scans */}
       <ChartContainer
-        title="Recent Scans"
-        description="Latest scan activity"
+        title={t('Recent Scans')}
+        description={t('Latest scan activity')}
         isLoading={scansLoading}
       >
         <ActivityFeed scans={scansData?.data ?? []} isLoading={scansLoading} />

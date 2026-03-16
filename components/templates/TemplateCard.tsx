@@ -3,6 +3,7 @@
 import { QRCodeTemplate } from '@/types/entities/template'
 import Image from 'next/image'
 import { MoreVertical, Eye, Edit, Trash2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import { useState } from 'react'
 
 interface TemplateCardProps {
@@ -22,6 +23,7 @@ export default function TemplateCard({
   onDelete,
   showActions = false,
 }: TemplateCardProps) {
+  const { t } = useTranslation()
   const [showMenu, setShowMenu] = useState(false)
   const isPrivate = template.template_access_level === 'private'
 
@@ -94,7 +96,7 @@ export default function TemplateCard({
                           className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
                           <Eye className="w-4 h-4 mr-2" />
-                          View
+                          {t('View')}
                         </button>
                       )}
                       {onEdit && (
@@ -106,7 +108,7 @@ export default function TemplateCard({
                           className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
                           <Edit className="w-4 h-4 mr-2" />
-                          Edit
+                          {t('Edit')}
                         </button>
                       )}
                       {onDelete && (
@@ -118,7 +120,7 @@ export default function TemplateCard({
                           className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
-                          Delete
+                          {t('Delete')}
                         </button>
                       )}
                     </div>
@@ -140,7 +142,7 @@ export default function TemplateCard({
           onClick={() => onUseTemplate?.(template)}
           className="w-full px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-md hover:bg-primary-700 active:bg-primary-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
         >
-          Use Template
+          {t('Use Template')}
         </button>
       </div>
     </div>

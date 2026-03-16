@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, RefreshCw, AlertCircle } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface TypeConversionModalProps {
   qrCodeId: number | string;
@@ -35,6 +36,7 @@ export function TypeConversionModal({
   onClose,
   onConvert,
 }: TypeConversionModalProps) {
+  const { t } = useTranslation();
   const [selectedType, setSelectedType] = useState('');
   const [isConverting, setIsConverting] = useState(false);
 
@@ -65,9 +67,9 @@ export function TypeConversionModal({
               <RefreshCw className="w-5 h-5 text-purple-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Convert QR Code Type</h2>
+              <h2 className="text-lg font-bold text-gray-900">{t('Convert QR Code Type')}</h2>
               <p className="text-sm text-gray-500">
-                Change from <span className="font-medium capitalize">{formatTypeName(currentType)}</span> to another type
+                {t('Change from')} <span className="font-medium capitalize">{formatTypeName(currentType)}</span> {t('to another type')}
               </p>
             </div>
           </div>
@@ -86,27 +88,27 @@ export function TypeConversionModal({
           <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-yellow-800">Data will change</p>
+              <p className="text-sm font-medium text-yellow-800">{t('Data will change')}</p>
               <p className="text-xs text-yellow-700 mt-1">
-                Converting the QR code type will replace the current data. This action cannot be undone.
+                {t('Converting the QR code type will replace the current data. This action cannot be undone.')}
               </p>
             </div>
           </div>
 
           {/* Current Type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Current Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Current Type')}</label>
             <div className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
               <span className="font-medium text-gray-900 capitalize">{formatTypeName(currentType)}</span>
               <span className="ml-2 text-xs text-gray-500">
-                ({isDynamic ? 'Dynamic' : 'Static'})
+                ({isDynamic ? t('Dynamic') : t('Static')})
               </span>
             </div>
           </div>
 
           {/* Target Type Dropdown */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Convert To</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Convert To')}</label>
             <div className="grid grid-cols-3 gap-2">
               {compatibleTypes.map((type) => (
                 <button
@@ -133,7 +135,7 @@ export function TypeConversionModal({
             disabled={isConverting}
             className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             onClick={handleConvert}
@@ -143,12 +145,12 @@ export function TypeConversionModal({
             {isConverting ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                Converting…
+                {t('Converting...')}
               </>
             ) : (
               <>
                 <RefreshCw className="w-4 h-4" />
-                Convert
+                {t('Convert')}
               </>
             )}
           </button>

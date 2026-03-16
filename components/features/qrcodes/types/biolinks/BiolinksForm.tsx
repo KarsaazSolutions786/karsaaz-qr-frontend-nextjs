@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -38,6 +39,7 @@ export function BiolinksForm({
   onCancel,
   isLoading,
 }: BiolinksFormProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'profile' | 'blocks' | 'design'>('profile');
   const [blocks, setBlocks] = useState<BiolinkBlock[]>(initialData?.blocks || []);
   const [theme, setTheme] = useState<ThemeSettings>(initialData?.theme || defaultTheme);
@@ -77,7 +79,7 @@ export function BiolinksForm({
       {/* Header with Tabs */}
       <div className="border-b bg-white">
         <div className="flex items-center justify-between px-6 py-4">
-          <h2 className="text-2xl font-bold text-gray-900">Biolinks Page Builder</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('Biolinks Page Builder')}</h2>
           <div className="flex gap-2">
             {onCancel && (
               <button
@@ -86,7 +88,7 @@ export function BiolinksForm({
                 className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                 disabled={isLoading}
               >
-                Cancel
+                {t('Cancel')}
               </button>
             )}
             <button
@@ -94,16 +96,16 @@ export function BiolinksForm({
               disabled={isLoading}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
-              {isLoading ? 'Saving...' : 'Save & Generate QR'}
+              {isLoading ? t('Saving...') : t('Save & Generate QR')}
             </button>
           </div>
         </div>
 
         <div className="flex gap-1 px-6">
           {[
-            { id: 'profile', label: '👤 Profile', icon: '' },
-            { id: 'blocks', label: '🧩 Blocks', badge: blocks.length },
-            { id: 'design', label: '🎨 Design', icon: '' },
+            { id: 'profile', label: t('Profile'), icon: '' },
+            { id: 'blocks', label: t('Blocks'), badge: blocks.length },
+            { id: 'design', label: t('Design'), icon: '' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -133,18 +135,18 @@ export function BiolinksForm({
             {activeTab === 'profile' && (
               <div className="bg-white rounded-lg border p-6 space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Information</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('Profile Information')}</h3>
 
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Display Name *
+                        {t('Display Name')} *
                       </label>
                       <input
                         {...register('profile.name')}
                         type="text"
                         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                        placeholder="Your Name"
+                        placeholder={t('Your Name')}
                       />
                       {errors.profile?.name && (
                         <p className="mt-1 text-sm text-red-600">{errors.profile.name.message}</p>
@@ -152,12 +154,12 @@ export function BiolinksForm({
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{t('Bio')}</label>
                       <textarea
                         {...register('profile.bio')}
                         className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         rows={3}
-                        placeholder="A short bio about yourself..."
+                        placeholder={t('A short bio about yourself...')}
                       />
                       <div className="flex items-center mt-2">
                         <input
@@ -167,14 +169,14 @@ export function BiolinksForm({
                           className="mr-2"
                         />
                         <label htmlFor="showBio" className="text-sm text-gray-700">
-                          Show bio on page
+                          {t('Show bio on page')}
                         </label>
                       </div>
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Avatar URL
+                        {t('Avatar URL')}
                       </label>
                       <input
                         {...register('profile.avatar')}
@@ -190,14 +192,14 @@ export function BiolinksForm({
                           className="mr-2"
                         />
                         <label htmlFor="showAvatar" className="text-sm text-gray-700">
-                          Show avatar on page
+                          {t('Show avatar on page')}
                         </label>
                       </div>
                       {profileData.avatar && profileData.showAvatar && (
                         <div className="mt-3">
                           <img
                             src={profileData.avatar}
-                            alt="Avatar preview"
+                            alt={t('Avatar preview')}
                             className="w-20 h-20 rounded-full object-cover border-2"
                           />
                         </div>
@@ -206,7 +208,7 @@ export function BiolinksForm({
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Cover Image URL (optional)
+                        {t('Cover Image URL (optional)')}
                       </label>
                       <input
                         {...register('profile.coverImage')}
@@ -218,7 +220,7 @@ export function BiolinksForm({
                         <div className="mt-3">
                           <img
                             src={profileData.coverImage}
-                            alt="Cover preview"
+                            alt={t('Cover preview')}
                             className="w-full h-32 object-cover rounded-lg"
                           />
                         </div>
@@ -232,7 +234,7 @@ export function BiolinksForm({
                     onClick={() => setActiveTab('blocks')}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Next: Add Blocks →
+                    {t('Next: Add Blocks')} →
                   </button>
                 </div>
               </div>

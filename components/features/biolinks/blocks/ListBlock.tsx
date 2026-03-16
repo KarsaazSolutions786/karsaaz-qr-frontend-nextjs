@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { ListBlockData } from '@/types/entities/biolink'
 
 interface ListBlockProps {
@@ -8,6 +11,7 @@ interface ListBlockProps {
 
 export default function ListBlock({ block, isEditing, onUpdate }: ListBlockProps) {
   const { title, items } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     const addItem = () => {
@@ -28,7 +32,7 @@ export default function ListBlock({ block, isEditing, onUpdate }: ListBlockProps
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Title (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Title (optional)')}</label>
           <input
             type="text"
             value={title || ''}
@@ -37,9 +41,9 @@ export default function ListBlock({ block, isEditing, onUpdate }: ListBlockProps
           />
         </div>
         <div className="flex items-center justify-between">
-          <label className="block text-sm font-medium text-gray-700">Items</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Items')}</label>
           <button type="button" onClick={addItem} className="text-sm text-blue-600 hover:text-blue-700">
-            + Add Item
+            {t('+ Add Item')}
           </button>
         </div>
         {items.map((item, index) => (
@@ -56,7 +60,7 @@ export default function ListBlock({ block, isEditing, onUpdate }: ListBlockProps
               value={item.text}
               onChange={(e) => updateItem(index, 'text', e.target.value)}
               className="block flex-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              placeholder="List item"
+              placeholder={t('List item')}
             />
             <button type="button" onClick={() => removeItem(index)} className="text-red-600 hover:text-red-700">
               ✕

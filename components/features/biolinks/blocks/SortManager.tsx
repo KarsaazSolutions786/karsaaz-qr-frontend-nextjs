@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import type { BlockData } from '@/types/entities/biolink'
 
 interface SortManagerProps {
@@ -18,6 +19,7 @@ interface SortManagerProps {
  * for full drag-and-drop support.
  */
 export default function SortManager({ blocks, onReorder, children }: SortManagerProps) {
+  const { t } = useTranslation();
   const moveUp = (index: number) => {
     if (index <= 0) return
     const updated = [...blocks]
@@ -54,7 +56,7 @@ export default function SortManager({ blocks, onReorder, children }: SortManager
               onClick={() => moveUp(index)}
               disabled={index === 0}
               className="text-xs text-gray-400 hover:text-gray-700 disabled:opacity-30"
-              title="Move up"
+              title={t('Move up')}
             >
               ▲
             </button>
@@ -62,7 +64,7 @@ export default function SortManager({ blocks, onReorder, children }: SortManager
               onClick={() => moveDown(index)}
               disabled={index === blocks.length - 1}
               className="text-xs text-gray-400 hover:text-gray-700 disabled:opacity-30"
-              title="Move down"
+              title={t('Move down')}
             >
               ▼
             </button>

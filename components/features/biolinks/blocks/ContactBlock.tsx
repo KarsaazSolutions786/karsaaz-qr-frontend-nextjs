@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { ContactBlockData } from '@/types/entities/biolink'
 
 interface ContactBlockProps {
@@ -8,12 +11,13 @@ interface ContactBlockProps {
 
 export default function ContactBlock({ block, isEditing, onUpdate }: ContactBlockProps) {
   const { name, phone, email, address } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Name</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Name')}</label>
           <input
             type="text"
             value={name}
@@ -22,7 +26,7 @@ export default function ContactBlock({ block, isEditing, onUpdate }: ContactBloc
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Phone</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Phone')}</label>
           <input
             type="tel"
             value={phone || ''}
@@ -31,7 +35,7 @@ export default function ContactBlock({ block, isEditing, onUpdate }: ContactBloc
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Email')}</label>
           <input
             type="email"
             value={email || ''}
@@ -40,7 +44,7 @@ export default function ContactBlock({ block, isEditing, onUpdate }: ContactBloc
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Address</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Address')}</label>
           <input
             type="text"
             value={address || ''}

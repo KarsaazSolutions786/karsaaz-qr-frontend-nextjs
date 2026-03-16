@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { authAPI } from '@/lib/api/endpoints/auth'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useTranslation } from '@/lib/i18n'
 
 interface EditProfileModalProps {
   open: boolean
@@ -29,6 +30,7 @@ function getIsoFromCallingCode(code: string): string {
 }
 
 export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
+  const { t } = useTranslation()
   const { user, refreshUserData } = useAuth()
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -89,7 +91,7 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
         const validationErrors = err.response.data?.errors || {}
         setErrors(validationErrors)
       } else {
-        setErrors({ general: ['Failed to update profile'] })
+        setErrors({ general: [t('Failed to update profile')] })
       }
     } finally {
       setLoading(false)
@@ -104,7 +106,7 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Edit Profile</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">{t('Edit Profile')}</h2>
 
         {/* Avatar */}
         <div className="flex justify-center mb-6">
@@ -149,12 +151,12 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
 
         {/* Name */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">User Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('User Name')}</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
+            placeholder={t('Enter your name')}
             disabled={loading}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
           />
@@ -163,12 +165,12 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
 
         {/* Email */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Email')}</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
+            placeholder={t('Enter your email')}
             disabled={loading}
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
           />
@@ -177,7 +179,7 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
 
         {/* Phone */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Phone No</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Phone No')}</label>
           <div className="flex gap-2">
             <input
               type="text"
@@ -191,7 +193,7 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
               type="text"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Enter phone number"
+              placeholder={t('Enter phone number')}
               disabled={loading}
               className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
             />
@@ -207,7 +209,7 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
             disabled={loading}
             className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="button"
@@ -215,7 +217,7 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
             disabled={loading}
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? 'Saving...' : 'Confirm'}
+            {loading ? t('Saving...') : t('Confirm')}
           </button>
         </div>
       </div>

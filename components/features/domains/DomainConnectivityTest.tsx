@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import type { DomainConnectivity } from '@/types/entities/domain'
 
 interface DomainConnectivityTestProps {
@@ -28,15 +29,17 @@ export function DomainConnectivityTest({
   onTest,
   isTesting,
 }: DomainConnectivityTestProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Connectivity Status</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t('Connectivity Status')}</h3>
           <p className="mt-0.5 text-sm text-gray-500">
-            Last checked: {connectivity.last_checked_at
+            {t('Last checked:')} {connectivity.last_checked_at
               ? new Date(connectivity.last_checked_at).toLocaleString()
-              : 'Never'}
+              : t('Never')}
           </p>
         </div>
         <button
@@ -44,7 +47,7 @@ export function DomainConnectivityTest({
           disabled={isTesting}
           className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-50"
         >
-          {isTesting ? 'Testing...' : 'Test Connection'}
+          {isTesting ? t('Testing...') : t('Test Connection')}
         </button>
       </div>
 
@@ -54,7 +57,7 @@ export function DomainConnectivityTest({
           className={`inline-block h-3 w-3 rounded-full ${connectivity.is_connected ? 'bg-green-500' : 'bg-red-500'}`}
         />
         <span className="text-sm font-medium text-gray-700">
-          {connectivity.is_connected ? 'Connected' : 'Not Connected'}
+          {connectivity.is_connected ? t('Connected') : t('Not Connected')}
         </span>
       </div>
 
@@ -75,16 +78,16 @@ export function DomainConnectivityTest({
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Type
+                  {t('Type')}
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Name
+                  {t('Name')}
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Value
+                  {t('Value')}
                 </th>
                 <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                  Status
+                  {t('Status')}
                 </th>
               </tr>
             </thead>

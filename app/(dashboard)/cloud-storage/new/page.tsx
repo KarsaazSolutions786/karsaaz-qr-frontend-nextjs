@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import apiClient from '@/lib/api/client'
+import { useTranslation } from '@/lib/i18n'
 
 type CloudProvider = 'aws_s3' | 'google_cloud' | 'azure' | 'digitalocean'
 
@@ -24,6 +25,7 @@ const PROVIDERS: { value: CloudProvider; label: string }[] = [
 ]
 
 export default function NewCloudStoragePage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -47,7 +49,7 @@ export default function NewCloudStoragePage() {
       await apiClient.post('/cloud-storage/connections', form)
       router.push('/cloud-storage')
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Failed to create cloud storage configuration.')
+      setError(err?.response?.data?.message || t('Failed to create cloud storage configuration.'))
     } finally {
       setSaving(false)
     }
@@ -57,10 +59,10 @@ export default function NewCloudStoragePage() {
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">New Cloud Storage</h1>
-          <p className="mt-2 text-sm text-gray-600">Configure a new cloud storage provider</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('New Cloud Storage')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Configure a new cloud storage provider')}</p>
         </div>
-        <Link href="/cloud-storage" className="text-sm text-blue-600 hover:text-blue-900">← Back</Link>
+        <Link href="/cloud-storage" className="text-sm text-blue-600 hover:text-blue-900">{t('← Back')}</Link>
       </div>
 
       {error && (
@@ -69,7 +71,7 @@ export default function NewCloudStoragePage() {
 
       <form onSubmit={handleSubmit} className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Name</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Name')}</label>
           <input
             type="text"
             required
@@ -81,7 +83,7 @@ export default function NewCloudStoragePage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Provider <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-gray-700">{t('Provider')} <span className="text-red-500">*</span></label>
           <select
             required
             value={form.provider}
@@ -95,7 +97,7 @@ export default function NewCloudStoragePage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Access Key <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-gray-700">{t('Access Key')} <span className="text-red-500">*</span></label>
           <input
             type="text"
             required
@@ -107,7 +109,7 @@ export default function NewCloudStoragePage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Secret Key <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-gray-700">{t('Secret Key')} <span className="text-red-500">*</span></label>
           <input
             type="password"
             required
@@ -119,7 +121,7 @@ export default function NewCloudStoragePage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Bucket <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-gray-700">{t('Bucket')} <span className="text-red-500">*</span></label>
           <input
             type="text"
             required
@@ -131,7 +133,7 @@ export default function NewCloudStoragePage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Region <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-gray-700">{t('Region')} <span className="text-red-500">*</span></label>
           <input
             type="text"
             required
@@ -148,14 +150,14 @@ export default function NewCloudStoragePage() {
             onClick={() => router.back()}
             className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="submit"
             disabled={saving}
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
           >
-            {saving ? 'Saving…' : 'Save Configuration'}
+            {saving ? t('Saving...') : t('Save Configuration')}
           </button>
         </div>
       </form>

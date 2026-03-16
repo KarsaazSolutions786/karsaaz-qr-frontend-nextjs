@@ -321,18 +321,18 @@ describe('ERROR_MESSAGES constant', () => {
 describe('FIELD_SPECIFIC_MESSAGES constant', () => {
   it('should have email field messages', () => {
     expect(FIELD_SPECIFIC_MESSAGES.email).toBeDefined()
-    expect(FIELD_SPECIFIC_MESSAGES.email.required).toBeDefined()
-    expect(FIELD_SPECIFIC_MESSAGES.email.email).toBeDefined()
+    expect(FIELD_SPECIFIC_MESSAGES.email!.required).toBeDefined()
+    expect(FIELD_SPECIFIC_MESSAGES.email!.email).toBeDefined()
   })
 
   it('should have password field messages', () => {
     expect(FIELD_SPECIFIC_MESSAGES.password).toBeDefined()
-    expect(FIELD_SPECIFIC_MESSAGES.password.required).toBeDefined()
-    expect(FIELD_SPECIFIC_MESSAGES.password.min).toBeDefined()
+    expect(FIELD_SPECIFIC_MESSAGES.password!.required).toBeDefined()
+    expect(FIELD_SPECIFIC_MESSAGES.password!.min).toBeDefined()
   })
 
   it('should have URL field messages', () => {
     expect(FIELD_SPECIFIC_MESSAGES.url).toBeDefined()
-    expect(FIELD_SPECIFIC_MESSAGES.url.url).toBeDefined()
+    expect(FIELD_SPECIFIC_MESSAGES.url!.url).toBeDefined()
   })
 })

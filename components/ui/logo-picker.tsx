@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 interface LogoPickerProps {
   value?: string
@@ -11,6 +12,7 @@ interface LogoPickerProps {
 }
 
 export function LogoPicker({ value, onChange, accept = 'image/*', className }: LogoPickerProps) {
+  const { t } = useTranslation()
   const [tab, setTab] = React.useState<'upload' | 'url'>('upload')
   const [urlInput, setUrlInput] = React.useState('')
   const fileRef = React.useRef<HTMLInputElement>(null)
@@ -33,17 +35,17 @@ export function LogoPicker({ value, onChange, accept = 'image/*', className }: L
     <div className={cn('space-y-3', className)}>
       {/* Tabs */}
       <div className="inline-flex h-9 items-center rounded-md bg-gray-100 p-1 text-sm">
-        {(['upload', 'url'] as const).map((t) => (
+        {(['upload', 'url'] as const).map((tabKey) => (
           <button
-            key={t}
+            key={tabKey}
             type="button"
-            onClick={() => setTab(t)}
+            onClick={() => setTab(tabKey)}
             className={cn(
               'rounded-sm px-3 py-1 text-sm font-medium transition-colors',
-              tab === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+              tab === tabKey ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
             )}
           >
-            {t === 'upload' ? 'Upload' : 'URL'}
+            {tabKey === 'upload' ? t('Upload') : t('URL')}
           </button>
         ))}
       </div>
@@ -63,7 +65,7 @@ export function LogoPicker({ value, onChange, accept = 'image/*', className }: L
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5-5m0 0l5 5m-5-5v12" />
             </svg>
-            Choose file
+            {t('Choose file')}
           </button>
         </div>
       )}
@@ -86,7 +88,7 @@ export function LogoPicker({ value, onChange, accept = 'image/*', className }: L
             onClick={handleUrlApply}
             className="h-10 rounded-md bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            Apply
+            {t('Apply')}
           </button>
         </div>
       )}

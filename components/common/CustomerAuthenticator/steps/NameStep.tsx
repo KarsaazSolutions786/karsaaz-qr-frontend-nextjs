@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, FormEvent } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -12,6 +13,7 @@ interface NameStepProps {
 }
 
 export function NameStep({ email, onSubmit, onBack, loading }: NameStepProps) {
+  const { t } = useTranslation()
   const [name, setName] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)
 
@@ -19,11 +21,11 @@ export function NameStep({ email, onSubmit, onBack, loading }: NameStepProps) {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) {
-      setValidationError('Name is required')
+      setValidationError(t('Name is required'))
       return
     }
     if (trimmed.length < 2) {
-      setValidationError('Name must be at least 2 characters')
+      setValidationError(t('Name must be at least 2 characters'))
       return
     }
     setValidationError(null)
@@ -34,17 +36,17 @@ export function NameStep({ email, onSubmit, onBack, loading }: NameStepProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="text-center">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          What&apos;s your name?
+          {t("What's your name?")}
         </h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          Continuing as <span className="font-medium">{email}</span>
+          {t('Continuing as')} <span className="font-medium">{email}</span>
         </p>
       </div>
 
       <div className="space-y-2">
         <Input
           type="text"
-          placeholder="Your name"
+          placeholder={t('Your name')}
           value={name}
           onChange={e => {
             setName(e.target.value)
@@ -64,10 +66,10 @@ export function NameStep({ email, onSubmit, onBack, loading }: NameStepProps) {
           className="flex-1"
           disabled={loading}
         >
-          Back
+          {t('Back')}
         </Button>
         <Button type="submit" className="flex-1" disabled={loading || !name.trim()}>
-          {loading ? 'Sending code...' : 'Continue'}
+          {loading ? t('Sending code...') : t('Continue')}
         </Button>
       </div>
     </form>

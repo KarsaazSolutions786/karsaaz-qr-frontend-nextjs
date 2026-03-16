@@ -3,6 +3,7 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/lib/i18n';
 
 interface DepthSettings {
   enabled: boolean;
@@ -24,6 +25,7 @@ const defaultDepth: DepthSettings = {
 };
 
 export default function DepthEffects({ depth, onChange }: DepthEffectsProps) {
+  const { t } = useTranslation();
   const d = depth ?? defaultDepth;
 
   const update = (partial: Partial<DepthSettings>) => {
@@ -40,13 +42,13 @@ export default function DepthEffects({ depth, onChange }: DepthEffectsProps) {
           onChange={(e) => update({ enabled: e.target.checked })}
           className="h-4 w-4"
         />
-        <Label htmlFor="depth-enabled" className="font-semibold">3D Perspective</Label>
+        <Label htmlFor="depth-enabled" className="font-semibold">{t('3D Perspective')}</Label>
       </div>
 
       {d.enabled && (
         <div className="space-y-3 pl-6">
           <div className="space-y-1">
-            <Label className="text-xs">Perspective: {d.perspective}px</Label>
+            <Label className="text-xs">{t('Perspective:')} {d.perspective}px</Label>
             <Input
               type="range"
               min="200"
@@ -59,7 +61,7 @@ export default function DepthEffects({ depth, onChange }: DepthEffectsProps) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">Rotate X: {d.rotateX}°</Label>
+              <Label className="text-xs">{t('Rotate X:')} {d.rotateX}</Label>
               <Input
                 type="range"
                 min="-45"
@@ -69,7 +71,7 @@ export default function DepthEffects({ depth, onChange }: DepthEffectsProps) {
               />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Rotate Y: {d.rotateY}°</Label>
+              <Label className="text-xs">{t('Rotate Y:')} {d.rotateY}</Label>
               <Input
                 type="range"
                 min="-45"

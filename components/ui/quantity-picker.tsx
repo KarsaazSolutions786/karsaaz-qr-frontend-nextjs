@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 import { Minus, Plus } from 'lucide-react'
 
 interface QuantityPickerProps {
@@ -20,6 +21,8 @@ export function QuantityPicker({
   step = 1,
   className,
 }: QuantityPickerProps) {
+  const { t } = useTranslation()
+
   const decrement = () => {
     const next = value - step
     if (next >= min) onChange(next)
@@ -46,7 +49,7 @@ export function QuantityPicker({
         onClick={decrement}
         disabled={value <= min}
         className="flex h-9 w-9 items-center justify-center rounded-l-lg text-gray-600 transition hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-        aria-label="Decrease"
+        aria-label={t("Decrease")}
       >
         <Minus className="h-4 w-4" />
       </button>
@@ -57,7 +60,7 @@ export function QuantityPicker({
         value={value}
         onChange={handleInput}
         className="h-9 w-14 border-x border-gray-300 bg-white text-center text-sm font-medium text-gray-900 focus:outline-none"
-        aria-label="Quantity"
+        aria-label={t("Quantity")}
       />
 
       <button
@@ -65,7 +68,7 @@ export function QuantityPicker({
         onClick={increment}
         disabled={value >= max}
         className="flex h-9 w-9 items-center justify-center rounded-r-lg text-gray-600 transition hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-        aria-label="Increase"
+        aria-label={t("Increase")}
       >
         <Plus className="h-4 w-4" />
       </button>

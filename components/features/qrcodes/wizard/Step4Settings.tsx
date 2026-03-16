@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { FolderTree } from '@/components/qr/FolderTree'
-import { useFolders } from '@/hooks/useFolders'
+import { useFolders } from '@/lib/hooks/useFolders'
 import {
   Lock,
   Calendar,
@@ -13,6 +13,7 @@ import {
   Tag,
   FileText,
 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface Step4SettingsProps {
   settings: any
@@ -25,6 +26,7 @@ export default function Step4Settings({
   onChange,
   folders = [],
 }: Step4SettingsProps) {
+  const { t } = useTranslation()
   const [showFolderPicker, setShowFolderPicker] = useState(false)
   const folderManager = useFolders(folders)
 
@@ -60,10 +62,10 @@ export default function Step4Settings({
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          QR Code Settings
+          {t('QR Code Settings')}
         </h2>
         <p className="text-gray-600">
-          Configure name, organization, and security options
+          {t('Configure name, organization, and security options')}
         </p>
       </div>
 
@@ -75,18 +77,18 @@ export default function Step4Settings({
             className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2"
           >
             <FileText className="w-4 h-4" />
-            QR Code Name *
+            {t('QR Code Name')} *
           </label>
           <Input
             id="name"
             type="text"
             value={settings.name || ''}
             onChange={(e) => handleChange('name', e.target.value)}
-            placeholder="e.g., Product Landing Page QR"
+            placeholder={t('e.g., Product Landing Page QR')}
             required
           />
           <p className="mt-1 text-xs text-gray-500">
-            Give your QR code a descriptive name for easy identification
+            {t('Give your QR code a descriptive name for easy identification')}
           </p>
         </div>
 
@@ -94,13 +96,13 @@ export default function Step4Settings({
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
             <FolderOpen className="w-4 h-4" />
-            Folder (Optional)
+            {t('Folder')} ({t('Optional')})
           </label>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Input
                 type="text"
-                value={selectedFolder?.name || 'No folder selected'}
+                value={selectedFolder?.name || t('No folder selected')}
                 readOnly
                 className="flex-1 bg-gray-50"
               />
@@ -109,7 +111,7 @@ export default function Step4Settings({
                 variant="outline"
                 onClick={() => setShowFolderPicker(!showFolderPicker)}
               >
-                {showFolderPicker ? 'Close' : 'Select'}
+                {showFolderPicker ? t('Close') : t('Select')}
               </Button>
             </div>
 
@@ -134,13 +136,13 @@ export default function Step4Settings({
                   }}
                   className="w-full mt-2"
                 >
-                  Clear Selection
+                  {t('Clear Selection')}
                 </Button>
               </div>
             )}
           </div>
           <p className="mt-1 text-xs text-gray-500">
-            Organize your QR codes into folders
+            {t('Organize your QR codes into folders')}
           </p>
         </div>
 
@@ -148,7 +150,7 @@ export default function Step4Settings({
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
             <Lock className="w-4 h-4" />
-            PIN Protection
+            {t('PIN Protection')}
           </label>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -160,7 +162,7 @@ export default function Step4Settings({
                 className="rounded border-gray-300"
               />
               <label htmlFor="pinProtection" className="text-sm text-gray-700">
-                Require PIN to access this QR code
+                {t('Require PIN to access this QR code')}
               </label>
             </div>
 
@@ -169,14 +171,14 @@ export default function Step4Settings({
                 type="text"
                 value={settings.pin || ''}
                 onChange={(e) => handleChange('pin', e.target.value)}
-                placeholder="Enter 4-6 digit PIN"
+                placeholder={t('Enter 4-6 digit PIN')}
                 maxLength={6}
                 pattern="[0-9]*"
               />
             )}
           </div>
           <p className="mt-1 text-xs text-gray-500">
-            Add an extra layer of security by requiring a PIN
+            {t('Add an extra layer of security by requiring a PIN')}
           </p>
         </div>
 
@@ -184,7 +186,7 @@ export default function Step4Settings({
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
             <Calendar className="w-4 h-4" />
-            Expiration Date (Optional)
+            {t('Expiration Date')} ({t('Optional')})
           </label>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -198,7 +200,7 @@ export default function Step4Settings({
                 className="rounded border-gray-300"
               />
               <label htmlFor="hasExpiration" className="text-sm text-gray-700">
-                Set an expiration date for this QR code
+                {t('Set an expiration date for this QR code')}
               </label>
             </div>
 
@@ -212,7 +214,7 @@ export default function Step4Settings({
             )}
           </div>
           <p className="mt-1 text-xs text-gray-500">
-            The QR code will become inactive after this date
+            {t('The QR code will become inactive after this date')}
           </p>
         </div>
 
@@ -220,11 +222,11 @@ export default function Step4Settings({
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
             <Tag className="w-4 h-4" />
-            Tags (Optional)
+            {t('Tags')} ({t('Optional')})
           </label>
           <Input
             type="text"
-            placeholder="Type a tag and press Enter"
+            placeholder={t('Type a tag and press Enter')}
             onKeyDown={handleTagInput}
           />
           {settings.tags && settings.tags.length > 0 && (
@@ -247,7 +249,7 @@ export default function Step4Settings({
             </div>
           )}
           <p className="mt-1 text-xs text-gray-500">
-            Add tags to help categorize and search for this QR code
+            {t('Add tags to help categorize and search for this QR code')}
           </p>
         </div>
 
@@ -255,12 +257,12 @@ export default function Step4Settings({
         <div>
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
             <Download className="w-4 h-4" />
-            Download Settings
+            {t('Download Settings')}
           </label>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs text-gray-600 mb-1">
-                Default Size
+                {t('Default Size')}
               </label>
               <select
                 value={settings.defaultSize || '500'}
@@ -275,7 +277,7 @@ export default function Step4Settings({
             </div>
             <div>
               <label className="block text-xs text-gray-600 mb-1">
-                Default Format
+                {t('Default Format')}
               </label>
               <select
                 value={settings.defaultFormat || 'png'}
@@ -290,7 +292,7 @@ export default function Step4Settings({
             </div>
           </div>
           <p className="mt-1 text-xs text-gray-500">
-            Set default download preferences for this QR code
+            {t('Set default download preferences for this QR code')}
           </p>
         </div>
       </div>

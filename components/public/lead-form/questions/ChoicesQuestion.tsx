@@ -1,6 +1,7 @@
 'use client';
 
 import { Check } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface ChoicesQuestionProps {
   value: string | string[];
@@ -17,6 +18,7 @@ export default function ChoicesQuestion({
   label,
   multiple = false,
 }: ChoicesQuestionProps) {
+  const { t } = useTranslation();
   const selectedValues = Array.isArray(value) ? value : value ? [value] : [];
 
   const handleSelect = (option: string) => {
@@ -36,7 +38,7 @@ export default function ChoicesQuestion({
       <label className="block text-sm font-medium text-gray-700">
         {label}
         {multiple && (
-          <span className="ml-2 text-xs text-gray-400">(select multiple)</span>
+          <span className="ml-2 text-xs text-gray-400">{t('(select multiple)')}</span>
         )}
       </label>
       <div className="space-y-2">

@@ -1,5 +1,6 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { calendarDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 
@@ -21,6 +22,7 @@ interface CalendarDataFormProps {
 }
 
 export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -29,23 +31,23 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
     <form className="space-y-5">
       <div>
         <label htmlFor="event_name" className={LABEL}>
-          Event Name *
+          {t('Event Name')} *
         </label>
         <input
           {...register('event_name')}
           id="event_name"
           type="text"
-          placeholder="Annual Conference 2025"
+          placeholder={t('Annual Conference 2025')}
           className={INPUT}
         />
         {errors.event_name && <p className={ERROR}>{errors.event_name.message}</p>}
       </div>
 
-      <h4 className={SECTION}>Organizer</h4>
+      <h4 className={SECTION}>{t('Organizer')}</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="organizer_name" className={LABEL}>
-            Organizer Name
+            {t('Organizer Name')}
           </label>
           <input
             {...register('organizer_name')}
@@ -56,7 +58,7 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
         </div>
         <div>
           <label htmlFor="organizer_email" className={LABEL}>
-            Organizer Email
+            {t('Organizer Email')}
           </label>
           <input
             {...register('organizer_email')}
@@ -68,23 +70,23 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
         </div>
       </div>
 
-      <h4 className={SECTION}>Location</h4>
+      <h4 className={SECTION}>{t('Location')}</h4>
       <div>
         <label htmlFor="location" className={LABEL}>
-          Venue Address
+          {t('Venue Address')}
         </label>
         <input
           {...register('location')}
           id="location"
           type="text"
-          placeholder="123 Main St, City"
+          placeholder={t('123 Main St, City')}
           className={INPUT}
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="latitude" className={LABEL}>
-            Latitude
+            {t('Latitude')}
           </label>
           <input
             {...register('latitude', { valueAsNumber: true })}
@@ -96,7 +98,7 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
         </div>
         <div>
           <label htmlFor="longitude" className={LABEL}>
-            Longitude
+            {t('Longitude')}
           </label>
           <input
             {...register('longitude', { valueAsNumber: true })}
@@ -109,7 +111,7 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
       </div>
       <div>
         <label htmlFor="website" className={LABEL}>
-          Event Website
+          {t('Event Website')}
         </label>
         <input
           {...register('website')}
@@ -121,11 +123,11 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
         {errors.website && <p className={ERROR}>{errors.website.message}</p>}
       </div>
 
-      <h4 className={SECTION}>Date & Time</h4>
+      <h4 className={SECTION}>{t('Date & Time')}</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="starts_at" className={LABEL}>
-            Start Date & Time *
+            {t('Start Date & Time')} *
           </label>
           <input
             {...register('starts_at')}
@@ -137,7 +139,7 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
         </div>
         <div>
           <label htmlFor="ends_at" className={LABEL}>
-            End Date & Time *
+            {t('End Date & Time')} *
           </label>
           <input {...register('ends_at')} id="ends_at" type="datetime-local" className={INPUT} />
           {errors.ends_at && <p className={ERROR}>{errors.ends_at.message}</p>}
@@ -146,7 +148,7 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="timezone" className={LABEL}>
-            Timezone
+            {t('Timezone')}
           </label>
           <input
             {...register('timezone')}
@@ -158,27 +160,27 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
         </div>
         <div>
           <label htmlFor="frequency" className={LABEL}>
-            Recurrence
+            {t('Recurrence')}
           </label>
           <select {...register('frequency')} id="frequency" className={SELECT}>
-            <option value="none">None</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-            <option value="yearly">Yearly</option>
+            <option value="none">{t('None')}</option>
+            <option value="daily">{t('Daily')}</option>
+            <option value="weekly">{t('Weekly')}</option>
+            <option value="monthly">{t('Monthly')}</option>
+            <option value="yearly">{t('Yearly')}</option>
           </select>
         </div>
       </div>
 
       <div>
         <label htmlFor="description" className={LABEL}>
-          Notes <span className="text-gray-400 font-normal">(optional)</span>
+          {t('Notes')} <span className="text-gray-400 font-normal">({t('optional')})</span>
         </label>
         <textarea
           {...register('description')}
           id="description"
           rows={3}
-          placeholder="Additional details about the event..."
+          placeholder={t('Additional details about the event...')}
           className={TEXTAREA}
         />
       </div>

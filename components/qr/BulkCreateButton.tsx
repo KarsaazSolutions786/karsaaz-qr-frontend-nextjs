@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { FolderPlus, Sparkles } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface BulkCreateButtonProps {
   onClick: () => void;
@@ -15,6 +16,7 @@ export interface BulkCreateButtonProps {
 }
 
 export function BulkCreateButton({ onClick, disabled = false }: BulkCreateButtonProps) {
+  const { t } = useTranslation();
   return (
     <button
       onClick={onClick}
@@ -41,7 +43,7 @@ export function BulkCreateButton({ onClick, disabled = false }: BulkCreateButton
         )}
       </div>
       
-      <span className="text-sm sm:text-base">Bulk Create</span>
+      <span className="text-sm sm:text-base">{t('Bulk Create')}</span>
       
       {/* Shine Effect */}
       {!disabled && (

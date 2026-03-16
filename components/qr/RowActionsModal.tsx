@@ -20,6 +20,7 @@ import {
   QrCode,
 } from 'lucide-react';
 import { QRCode } from '@/types/entities/qrcode';
+import { useTranslation } from '@/lib/i18n';
 
 export type QRAction =
   | 'edit'
@@ -44,6 +45,7 @@ export function RowActionsModal({
   qrcode,
   onAction,
 }: RowActionsModalProps) {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   const handleAction = (action: QRAction) => {
@@ -54,65 +56,65 @@ export function RowActionsModal({
   const actions = [
     {
       action: 'edit' as QRAction,
-      label: 'Edit',
+      label: t('Edit'),
       icon: Edit,
-      description: 'Modify QR code settings',
+      description: t('Modify QR code settings'),
       color: 'text-blue-600',
       bgColor: 'bg-blue-50 hover:bg-blue-100',
     },
     {
       action: 'preview' as QRAction,
-      label: 'Preview',
+      label: t('Preview'),
       icon: Eye,
-      description: 'View full details',
+      description: t('View full details'),
       color: 'text-purple-600',
       bgColor: 'bg-purple-50 hover:bg-purple-100',
     },
     {
       action: 'download' as QRAction,
-      label: 'Download',
+      label: t('Download'),
       icon: Download,
-      description: 'Export QR code',
+      description: t('Export QR code'),
       color: 'text-green-600',
       bgColor: 'bg-green-50 hover:bg-green-100',
     },
     {
       action: 'share' as QRAction,
-      label: 'Share',
+      label: t('Share'),
       icon: Share2,
-      description: 'Share on social media',
+      description: t('Share on social media'),
       color: 'text-indigo-600',
       bgColor: 'bg-indigo-50 hover:bg-indigo-100',
     },
     {
       action: 'duplicate' as QRAction,
-      label: 'Duplicate',
+      label: t('Duplicate'),
       icon: Copy,
-      description: 'Create a copy',
+      description: t('Create a copy'),
       color: 'text-teal-600',
       bgColor: 'bg-teal-50 hover:bg-teal-100',
     },
     {
       action: 'analytics' as QRAction,
-      label: 'Analytics',
+      label: t('Analytics'),
       icon: BarChart3,
-      description: 'View scan statistics',
+      description: t('View scan statistics'),
       color: 'text-orange-600',
       bgColor: 'bg-orange-50 hover:bg-orange-100',
     },
     {
       action: 'archive' as QRAction,
-      label: qrcode.status === 'archived' ? 'Unarchive' : 'Archive',
+      label: qrcode.status === 'archived' ? t('Unarchive') : t('Archive'),
       icon: Archive,
-      description: qrcode.status === 'archived' ? 'Restore from archive' : 'Move to archive',
+      description: qrcode.status === 'archived' ? t('Restore from archive') : t('Move to archive'),
       color: 'text-gray-600',
       bgColor: 'bg-gray-50 hover:bg-gray-100',
     },
     {
       action: 'delete' as QRAction,
-      label: 'Delete',
+      label: t('Delete'),
       icon: Trash2,
-      description: 'Permanently remove',
+      description: t('Permanently remove'),
       color: 'text-red-600',
       bgColor: 'bg-red-50 hover:bg-red-100',
     },
@@ -123,7 +125,7 @@ export function RowActionsModal({
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t('Quick Actions')}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -148,7 +150,7 @@ export function RowActionsModal({
               </p>
               <div className="flex items-center gap-3 mt-1">
                 <span className="text-xs text-gray-500">
-                  {qrcode.scans} scans
+                  {qrcode.scans} {t('scans')}
                 </span>
                 <span
                   className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -195,7 +197,7 @@ export function RowActionsModal({
             onClick={onClose}
             className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
           >
-            Cancel
+            {t('Cancel')}
           </button>
         </div>
       </div>

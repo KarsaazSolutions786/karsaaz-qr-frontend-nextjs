@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react';
 import { Mail, Send, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { NewsletterBlock as NewsletterBlockType } from '@/types/entities/biolinks';
+import { useTranslation } from '@/lib/i18n';
 
 interface NewsletterBlockProps {
   block: NewsletterBlockType;
@@ -17,6 +20,7 @@ export const NewsletterBlock: React.FC<NewsletterBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   return (
     <div
       className={`group relative bg-white border rounded-lg p-4 transition-all ${
@@ -33,7 +37,7 @@ export const NewsletterBlock: React.FC<NewsletterBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -44,14 +48,14 @@ export const NewsletterBlock: React.FC<NewsletterBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -64,7 +68,7 @@ export const NewsletterBlock: React.FC<NewsletterBlockProps> = ({
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-medium text-gray-900 mb-1">
-            {block.title || 'Newsletter Signup'}
+            {block.title || t('Newsletter Signup')}
           </div>
           {block.description && (
             <div className="text-sm text-gray-600 mb-2 line-clamp-2">
@@ -74,17 +78,17 @@ export const NewsletterBlock: React.FC<NewsletterBlockProps> = ({
           <div className="flex items-center gap-2 text-xs text-gray-500">
             <div className="flex items-center gap-1">
               <Mail className="w-3 h-3" />
-              <span>{block.placeholder || 'Enter your email'}</span>
+              <span>{block.placeholder || t('Enter your email')}</span>
             </div>
             <span>•</span>
             <div className="flex items-center gap-1">
               <Send className="w-3 h-3" />
-              <span>{block.buttonText || 'Subscribe'}</span>
+              <span>{block.buttonText || t('Subscribe')}</span>
             </div>
           </div>
           {block.apiEndpoint && (
             <div className="text-xs text-blue-600 mt-1 truncate">
-              API: {block.apiEndpoint}
+              {t('API:')} {block.apiEndpoint}
             </div>
           )}
         </div>

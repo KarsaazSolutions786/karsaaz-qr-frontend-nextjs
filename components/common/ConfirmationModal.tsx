@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 interface ConfirmationModalProps {
   open: boolean;
@@ -18,14 +19,17 @@ export function ConfirmationModal({
   open,
   title,
   message,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   variant = 'danger',
   loading: externalLoading,
   onConfirm,
   onCancel,
 }: ConfirmationModalProps) {
+  const { t } = useTranslation();
   const [internalLoading, setInternalLoading] = useState(false);
+  const resolvedConfirmLabel = confirmLabel ?? t('Confirm');
+  const resolvedCancelLabel = cancelLabel ?? t('Cancel');
   const loading = externalLoading ?? internalLoading;
 
   const handleConfirm = async () => {
@@ -72,7 +76,7 @@ export function ConfirmationModal({
             disabled={loading}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
           >
-            {cancelLabel}
+            {resolvedCancelLabel}
           </button>
           <button
             type="button"
@@ -80,7 +84,7 @@ export function ConfirmationModal({
             disabled={loading}
             className={`rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50 ${variantStyles.btn}`}
           >
-            {loading ? 'Processing...' : confirmLabel}
+            {loading ? t('Processing...') : resolvedConfirmLabel}
           </button>
         </div>
       </div>

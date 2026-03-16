@@ -1,10 +1,13 @@
 export type DomainStatus = 'pending' | 'verified' | 'failed'
 
+export type DomainAvailability = 'public' | 'private'
+
 export interface Domain {
   id: string // UUID
   userId: string
   domain: string // e.g., "qr.example.com"
   status: DomainStatus
+  availability?: DomainAvailability // 'public' = all users, 'private' = owner only
   isDefault: boolean // Whether this is the default domain for new QR codes
   dnsRecords: DNSRecord[] // DNS records to verify
   verifiedAt?: string // ISO 8601 (when verified)

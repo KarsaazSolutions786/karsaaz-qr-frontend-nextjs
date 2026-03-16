@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
 import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
+import { useTranslation } from '@/lib/i18n'
 
 const CONFIG_KEYS = [
   'mail.mailers.smtp.host',
@@ -18,6 +19,7 @@ const CONFIG_KEYS = [
 ]
 
 export default function SmtpSettingsPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
   const { mutateAsync: save, isPending: isSaving, error } = useSaveSystemConfigs(CONFIG_KEYS)
   const [formData, setFormData] = useState<Record<string, string>>({})
@@ -61,29 +63,29 @@ export default function SmtpSettingsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">SMTP / Mail Settings</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('SMTP / Mail Settings')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Configure your outgoing email server and sender information.
+          {t('Configure your outgoing email server and sender information.')}
         </p>
       </div>
 
       {error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
       <form onSubmit={handleSave} className="space-y-8">
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">SMTP Server</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('SMTP Server')}</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">SMTP Host</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('SMTP Host')}</label>
               <input
                 type="text"
                 value={formData['mail.mailers.smtp.host'] || ''}
@@ -93,7 +95,7 @@ export default function SmtpSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Port</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('Port')}</label>
               <input
                 type="text"
                 value={formData['mail.mailers.smtp.port'] || ''}
@@ -103,7 +105,7 @@ export default function SmtpSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Username</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('Username')}</label>
               <input
                 type="text"
                 value={formData['mail.mailers.smtp.username'] || ''}
@@ -113,7 +115,7 @@ export default function SmtpSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Password</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('Password')}</label>
               <input
                 type="password"
                 value={formData['mail.mailers.smtp.password'] || ''}
@@ -123,19 +125,19 @@ export default function SmtpSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Encryption</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('Encryption')}</label>
               <select
                 value={formData['mail.mailers.smtp.encryption'] || 'none'}
                 onChange={(e) => update('mail.mailers.smtp.encryption', e.target.value)}
                 className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
-                <option value="none">None</option>
-                <option value="tls">TLS</option>
-                <option value="ssl">SSL</option>
+                <option value="none">{t('None')}</option>
+                <option value="tls">{t('TLS')}</option>
+                <option value="ssl">{t('SSL')}</option>
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Auth Type</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('Auth Type')}</label>
               <input
                 type="text"
                 value={formData['mail.mailers.smtp.auth_type'] || 'login'}
@@ -145,7 +147,7 @@ export default function SmtpSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Timeout (seconds)</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('Timeout (seconds)')}</label>
               <input
                 type="number"
                 value={formData['mail.mailers.smtp.timeout'] || '30'}
@@ -158,10 +160,10 @@ export default function SmtpSettingsPage() {
         </section>
 
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Sender Information</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Sender Information')}</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">From Address</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('From Address')}</label>
               <input
                 type="email"
                 value={formData['mail.from.address'] || ''}
@@ -171,7 +173,7 @@ export default function SmtpSettingsPage() {
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">From Name</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('From Name')}</label>
               <input
                 type="text"
                 value={formData['mail.from.name'] || ''}
@@ -189,20 +191,20 @@ export default function SmtpSettingsPage() {
             disabled={isSaving}
             className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
-            {isSaving ? 'Saving…' : 'Save Settings'}
+            {isSaving ? t('Saving...') : t('Save Settings')}
           </button>
         </div>
       </form>
 
       {/* SMTP Test Section */}
       <section className="mt-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Test SMTP Connection</h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Test SMTP Connection')}</h2>
         <p className="mb-4 text-sm text-gray-600">
-          Send a test email to verify your SMTP settings are working correctly.
+          {t('Send a test email to verify your SMTP settings are working correctly.')}
         </p>
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Recipient Email</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">{t('Recipient Email')}</label>
             <input
               type="email"
               value={testEmail}
@@ -212,7 +214,7 @@ export default function SmtpSettingsPage() {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Subject</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">{t('Subject')}</label>
             <input
               type="text"
               value={testSubject}
@@ -221,7 +223,7 @@ export default function SmtpSettingsPage() {
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Message</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">{t('Message')}</label>
             <textarea
               value={testMessage}
               onChange={(e) => setTestMessage(e.target.value)}
@@ -243,18 +245,18 @@ export default function SmtpSettingsPage() {
                 })
                 setTestResult(result)
               } catch {
-                setTestResult({ success: false, debug: 'Failed to send test email. Check your settings and try again.' })
+                setTestResult({ success: false, debug: t('Failed to send test email. Check your settings and try again.') })
               } finally {
                 setIsTesting(false)
               }
             }}
             className="rounded-md bg-green-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
           >
-            {isTesting ? 'Sending…' : 'Send Test Email'}
+            {isTesting ? t('Sending...') : t('Send Test Email')}
           </button>
           {testResult && (
             <div className={`mt-4 rounded-md p-4 text-sm ${testResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-              <p className="font-medium">{testResult.success ? '✅ Test email sent successfully!' : '❌ Failed to send test email'}</p>
+              <p className="font-medium">{testResult.success ? t('Test email sent successfully!') : t('Failed to send test email')}</p>
               {testResult.debug && (
                 <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded bg-gray-100 p-3 text-xs text-gray-700">
                   {testResult.debug}

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { Loader2, CheckCircle, XCircle } from 'lucide-react'
 import apiClient from '@/lib/api/client'
 
@@ -18,6 +19,7 @@ interface DatabaseStepProps {
 }
 
 export function DatabaseStep({ config, onChange }: DatabaseStepProps) {
+  const { t } = useTranslation();
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle')
   const [migrateStatus, setMigrateStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
@@ -32,10 +34,10 @@ export function DatabaseStep({ config, onChange }: DatabaseStepProps) {
     try {
       await apiClient.post('/install/test-database', config)
       setTestStatus('success')
-      setMessage('Connection successful!')
+      setMessage(t('Connection successful!'))
     } catch {
       setTestStatus('error')
-      setMessage('Connection failed. Please check your credentials.')
+      setMessage(t('Connection failed. Please check your credentials.'))
     }
   }
 
@@ -45,19 +47,19 @@ export function DatabaseStep({ config, onChange }: DatabaseStepProps) {
     try {
       await apiClient.post('/install/run-migrations', config)
       setMigrateStatus('success')
-      setMessage('Migrations completed successfully!')
+      setMessage(t('Migrations completed successfully!'))
     } catch {
       setMigrateStatus('error')
-      setMessage('Migration failed. Please try again.')
+      setMessage(t('Migration failed. Please try again.'))
     }
   }
 
   const fields: { key: keyof DatabaseConfig; label: string; type: string; placeholder: string }[] = [
-    { key: 'host', label: 'Database Host', type: 'text', placeholder: 'localhost' },
-    { key: 'port', label: 'Port', type: 'text', placeholder: '3306' },
-    { key: 'database', label: 'Database Name', type: 'text', placeholder: 'karsaaz_qr' },
-    { key: 'username', label: 'Username', type: 'text', placeholder: 'root' },
-    { key: 'password', label: 'Password', type: 'password', placeholder: '••••••••' },
+    { key: 'host', label: t('Database Host'), type: 'text', placeholder: 'localhost' },
+    { key: 'port', label: t('Port'), type: 'text', placeholder: '3306' },
+    { key: 'database', label: t('Database Name'), type: 'text', placeholder: 'karsaaz_qr' },
+    { key: 'username', label: t('Username'), type: 'text', placeholder: 'root' },
+    { key: 'password', label: t('Password'), type: 'password', placeholder: '••••••••' },
   ]
 
   return (
@@ -97,7 +99,7 @@ export function DatabaseStep({ config, onChange }: DatabaseStepProps) {
           className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
         >
           {testStatus === 'testing' && <Loader2 className="h-4 w-4 animate-spin" />}
-          Test Connection
+          {t('Test Connection')}
         </button>
         <button
           type="button"
@@ -106,7 +108,7 @@ export function DatabaseStep({ config, onChange }: DatabaseStepProps) {
           className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
         >
           {migrateStatus === 'running' && <Loader2 className="h-4 w-4 animate-spin" />}
-          Run Migrations
+          {t('Run Migrations')}
         </button>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useUpdateProfile } from '@/lib/hooks/mutations/useUpdateProfile'
+import { useTranslation } from '@/lib/i18n'
 import { User } from '@/types/entities/user'
 
 const profileSchema = z
@@ -47,6 +48,7 @@ interface ProfileEditorProps {
 }
 
 export function ProfileEditor({ user }: ProfileEditorProps) {
+  const { t } = useTranslation()
   const [showPasswords, setShowPasswords] = useState(false)
   const updateProfileMutation = useUpdateProfile()
 
@@ -86,7 +88,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          Full Name
+          {t('Full Name')}
         </label>
         <input
           {...register('name')}
@@ -99,7 +101,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
 
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email Address
+          {t('Email Address')}
         </label>
         <input
           {...register('email')}
@@ -111,12 +113,12 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
       </div>
 
       <div className="border-t pt-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Change Password</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">{t('Change Password')}</h3>
 
         <div className="space-y-4">
           <div>
             <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
-              Current Password
+              {t('Current Password')}
             </label>
             <input
               {...register('currentPassword')}
@@ -131,7 +133,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
 
           <div>
             <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-              New Password
+              {t('New Password')}
             </label>
             <input
               {...register('newPassword')}
@@ -146,7 +148,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
 
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-              Confirm New Password
+              {t('Confirm New Password')}
             </label>
             <input
               {...register('confirmPassword')}
@@ -168,7 +170,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
               className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
             <label htmlFor="showPasswords" className="ml-2 block text-sm text-gray-900">
-              Show passwords
+              {t('Show passwords')}
             </label>
           </div>
         </div>
@@ -178,14 +180,14 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
         <div className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
             {(updateProfileMutation.error as any)?.message ||
-              'Profile update failed. Please try again.'}
+              t('Profile update failed. Please try again.')}
           </p>
         </div>
       )}
 
       {updateProfileMutation.isSuccess && (
         <div className="rounded-md bg-green-50 p-4">
-          <p className="text-sm text-green-800">Profile updated successfully!</p>
+          <p className="text-sm text-green-800">{t('Profile updated successfully!')}</p>
         </div>
       )}
 
@@ -195,7 +197,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
           disabled={!isDirty || isSubmitting || updateProfileMutation.isPending}
           className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isSubmitting || updateProfileMutation.isPending ? 'Saving...' : 'Save Changes'}
+          {isSubmitting || updateProfileMutation.isPending ? t('Saving...') : t('Save Changes')}
         </button>
 
         <button
@@ -204,7 +206,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
           disabled={!isDirty || isSubmitting}
           className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
     </form>

@@ -8,7 +8,8 @@
 
 import React from 'react';
 import { Home, ChevronRight, Folder } from 'lucide-react';
-import { Folder as FolderType } from '@/hooks/useFolders';
+import { useTranslation } from '@/lib/i18n';
+import { Folder as FolderType } from '@/lib/hooks/useFolders';
 
 export interface FolderBreadcrumbProps {
   path: FolderType[];
@@ -21,6 +22,7 @@ export function FolderBreadcrumb({
   onNavigate,
   className = '',
 }: FolderBreadcrumbProps) {
+  const { t } = useTranslation();
   return (
     <nav className={`flex items-center gap-2 ${className}`}>
       {/* Home/All */}
@@ -36,7 +38,7 @@ export function FolderBreadcrumb({
         `}
       >
         <Home className="w-4 h-4" />
-        <span>All QR Codes</span>
+        <span>{t('All QR Codes')}</span>
       </button>
       
       {/* Breadcrumb items */}
@@ -85,6 +87,7 @@ export function FolderBreadcrumbCompact({
   onNavigate,
   className = '',
 }: FolderBreadcrumbProps) {
+  const { t } = useTranslation();
   const [showDropdown, setShowDropdown] = React.useState(false);
   const currentFolder = path[path.length - 1];
   
@@ -95,7 +98,7 @@ export function FolderBreadcrumbCompact({
         className={`flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg ${className}`}
       >
         <Home className="w-4 h-4" />
-        <span>All QR Codes</span>
+        <span>{t('All QR Codes')}</span>
       </button>
     );
   }
@@ -132,7 +135,7 @@ export function FolderBreadcrumbCompact({
               className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >
               <Home className="w-4 h-4" />
-              <span>All QR Codes</span>
+              <span>{t('All QR Codes')}</span>
             </button>
             
             {path.map((folder, index) => (

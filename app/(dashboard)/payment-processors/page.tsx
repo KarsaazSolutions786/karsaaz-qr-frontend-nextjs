@@ -8,6 +8,7 @@ import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
 import apiClient from '@/lib/api/client'
 import { PROCESSOR_REGISTRY } from '@/components/features/payment-processors/registry'
+import { useTranslation } from '@/lib/i18n'
 
 // ─── Processor Definitions ────────────────────────────────────────────────────
 
@@ -529,6 +530,7 @@ const PROCESSORS: ProcessorDef[] = [
 // ─── Processor Form ────────────────────────────────────────────────────────────
 
 function ProcessorForm({ processor }: { processor: ProcessorDef }) {
+  const { t } = useTranslation()
   const CustomForm = PROCESSOR_REGISTRY[processor.slug] ?? null
   const enabledKey = `${processor.slug}_enabled`
   const displayNameKey = `${processor.slug}_display_name`
@@ -570,20 +572,20 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
       )
       setTestResult(
         res.data.success
-          ? '✓ Credentials are valid.'
-          : `✗ ${res.data.message || 'Invalid credentials.'}`
+          ? t('Credentials are valid.')
+          : res.data.message || t('Invalid credentials.')
       )
     } catch {
-      setTestResult('✗ Failed to test credentials.')
+      setTestResult(t('Failed to test credentials.'))
     }
   }
 
   const handleRegisterWebhook = async () => {
     try {
       await apiClient.post(`/payment-processors/${processor.slug}/register-webhook`)
-      toast.success('Webhook registered successfully.')
+      toast.success(t('Webhook registered successfully.'))
     } catch {
-      toast.error('Unable to register webhook. Please try again.')
+      toast.error(t('Unable to register webhook. Please try again.'))
     }
   }
 
@@ -601,12 +603,12 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
     <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {saveMutation.error && (
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings.
+          {t('Failed to save settings.')}
         </div>
       )}
       {saved && (
         <div className="rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
       {testResult && (
@@ -620,11 +622,11 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
       {/* Offline payments note */}
       {processor.id === 'offline-payments' && (
         <div className="rounded-md bg-blue-50 p-4 text-sm text-blue-800">
-          After approving offline payments, review them in the{' '}
+          {t('After approving offline payments, review them in the')}{' '}
           <Link href="/transactions" className="underline hover:text-blue-600">
-            Transactions
+            {t('Transactions')}
           </Link>{' '}
-          section.
+          {t('section.')}
         </div>
       )}
 
@@ -632,7 +634,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
       {processor.showWebhookUrl && (
         <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
           <p className="font-medium mb-1">
-            Add the following webhook URL in your payment processor dashboard:
+            {t('Add the following webhook URL in your payment processor dashboard:')}
           </p>
           <div className="flex items-center gap-2 mt-2">
             <code className="rounded bg-white px-2 py-1 text-xs break-all select-all">
@@ -648,7 +650,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
               }}
               className="shrink-0 rounded border border-amber-300 px-2 py-1 text-xs font-medium hover:bg-amber-100"
             >
-              Copy
+              {t('Copy')}
             </button>
           </div>
         </div>
@@ -657,7 +659,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-4">
         {/* Enabled toggle */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Status')}</label>
           <div className="flex gap-4">
             {(['enabled', 'disabled'] as const).map(v => (
               <label
@@ -680,7 +682,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
 
         {/* Display Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Display Name</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Display Name')}</label>
           <input
             type="text"
             value={values[displayNameKey] ?? ''}
@@ -698,7 +700,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
         ) : (
           processor.fields.map(field => (
             <div key={field.key}>
-              <label className="block text-sm font-medium text-gray-700">{field.label}</label>
+              <label className="block text-sm font-medium text-gray-700">{t(field.label)}</label>
               {field.type === 'textarea' ? (
                 <textarea
                   rows={4}
@@ -715,7 +717,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
                 >
                   {field.options?.map(opt => (
                     <option key={opt.value} value={opt.value}>
-                      {opt.label}
+                      {t(opt.label)}
                     </option>
                   ))}
                 </select>
@@ -734,7 +736,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
 
         {/* Pay Button Text */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Pay Button Text</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Pay Button Text')}</label>
           <input
             type="text"
             value={values[payButtonTextKey] ?? ''}
@@ -746,7 +748,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
 
         {/* Sort Order */}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Sort Order</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Sort Order')}</label>
           <input
             type="number"
             value={values[sortOrderKey] ?? '0'}
@@ -763,7 +765,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
           disabled={saveMutation.isPending}
           className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
         >
-          {saveMutation.isPending ? 'Saving…' : 'Save'}
+          {saveMutation.isPending ? t('Saving...') : t('Save')}
         </button>
         {processor.hasTestCredentials && (
           <button
@@ -771,7 +773,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
             onClick={handleTestCredentials}
             className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Test Credentials
+            {t('Test Credentials')}
           </button>
         )}
         {processor.hasWebhook && (
@@ -780,7 +782,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
             onClick={handleRegisterWebhook}
             className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Register Webhook
+            {t('Register Webhook')}
           </button>
         )}
       </div>
@@ -791,6 +793,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 function PaymentProcessorsPageInner() {
+  const { t } = useTranslation()
   const searchParams = useSearchParams()
   const router = useRouter()
   const activeTabId = searchParams.get('tab-id') ?? 'stripe'
@@ -806,9 +809,9 @@ function PaymentProcessorsPageInner() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Payment Processors</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Payment Processors')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Configure payment gateway credentials and settings.
+          {t('Configure payment gateway credentials and settings.')}
         </p>
       </div>
 

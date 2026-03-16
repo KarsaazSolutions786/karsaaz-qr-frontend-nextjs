@@ -3,7 +3,7 @@
 import { use } from 'react'
 import Link from 'next/link'
 import { useBulkImportInstance } from '@/lib/hooks/queries/useBulkOperations'
-
+import { useTranslation } from '@/lib/i18n'
 interface BulkInstance {
   id: number
   name: string | null
@@ -31,8 +31,9 @@ const statusStyles: Record<string, string> = {
 
 export default function BulkOperationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
+  const { t } = useTranslation()
   const { data: instance, isLoading: loading, error: queryError } = useBulkImportInstance(id)
-  const error = queryError ? 'Failed to load bulk operation details.' : (!loading && !instance ? 'Bulk operation not found.' : '')
+  const error = queryError ? t('Failed to load bulk operation details.') : (!loading && !instance ? t('Bulk operation not found.') : '')
   const results: BulkResult[] = (instance as BulkInstance)?.results ?? []
 
   if (loading) {
@@ -46,8 +47,8 @@ export default function BulkOperationDetailPage({ params }: { params: Promise<{ 
   if (error || !instance) {
     return (
       <div className="py-16 text-center">
-        <h2 className="text-lg font-medium text-gray-900">{error || 'Not found'}</h2>
-        <Link href="/bulk-operations" className="mt-2 text-sm text-blue-600 hover:text-blue-900">← Back</Link>
+        <h2 className="text-lg font-medium text-gray-900">{error || t('Not found')}</h2>
+        <Link href="/bulk-operations" className="mt-2 text-sm text-blue-600 hover:text-blue-900">{t('Back')}</Link>
       </div>
     )
   }
@@ -64,30 +65,30 @@ export default function BulkOperationDetailPage({ params }: { params: Promise<{ 
             {instance.name || `Bulk Operation #${instance.id}`}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Created: {new Date(instance.created_at).toLocaleString()}
+            {t('Created:')} {new Date(instance.created_at).toLocaleString()}
           </p>
         </div>
-        <Link href="/bulk-operations" className="text-sm text-blue-600 hover:text-blue-900">← Back</Link>
+        <Link href="/bulk-operations" className="text-sm text-blue-600 hover:text-blue-900">{t('← Back')}</Link>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-sm text-gray-500">Status</p>
+          <p className="text-sm text-gray-500">{t('Status')}</p>
           <span className={`mt-1 inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusStyles[instance.status] || 'bg-gray-100 text-gray-700'}`}>
             {instance.status}
           </span>
         </div>
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-sm text-gray-500">Total</p>
+          <p className="text-sm text-gray-500">{t('Total')}</p>
           <p className="mt-1 text-2xl font-bold text-gray-900">{instance.total}</p>
         </div>
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-sm text-gray-500">Success</p>
+          <p className="text-sm text-gray-500">{t('Success')}</p>
           <p className="mt-1 text-2xl font-bold text-green-600">{successCount || instance.progress}</p>
         </div>
         <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-          <p className="text-sm text-gray-500">Failed</p>
+          <p className="text-sm text-gray-500">{t('Failed')}</p>
           <p className="mt-1 text-2xl font-bold text-red-600">{failedCount}</p>
         </div>
       </div>
@@ -96,7 +97,7 @@ export default function BulkOperationDetailPage({ params }: { params: Promise<{ 
       {instance.total > 0 && (
         <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
           <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>{instance.progress} / {instance.total} processed</span>
+            <span>{instance.progress} / {instance.total} {t('processed')}</span>
             <span>{progressPct}%</span>
           </div>
           <div className="mt-2 h-3 overflow-hidden rounded-full bg-gray-200">
@@ -111,15 +112,15 @@ export default function BulkOperationDetailPage({ params }: { params: Promise<{ 
       {/* Results Table */}
       {results.length > 0 && (
         <div className="mt-6">
-          <h2 className="mb-3 text-lg font-semibold text-gray-900">Results</h2>
+          <h2 className="mb-3 text-lg font-semibold text-gray-900">{t('Results')}</h2>
           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-3 pl-4 pr-3 text-left text-xs font-semibold text-gray-600">Row</th>
-                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600">URL</th>
-                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600">Status</th>
-                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600">Details</th>
+                  <th className="py-3 pl-4 pr-3 text-left text-xs font-semibold text-gray-600">{t('Row')}</th>
+                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600">{t('URL')}</th>
+                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600">{t('Status')}</th>
+                  <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600">{t('Details')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">

@@ -1,12 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
 
 const BILLING_KEYS = ['billing_collection_enabled', 'billing_private_form', 'billing_company_form']
 
 export default function BillingPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(BILLING_KEYS)
   const saveMutation = useSaveSystemConfigs(BILLING_KEYS)
   const [saved, setSaved] = useState(false)
@@ -49,29 +51,29 @@ export default function BillingPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Billing</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Billing')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Configure billing data collection during checkout.
+          {t('Configure billing data collection during checkout.')}
         </p>
       </div>
 
       {saveMutation.error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Billing Collection Toggle */}
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Billing Collection</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Billing Collection')}</h2>
           <p className="mb-4 text-sm text-gray-500">
-            When enabled, customers will be prompted to fill in billing details during checkout.
+            {t('When enabled, customers will be prompted to fill in billing details during checkout.')}
           </p>
           <div className="flex gap-4">
             <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50">
@@ -83,7 +85,7 @@ export default function BillingPage() {
                 onChange={(e) => setForm((f) => ({ ...f, billing_collection_enabled: e.target.value }))}
                 className="text-blue-600"
               />
-              Enabled
+              {t('Enabled')}
             </label>
             <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-200 px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-50">
               <input
@@ -94,17 +96,16 @@ export default function BillingPage() {
                 onChange={(e) => setForm((f) => ({ ...f, billing_collection_enabled: e.target.value }))}
                 className="text-blue-600"
               />
-              Disabled
+              {t('Disabled')}
             </label>
           </div>
         </section>
 
         {/* Private Customer Form Builder */}
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">Private Customer Details Form</h2>
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('Private Customer Details Form')}</h2>
           <p className="mb-4 text-sm text-gray-500">
-            Define the fields to collect from private (individual) customers during checkout.
-            Enter field definitions as JSON or a form schema.
+            {t('Define the fields to collect from private (individual) customers during checkout. Enter field definitions as JSON or a form schema.')}
           </p>
           <textarea
             rows={8}
@@ -117,9 +118,9 @@ export default function BillingPage() {
 
         {/* Company Details Form Builder */}
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-1 text-lg font-semibold text-gray-900">Company Details Form</h2>
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('Company Details Form')}</h2>
           <p className="mb-4 text-sm text-gray-500">
-            Define the fields to collect from company customers during checkout.
+            {t('Define the fields to collect from company customers during checkout.')}
           </p>
           <textarea
             rows={8}
@@ -132,19 +133,19 @@ export default function BillingPage() {
 
         <div className="flex items-center justify-end gap-4">
           <div className="flex-1 text-sm text-gray-500">
-            Related:{' '}
-            <a href="/transactions" className="text-blue-600 hover:underline">Transactions</a>
+            {t('Related:')}{' '}
+            <a href="/transactions" className="text-blue-600 hover:underline">{t('Transactions')}</a>
             {' · '}
-            <a href="/plans" className="text-blue-600 hover:underline">Plans</a>
+            <a href="/plans" className="text-blue-600 hover:underline">{t('Plans')}</a>
             {' · '}
-            <a href="/currencies" className="text-blue-600 hover:underline">Currencies</a>
+            <a href="/currencies" className="text-blue-600 hover:underline">{t('Currencies')}</a>
           </div>
           <button
             type="submit"
             disabled={saveMutation.isPending}
             className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
-            {saveMutation.isPending ? 'Saving…' : 'Save Settings'}
+            {saveMutation.isPending ? t('Saving…') : t('Save Settings')}
           </button>
         </div>
       </form>

@@ -1,67 +1,104 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  selectClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * PayU LATAM payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Mode (sandbox / production)
+ * - API Key
+ * - API Login
+ * - Merchant ID
+ * - Account ID
+ */
+export function PayULatamForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function PayULatamForm({ settings, onChange }: Props) {
   return (
     <PaymentProcessorFormBase slug="payu-latam" settings={settings} onChange={onChange}>
+      {/* Mode */}
       <div>
-        <label htmlFor="payu-latam-api-key" className="block text-sm font-medium text-gray-700">
-          API Key
+        <label htmlFor="payu-latam-mode" className={labelClass}>
+          {t('Mode')}
+        </label>
+        <select
+          id="payu-latam-mode"
+          value={settings['payu-latam_mode'] ?? 'sandbox'}
+          onChange={(e) => onChange('payu-latam_mode', e.target.value)}
+          className={selectClass}
+        >
+          <option value="sandbox">{t('Sandbox')}</option>
+          <option value="production">{t('Production')}</option>
+        </select>
+      </div>
+
+      {/* API Key */}
+      <div>
+        <label htmlFor="payu-latam-api-key" className={labelClass}>
+          {t('API Key')}
         </label>
         <input
           id="payu-latam-api-key"
           type="password"
-          value={settings.api_key ?? ''}
-          onChange={(e) => onChange('api_key', e.target.value)}
-          placeholder="Enter API Key"
+          value={settings['payu-latam_api_key'] ?? ''}
+          onChange={(e) => onChange('payu-latam_api_key', e.target.value)}
+          placeholder="4Vj8eK4********arnUA"
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Found in your PayU LATAM merchant dashboard')}
+        </p>
       </div>
+
+      {/* API Login */}
       <div>
-        <label htmlFor="payu-latam-api-login" className="block text-sm font-medium text-gray-700">
-          API Login
+        <label htmlFor="payu-latam-api-login" className={labelClass}>
+          {t('API Login')}
         </label>
         <input
           id="payu-latam-api-login"
           type="text"
-          value={settings.api_login ?? ''}
-          onChange={(e) => onChange('api_login', e.target.value)}
-          placeholder="Enter API Login"
+          value={settings['payu-latam_api_login'] ?? ''}
+          onChange={(e) => onChange('payu-latam_api_login', e.target.value)}
+          placeholder={t('Enter API Login')}
           className={inputClass}
         />
       </div>
+
+      {/* Merchant ID */}
       <div>
-        <label htmlFor="payu-latam-merchant-id" className="block text-sm font-medium text-gray-700">
-          Merchant ID
+        <label htmlFor="payu-latam-merchant-id" className={labelClass}>
+          {t('Merchant ID')}
         </label>
         <input
           id="payu-latam-merchant-id"
           type="text"
-          value={settings.merchant_id ?? ''}
-          onChange={(e) => onChange('merchant_id', e.target.value)}
-          placeholder="Enter Merchant ID"
+          value={settings['payu-latam_merchant_id'] ?? ''}
+          onChange={(e) => onChange('payu-latam_merchant_id', e.target.value)}
+          placeholder="123456"
           className={inputClass}
         />
       </div>
+
+      {/* Account ID */}
       <div>
-        <label htmlFor="payu-latam-account-id" className="block text-sm font-medium text-gray-700">
-          Account ID
+        <label htmlFor="payu-latam-account-id" className={labelClass}>
+          {t('Account ID')}
         </label>
         <input
           id="payu-latam-account-id"
           type="text"
-          value={settings.account_id ?? ''}
-          onChange={(e) => onChange('account_id', e.target.value)}
-          placeholder="Enter Account ID"
+          value={settings['payu-latam_account_id'] ?? ''}
+          onChange={(e) => onChange('payu-latam_account_id', e.target.value)}
+          placeholder="123456"
           className={inputClass}
         />
       </div>

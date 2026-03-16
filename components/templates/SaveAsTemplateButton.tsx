@@ -1,25 +1,41 @@
 'use client'
 
 import { useState } from 'react'
-import { Save, Loader2, CheckCircle, X } from 'lucide-react'
+import { Save, Loader2, X } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import { useCreateTemplate } from '@/lib/hooks/queries/useTemplates'
-import type { CreateTemplateInput } from '@/types/entities/template'
+import { toast } from 'sonner'
 
 interface SaveAsTemplateButtonProps {
-  qrcodeId: number
-  qrcodeData: any // Full QR code object
+  /** The saved QR code ID (required -- QR must be saved first) */
+  qrcodeId: string | number
+  /** Display name of the QR code (used as default template name) */
+  qrcodeName?: string
+  /** QR code type label for the preview section */
+  qrcodeType?: string
   onSuccess?: () => void
   className?: string
   children?: React.ReactNode
 }
 
+/**
+ * SaveAsTemplateButton -- Opens a modal to save the current QR code as a
+ * reusable template. The backend creates the template by cloning the QR code's
+ * data, design, and settings from the referenced `qrcode_id`.
+ *
+ * Requirements:
+ * - The QR code must already be saved (has a valid ID)
+ * - Backend route: POST /qrcode-templates { qrcode_id, name, description, ... }
+ */
 export default function SaveAsTemplateButton({
-  qrcodeId: _qrcodeId,
-  qrcodeData,
+  qrcodeId,
+  qrcodeName,
+  qrcodeType,
   onSuccess,
   className = '',
   children,
 }: SaveAsTemplateButtonProps) {
+  const { t } = useTranslation()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -29,43 +45,39 @@ export default function SaveAsTemplateButton({
 
   const createTemplateMutation = useCreateTemplate({
     onSuccess: () => {
+      toast.success('Template saved successfully!')
       onSuccess?.()
       setIsModalOpen(false)
-      // Reset form
       setFormData({
         name: '',
         description: '',
         template_access_level: 'private',
       })
-      // You can add toast notification here if available
     },
-    onError: (error) => {
-      console.error('Failed to create template:', error)
-      // You can add toast notification here if available
+    onError: (error: any) => {
+      const msg = error?.response?.data?.message || error?.message || 'Failed to save template'
+      toast.error(msg)
     },
   })
 
   const handleSaveTemplate = () => {
     if (!formData.name.trim()) return
-
-    const templateInput: CreateTemplateInput = {
-      name: formData.name.trim(),
-      description: formData.description.trim() || undefined,
-      type: qrcodeData.type || 'url',
-      template_access_level: formData.template_access_level,
-      settings: qrcodeData.settings || {},
-      data: qrcodeData.data || {},
-      design: qrcodeData.design || {},
-      thumbnail_url: qrcodeData.thumbnail_url || undefined,
+    if (!formData.description.trim()) {
+      toast.error('Please enter a description for the template.')
+      return
     }
 
-    createTemplateMutation.mutate(templateInput)
+    createTemplateMutation.mutate({
+      qrcode_id: qrcodeId,
+      name: formData.name.trim(),
+      description: formData.description.trim(),
+      template_access_level: formData.template_access_level,
+    })
   }
 
   const handleOpenModal = () => {
-    // Pre-fill with QR code name if available
     setFormData({
-      name: qrcodeData.name ? `${qrcodeData.name} Template` : '',
+      name: qrcodeName ? `${qrcodeName} Template` : '',
       description: '',
       template_access_level: 'private',
     })
@@ -76,10 +88,10 @@ export default function SaveAsTemplateButton({
     <>
       <button
         onClick={handleOpenModal}
-        className={`inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 active:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${className}`}
+        className={`inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 active:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${className}`}
       >
         <Save className="w-4 h-4" />
-        {children || 'Save as Template'}
+        {children || t('Save as Template')}
       </button>
 
       {/* Modal */}
@@ -88,7 +100,7 @@ export default function SaveAsTemplateButton({
           <div className="max-w-lg w-full mx-4 rounded-lg bg-white p-6 shadow-xl">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
-                Save as Template
+                {t('Save as Template')}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -99,67 +111,52 @@ export default function SaveAsTemplateButton({
               </button>
             </div>
 
-            {/* Preview */}
-            <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-xs font-medium text-gray-700 mb-2">Preview</p>
-              <div className="space-y-1">
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Type:</span> {qrcodeData.type || 'URL'}
+            {/* Context preview */}
+            {qrcodeType && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <p className="text-xs text-gray-500 mb-1">{t('Creating template from')}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {qrcodeName || 'Untitled QR Code'}{' '}
+                  <span className="text-gray-500">({qrcodeType})</span>
                 </p>
-                {qrcodeData.design?.foreground_color && (
-                  <p className="text-sm text-gray-600 flex items-center gap-2">
-                    <span className="font-medium">Color:</span>
-                    <span
-                      className="inline-block w-4 h-4 rounded border border-gray-300"
-                      style={{ backgroundColor: qrcodeData.design.foreground_color }}
-                    />
-                    {qrcodeData.design.foreground_color}
-                  </p>
-                )}
-                {qrcodeData.design?.logo_url && (
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Has logo:</span>{' '}
-                    <CheckCircle className="inline w-4 h-4 text-green-600" />
-                  </p>
-                )}
               </div>
-            </div>
+            )}
 
             {/* Form */}
             <div className="space-y-4">
               <div>
                 <label htmlFor="template-name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Template Name <span className="text-red-500">*</span>
+                  {t('Template Name')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="template-name"
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Enter template name"
+                  placeholder={t('Enter template name')}
                   disabled={createTemplateMutation.isPending}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
               <div>
                 <label htmlFor="template-description" className="block text-sm font-medium text-gray-700 mb-1">
-                  Description
+                  {t('Description')} <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   id="template-description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Describe this template (optional)"
+                  placeholder={t('Describe this template so others know when to use it')}
                   rows={3}
                   disabled={createTemplateMutation.isPending}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-50 disabled:cursor-not-allowed"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Access Level
+                  {t('Access Level')}
                 </label>
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -167,12 +164,12 @@ export default function SaveAsTemplateButton({
                       type="radio"
                       value="private"
                       checked={formData.template_access_level === 'private'}
-                      onChange={(_e) => setFormData({ ...formData, template_access_level: 'private' })}
+                      onChange={() => setFormData({ ...formData, template_access_level: 'private' })}
                       disabled={createTemplateMutation.isPending}
-                      className="w-4 h-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
+                      className="w-4 h-4 text-purple-600 focus:ring-purple-500 disabled:cursor-not-allowed"
                     />
                     <span className="text-sm text-gray-700">
-                      <strong>Private</strong> - Only visible to you
+                      <strong>{t('Private')}</strong> - {t('Only visible to you')}
                     </span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -180,12 +177,12 @@ export default function SaveAsTemplateButton({
                       type="radio"
                       value="public"
                       checked={formData.template_access_level === 'public'}
-                      onChange={(_e) => setFormData({ ...formData, template_access_level: 'public' })}
+                      onChange={() => setFormData({ ...formData, template_access_level: 'public' })}
                       disabled={createTemplateMutation.isPending}
-                      className="w-4 h-4 text-primary-600 focus:ring-primary-500 disabled:cursor-not-allowed"
+                      className="w-4 h-4 text-purple-600 focus:ring-purple-500 disabled:cursor-not-allowed"
                     />
                     <span className="text-sm text-gray-700">
-                      <strong>Public</strong> - Visible to all users
+                      <strong>{t('Public')}</strong> - {t('Visible to all users')}
                     </span>
                   </label>
                 </div>
@@ -196,18 +193,18 @@ export default function SaveAsTemplateButton({
             <div className="mt-6 flex gap-3">
               <button
                 onClick={handleSaveTemplate}
-                disabled={!formData.name.trim() || createTemplateMutation.isPending}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white text-sm font-semibold rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={!formData.name.trim() || !formData.description.trim() || createTemplateMutation.isPending}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-semibold rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {createTemplateMutation.isPending ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Saving...
+                    {t('Saving...')}
                   </>
                 ) : (
                   <>
                     <Save className="w-4 h-4" />
-                    Save Template
+                    {t('Save Template')}
                   </>
                 )}
               </button>
@@ -217,7 +214,7 @@ export default function SaveAsTemplateButton({
                 disabled={createTemplateMutation.isPending}
                 className="flex-1 px-4 py-2 border border-gray-300 text-sm font-semibold text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Cancel
+                {t('Cancel')}
               </button>
             </div>
           </div>

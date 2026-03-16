@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Bell, X } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface TicketNotificationProps {
   ticketId: number
@@ -17,10 +18,12 @@ interface TicketNotificationProps {
 export function TicketNotification({
   ticketId,
   ticketReference,
-  message = 'You have a new reply on your support ticket.',
+  message,
   onDismiss,
   onView,
 }: TicketNotificationProps) {
+  const { t } = useTranslation()
+  const displayMessage = message || t('You have a new reply on your support ticket.')
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
@@ -42,13 +45,13 @@ export function TicketNotification({
           </div>
           <div className="ml-3 w-0 flex-1">
             <p className="text-sm font-medium text-gray-900">Ticket #{ticketReference}</p>
-            <p className="mt-1 text-sm text-gray-500">{message}</p>
+            <p className="mt-1 text-sm text-gray-500">{displayMessage}</p>
             <div className="mt-3 flex gap-3">
               <button
                 onClick={() => onView?.(ticketId)}
                 className="rounded-md bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100"
               >
-                View Ticket
+                {t('View Ticket')}
               </button>
               <button
                 onClick={() => {
@@ -57,7 +60,7 @@ export function TicketNotification({
                 }}
                 className="rounded-md bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 ring-1 ring-inset ring-gray-300"
               >
-                Dismiss
+                {t('Dismiss')}
               </button>
             </div>
           </div>

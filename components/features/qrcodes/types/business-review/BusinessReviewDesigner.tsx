@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface BusinessReviewDesignSettings extends DesignSettings {
   // Business Review-specific settings
@@ -36,13 +37,14 @@ const tabs: DesignerTab[] = [
 ]
 
 export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<BusinessReviewDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderFormSettingsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Logo & Form</h4>
+      <h4 className="font-medium text-gray-900">{t('Logo & Form')}</h4>
 
       {/* Logo Settings */}
       <div className="space-y-3">
@@ -55,18 +57,18 @@ export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showLogo" className="text-sm text-gray-700">
-            Show Logo
+            {t('Show Logo')}
           </label>
         </div>
 
         {design.showLogo && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Logo Position</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Position')}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'left', label: 'Left' },
-                { value: 'center', label: 'Center' },
-                { value: 'right', label: 'Right' },
+                { value: 'left', label: t('Left') },
+                { value: 'center', label: t('Center') },
+                { value: 'right', label: t('Right') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -90,14 +92,14 @@ export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesig
         )}
       </div>
 
-      {/* Form Style */}
+      {/* {t('Form Style')} */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Form Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Form Style')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'card', label: 'Card' },
-            { value: 'minimal', label: 'Minimal' },
-            { value: 'bordered', label: 'Bordered' },
+            { value: 'card', label: t('Card') },
+            { value: 'minimal', label: t('Minimal') },
+            { value: 'bordered', label: t('Bordered') },
           ].map(option => (
             <button
               key={option.value}
@@ -119,10 +121,10 @@ export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesig
         </div>
       </div>
 
-      {/* Rating Style */}
+      {/* {t('Rating Style')} */}
       <div className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Rating Style</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Rating Style')}</label>
           <div className="flex flex-wrap gap-2">
             {[
               { value: 'stars', label: '⭐ Stars' },
@@ -158,7 +160,7 @@ export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showRatingLabels" className="text-sm text-gray-700">
-            Show Rating Labels
+            {t('Show Rating Labels')}
           </label>
         </div>
       </div>
@@ -166,45 +168,45 @@ export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesig
       {/* Form Text Fields */}
       <div className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Page Title</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Page Title')}</label>
           <input
             type="text"
             value={design.pageTitle || ''}
             onChange={e => updateDesign({ pageTitle: e.target.value })}
-            placeholder="Enter page title"
+            placeholder={t('Enter page title')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Placeholder Text</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Placeholder Text')}</label>
           <input
             type="text"
             value={design.placeholderText || ''}
             onChange={e => updateDesign({ placeholderText: e.target.value })}
-            placeholder="Enter placeholder text"
+            placeholder={t('Enter placeholder text')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Send Button Text</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Send Button Text')}</label>
           <input
             type="text"
-            value={design.sendButtonText || 'Send Feedback'}
+            value={design.sendButtonText || t('Send Feedback')}
             onChange={e => updateDesign({ sendButtonText: e.target.value })}
-            placeholder="Send Feedback"
+            placeholder={t('Send Feedback')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Success Message</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Success Message')}</label>
           <input
             type="text"
             value={design.successMessage || ''}
             onChange={e => updateDesign({ successMessage: e.target.value })}
-            placeholder="Thank you for your feedback!"
+            placeholder={t('Thank you for your feedback!')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
@@ -214,7 +216,7 @@ export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesig
       <div className="space-y-3">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Send Button Background
+            {t('Send Button Background')}
           </label>
           <div className="flex gap-2">
             <input
@@ -234,7 +236,7 @@ export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesig
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Send Button Text Color
+            {t('Send Button Text Color')}
           </label>
           <div className="flex gap-2">
             <input
@@ -257,27 +259,27 @@ export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesig
 
   const renderFeedbackSettingsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Feedback Settings</h4>
+      <h4 className="font-medium text-gray-900">{t('Feedback Settings')}</h4>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Recipient Email</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Recipient Email')}</label>
         <input
           type="email"
           value={design.recipientEmail || ''}
           onChange={e => updateDesign({ recipientEmail: e.target.value })}
-          placeholder="Comma separated recipient emails"
+          placeholder={t('Comma separated recipient emails')}
           className="w-full px-3 py-2 border rounded-lg"
         />
-        <p className="text-xs text-gray-500 mt-1">Separate multiple emails with commas</p>
+        <p className="text-xs text-gray-500 mt-1">{t('Separate multiple emails with commas')}</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Email Subject</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Email Subject')}</label>
         <input
           type="text"
           value={design.emailSubject || ''}
           onChange={e => updateDesign({ emailSubject: e.target.value })}
-          placeholder="New feedback received"
+          placeholder={t('New feedback received')}
           className="w-full px-3 py-2 border rounded-lg"
         />
       </div>

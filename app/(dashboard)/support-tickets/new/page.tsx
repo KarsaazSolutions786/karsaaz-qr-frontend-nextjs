@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/lib/context/AuthContext'
@@ -9,6 +10,7 @@ import CreateTicketForm from '@/components/features/support/CreateTicketForm'
 import type { CreateTicketPayload } from '@/types/entities/support-ticket'
 
 export default function NewTicketPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { user } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
@@ -20,7 +22,7 @@ export default function NewTicketPage() {
       router.push('/support-tickets')
     } catch (err) {
       console.error('Failed to create ticket:', err)
-      toast.error('Unable to create support ticket. Please try again.')
+      toast.error(t('Unable to create support ticket. Please try again.'))
     } finally {
       setIsLoading(false)
     }
@@ -29,8 +31,8 @@ export default function NewTicketPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">New Support Ticket</h1>
-        <p className="mt-2 text-sm text-gray-600">Describe your issue and we&apos;ll get back to you</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t('New Support Ticket')}</h1>
+        <p className="mt-2 text-sm text-gray-600">{t("Describe your issue and we'll get back to you")}</p>
       </div>
 
       <CreateTicketForm

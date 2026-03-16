@@ -11,6 +11,7 @@ import React from 'react';
 import { ColorPicker } from '../ui/ColorPicker';
 
 import { LogoConfig } from '@/types/entities/designer';
+import { useTranslation } from '@/lib/i18n';
 
 export interface LogoPositioningProps {
   value: LogoConfig;
@@ -27,6 +28,7 @@ export function LogoPositioning({
   maxMargin = 0.3,
   className = '',
 }: LogoPositioningProps) {
+  const { t } = useTranslation();
   const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const size = parseFloat(e.target.value);
     onChange({ ...value, size });
@@ -74,7 +76,7 @@ export function LogoPositioning({
 
   return (
     <div className={`logo-positioning ${className}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-3">Logo Settings</label>
+      <label className="block text-sm font-medium text-gray-700 mb-3">{t('Logo Settings')}</label>
 
       {/* Size control */}
       <div className="mb-4">
@@ -126,7 +128,7 @@ export function LogoPositioning({
 
       {/* Shape selector */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Shape</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Shape')}</label>
         <div className="flex gap-2">
           <button
             type="button"
@@ -156,7 +158,7 @@ export function LogoPositioning({
       {/* Background color toggle */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-gray-700">Background</label>
+          <label className="text-sm font-medium text-gray-700">{t('Background')}</label>
           <button
             type="button"
             onClick={toggleBackground}
@@ -182,7 +184,7 @@ export function LogoPositioning({
       {/* Border toggle */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-gray-700">Border</label>
+          <label className="text-sm font-medium text-gray-700">{t('Border')}</label>
           <button
             type="button"
             onClick={toggleBorder}
@@ -220,7 +222,7 @@ export function LogoPositioning({
 
       {/* Visual preview */}
       <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <label className="block text-sm font-medium text-gray-700 mb-3">Preview</label>
+        <label className="block text-sm font-medium text-gray-700 mb-3">{t('Preview')}</label>
         <div className="flex items-center justify-center">
           <div
             className="relative bg-white border-2 border-gray-300"

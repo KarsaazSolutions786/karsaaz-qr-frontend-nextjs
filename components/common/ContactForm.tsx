@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
@@ -30,6 +31,7 @@ const inputClass = cn(
 )
 
 export function ContactForm({ onSubmit, isLoading, defaultValues, className }: ContactFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -42,29 +44,29 @@ export function ContactForm({ onSubmit, isLoading, defaultValues, className }: C
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={cn('space-y-4', className)}>
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Name *</label>
-        <input {...register('name')} placeholder="Your name" disabled={isLoading} className={inputClass} />
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('Name')} *</label>
+        <input {...register('name')} placeholder={t('Your name')} disabled={isLoading} className={inputClass} />
         {errors.name && <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>}
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Email *</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('Email')} *</label>
         <input {...register('email')} type="email" placeholder="you@example.com" disabled={isLoading} className={inputClass} />
         {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Phone</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('Phone')}</label>
         <input {...register('phone')} type="tel" placeholder="+1 (555) 000-0000" disabled={isLoading} className={inputClass} />
         {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>}
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Message *</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('Message')} *</label>
         <textarea
           {...register('message')}
           rows={4}
-          placeholder="Your message…"
+          placeholder={t('Your message...')}
           disabled={isLoading}
           className={cn(inputClass, 'h-auto resize-y')}
         />
@@ -80,7 +82,7 @@ export function ContactForm({ onSubmit, isLoading, defaultValues, className }: C
           'disabled:pointer-events-none disabled:opacity-50'
         )}
       >
-        {isLoading ? 'Sending…' : 'Send Message'}
+        {isLoading ? t('Sending...') : t('Send Message')}
       </button>
     </form>
   )

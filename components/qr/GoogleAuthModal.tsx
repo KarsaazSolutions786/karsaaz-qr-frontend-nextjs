@@ -9,6 +9,7 @@
 import React, { useState } from 'react';
 import { X, CheckCircle, AlertCircle } from 'lucide-react';
 import { GoogleAuthButton } from './GoogleAuthButton';
+import { useTranslation } from '@/lib/i18n';
 
 export interface GoogleAuthModalProps {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export function GoogleAuthModal({
   onSuccess,
   onError,
 }: GoogleAuthModalProps) {
+  const { t } = useTranslation();
   const [authState, setAuthState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -58,7 +60,7 @@ export function GoogleAuthModal({
         }, 1500);
       }, 1000);
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('Authentication failed');
+      const err = error instanceof Error ? error : new Error(t('Authentication failed'));
       setAuthState('error');
       setErrorMessage(err.message);
       onError?.(err);
@@ -82,14 +84,14 @@ export function GoogleAuthModal({
     }
   };
 
-  const title = mode === 'signin' ? 'Sign In' : 'Sign Up';
+  const title = mode === 'signin' ? t('Sign In') : t('Sign Up');
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-900">{title} with Google</h2>
+          <h2 className="text-xl font-bold text-gray-900">{title} {t('with Google')}</h2>
           <button
             type="button"
             onClick={handleClose}
@@ -106,8 +108,8 @@ export function GoogleAuthModal({
             <div className="space-y-4">
               <p className="text-sm text-gray-600 text-center">
                 {mode === 'signin'
-                  ? 'Sign in to your account using Google'
-                  : 'Create a new account using Google'}
+                  ? t('Sign in to your account using Google')
+                  : t('Create a new account using Google')}
               </p>
               <GoogleAuthButton
                 text={mode === 'signin' ? 'signin_with' : 'signup_with'}
@@ -116,7 +118,7 @@ export function GoogleAuthModal({
               />
               <div className="pt-4 border-t border-gray-200">
                 <p className="text-xs text-gray-500 text-center">
-                  By continuing, you agree to our Terms of Service and Privacy Policy
+                  {t('By continuing, you agree to our Terms of Service and Privacy Policy')}
                 </p>
               </div>
             </div>
@@ -125,7 +127,7 @@ export function GoogleAuthModal({
           {authState === 'loading' && (
             <div className="py-8 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-              <p className="text-sm text-gray-600">Authenticating with Google...</p>
+              <p className="text-sm text-gray-600">{t('Authenticating with Google...')}</p>
             </div>
           )}
 
@@ -133,12 +135,12 @@ export function GoogleAuthModal({
             <div className="py-8 text-center">
               <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Success!
+                {t('Success!')}
               </h3>
               <p className="text-sm text-gray-600">
                 {mode === 'signin'
-                  ? 'You have successfully signed in.'
-                  : 'Your account has been created.'}
+                  ? t('You have successfully signed in.')
+                  : t('Your account has been created.')}
               </p>
             </div>
           )}
@@ -150,7 +152,7 @@ export function GoogleAuthModal({
                   <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <h4 className="text-sm font-semibold text-red-900 mb-1">
-                      Authentication Failed
+                      {t('Authentication Failed')}
                     </h4>
                     <p className="text-sm text-red-700">{errorMessage}</p>
                   </div>
@@ -171,22 +173,22 @@ export function GoogleAuthModal({
             <p className="text-sm text-gray-600">
               {mode === 'signin' ? (
                 <>
-                  Don't have an account?{' '}
+                  {t("Don't have an account?")}{' '}
                   <button
                     type="button"
                     className="text-primary-600 hover:text-primary-700 font-medium"
                   >
-                    Sign up
+                    {t('Sign up')}
                   </button>
                 </>
               ) : (
                 <>
-                  Already have an account?{' '}
+                  {t('Already have an account?')}{' '}
                   <button
                     type="button"
                     className="text-primary-600 hover:text-primary-700 font-medium"
                   >
-                    Sign in
+                    {t('Sign in')}
                   </button>
                 </>
               )}

@@ -28,6 +28,8 @@ export const SOCIAL_MEDIA_TYPES: Record<string, boolean> = {
   facebookmessenger: true,
   viber: true,
   call: true,
+  skype: true,
+  wechat: true,
 }
 
 /**
@@ -37,7 +39,7 @@ export const SOCIAL_MEDIA_TYPES: Record<string, boolean> = {
 export const QR_TYPES: QRCodeTypeDefinition[] = [
   {
     id: 'text',
-    name: 'URL / Link',
+    name: 'URL / LINK',
     cat: 'static',
     icon: '/icons/qr-types/url-link-figma.svg',
     description: 'Link to any website or URL',
@@ -72,7 +74,7 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
   },
   {
     id: 'email',
-    name: 'Email (Static)',
+    name: 'Email',
     cat: 'static',
     icon: '/icons/qr-types/email-figma.svg',
     description: 'Pre-filled email',
@@ -107,7 +109,7 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
   },
   {
     id: 'vcard-plus',
-    name: 'vCard Plus',
+    name: 'VCard Plus',
     cat: 'dynamic',
     icon: '/icons/qr-types/vcard-figma.svg',
     description: 'Enhanced digital business card',
@@ -254,14 +256,14 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
   },
   {
     id: 'crypto',
-    name: 'Crypto',
+    name: 'Crypto currency',
     cat: 'static',
     icon: '/icons/qr-types/crypto-coin-figma.svg',
     description: 'Cryptocurrency payment',
   },
   {
     id: 'paypal',
-    name: 'PayPal',
+    name: 'Paypal',
     cat: 'dynamic',
     icon: '/icons/qr-types/paypal-figma.svg',
     description: 'PayPal payment link',
@@ -289,7 +291,7 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
   },
   {
     id: 'brazilpix',
-    name: 'Brazillian PIX',
+    name: 'Brazilian Pix',
     cat: 'static',
     icon: '/icons/qr-types/brazilian-pix-figma.png',
     description: 'PIX payment',
@@ -335,6 +337,20 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     cat: 'static',
     icon: '/icons/qr-types/tiktok.png',
     description: 'TikTok profile link',
+  },
+  {
+    id: 'skype',
+    name: 'Skype',
+    cat: 'static',
+    icon: '/icons/qr-types/skype.png',
+    description: 'Start Skype call or chat',
+  },
+  {
+    id: 'wechat',
+    name: 'WeChat',
+    cat: 'static',
+    icon: '/icons/qr-types/wechat.png',
+    description: 'Open WeChat chat',
   },
 ]
 

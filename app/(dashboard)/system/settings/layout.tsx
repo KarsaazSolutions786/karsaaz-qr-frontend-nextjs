@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils/cn'
+import { useTranslation } from '@/lib/i18n'
 
 const SETTINGS_TABS = [
   { label: 'General', href: '/system/settings' },
@@ -15,18 +16,20 @@ const SETTINGS_TABS = [
   { label: 'Appearance', href: '/system/settings/appearance' },
   { label: 'Advanced', href: '/system/settings/advanced' },
   { label: 'Banner', href: '/system/settings/banner' },
+  { label: 'Logo & Favicon', href: '/system/settings/logo-favicon' },
   { label: 'Design Assets', href: '/system/settings/design-assets' },
 ]
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation()
   const pathname = usePathname()
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold dark:text-white">System Settings</h1>
+        <h1 className="text-2xl font-bold dark:text-white">{t('System Settings')}</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Configure your application settings
+          {t('Configure your application settings')}
         </p>
       </div>
 

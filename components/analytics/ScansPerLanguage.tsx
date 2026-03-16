@@ -8,6 +8,7 @@
 
 import React, { useMemo } from 'react';
 import { Languages } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface LanguageData {
   language: string;
@@ -48,6 +49,8 @@ function getFlagEmoji(language: string): string {
 }
 
 export function ScansPerLanguage({ data, loading = false }: ScansPerLanguageProps) {
+  const { t } = useTranslation();
+
   const sorted = useMemo(
     () => [...data].sort((a, b) => b.count - a.count),
     [data]
@@ -63,8 +66,8 @@ export function ScansPerLanguage({ data, loading = false }: ScansPerLanguageProp
           <Languages className="w-5 h-5 text-amber-600" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Scans by Language</h3>
-          <p className="text-sm text-gray-500">Visitor language distribution</p>
+          <h3 className="text-lg font-bold text-gray-900">{t('Scans by Language')}</h3>
+          <p className="text-sm text-gray-500">{t('Visitor language distribution')}</p>
         </div>
       </div>
 
@@ -80,7 +83,7 @@ export function ScansPerLanguage({ data, loading = false }: ScansPerLanguageProp
       ) : sorted.length === 0 ? (
         <div className="text-center py-8">
           <Languages className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No language data available</p>
+          <p className="text-gray-500">{t('No language data available')}</p>
         </div>
       ) : (
         <div className="space-y-4">

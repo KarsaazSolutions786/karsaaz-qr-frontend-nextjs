@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import apiClient from '@/lib/api/client';
+import { useTranslation } from '@/lib/i18n';
 
 interface CreatePasswordModalProps {
   open: boolean;
@@ -10,6 +11,7 @@ interface CreatePasswordModalProps {
 }
 
 export function CreatePasswordModal({ open, onClose, onSuccess }: CreatePasswordModalProps) {
+  const { t } = useTranslation();
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -20,11 +22,11 @@ export function CreatePasswordModal({ open, onClose, onSuccess }: CreatePassword
     setErrors({});
 
     if (password.length < 6) {
-      setErrors({ password: ['Password must be at least 6 characters.'] });
+      setErrors({ password: [t('Password must be at least 6 characters.')] });
       return;
     }
     if (password !== passwordConfirmation) {
-      setErrors({ password_confirmation: ['Passwords do not match.'] });
+      setErrors({ password_confirmation: [t('Passwords do not match.')] });
       return;
     }
 
@@ -43,7 +45,7 @@ export function CreatePasswordModal({ open, onClose, onSuccess }: CreatePassword
       if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);
       } else {
-        setErrors({ password: ['Failed to set password. Please try again.'] });
+        setErrors({ password: [t('Failed to set password. Please try again.')] });
       }
     } finally {
       setLoading(false);
@@ -56,14 +58,14 @@ export function CreatePasswordModal({ open, onClose, onSuccess }: CreatePassword
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
       <div className="relative z-10 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 className="text-lg font-semibold text-gray-900">Create Password</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('Create Password')}</h3>
         <p className="mt-1 text-sm text-gray-600">
-          Set a password to switch from passwordless to password-based login.
+          {t('Set a password to switch from passwordless to password-based login.')}
         </p>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
             <label htmlFor="pwd_password" className="block text-sm font-medium text-gray-700">
-              Password
+              {t('Password')}
             </label>
             <input
               id="pwd_password"
@@ -80,7 +82,7 @@ export function CreatePasswordModal({ open, onClose, onSuccess }: CreatePassword
           </div>
           <div>
             <label htmlFor="pwd_password_confirmation" className="block text-sm font-medium text-gray-700">
-              Confirm Password
+              {t('Confirm Password')}
             </label>
             <input
               id="pwd_password_confirmation"
@@ -102,14 +104,14 @@ export function CreatePasswordModal({ open, onClose, onSuccess }: CreatePassword
               disabled={loading}
               className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               type="submit"
               disabled={loading}
               className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? 'Saving...' : 'Set Password'}
+              {loading ? t('Saving...') : t('Set Password')}
             </button>
           </div>
         </form>

@@ -7,8 +7,10 @@ import { blogPostsAPI } from '@/lib/api/endpoints/blog-posts'
 import type { BlogPost } from '@/types/entities/blog-post'
 import { Loader2, ArrowLeft, Calendar } from 'lucide-react'
 import { sanitizeHTML } from '@/lib/utils/dom-safety'
+import { useTranslation } from '@/lib/i18n'
 
 export default function BlogPostPage() {
+  const { t } = useTranslation()
   const params = useParams()
   const slug = params?.slug as string
   const [post, setPost] = useState<BlogPost | null>(null)
@@ -21,7 +23,7 @@ export default function BlogPostPage() {
     blogPostsAPI
       .getById(Number(slug))
       .then((data) => setPost(data))
-      .catch(() => setError('Blog post not found'))
+      .catch(() => setError(t('Blog post not found')))
       .finally(() => setLoading(false))
   }, [slug])
 
@@ -36,9 +38,9 @@ export default function BlogPostPage() {
   if (error || !post) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-red-600">{error || 'Post not found'}</p>
+        <p className="text-red-600">{error || t('Post not found')}</p>
         <Link href="/blog" className="text-sm text-purple-600 hover:underline">
-          ← Back to Blog
+          {t('Back to Blog')}
         </Link>
       </div>
     )
@@ -51,7 +53,7 @@ export default function BlogPostPage() {
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-purple-600 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Blog
+        {t('Back to Blog')}
       </Link>
 
       <h1 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">{post.title}</h1>

@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
+import { useTranslation } from '@/lib/i18n'
 import { CustomerAuthenticator, type ViewerAuth } from './CustomerAuthenticator'
 
 interface CustomerAuthModalProps {
@@ -28,9 +29,12 @@ export function CustomerAuthModal({
   onOpenChange,
   qrCodeId,
   onAuthenticated,
-  title = 'Verify your identity',
-  description = 'Please verify your identity to continue viewing this content.',
+  title,
+  description,
 }: CustomerAuthModalProps) {
+  const { t } = useTranslation()
+  const resolvedTitle = title ?? t('Verify your identity')
+  const resolvedDescription = description ?? t('Please verify your identity to continue viewing this content.')
   const handleCancel = () => {
     onOpenChange(false)
   }
@@ -39,8 +43,8 @@ export function CustomerAuthModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle>{resolvedTitle}</DialogTitle>
+          <DialogDescription>{resolvedDescription}</DialogDescription>
         </DialogHeader>
         <CustomerAuthenticator
           qrCodeId={qrCodeId}

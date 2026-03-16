@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react'
 import { CloudArrowUpIcon, DocumentTextIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 interface AlipayChineseConfig {
@@ -45,6 +46,7 @@ function CertificateUpload({
   disabled = false,
   description,
 }: CertificateUploadProps) {
+  const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
 
@@ -115,9 +117,9 @@ function CertificateUpload({
         >
           <CloudArrowUpIcon className="h-8 w-8 text-gray-400 mx-auto mb-2" />
           <p className="text-sm text-gray-600">
-            <span className="font-medium text-blue-600">Click to upload</span> or drag and drop
+            <span className="font-medium text-blue-600">{t('Click to upload')}</span> {t('or drag and drop')}
           </p>
-          <p className="text-xs text-gray-500 mt-1">{accept} files only</p>
+          <p className="text-xs text-gray-500 mt-1">{accept} {t('files only')}</p>
 
           <input
             ref={inputRef}
@@ -140,6 +142,7 @@ export function AlipayChineseForm({
   fieldPrefix = 'alipay_china',
   disabled = false,
 }: AlipayChineseFormProps) {
+  const { t } = useTranslation()
   const update = <K extends keyof AlipayChineseConfig>(field: K, value: AlipayChineseConfig[K]) => {
     onChange({ ...config, [field]: value })
   }
@@ -149,15 +152,15 @@ export function AlipayChineseForm({
   return (
     <div className="space-y-6">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="text-sm font-medium text-blue-900 mb-1">AliPay China Payment Processor</h3>
+        <h3 className="text-sm font-medium text-blue-900 mb-1">{t('AliPay China Payment Processor')}</h3>
         <p className="text-sm text-blue-700">
-          Configure AliPay China payment integration with certificate-based authentication.
+          {t('Configure AliPay China payment integration with certificate-based authentication.')}
         </p>
       </div>
 
       {/* Mode Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Mode</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Mode')}</label>
         <div className="flex gap-3">
           <button
             type="button"
@@ -170,7 +173,7 @@ export function AlipayChineseForm({
                 : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
             )}
           >
-            Sandbox
+            {t('Sandbox')}
           </button>
           <button
             type="button"
@@ -183,19 +186,19 @@ export function AlipayChineseForm({
                 : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
             )}
           >
-            Live
+            {t('Live')}
           </button>
         </div>
         {config.mode === 'sandbox' && (
           <p className="mt-2 text-xs text-yellow-600">
-            Sandbox mode is for testing only. Switch to Live for production.
+            {t('Sandbox mode is for testing only. Switch to Live for production.')}
           </p>
         )}
       </div>
 
       {/* App ID */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">App ID</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('App ID')}</label>
         <input
           type="text"
           name={fieldName('app_id')}
@@ -209,7 +212,7 @@ export function AlipayChineseForm({
 
       {/* App Secret Cert */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">App Secret Cert</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('App Secret Cert')}</label>
         <textarea
           name={fieldName('app_secret_cert')}
           value={config.app_secret_cert}
@@ -220,16 +223,16 @@ export function AlipayChineseForm({
           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm font-mono focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:opacity-50"
         />
         <p className="mt-1 text-xs text-gray-500">
-          Paste your application&apos;s private key certificate content
+          {t("Paste your application's private key certificate content")}
         </p>
       </div>
 
       {/* Certificate Files */}
       <div className="space-y-4">
-        <h4 className="text-sm font-medium text-gray-900 border-b pb-2">Certificate Files</h4>
+        <h4 className="text-sm font-medium text-gray-900 border-b pb-2">{t('Certificate Files')}</h4>
 
         <CertificateUpload
-          label="App Public Certificate"
+          label={t('App Public Certificate')}
           name={fieldName('app_public_cert')}
           value={config.app_public_cert}
           fileName={config.app_public_cert_name}
@@ -239,11 +242,11 @@ export function AlipayChineseForm({
           }}
           accept=".crt"
           disabled={disabled}
-          description="Your application's public certificate file"
+          description={t("Your application's public certificate file")}
         />
 
         <CertificateUpload
-          label="AliPay Public Cert"
+          label={t('AliPay Public Cert')}
           name={fieldName('alipay_public_cert')}
           value={config.alipay_public_cert}
           fileName={config.alipay_public_cert_name}
@@ -253,11 +256,11 @@ export function AlipayChineseForm({
           }}
           accept=".crt"
           disabled={disabled}
-          description="AliPay's public certificate for verification"
+          description={t("AliPay's public certificate for verification")}
         />
 
         <CertificateUpload
-          label="AliPay Root Cert"
+          label={t('AliPay Root Cert')}
           name={fieldName('alipay_root_cert')}
           value={config.alipay_root_cert}
           fileName={config.alipay_root_cert_name}
@@ -267,15 +270,15 @@ export function AlipayChineseForm({
           }}
           accept=".crt"
           disabled={disabled}
-          description="AliPay's root CA certificate"
+          description={t("AliPay's root CA certificate")}
         />
       </div>
 
       {/* App Auth Token (Optional) */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          App Auth Token
-          <span className="text-gray-400 font-normal ml-1">(Optional)</span>
+          {t('App Auth Token')}
+          <span className="text-gray-400 font-normal ml-1">{t('(Optional)')}</span>
         </label>
         <input
           type="text"
@@ -287,20 +290,20 @@ export function AlipayChineseForm({
           className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:opacity-50"
         />
         <p className="mt-1 text-xs text-gray-500">
-          Required for third-party authorization scenarios
+          {t('Required for third-party authorization scenarios')}
         </p>
       </div>
 
       {/* Validation Summary */}
       <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-2">Configuration Status</h4>
+        <h4 className="text-sm font-medium text-gray-700 mb-2">{t('Configuration Status')}</h4>
         <ul className="space-y-1 text-sm">
           <li className="flex items-center gap-2">
             <span
               className={cn('w-2 h-2 rounded-full', config.app_id ? 'bg-green-500' : 'bg-gray-300')}
             />
             <span className={config.app_id ? 'text-gray-700' : 'text-gray-400'}>
-              App ID {config.app_id ? 'configured' : 'required'}
+              {t('App ID')} {config.app_id ? t('configured') : t('required')}
             </span>
           </li>
           <li className="flex items-center gap-2">
@@ -311,7 +314,7 @@ export function AlipayChineseForm({
               )}
             />
             <span className={config.app_secret_cert ? 'text-gray-700' : 'text-gray-400'}>
-              App Secret Cert {config.app_secret_cert ? 'configured' : 'required'}
+              {t('App Secret Cert')} {config.app_secret_cert ? t('configured') : t('required')}
             </span>
           </li>
           <li className="flex items-center gap-2">
@@ -330,8 +333,8 @@ export function AlipayChineseForm({
                   : 'text-gray-400'
               }
             >
-              App Public Certificate{' '}
-              {config.app_public_cert || config.app_public_cert_name ? 'uploaded' : 'required'}
+              {t('App Public Certificate')}{' '}
+              {config.app_public_cert || config.app_public_cert_name ? t('uploaded') : t('required')}
             </span>
           </li>
           <li className="flex items-center gap-2">
@@ -350,10 +353,10 @@ export function AlipayChineseForm({
                   : 'text-gray-400'
               }
             >
-              AliPay Public Cert{' '}
+              {t('AliPay Public Cert')}{' '}
               {config.alipay_public_cert || config.alipay_public_cert_name
-                ? 'uploaded'
-                : 'required'}
+                ? t('uploaded')
+                : t('required')}
             </span>
           </li>
           <li className="flex items-center gap-2">
@@ -372,8 +375,8 @@ export function AlipayChineseForm({
                   : 'text-gray-400'
               }
             >
-              AliPay Root Cert{' '}
-              {config.alipay_root_cert || config.alipay_root_cert_name ? 'uploaded' : 'required'}
+              {t('AliPay Root Cert')}{' '}
+              {config.alipay_root_cert || config.alipay_root_cert_name ? t('uploaded') : t('required')}
             </span>
           </li>
         </ul>

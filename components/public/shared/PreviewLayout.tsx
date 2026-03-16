@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 interface PreviewLayoutProps {
   children: React.ReactNode;
@@ -14,8 +17,8 @@ interface PreviewLayoutProps {
 
 export default function PreviewLayout({
   children,
-  title = 'QR Code Preview',
-  description = 'View QR Code content',
+  title: titleProp,
+  description: descriptionProp,
   image,
   type = 'website',
   showHeader = true,
@@ -23,6 +26,10 @@ export default function PreviewLayout({
   theme = 'auto',
   className = '',
 }: PreviewLayoutProps) {
+  const { t } = useTranslation();
+  const title = titleProp ?? t('QR Code Preview');
+  const description = descriptionProp ?? t('View QR Code content');
+
   return (
     <html lang="en" data-theme={theme}>
       <head>
@@ -54,7 +61,7 @@ export default function PreviewLayout({
                     <svg className="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm13-2h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/>
                     </svg>
-                    <span className="text-xl font-bold text-gray-900">Karsaaz QR</span>
+                    <span className="text-xl font-bold text-gray-900">{t('Karsaaz QR')}</span>
                   </div>
                 </div>
               </div>
@@ -70,17 +77,17 @@ export default function PreviewLayout({
               <div className="container mx-auto px-4">
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-4">
-                    Create your own QR codes with advanced features
+                    {t('Create your own QR codes with advanced features')}
                   </p>
                   <a
                     href="https://app.karsaazqr.com"
                     className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Get Started Free
+                    {t('Get Started Free')}
                   </a>
                   <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
-                    <span>Powered by</span>
-                    <strong className="text-blue-600">Karsaaz QR</strong>
+                    <span>{t('Powered by')}</span>
+                    <strong className="text-blue-600">{t('Karsaaz QR')}</strong>
                   </div>
                 </div>
               </div>

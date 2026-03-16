@@ -13,7 +13,9 @@ function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): 
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search)
     const from = params.get('from')
-    if (from) return from
+    if (from && from.startsWith('/') && !from.startsWith('//') && !from.includes('://')) {
+      return from
+    }
   }
   // Use the home_page from user's first role (matches original frontend)
   let homePage = user.roles?.[0]?.home_page
@@ -51,7 +53,10 @@ export function useLogin() {
       setUser(loginResponse.user)
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(loginResponse.user))
-        localStorage.setItem('token', loginResponse.token)
+        // Token is now stored in an httpOnly cookie by the backend.
+        // Store only a flag for client-side session detection.
+        localStorage.setItem('logged_in', 'true')
+        localStorage.removeItem('token') // Clean up legacy token
       }
 
       queryClient.setQueryData(queryKeys.auth.currentUser(), loginResponse.user)
@@ -80,7 +85,9 @@ export function useTwoFactorLoginVerify() {
       setUser(response.user)
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(response.user))
-        localStorage.setItem('token', response.token)
+        // Token is stored in httpOnly cookie by backend
+        localStorage.setItem('logged_in', 'true')
+        localStorage.removeItem('token')
       }
       queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
 

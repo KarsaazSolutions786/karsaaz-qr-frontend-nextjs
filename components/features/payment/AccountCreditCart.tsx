@@ -2,14 +2,16 @@
 
 import { Minus, Plus, Trash2 } from 'lucide-react'
 import { useAccountCredit } from '@/lib/hooks/useAccountCredit'
+import { useTranslation } from '@/lib/i18n'
 
 export function AccountCreditCart() {
   const { cartItems, balance, cartTotal, amountToPay, updateQuantity, removeFromCart, clearCart } = useAccountCredit()
+  const { t } = useTranslation()
 
   if (cartItems.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <p className="text-gray-500">Your cart is empty</p>
+        <p className="text-gray-500">{t('Your cart is empty')}</p>
       </div>
     )
   }
@@ -18,9 +20,9 @@ export function AccountCreditCart() {
     <div className="rounded-lg border border-gray-200 bg-white">
       <div className="border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-900">Cart Items</h3>
+          <h3 className="text-sm font-semibold text-gray-900">{t('Cart Items')}</h3>
           <button onClick={clearCart} className="text-xs text-red-600 hover:text-red-700">
-            Clear All
+            {t('Clear All')}
           </button>
         </div>
       </div>
@@ -32,7 +34,7 @@ export function AccountCreditCart() {
               <p className="text-sm font-medium text-gray-900">{item.name}</p>
               <p className="text-xs text-gray-500">
                 ${item.unitPrice.toFixed(2)} each
-                {item.isDynamic && <span className="ml-1 text-blue-600">(Dynamic)</span>}
+                {item.isDynamic && <span className="ml-1 text-blue-600">({t('Dynamic')})</span>}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -65,15 +67,15 @@ export function AccountCreditCart() {
 
       <div className="border-t border-gray-200 px-4 py-3 space-y-1">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-500">Subtotal</span>
+          <span className="text-gray-500">{t('Subtotal')}</span>
           <span className="font-medium">${cartTotal.toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-gray-500">Account Balance</span>
+          <span className="text-gray-500">{t('Account Balance')}</span>
           <span className="font-medium text-green-600">-${Math.min(balance, cartTotal).toFixed(2)}</span>
         </div>
         <div className="flex justify-between text-sm font-semibold border-t border-gray-100 pt-1">
-          <span>Amount to Pay</span>
+          <span>{t('Amount to Pay')}</span>
           <span>${amountToPay.toFixed(2)}</span>
         </div>
       </div>

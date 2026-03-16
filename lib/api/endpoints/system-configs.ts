@@ -103,26 +103,34 @@ export const systemConfigsAPI = {
   /**
    * Get system logs
    * GET /api/system/logs
+   * Backend returns { data: base64_encoded_string, size: "58.11 MB" }
    */
   getLogs: async (): Promise<{
     content: string
     size: number
   }> => {
-    const response = await apiClient.get<{ content: string; size: number }>(
+    const response = await apiClient.get<{ data: string; size: string }>(
       '/system/logs'
     )
-    return response.data
+    const { data, size } = response.data
+    // Decode base64 log content
+    const content = data ? atob(data) : ''
+    // Parse formatted size string (e.g. "58.11 MB") to bytes
+    const sizeStr = size || '0 B'
+    const units: Record<string, number> = { B: 1, KB: 1024, MB: 1024 * 1024, GB: 1024 * 1024 * 1024 }
+    const match = sizeStr.match(/([\d.]+)\s*(B|KB|MB|GB)/)
+    const sizeBytes = match ? parseFloat(match[1]!) * (units[match[2]!] || 1) : 0
+    return { content, size: sizeBytes }
   },
 
   /**
    * Download log file
    * POST /api/system/log-file
+   * Backend returns { url: "/api/system/log-file?signature=..." }
    */
-  downloadLogFile: async (): Promise<Blob> => {
-    const response = await apiClient.post('/system/log-file', null, {
-      responseType: 'blob',
-    })
-    return response.data
+  downloadLogFile: async (): Promise<string> => {
+    const response = await apiClient.post<{ url: string }>('/system/log-file')
+    return response.data.url
   },
 
   /**

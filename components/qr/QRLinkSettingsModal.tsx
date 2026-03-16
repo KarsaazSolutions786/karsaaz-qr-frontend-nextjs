@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useQRLinkSettings, useUpdateQRLinkSettings } from '@/lib/hooks/queries/useQRCodes'
+import { useTranslation } from '@/lib/i18n'
 
 interface QRLinkSettingsModalProps {
   qrCodeId: string
@@ -19,6 +20,7 @@ interface LinkSettings {
 }
 
 export function QRLinkSettingsModal({ qrCodeId, open, onClose, onSave }: QRLinkSettingsModalProps) {
+  const { t } = useTranslation()
   const [settings, setSettings] = useState<LinkSettings>({
     slug: '',
     redirectEnabled: true,
@@ -45,9 +47,9 @@ export function QRLinkSettingsModal({ qrCodeId, open, onClose, onSave }: QRLinkS
 
   const loading = queryLoading || updateMutation.isPending
   const error = queryError
-    ? 'Failed to load link settings'
+    ? t('Failed to load link settings')
     : updateMutation.isError
-      ? 'Failed to save settings'
+      ? t('Failed to save settings')
       : ''
 
   const handleSave = async () => {
@@ -72,7 +74,7 @@ export function QRLinkSettingsModal({ qrCodeId, open, onClose, onSave }: QRLinkS
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">QR Link Settings</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('QR Link Settings')}</h2>
           <button onClick={onClose} className="rounded-lg p-1 hover:bg-gray-100">
             <X className="h-5 w-5 text-gray-500" />
           </button>
@@ -84,7 +86,7 @@ export function QRLinkSettingsModal({ qrCodeId, open, onClose, onSave }: QRLinkS
 
         <div className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Custom Slug</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">{t('Custom Slug')}</label>
             <input
               type="text"
               value={settings.slug}
@@ -98,14 +100,14 @@ export function QRLinkSettingsModal({ qrCodeId, open, onClose, onSave }: QRLinkS
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Target URL</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">{t('Target URL')}</label>
             <div className="rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-600">
-              {settings.targetUrl || 'No target URL set'}
+              {settings.targetUrl || t('No target URL set')}
             </div>
           </div>
 
           <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-gray-700">Enable Redirect</label>
+            <label className="text-sm font-medium text-gray-700">{t('Enable Redirect')}</label>
             <button
               type="button"
               role="switch"
@@ -131,14 +133,14 @@ export function QRLinkSettingsModal({ qrCodeId, open, onClose, onSave }: QRLinkS
             onClick={onClose}
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             onClick={handleSave}
             disabled={loading}
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? 'Saving...' : 'Save'}
+            {loading ? t('Saving...') : t('Save')}
           </button>
         </div>
       </div>

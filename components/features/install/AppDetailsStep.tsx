@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { TimezoneSelect } from '@/components/ui/timezone-select'
 
 interface AppDetailsConfig {
@@ -30,6 +31,7 @@ const languages = [
 ]
 
 export function AppDetailsStep({ config, onChange }: AppDetailsStepProps) {
+  const { t } = useTranslation();
   const update = (field: keyof AppDetailsConfig, value: string) => {
     onChange({ ...config, [field]: value })
   }
@@ -37,7 +39,7 @@ export function AppDetailsStep({ config, onChange }: AppDetailsStepProps) {
   return (
     <div className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">App Name</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('App Name')}</label>
         <input
           type="text"
           value={config.appName}
@@ -48,7 +50,7 @@ export function AppDetailsStep({ config, onChange }: AppDetailsStepProps) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">App URL</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('App URL')}</label>
         <input
           type="url"
           value={config.appUrl}
@@ -59,7 +61,7 @@ export function AppDetailsStep({ config, onChange }: AppDetailsStepProps) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Description</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('Description')}</label>
         <textarea
           value={config.description}
           onChange={(e) => update('description', e.target.value)}
@@ -70,7 +72,7 @@ export function AppDetailsStep({ config, onChange }: AppDetailsStepProps) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Timezone</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('Timezone')}</label>
         <TimezoneSelect
           value={config.timezone}
           onChange={(value) => update('timezone', value)}
@@ -78,7 +80,7 @@ export function AppDetailsStep({ config, onChange }: AppDetailsStepProps) {
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Default Language</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('Default Language')}</label>
         <select
           value={config.defaultLanguage}
           onChange={(e) => update('defaultLanguage', e.target.value)}

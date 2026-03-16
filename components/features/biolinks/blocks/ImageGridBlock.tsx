@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import type { ImageGridBlockData } from '@/types/entities/biolink'
 
 interface ImageGridBlockProps {
@@ -10,6 +11,7 @@ interface ImageGridBlockProps {
 }
 
 export default function ImageGridBlock({ block, isEditing, onUpdate }: ImageGridBlockProps) {
+  const { t } = useTranslation();
   const { title, items, gridGap = 8, columns = 3, lightbox = false } = block.data
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
@@ -32,7 +34,7 @@ export default function ImageGridBlock({ block, isEditing, onUpdate }: ImageGrid
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Title (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Title (optional)')}</label>
           <input
             type="text"
             value={title || ''}
@@ -42,7 +44,7 @@ export default function ImageGridBlock({ block, isEditing, onUpdate }: ImageGrid
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Columns</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Columns')}</label>
             <select
               value={columns}
               onChange={e =>
@@ -50,13 +52,13 @@ export default function ImageGridBlock({ block, isEditing, onUpdate }: ImageGrid
               }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             >
-              <option value={2}>2 Columns</option>
-              <option value={3}>3 Columns</option>
-              <option value={4}>4 Columns</option>
+              <option value={2}>{t('2 Columns')}</option>
+              <option value={3}>{t('3 Columns')}</option>
+              <option value={4}>{t('4 Columns')}</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Grid Gap (px)</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Grid Gap (px)')}</label>
             <input
               type="number"
               value={gridGap}
@@ -74,17 +76,17 @@ export default function ImageGridBlock({ block, isEditing, onUpdate }: ImageGrid
             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
           <label htmlFor={`lightbox-${block.id}`} className="text-sm font-medium text-gray-700">
-            Enable Lightbox
+            {t('Enable Lightbox')}
           </label>
         </div>
         <div className="flex items-center justify-between">
-          <label className="block text-sm font-medium text-gray-700">Images</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Images')}</label>
           <button
             type="button"
             onClick={addItem}
             className="text-sm text-blue-600 hover:text-blue-700"
           >
-            + Add Image
+            {t('+ Add Image')}
           </button>
         </div>
         {items.map((item, index) => (
@@ -94,7 +96,7 @@ export default function ImageGridBlock({ block, isEditing, onUpdate }: ImageGrid
                 type="url"
                 value={item.url}
                 onChange={e => updateItem(index, 'url', e.target.value)}
-                placeholder="Image URL"
+                placeholder={t('Image URL')}
                 className="block flex-1 rounded-md border-gray-300 text-sm shadow-sm"
               />
               <button
@@ -109,14 +111,14 @@ export default function ImageGridBlock({ block, isEditing, onUpdate }: ImageGrid
               type="text"
               value={item.alt || ''}
               onChange={e => updateItem(index, 'alt', e.target.value)}
-              placeholder="Alt text (optional)"
+              placeholder={t('Alt text (optional)')}
               className="block w-full rounded-md border-gray-300 text-sm shadow-sm"
             />
             <input
               type="url"
               value={item.link || ''}
               onChange={e => updateItem(index, 'link', e.target.value)}
-              placeholder="Link URL (optional)"
+              placeholder={t('Link URL (optional)')}
               className="block w-full rounded-md border-gray-300 text-sm shadow-sm"
             />
           </div>

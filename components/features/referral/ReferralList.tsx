@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { useTranslation } from '@/lib/i18n'
 import { referralAPI } from '@/lib/api/endpoints/referral'
 import type { Referral } from '@/types/entities/referral'
 
@@ -11,6 +13,7 @@ const STATUS_STYLES: Record<Referral['status'], { bg: string; text: string }> = 
 }
 
 export function ReferralList() {
+  const { t } = useTranslation()
   const [referrals, setReferrals] = useState<Referral[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -24,7 +27,7 @@ export function ReferralList() {
         setReferrals(res.data)
         setLastPage(res.pagination.lastPage)
       })
-      .catch(() => {})
+      .catch(() => { toast.error('Failed to load referrals') })
       .finally(() => setLoading(false))
   }, [page])
 
@@ -44,12 +47,12 @@ export function ReferralList() {
   return (
     <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
       <div className="border-b border-gray-200 px-6 py-4">
-        <h3 className="text-lg font-semibold text-gray-900">Referred Users</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('Referred Users')}</h3>
       </div>
 
       {referrals.length === 0 ? (
         <div className="px-6 py-12 text-center text-sm text-gray-500">
-          No referrals yet. Share your referral link to get started.
+          {t('No referrals yet. Share your referral link to get started.')}
         </div>
       ) : (
         <>
@@ -57,10 +60,10 @@ export function ReferralList() {
             <table className="w-full text-left text-sm">
               <thead className="border-b border-gray-200 bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 font-medium text-gray-600">Email</th>
-                  <th className="px-6 py-3 font-medium text-gray-600">Status</th>
-                  <th className="px-6 py-3 font-medium text-gray-600">Commission</th>
-                  <th className="px-6 py-3 font-medium text-gray-600">Date</th>
+                  <th className="px-6 py-3 font-medium text-gray-600">{t('Email')}</th>
+                  <th className="px-6 py-3 font-medium text-gray-600">{t('Status')}</th>
+                  <th className="px-6 py-3 font-medium text-gray-600">{t('Commission')}</th>
+                  <th className="px-6 py-3 font-medium text-gray-600">{t('Date')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -92,10 +95,10 @@ export function ReferralList() {
                 onClick={() => setPage((p) => p - 1)}
                 className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Previous
+                {t('Previous')}
               </button>
               <span className="text-sm text-gray-600">
-                Page {page} of {lastPage}
+                {t('Page')} {page} {t('of')} {lastPage}
               </span>
               <button
                 type="button"
@@ -103,7 +106,7 @@ export function ReferralList() {
                 onClick={() => setPage((p) => p + 1)}
                 className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Next
+                {t('Next')}
               </button>
             </div>
           )}

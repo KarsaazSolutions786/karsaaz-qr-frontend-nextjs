@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import { TrashIcon, UserPlusIcon } from '@heroicons/react/24/outline'
 import { useSubUsers, useDeleteSubUser } from '@/lib/hooks/queries/useUsers'
+import { useTranslation } from '@/lib/i18n'
 
 export interface SubUserEntry {
   id: number | string
@@ -40,6 +41,7 @@ const STATUS_BADGE: Record<string, string> = {
 }
 
 export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, onRemove: onRemoveProp, maxUsers, userId }: SubUserManagementProps) {
+  const { t } = useTranslation()
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('viewer')
@@ -91,7 +93,7 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
   }
 
   async function handleRemove(userId: number | string) {
-    if (!confirm('Remove this user? They will lose all access.')) return
+    if (!confirm(t('Remove this user? They will lose all access.'))) return
     setRemoving(userId)
     try {
       await onRemove(userId)
@@ -115,9 +117,9 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">Sub-Users</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t('Sub-Users')}</h3>
           <p className="text-sm text-gray-500 mt-1">
-            Manage team members and their access
+            {t('Manage team members and their access')}
             {maxUsers && (
               <span className="ml-2 text-xs text-gray-400">
                 ({users.length}/{maxUsers} seats used)
@@ -132,7 +134,7 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
           className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 transition-colors"
         >
           <UserPlusIcon className="w-4 h-4" />
-          Invite User
+          {t('Invite User')}
         </button>
       </div>
 
@@ -140,7 +142,7 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
       {maxUsers && (
         <div className="px-6 py-3 bg-gray-50 border-b border-gray-100">
           <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-            <span>Usage</span>
+            <span>{t('Usage')}</span>
             <span>{users.length} of {maxUsers} users</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-1.5">
@@ -157,7 +159,7 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
         <form onSubmit={handleInvite} className="px-6 py-4 border-b border-gray-100 bg-gray-50">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-gray-600 mb-1">Email *</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{t('Email')} *</label>
               <input
                 type="email"
                 value={inviteEmail}
@@ -168,14 +170,14 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Role *</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{t('Role')} *</label>
               <select
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value)}
                 className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-purple-500"
               >
                 {ROLE_OPTIONS.map((r) => (
-                  <option key={r.value} value={r.value}>{r.label}</option>
+                  <option key={r.value} value={r.value}>{t(r.label)}</option>
                 ))}
               </select>
             </div>
@@ -186,14 +188,14 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
               disabled={saving || !inviteEmail}
               className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 transition-colors"
             >
-              {saving ? 'Sending...' : 'Send Invite'}
+              {saving ? t('Sending...') : t('Send Invite')}
             </button>
             <button
               type="button"
               onClick={() => setShowInvite(false)}
               className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
             >
-              Cancel
+              {t('Cancel')}
             </button>
           </div>
         </form>
@@ -204,23 +206,23 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-gray-400 py-4">
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-200 border-t-purple-600" />
-            Loading sub-users...
+            {t('Loading sub-users...')}
           </div>
         ) : users.length === 0 ? (
           <div className="text-center py-8">
             <span className="text-4xl">👥</span>
-            <p className="text-sm text-gray-500 mt-2">No sub-users yet. Invite someone to get started.</p>
+            <p className="text-sm text-gray-500 mt-2">{t('No sub-users yet. Invite someone to get started.')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead>
                 <tr>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Last Login</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('User')}</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('Role')}</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('Status')}</th>
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{t('Last Login')}</th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">{t('Actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -244,13 +246,13 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
                     </td>
                     <td className="px-3 py-3">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium capitalize ${STATUS_BADGE[user.status] || STATUS_BADGE.disabled}`}>
-                        {user.status}
+                        {t(user.status)}
                       </span>
                     </td>
                     <td className="px-3 py-3 text-sm text-gray-500">
                       {user.last_login
                         ? new Date(user.last_login).toLocaleDateString()
-                        : 'Never'}
+                        : t('Never')}
                     </td>
                     <td className="px-3 py-3 text-right">
                       <button
@@ -258,7 +260,7 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
                         onClick={() => handleRemove(user.id)}
                         disabled={removing === user.id}
                         className="p-1.5 text-gray-400 hover:text-red-600 disabled:opacity-50"
-                        title="Remove user"
+                        title={t('Remove user')}
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>

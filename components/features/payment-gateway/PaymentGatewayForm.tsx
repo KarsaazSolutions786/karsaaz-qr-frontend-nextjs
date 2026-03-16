@@ -1,6 +1,7 @@
 'use client'
 
 import { useForm, Controller } from 'react-hook-form'
+import { useTranslation } from '@/lib/i18n'
 import PaymentProcessorFormBase from './PaymentProcessorFormBase'
 import { StripeForm } from '../payment-processors/StripeForm'
 import { RazorpayForm } from '../payment-processors/RazorpayForm'
@@ -21,6 +22,7 @@ import { PayTRForm } from '../payment-processors/PayTRForm'
 import { FIBForm } from '../payment-processors/FIBForm'
 import { OrangeBillingForm } from '../payment-processors/OrangeBillingForm'
 import { PaddleForm } from '../payment-processors/PaddleForm'
+import { PaddleBillingForm } from '../payment-processors/PaddleBillingForm'
 import { PayKickstartForm } from '../payment-processors/PayKickstartForm'
 import { OfflinePaymentForm } from '../payment-processors/OfflinePaymentForm'
 import type { PaymentGateway, PaymentProcessorSlug } from '@/types/entities/payment-gateway'
@@ -38,7 +40,8 @@ const PROCESSOR_SLUGS: { value: PaymentProcessorSlug; label: string }[] = [
   { value: 'payfast', label: 'PayFast' },
   { value: 'payu-international', label: 'PayU International' },
   { value: 'payu-latam', label: 'PayU Latam' },
-  { value: 'paddle', label: 'Paddle' },
+  { value: 'paddle', label: 'Paddle (Classic)' },
+  { value: 'paddle-billing', label: 'Paddle (Billing)' },
   { value: 'xendit', label: 'Xendit' },
   { value: 'yookassa', label: 'YooKassa' },
   { value: 'dintero', label: 'Dintero' },
@@ -109,9 +112,12 @@ function renderProcessorForm(
       return <OrangeBillingForm settings={settings} onChange={onChange} />
     case 'paddle':
       return <PaddleForm settings={settings} onChange={onChange} />
+    case 'paddle-billing':
+      return <PaddleBillingForm settings={settings} onChange={onChange} />
     case 'paykickstart':
       return <PayKickstartForm settings={settings} onChange={onChange} />
     case 'offline':
+    case 'offline-payments':
       return <OfflinePaymentForm settings={settings} onChange={onChange} />
     default:
       return <PaymentProcessorFormBase slug={slug} settings={settings} onChange={onChange} />
@@ -141,6 +147,7 @@ export default function PaymentGatewayForm({
     },
   })
 
+  const { t } = useTranslation()
   const settings = watch('settings')
   const slug = watch('slug')
 
@@ -154,12 +161,12 @@ export default function PaymentGatewayForm({
         {/* Name */}
         <div>
           <label htmlFor="gw-name" className="block text-sm font-medium text-gray-700">
-            Gateway Name
+            {t('Gateway Name')}
           </label>
           <input
             id="gw-name"
             type="text"
-            {...register('name', { required: 'Name is required' })}
+            {...register('name', { required: t('Name is required') })}
             placeholder="e.g. Stripe Production"
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
           />
@@ -169,14 +176,14 @@ export default function PaymentGatewayForm({
         {/* Slug selector */}
         <div>
           <label htmlFor="gw-slug" className="block text-sm font-medium text-gray-700">
-            Processor
+            {t('Processor')}
           </label>
           <select
             id="gw-slug"
-            {...register('slug', { required: 'Processor is required' })}
+            {...register('slug', { required: t('Processor is required') })}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
           >
-            <option value="">Select a processor…</option>
+            <option value="">{t('Select a processor...')}</option>
             {PROCESSOR_SLUGS.map(p => (
               <option key={p.value} value={p.value}>
                 {p.label}
@@ -209,7 +216,7 @@ export default function PaymentGatewayForm({
               </button>
             )}
           />
-          <span className="text-sm text-gray-700">Enabled</span>
+          <span className="text-sm text-gray-700">{t('Enabled')}</span>
         </div>
 
         {/* Supports Recurring */}
@@ -221,7 +228,7 @@ export default function PaymentGatewayForm({
             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
           <label htmlFor="gw-recurring" className="text-sm text-gray-700">
-            Supports recurring payments
+            {t('Supports recurring payments')}
           </label>
         </div>
       </div>
@@ -229,7 +236,7 @@ export default function PaymentGatewayForm({
       {/* Processor-specific settings */}
       {slug && (
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-sm font-semibold text-gray-900">Processor Settings</h3>
+          <h3 className="mb-4 text-sm font-semibold text-gray-900">{t('Processor Settings')}</h3>
           {renderProcessorForm(slug, settings, handleSettingChange)}
         </div>
       )}
@@ -241,7 +248,7 @@ export default function PaymentGatewayForm({
           disabled={isSubmitting}
           className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
         >
-          {isSubmitting ? 'Saving…' : initialData ? 'Update Gateway' : 'Create Gateway'}
+          {isSubmitting ? t('Saving...') : initialData ? t('Update Gateway') : t('Create Gateway')}
         </button>
       </div>
     </form>

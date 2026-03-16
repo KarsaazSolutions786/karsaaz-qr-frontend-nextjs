@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { domainsAPI } from '@/lib/api/endpoints/domains'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateDomainRequest, UpdateDomainRequest } from '@/lib/api/endpoints/domains'
-import type { DomainStatus } from '@/types/entities/domain'
+import type { DomainStatus, DomainAvailability } from '@/types/entities/domain'
 
 export function useCreateDomain() {
   const router = useRouter()
@@ -57,6 +57,33 @@ export function useChangeDomainStatus() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.domains.all() })
       queryClient.invalidateQueries({ queryKey: queryKeys.domains.detail(variables.id) })
+    },
+  })
+}
+
+export function useChangeDomainAvailability() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({
+      id,
+      availability,
+    }: {
+      id: string
+      availability: DomainAvailability
+    }) => domainsAPI.updateAvailability(id, availability),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.domains.all() })
+      queryClient.invalidateQueries({ queryKey: queryKeys.domains.detail(variables.id) })
+    },
+  })
+}
+
+export function useSetDefaultDomain() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => domainsAPI.setDefault(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.domains.all() })
     },
   })
 }

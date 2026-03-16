@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import type { QRDesign } from './types'
+import { useTranslation } from '@/lib/i18n'
 
 interface LogoTabProps {
   design: QRDesign
@@ -12,10 +13,11 @@ interface LogoTabProps {
 }
 
 export default function LogoTab({ design, onChange }: LogoTabProps) {
+  const { t } = useTranslation()
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="logo-url">Logo URL</Label>
+        <Label htmlFor="logo-url">{t('Logo URL')}</Label>
         <Input
           id="logo-url"
           type="url"
@@ -37,7 +39,7 @@ export default function LogoTab({ design, onChange }: LogoTabProps) {
       {design.logo?.url && (
         <>
           <div className="space-y-2">
-            <Label htmlFor="logo-size">Logo Size: {design.logo.size}px</Label>
+            <Label htmlFor="logo-size">{t('Logo Size:')} {design.logo.size}px</Label>
             <Input
               id="logo-size"
               type="range"
@@ -53,7 +55,7 @@ export default function LogoTab({ design, onChange }: LogoTabProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="logo-padding">Logo Padding: {design.logo.padding}px</Label>
+            <Label htmlFor="logo-padding">{t('Logo Padding:')} {design.logo.padding}px</Label>
             <Input
               id="logo-padding"
               type="range"
@@ -69,7 +71,7 @@ export default function LogoTab({ design, onChange }: LogoTabProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="logo-bg">Logo Background (optional)</Label>
+            <Label htmlFor="logo-bg">{t('Logo Background (optional)')}</Label>
             <div className="flex gap-2">
               <Input
                 id="logo-bg"
@@ -92,7 +94,7 @@ export default function LogoTab({ design, onChange }: LogoTabProps) {
                   onChange({ ...design, logo: rest })
                 }}
               >
-                Clear
+                {t('Clear')}
               </Button>
             </div>
           </div>

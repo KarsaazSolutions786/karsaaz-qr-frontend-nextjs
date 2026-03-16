@@ -142,8 +142,11 @@ export function encodeQRData(type: string, data: Record<string, any>): string {
     }
 
     // WeChat – schema field: username
-    case 'wechat':
-      return data.username || ''
+    case 'wechat': {
+      const val = data.username || ''
+      if (!val) return ''
+      return `weixin://dl/chat?${val}`
+    }
 
     // Skype – schema field: skype_name, type = call|chat
     case 'skype': {

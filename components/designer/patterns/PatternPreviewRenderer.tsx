@@ -4,12 +4,14 @@ import React from 'react'
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import type { PatternSettings } from './types'
+import { useTranslation } from '@/lib/i18n'
 
 interface PatternPreviewRendererProps {
   pattern: PatternSettings
 }
 
 export default function PatternPreviewRenderer({ pattern }: PatternPreviewRendererProps) {
+  const { t } = useTranslation()
   if (pattern.type === 'none') return null
 
   const rotation = pattern.rotation ?? 0
@@ -148,7 +150,7 @@ export default function PatternPreviewRenderer({ pattern }: PatternPreviewRender
 
   return (
     <div className="space-y-2">
-      <Label>Pattern Preview</Label>
+      <Label>{t('Pattern Preview')}</Label>
       <Card className="p-0 overflow-hidden">
         <div className="h-32 bg-white relative">{renderPreview()}</div>
       </Card>

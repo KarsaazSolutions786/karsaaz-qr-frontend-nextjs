@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Providers } from '@/lib/providers'
 import { generateOGMetadata } from '@/lib/utils/og-metadata'
+import { WebsiteAnnouncementBanner } from '@/components/common/WebsiteBanner'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -26,7 +27,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        <Providers>{children}</Providers>
+        <Providers>
+          <WebsiteAnnouncementBanner />
+          {children}
+        </Providers>
       </body>
     </html>
   )

@@ -8,9 +8,9 @@ import { useRouter } from 'next/navigation'
 import { Archive, Filter, FolderTree as FolderTreeIcon, Folder as FolderIcon } from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
-import { useMultiSelect } from '@/hooks/useMultiSelect'
-import { useFilters } from '@/hooks/useFilters'
-import { useQRActions } from '@/hooks/useQRActions'
+import { useMultiSelect } from '@/lib/hooks/useMultiSelect'
+import { useFilters } from '@/lib/hooks/useFilters'
+import { useQRActions } from '@/lib/hooks/useQRActions'
 import { MultiSelectToolbar, type BulkAction } from '@/components/qr/MultiSelectToolbar'
 import { FilterModal } from '@/components/qr/FilterModal'
 import { QRCodeCardSkeleton } from '@/components/common/Skeleton'
@@ -25,8 +25,10 @@ import { useFolders } from '@/lib/hooks/queries/useFolders'
 import type { Folder } from '@/lib/api/endpoints/folders'
 import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
 import { Download, Trash2, ArchiveRestore, Copy } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function ArchivedQRCodesPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -94,7 +96,7 @@ export default function ArchivedQRCodesPage() {
     () => [
       {
         id: 'download',
-        label: 'Download',
+        label: t('Download'),
         icon: <Download className="w-4 h-4" />,
         onClick: async (ids: string[]) => {
           await bulkDownloadQRCodes(ids)
@@ -102,7 +104,7 @@ export default function ArchivedQRCodesPage() {
       },
       {
         id: 'duplicate',
-        label: 'Duplicate',
+        label: t('Duplicate'),
         icon: <Copy className="w-4 h-4" />,
         onClick: async (ids: string[]) => {
           await bulkDuplicateQRCodes(ids)
@@ -110,7 +112,7 @@ export default function ArchivedQRCodesPage() {
       },
       {
         id: 'unarchive',
-        label: 'Unarchive',
+        label: t('Unarchive'),
         icon: <ArchiveRestore className="w-4 h-4" />,
         onClick: async (ids: string[]) => {
           await bulkUnarchiveQRCodes(ids)
@@ -119,7 +121,7 @@ export default function ArchivedQRCodesPage() {
       },
       {
         id: 'delete',
-        label: 'Delete',
+        label: t('Delete'),
         icon: <Trash2 className="w-4 h-4" />,
         variant: 'danger' as const,
         requiresConfirmation: true,
@@ -149,7 +151,7 @@ export default function ArchivedQRCodesPage() {
           duplicateQRCode(qrCodeId)
           break
         case 'delete':
-          if (confirm('Are you sure you want to delete this QR code?')) {
+          if (confirm(t('Are you sure you want to delete this QR code?'))) {
             deleteQRCode(qrCodeId)
           }
           break
@@ -182,8 +184,8 @@ export default function ArchivedQRCodesPage() {
               <Archive className="w-6 h-6 text-gray-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Archived QR Codes</h1>
-              <p className="mt-2 text-sm text-gray-600">View and manage your archived QR codes</p>
+              <h1 className="text-3xl font-bold text-gray-900">{t('Archived QR Codes')}</h1>
+              <p className="mt-2 text-sm text-gray-600">{t('View and manage your archived QR codes')}</p>
             </div>
           </div>
         </div>
@@ -193,20 +195,20 @@ export default function ArchivedQRCodesPage() {
             className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             <FolderTreeIcon className="w-4 h-4 mr-2" />
-            Folders
+            {t('Folders')}
           </button>
           <button
             onClick={() => setShowFilters(true)}
             className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             <Filter className="w-4 h-4 mr-2" />
-            Filters
+            {t('Filters')}
           </button>
           <Link
             href="/qrcodes"
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
-            View Active QR Codes
+            {t('View Active QR Codes')}
           </Link>
         </div>
       </div>
@@ -230,7 +232,7 @@ export default function ArchivedQRCodesPage() {
         {showFolders && (
           <div className="w-64 flex-shrink-0">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <h3 className="font-semibold text-gray-900 mb-4">Folders</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">{t('Folders')}</h3>
               <div className="space-y-1">
                 <button
                   onClick={() => {
@@ -243,7 +245,7 @@ export default function ArchivedQRCodesPage() {
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
-                  All QR Codes
+                  {t('All QR Codes')}
                 </button>
                 {(foldersData || []).map((folder: Folder) => (
                   <button
@@ -278,7 +280,7 @@ export default function ArchivedQRCodesPage() {
           <div className="mb-6 space-y-4">
             <DebouncedSearch
               onSearch={handleSearch}
-              placeholder="Search archived QR codes..."
+              placeholder={t('Search archived QR codes...')}
               delay={300}
               minLength={0}
             />
@@ -294,10 +296,9 @@ export default function ArchivedQRCodesPage() {
             <div className="flex items-start gap-3">
               <Archive className="w-5 h-5 text-blue-600 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-blue-900">These QR codes are archived</p>
+                <p className="text-sm font-medium text-blue-900">{t('These QR codes are archived')}</p>
                 <p className="text-sm text-blue-700 mt-1">
-                  Archived QR codes are hidden from your active list but can be unarchived at any
-                  time. They continue to work and track scans.
+                  {t('Archived QR codes are hidden from your active list but can be unarchived at any time. They continue to work and track scans.')}
                 </p>
               </div>
             </div>
@@ -316,15 +317,15 @@ export default function ArchivedQRCodesPage() {
           {!isLoading && !hasQRCodes && !search && (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <Archive className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No archived QR codes</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('No archived QR codes')}</h3>
               <p className="text-gray-600 mb-6">
-                You haven't archived any QR codes yet. Archived items will appear here.
+                {t("You haven't archived any QR codes yet. Archived items will appear here.")}
               </p>
               <Link
                 href="/qrcodes"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >
-                View Active QR Codes
+                {t('View Active QR Codes')}
               </Link>
             </div>
           )}

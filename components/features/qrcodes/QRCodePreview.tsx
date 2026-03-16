@@ -1,6 +1,7 @@
 'use client'
 
 import { QRCode } from '@/types/entities/qrcode'
+import { useTranslation } from '@/lib/i18n'
 
 interface QRCodePreviewProps {
   qrcode: QRCode
@@ -8,6 +9,7 @@ interface QRCodePreviewProps {
 }
 
 export function QRCodePreview({ qrcode, size = 256 }: QRCodePreviewProps) {
+  const { t } = useTranslation()
   // In a real implementation, this would use qrcode.react or similar library
   // For now, it's a placeholder showing the pattern
 
@@ -24,17 +26,17 @@ export function QRCodePreview({ qrcode, size = 256 }: QRCodePreviewProps) {
         <div className="flex h-full w-full items-center justify-center bg-gray-100">
           <div className="text-center">
             <div className="text-6xl">⊞</div>
-            <div className="mt-2 text-xs text-gray-500">QR Code</div>
+            <div className="mt-2 text-xs text-gray-500">{t('QR Code')}</div>
           </div>
         </div>
       </div>
 
       {qrcode.customization?.logoUrl && (
-        <div className="text-xs text-gray-500">Logo: {qrcode.customization.logoUrl}</div>
+        <div className="text-xs text-gray-500">{t('Logo')}: {qrcode.customization.logoUrl}</div>
       )}
 
       <div className="text-sm text-gray-600">
-        Style: {qrcode.customization?.style || 'squares'}
+        {t('Style')}: {qrcode.customization?.style || 'squares'}
       </div>
     </div>
   )

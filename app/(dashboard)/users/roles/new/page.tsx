@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { useCreateRole } from '@/lib/hooks/mutations/useRoleMutations'
 import { PermissionsInput } from '@/components/features/roles/PermissionsInput'
+import { useTranslation } from '@/lib/i18n'
 
 export default function NewRolePage() {
+  const { t } = useTranslation()
   const [name, setName] = useState('')
   const [homePage, setHomePage] = useState('')
   const [permissionIds, setPermissionIds] = useState<number[]>([])
@@ -19,7 +21,7 @@ export default function NewRolePage() {
     setError(null)
 
     if (!name.trim()) {
-      setError('Role name is required.')
+      setError(t('Role name is required.'))
       return
     }
 
@@ -34,7 +36,7 @@ export default function NewRolePage() {
       const msg =
         err?.response?.data?.message ||
         Object.values(err?.response?.data?.errors || {}).flat().join(' ') ||
-        'Failed to create role.'
+        t('Failed to create role.')
       setError(msg as string)
     }
   }
@@ -47,13 +49,13 @@ export default function NewRolePage() {
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Roles
+        {t('Back to Roles')}
       </Link>
 
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
         <div className="px-6 py-6 border-b border-gray-200">
-          <h1 className="text-xl font-semibold text-gray-900">Create Role</h1>
-          <p className="mt-1 text-sm text-gray-600">Define a new role and assign permissions.</p>
+          <h1 className="text-xl font-semibold text-gray-900">{t('Create Role')}</h1>
+          <p className="mt-1 text-sm text-gray-600">{t('Define a new role and assign permissions.')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6">
@@ -66,7 +68,7 @@ export default function NewRolePage() {
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Role Name <span className="text-red-500">*</span>
+              {t('Role Name')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -81,7 +83,7 @@ export default function NewRolePage() {
           {/* Home Page */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Home Page
+              {t('Home Page')}
             </label>
             <input
               type="text"
@@ -91,14 +93,14 @@ export default function NewRolePage() {
               className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <p className="mt-1 text-xs text-gray-500">
-              The page users with this role are redirected to after login.
+              {t('The page users with this role are redirected to after login.')}
             </p>
           </div>
 
           {/* Permissions */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Permissions
+              {t('Permissions')}
               <span className="ml-2 text-xs font-normal text-gray-400">
                 ({permissionIds.length} selected)
               </span>
@@ -112,7 +114,7 @@ export default function NewRolePage() {
               href="/users/roles"
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              Cancel
+              {t('Cancel')}
             </Link>
             <button
               type="submit"
@@ -120,7 +122,7 @@ export default function NewRolePage() {
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              Create Role
+              {t('Create Role')}
             </button>
           </div>
         </form>

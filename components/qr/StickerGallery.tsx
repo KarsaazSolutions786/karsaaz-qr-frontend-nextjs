@@ -9,6 +9,7 @@
 import React, { useState, useMemo } from 'react';
 import { Sticker, StickerCategory } from '@/types/entities/sticker';
 import { filterStickersByCategory, filterStickersBySearch, sortStickers } from '@/lib/utils/sticker-utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface StickerGalleryProps {
   stickers: Sticker[];
@@ -33,6 +34,7 @@ export function StickerGallery({
   columns = 4,
   className = '',
 }: StickerGalleryProps) {
+  const { t } = useTranslation();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   // Filter and sort stickers
@@ -80,11 +82,11 @@ export function StickerGallery({
               d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No stickers found</h3>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No stickers found')}</h3>
           <p className="mt-1 text-sm text-gray-500">
             {searchQuery
-              ? 'Try adjusting your search or filter.'
-              : 'Upload a custom sticker or select a different category.'}
+              ? t('Try adjusting your search or filter.')
+              : t('Upload a custom sticker or select a different category.')}
           </p>
         </div>
       </div>
@@ -138,7 +140,7 @@ export function StickerGallery({
               {/* Custom badge */}
               {sticker.isCustom && (
                 <div className="absolute top-2 left-2 px-2 py-0.5 bg-purple-600 text-white text-xs font-medium rounded">
-                  Custom
+                  {t('Custom')}
                 </div>
               )}
 
@@ -156,7 +158,7 @@ export function StickerGallery({
       {/* Results count */}
       <div className="mt-4 text-center">
         <p className="text-xs text-gray-500">
-          Showing {filteredStickers.length} sticker{filteredStickers.length !== 1 ? 's' : ''}
+          {t('Showing')} {filteredStickers.length} {filteredStickers.length !== 1 ? t('stickers') : t('sticker')}
         </p>
       </div>
     </div>
@@ -174,6 +176,7 @@ export function StickerGalleryPaginated({
   itemsPerPage = 12,
   ...props
 }: StickerGalleryPaginatedProps) {
+  const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate pagination
@@ -195,7 +198,7 @@ export function StickerGalleryPaginated({
             disabled={currentPage === 1}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Previous
+            {t('Previous')}
           </button>
 
           <div className="flex items-center gap-1">
@@ -221,7 +224,7 @@ export function StickerGalleryPaginated({
             disabled={currentPage === totalPages}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Next
+            {t('Next')}
           </button>
         </div>
       )}

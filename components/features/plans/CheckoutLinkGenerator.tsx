@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 interface CheckoutLinkGeneratorProps {
   planId: number
@@ -10,6 +11,7 @@ interface CheckoutLinkGeneratorProps {
 type BillingCycle = 'monthly' | 'annual'
 
 export function CheckoutLinkGenerator({ planId, planName }: CheckoutLinkGeneratorProps) {
+  const { t } = useTranslation()
   const [cycle, setCycle] = useState<BillingCycle>('monthly')
   const [copied, setCopied] = useState(false)
 
@@ -36,9 +38,9 @@ export function CheckoutLinkGenerator({ planId, planName }: CheckoutLinkGenerato
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-      <h3 className="text-sm font-semibold text-gray-900">Checkout Link</h3>
+      <h3 className="text-sm font-semibold text-gray-900">{t('Checkout Link')}</h3>
       <p className="mt-1 text-xs text-gray-500">
-        Share this link to let users subscribe directly to <strong>{planName}</strong>.
+        {t('Share this link to let users subscribe directly to')} <strong>{planName}</strong>.
       </p>
 
       {/* Billing cycle selector */}
@@ -52,7 +54,7 @@ export function CheckoutLinkGenerator({ planId, planName }: CheckoutLinkGenerato
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
         >
-          Monthly
+          {t('Monthly')}
         </button>
         <button
           type="button"
@@ -63,7 +65,7 @@ export function CheckoutLinkGenerator({ planId, planName }: CheckoutLinkGenerato
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
         >
-          Annual
+          {t('Annual')}
         </button>
       </div>
 
@@ -86,14 +88,14 @@ export function CheckoutLinkGenerator({ planId, planName }: CheckoutLinkGenerato
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              Copied
+              {t('Copied')}
             </span>
           ) : (
             <span className="flex items-center gap-1">
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
-              Copy
+              {t('Copy')}
             </span>
           )}
         </button>

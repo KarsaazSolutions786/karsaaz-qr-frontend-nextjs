@@ -1,5 +1,6 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { appStoreDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 
@@ -17,6 +18,7 @@ interface AppStoreDataFormProps {
 }
 
 export function AppStoreDataForm({ defaultValues, onChange }: AppStoreDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -25,32 +27,32 @@ export function AppStoreDataForm({ defaultValues, onChange }: AppStoreDataFormPr
     <form className="space-y-5">
       <div>
         <label htmlFor="appName" className={LABEL}>
-          App Name *
+          {t('App Name')} *
         </label>
         <input
           {...register('appName')}
           id="appName"
           type="text"
-          placeholder="My Awesome App"
+          placeholder={t('My Awesome App')}
           className={INPUT}
         />
         {errors.appName && <p className={ERROR}>{errors.appName.message}</p>}
       </div>
       <div>
         <label htmlFor="app_description" className={LABEL}>
-          App Description <span className="text-gray-400 font-normal">(optional)</span>
+          {t('App Description')} <span className="text-gray-400 font-normal">({t('optional')})</span>
         </label>
         <textarea
           {...register('app_description')}
           id="app_description"
           rows={3}
-          placeholder="Describe your app..."
+          placeholder={t('Describe your app...')}
           className={TEXTAREA}
         />
       </div>
       <div>
         <label htmlFor="androidUrl" className={LABEL}>
-          Google Play URL
+          {t('Google Play URL')}
         </label>
         <input
           {...register('androidUrl')}
@@ -63,7 +65,7 @@ export function AppStoreDataForm({ defaultValues, onChange }: AppStoreDataFormPr
       </div>
       <div>
         <label htmlFor="iosUrl" className={LABEL}>
-          Apple Store URL
+          {t('Apple Store URL')}
         </label>
         <input
           {...register('iosUrl')}
@@ -76,13 +78,13 @@ export function AppStoreDataForm({ defaultValues, onChange }: AppStoreDataFormPr
       </div>
       <div>
         <label htmlFor="expires_at" className={LABEL}>
-          Expiry Date <span className="text-gray-400 font-normal">(optional)</span>
+          {t('Expiry Date')} <span className="text-gray-400 font-normal">({t('optional')})</span>
         </label>
         <input {...register('expires_at')} id="expires_at" type="date" className={INPUT} />
       </div>
       <div>
         <label htmlFor="socialProfiles" className={LABEL}>
-          Social Profiles <span className="text-gray-400 font-normal">(one URL per line)</span>
+          {t('Social Profiles')} <span className="text-gray-400 font-normal">({t('one URL per line')})</span>
         </label>
         <textarea
           {...register('socialProfiles')}

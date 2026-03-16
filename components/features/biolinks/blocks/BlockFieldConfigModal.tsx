@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { X, Plus, Trash2, GripVertical } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { BiolinkBlockField, BiolinkFieldType } from '@/types/entities/dynamic-biolink-block';
@@ -26,6 +27,7 @@ export default function BlockFieldConfigModal({
   onClose,
   onSave,
 }: BlockFieldConfigModalProps) {
+  const { t } = useTranslation();
   const [fields, setFields] = useState<BiolinkBlockField[]>(initialFields);
 
   if (!open) return null;
@@ -61,7 +63,7 @@ export default function BlockFieldConfigModal({
       <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-          <h2 className="text-lg font-semibold text-gray-900">Configure Block Fields</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('Configure Block Fields')}</h2>
           <button
             onClick={onClose}
             className="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
@@ -74,7 +76,7 @@ export default function BlockFieldConfigModal({
         <div className="max-h-[60vh] overflow-y-auto px-6 py-4">
           {fields.length === 0 ? (
             <p className="py-8 text-center text-sm text-gray-500">
-              No fields configured. Add a field to get started.
+              {t('No fields configured. Add a field to get started.')}
             </p>
           ) : (
             <div className="space-y-4">
@@ -88,7 +90,7 @@ export default function BlockFieldConfigModal({
                     <Input
                       value={field.name}
                       onChange={(e) => updateField(index, { name: e.target.value })}
-                      placeholder="Field name"
+                      placeholder={t('Field name')}
                       className="h-9 text-sm"
                     />
                     <div className="flex gap-2">
@@ -101,14 +103,14 @@ export default function BlockFieldConfigModal({
                       >
                         {FIELD_TYPES.map((ft) => (
                           <option key={ft.value} value={ft.value}>
-                            {ft.label}
+                            {t(ft.label)}
                           </option>
                         ))}
                       </select>
                       <Input
                         value={field.placeholder || ''}
                         onChange={(e) => updateField(index, { placeholder: e.target.value })}
-                        placeholder="Placeholder"
+                        placeholder={t('Placeholder')}
                         className="h-9 flex-1 text-sm"
                       />
                     </div>
@@ -129,14 +131,14 @@ export default function BlockFieldConfigModal({
         <div className="flex items-center justify-between border-t border-gray-200 px-6 py-4">
           <Button type="button" variant="outline" size="sm" onClick={addField}>
             <Plus className="mr-1 h-4 w-4" />
-            Add Field
+            {t('Add Field')}
           </Button>
           <div className="flex gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button type="button" onClick={handleSave}>
-              Save Fields
+              {t('Save Fields')}
             </Button>
           </div>
         </div>

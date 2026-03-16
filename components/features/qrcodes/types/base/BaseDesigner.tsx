@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface DesignSettings {
   // Background
@@ -88,6 +89,7 @@ export function BaseDesigner({
   tabs = defaultTabs,
   className,
 }: BaseDesignerProps) {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(tabs[0]?.id || 'colors')
   const [backgroundMode, setBackgroundMode] = useState<'color' | 'gradient' | 'image'>('color')
 
@@ -117,14 +119,14 @@ export function BaseDesigner({
               backgroundMode === mode ? 'bg-blue-600 text-white' : 'bg-gray-200'
             )}
           >
-            {mode === 'color' ? 'Solid Color' : mode}
+            {mode === 'color' ? t('Solid Color') : mode === 'gradient' ? t('gradient') : t('image')}
           </button>
         ))}
       </div>
 
       {backgroundMode === 'color' && (
         <ColorInput
-          label="Background Color"
+          label={t('Background Color')}
           value={design.backgroundColor || '#ffffff'}
           onChange={value => updateDesign({ backgroundColor: value })}
         />
@@ -147,7 +149,7 @@ export function BaseDesigner({
           </div>
           <div className="flex gap-2 items-end">
             <ColorInput
-              label="Start Color"
+              label={t('Start Color')}
               value={design.backgroundGradient?.colors[0] || '#667eea'}
               onChange={value =>
                 updateDesign({
@@ -160,7 +162,7 @@ export function BaseDesigner({
               }
             />
             <ColorInput
-              label="End Color"
+              label={t('End Color')}
               value={design.backgroundGradient?.colors[1] || '#764ba2'}
               onChange={value =>
                 updateDesign({
@@ -173,7 +175,7 @@ export function BaseDesigner({
               }
             />
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Angle</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Angle')}</label>
               <input
                 type="number"
                 value={design.backgroundGradient?.angle || 135}
@@ -197,7 +199,7 @@ export function BaseDesigner({
       {backgroundMode === 'image' && (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('Image URL')}</label>
             <input
               type="url"
               value={design.backgroundImage || ''}
@@ -208,7 +210,7 @@ export function BaseDesigner({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Blur Amount: {design.backgroundBlur || 0}px
+              {t('Blur Amount')}: {design.backgroundBlur || 0}px
             </label>
             <input
               type="range"
@@ -224,7 +226,7 @@ export function BaseDesigner({
 
       <div className="mt-4 pt-4 border-t">
         <ColorInput
-          label="Primary Color"
+          label={t('Primary Color')}
           value={design.primaryColor || '#3b82f6'}
           onChange={value => updateDesign({ primaryColor: value })}
         />
@@ -235,7 +237,7 @@ export function BaseDesigner({
   const renderTypographyTab = () => (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Font Family</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Font Family')}</label>
         <select
           value={design.fontFamily || fontOptions[0]?.value || ''}
           onChange={e => updateDesign({ fontFamily: e.target.value })}
@@ -250,13 +252,13 @@ export function BaseDesigner({
       </div>
 
       <ColorInput
-        label="Text Color"
+        label={t('Text Color')}
         value={design.textColor || '#1f2937'}
         onChange={value => updateDesign({ textColor: value })}
       />
 
       <ColorInput
-        label="Heading Color"
+        label={t('Heading Color')}
         value={design.headingColor || '#111827'}
         onChange={value => updateDesign({ headingColor: value })}
       />
@@ -266,7 +268,7 @@ export function BaseDesigner({
   const renderButtonsTab = () => (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Button Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Button Style')}</label>
         <div className="grid grid-cols-3 gap-2">
           {['rounded', 'square', 'pill'].map(style => (
             <button
@@ -289,13 +291,13 @@ export function BaseDesigner({
       </div>
 
       <ColorInput
-        label="Button Color"
+        label={t('Button Color')}
         value={design.buttonColor || '#3b82f6'}
         onChange={value => updateDesign({ buttonColor: value })}
       />
 
       <ColorInput
-        label="Button Text Color"
+        label={t('Button Text Color')}
         value={design.buttonTextColor || '#ffffff'}
         onChange={value => updateDesign({ buttonTextColor: value })}
       />
@@ -309,7 +311,7 @@ export function BaseDesigner({
           className="rounded border-gray-300"
         />
         <label htmlFor="buttonShadow" className="text-sm text-gray-700">
-          Enable button shadow
+          {t('Enable button shadow')}
         </label>
       </div>
     </div>
@@ -318,7 +320,7 @@ export function BaseDesigner({
   const renderLayoutTab = () => (
     <div className="space-y-4">
       <RangeInput
-        label="Max Width"
+        label={t('Max Width')}
         value={design.maxWidth || 680}
         min={320}
         max={1200}
@@ -328,7 +330,7 @@ export function BaseDesigner({
       />
 
       <RangeInput
-        label="Padding"
+        label={t('Padding')}
         value={design.padding || 24}
         min={0}
         max={48}
@@ -338,7 +340,7 @@ export function BaseDesigner({
       />
 
       <RangeInput
-        label="Section Spacing"
+        label={t('Section Spacing')}
         value={design.spacing || 16}
         min={0}
         max={48}
@@ -348,7 +350,7 @@ export function BaseDesigner({
       />
 
       <RangeInput
-        label="Border Radius"
+        label={t('Border Radius')}
         value={design.borderRadius || 12}
         min={0}
         max={32}
@@ -366,12 +368,12 @@ export function BaseDesigner({
           className="rounded border-gray-300"
         />
         <label htmlFor="enableAnimations" className="text-sm text-gray-700">
-          Enable animations
+          {t('Enable animations')}
         </label>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Custom CSS</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Custom CSS')}</label>
         <textarea
           value={design.customCss || ''}
           onChange={e => updateDesign({ customCss: e.target.value })}
@@ -400,7 +402,7 @@ export function BaseDesigner({
 
   return (
     <div className={cn('space-y-4', className)}>
-      <h3 className="text-lg font-semibold text-gray-900">Design & Styling</h3>
+      <h3 className="text-lg font-semibold text-gray-900">{t('Design & Styling')}</h3>
 
       {/* Tab Navigation */}
       <div className="flex gap-2 border-b overflow-x-auto">

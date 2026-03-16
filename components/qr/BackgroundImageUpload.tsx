@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface BackgroundImageUploadProps {
   imageUrl: string | null;
@@ -29,6 +30,7 @@ export function BackgroundImageUpload({
   maxSizeKB = DEFAULT_MAX_SIZE_KB,
   className = '',
 }: BackgroundImageUploadProps) {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -176,7 +178,7 @@ export function BackgroundImageUpload({
 
   return (
     <div className={`background-image-upload ${className}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Background Image</label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">{t('Background Image')}</label>
 
       {/* Upload area */}
       {!imageUrl ? (
@@ -203,7 +205,7 @@ export function BackgroundImageUpload({
           {isLoading ? (
             <div className="flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-3"></div>
-              <p className="text-sm text-gray-600">Processing...</p>
+              <p className="text-sm text-gray-600">{t('Processing...')}</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
@@ -220,7 +222,7 @@ export function BackgroundImageUpload({
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <p className="text-sm text-gray-700 font-medium mb-1">Click to upload or drag and drop</p>
+              <p className="text-sm text-gray-700 font-medium mb-1">{t('Click to upload or drag and drop')}</p>
               <p className="text-xs text-gray-500">
                 PNG, JPG, or WebP (max {Math.round(maxSizeKB / 1024)}MB)
               </p>
@@ -246,14 +248,14 @@ export function BackgroundImageUpload({
                 onClick={handleClick}
                 className="flex-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md text-sm transition"
               >
-                Replace
+                {t('Replace')}
               </button>
               <button
                 type="button"
                 onClick={handleRemove}
                 className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 rounded-md text-sm transition"
               >
-                Remove
+                {t('Remove')}
               </button>
             </div>
 
@@ -295,7 +297,7 @@ export function BackgroundImageUpload({
 
       {/* URL input as alternative */}
       <div className="mt-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Or enter image URL</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Or enter image URL')}</label>
         <input
           type="url"
           value={imageUrl || ''}
@@ -308,7 +310,7 @@ export function BackgroundImageUpload({
       {/* Help text */}
       <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
         <p className="text-xs text-blue-800">
-          💡 <span className="font-medium">Tip:</span> Use high-quality images for best results. The image will be scaled to fit the QR code size while maintaining aspect ratio.
+          {t('Tip:')} {t('Use high-quality images for best results. The image will be scaled to fit the QR code size while maintaining aspect ratio.')}
         </p>
       </div>
     </div>

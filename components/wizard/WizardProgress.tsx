@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface WizardProgressProps {
   totalSteps: number;
@@ -16,6 +19,7 @@ export function WizardProgress({
   showStepCount = true,
   className,
 }: WizardProgressProps) {
+  const { t } = useTranslation();
   const progress = ((currentStep + 1) / totalSteps) * 100;
   const percentage = Math.round(progress);
 
@@ -26,11 +30,11 @@ export function WizardProgress({
         <div className="mb-2 flex items-center justify-between text-sm">
           {showStepCount && (
             <span className="font-medium text-gray-700">
-              Step {currentStep + 1} of {totalSteps}
+              {t(`Step ${currentStep + 1} of ${totalSteps}`)}
             </span>
           )}
           {showPercentage && (
-            <span className="text-gray-500">{percentage}% Complete</span>
+            <span className="text-gray-500">{t(`${percentage}% Complete`)}</span>
           )}
         </div>
       )}

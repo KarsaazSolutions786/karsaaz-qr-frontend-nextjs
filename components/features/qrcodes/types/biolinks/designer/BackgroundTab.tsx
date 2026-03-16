@@ -136,7 +136,7 @@ export default function BackgroundTab({ theme, updateTheme }: BackgroundTabProps
                   })
                 }
                 className="w-24 px-3 py-2 border rounded-lg"
-                placeholder="Angle"
+                placeholder={t('Angle')}
                 min="0"
                 max="360"
               />

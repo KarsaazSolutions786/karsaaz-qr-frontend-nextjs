@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { PlusIcon, TrashIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface GradientStop {
   color: string
@@ -174,6 +175,7 @@ export function GradientPicker({
   minStops = 2,
   maxStops = 5,
 }: GradientPickerProps) {
+  const { t } = useTranslation()
   const [activeStopIndex, setActiveStopIndex] = useState(0)
   const [showPresetPanel, setShowPresetPanel] = useState(false)
   const sliderRef = useRef<HTMLDivElement>(null)
@@ -318,7 +320,7 @@ export function GradientPicker({
 
       {/* Gradient slider */}
       <div className="space-y-2">
-        <div className="text-xs text-gray-500 font-medium">Color Stops</div>
+        <div className="text-xs text-gray-500 font-medium">{t('Color Stops')}</div>
         <div
           ref={sliderRef}
           className="relative h-8 rounded-md border border-gray-300 cursor-crosshair"
@@ -395,7 +397,7 @@ export function GradientPicker({
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-500">Position</label>
+            <label className="text-xs text-gray-500">{t('Position')}</label>
             <input
               type="number"
               min={0}
@@ -427,21 +429,21 @@ export function GradientPicker({
       <div className="flex flex-wrap items-center gap-3">
         {/* Gradient type */}
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-500">Type</label>
+          <label className="text-xs text-gray-500">{t('Type')}</label>
           <select
             value={value.type}
             onChange={e => onChange({ ...value, type: e.target.value as 'linear' | 'radial' })}
             className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
-            <option value="linear">Linear</option>
-            <option value="radial">Radial</option>
+            <option value="linear">{t('Linear')}</option>
+            <option value="radial">{t('Radial')}</option>
           </select>
         </div>
 
         {/* Angle (linear only) */}
         {value.type === 'linear' && (
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-500">Angle</label>
+            <label className="text-xs text-gray-500">{t('Angle')}</label>
             <input
               type="number"
               min={0}
@@ -469,7 +471,7 @@ export function GradientPicker({
           className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-md disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <PlusIcon className="w-3.5 h-3.5" />
-          Add Stop
+          {t('Add Stop')}
         </button>
 
         {/* Randomize */}
@@ -489,7 +491,7 @@ export function GradientPicker({
             onClick={() => setShowPresetPanel(!showPresetPanel)}
             className="px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-md"
           >
-            Presets
+            {t('Presets')}
           </button>
         )}
       </div>

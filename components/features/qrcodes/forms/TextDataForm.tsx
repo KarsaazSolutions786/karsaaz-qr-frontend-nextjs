@@ -1,6 +1,7 @@
 'use client'
 
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { textDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 
@@ -16,6 +17,7 @@ interface TextDataFormProps {
 }
 
 export function TextDataForm({ defaultValues, onChange }: TextDataFormProps) {
+  const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<TextDataFormData>({
     schema: textDataSchema,
     defaultValues,
@@ -25,8 +27,8 @@ export function TextDataForm({ defaultValues, onChange }: TextDataFormProps) {
   return (
     <form className="space-y-5">
       <div>
-        <label htmlFor="text" className={LABEL}>Text / URL</label>
-        <textarea {...register('text')} id="text" rows={5} placeholder="Enter your text or URL..." className={TEXTAREA} />
+        <label htmlFor="text" className={LABEL}>{t('Text / URL')}</label>
+        <textarea {...register('text')} id="text" rows={5} placeholder={t('Enter your text or URL...')} className={TEXTAREA} />
         {errors.text && <p className={ERROR}>{errors.text.message}</p>}
       </div>
     </form>

@@ -7,9 +7,11 @@ import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth'
 import { useLogin, useTwoFactorLoginVerify } from '@/lib/hooks/mutations/useLogin'
+import { useTranslation } from '@/lib/i18n'
 import type { LoginRequires2FAResponse } from '@/lib/api/endpoints/auth'
 
 export function LoginForm() {
+  const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const [show2fa, setShow2fa] = useState(false)
   const [twoFactorToken, setTwoFactorToken] = useState('')
@@ -60,7 +62,7 @@ export function LoginForm() {
 
   const handle2faSubmit = async () => {
     if (!twoFactorCode || twoFactorCode.length < 6) {
-      setTwoFactorError('Please enter the 6-digit authentication code')
+      setTwoFactorError(t('Please enter the 6-digit authentication code'))
       return
     }
     setTwoFactorError('')
@@ -71,7 +73,7 @@ export function LoginForm() {
         code: twoFactorCode,
       })
     } catch {
-      setTwoFactorError('Invalid authentication code. Please try again.')
+      setTwoFactorError(t('Invalid authentication code. Please try again.'))
     }
   }
 
@@ -80,7 +82,7 @@ export function LoginForm() {
     return (
       <div className="w-full space-y-3">
         <div className="rounded-lg bg-white/10 px-4 py-2.5 text-center text-sm text-white/80">
-          Two-factor authentication required
+          {t('Two-factor authentication required')}
         </div>
 
         <div>
@@ -89,13 +91,13 @@ export function LoginForm() {
             className="mb-1 block text-[12px] font-bold text-white"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Authentication Code
+            {t('Authentication Code')}
           </label>
           <p
             className="mb-2 text-[11px] text-white/60"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Enter the 6-digit code from your authenticator app
+            {t('Enter the 6-digit code from your authenticator app')}
           </p>
           <input
             ref={twoFactorInputRef}
@@ -135,7 +137,7 @@ export function LoginForm() {
             fontFamily: "'Inter', sans-serif",
           }}
         >
-          {twoFactorVerify.isPending ? 'Verifying...' : 'Verify & Sign In'}
+          {twoFactorVerify.isPending ? t('Verifying...') : t('Verify & Sign In')}
         </button>
 
         <button
@@ -149,7 +151,7 @@ export function LoginForm() {
           }}
           className="text-sm text-white/80 hover:text-white hover:underline flex items-center gap-1"
         >
-          ← Back to login
+          {t('Back to login')}
         </button>
       </div>
     )
@@ -165,7 +167,7 @@ export function LoginForm() {
           className="mb-1 block text-[12px] font-bold text-white"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
-          Email
+          {t('Email')}
         </label>
         <input
           {...register('email')}
@@ -192,7 +194,7 @@ export function LoginForm() {
           className="mb-1 block text-[12px] font-bold text-white"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
-          Password
+          {t('Password')}
         </label>
         <div className="relative">
           <input
@@ -210,7 +212,7 @@ export function LoginForm() {
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-[#404a60] hover:text-gray-700 transition-colors"
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? t('Hide password') : t('Show password')}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -229,7 +231,7 @@ export function LoginForm() {
           className="text-[12px] font-medium text-white hover:text-white/80 transition-colors"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
-          Forget password?
+          {t('Forget password?')}
         </Link>
       </div>
 
@@ -238,7 +240,7 @@ export function LoginForm() {
         <div role="alert" className="rounded-lg bg-red-500/20 border border-red-400/30 p-3">
           <p className="text-xs text-red-100">
             {(loginMutation.error as any)?.response?.data?.message ||
-              'Invalid email or password. Please try again.'}
+              t('Invalid email or password. Please try again.')}
           </p>
         </div>
       )}
@@ -254,7 +256,7 @@ export function LoginForm() {
           fontFamily: "'Inter', sans-serif",
         }}
       >
-        {isSubmitting || loginMutation.isPending ? 'Signing in...' : 'Login'}
+        {isSubmitting || loginMutation.isPending ? t('Signing in...') : t('Login')}
       </button>
     </form>
   )

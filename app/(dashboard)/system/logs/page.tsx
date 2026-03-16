@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
+import { useTranslation } from '@/lib/i18n'
 
 export default function SystemLogsPage() {
+  const { t } = useTranslation()
   const [logContent, setLogContent] = useState('')
   const [fileSize, setFileSize] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
@@ -28,7 +30,7 @@ export default function SystemLogsPage() {
         }
       }, 100)
     } catch {
-      setLogContent('Failed to load logs.')
+      setLogContent(t('Failed to load logs.'))
     } finally {
       setIsLoading(false)
     }
@@ -40,27 +42,25 @@ export default function SystemLogsPage() {
 
   const handleDownload = async () => {
     try {
-      const blob = await systemConfigsAPI.downloadLogFile()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `system-logs-${new Date().toISOString().split('T')[0]}.log`
-      a.click()
-      URL.revokeObjectURL(url)
+      const url = await systemConfigsAPI.downloadLogFile()
+      // Backend returns a relative signed URL — resolve against API origin
+      const baseOrigin = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && (window as any).BACKEND_URL) || ''
+      const fullUrl = url.startsWith('http') ? url : `${baseOrigin}${url}`
+      window.open(fullUrl, '_blank')
     } catch {
-      showFeedback('Failed to download log file.')
+      showFeedback(t('Failed to download log file.'))
     }
   }
 
   const handleClear = async () => {
-    if (!confirm('Are you sure you want to clear the log file? This cannot be undone.')) return
+    if (!confirm(t('Are you sure you want to clear the log file? This cannot be undone.'))) return
     try {
       await systemConfigsAPI.clearLogFile()
       setLogContent('')
       setFileSize(0)
-      showFeedback('Log file cleared successfully.')
+      showFeedback(t('Log file cleared successfully.'))
     } catch {
-      showFeedback('Failed to clear log file.')
+      showFeedback(t('Failed to clear log file.'))
     }
   }
 
@@ -74,9 +74,9 @@ export default function SystemLogsPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">System Logs</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('System Logs')}</h1>
           <p className="mt-2 text-sm text-gray-600">
-            View system activity and error logs
+            {t('View system activity and error logs')}
             {fileSize > 0 && <span className="ml-2 text-gray-400">({formatSize(fileSize)})</span>}
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function SystemLogsPage() {
             disabled={isLoading}
             className="inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50"
           >
-            {isLoading ? 'Loading…' : 'Refresh'}
+            {isLoading ? t('Loading...') : t('Refresh')}
           </button>
           <button
             type="button"
@@ -96,7 +96,7 @@ export default function SystemLogsPage() {
             disabled={!logContent}
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50"
           >
-            Download
+            {t('Download')}
           </button>
           <button
             type="button"
@@ -104,7 +104,7 @@ export default function SystemLogsPage() {
             disabled={!logContent}
             className="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50"
           >
-            Clear Logs
+            {t('Clear Logs')}
           </button>
         </div>
       </div>
@@ -118,7 +118,7 @@ export default function SystemLogsPage() {
           <textarea
             ref={textareaRef}
             readOnly
-            value={logContent || 'No logs available.'}
+            value={logContent || t('No logs available.')}
             className="h-[600px] w-full resize-none border-0 bg-gray-900 p-6 font-mono text-xs leading-relaxed text-green-400 focus:outline-none"
           />
         )}

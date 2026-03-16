@@ -3,6 +3,7 @@
 import React from 'react';
 import { Star, Flame, TrendingUp, Leaf, Wheat, Milk, Fish, Egg } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { useTranslation } from '@/lib/i18n';
 
 interface AllergenInfo {
   glutenFree?: boolean;
@@ -51,6 +52,7 @@ const allergenIcons: Record<keyof AllergenInfo, { icon: typeof Wheat; label: str
 };
 
 export default function MenuDisplay({ items, currencySymbol, primaryColor, accentColor }: MenuDisplayProps) {
+  const { t } = useTranslation();
   const formatPrice = (price: number) => {
     return `${currencySymbol}${price.toFixed(2)}`;
   };
@@ -94,7 +96,7 @@ export default function MenuDisplay({ items, currencySymbol, primaryColor, accen
                     style={{ backgroundColor: primaryColor }}
                   >
                     <TrendingUp className="w-3.5 h-3.5" />
-                    Popular
+                    {t('Popular')}
                   </div>
                 )}
               </div>
@@ -199,7 +201,7 @@ export default function MenuDisplay({ items, currencySymbol, primaryColor, accen
                       />
                     ))}
                   </div>
-                  <span className="text-xs font-medium text-gray-600">Customer Favorite</span>
+                  <span className="text-xs font-medium text-gray-600">{t('Customer Favorite')}</span>
                 </div>
               </div>
             )}

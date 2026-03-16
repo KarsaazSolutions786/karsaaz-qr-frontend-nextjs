@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { useTranslation } from '@/lib/i18n'
 import { useTransactions } from '@/lib/hooks/queries/useTransactions'
 import { useApproveTransaction, useRejectTransaction } from '@/lib/hooks/mutations/useTransactionMutations'
 import type { Transaction } from '@/types/entities/transaction'
@@ -23,7 +24,9 @@ function StatusBadge({ status }: { status?: string }) {
 function formatAmount(transaction: Transaction): string {
   if (transaction.formatted_amount) return transaction.formatted_amount
   if (transaction.amount != null) {
-    const amt = transaction.amount > 100 ? transaction.amount / 100 : transaction.amount
+    const raw = Number(transaction.amount)
+    if (isNaN(raw)) return '—'
+    const amt = raw > 100 ? raw / 100 : raw
     return `${transaction.currency ?? ''} ${amt.toFixed(2)}`.trim()
   }
   return '—'
@@ -47,6 +50,7 @@ function getDescriptionDisplay(transaction: Transaction): string {
 }
 
 export default function TransactionsPage() {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const { data, isLoading } = useTransactions({ page, search: search || undefined })
@@ -54,15 +58,15 @@ export default function TransactionsPage() {
   const rejectMutation = useRejectTransaction()
 
   const handleApprove = async (id: string) => {
-    if (!confirm('Approve this transaction?')) return
+    if (!confirm(t('Approve this transaction?'))) return
     await approveMutation.mutateAsync(Number(id))
-    toast.success('Transaction approved successfully.')
+    toast.success(t('Transaction approved successfully.'))
   }
 
   const handleReject = async (id: string) => {
-    if (!confirm('Reject this transaction?')) return
+    if (!confirm(t('Reject this transaction?'))) return
     await rejectMutation.mutateAsync(Number(id))
-    toast.success('Transaction rejected successfully.')
+    toast.success(t('Transaction rejected successfully.'))
   }
 
   const handleOpenProof = (transaction: Transaction) => {
@@ -76,9 +80,9 @@ export default function TransactionsPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Transactions</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Transactions')}</h1>
           <p className="mt-2 text-sm text-gray-600">
-            View and manage payment transactions
+            {t('View and manage payment transactions')}
           </p>
         </div>
       </div>
@@ -86,7 +90,7 @@ export default function TransactionsPage() {
       <div className="mt-8 mb-6">
         <input
           type="search"
-          placeholder="Search transactions…"
+          placeholder={t('Search transactions…')}
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:max-w-md sm:text-sm"
@@ -103,14 +107,14 @@ export default function TransactionsPage() {
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 w-8">ID</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Amount</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">User</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Source</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 max-w-32">Stripe ID</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date</th>
+                  <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 w-8">{t('ID')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Amount')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('User')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Description')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Source')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 max-w-32">{t('Stripe ID')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Status')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Date')}</th>
                   <th className="relative py-3.5 pl-3 pr-4 w-28"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
@@ -162,7 +166,7 @@ export default function TransactionsPage() {
                                 className="text-blue-600 hover:text-blue-800 text-xs"
                                 title="View payment proof"
                               >
-                                Proof
+                                {t('Proof')}
                               </button>
                             )}
                             <button
@@ -170,14 +174,14 @@ export default function TransactionsPage() {
                               disabled={approveMutation.isPending}
                               className="text-green-600 hover:text-green-900 text-xs disabled:opacity-50"
                             >
-                              Approve
+                              {t('Approve')}
                             </button>
                             <button
                               onClick={() => handleReject(transaction.id)}
                               disabled={rejectMutation.isPending}
                               className="text-red-600 hover:text-red-900 text-xs disabled:opacity-50"
                             >
-                              Reject
+                              {t('Reject')}
                             </button>
                           </div>
                         ) : (
@@ -198,17 +202,17 @@ export default function TransactionsPage() {
                 disabled={page === 1}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
-                Previous
+                {t('Previous')}
               </button>
               <span className="text-sm text-gray-600">
-                Page {page} of {data.pagination.lastPage}
+                {t('Page')} {page} {t('of')} {data.pagination.lastPage}
               </span>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= data.pagination.lastPage}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
-                Next
+                {t('Next')}
               </button>
             </div>
           )}
@@ -218,8 +222,8 @@ export default function TransactionsPage() {
           <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No transactions</h3>
-          <p className="mt-1 text-sm text-gray-500">Transactions will appear here when payments are processed.</p>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No transactions')}</h3>
+          <p className="mt-1 text-sm text-gray-500">{t('Transactions will appear here when payments are processed.')}</p>
         </div>
       )}
     </div>

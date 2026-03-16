@@ -16,6 +16,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select'
+import { useTranslation } from '@/lib/i18n'
 
 const CONFIG_KEYS = [
   'dashboard.top_banner_option',
@@ -34,6 +35,7 @@ const CONFIG_KEYS = [
 ]
 
 export default function DashboardAreaSettingsPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
   const saveMutation = useSaveSystemConfigs(CONFIG_KEYS)
   const [saved, setSaved] = useState(false)
@@ -65,20 +67,20 @@ export default function DashboardAreaSettingsPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard Area Settings</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Dashboard Area Settings')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Configure the dashboard layout, banners, and welcome popup.
+          {t('Configure the dashboard layout, banners, and welcome popup.')}
         </p>
       </div>
 
       {saveMutation.error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
@@ -86,30 +88,30 @@ export default function DashboardAreaSettingsPage() {
         {/* Top Banner Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Top Banner</CardTitle>
+            <CardTitle>{t('Top Banner')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Banner Option</Label>
+              <Label>{t('Banner Option')}</Label>
               <Select
                 value={form['dashboard.top_banner_option'] ?? 'none'}
                 onValueChange={(v) => set('dashboard.top_banner_option', v)}
               >
                 <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select option" />
+                  <SelectValue placeholder={t('Select option')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  <SelectItem value="image">Image</SelectItem>
-                  <SelectItem value="video">Video</SelectItem>
-                  <SelectItem value="custom">Custom</SelectItem>
+                  <SelectItem value="none">{t('None')}</SelectItem>
+                  <SelectItem value="image">{t('Image')}</SelectItem>
+                  <SelectItem value="video">{t('Video')}</SelectItem>
+                  <SelectItem value="custom">{t('Custom')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <Label>Image URL</Label>
+                <Label>{t('Image URL')}</Label>
                 <Input
                   className="mt-1"
                   value={form['dashboard.top_banner_image'] ?? ''}
@@ -118,7 +120,7 @@ export default function DashboardAreaSettingsPage() {
                 />
               </div>
               <div>
-                <Label>Video URL</Label>
+                <Label>{t('Video URL')}</Label>
                 <Input
                   className="mt-1"
                   value={form['dashboard.top_banner_video'] ?? ''}
@@ -127,7 +129,7 @@ export default function DashboardAreaSettingsPage() {
                 />
               </div>
               <div>
-                <Label>Title</Label>
+                <Label>{t('Title')}</Label>
                 <Input
                   className="mt-1"
                   value={form['dashboard.top_banner_title'] ?? ''}
@@ -135,7 +137,7 @@ export default function DashboardAreaSettingsPage() {
                 />
               </div>
               <div>
-                <Label>Subtitle</Label>
+                <Label>{t('Subtitle')}</Label>
                 <Input
                   className="mt-1"
                   value={form['dashboard.top_banner_subtitle'] ?? ''}
@@ -143,7 +145,7 @@ export default function DashboardAreaSettingsPage() {
                 />
               </div>
               <div>
-                <Label>Text Color</Label>
+                <Label>{t('Text Color')}</Label>
                 <div className="mt-1 flex items-center gap-2">
                   <input
                     type="color"
@@ -160,7 +162,7 @@ export default function DashboardAreaSettingsPage() {
                 </div>
               </div>
               <div>
-                <Label>Height (px)</Label>
+                <Label>{t('Height (px)')}</Label>
                 <Input
                   type="number"
                   className="mt-1"
@@ -176,21 +178,21 @@ export default function DashboardAreaSettingsPage() {
         {/* QR Code List */}
         <Card>
           <CardHeader>
-            <CardTitle>QR Code List</CardTitle>
+            <CardTitle>{t('QR Code List')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div>
-              <Label>Display Mode</Label>
+              <Label>{t('Display Mode')}</Label>
               <Select
                 value={form['dashboard.qrcode_list_mode'] ?? 'grid'}
                 onValueChange={(v) => set('dashboard.qrcode_list_mode', v)}
               >
                 <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select mode" />
+                  <SelectValue placeholder={t('Select mode')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="grid">Grid</SelectItem>
-                  <SelectItem value="list">List</SelectItem>
+                  <SelectItem value="grid">{t('Grid')}</SelectItem>
+                  <SelectItem value="list">{t('List')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -200,11 +202,11 @@ export default function DashboardAreaSettingsPage() {
         {/* Welcome Popup */}
         <Card>
           <CardHeader>
-            <CardTitle>Welcome Popup</CardTitle>
+            <CardTitle>{t('Welcome Popup')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Enabled</Label>
+              <Label>{t('Enabled')}</Label>
               <Switch
                 checked={form['dashboard.welcome_popup_enabled'] === 'true'}
                 onCheckedChange={(v) =>
@@ -213,7 +215,7 @@ export default function DashboardAreaSettingsPage() {
               />
             </div>
             <div>
-              <Label>Video URL</Label>
+              <Label>{t('Video URL')}</Label>
               <Input
                 className="mt-1"
                 value={form['dashboard.welcome_popup_modal_video'] ?? ''}
@@ -224,7 +226,7 @@ export default function DashboardAreaSettingsPage() {
               />
             </div>
             <div>
-              <Label>Text</Label>
+              <Label>{t('Text')}</Label>
               <Textarea
                 className="mt-1"
                 rows={4}
@@ -236,7 +238,7 @@ export default function DashboardAreaSettingsPage() {
               />
             </div>
             <div>
-              <Label>Show Times</Label>
+              <Label>{t('Show Times')}</Label>
               <Input
                 type="number"
                 className="mt-1"
@@ -253,11 +255,11 @@ export default function DashboardAreaSettingsPage() {
         {/* Sidebar */}
         <Card>
           <CardHeader>
-            <CardTitle>Sidebar</CardTitle>
+            <CardTitle>{t('Sidebar')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div>
-              <Label>Account Widget Style</Label>
+              <Label>{t('Account Widget Style')}</Label>
               <Select
                 value={form['dashboard.sidebar_account_widget_style'] ?? 'compact'}
                 onValueChange={(v) =>
@@ -265,11 +267,11 @@ export default function DashboardAreaSettingsPage() {
                 }
               >
                 <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select style" />
+                  <SelectValue placeholder={t('Select style')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="compact">Compact</SelectItem>
-                  <SelectItem value="detailed">Detailed</SelectItem>
+                  <SelectItem value="compact">{t('Compact')}</SelectItem>
+                  <SelectItem value="detailed">{t('Detailed')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -282,7 +284,7 @@ export default function DashboardAreaSettingsPage() {
           onClick={handleSave}
           disabled={saveMutation.isPending}
         >
-          {saveMutation.isPending ? 'Saving…' : 'Save Settings'}
+          {saveMutation.isPending ? t('Saving...') : t('Save Settings')}
         </Button>
       </div>
     </div>

@@ -6,6 +6,7 @@ import { Star, Download, ChevronLeft, ChevronRight, Smartphone } from 'lucide-re
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { useTranslation } from '@/lib/i18n'
 
 interface AppDownloadDesignerProps {
   appName: string
@@ -32,6 +33,7 @@ export default function AppDownloadDesigner({
   version,
   category,
 }: AppDownloadDesignerProps) {
+  const { t } = useTranslation()
   const [currentScreenshot, setCurrentScreenshot] = useState(0)
 
   const renderStars = (r: number) => {
@@ -91,9 +93,9 @@ export default function AppDownloadDesigner({
                 <Smartphone className="w-5 h-5" />
                 <div className="text-left">
                   <div className="text-[10px] leading-tight text-muted-foreground">
-                    Download on the
+                    {t('Download on the')}
                   </div>
-                  <div className="text-sm font-semibold">App Store</div>
+                  <div className="text-sm font-semibold">{t('App Store')}</div>
                 </div>
               </Button>
             </a>
@@ -103,8 +105,8 @@ export default function AppDownloadDesigner({
               <Button variant="outline" className="h-14 px-6 gap-2 rounded-xl">
                 <Smartphone className="w-5 h-5" />
                 <div className="text-left">
-                  <div className="text-[10px] leading-tight text-muted-foreground">Get it on</div>
-                  <div className="text-sm font-semibold">Google Play</div>
+                  <div className="text-[10px] leading-tight text-muted-foreground">{t('Get it on')}</div>
+                  <div className="text-sm font-semibold">{t('Google Play')}</div>
                 </div>
               </Button>
             </a>
@@ -115,7 +117,7 @@ export default function AppDownloadDesigner({
         {screenshots.length > 0 && (
           <Card>
             <CardContent className="p-6">
-              <h2 className="text-lg font-semibold mb-4">Screenshots</h2>
+              <h2 className="text-lg font-semibold mb-4">{t('Screenshots')}</h2>
               <div className="relative">
                 <div className="aspect-[9/16] max-w-[240px] mx-auto rounded-2xl overflow-hidden bg-gray-100 shadow-lg relative">
                   <Image
@@ -160,11 +162,11 @@ export default function AppDownloadDesigner({
         {/* Download CTA */}
         <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white border-0">
           <CardContent className="p-6 text-center">
-            <h3 className="text-xl font-bold mb-2">Download {appName}</h3>
-            <p className="text-white/80 text-sm mb-4">Available on iOS and Android</p>
+            <h3 className="text-xl font-bold mb-2">{t('Download')} {appName}</h3>
+            <p className="text-white/80 text-sm mb-4">{t('Available on iOS and Android')}</p>
             <Button className="bg-white text-indigo-600 hover:bg-white/90 font-semibold">
               <Download className="w-4 h-4 mr-2" />
-              Download Now
+              {t('Download Now')}
             </Button>
           </CardContent>
         </Card>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import type { FAQsBlockData } from '@/types/entities/biolink'
 
 interface FAQsBlockProps {
@@ -10,6 +11,7 @@ interface FAQsBlockProps {
 }
 
 export default function FAQsBlock({ block, isEditing, onUpdate }: FAQsBlockProps) {
+  const { t } = useTranslation();
   const { title, subtitle, faqs } = block.data
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
@@ -32,7 +34,7 @@ export default function FAQsBlock({ block, isEditing, onUpdate }: FAQsBlockProps
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Title (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Title (optional)')}</label>
           <input
             type="text"
             value={title || ''}
@@ -41,7 +43,7 @@ export default function FAQsBlock({ block, isEditing, onUpdate }: FAQsBlockProps
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Subtitle (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Subtitle (optional)')}</label>
           <input
             type="text"
             value={subtitle || ''}
@@ -50,9 +52,9 @@ export default function FAQsBlock({ block, isEditing, onUpdate }: FAQsBlockProps
           />
         </div>
         <div className="flex items-center justify-between">
-          <label className="block text-sm font-medium text-gray-700">Questions</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Questions')}</label>
           <button type="button" onClick={addFaq} className="text-sm text-blue-600 hover:text-blue-700">
-            + Add Question
+            {t('+ Add Question')}
           </button>
         </div>
         {faqs.map((faq, index) => (
@@ -62,7 +64,7 @@ export default function FAQsBlock({ block, isEditing, onUpdate }: FAQsBlockProps
                 type="text"
                 value={faq.question}
                 onChange={(e) => updateFaq(index, 'question', e.target.value)}
-                placeholder="Question"
+                placeholder={t('Question')}
                 className="block flex-1 rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
               <button type="button" onClick={() => removeFaq(index)} className="text-red-600 hover:text-red-700">
@@ -72,7 +74,7 @@ export default function FAQsBlock({ block, isEditing, onUpdate }: FAQsBlockProps
             <textarea
               value={faq.answer}
               onChange={(e) => updateFaq(index, 'answer', e.target.value)}
-              placeholder="Answer"
+              placeholder={t('Answer')}
               rows={2}
               className="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
             />

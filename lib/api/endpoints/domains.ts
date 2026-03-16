@@ -1,5 +1,5 @@
 import apiClient from '../client'
-import type { Domain, DomainConnectivity, DomainStatus } from '@/types/entities/domain'
+import type { Domain, DomainConnectivity, DomainStatus, DomainAvailability } from '@/types/entities/domain'
 
 export interface DomainListResponse {
   data: Domain[]
@@ -51,6 +51,27 @@ export const domainsAPI = {
 
   changeStatus: async (id: string, status: DomainStatus) => {
     const response = await apiClient.put<Domain>(`/domains/${id}/status`, { status })
+    return response.data
+  },
+
+  /**
+   * Update domain availability (public/private)
+   * PUT /api/domains/{id}/update-availability
+   */
+  updateAvailability: async (id: string, availability: DomainAvailability) => {
+    const response = await apiClient.put<Domain>(
+      `/domains/${id}/update-availability`,
+      { availability }
+    )
+    return response.data
+  },
+
+  /**
+   * Set domain as the default domain for new QR codes
+   * PUT /api/domains/{id}/set-default
+   */
+  setDefault: async (id: string) => {
+    const response = await apiClient.put<Domain>(`/domains/${id}/set-default`)
     return response.data
   },
 }

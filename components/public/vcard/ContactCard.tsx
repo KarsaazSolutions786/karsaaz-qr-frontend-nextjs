@@ -2,6 +2,7 @@
 
 import { Phone, Mail, Globe, MapPin, Building2, Briefcase, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { useTranslation } from '@/lib/i18n';
 
 interface ContactCardProps {
   firstName?: string;
@@ -39,6 +40,7 @@ export default function ContactCard({
   photo,
   theme,
 }: ContactCardProps) {
+  const { t } = useTranslation();
   const primaryColor = theme?.primaryColor || '#2563eb';
   const fullName = [firstName, lastName].filter(Boolean).join(' ');
   const fullAddress = [address, city, state, zip, country].filter(Boolean).join(', ');
@@ -98,7 +100,7 @@ export default function ContactCard({
                   <Phone className="w-5 h-5 text-blue-600" />
                 </div>
                 <div className="text-left flex-1">
-                  <div className="text-xs text-gray-500">Phone</div>
+                  <div className="text-xs text-gray-500">{t('Phone')}</div>
                   <div className="font-medium text-gray-900">{phone}</div>
                 </div>
               </a>
@@ -113,7 +115,7 @@ export default function ContactCard({
                   <Mail className="w-5 h-5 text-green-600" />
                 </div>
                 <div className="text-left flex-1">
-                  <div className="text-xs text-gray-500">Email</div>
+                  <div className="text-xs text-gray-500">{t('Email')}</div>
                   <div className="font-medium text-gray-900 break-all">{email}</div>
                 </div>
               </a>
@@ -130,7 +132,7 @@ export default function ContactCard({
                   <Globe className="w-5 h-5 text-purple-600" />
                 </div>
                 <div className="text-left flex-1">
-                  <div className="text-xs text-gray-500">Website</div>
+                  <div className="text-xs text-gray-500">{t('Website')}</div>
                   <div className="font-medium text-gray-900 break-all">{website}</div>
                 </div>
               </a>
@@ -147,7 +149,7 @@ export default function ContactCard({
                   <MapPin className="w-5 h-5 text-red-600" />
                 </div>
                 <div className="text-left flex-1">
-                  <div className="text-xs text-gray-500">Address</div>
+                  <div className="text-xs text-gray-500">{t('Address')}</div>
                   <div className="font-medium text-gray-900">{fullAddress}</div>
                 </div>
               </a>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import type { Domain } from '@/types/entities/domain'
 
 interface DomainListProps {
@@ -14,12 +15,19 @@ const statusColors: Record<string, string> = {
   failed: 'bg-red-100 text-red-800',
 }
 
+const availabilityColors: Record<string, string> = {
+  public: 'bg-blue-100 text-blue-800',
+  private: 'bg-gray-100 text-gray-800',
+}
+
 export function DomainList({ domains, onEdit, onDelete }: DomainListProps) {
+  const { t } = useTranslation()
+
   if (domains.length === 0) {
     return (
       <div className="flex h-48 flex-col items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white text-gray-500">
-        <p className="text-lg font-medium">No domains yet</p>
-        <p className="text-sm">Add a custom domain to get started</p>
+        <p className="text-lg font-medium">{t('No domains yet')}</p>
+        <p className="text-sm">{t('Add a custom domain to get started')}</p>
       </div>
     )
   }
@@ -30,22 +38,26 @@ export function DomainList({ domains, onEdit, onDelete }: DomainListProps) {
         <thead className="bg-gray-50">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Domain
+              {t('Domain')}
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Status
+              {t('Status')}
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-              Connectivity
+              {t('Availability')}
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+              {t('Connectivity')}
             </th>
             <th className="w-28 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-              Actions
+              {t('Actions')}
             </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100 bg-white">
           {domains.map((domain) => {
-            const allVerified = domain.dnsRecords.every((r) => r.status === 'verified' || r.status === 'valid')
+            const allVerified = domain.dnsRecords?.every((r) => r.status === 'verified' || r.status === 'valid') ?? false
+            const availability = domain.availability ?? 'public'
             return (
               <tr key={domain.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 text-sm font-medium text-gray-900">
@@ -64,12 +76,19 @@ export function DomainList({ domains, onEdit, onDelete }: DomainListProps) {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm">
+                  <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${availabilityColors[availability] ?? 'bg-gray-100 text-gray-800'}`}
+                  >
+                    {availability}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-sm">
                   <span className="flex items-center gap-1.5">
                     <span
                       className={`inline-block h-2.5 w-2.5 rounded-full ${allVerified ? 'bg-green-500' : 'bg-red-500'}`}
                     />
                     <span className="text-gray-600">
-                      {allVerified ? 'Connected' : 'Not connected'}
+                      {allVerified ? t('Connected') : t('Not connected')}
                     </span>
                   </span>
                 </td>
@@ -79,13 +98,13 @@ export function DomainList({ domains, onEdit, onDelete }: DomainListProps) {
                       onClick={() => onEdit(domain)}
                       className="rounded px-2 py-1 text-blue-600 hover:bg-blue-50"
                     >
-                      Edit
+                      {t('Edit')}
                     </button>
                     <button
                       onClick={() => onDelete(domain)}
                       className="rounded px-2 py-1 text-red-600 hover:bg-red-50"
                     >
-                      Delete
+                      {t('Delete')}
                     </button>
                   </div>
                 </td>

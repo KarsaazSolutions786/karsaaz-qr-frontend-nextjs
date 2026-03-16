@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useTranslation } from '@/lib/i18n'
 import {
   PieChart as RechartsPie,
   Pie,
@@ -19,10 +20,12 @@ interface PieChartProps {
 }
 
 export default function PieChart({ data, height = 300 }: PieChartProps) {
+  const { t } = useTranslation()
+
   if (!data || data.length === 0) {
     return (
       <div className="flex h-64 items-center justify-center text-sm text-gray-500">
-        No data available
+        {t('No data available')}
       </div>
     )
   }

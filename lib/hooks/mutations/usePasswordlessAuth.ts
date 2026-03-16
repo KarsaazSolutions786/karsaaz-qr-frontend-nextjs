@@ -18,7 +18,9 @@ function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): 
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search)
     const from = params.get('from')
-    if (from) return from
+    if (from && from.startsWith('/') && !from.startsWith('//') && !from.includes('://')) {
+      return from
+    }
   }
   let homePage = user.roles?.[0]?.home_page
   // Strip legacy /dashboard prefix (old Lit frontend used /dashboard/qrcodes, Next.js uses /qrcodes)
@@ -81,7 +83,9 @@ export function usePasswordlessVerify() {
       setUser(response.user)
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(response.user))
-        localStorage.setItem('token', response.token)
+        // Token is stored in httpOnly cookie by backend
+        localStorage.setItem('logged_in', 'true')
+        localStorage.removeItem('token') // Clean up legacy token
       }
       queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
 

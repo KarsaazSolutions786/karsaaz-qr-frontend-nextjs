@@ -1,3 +1,7 @@
+'use client';
+
+import { useTranslation } from '@/lib/i18n';
+
 interface QRCodeBadgeProps {
   variant?: 'default' | 'minimal' | 'branded';
   position?: 'bottom-right' | 'bottom-left' | 'bottom-center' | 'top-right' | 'top-left';
@@ -11,10 +15,12 @@ export default function QRCodeBadge({
   variant = 'default',
   position = 'bottom-right',
   showLogo = true,
-  text = 'Powered by Karsaaz QR',
+  text,
   link = 'https://app.karsaazqr.com',
   className = '',
 }: QRCodeBadgeProps) {
+  const { t } = useTranslation();
+  const resolvedText = text || t('Powered by Karsaaz QR');
   const positionClasses = {
     'bottom-right': 'bottom-4 right-4',
     'bottom-left': 'bottom-4 left-4',
@@ -50,7 +56,7 @@ export default function QRCodeBadge({
           <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm13-2h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/>
         </svg>
       )}
-      <span>{text}</span>
+      <span>{resolvedText}</span>
     </a>
   );
 }

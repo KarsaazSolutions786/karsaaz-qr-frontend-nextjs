@@ -1,56 +1,85 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * Flutterwave payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Public Key
+ * - Secret Key
+ * - Encryption Key
+ *
+ * Webhook is NOT auto-registered; a manual webhook URL is displayed.
+ */
+export function FlutterwaveForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function FlutterwaveForm({ settings, onChange }: Props) {
   return (
-    <PaymentProcessorFormBase slug="flutterwave" settings={settings} onChange={onChange}>
+    <PaymentProcessorFormBase
+      slug="flutterwave"
+      settings={settings}
+      onChange={onChange}
+      showWebhookUrl
+      webhookMessage={t(
+        'Add the following webhook URL in your Flutterwave Dashboard under Settings > Webhooks:'
+      )}
+    >
+      {/* Public Key */}
       <div>
-        <label htmlFor="flutterwave-public-key" className="block text-sm font-medium text-gray-700">
-          Public Key
+        <label htmlFor="flutterwave-public-key" className={labelClass}>
+          {t('Public Key')}
         </label>
         <input
           id="flutterwave-public-key"
-          type="text"
-          value={settings.public_key ?? ''}
-          onChange={(e) => onChange('public_key', e.target.value)}
-          placeholder="Enter Public Key"
+          type="password"
+          value={settings.flutterwave_public_key ?? ''}
+          onChange={(e) => onChange('flutterwave_public_key', e.target.value)}
+          placeholder={t('Enter Public Key')}
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Found in your Flutterwave Dashboard under Settings > API Keys')}
+        </p>
       </div>
+
+      {/* Secret Key */}
       <div>
-        <label htmlFor="flutterwave-secret-key" className="block text-sm font-medium text-gray-700">
-          Secret Key
+        <label htmlFor="flutterwave-secret-key" className={labelClass}>
+          {t('Secret Key')}
         </label>
         <input
           id="flutterwave-secret-key"
           type="password"
-          value={settings.secret_key ?? ''}
-          onChange={(e) => onChange('secret_key', e.target.value)}
-          placeholder="Enter Secret Key"
+          value={settings.flutterwave_secret_key ?? ''}
+          onChange={(e) => onChange('flutterwave_secret_key', e.target.value)}
+          placeholder={t('Enter Secret Key')}
           className={inputClass}
         />
       </div>
+
+      {/* Encryption Key */}
       <div>
-        <label htmlFor="flutterwave-encryption-key" className="block text-sm font-medium text-gray-700">
-          Encryption Key
+        <label htmlFor="flutterwave-encryption-key" className={labelClass}>
+          {t('Encryption Key')}
         </label>
         <input
           id="flutterwave-encryption-key"
           type="password"
-          value={settings.encryption_key ?? ''}
-          onChange={(e) => onChange('encryption_key', e.target.value)}
-          placeholder="Enter Encryption Key"
+          value={settings.flutterwave_encryption_key ?? ''}
+          onChange={(e) => onChange('flutterwave_encryption_key', e.target.value)}
+          placeholder={t('Enter Encryption Key')}
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Found in your Flutterwave Dashboard under Settings > API Keys')}
+        </p>
       </div>
     </PaymentProcessorFormBase>
   )

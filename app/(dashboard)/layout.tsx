@@ -1,13 +1,19 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useTranslation } from '@/lib/i18n'
 import { LanguagePicker } from '@/components/common/LanguagePicker'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { ActAsBanner } from '@/components/common/ActAsBanner'
+import { SubscriptionBanner } from '@/components/common/SubscriptionBanner'
+import { IncompleteCheckoutBanner } from '@/components/common/IncompleteCheckoutBanner'
+import { DashboardBanner } from '@/components/common/DashboardBanner'
+import { SubscriptionAlertProvider } from '@/components/features/subscriptions/SubscriptionAlertProvider'
+import { CartWidget } from '@/components/features/payment/CartWidget'
 import {
   QrCodeIcon,
   Bars3Icon,
@@ -24,10 +30,17 @@ import {
   ServerIcon,
   HomeIcon,
   UserCircleIcon,
+  WalletIcon,
+  GiftIcon,
+  RectangleStackIcon,
+  LinkIcon,
 } from '@heroicons/react/24/outline'
 import { GlobalSearch } from '@/components/common/GlobalSearch'
 import { QuickActions } from '@/components/common/QuickActions'
+import { AccountBalanceWidget } from '@/components/features/payment/AccountBalanceWidget'
+import { useAccountCredit } from '@/lib/hooks/useAccountCredit'
 import { isSuperAdmin } from '@/lib/utils/permissions'
+import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 
 // Admin-only route prefixes — regular users are redirected away
 const ADMIN_ROUTE_PREFIXES = [
@@ -37,8 +50,6 @@ const ADMIN_ROUTE_PREFIXES = [
   '/billing',
   '/transactions',
   '/payment-processors',
-  '/payment-gateways',
-  '/payment-methods',
   '/currencies',
   '/plugins',
   '/system',
@@ -81,6 +92,7 @@ const figmaPrimaryNav: FigmaNavItem[] = [
   { key: 'home', label: 'Home', href: '/qrcodes/new', icon: HomeIcon },
   { key: 'existing-qr', label: 'Existing QR', href: '/qrcodes', icon: QrCodeIcon },
   { key: 'archived', label: 'Archived', href: '/archived', icon: ArchiveBoxIcon },
+  { key: 'qr-templates', label: 'Templates', href: '/qrcode-templates', icon: RectangleStackIcon },
   { key: 'plans', label: 'Plans', href: '/pricing', icon: BanknotesIcon },
   { key: 'my-account', label: 'My Account', href: '/account', icon: UserCircleIcon },
   {
@@ -88,6 +100,20 @@ const figmaPrimaryNav: FigmaNavItem[] = [
     label: 'Storage Connections',
     href: '/cloud-storage',
     icon: CloudIcon,
+  },
+]
+
+// User-facing sections (visible to all authenticated users)
+const figmaUserSectionNav: FigmaNavSection[] = [
+  {
+    key: 'referrals',
+    label: 'Referrals',
+    href: '/referral',
+    icon: GiftIcon,
+    items: [
+      { name: 'Commission', href: '/referral', icon: GiftIcon },
+      { name: 'Withdrawals', href: '/referral/withdrawals', icon: GiftIcon },
+    ],
   },
 ]
 
@@ -113,12 +139,11 @@ const figmaSectionNav: FigmaNavSection[] = [
     adminOnly: true,
     items: [
       { name: 'Pricing Plans', href: '/plans', icon: BanknotesIcon },
+      { name: 'Credit Pricing', href: '/plans/credit-pricing', icon: BanknotesIcon },
       { name: 'Subscriptions', href: '/subscriptions', icon: BanknotesIcon },
       { name: 'Billing', href: '/billing', icon: BanknotesIcon },
       { name: 'Transactions', href: '/transactions', icon: BanknotesIcon },
       { name: 'Payment Processors', href: '/payment-processors', icon: BanknotesIcon },
-      { name: 'Payment Gateways', href: '/payment-gateways', icon: BanknotesIcon },
-      { name: 'Payment Methods', href: '/payment-methods', icon: BanknotesIcon },
       { name: 'Currencies', href: '/currencies', icon: BanknotesIcon },
     ],
   },
@@ -177,12 +202,7 @@ const figmaSectionNav: FigmaNavSection[] = [
       { name: 'Abuse Reports', href: '/system/abuse-reports', icon: ServerIcon },
       { name: 'Domains', href: '/system/domains', icon: ServerIcon },
       { name: 'Template Categories', href: '/template-categories', icon: ServerIcon },
-      { name: 'Email Templates', href: '/system/email-templates', icon: ServerIcon },
-      { name: 'Webhooks', href: '/system/webhooks', icon: ServerIcon },
       { name: 'API Docs', href: '/system/api-docs', icon: ServerIcon },
-      { name: 'Scheduled Tasks', href: '/system/scheduled-tasks', icon: ServerIcon },
-      { name: 'Queues', href: '/system/queues', icon: ServerIcon },
-      { name: 'Backups', href: '/system/backups', icon: ServerIcon },
     ],
   },
 ]
@@ -208,6 +228,8 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { user, isLoading, logout } = useAuth()
+  const { t } = useTranslation()
+  const { isAccountCreditMode } = useAccountCredit()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
@@ -217,14 +239,55 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   // Permission-based filtering: show admin groups only for admin users
   const isAdmin = Boolean(user?.roles?.[0]?.super_admin)
   const filteredSectionNav = figmaSectionNav.filter(item => !item.adminOnly || isAdmin)
+
+  // Custom client menu from admin config (for non-admin users)
+  const { data: menuConfig } = useSystemConfigs(
+    isAdmin ? [] : ['app.dashboard-client-menu']
+  )
+  const customMenuItems: FigmaNavSection[] = React.useMemo(() => {
+    if (isAdmin || !menuConfig?.['app.dashboard-client-menu']) return []
+    try {
+      const items = JSON.parse(menuConfig['app.dashboard-client-menu'])
+      if (!Array.isArray(items) || items.length === 0) return []
+      return [{
+        key: 'custom-menu',
+        label: 'Menu',
+        href: items[0]?.url || '#',
+        icon: LinkIcon,
+        items: items.map((item: { label: string; url: string }) => ({
+          name: item.label || 'Link',
+          href: item.url || '#',
+          icon: LinkIcon,
+        })),
+      }]
+    } catch {
+      return []
+    }
+  }, [isAdmin, menuConfig])
+
+  // Combine all sections: user sections + admin sections + custom menu
+  const allSectionNav = [
+    ...figmaUserSectionNav,
+    ...filteredSectionNav,
+    ...customMenuItems,
+  ]
+
+  // Build primary nav -- add Account Credits item when credit billing is active
+  const effectivePrimaryNav = isAccountCreditMode
+    ? [
+        ...figmaPrimaryNav,
+        { key: 'account-credits', label: 'Account Credits', href: '/account-credits', icon: WalletIcon },
+      ]
+    : figmaPrimaryNav
+
   const collapsedNavItems: NavItem[] = [
-    ...figmaPrimaryNav.map(item => ({ name: item.label, href: item.href, icon: item.icon })),
-    ...filteredSectionNav.map(item => ({ name: item.label, href: item.href, icon: item.icon })),
+    ...effectivePrimaryNav.map(item => ({ name: item.label, href: item.href, icon: item.icon })),
+    ...allSectionNav.map(item => ({ name: item.label, href: item.href, icon: item.icon })),
   ]
 
   useEffect(() => {
     const nextExpanded: Record<string, boolean> = {}
-    filteredSectionNav.forEach(section => {
+    allSectionNav.forEach(section => {
       const isActiveInSection = section.items.some(item => isItemActive(item.href))
       if (isActiveInSection) {
         nextExpanded[section.key] = true
@@ -234,7 +297,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       setExpandedSections(prev => ({ ...prev, ...nextExpanded }))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, searchParams, filteredSectionNav.length])
+  }, [pathname, searchParams, allSectionNav.length])
 
   // Set mounted to true after initial render to prevent hydration mismatch
   useEffect(() => {
@@ -277,7 +340,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     const exactMatch = pathname === itemPath
     const prefixMatch = pathname.startsWith(`${itemPath}/`)
     // If another primary nav item exactly matches the current path, only allow exact matches
-    const anotherPrimaryExactMatch = figmaPrimaryNav.some(
+    const anotherPrimaryExactMatch = effectivePrimaryNav.some(
       nav => nav.href !== href && pathname === nav.href.split('?')[0]
     )
     const pathMatch = exactMatch || (prefixMatch && !anotherPrimaryExactMatch)
@@ -350,15 +413,29 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       {/* Figma Sidebar: opened (264px) / closed (115px) */}
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 flex flex-col
-          bg-white shadow-[2px_0_16px_rgba(0,0,0,0.04)]
+          fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden
+          backdrop-blur-[25px] bg-white/90 border-r-2 border-white
           transition-all duration-300 ease-in-out transform
           lg:translate-x-0 lg:static lg:inset-auto
           ${sidebarCollapsed ? 'w-[115px]' : 'w-[264px]'}
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
       >
-        <div className="relative h-[154px] shrink-0">
+        {/* Decorative QR watermark */}
+        <div
+          className="pointer-events-none absolute bottom-[-20px] left-[10px] right-[-20px] flex items-center justify-center"
+          aria-hidden="true"
+        >
+          <Image
+            src="/sidebar-assets/qr-watermark.svg"
+            alt=""
+            width={188}
+            height={188}
+            className="rotate-[23.5deg] opacity-100"
+          />
+        </div>
+
+        <div className="relative shrink-0" style={{ height: sidebarCollapsed ? '120px' : '154px' }}>
           <Link
             href="/qrcodes/new"
             className={`absolute flex items-center ${sidebarCollapsed ? 'left-1/2 top-[71px] -translate-x-1/2' : 'left-5 top-[72px]'}`}
@@ -366,30 +443,45 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
           >
             {sidebarCollapsed ? (
               <Image
-                src="/sidebar-assets/sidebar-logo.svg"
+                src="/sidebar-assets/qr-bracket-icon.svg"
                 alt="Karsaaz QR"
                 width={36}
                 height={36}
               />
             ) : (
-              <Image
-                src="/images/auth/karsaaz-logo.svg"
-                alt="Karsaaz QR"
-                width={150}
-                height={32}
-                priority
-              />
+              <span className="flex items-center gap-1">
+                <Image
+                  src="/sidebar-assets/sidebar-logo.svg"
+                  alt="Karsaaz"
+                  width={120}
+                  height={32}
+                  priority
+                />
+                <Image
+                  src="/sidebar-assets/qr-bracket-icon.svg"
+                  alt="QR"
+                  width={28}
+                  height={28}
+                />
+              </span>
             )}
-          </Link>
-
-          <button
+          </Link>                                                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                          
+          <button                                                                                                                                                                                                                                                                                                                          
             type="button"
             onClick={() => setSidebarCollapsed(prev => !prev)}
-            className="hidden lg:flex absolute right-5 top-[77px] h-7 w-7 items-center justify-center rounded-md text-[#6d6d6d] hover:bg-[#f3e8ff]"
+            className={`hidden lg:flex absolute items-center justify-center transition-colors ${
+              sidebarCollapsed
+                ? 'left-[69px] top-[74px] h-[30px] w-[26px] rounded-[5px]'
+                : 'right-5 top-[77px] h-[30px] w-[26px] rounded-[5px]'
+            }`}
             aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            <ChevronRightIcon
-              className={`h-4 w-4 transition-transform ${sidebarCollapsed ? '' : 'rotate-180'}`}
+            <Image
+              src={sidebarCollapsed ? '/sidebar-assets/expand-toggle.svg' : '/sidebar-assets/collapse-toggle.svg'}
+              alt=""
+              width={26}
+              height={30}
             />
           </button>
 
@@ -403,7 +495,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
           </button>
         </div>
 
-        <nav aria-label="Main navigation" className="flex-1 overflow-y-auto px-2 pb-4">
+        <nav aria-label="Main navigation" className="relative z-10 flex-1 overflow-y-auto px-2 pb-4">
           {sidebarCollapsed ? (
             <div className="flex flex-col items-center gap-[20px] pt-0">
               {collapsedNavItems.map(item => {
@@ -415,10 +507,9 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                     onClick={() => setSidebarOpen(false)}
                     className={`
                       flex items-center justify-center transition-colors
-                      ${
-                        active
-                          ? 'h-[50px] w-[72px] rounded-[8px] bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] text-white'
-                          : 'h-[25.54px] w-[25.54px] rounded-[6px] text-[#9b6fb5] hover:bg-[#f7f1fb]'
+                      ${active
+                        ? 'h-[50px] w-[72px] rounded-[8px] bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] text-white'
+                        : 'h-[25.54px] w-[25.54px] rounded-[6px] text-[#9b6fb5] hover:bg-[#f7f1fb]'
                       }
                     `}
                     title={item.name}
@@ -430,7 +521,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
             </div>
           ) : (
             <div className="space-y-1 px-2">
-              {figmaPrimaryNav.map(item => {
+              {effectivePrimaryNav.map(item => {
                 const active = isItemActive(item.href)
                 return (
                   <Link
@@ -439,10 +530,9 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                     onClick={() => setSidebarOpen(false)}
                     className={`
                       flex h-[52px] items-center gap-3 px-4 text-[14px] font-medium transition-colors
-                      ${
-                        active
-                          ? 'rounded-[12px] bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] text-white'
-                          : 'rounded-[26px] text-[#6d6d6d] hover:bg-[#f7f1fb]'
+                      ${active
+                        ? 'rounded-[12px] bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] text-white'
+                        : 'rounded-[26px] text-[#6d6d6d] hover:bg-[#f7f1fb]'
                       }
                     `}
                   >
@@ -451,12 +541,12 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                     >
                       <item.icon className="h-4 w-4" />
                     </div>
-                    <span className="truncate">{item.label}</span>
+                    <span className="truncate">{t(item.label)}</span>
                   </Link>
                 )
               })}
 
-              {filteredSectionNav.map(item => {
+              {allSectionNav.map(item => {
                 const sectionActive = item.items.some(sectionItem => isItemActive(sectionItem.href))
                 const expanded = expandedSections[item.key] || false
                 return (
@@ -472,7 +562,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                       <item.icon
                         className={`h-5 w-5 ${sectionActive ? 'text-[#8f55a6]' : 'text-[#9b6fb5]'}`}
                       />
-                      <span className="flex-1 truncate text-left">{item.label}</span>
+                      <span className="flex-1 truncate text-left">{t(item.label)}</span>
                       <ChevronRightIcon
                         className={`h-3.5 w-3.5 transition-transform ${expanded ? 'rotate-90' : ''}`}
                       />
@@ -492,7 +582,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                                 ${childActive ? 'bg-[#f5e7fb] text-[#1b1b1b] font-medium' : 'text-[#6d6d6d] hover:bg-[#f7f1fb]'}
                               `}
                             >
-                              {sectionItem.name}
+                              {t(sectionItem.name)}
                             </Link>
                           )
                         })}
@@ -506,7 +596,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div
-          className={`${sidebarCollapsed ? 'px-3 pb-3 flex items-center justify-center gap-2' : 'px-5 pb-3 flex items-center justify-between gap-1'}`}
+          className={`relative z-10 ${sidebarCollapsed ? 'px-3 pb-3 flex items-center justify-center gap-2' : 'px-5 pb-3 flex items-center justify-between gap-1'}`}
         >
           {sidebarCollapsed ? (
             <>
@@ -527,8 +617,8 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
               <div className="flex h-[35px] w-[109px] items-center gap-2 rounded-[4px] border border-[#1b1b1b0a] bg-white px-2">
                 <Image src="/sidebar-assets/apple.svg" alt="App Store" width={16} height={16} />
                 <div className="leading-none text-black">
-                  <p className="text-[7px] font-normal">Download on the</p>
-                  <p className="text-[10px] font-medium">App Store</p>
+                  <p className="text-[7px] font-normal">{t('Download on the')}</p>
+                  <p className="text-[10px] font-medium">{t('App Store')}</p>
                 </div>
               </div>
               <div className="flex h-[35px] w-[109px] items-center gap-2 rounded-[4px] border border-[#1b1b1b0a] bg-white px-2">
@@ -539,28 +629,29 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
                   height={16}
                 />
                 <div className="leading-none text-black">
-                  <p className="text-[7px] font-normal uppercase">Get it on</p>
-                  <p className="text-[10px] font-medium">Google Play</p>
+                  <p className="text-[7px] font-normal uppercase">{t('Get it on')}</p>
+                  <p className="text-[10px] font-medium">{t('Google Play')}</p>
                 </div>
               </div>
             </>
           )}
         </div>
 
-        <div className="px-3 pb-4">
+        <div className="relative z-10 px-3 pb-4">
           <button
             type="button"
             onClick={handleLogout}
             disabled={isLoggingOut}
             className={`
-              flex h-[50px] w-full items-center rounded-[12px] border border-[#bd6bff52] bg-white text-[#6d6d6d]
+              flex h-[50px] w-full items-center rounded-[12px] border border-[#bd6bff52]
+              backdrop-blur-[1.6px] bg-white text-[#6d6d6d]
               transition-colors hover:bg-[#f7f1fb] disabled:opacity-60
               ${sidebarCollapsed ? 'justify-center px-0' : 'justify-start gap-3 px-4'}
             `}
           >
             <ArrowRightOnRectangleIcon className="h-5 w-5 text-[#e04f6b]" />
             {!sidebarCollapsed && (
-              <span className="text-base">{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
+              <span className="text-[16px] font-medium">{isLoggingOut ? t('Logging out...') : t('Logout')}</span>
             )}
           </button>
         </div>
@@ -570,6 +661,12 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Impersonation banner */}
         <ActAsBanner />
+        {/* Subscription status banner */}
+        <SubscriptionBanner />
+        {/* Incomplete checkout banner */}
+        <IncompleteCheckoutBanner />
+        {/* Admin-configured announcement banner */}
+        <DashboardBanner />
         {/* Mobile header */}
         <div className="sticky top-0 z-10 flex h-14 items-center gap-x-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 shadow-sm lg:hidden">
           <button
@@ -584,6 +681,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
           <div className="flex-1">
             <GlobalSearch />
           </div>
+          {isAccountCreditMode && <AccountBalanceWidget />}
           <ThemeToggle />
           <LanguagePicker />
         </div>
@@ -593,6 +691,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
           <div className="flex-1">
             <GlobalSearch />
           </div>
+          {isAccountCreditMode && <AccountBalanceWidget />}
           <ThemeToggle />
           <LanguagePicker />
         </div>
@@ -608,6 +707,12 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
 
         {/* Quick Actions FAB */}
         <QuickActions />
+
+        {/* Account credit cart floating widget */}
+        <CartWidget />
+
+        {/* Subscription alert modals (expiring, trial ending, upgrade prompts) */}
+        <SubscriptionAlertProvider />
       </div>
     </div>
   )

@@ -44,11 +44,13 @@ export function useActAsUser() {
   return useMutation({
     mutationFn: (id: number) => usersAPI.actAs(id),
     onSuccess: (data: any) => {
-      // Store current admin as mainUser, swap to impersonated user
+      // Store current admin as mainUser, swap to impersonated user.
+      // The impersonation token is stored in localStorage so the Bearer header
+      // overrides the admin's httpOnly cookie on subsequent requests.
       if (typeof window !== 'undefined' && data?.user && data?.token) {
         const mainUser = {
           user: JSON.parse(localStorage.getItem('user') || 'null'),
-          token: localStorage.getItem('token'),
+          token: null, // Admin uses cookie auth; no token to save
         }
         localStorage.setItem('mainUser', JSON.stringify(mainUser))
         localStorage.setItem('user', JSON.stringify(data.user))

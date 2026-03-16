@@ -50,4 +50,13 @@ export const designAssetsAPI = {
     })
     return data
   },
+
+  uploadShapeSvg: async (assetId: number, file: File): Promise<{ message: string; svg_path: string }> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    const { data } = await apiClient.post(`/design-assets/${assetId}/upload-shape-svg`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return data
+  },
 }

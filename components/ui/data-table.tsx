@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface Column<T = any> {
   key: string
@@ -29,6 +30,7 @@ export function DataTable<T extends Record<string, any>>({
   sortable = false,
   className,
 }: DataTableProps<T>) {
+  const { t } = useTranslation()
   const [sortKey, setSortKey] = React.useState<string | null>(null)
   const [sortDir, setSortDir] = React.useState<SortDirection>(null)
   const [selected, setSelected] = React.useState<Set<number>>(new Set())
@@ -151,7 +153,7 @@ export function DataTable<T extends Record<string, any>>({
                 colSpan={columns.length + (onRowSelect ? 1 : 0)}
                 className="px-4 py-8 text-center text-gray-400"
               >
-                No data available
+                {t('No data available')}
               </td>
             </tr>
           ) : (

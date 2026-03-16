@@ -2,21 +2,22 @@
 
 import { toast } from 'sonner'
 import { QRCode } from '@/types/entities/qrcode'
+import { useTranslation } from '@/lib/i18n'
 
 interface QRCodeDownloaderProps {
   qrcode: QRCode
 }
 
-export function QRCodeDownloader({ qrcode }: QRCodeDownloaderProps) {
+export function QRCodeDownloader({ qrcode: _qrcode }: QRCodeDownloaderProps) {
+  const { t } = useTranslation()
   const handleDownload = async (format: 'png' | 'svg' | 'pdf') => {
     // In a real implementation, this would call the API to get the image
-    console.log(`Downloading QR code ${qrcode.id} as ${format}`)
-    toast.info(`Download as ${format.toUpperCase()} — coming soon!`)
+    toast.info(`${t('Download as')} ${format.toUpperCase()} — ${t('coming soon!')}`)
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Download QR Code</h3>
+      <h3 className="text-lg font-semibold text-gray-900">{t('Download QR Code')}</h3>
       
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <button
@@ -45,7 +46,7 @@ export function QRCodeDownloader({ qrcode }: QRCodeDownloaderProps) {
       </div>
 
       <div className="text-xs text-gray-500">
-        Downloads are optimized for print and digital use
+        {t('Downloads are optimized for print and digital use')}
       </div>
     </div>
   )

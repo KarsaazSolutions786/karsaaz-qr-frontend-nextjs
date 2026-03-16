@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import { X, Calendar, Check } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export type DateRangePreset = 
   | 'today'
@@ -98,6 +99,7 @@ export function StatsDateRangeModal({
   currentRange,
   onApply,
 }: StatsDateRangeModalProps) {
+  const { t } = useTranslation();
   const [preset, setPreset] = useState<DateRangePreset>(
     currentRange.preset || 'last7days'
   );
@@ -144,7 +146,7 @@ export function StatsDateRangeModal({
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-primary-600" />
-            <h2 className="text-xl font-bold text-gray-900">Select Date Range</h2>
+            <h2 className="text-xl font-bold text-gray-900">{t('Select Date Range')}</h2>
           </div>
           <button
             type="button"
@@ -160,7 +162,7 @@ export function StatsDateRangeModal({
           {/* Preset Buttons */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Quick Select
+              {t('Quick Select')}
             </label>
             <div className="grid grid-cols-2 gap-2">
               {PRESETS.filter((p) => p.value !== 'custom').map((presetOption) => (
@@ -174,7 +176,7 @@ export function StatsDateRangeModal({
                       : 'border-gray-200 hover:border-gray-300 text-gray-700'
                   }`}
                 >
-                  <span>{presetOption.label}</span>
+                  <span>{t(presetOption.label)}</span>
                   {preset === presetOption.value && (
                     <Check className="w-4 h-4" />
                   )}
@@ -187,7 +189,7 @@ export function StatsDateRangeModal({
           <div className="mb-6 p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <label className="text-sm font-medium text-gray-700">
-                Custom Date Range
+                {t('Custom Date Range')}
               </label>
               <button
                 type="button"
@@ -198,13 +200,13 @@ export function StatsDateRangeModal({
                     : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                 }`}
               >
-                {preset === 'custom' ? 'Selected' : 'Select Custom'}
+                {preset === 'custom' ? t('Selected') : t('Select Custom')}
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  Start Date
+                  {t('Start Date')}
                 </label>
                 <input
                   type="date"
@@ -218,7 +220,7 @@ export function StatsDateRangeModal({
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
-                  End Date
+                  {t('End Date')}
                 </label>
                 <input
                   type="date"
@@ -243,12 +245,12 @@ export function StatsDateRangeModal({
                 className="rounded"
               />
               <span className="text-sm text-gray-700">
-                Compare with previous period
+                {t('Compare with previous period')}
               </span>
             </label>
             {compareWithPrevious && (
               <p className="text-xs text-gray-500 mt-1 ml-6">
-                Analytics will show comparison with the same date range in the previous period.
+                {t('Analytics will show comparison with the same date range in the previous period.')}
               </p>
             )}
           </div>
@@ -256,7 +258,7 @@ export function StatsDateRangeModal({
           {/* Selected Range Display */}
           <div className="p-3 bg-blue-50 rounded-lg">
             <div className="text-xs font-medium text-blue-900 mb-1">
-              Selected Range
+              {t('Selected Range')}
             </div>
             <div className="text-sm text-blue-700">
               {new Date(startDate).toLocaleDateString('en-US', {
@@ -272,7 +274,7 @@ export function StatsDateRangeModal({
               })}
               {preset !== 'custom' && (
                 <span className="ml-2 text-xs">
-                  ({PRESETS.find((p) => p.value === preset)?.label})
+                  ({t(PRESETS.find((p) => p.value === preset)?.label || '')})
                 </span>
               )}
             </div>
@@ -286,7 +288,7 @@ export function StatsDateRangeModal({
             onClick={handleReset}
             className="text-sm text-gray-600 hover:text-gray-800 font-medium"
           >
-            Reset
+            {t('Reset')}
           </button>
           <div className="flex items-center gap-3">
             <button
@@ -294,14 +296,14 @@ export function StatsDateRangeModal({
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               type="button"
               onClick={handleApply}
               className="px-6 py-2 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition"
             >
-              Apply
+              {t('Apply')}
             </button>
           </div>
         </div>

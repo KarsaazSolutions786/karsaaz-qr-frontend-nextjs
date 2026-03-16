@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { AlertTriangle, TrendingUp, CheckCircle } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface QRCodeQuotaDisplayProps {
   used: number;
@@ -22,6 +23,7 @@ export function QRCodeQuotaDisplay({
   plan,
   onUpgrade,
 }: QRCodeQuotaDisplayProps) {
+  const { t } = useTranslation();
   const percentage = total > 0 ? (used / total) * 100 : 0;
   const isNearLimit = percentage >= 80;
   const isAtLimit = percentage >= 100;
@@ -57,9 +59,9 @@ export function QRCodeQuotaDisplay({
           {getIcon()}
           <div>
             <h3 className="text-sm font-semibold text-gray-900">
-              QR Code Usage
+              {t('QR Code Usage')}
             </h3>
-            <p className="text-xs text-gray-500 capitalize">{plan} Plan</p>
+            <p className="text-xs text-gray-500 capitalize">{plan} {t('Plan')}</p>
           </div>
         </div>
         <div className={`text-sm font-bold ${getTextColor()}`}>
@@ -77,11 +79,11 @@ export function QRCodeQuotaDisplay({
         </div>
         <div className="mt-2 flex items-center justify-between text-xs">
           <span className="text-gray-600">
-            {Math.round(percentage)}% used
+            {Math.round(percentage)}% {t('used')}
           </span>
           {total > 0 && (
             <span className="text-gray-600">
-              {total - used} remaining
+              {total - used} {t('remaining')}
             </span>
           )}
         </div>
@@ -94,10 +96,10 @@ export function QRCodeQuotaDisplay({
             <AlertTriangle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-red-800">
-                You've reached your QR code limit
+                {t("You've reached your QR code limit")}
               </p>
               <p className="text-xs text-red-700 mt-1">
-                Upgrade your plan to create more QR codes
+                {t('Upgrade your plan to create more QR codes')}
               </p>
             </div>
           </div>
@@ -106,7 +108,7 @@ export function QRCodeQuotaDisplay({
               onClick={onUpgrade}
               className="mt-2 w-full px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md transition-colors"
             >
-              Upgrade Plan
+              {t('Upgrade Plan')}
             </button>
           )}
         </div>
@@ -118,10 +120,10 @@ export function QRCodeQuotaDisplay({
             <TrendingUp className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-medium text-orange-800">
-                Approaching limit
+                {t('Approaching limit')}
               </p>
               <p className="text-xs text-orange-700 mt-1">
-                Consider upgrading to avoid running out of QR codes
+                {t('Consider upgrading to avoid running out of QR codes')}
               </p>
             </div>
           </div>
@@ -130,7 +132,7 @@ export function QRCodeQuotaDisplay({
               onClick={onUpgrade}
               className="mt-2 w-full px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-medium rounded-md transition-colors"
             >
-              Upgrade Plan
+              {t('Upgrade Plan')}
             </button>
           )}
         </div>

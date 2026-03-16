@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import { Info, Printer, Monitor } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface DPISettingsProps {
   value: number;
@@ -66,6 +67,7 @@ export function DPISettings({
   disabled = false,
   className = '',
 }: DPISettingsProps) {
+  const { t } = useTranslation();
   const [showTooltip, setShowTooltip] = useState(false);
   const [customValue, setCustomValue] = useState(value);
   const [showCustomInput, setShowCustomInput] = useState(!DPI_PRESETS.some(p => p.value === value));
@@ -89,7 +91,7 @@ export function DPISettings({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <label className="text-sm font-medium text-gray-700">
-            DPI (Resolution)
+            {t('DPI (Resolution)')}
           </label>
           
           {/* Info tooltip */}
@@ -105,15 +107,15 @@ export function DPISettings({
             
             {showTooltip && (
               <div className="absolute left-0 top-6 z-10 w-72 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg">
-                <p className="mb-2 font-medium">DPI Settings</p>
+                <p className="mb-2 font-medium">{t('DPI Settings')}</p>
                 <p className="text-gray-300 mb-2">
-                  DPI (Dots Per Inch) determines the print resolution. Higher DPI = better print quality but larger file size.
+                  {t('DPI (Dots Per Inch) determines the print resolution. Higher DPI = better print quality but larger file size.')}
                 </p>
                 <ul className="text-gray-300 space-y-1">
-                  <li>• 72 DPI: Screen display only</li>
-                  <li>• 150 DPI: Draft/home printing</li>
-                  <li>• 300 DPI: Professional printing (recommended)</li>
-                  <li>• 600+ DPI: High-end printing</li>
+                  <li>{t('72 DPI: Screen display only')}</li>
+                  <li>{t('150 DPI: Draft/home printing')}</li>
+                  <li>{t('300 DPI: Professional printing (recommended)')}</li>
+                  <li>{t('600+ DPI: High-end printing')}</li>
                 </ul>
                 <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-900 transform rotate-45" />
               </div>
@@ -151,7 +153,7 @@ export function DPISettings({
               {preset.recommended && (
                 <div className="absolute top-1 right-1">
                   <span className="px-1.5 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
-                    Recommended
+                    {t('Recommended')}
                   </span>
                 </div>
               )}
@@ -182,7 +184,7 @@ export function DPISettings({
           disabled={disabled}
           className="text-sm text-blue-600 hover:text-blue-700 font-medium disabled:opacity-50"
         >
-          {showCustomInput ? 'Hide' : 'Set'} Custom DPI
+          {showCustomInput ? t('Hide Custom DPI') : t('Set Custom DPI')}
         </button>
         
         {showCustomInput && (
@@ -200,7 +202,7 @@ export function DPISettings({
                 focus:outline-none focus:ring-2 focus:ring-blue-500
                 ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
               `}
-              placeholder="Enter custom DPI (72-2400)"
+              placeholder={t('Enter custom DPI (72-2400)')}
             />
             <span className="text-sm text-gray-500">DPI</span>
           </div>
@@ -211,19 +213,19 @@ export function DPISettings({
       <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
         <div className="text-xs text-gray-600 space-y-1">
           <div className="flex justify-between">
-            <span>Use case:</span>
+            <span>{t('Use case:')}</span>
             <span className="font-medium text-gray-900">
               {getDPIUseCase(value)}
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Print quality:</span>
+            <span>{t('Print quality:')}</span>
             <span className="font-medium text-gray-900">
               {getDPIPrintQuality(value)}
             </span>
           </div>
           <div className="flex justify-between">
-            <span>Size at 1 inch:</span>
+            <span>{t('Size at 1 inch:')}</span>
             <span className="font-medium text-gray-900">
               {value} × {value} pixels
             </span>
@@ -243,10 +245,11 @@ export function DPISettingsCompact({
   disabled = false,
   className = '',
 }: Omit<DPISettingsProps, 'format'>) {
+  const { t } = useTranslation();
   return (
     <div className={className}>
       <label htmlFor="dpi-setting" className="block text-sm font-medium text-gray-700 mb-1">
-        DPI (Resolution)
+        {t('DPI (Resolution)')}
       </label>
       
       <select

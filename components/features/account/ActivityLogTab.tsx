@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { activityLogAPI, type ActivityLogEntry } from '@/lib/api/endpoints/account'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/lib/i18n'
 
 interface ActivityLogTabProps {
   userId: number | string
@@ -19,6 +20,7 @@ function parseUserAgent(ua: string): string {
 }
 
 export function ActivityLogTab({ userId }: ActivityLogTabProps) {
+  const { t } = useTranslation()
   const [entries, setEntries] = useState<ActivityLogEntry[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)
@@ -36,7 +38,7 @@ export function ActivityLogTab({ userId }: ActivityLogTabProps) {
       setLastPage(res.meta.last_page)
       setFetched(true)
     } catch {
-      setError('Failed to load activity log')
+      setError(t('Failed to load activity log'))
       setFetched(true)
     } finally {
       setLoading(false)
@@ -50,25 +52,25 @@ export function ActivityLogTab({ userId }: ActivityLogTabProps) {
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Activity Log</h2>
-        <p className="text-sm text-gray-500 mb-6">Recent activity on your account.</p>
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('Activity Log')}</h2>
+        <p className="text-sm text-gray-500 mb-6">{t('Recent activity on your account.')}</p>
 
         {error && <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>}
 
         {loading && !fetched ? (
-          <p className="text-sm text-gray-500">Loading...</p>
+          <p className="text-sm text-gray-500">{t('Loading...')}</p>
         ) : entries.length === 0 ? (
-          <p className="text-sm text-gray-500">No activity recorded yet.</p>
+          <p className="text-sm text-gray-500">{t('No activity recorded yet.')}</p>
         ) : (
           <>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead>
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Date</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Action</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">IP Address</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Device / Browser</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Date')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Action')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('IP Address')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Device / Browser')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -103,7 +105,7 @@ export function ActivityLogTab({ userId }: ActivityLogTabProps) {
                     disabled={page <= 1 || loading}
                     onClick={() => fetchLog(page - 1)}
                   >
-                    Previous
+                    {t('Previous')}
                   </Button>
                   <Button
                     size="sm"
@@ -111,7 +113,7 @@ export function ActivityLogTab({ userId }: ActivityLogTabProps) {
                     disabled={page >= lastPage || loading}
                     onClick={() => fetchLog(page + 1)}
                   >
-                    Next
+                    {t('Next')}
                   </Button>
                 </div>
               </div>

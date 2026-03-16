@@ -1,5 +1,6 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { resumeDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 const INPUT =
@@ -12,6 +13,7 @@ interface ResumeDataFormProps {
   onChange?: (data: Partial<ResumeData>) => void
 }
 export function ResumeDataForm({ defaultValues, onChange }: ResumeDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -20,7 +22,7 @@ export function ResumeDataForm({ defaultValues, onChange }: ResumeDataFormProps)
     <form className="space-y-5">
       <div>
         <label htmlFor="name" className={LABEL}>
-          Name *
+          {t('Name')} *
         </label>
         <input
           {...register('name')}
@@ -33,7 +35,7 @@ export function ResumeDataForm({ defaultValues, onChange }: ResumeDataFormProps)
       </div>
       <div>
         <label htmlFor="resume_file" className={LABEL}>
-          Resume File
+          {t('Resume File')}
         </label>
         <input
           id="resume_file"
@@ -41,11 +43,11 @@ export function ResumeDataForm({ defaultValues, onChange }: ResumeDataFormProps)
           accept=".pdf,.docx,.doc"
           className="mt-1.5 block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 transition"
         />
-        <p className="mt-1 text-xs text-gray-500">Supported formats: PDF, DOCX. Max size: 10MB</p>
+        <p className="mt-1 text-xs text-gray-500">{t('Supported formats: PDF, DOCX. Max size: 10MB')}</p>
       </div>
       <div>
         <label htmlFor="expires_at" className={LABEL}>
-          Expiry Date
+          {t('Expiry Date')}
         </label>
         <input {...register('expires_at')} id="expires_at" type="date" className={INPUT} />
       </div>

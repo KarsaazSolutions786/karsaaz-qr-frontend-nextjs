@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface BusinessProfileDesignSettings extends DesignSettings {
   // Business Profile-specific settings
@@ -43,23 +44,24 @@ const tabs: DesignerTab[] = [
 ]
 
 export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<BusinessProfileDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderProfileOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Profile Layout</h4>
+      <h4 className="font-medium text-gray-900">{t('Profile Layout')}</h4>
 
       {/* Profile Layout Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Layout Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Layout Style')}</label>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { value: 'classic', label: 'Classic' },
-            { value: 'modern', label: 'Modern' },
-            { value: 'minimal', label: 'Minimal' },
-            { value: 'card', label: 'Card' },
+            { value: 'classic', label: t('Classic') },
+            { value: 'modern', label: t('Modern') },
+            { value: 'minimal', label: t('Minimal') },
+            { value: 'card', label: t('Card') },
           ].map(option => (
             <button
               key={option.value}
@@ -92,19 +94,19 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
             className="rounded border-gray-300"
           />
           <label htmlFor="showLogo" className="text-sm text-gray-700">
-            Show Logo
+            {t('Show Logo')}
           </label>
         </div>
 
         {design.showLogo && (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Logo Position</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Position')}</label>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { value: 'left', label: 'Left' },
-                  { value: 'center', label: 'Center' },
-                  { value: 'right', label: 'Right' },
+                  { value: 'left', label: t('Left') },
+                  { value: 'center', label: t('Center') },
+                  { value: 'right', label: t('Right') },
                 ].map(option => (
                   <button
                     key={option.value}
@@ -127,12 +129,12 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Logo Size</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Size')}</label>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { value: 'small', label: 'Small' },
-                  { value: 'medium', label: 'Medium' },
-                  { value: 'large', label: 'Large' },
+                  { value: 'small', label: t('Small') },
+                  { value: 'medium', label: t('Medium') },
+                  { value: 'large', label: t('Large') },
                 ].map(option => (
                   <button
                     key={option.value}
@@ -168,20 +170,20 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
             className="rounded border-gray-300"
           />
           <label htmlFor="showContactInfo" className="text-sm text-gray-700">
-            Show Contact Information
+            {t('Show Contact Information')}
           </label>
         </div>
 
         {design.showContactInfo && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Contact Display Style
+              {t('Contact Display Style')}
             </label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'icons', label: 'Icons Only' },
-                { value: 'details', label: 'Details Only' },
-                { value: 'both', label: 'Icons & Details' },
+                { value: 'icons', label: t('Icons Only') },
+                { value: 'details', label: t('Details Only') },
+                { value: 'both', label: t('Icons & Details') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -208,10 +210,10 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
 
       {/* Additional Colors */}
       <div className="space-y-4">
-        <h5 className="text-sm font-medium text-gray-700">Card Styling</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Card Styling')}</h5>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Card Background</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Card Background')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -229,7 +231,7 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Accent Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Accent Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -251,7 +253,7 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
 
   const renderSectionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Page Sections</h4>
+      <h4 className="font-medium text-gray-900">{t('Page Sections')}</h4>
 
       {/* Social Links */}
       <div className="space-y-3">
@@ -264,20 +266,20 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
             className="rounded border-gray-300"
           />
           <label htmlFor="showSocialLinks" className="text-sm text-gray-700">
-            Show Social Links
+            {t('Show Social Links')}
           </label>
         </div>
 
         {design.showSocialLinks && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Social Icons Style
+              {t('Social Icons Style')}
             </label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'filled', label: 'Filled' },
-                { value: 'outline', label: 'Outline' },
-                { value: 'minimal', label: 'Minimal' },
+                { value: 'filled', label: t('Filled') },
+                { value: 'outline', label: t('Outline') },
+                { value: 'minimal', label: t('Minimal') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -312,7 +314,7 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
           className="rounded border-gray-300"
         />
         <label htmlFor="showOpeningHours" className="text-sm text-gray-700">
-          Show Opening Hours
+          {t('Show Opening Hours')}
         </label>
       </div>
 
@@ -327,18 +329,18 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
             className="rounded border-gray-300"
           />
           <label htmlFor="showMap" className="text-sm text-gray-700">
-            Show Map
+            {t('Show Map')}
           </label>
         </div>
 
         {design.showMap && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Map Style</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Map Style')}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'standard', label: 'Standard' },
-                { value: 'satellite', label: 'Satellite' },
-                { value: 'dark', label: 'Dark' },
+                { value: 'standard', label: t('Standard') },
+                { value: 'satellite', label: t('Satellite') },
+                { value: 'dark', label: t('Dark') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -373,32 +375,32 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
             className="rounded border-gray-300"
           />
           <label htmlFor="showPortfolio" className="text-sm text-gray-700">
-            Show Portfolio Section
+            {t('Show Portfolio Section')}
           </label>
         </div>
 
         {design.showPortfolio && (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Section Title</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Section Title')}</label>
               <input
                 type="text"
-                value={design.portfolioSectionTitle || 'Our Products'}
+                value={design.portfolioSectionTitle || t('Our Products')}
                 onChange={e => updateDesign({ portfolioSectionTitle: e.target.value })}
-                placeholder="Our Products"
+                placeholder={t('Our Products')}
                 className="w-full px-3 py-2 border rounded-lg"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Portfolio Layout
+                {t('Portfolio Layout')}
               </label>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { value: 'grid', label: 'Grid' },
-                  { value: 'carousel', label: 'Carousel' },
-                  { value: 'masonry', label: 'Masonry' },
+                  { value: 'grid', label: t('Grid') },
+                  { value: 'carousel', label: t('Carousel') },
+                  { value: 'masonry', label: t('Masonry') },
                 ].map(option => (
                   <button
                     key={option.value}
@@ -434,7 +436,7 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
           className="rounded border-gray-300"
         />
         <label htmlFor="showReviewSites" className="text-sm text-gray-700">
-          Show Review Sites
+          {t('Show Review Sites')}
         </label>
       </div>
 
@@ -449,18 +451,18 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
             className="rounded border-gray-300"
           />
           <label htmlFor="showLeadForm" className="text-sm text-gray-700">
-            Show Lead Form
+            {t('Show Lead Form')}
           </label>
         </div>
 
         {design.showLeadForm && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Form Position</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Form Position')}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'inline', label: 'Inline' },
-                { value: 'popup', label: 'Popup' },
-                { value: 'bottom', label: 'Bottom' },
+                { value: 'inline', label: t('Inline') },
+                { value: 'popup', label: t('Popup') },
+                { value: 'bottom', label: t('Bottom') },
               ].map(option => (
                 <button
                   key={option.value}

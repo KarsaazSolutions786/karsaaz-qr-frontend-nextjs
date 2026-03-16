@@ -1,93 +1,86 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  selectClass,
+  labelClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * Orange (Mobile Money) payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Mode (test / production)
+ * - Merchant
+ * - Login ID
+ * - Password
+ *
+ * No webhook registration. No manual webhook URL display.
+ */
+export function OrangeBillingForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function OrangeBillingForm({ settings, onChange }: Props) {
   return (
-    <PaymentProcessorFormBase slug="orange-billing" settings={settings} onChange={onChange}>
+    <PaymentProcessorFormBase slug="orange-bf" settings={settings} onChange={onChange}>
+      {/* Mode */}
       <div>
-        <label htmlFor="orange-merchant-key" className="block text-sm font-medium text-gray-700">
-          Merchant Key
+        <label htmlFor="orange-bf-mode" className={labelClass}>
+          {t('Mode')}
+        </label>
+        <select
+          id="orange-bf-mode"
+          value={settings['orange-bf_mode'] ?? 'test'}
+          onChange={(e) => onChange('orange-bf_mode', e.target.value)}
+          className={selectClass}
+        >
+          <option value="test">{t('Test')}</option>
+          <option value="production">{t('Production')}</option>
+        </select>
+      </div>
+
+      {/* Merchant */}
+      <div>
+        <label htmlFor="orange-bf-merchant" className={labelClass}>
+          {t('Merchant')}
         </label>
         <input
-          id="orange-merchant-key"
+          id="orange-bf-merchant"
+          type="text"
+          value={settings['orange-bf_merchant'] ?? ''}
+          onChange={(e) => onChange('orange-bf_merchant', e.target.value)}
+          placeholder={t('Enter Merchant')}
+          className={inputClass}
+        />
+      </div>
+
+      {/* Login ID */}
+      <div>
+        <label htmlFor="orange-bf-login-id" className={labelClass}>
+          {t('Login ID')}
+        </label>
+        <input
+          id="orange-bf-login-id"
+          type="text"
+          value={settings['orange-bf_login_id'] ?? ''}
+          onChange={(e) => onChange('orange-bf_login_id', e.target.value)}
+          placeholder={t('Enter Login ID')}
+          className={inputClass}
+        />
+      </div>
+
+      {/* Password */}
+      <div>
+        <label htmlFor="orange-bf-password" className={labelClass}>
+          {t('Password')}
+        </label>
+        <input
+          id="orange-bf-password"
           type="password"
-          value={settings.merchant_key ?? ''}
-          onChange={e => onChange('merchant_key', e.target.value)}
-          placeholder="Enter Merchant Key"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label htmlFor="orange-api-url" className="block text-sm font-medium text-gray-700">
-          API URL
-        </label>
-        <input
-          id="orange-api-url"
-          type="text"
-          value={settings.api_url ?? ''}
-          onChange={e => onChange('api_url', e.target.value)}
-          placeholder="Enter API URL"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label htmlFor="orange-return-url" className="block text-sm font-medium text-gray-700">
-          Return URL
-        </label>
-        <input
-          id="orange-return-url"
-          type="text"
-          value={settings.return_url ?? ''}
-          onChange={e => onChange('return_url', e.target.value)}
-          placeholder="Enter Return URL"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label htmlFor="orange-cancel-url" className="block text-sm font-medium text-gray-700">
-          Cancel URL
-        </label>
-        <input
-          id="orange-cancel-url"
-          type="text"
-          value={settings.cancel_url ?? ''}
-          onChange={e => onChange('cancel_url', e.target.value)}
-          placeholder="Enter Cancel URL"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label htmlFor="orange-country-code" className="block text-sm font-medium text-gray-700">
-          Country Code
-        </label>
-        <input
-          id="orange-country-code"
-          type="text"
-          value={settings.country_code ?? ''}
-          onChange={e => onChange('country_code', e.target.value)}
-          placeholder="e.g. BF, CI, SN"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label htmlFor="orange-currency" className="block text-sm font-medium text-gray-700">
-          Currency
-        </label>
-        <input
-          id="orange-currency"
-          type="text"
-          value={settings.currency ?? ''}
-          onChange={e => onChange('currency', e.target.value)}
-          placeholder="e.g. XOF"
+          value={settings['orange-bf_password'] ?? ''}
+          onChange={(e) => onChange('orange-bf_password', e.target.value)}
+          placeholder={t('Enter Password')}
           className={inputClass}
         />
       </div>

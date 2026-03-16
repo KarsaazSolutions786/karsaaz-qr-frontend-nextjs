@@ -165,6 +165,58 @@ export function getModuleNeighbors(
 }
 
 /**
+ * Get 8-bit neighbour bitmask for a module (used by line shapes and triangle-end).
+ *
+ * Bit layout (clockwise from top-left):
+ *   1 2 3
+ *   8 # 4
+ *   7 6 5
+ *
+ * bit 0 (0x01) = top-left
+ * bit 1 (0x02) = top
+ * bit 2 (0x04) = top-right
+ * bit 3 (0x08) = right
+ * bit 4 (0x10) = bottom-right
+ * bit 5 (0x20) = bottom
+ * bit 6 (0x40) = bottom-left
+ * bit 7 (0x80) = left
+ */
+export function getNeighbourBits(
+  qr: QRCode,
+  row: number,
+  col: number,
+  moduleCount: number
+): number {
+  let bits = 0;
+  const offsets: [number, number, number][] = [
+    [0x01, -1, -1], // top-left
+    [0x02,  0, -1], // top
+    [0x04,  1, -1], // top-right
+    [0x08,  1,  0], // right
+    [0x10,  1,  1], // bottom-right
+    [0x20,  0,  1], // bottom
+    [0x40, -1,  1], // bottom-left
+    [0x80, -1,  0], // left
+  ];
+  for (const [bit, dx, dy] of offsets) {
+    const nx = col + dx;
+    const ny = row + dy;
+    if (nx >= 0 && nx < moduleCount && ny >= 0 && ny < moduleCount && isDark(qr, ny, nx)) {
+      bits |= bit;
+    }
+  }
+  return bits;
+}
+
+/**
+ * Check neighbour bitmask: returns true when all `all` bits are set
+ * among the bits allowed by `any` mask.
+ */
+export function checkNeighbourBits(bits: number, all: number, any: number): boolean {
+  return (bits & (all | (~any & 0xff))) === all;
+}
+
+/**
  * Convert hex color to RGB
  */
 export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {

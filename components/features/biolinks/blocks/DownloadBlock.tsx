@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { DownloadBlockData } from '@/types/entities/biolink'
 
 interface DownloadBlockProps {
@@ -8,12 +11,13 @@ interface DownloadBlockProps {
 
 export default function DownloadBlock({ block, isEditing, onUpdate }: DownloadBlockProps) {
   const { fileName, fileUrl, fileSize, fileType } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">File Name</label>
+          <label className="block text-sm font-medium text-gray-700">{t('File Name')}</label>
           <input
             type="text"
             value={fileName}
@@ -22,7 +26,7 @@ export default function DownloadBlock({ block, isEditing, onUpdate }: DownloadBl
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">File URL</label>
+          <label className="block text-sm font-medium text-gray-700">{t('File URL')}</label>
           <input
             type="url"
             value={fileUrl}
@@ -32,7 +36,7 @@ export default function DownloadBlock({ block, isEditing, onUpdate }: DownloadBl
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">File Size (optional)</label>
+            <label className="block text-sm font-medium text-gray-700">{t('File Size (optional)')}</label>
             <input
               type="text"
               value={fileSize || ''}
@@ -42,7 +46,7 @@ export default function DownloadBlock({ block, isEditing, onUpdate }: DownloadBl
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">File Type (optional)</label>
+            <label className="block text-sm font-medium text-gray-700">{t('File Type (optional)')}</label>
             <input
               type="text"
               value={fileType || ''}
@@ -71,7 +75,7 @@ export default function DownloadBlock({ block, isEditing, onUpdate }: DownloadBl
           </p>
         )}
       </div>
-      <span className="text-sm font-medium text-blue-600">Download</span>
+      <span className="text-sm font-medium text-blue-600">{t('Download')}</span>
     </a>
   )
 }

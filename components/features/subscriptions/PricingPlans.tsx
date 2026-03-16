@@ -4,8 +4,10 @@ import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { PlanCard } from './PlanCard'
 import type { Plan } from '@/types/entities/subscription'
 import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
+import { useTranslation } from '@/lib/i18n'
 
 export function PricingPlans({ billingMode }: { billingMode?: string }) {
+  const { t } = useTranslation()
   const { data: plansData, isLoading, error } = usePlans()
   const allPlans: Plan[] | undefined = plansData?.data
     ?.filter((sp) => !sp.isHidden)
@@ -40,7 +42,7 @@ export function PricingPlans({ billingMode }: { billingMode?: string }) {
   if (error) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
-        <p className="text-red-800">Failed to load pricing plans. Please try again later.</p>
+        <p className="text-red-800">{t('Failed to load pricing plans. Please try again later.')}</p>
       </div>
     )
   }
@@ -48,7 +50,7 @@ export function PricingPlans({ billingMode }: { billingMode?: string }) {
   if (!plans || plans?.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-6 text-center">
-        <p className="text-gray-600">No plans available at this time.</p>
+        <p className="text-gray-600">{t('No plans available at this time.')}</p>
       </div>
     )
   }

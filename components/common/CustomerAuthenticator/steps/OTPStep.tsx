@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef, FormEvent } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -16,6 +17,7 @@ const OTP_LENGTH = 6
 const RESEND_COOLDOWN_SECONDS = 60
 
 export function OTPStep({ email, onVerify, onResend, onBack, loading }: OTPStepProps) {
+  const { t } = useTranslation()
   const [otp, setOtp] = useState('')
   const [resendCountdown, setResendCountdown] = useState(RESEND_COOLDOWN_SECONDS)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -57,10 +59,10 @@ export function OTPStep({ email, onVerify, onResend, onBack, loading }: OTPStepP
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="text-center">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Enter verification code
+          {t('Enter verification code')}
         </h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          We sent a {OTP_LENGTH}-digit code to <span className="font-medium">{email}</span>
+          {t('We sent a')} {OTP_LENGTH}{t('-digit code to')} <span className="font-medium">{email}</span>
         </p>
       </div>
 
@@ -87,7 +89,7 @@ export function OTPStep({ email, onVerify, onResend, onBack, loading }: OTPStepP
           disabled={resendCountdown > 0 || loading}
           className="text-sm text-primary hover:underline disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
         >
-          {resendCountdown > 0 ? `Resend code in ${resendCountdown}s` : 'Resend code'}
+          {resendCountdown > 0 ? `${t('Resend code in')} ${resendCountdown}s` : t('Resend code')}
         </button>
       </div>
 
@@ -99,10 +101,10 @@ export function OTPStep({ email, onVerify, onResend, onBack, loading }: OTPStepP
           className="flex-1"
           disabled={loading}
         >
-          Back
+          {t('Back')}
         </Button>
         <Button type="submit" className="flex-1" disabled={loading || otp.length < OTP_LENGTH}>
-          {loading ? 'Verifying...' : 'Verify'}
+          {loading ? t('Verifying...') : t('Verify')}
         </Button>
       </div>
     </form>

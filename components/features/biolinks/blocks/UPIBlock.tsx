@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import type { UPIBlockData } from '@/types/entities/biolink'
 
 interface UPIBlockProps {
@@ -18,13 +19,14 @@ function buildUpiUrl(vpa: string, name?: string, amount?: number, note?: string)
 }
 
 export default function UPIBlock({ block, isEditing, onUpdate }: UPIBlockProps) {
+  const { t } = useTranslation();
   const { vpa, amount, name, note } = block.data
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">UPI ID (VPA)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('UPI ID (VPA)')}</label>
           <input
             type="text"
             value={vpa}
@@ -34,7 +36,7 @@ export default function UPIBlock({ block, isEditing, onUpdate }: UPIBlockProps) 
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Payee Name (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Payee Name (optional)')}</label>
           <input
             type="text"
             value={name || ''}
@@ -44,7 +46,7 @@ export default function UPIBlock({ block, isEditing, onUpdate }: UPIBlockProps) 
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Amount (optional)</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Amount (optional)')}</label>
             <input
               type="number"
               value={amount || ''}
@@ -57,7 +59,7 @@ export default function UPIBlock({ block, isEditing, onUpdate }: UPIBlockProps) 
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Note (optional)</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Note (optional)')}</label>
             <input
               type="text"
               value={note || ''}
@@ -73,7 +75,7 @@ export default function UPIBlock({ block, isEditing, onUpdate }: UPIBlockProps) 
   if (!vpa) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
-        <p className="text-sm text-gray-500">No UPI ID set</p>
+        <p className="text-sm text-gray-500">{t('No UPI ID set')}</p>
       </div>
     )
   }
@@ -96,7 +98,7 @@ export default function UPIBlock({ block, isEditing, onUpdate }: UPIBlockProps) 
         href={upiUrl}
         className="w-full rounded-lg bg-purple-600 px-4 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-purple-700"
       >
-        Pay via UPI
+        {t('Pay via UPI')}
       </a>
     </div>
   )

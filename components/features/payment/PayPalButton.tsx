@@ -6,6 +6,7 @@ import {
   updatePayPalIds,
 } from '@/lib/api/endpoints/paypal'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/lib/i18n'
 
 declare global {
   interface Window {
@@ -33,11 +34,12 @@ export function PayPalButton({ plan, clientId, promoCode }: PayPalButtonProps) {
   const [error, setError] = useState<string | null>(null)
   const [sdkLoaded, setSdkLoaded] = useState(false)
   const router = useRouter()
+  const { t } = useTranslation()
 
   // Load PayPal SDK
   useEffect(() => {
     if (!clientId) {
-      setError('PayPal is not configured.')
+      setError(t('PayPal is not configured.'))
       setLoading(false)
       return
     }
@@ -59,7 +61,7 @@ export function PayPalButton({ plan, clientId, promoCode }: PayPalButtonProps) {
     }
 
     script.onerror = () => {
-      setError('Failed to load PayPal SDK.')
+      setError(t('Failed to load PayPal SDK.'))
       setLoading(false)
     }
 
@@ -118,13 +120,13 @@ export function PayPalButton({ plan, clientId, promoCode }: PayPalButtonProps) {
             // Redirect to success page
             window.location.href = '/payment/success?payment_gateway=paypal'
           } catch {
-            setError('Payment approved but failed to save. Please contact support.')
+            setError(t('Payment approved but failed to save. Please contact support.'))
           }
         },
 
         onError: (err: any) => {
           console.error('PayPal error:', err)
-          setError('PayPal encountered an error. Please try again.')
+          setError(t('PayPal encountered an error. Please try again.'))
         },
 
         onCancel: () => {
@@ -151,7 +153,7 @@ export function PayPalButton({ plan, clientId, promoCode }: PayPalButtonProps) {
       {loading && (
         <div className="flex items-center justify-center py-6">
           <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-200 border-t-blue-600" />
-          <span className="ml-2 text-sm text-gray-500">Loading PayPal...</span>
+          <span className="ml-2 text-sm text-gray-500">{t('Loading PayPal...')}</span>
         </div>
       )}
       <div ref={containerRef} className={loading ? 'hidden' : ''} />

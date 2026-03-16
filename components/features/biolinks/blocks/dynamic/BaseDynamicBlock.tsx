@@ -1,6 +1,7 @@
 'use client'
 
 import type { ComponentType } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import type { BlockData } from '@/types/entities/biolink'
 
 interface BaseDynamicBlockProps {
@@ -20,13 +21,14 @@ export default function BaseDynamicBlock({
   onUpdate,
   registry,
 }: BaseDynamicBlockProps) {
+  const { t } = useTranslation();
   const Component = registry[block.type]
 
   if (!Component) {
     return (
       <div className="rounded-lg border-2 border-dashed border-yellow-300 bg-yellow-50 p-4 text-center">
         <p className="text-sm text-yellow-700">
-          Unsupported block type: <code className="font-mono">{block.type}</code>
+          {t('Unsupported block type:')} <code className="font-mono">{block.type}</code>
         </p>
       </div>
     )

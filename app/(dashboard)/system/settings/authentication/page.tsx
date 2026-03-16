@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
+import { useTranslation } from '@/lib/i18n'
 
 const CONFIG_KEYS = [
   'app.email_verification_after_sign_up',
@@ -16,6 +17,7 @@ const CONFIG_KEYS = [
 ]
 
 export default function AuthenticationSettingsPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
   const { mutateAsync: save, isPending: isSaving, error } = useSaveSystemConfigs(CONFIG_KEYS)
   const [formData, setFormData] = useState<Record<string, string>>({})
@@ -64,35 +66,38 @@ export default function AuthenticationSettingsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Authentication Settings</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Authentication Settings')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Configure user authentication, registration, and login behaviour.
+          {t('Configure user authentication, registration, and login behaviour.')}
         </p>
       </div>
 
       {error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
       <form onSubmit={handleSave} className="space-y-8">
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">General</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('General')}</h2>
           <div className="space-y-4">
             {([
-              { key: 'app.email_verification_after_sign_up', label: 'Email Verification After Sign Up' },
-              { key: 'app.new_user_registration', label: 'New User Registration Enabled' },
-              { key: 'app.passwordless_checkout', label: 'Passwordless Checkout' },
-              { key: 'app.mobile_number_field', label: 'Mobile Number Field' },
-            ] as const).map(({ key, label }) => (
+              { key: 'app.email_verification_after_sign_up', label: t('Email Verification After Sign Up'), desc: '' },
+              { key: 'app.new_user_registration', label: t('New User Registration Enabled'), desc: '' },
+              { key: 'app.passwordless_checkout', label: t('Passwordless Login (Email OTP)'), desc: t('Allow users to sign in and register using email + one-time code instead of a password. Also enables passwordless checkout.') },
+              { key: 'app.mobile_number_field', label: t('Mobile Number Field'), desc: '' },
+            ]).map(({ key, label, desc }) => (
               <label key={key} className="flex cursor-pointer items-center justify-between rounded-md border border-gray-200 px-4 py-3 transition-colors hover:bg-gray-50">
-                <span className="text-sm font-medium text-gray-700">{label}</span>
+                <div className="flex-1 mr-4">
+                  <span className="text-sm font-medium text-gray-700">{label}</span>
+                  {desc && <p className="text-xs text-gray-500 mt-0.5">{desc}</p>}
+                </div>
                 <button
                   type="button"
                   role="switch"
@@ -114,28 +119,28 @@ export default function AuthenticationSettingsPage() {
         </section>
 
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Behaviour</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Behaviour')}</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">After Logout Action</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('After Logout Action')}</label>
               <select
                 value={formData['app.after_logout_action'] || 'redirect_to_login'}
                 onChange={(e) => update('app.after_logout_action', e.target.value)}
                 className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
-                <option value="redirect_to_login">Redirect to Login</option>
-                <option value="redirect_to_homepage">Redirect to Homepage</option>
+                <option value="redirect_to_login">{t('Redirect to Login')}</option>
+                <option value="redirect_to_homepage">{t('Redirect to Homepage')}</option>
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">Authentication Type</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700">{t('Authentication Type')}</label>
               <select
                 value={formData['app.authentication_type'] || 'default'}
                 onChange={(e) => update('app.authentication_type', e.target.value)}
                 className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
-                <option value="default">Default</option>
-                <option value="firebase">Firebase</option>
+                <option value="default">{t('Default')}</option>
+                <option value="firebase">{t('Firebase')}</option>
               </select>
             </div>
           </div>
@@ -143,11 +148,11 @@ export default function AuthenticationSettingsPage() {
 
         {isFirebase && (
           <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">Firebase Configuration</h2>
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Firebase Configuration')}</h2>
             <div className="space-y-4">
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Firebase Config Object (JSON)
+                  {t('Firebase Config Object (JSON)')}
                 </label>
                 <textarea
                   rows={6}
@@ -159,7 +164,7 @@ export default function AuthenticationSettingsPage() {
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">
-                  Service Account Credentials (JSON)
+                  {t('Service Account Credentials (JSON)')}
                 </label>
                 <textarea
                   rows={6}
@@ -179,7 +184,7 @@ export default function AuthenticationSettingsPage() {
             disabled={isSaving}
             className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
-            {isSaving ? 'Saving…' : 'Save Settings'}
+            {isSaving ? t('Saving...') : t('Save Settings')}
           </button>
         </div>
       </form>

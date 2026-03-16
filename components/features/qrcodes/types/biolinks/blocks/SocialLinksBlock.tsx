@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react';
 import { Share2, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { SocialLinksBlock as SocialLinksBlockType } from '@/types/entities/biolinks';
+import { useTranslation } from '@/lib/i18n';
 
 interface SocialLinksBlockProps {
   block: SocialLinksBlockType;
@@ -17,6 +20,7 @@ export const SocialLinksBlock: React.FC<SocialLinksBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   return (
     <div
       className={`group relative bg-white border rounded-lg p-4 transition-all ${
@@ -33,7 +37,7 @@ export const SocialLinksBlock: React.FC<SocialLinksBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -44,14 +48,14 @@ export const SocialLinksBlock: React.FC<SocialLinksBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -63,7 +67,7 @@ export const SocialLinksBlock: React.FC<SocialLinksBlockProps> = ({
           <Share2 className="w-5 h-5 text-pink-600" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-medium text-gray-900 mb-2">Social Links</div>
+          <div className="font-medium text-gray-900 mb-2">{t('Social Links')}</div>
           {block.links.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {block.links.map((link, index) => (
@@ -77,10 +81,10 @@ export const SocialLinksBlock: React.FC<SocialLinksBlockProps> = ({
               ))}
             </div>
           ) : (
-            <div className="text-sm text-gray-500">No social links added</div>
+            <div className="text-sm text-gray-500">{t('No social links added')}</div>
           )}
           <div className="text-xs text-gray-400 mt-2 capitalize">
-            Style: {block.style}
+            {t('Style:')} {block.style}
           </div>
         </div>
       </div>

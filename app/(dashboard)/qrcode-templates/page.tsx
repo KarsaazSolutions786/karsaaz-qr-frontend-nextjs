@@ -11,8 +11,10 @@ import TemplateCategoryFilter from '@/components/templates/TemplateCategoryFilte
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { Pagination } from '@/components/common/Pagination'
 import type { TemplateFilters } from '@/types/entities/template'
+import { useTranslation } from '@/lib/i18n'
 
 export default function QRCodeTemplatesPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [filters, setFilters] = useState<TemplateFilters>({
@@ -47,10 +49,10 @@ export default function QRCodeTemplatesPage() {
   }
 
   const publicTemplates = templates?.filter(
-    (t) => t.template_access_level === 'public'
+    (tmpl) => tmpl.template_access_level === 'public'
   )
   const privateTemplates = templates?.filter(
-    (t) => t.template_access_level === 'private'
+    (tmpl) => tmpl.template_access_level === 'private'
   )
 
   // Calculate pagination for the combined templates (shown on the same page)
@@ -66,18 +68,18 @@ export default function QRCodeTemplatesPage() {
 
   // Separate paginated templates back into public and private
   const paginatedPrivateTemplates = paginatedTemplates.filter(
-    (t) => t.template_access_level === 'private'
+    (tmpl) => tmpl.template_access_level === 'private'
   )
   const paginatedPublicTemplates = paginatedTemplates.filter(
-    (t) => t.template_access_level === 'public'
+    (tmpl) => tmpl.template_access_level === 'public'
   )
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">QR Code Templates</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('QR Code Templates')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Choose a template to quickly create professional QR codes
+          {t('Choose a template to quickly create professional QR codes')}
         </p>
       </div>
 
@@ -85,7 +87,7 @@ export default function QRCodeTemplatesPage() {
         <div className="flex-1 max-w-md">
           <DebouncedSearch
             onSearch={setSearch}
-            placeholder="Search templates..."
+            placeholder={t('Search templates...')}
             delay={300}
           />
         </div>
@@ -96,7 +98,7 @@ export default function QRCodeTemplatesPage() {
             className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             <Filter className="w-4 h-4 mr-2" />
-            Filters
+            {t('Filters')}
           </button>
 
           <div className="inline-flex rounded-md shadow-sm">
@@ -127,7 +129,7 @@ export default function QRCodeTemplatesPage() {
       <div className="flex gap-6">
         <aside className="hidden lg:block w-64 flex-shrink-0">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">{t('Categories')}</h3>
             <TemplateCategoryFilter
               categories={categories || []}
               selectedCategoryId={filters.category_id}
@@ -140,21 +142,21 @@ export default function QRCodeTemplatesPage() {
           {isLoading && (
             <div className="text-center py-12">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-              <p className="mt-4 text-gray-600">Loading templates...</p>
+              <p className="mt-4 text-gray-600">{t('Loading templates...')}</p>
             </div>
           )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-              <p className="text-red-800">Failed to load templates</p>
+              <p className="text-red-800">{t('Failed to load templates')}</p>
             </div>
           )}
 
           {!isLoading && !error && templates?.length === 0 && (
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
-              <p className="text-gray-600 mb-4">No templates found</p>
+              <p className="text-gray-600 mb-4">{t('No templates found')}</p>
               <p className="text-sm text-gray-500">
-                Try adjusting your search or filters
+                {t('Try adjusting your search or filters')}
               </p>
             </div>
           )}
@@ -165,7 +167,7 @@ export default function QRCodeTemplatesPage() {
                 {paginatedPrivateTemplates && paginatedPrivateTemplates.length > 0 && (
                   <section>
                     <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                      My Templates ({privateTemplates?.length || 0})
+                      {t('My Templates')} ({privateTemplates?.length || 0})
                     </h2>
                     {viewMode === 'grid' ? (
                       <TemplateGrid
@@ -184,7 +186,7 @@ export default function QRCodeTemplatesPage() {
                 {paginatedPublicTemplates && paginatedPublicTemplates.length > 0 && (
                   <section>
                     <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                      Public Templates ({publicTemplates?.length || 0})
+                      {t('Public Templates')} ({publicTemplates?.length || 0})
                     </h2>
                     {viewMode === 'grid' ? (
                       <TemplateGrid

@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 /**
  * OAuth Callback Page
@@ -22,6 +23,7 @@ import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
 type CallbackStatus = 'processing' | 'success' | 'error'
 
 function CallbackContent() {
+  const { t } = useTranslation()
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<CallbackStatus>('processing')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
@@ -43,7 +45,7 @@ function CallbackContent() {
     // Validate required params
     if (!code) {
       setStatus('error')
-      setErrorMessage('No authorization code received')
+      setErrorMessage(t('No authorization code received'))
       return
     }
 
@@ -75,7 +77,7 @@ function CallbackContent() {
     // Ensure we're in a popup with an opener
     if (!window.opener) {
       setStatus('error')
-      setErrorMessage('This page must be opened in a popup window')
+      setErrorMessage(t('This page must be opened in a popup window'))
       return
     }
 
@@ -97,7 +99,7 @@ function CallbackContent() {
       }, 1500)
     } catch (err) {
       setStatus('error')
-      setErrorMessage('Failed to communicate with parent window')
+      setErrorMessage(t('Failed to communicate with parent window'))
     }
   }, [searchParams])
 
@@ -108,10 +110,10 @@ function CallbackContent() {
           <>
             <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
             <h1 className="text-xl font-semibold text-gray-900 mb-2">
-              Processing Authorization
+              {t('Processing Authorization')}
             </h1>
             <p className="text-gray-600">
-              Please wait while we complete your connection...
+              {t('Please wait while we complete your connection...')}
             </p>
           </>
         )}
@@ -122,10 +124,10 @@ function CallbackContent() {
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
             <h1 className="text-xl font-semibold text-gray-900 mb-2">
-              Authorization Successful
+              {t('Authorization Successful')}
             </h1>
             <p className="text-gray-600">
-              Your cloud storage account has been connected. This window will close automatically.
+              {t('Your cloud storage account has been connected. This window will close automatically.')}
             </p>
           </>
         )}
@@ -136,16 +138,16 @@ function CallbackContent() {
               <XCircle className="w-10 h-10 text-red-600" />
             </div>
             <h1 className="text-xl font-semibold text-gray-900 mb-2">
-              Authorization Failed
+              {t('Authorization Failed')}
             </h1>
             <p className="text-gray-600 mb-4">
-              {errorMessage || 'An error occurred during authorization.'}
+              {errorMessage || t('An error occurred during authorization.')}
             </p>
             <button
               onClick={() => window.close()}
               className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-sm font-medium transition-colors"
             >
-              Close Window
+              {t('Close Window')}
             </button>
           </>
         )}
@@ -155,13 +157,14 @@ function CallbackContent() {
 }
 
 export default function CloudStorageOAuthCallbackPage() {
+  const { t } = useTranslation()
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full mx-4 p-8 bg-white rounded-xl shadow-lg text-center">
           <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
           <h1 className="text-xl font-semibold text-gray-900 mb-2">
-            Loading...
+            {t('Loading...')}
           </h1>
         </div>
       </div>

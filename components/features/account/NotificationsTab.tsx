@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { notificationPrefsAPI, type NotificationPreferences } from '@/lib/api/endpoints/account'
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/lib/i18n'
 
 interface NotificationsTabProps {
   userId: number | string
@@ -18,6 +19,7 @@ const PREF_LABELS: { key: keyof NotificationPreferences; label: string; descript
 ]
 
 export function NotificationsTab({ userId }: NotificationsTabProps) {
+  const { t } = useTranslation()
   const [prefs, setPrefs] = useState<NotificationPreferences | null>(null)
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -62,9 +64,9 @@ export function NotificationsTab({ userId }: NotificationsTabProps) {
       setSaving(true)
       setError(null)
       await notificationPrefsAPI.update(userId, prefs)
-      setSuccess('Notification preferences saved.')
+      setSuccess(t('Notification preferences saved.'))
     } catch {
-      setError('Failed to save preferences')
+      setError(t('Failed to save preferences'))
     } finally {
       setSaving(false)
     }
@@ -73,31 +75,35 @@ export function NotificationsTab({ userId }: NotificationsTabProps) {
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">Notification Preferences</h2>
-        <p className="text-sm text-gray-500 mb-6">Choose what notifications you&apos;d like to receive.</p>
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('Notification Preferences')}</h2>
+        <p className="text-sm text-gray-500 mb-6">{t('Choose what notifications you\'d like to receive.')}</p>
 
         {error && <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>}
         {success && <div className="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700">{success}</div>}
 
         {loading ? (
-          <p className="text-sm text-gray-500">Loading preferences...</p>
+          <p className="text-sm text-gray-500">{t('Loading preferences...')}</p>
         ) : prefs ? (
           <div className="space-y-4">
-            {PREF_LABELS.map(({ key, label, description }) => (
+            {PREF_LABELS.map(({ key, label, description }) => {
+              const translatedLabel = t(label)
+              const translatedDesc = t(description)
+              return (
               <div key={key} className="flex items-center justify-between rounded-md border border-gray-100 p-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{label}</p>
-                  <p className="text-xs text-gray-500">{description}</p>
+                  <p className="text-sm font-medium text-gray-900">{translatedLabel}</p>
+                  <p className="text-xs text-gray-500">{translatedDesc}</p>
                 </div>
                 <Switch
                   checked={prefs[key]}
                   onCheckedChange={() => handleToggle(key)}
                 />
               </div>
-            ))}
+            )})}
+
             <div className="pt-4">
               <Button onClick={handleSave} disabled={saving}>
-                {saving ? 'Saving...' : 'Save Preferences'}
+                {saving ? t('Saving...') : t('Save Preferences')}
               </Button>
             </div>
           </div>

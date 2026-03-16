@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 
 /**
  * Email Verified Success Page
@@ -16,6 +17,7 @@ import Link from 'next/link'
  * to the dashboard, matching the legacy qrcg-email-verified behaviour.
  */
 export default function EmailVerifiedPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [countdown, setCountdown] = useState(5)
 
@@ -49,23 +51,21 @@ export default function EmailVerifiedPage() {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Email Verified!</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('Email Verified!')}</h2>
           <p className="mt-2 text-sm text-gray-600">
-            Your email address has been successfully verified. You now have full
-            access to all features.
+            {t('Your email address has been successfully verified. You now have full access to all features.')}
           </p>
         </div>
 
         <p className="text-sm text-gray-500">
-          Redirecting to dashboard in {countdown} second
-          {countdown !== 1 ? 's' : ''}…
+          {t('Redirecting to dashboard in')} {countdown} {countdown !== 1 ? t('seconds') : t('second')}…
         </p>
 
         <Link
           href="/qrcodes"
           className="inline-block rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          Go to Dashboard Now
+          {t('Go to Dashboard Now')}
         </Link>
       </div>
     </div>

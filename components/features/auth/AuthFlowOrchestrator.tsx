@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, createContext, useContext, type ReactNode } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { LoginForm } from './LoginForm'
 import { OTPVerificationForm } from './OTPVerificationForm'
 
@@ -39,6 +40,7 @@ export function AuthFlowOrchestrator({
   onSuccess,
   initialStep = 'login',
 }: AuthFlowOrchestratorProps) {
+  const { t } = useTranslation()
   const [state, setState] = useState<AuthFlowState>({
     step: initialStep,
     email: '',
@@ -67,9 +69,9 @@ export function AuthFlowOrchestrator({
         {state.step === 'login' && (
           <div>
             <div className="mb-4 text-center">
-              <h2 className="text-xl font-bold text-gray-900">Sign In</h2>
+              <h2 className="text-xl font-bold text-gray-900">{t('Sign In')}</h2>
               <p className="mt-1 text-sm text-gray-600">
-                Enter your credentials to continue
+                {t('Enter your credentials to continue')}
               </p>
             </div>
             <LoginForm />
@@ -79,9 +81,9 @@ export function AuthFlowOrchestrator({
         {state.step === 'twoFactor' && state.email && (
           <div>
             <div className="mb-4 text-center">
-              <h2 className="text-xl font-bold text-gray-900">Two-Factor Authentication</h2>
+              <h2 className="text-xl font-bold text-gray-900">{t('Two-Factor Authentication')}</h2>
               <p className="mt-1 text-sm text-gray-600">
-                Enter the verification code sent to your email
+                {t('Enter the verification code sent to your email')}
               </p>
             </div>
             <OTPVerificationForm email={state.email} />
@@ -91,7 +93,7 @@ export function AuthFlowOrchestrator({
         {state.step === 'redirect' && (
           <div className="flex flex-col items-center gap-3 py-8">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600" />
-            <p className="text-sm text-gray-600">Redirecting…</p>
+            <p className="text-sm text-gray-600">{t('Redirecting...')}</p>
           </div>
         )}
       </div>

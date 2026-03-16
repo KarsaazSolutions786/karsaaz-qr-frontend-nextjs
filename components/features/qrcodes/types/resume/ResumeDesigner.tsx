@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
+import { useTranslation } from '@/lib/i18n'
 
 export interface ResumeDesignSettings extends DesignSettings {
   // Resume is typically a direct link to a PDF or document
@@ -21,25 +22,24 @@ const tabs: DesignerTab[] = [
 ]
 
 export function ResumeDesigner({ design, onChange }: ResumeDesignerProps) {
+  const { t } = useTranslation()
   const renderInfoContent = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-medium text-blue-900 mb-2">Resume QR Code</h4>
+        <h4 className="font-medium text-blue-900 mb-2">{t('Resume QR Code')}</h4>
         <p className="text-sm text-blue-800">
-          This QR code will link directly to your resume document (PDF, DOCX, etc.). The base design
-          settings above will be applied to the loading page.
+          {t('This QR code will link directly to your resume document (PDF, DOCX, etc.). The base design settings above will be applied to the loading page.')}
         </p>
       </div>
 
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <h5 className="font-medium text-gray-900 mb-2">Best Practices</h5>
+        <h5 className="font-medium text-gray-900 mb-2">{t('Best Practices')}</h5>
         <ul className="text-sm text-gray-700 space-y-1">
-          <li>• Keep your resume file under 5MB for fast loading</li>
-          <li>• Use PDF format for best compatibility</li>
-          <li>• Test the QR code before printing on business cards</li>
+          <li>{t('Keep your resume file under 5MB for fast loading')}</li>
+          <li>{t('Use PDF format for best compatibility')}</li>
+          <li>{t('Test the QR code before printing on business cards')}</li>
           <li>
-            • Consider using a link that allows you to update the resume without changing the QR
-            code
+            {t('Consider using a link that allows you to update the resume without changing the QR code')}
           </li>
         </ul>
       </div>

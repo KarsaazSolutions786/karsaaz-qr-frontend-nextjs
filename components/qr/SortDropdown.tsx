@@ -16,6 +16,7 @@ import {
   Tag,
   Check,
 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export type SortOption =
   | 'name-asc'
@@ -82,6 +83,7 @@ const SORT_OPTIONS: SortOptionItem[] = [
 ];
 
 export function SortDropdown({ currentSort, onSortChange }: SortDropdownProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -115,8 +117,8 @@ export function SortDropdown({ currentSort, onSortChange }: SortDropdownProps) {
         className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
       >
         {currentOption?.icon}
-        <span className="hidden sm:inline">{currentOption?.label || 'Sort'}</span>
-        <span className="sm:hidden">Sort</span>
+        <span className="hidden sm:inline">{t(currentOption?.label || 'Sort')}</span>
+        <span className="sm:hidden">{t('Sort')}</span>
         <ChevronDown
           className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
         />
@@ -138,7 +140,7 @@ export function SortDropdown({ currentSort, onSortChange }: SortDropdownProps) {
                 <span className={currentSort === option.value ? 'text-blue-600' : 'text-gray-500'}>
                   {option.icon}
                 </span>
-                <span className="flex-1 text-left">{option.label}</span>
+                <span className="flex-1 text-left">{t(option.label)}</span>
                 {currentSort === option.value && (
                   <Check className="w-4 h-4 text-blue-600" />
                 )}

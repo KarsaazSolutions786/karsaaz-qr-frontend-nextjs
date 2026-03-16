@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import {
   BiolinkBlock,
@@ -23,6 +24,7 @@ interface BlockSettingsModalProps {
 }
 
 export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModalProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<BiolinkBlock>(block);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,19 +44,19 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Button Title *
+                {t('Button Title')} *
               </label>
               <input
                 type="text"
                 value={linkBlock.title}
                 onChange={(e) => updateField('title', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g., Visit My Website"
+                placeholder={t('e.g., Visit My Website')}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">URL *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('URL')} *</label>
               <input
                 type="url"
                 value={linkBlock.url}
@@ -66,14 +68,14 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Icon (optional)
+                {t('Icon (optional)')}
               </label>
               <input
                 type="text"
                 value={linkBlock.icon || ''}
                 onChange={(e) => updateField('icon', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="Icon name or emoji"
+                placeholder={t('Icon name or emoji')}
               />
             </div>
           </>
@@ -85,27 +87,27 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Text Content *
+                {t('Text Content')} *
               </label>
               <textarea
                 value={textBlock.content}
                 onChange={(e) => updateField('content', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 rows={4}
-                placeholder="Enter your text..."
+                placeholder={t('Enter your text...')}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Alignment</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Alignment')}</label>
               <select
                 value={textBlock.alignment || 'center'}
                 onChange={(e) => updateField('alignment', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value="left">Left</option>
-                <option value="center">Center</option>
-                <option value="right">Right</option>
+                <option value="left">{t('Left')}</option>
+                <option value="center">{t('Center')}</option>
+                <option value="right">{t('Right')}</option>
               </select>
             </div>
           </>
@@ -117,30 +119,30 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Heading Text *
+                {t('Heading Text')} *
               </label>
               <input
                 type="text"
                 value={headingBlock.text}
                 onChange={(e) => updateField('text', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter heading..."
+                placeholder={t('Enter heading...')}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Level</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Level')}</label>
               <select
                 value={headingBlock.level}
                 onChange={(e) => updateField('level', parseInt(e.target.value))}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               >
-                <option value="1">H1 - Largest</option>
+                <option value="1">{t('H1 - Largest')}</option>
                 <option value="2">H2</option>
                 <option value="3">H3</option>
                 <option value="4">H4</option>
                 <option value="5">H5</option>
-                <option value="6">H6 - Smallest</option>
+                <option value="6">{t('H6 - Smallest')}</option>
               </select>
             </div>
           </>
@@ -152,7 +154,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Image URL *
+                {t('Image URL')} *
               </label>
               <input
                 type="url"
@@ -165,19 +167,19 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Alt Text (optional)
+                {t('Alt Text (optional)')}
               </label>
               <input
                 type="text"
                 value={imageBlock.alt || ''}
                 onChange={(e) => updateField('alt', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="Description of image"
+                placeholder={t('Description of image')}
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Link URL (optional)
+                {t('Link URL (optional)')}
               </label>
               <input
                 type="url"
@@ -196,7 +198,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address *
+                {t('Email Address')} *
               </label>
               <input
                 type="email"
@@ -209,23 +211,23 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Subject (optional)
+                {t('Subject (optional)')}
               </label>
               <input
                 type="text"
                 value={emailBlock.subject || ''}
                 onChange={(e) => updateField('subject', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="Subject line"
+                placeholder={t('Subject line')}
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Button Text
+                {t('Button Text')}
               </label>
               <input
                 type="text"
-                value={emailBlock.buttonText || 'Send Email'}
+                value={emailBlock.buttonText || t('Send Email')}
                 onChange={(e) => updateField('buttonText', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
@@ -239,7 +241,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number *
+                {t('Phone Number')} *
               </label>
               <input
                 type="tel"
@@ -252,11 +254,11 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Button Text
+                {t('Button Text')}
               </label>
               <input
                 type="text"
-                value={phoneBlock.buttonText || 'Call Now'}
+                value={phoneBlock.buttonText || t('Call Now')}
                 onChange={(e) => updateField('buttonText', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
               />
@@ -270,7 +272,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
                 className="mr-2"
               />
               <label htmlFor="showWhatsApp" className="text-sm text-gray-700">
-                Show WhatsApp option
+                {t('Show WhatsApp option')}
               </label>
             </div>
           </>
@@ -282,7 +284,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Address *
+                {t('Address')} *
               </label>
               <textarea
                 value={locationBlock.address}
@@ -295,7 +297,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Google Maps URL (optional)
+                {t('Google Maps URL (optional)')}
               </label>
               <input
                 type="url"
@@ -314,7 +316,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                File Name *
+                {t('File Name')} *
               </label>
               <input
                 type="text"
@@ -327,7 +329,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                File URL *
+                {t('File URL')} *
               </label>
               <input
                 type="url"
@@ -346,19 +348,19 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
         return (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Title')} *</label>
               <input
                 type="text"
                 value={newsletterBlock.title}
                 onChange={(e) => updateField('title', e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                placeholder="Subscribe to Newsletter"
+                placeholder={t('Subscribe to Newsletter')}
                 required
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Description (optional)
+                {t('Description (optional)')}
               </label>
               <textarea
                 value={newsletterBlock.description || ''}
@@ -369,7 +371,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                API Endpoint *
+                {t('API Endpoint')} *
               </label>
               <input
                 type="url"
@@ -386,7 +388,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
       default:
         return (
           <div className="text-gray-500 text-center py-4">
-            Settings for {block.type} block coming soon...
+            {t('Settings for')} {block.type} {t('block coming soon...')}
           </div>
         );
     }
@@ -396,7 +398,7 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">Block Settings</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('Block Settings')}</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -414,13 +416,13 @@ export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModa
               onClick={onClose}
               className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               type="submit"
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Save Changes
+              {t('Save Changes')}
             </button>
           </div>
         </form>

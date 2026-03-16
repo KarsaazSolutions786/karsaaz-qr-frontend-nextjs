@@ -1,7 +1,9 @@
+'use client'
+
 import React from 'react';
 import { Code, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { EmbedBlock as EmbedBlockType } from '@/types/entities/biolinks';
-import { sanitizeHTML } from '@/lib/utils/dom-safety';
+import { useTranslation } from '@/lib/i18n';
 
 interface EmbedBlockProps {
   block: EmbedBlockType;
@@ -18,6 +20,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   return (
     <div
       className={`group relative bg-white border rounded-lg p-4 transition-all ${
@@ -34,7 +37,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors bg-white"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -45,14 +48,14 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors bg-white"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors bg-white"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -64,19 +67,22 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <Code className="w-4 h-4 text-gray-600" />
-              <span className="text-sm font-medium text-gray-900">Custom Embed</span>
+              <span className="text-sm font-medium text-gray-900">{t('Custom Embed')}</span>
             </div>
             <div
               className="bg-gray-50 rounded-lg p-3 border"
               style={{ height: block.height ? `${block.height}px` : '400px' }}
             >
-              <div
-                dangerouslySetInnerHTML={{ __html: sanitizeHTML(block.embedCode) }}
+              <iframe
+                sandbox="allow-scripts allow-popups"
+                srcDoc={block.embedCode}
                 className="w-full h-full"
+                style={{ border: 'none' }}
+                title={t('Embed preview')}
               />
             </div>
             <div className="text-xs text-gray-500">
-              Height: {block.height || 400}px
+              {t('Height:')} {block.height || 400}px
             </div>
           </div>
         ) : (
@@ -84,7 +90,7 @@ export const EmbedBlock: React.FC<EmbedBlockProps> = ({
             <div className="flex-shrink-0 w-10 h-10 bg-violet-50 rounded-lg flex items-center justify-center">
               <Code className="w-5 h-5 text-violet-600" />
             </div>
-            <div className="text-gray-500">No embed code set</div>
+            <div className="text-gray-500">{t('No embed code set')}</div>
           </div>
         )}
       </div>

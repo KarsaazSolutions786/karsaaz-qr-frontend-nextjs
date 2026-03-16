@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { pluginsAPI, type PluginConfig } from '@/lib/api/endpoints/plugins'
 import { toast } from 'sonner'
+import { useTranslation } from '@/lib/i18n'
 
 interface PluginSettingsFormProps {
   configs: PluginConfig[]
@@ -10,6 +11,7 @@ interface PluginSettingsFormProps {
 }
 
 export function PluginSettingsForm({ configs, onSaved }: PluginSettingsFormProps) {
+  const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {}
     configs.forEach((c) => {
@@ -28,10 +30,10 @@ export function PluginSettingsForm({ configs, onSaved }: PluginSettingsFormProps
     setSaving(true)
     try {
       await pluginsAPI.saveConfig(values)
-      toast.success('Plugin settings saved')
+      toast.success(t('Plugin settings saved'))
       onSaved?.()
     } catch {
-      toast.error('Failed to save settings')
+      toast.error(t('Failed to save settings'))
     } finally {
       setSaving(false)
     }
@@ -91,7 +93,7 @@ export function PluginSettingsForm({ configs, onSaved }: PluginSettingsFormProps
 
   if (configs.length === 0) {
     return (
-      <p className="text-sm text-gray-500">This plugin has no configurable settings.</p>
+      <p className="text-sm text-gray-500">{t('This plugin has no configurable settings.')}</p>
     )
   }
 
@@ -112,7 +114,7 @@ export function PluginSettingsForm({ configs, onSaved }: PluginSettingsFormProps
           disabled={saving}
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
         >
-          {saving ? 'Saving...' : 'Save Settings'}
+          {saving ? t('Saving...') : t('Save Settings')}
         </button>
       </div>
     </form>

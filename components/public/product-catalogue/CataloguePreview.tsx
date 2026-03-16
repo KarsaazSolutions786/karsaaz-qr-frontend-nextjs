@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { Search, ShoppingCart, X, Filter, Grid, List, Phone, Mail, MapPin } from 'lucide-react';
 import ProductGrid from './ProductGrid';
 import SimplePagination from '@/components/common/SimplePagination';
+import { useTranslation } from '@/lib/i18n';
 
 interface Variant {
   id: string;
@@ -46,6 +47,7 @@ interface CartItem extends Product {
 }
 
 export default function CataloguePreview({ data }: { data: CatalogueData }) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -197,7 +199,7 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
                   onClick={() => setShowInquiry(true)}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                 >
-                  Contact Us
+                  {t('Contact Us')}
                 </button>
               )}
             </div>
@@ -209,7 +211,7 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder={t('Search products...')}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -222,7 +224,7 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
                 className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
               >
                 <Filter className="w-5 h-5" />
-                Filters
+                {t('Filters')}
               </button>
 
               <div className="flex border border-gray-300 rounded-lg overflow-hidden">
@@ -252,14 +254,14 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Category
+                    {t('Category')}
                   </label>
                   <select
                     value={selectedCategory}
                     onChange={e => setSelectedCategory(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="all">All Categories</option>
+                    <option value="all">{t('All Categories')}</option>
                     {categories.map(cat => (
                       <option key={cat} value={cat}>
                         {cat}
@@ -270,17 +272,17 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Sort By
+                    {t('Sort By')}
                   </label>
                   <select
                     value={sortBy}
                     onChange={e => setSortBy(e.target.value as any)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="newest">Newest First</option>
-                    <option value="name">Name (A-Z)</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
+                    <option value="newest">{t('Newest First')}</option>
+                    <option value="name">{t('Name (A-Z)')}</option>
+                    <option value="price-low">{t('Price: Low to High')}</option>
+                    <option value="price-high">{t('Price: High to Low')}</option>
                   </select>
                 </div>
               </div>
@@ -293,7 +295,7 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {filteredProducts.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No products found</p>
+            <p className="text-gray-500 text-lg">{t('No products found')}</p>
           </div>
         ) : (
           <>
@@ -327,7 +329,7 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
           <div className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-xl">
             <div className="flex flex-col h-full">
               <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="text-xl font-bold">Shopping Cart ({cartItemCount})</h2>
+                <h2 className="text-xl font-bold">{t('Shopping Cart')} ({cartItemCount})</h2>
                 <button
                   onClick={() => setShowCart(false)}
                   className="p-2 hover:bg-gray-100 rounded-lg"
@@ -338,7 +340,7 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
 
               <div className="flex-1 overflow-y-auto p-4">
                 {cart.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">Your cart is empty</p>
+                  <p className="text-gray-500 text-center py-8">{t('Your cart is empty')}</p>
                 ) : (
                   <div className="space-y-4">
                     {cart.map((item, index) => (
@@ -376,7 +378,7 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
                               onClick={() => removeFromCart(index)}
                               className="ml-auto text-red-600 hover:text-red-700"
                             >
-                              Remove
+                              {t('Remove')}
                             </button>
                           </div>
                         </div>
@@ -389,11 +391,11 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
               {cart.length > 0 && (
                 <div className="border-t p-4 space-y-4">
                   <div className="flex justify-between text-lg font-bold">
-                    <span>Total:</span>
+                    <span>{t('Total:')}</span>
                     <span>${cartTotal.toFixed(2)}</span>
                   </div>
                   <button className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                    Proceed to Checkout
+                    {t('Proceed to Checkout')}
                   </button>
                 </div>
               )}
@@ -407,7 +409,7 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
           <div className="bg-white rounded-lg max-w-md w-full p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Contact Us</h2>
+              <h2 className="text-2xl font-bold">{t('Contact Us')}</h2>
               <button onClick={() => setShowInquiry(false)} className="p-2 hover:bg-gray-100 rounded">
                 <X className="w-6 h-6" />
               </button>
@@ -443,18 +445,18 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
             <form className="space-y-4">
               <input
                 type="text"
-                placeholder="Your Name"
+                placeholder={t('Your Name')}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
               />
               <input
                 type="email"
-                placeholder="Your Email"
+                placeholder={t('Your Email')}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
               />
               <textarea
-                placeholder="Your Message"
+                placeholder={t('Your Message')}
                 rows={4}
                 className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 required
@@ -463,7 +465,7 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
                 type="submit"
                 className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
               >
-                Send Inquiry
+                {t('Send Inquiry')}
               </button>
             </form>
           </div>

@@ -6,20 +6,22 @@ import { Plus, Loader2 } from 'lucide-react'
 import { useRoles } from '@/lib/hooks/queries/useRoles'
 import { useDeleteRole } from '@/lib/hooks/mutations/useRoleMutations'
 import type { RoleEntity } from '@/lib/api/endpoints/roles'
+import { useTranslation } from '@/lib/i18n'
 
 function RoleNameCell({ role }: { role: RoleEntity }) {
+  const { t } = useTranslation()
   const isSuperAdmin = role.name?.toLowerCase() === 'super admin'
   return (
     <div className="flex items-center gap-2 flex-wrap">
       <span className="font-medium text-gray-900">{role.name}</span>
       {role.read_only && (
         <span className="inline-flex rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-semibold text-yellow-800">
-          Read Only
+          {t('Read Only')}
         </span>
       )}
       {isSuperAdmin && (
         <span className="inline-flex rounded-full bg-purple-100 px-2 py-0.5 text-xs font-semibold text-purple-800">
-          Super Admin
+          {t('Super Admin')}
         </span>
       )}
     </div>
@@ -27,13 +29,14 @@ function RoleNameCell({ role }: { role: RoleEntity }) {
 }
 
 export default function RolesPage() {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const { data, isLoading } = useRoles({ page, search: search || undefined })
   const deleteMutation = useDeleteRole()
 
   const handleDelete = async (id: number, name: string) => {
-    if (confirm(`Are you sure you want to delete the role "${name}"?`)) {
+    if (confirm(t('Are you sure you want to delete the role "{{name}}"?').replace('{{name}}', name))) {
       await deleteMutation.mutateAsync(id)
     }
   }
@@ -43,8 +46,8 @@ export default function RolesPage() {
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">User Roles</h1>
-          <p className="mt-2 text-sm text-gray-600">Manage roles and permissions</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('User Roles')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Manage roles and permissions')}</p>
         </div>
         <div className="mt-4 sm:mt-0">
           <Link
@@ -52,7 +55,7 @@ export default function RolesPage() {
             className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
           >
             <Plus className="w-4 h-4" />
-            Create Role
+            {t('Create Role')}
           </Link>
         </div>
       </div>
@@ -62,7 +65,7 @@ export default function RolesPage() {
         <div className="mb-6">
           <input
             type="search"
-            placeholder="Search roles..."
+            placeholder={t('Search roles...')}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
@@ -75,7 +78,7 @@ export default function RolesPage() {
         {isLoading ? (
           <div className="text-center py-12">
             <Loader2 className="inline-block h-8 w-8 animate-spin text-gray-400" />
-            <p className="mt-2 text-sm text-gray-600">Loading...</p>
+            <p className="mt-2 text-sm text-gray-600">{t('Loading...')}</p>
           </div>
         ) : data && data.data.length > 0 ? (
           <>
@@ -83,12 +86,12 @@ export default function RolesPage() {
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="py-3.5 pl-4 pr-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide sm:pl-6">Name</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Home Page</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Permissions</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Users</th>
-                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Created</th>
-                    <th className="relative py-3.5 pl-3 pr-4 sm:pr-6 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide sm:pl-6">{t('Name')}</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('Home Page')}</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('Permissions')}</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('Users')}</th>
+                    <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('Created')}</th>
+                    <th className="relative py-3.5 pl-3 pr-4 sm:pr-6 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('Actions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -114,15 +117,15 @@ export default function RolesPage() {
                           href={`/users/roles/${role.id}`}
                           className="text-blue-600 hover:text-blue-900 mr-4"
                         >
-                          Edit
+                          {t('Edit')}
                         </Link>
                         <button
                           onClick={() => handleDelete(role.id, role.name)}
                           disabled={role.read_only || deleteMutation.isPending}
-                          title={role.read_only ? 'Read-only roles cannot be deleted' : undefined}
+                          title={role.read_only ? t('Read-only roles cannot be deleted') : undefined}
                           className="text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          Delete
+                          {t('Delete')}
                         </button>
                       </td>
                     </tr>
@@ -142,14 +145,14 @@ export default function RolesPage() {
                     disabled={page === 1}
                     className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Previous
+                    {t('Previous')}
                   </button>
                   <button
                     onClick={() => setPage((p) => p + 1)}
                     disabled={page >= data.pagination.lastPage}
                     className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Next
+                    {t('Next')}
                   </button>
                 </div>
               </div>
@@ -160,15 +163,15 @@ export default function RolesPage() {
             <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No roles found</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by creating a new role.</p>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No roles found')}</h3>
+            <p className="mt-1 text-sm text-gray-500">{t('Get started by creating a new role.')}</p>
             <div className="mt-6">
               <Link
                 href="/users/roles/new"
                 className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
               >
                 <Plus className="w-4 h-4" />
-                Create Role
+                {t('Create Role')}
               </Link>
             </div>
           </div>

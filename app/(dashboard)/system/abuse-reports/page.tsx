@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import apiClient from '@/lib/api/client'
+import { useTranslation } from '@/lib/i18n'
 
 type ReportStatus = 'pending' | 'reviewed' | 'resolved' | 'dismissed'
 
@@ -16,6 +17,7 @@ interface AbuseReport {
 }
 
 export default function AbuseReportsPage() {
+  const { t } = useTranslation()
   const [reports, setReports] = useState<AbuseReport[]>([])
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<'all' | ReportStatus>('all')
@@ -63,8 +65,8 @@ export default function AbuseReportsPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Abuse Reports</h1>
-        <p className="mt-2 text-sm text-gray-600">Review and manage reported content</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Abuse Reports')}</h1>
+        <p className="mt-2 text-sm text-gray-600">{t('Review and manage reported content')}</p>
       </div>
 
       {/* Status Tabs */}
@@ -117,11 +119,11 @@ export default function AbuseReportsPage() {
                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
               />
             </svg>
-            <h3 className="mt-4 text-sm font-medium text-gray-900">No abuse reports</h3>
+            <h3 className="mt-4 text-sm font-medium text-gray-900">{t('No abuse reports')}</h3>
             <p className="mt-1 text-sm text-gray-500">
               {statusFilter === 'all'
-                ? 'No reports have been submitted yet. All clear!'
-                : `No ${statusFilter} reports found.`}
+                ? t('No reports have been submitted yet. All clear!')
+                : t(`No ${statusFilter} reports found.`)}
             </p>
           </div>
         ) : (
@@ -130,22 +132,22 @@ export default function AbuseReportsPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Reporter
+                    {t('Reporter')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Reported URL
+                    {t('Reported URL')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Reason
+                    {t('Reason')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Status
+                    {t('Status')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Date
+                    {t('Date')}
                   </th>
                   <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                    Actions
+                    {t('Actions')}
                   </th>
                 </tr>
               </thead>
@@ -182,13 +184,13 @@ export default function AbuseReportsPage() {
                             onClick={() => updateStatus(report.id, 'reviewed')}
                             className="mr-3 font-medium text-blue-600 hover:text-blue-500"
                           >
-                            Review
+                            {t('Review')}
                           </button>
                           <button
                             onClick={() => updateStatus(report.id, 'dismissed')}
                             className="font-medium text-gray-500 hover:text-gray-700"
                           >
-                            Dismiss
+                            {t('Dismiss')}
                           </button>
                         </>
                       )}
@@ -197,11 +199,11 @@ export default function AbuseReportsPage() {
                           onClick={() => updateStatus(report.id, 'resolved')}
                           className="font-medium text-green-600 hover:text-green-500"
                         >
-                          Resolve
+                          {t('Resolve')}
                         </button>
                       )}
                       {(report.status === 'resolved' || report.status === 'dismissed') && (
-                        <span className="text-xs text-gray-400">No actions</span>
+                        <span className="text-xs text-gray-400">{t('No actions')}</span>
                       )}
                     </td>
                   </tr>
@@ -219,15 +221,15 @@ export default function AbuseReportsPage() {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               className="rounded bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
             >
-              Previous
+              {t('Previous')}
             </button>
-            <span className="text-sm text-gray-500">Page {page} of {lastPage}</span>
+            <span className="text-sm text-gray-500">{t('Page')} {page} {t('of')} {lastPage}</span>
             <button
               disabled={page >= lastPage}
               onClick={() => setPage((p) => p + 1)}
               className="rounded bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50"
             >
-              Next
+              {t('Next')}
             </button>
           </div>
         )}

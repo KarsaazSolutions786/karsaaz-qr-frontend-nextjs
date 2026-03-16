@@ -139,6 +139,51 @@ function selectSubscription(subscriptions: Subscription[]): Subscription | null 
 }
 
 /**
+ * Check if user has super admin role
+ */
+function isSuperAdminUser(user: User | null): boolean {
+  if (!user) return false
+  return (user as any).roles?.some((r: any) => !!r.super_admin) ?? false
+}
+
+/**
+ * Build an unlimited admin plan (no restrictions)
+ */
+const adminPlan: SubscriptionPlan = {
+  id: 0,
+  name: 'Admin (Unlimited)',
+  price: '999',
+  monthly_price: '999',
+  frequency: 'lifetime',
+  is_trial: false,
+  is_popular: false,
+  is_hidden: true,
+  number_of_dynamic_qrcodes: -1,
+  number_of_scans: -1,
+  number_of_users: -1,
+  number_of_custom_domains: -1,
+  qr_types: [],
+  features: ['api_access', 'white_label', 'advanced_analytics', 'bulk_operations', 'templates', 'ai_design', 'custom_domain', 'svg_download', 'pdf_download', 'eps_download'],
+  file_size_limit: -1,
+  number_of_bulk_created_qrcodes: -1,
+}
+
+const adminFeatures: FeatureFlags = {
+  qr_code_types: [],
+  max_dynamic_qrcodes: -1,
+  max_scans_per_month: -1,
+  max_bulk_operations: -1,
+  max_invited_users: -1,
+  allow_custom_domain: true,
+  allow_api_access: true,
+  allow_white_label: true,
+  allow_advanced_analytics: true,
+  allow_bulk_operations: true,
+  allow_templates: true,
+  allow_ai_design: true,
+}
+
+/**
  * Process user data to extract subscription information
  */
 function processSubscriptionData(user: User | null): SubscriptionData {
@@ -151,6 +196,19 @@ function processSubscriptionData(user: User | null): SubscriptionData {
       isOnTrial: false,
       features: defaultFeatures,
       subscriptionStatus: null,
+    }
+  }
+
+  // Admin users get unlimited access regardless of subscription status
+  if (isSuperAdminUser(user)) {
+    return {
+      status: 'active',
+      subscription: null,
+      plan: adminPlan,
+      remainingDays: 9999,
+      isOnTrial: false,
+      features: adminFeatures,
+      subscriptionStatus: 'active',
     }
   }
 
@@ -246,7 +304,7 @@ export function useSubscription() {
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
     retry: 1,
-    enabled: typeof window !== 'undefined' && !!localStorage.getItem('token'),
+    enabled: typeof window !== 'undefined' && !!(localStorage.getItem('logged_in') || localStorage.getItem('token')),
   })
 
   // Process subscription data from user

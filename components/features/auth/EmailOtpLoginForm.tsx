@@ -14,6 +14,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 import {
   usePasswordlessCheckPreference,
   usePasswordlessInit,
@@ -26,6 +27,8 @@ import { GoogleLoginButton } from './GoogleLoginButton'
 type Step = 'email' | 'otp' | 'password' | '2fa'
 
 export function EmailOtpLoginForm() {
+  const { t } = useTranslation()
+
   // ── State ──
   const [step, setStep] = useState<Step>('email')
   const [email, setEmail] = useState('')
@@ -119,7 +122,7 @@ export function EmailOtpLoginForm() {
 
     const trimmedEmail = emailInput.trim()
     if (!trimmedEmail || !trimmedEmail.includes('@')) {
-      setErrorMessage('Please enter a valid email address')
+      setErrorMessage(t('Please enter a valid email address'))
       return
     }
 
@@ -144,17 +147,17 @@ export function EmailOtpLoginForm() {
         setStep('otp')
         startResendCountdown()
       } else {
-        setErrorMessage(initResult.message || 'Failed to send verification code')
+        setErrorMessage(initResult.message || t('Failed to send verification code'))
       }
     } catch (error) {
-      setErrorMessage(extractError(error, 'Failed to send verification code. Please try again.'))
+      setErrorMessage(extractError(error, t('Failed to send verification code. Please try again.')))
     }
   }
 
   // ── Step 2a: Verify OTP ──
   async function handleVerifyOtp() {
     if (!otp || otp.length !== 6) {
-      setErrorMessage('Please enter the 6-digit verification code')
+      setErrorMessage(t('Please enter the 6-digit verification code'))
       return
     }
     setErrorMessage('')
@@ -164,7 +167,7 @@ export function EmailOtpLoginForm() {
       // On success: usePasswordlessVerify handles storing token + redirect
     } catch (error) {
       setErrorMessage(
-        extractError(error, 'Invalid or expired verification code. Please try again.')
+        extractError(error, t('Invalid or expired verification code. Please try again.'))
       )
     }
   }
@@ -179,10 +182,10 @@ export function EmailOtpLoginForm() {
       if (result.success) {
         startResendCountdown()
       } else {
-        setErrorMessage(result.message || 'Failed to resend verification code')
+        setErrorMessage(result.message || t('Failed to resend verification code'))
       }
     } catch (error) {
-      setErrorMessage(extractError(error, 'Failed to resend verification code. Please try again.'))
+      setErrorMessage(extractError(error, t('Failed to resend verification code. Please try again.')))
     }
   }
 
@@ -190,7 +193,7 @@ export function EmailOtpLoginForm() {
   async function handlePasswordSubmit(e?: React.FormEvent) {
     e?.preventDefault()
     if (!password) {
-      setErrorMessage('Please enter your password')
+      setErrorMessage(t('Please enter your password'))
       return
     }
     setErrorMessage('')
@@ -208,7 +211,7 @@ export function EmailOtpLoginForm() {
       }
       // On success: useLogin handles storing token + redirect
     } catch (error) {
-      setErrorMessage(extractError(error, 'Invalid email or password. Please try again.'))
+      setErrorMessage(extractError(error, t('Invalid email or password. Please try again.')))
     }
   }
 
@@ -216,7 +219,7 @@ export function EmailOtpLoginForm() {
   async function handle2faSubmit(e?: React.FormEvent) {
     e?.preventDefault()
     if (!twoFactorCode || twoFactorCode.length < 6) {
-      setErrorMessage('Please enter the 6-digit authentication code')
+      setErrorMessage(t('Please enter the 6-digit authentication code'))
       return
     }
     setErrorMessage('')
@@ -228,7 +231,7 @@ export function EmailOtpLoginForm() {
       })
       // On success: useTwoFactorLoginVerify handles storing token + redirect
     } catch (error) {
-      setErrorMessage(extractError(error, 'Invalid authentication code. Please try again.'))
+      setErrorMessage(extractError(error, t('Invalid authentication code. Please try again.')))
     }
   }
 
@@ -292,13 +295,13 @@ export function EmailOtpLoginForm() {
   function getHeadingText(): string {
     switch (step) {
       case 'otp':
-        return 'Enter the verification code we sent you.'
+        return t('Enter the verification code we sent you.')
       case 'password':
-        return 'Enter your password to sign in.'
+        return t('Enter your password to sign in.')
       case '2fa':
-        return 'Enter your two-factor authentication code.'
+        return t('Enter your two-factor authentication code.')
       default:
-        return 'Sign in or create an account with your email.'
+        return t('Sign in or create an account with your email.')
     }
   }
 
@@ -309,7 +312,7 @@ export function EmailOtpLoginForm() {
       <form onSubmit={handleEmailSubmit} className="space-y-4">
         <div>
           <label htmlFor="passwordless-email" className="mb-1.5 block text-xs font-bold text-white">
-            Enter Your Email
+            {t('Enter Your Email')}
           </label>
           <input
             ref={emailInputRef}
@@ -335,7 +338,7 @@ export function EmailOtpLoginForm() {
           disabled={isLoading}
           className="h-10 w-full rounded-[41.843px] bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-base font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:from-[#c7aef5] hover:to-[#9366e8] focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
         >
-          {isLoading ? 'Please wait...' : 'Continue with Email'}
+          {isLoading ? t('Please wait...') : t('Continue with Email')}
         </button>
       </form>
     )
@@ -348,12 +351,12 @@ export function EmailOtpLoginForm() {
       <div className="space-y-4">
         {/* Email display badge */}
         <div className="bg-white/10 px-4 py-2.5 rounded-lg text-center text-sm text-white/80">
-          We sent a verification code to <strong className="text-white">{email}</strong>
+          {t('We sent a verification code to')} <strong className="text-white">{email}</strong>
         </div>
 
         <div>
           <label htmlFor="otp-input" className="mb-1.5 block text-xs font-bold text-white">
-            Enter Verification Code
+            {t('Enter Verification Code')}
           </label>
           <input
             ref={otpInputRef}
@@ -384,7 +387,7 @@ export function EmailOtpLoginForm() {
           disabled={isLoading || otp.length !== 6}
           className="h-10 w-full rounded-[41.843px] bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-base font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:from-[#c7aef5] hover:to-[#9366e8] focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
         >
-          {verifyOtp.isPending ? 'Verifying...' : 'Verify & Continue'}
+          {verifyOtp.isPending ? t('Verifying...') : t('Verify & Continue')}
         </button>
 
         {/* Bottom actions */}
@@ -394,11 +397,11 @@ export function EmailOtpLoginForm() {
             onClick={goBackToEmail}
             className="text-sm text-white/80 hover:text-white hover:underline flex items-center gap-1"
           >
-            ← Change Email
+            {t('Change Email')}
           </button>
 
           {resendCountdown > 0 ? (
-            <span className="text-sm text-white/50">Resend in {resendCountdown}s</span>
+            <span className="text-sm text-white/50">{t('Resend in')} {resendCountdown}s</span>
           ) : (
             <button
               type="button"
@@ -406,7 +409,7 @@ export function EmailOtpLoginForm() {
               disabled={resendOtp.isPending}
               className="text-sm text-white/80 hover:text-white hover:underline disabled:opacity-50"
             >
-              {resendOtp.isPending ? 'Sending...' : 'Resend Code'}
+              {resendOtp.isPending ? t('Sending...') : t('Resend Code')}
             </button>
           )}
         </div>
@@ -421,12 +424,12 @@ export function EmailOtpLoginForm() {
       <form onSubmit={handlePasswordSubmit} className="space-y-4">
         {/* Email display badge */}
         <div className="bg-white/10 px-4 py-2.5 rounded-lg text-center text-sm text-white/80">
-          Logging in as <strong className="text-white">{email}</strong>
+          {t('Logging in as')} <strong className="text-white">{email}</strong>
         </div>
 
         <div>
           <label htmlFor="password-input" className="mb-1.5 block text-xs font-bold text-white">
-            Enter Your Password
+            {t('Enter Your Password')}
           </label>
           <div className="relative">
             <input
@@ -435,7 +438,7 @@ export function EmailOtpLoginForm() {
               type={showPassword ? 'text' : 'password'}
               autoFocus
               autoComplete="current-password"
-              placeholder="Enter your password"
+              placeholder={t('Enter your password')}
               value={password}
               onChange={e => setPassword(e.target.value)}
               onKeyDown={e => {
@@ -449,7 +452,7 @@ export function EmailOtpLoginForm() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-[#404a60] hover:text-gray-700"
             >
-              {showPassword ? 'Hide' : 'Show'}
+              {showPassword ? t('Hide') : t('Show')}
             </button>
           </div>
         </div>
@@ -461,7 +464,7 @@ export function EmailOtpLoginForm() {
           disabled={isLoading || !password}
           className="h-10 w-full rounded-[41.843px] bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-base font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:from-[#c7aef5] hover:to-[#9366e8] focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
         >
-          {loginMutation.isPending ? 'Signing in...' : 'Login'}
+          {loginMutation.isPending ? t('Signing in...') : t('Login')}
         </button>
 
         {/* Bottom actions */}
@@ -471,13 +474,13 @@ export function EmailOtpLoginForm() {
             onClick={goBackToEmail}
             className="text-sm text-white/80 hover:text-white hover:underline flex items-center gap-1"
           >
-            ← Change Email
+            {t('Change Email')}
           </button>
           <Link
             href="/forgot-password"
             className="text-xs font-medium text-white hover:text-white/80 transition-colors"
           >
-            Forgot Password?
+            {t('Forgot Password?')}
           </Link>
         </div>
       </form>
@@ -490,15 +493,15 @@ export function EmailOtpLoginForm() {
     return (
       <div className="space-y-4">
         <div className="bg-white/10 px-4 py-2.5 rounded-lg text-center text-sm text-white/80">
-          Two-factor authentication is enabled for <strong className="text-white">{email}</strong>
+          {t('Two-factor authentication is enabled for')} <strong className="text-white">{email}</strong>
         </div>
 
         <div>
           <label htmlFor="2fa-input" className="mb-1.5 block text-xs font-bold text-white">
-            Authentication Code
+            {t('Authentication Code')}
           </label>
           <p className="mb-2 text-xs text-white/60">
-            Enter the 6-digit code from your authenticator app
+            {t('Enter the 6-digit code from your authenticator app')}
           </p>
           <input
             ref={twoFactorInputRef}
@@ -529,7 +532,7 @@ export function EmailOtpLoginForm() {
           disabled={isLoading || twoFactorCode.length !== 6}
           className="h-10 w-full rounded-[41.843px] bg-gradient-to-b from-[#bb9df3] to-[#8351e0] text-base font-semibold text-white shadow-[0px_3px_10px_0px_rgba(0,0,0,0.16)] hover:from-[#c7aef5] hover:to-[#9366e8] focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:opacity-50 transition-all"
         >
-          {twoFactorVerify.isPending ? 'Verifying...' : 'Verify & Sign In'}
+          {twoFactorVerify.isPending ? t('Verifying...') : t('Verify & Sign In')}
         </button>
 
         <div className="flex items-center justify-between mt-4">
@@ -543,7 +546,7 @@ export function EmailOtpLoginForm() {
             }}
             className="text-sm text-white/80 hover:text-white hover:underline flex items-center gap-1"
           >
-            ← Back
+            {t('Back')}
           </button>
         </div>
       </div>
@@ -573,7 +576,7 @@ export function EmailOtpLoginForm() {
             className="whitespace-nowrap text-[28px] font-semibold leading-normal text-white"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Welcome to
+            {t('Welcome to')}
           </h2>
           <Image
             src="/images/auth/karsaaz-logo.svg"
@@ -600,7 +603,7 @@ export function EmailOtpLoginForm() {
               <div className="w-full border-t border-white/20" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="bg-transparent px-3 text-white/60">OR</span>
+              <span className="bg-transparent px-3 text-white/60">{t('OR')}</span>
             </div>
           </div>
         </>

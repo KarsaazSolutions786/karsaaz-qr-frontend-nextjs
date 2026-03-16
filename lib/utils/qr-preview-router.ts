@@ -18,6 +18,8 @@ export const QR_TYPE_ROUTES: QRTypeRoute[] = [
   { type: 'restaurant-menu', route: '/menu', aliases: ['menu'] },
   { type: 'product-catalogue', route: '/products', aliases: ['products', 'catalog', 'catalogue'] },
   { type: 'business-review', route: '/review', aliases: ['review', 'rating'] },
+  { type: 'google-review', route: '/review', aliases: [] },
+  { type: 'paypal', route: '/paypal', aliases: ['payment-paypal'] },
   { type: 'event', route: '/event', aliases: [] },
   { type: 'lead-form', route: '/form', aliases: ['form', 'contact-form'] },
   { type: 'website-builder', route: '/website', aliases: ['website', 'site'] },

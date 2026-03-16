@@ -13,6 +13,7 @@ import {
 } from '@/lib/hooks/mutations/useTranslationMutations'
 import { translationsAPI } from '@/lib/api/endpoints/translations'
 import type { Translation } from '@/types/entities/translation'
+import { useTranslation as useI18n } from '@/lib/i18n'
 
 export default function TranslationsPage() {
   const router = useRouter()
@@ -25,6 +26,7 @@ export default function TranslationsPage() {
   const setMainMutation = useSetMainTranslation()
   const toggleActiveMutation = useToggleTranslationActive()
   const autoTranslateMutation = useAutoTranslate()
+  const { t } = useI18n()
 
   useEffect(() => {
     translationsAPI.canAutoTranslate()
@@ -33,22 +35,22 @@ export default function TranslationsPage() {
   }, [])
 
   const handleDelete = async (id: number, name: string) => {
-    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+    if (confirm(t('Are you sure you want to delete') + ` "${name}"?`)) {
       await deleteMutation.mutateAsync(id)
     }
   }
 
   const handleAutoTranslate = (id: number) => {
     if (!canAutoTranslate) {
-      if (confirm('Google Translate API key is not configured. Go to System Settings to configure it?')) {
+      if (confirm(t('Google Translate API key is not configured. Go to System Settings to configure it?'))) {
         router.push('/system/settings?tab-id=advanced')
       }
       return
     }
-    if (!confirm('Start auto-translation? This may take a few minutes.')) return
+    if (!confirm(t('Start auto-translation? This may take a few minutes.'))) return
     autoTranslateMutation.mutate(id, {
       onSuccess: () => {
-        toast.success('Auto-translation started. This may take a few minutes to complete.')
+        toast.success(t('Auto-translation started. This may take a few minutes to complete.'))
       },
     })
   }
@@ -57,19 +59,19 @@ export default function TranslationsPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Translations</h1>
-          <p className="mt-2 text-sm text-gray-600">Manage language translations and localization</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Translations')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Manage language translations and localization')}</p>
         </div>
         <div className="mt-4 sm:mt-0">
           <Link href="/translations/new" className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
-            Add Language
+            {t('Add Language')}
           </Link>
         </div>
       </div>
 
       <div className="mt-8">
         <div className="mb-6">
-          <input type="search" placeholder="Search translations…" value={search}
+          <input type="search" placeholder={t('Search translations…')} value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:max-w-md" />
         </div>
@@ -84,13 +86,13 @@ export default function TranslationsPage() {
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="w-8 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">ID</th>
-                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Name</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Locale</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Active</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Main Language</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Completeness</th>
-                    <th className="relative py-3.5 pl-3 pr-4 w-72"><span className="sr-only">Actions</span></th>
+                    <th className="w-8 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{t('ID')}</th>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{t('Name')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Locale')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Active')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Main Language')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Completeness')}</th>
+                    <th className="relative py-3.5 pl-3 pr-4 w-72"><span className="sr-only">{t('Actions')}</span></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -114,9 +116,9 @@ export default function TranslationsPage() {
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {translation.isMain ? (
-                          <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">YES</span>
+                          <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">{t('YES')}</span>
                         ) : (
-                          <span className="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold leading-5 text-gray-600">NO</span>
+                          <span className="inline-flex rounded-full bg-gray-100 px-2 text-xs font-semibold leading-5 text-gray-600">{t('NO')}</span>
                         )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -129,13 +131,13 @@ export default function TranslationsPage() {
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                         <div className="flex items-center justify-end gap-3 flex-wrap">
-                          <Link href={`/translations/${translation.id}`} className="text-blue-600 hover:text-blue-900">Edit</Link>
+                          <Link href={`/translations/${translation.id}`} className="text-blue-600 hover:text-blue-900">{t('Edit')}</Link>
                           <button
                             onClick={() => handleAutoTranslate(translation.id)}
                             disabled={autoTranslateMutation.isPending}
                             className="text-purple-600 hover:text-purple-900 disabled:opacity-50"
                           >
-                            Auto Translate
+                            {t('Auto Translate')}
                           </button>
                           {!translation.isMain && (
                             <button
@@ -143,7 +145,7 @@ export default function TranslationsPage() {
                               disabled={setMainMutation.isPending}
                               className="text-indigo-600 hover:text-indigo-900 disabled:opacity-50"
                             >
-                              Set Main
+                              {t('Set Main')}
                             </button>
                           )}
                           <button
@@ -151,7 +153,7 @@ export default function TranslationsPage() {
                             className="text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-50"
                             disabled={deleteMutation.isPending || translation.isMain}
                           >
-                            Delete
+                            {t('Delete')}
                           </button>
                         </div>
                       </td>
@@ -163,19 +165,19 @@ export default function TranslationsPage() {
             {data.pagination && data.pagination.lastPage > 1 && (
               <div className="mt-6 flex items-center justify-between">
                 <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
-                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">Previous</button>
-                <span className="text-sm text-gray-600">Page {page} of {data.pagination.lastPage}</span>
+                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">{t('Previous')}</button>
+                <span className="text-sm text-gray-600">{t('Page')} {page} {t('of')} {data.pagination.lastPage}</span>
                 <button onClick={() => setPage((p) => p + 1)} disabled={page >= data.pagination.lastPage}
-                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">Next</button>
+                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50">{t('Next')}</button>
               </div>
             )}
           </>
         ) : (
           <div className="text-center py-12">
-            <h3 className="text-sm font-medium text-gray-900">No translations</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by adding a language</p>
+            <h3 className="text-sm font-medium text-gray-900">{t('No translations')}</h3>
+            <p className="mt-1 text-sm text-gray-500">{t('Get started by adding a language')}</p>
             <div className="mt-6">
-              <Link href="/translations/new" className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">Add Language</Link>
+              <Link href="/translations/new" className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">{t('Add Language')}</Link>
             </div>
           </div>
         )}

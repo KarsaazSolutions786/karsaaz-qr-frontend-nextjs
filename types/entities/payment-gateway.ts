@@ -13,10 +13,11 @@ export interface PaymentGateway {
 
 export type PaymentProcessorSlug =
   | 'stripe' | 'paypal' | 'razorpay' | 'paystack' | 'flutterwave'
-  | 'mercadopago' | 'mollie' | '2checkout' | 'alipay' | 'payfast'
-  | 'payu-international' | 'payu-latam' | 'paddle' | 'xendit'
-  | 'yookassa' | 'dintero' | 'paykickstart' | 'paytr' | 'postfinance'
-  | 'orange-bf' | 'offline' | 'fib';
+  | 'mercadopago' | 'mollie' | '2checkout' | 'alipay' | 'alipay-china'
+  | 'payfast' | 'payu-international' | 'payu-latam' | 'paddle'
+  | 'paddle-billing' | 'xendit' | 'yookassa' | 'dintero' | 'paykickstart'
+  | 'paytr' | 'postfinance' | 'orange-bf' | 'offline' | 'offline-payments'
+  | 'fib';
 
 export interface ProcessorFormField {
   name: string;

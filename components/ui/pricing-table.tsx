@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface PlanFeature {
   name: string
@@ -26,6 +27,7 @@ export interface PricingTableProps {
 }
 
 export function PricingTable({ plans, onSelect, currentPlanId, className }: PricingTableProps) {
+  const { t } = useTranslation()
   return (
     <div className={cn('grid gap-6', plans.length <= 3 ? 'md:grid-cols-3' : 'md:grid-cols-4', className)}>
       {plans.map((plan) => {
@@ -42,7 +44,7 @@ export function PricingTable({ plans, onSelect, currentPlanId, className }: Pric
           >
             {plan.recommended && (
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-3 py-0.5 text-xs font-semibold text-white">
-                Recommended
+                {t('Recommended')}
               </span>
             )}
             <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
@@ -78,7 +80,7 @@ export function PricingTable({ plans, onSelect, currentPlanId, className }: Pric
                   : 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
               )}
             >
-              {isCurrent ? 'Current Plan' : plan.cta || 'Select Plan'}
+              {isCurrent ? t('Current Plan') : plan.cta || t('Select Plan')}
             </button>
           </div>
         )

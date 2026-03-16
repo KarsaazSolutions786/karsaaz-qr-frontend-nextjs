@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import type { NewsletterBlockData } from '@/types/entities/biolink'
 
 interface NewsletterBlockProps {
@@ -10,6 +11,7 @@ interface NewsletterBlockProps {
 }
 
 export default function NewsletterBlock({ block, isEditing, onUpdate }: NewsletterBlockProps) {
+  const { t } = useTranslation();
   const { title, description, placeholder = 'Enter your email', buttonText = 'Subscribe', apiEndpoint } = block.data
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -18,7 +20,7 @@ export default function NewsletterBlock({ block, isEditing, onUpdate }: Newslett
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Title</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Title')}</label>
           <input
             type="text"
             value={title}
@@ -27,7 +29,7 @@ export default function NewsletterBlock({ block, isEditing, onUpdate }: Newslett
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Description (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Description (optional)')}</label>
           <input
             type="text"
             value={description || ''}
@@ -36,7 +38,7 @@ export default function NewsletterBlock({ block, isEditing, onUpdate }: Newslett
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Placeholder</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Placeholder')}</label>
           <input
             type="text"
             value={placeholder}
@@ -45,7 +47,7 @@ export default function NewsletterBlock({ block, isEditing, onUpdate }: Newslett
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Button Text</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Button Text')}</label>
           <input
             type="text"
             value={buttonText}
@@ -54,7 +56,7 @@ export default function NewsletterBlock({ block, isEditing, onUpdate }: Newslett
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">API Endpoint</label>
+          <label className="block text-sm font-medium text-gray-700">{t('API Endpoint')}</label>
           <input
             type="url"
             value={apiEndpoint}
@@ -84,7 +86,7 @@ export default function NewsletterBlock({ block, isEditing, onUpdate }: Newslett
   if (submitted) {
     return (
       <div className="rounded-lg bg-green-50 p-6 text-center">
-        <p className="font-medium text-green-800">✓ Thank you for subscribing!</p>
+        <p className="font-medium text-green-800">{t('Thank you for subscribing!')}</p>
       </div>
     )
   }

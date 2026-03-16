@@ -10,19 +10,21 @@ import { SuperUserStep } from '@/components/features/install/SuperUserStep'
 import { AppDetailsStep } from '@/components/features/install/AppDetailsStep'
 import { CompleteStep } from '@/components/features/install/CompleteStep'
 import apiClient from '@/lib/api/client'
-
-const steps: Step[] = [
-  { id: 'intro', title: 'Welcome', description: 'Introduction' },
-  { id: 'database', title: 'Database', description: 'Configure DB' },
-  { id: 'mail', title: 'Mail', description: 'SMTP settings' },
-  { id: 'license', title: 'License', description: 'Validate license' },
-  { id: 'superuser', title: 'Admin', description: 'Create admin' },
-  { id: 'app-details', title: 'App Details', description: 'App config' },
-  { id: 'complete', title: 'Complete', description: 'All done!' },
-]
+import { useTranslation } from '@/lib/i18n'
 
 export default function InstallPage() {
+  const { t } = useTranslation()
   const [currentStep, setCurrentStep] = useState(0)
+
+  const steps: Step[] = [
+    { id: 'intro', title: t('Welcome'), description: t('Introduction') },
+    { id: 'database', title: t('Database'), description: t('Configure DB') },
+    { id: 'mail', title: t('Mail'), description: t('SMTP settings') },
+    { id: 'license', title: t('License'), description: t('Validate license') },
+    { id: 'superuser', title: t('Admin'), description: t('Create admin') },
+    { id: 'app-details', title: t('App Details'), description: t('App config') },
+    { id: 'complete', title: t('Complete'), description: t('All done!') },
+  ]
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [dbConfig, setDbConfig] = useState({

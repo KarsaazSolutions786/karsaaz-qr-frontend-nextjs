@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface PreviewThemeProps {
   defaultTheme?: 'light' | 'dark' | 'auto';
@@ -16,6 +17,7 @@ export default function PreviewTheme({
   position = 'top-right',
   className = '',
 }: PreviewThemeProps) {
+  const { t } = useTranslation();
   const [theme, setTheme] = useState<'light' | 'dark'>(
     defaultTheme === 'auto' ? 'light' : defaultTheme
   );
@@ -62,7 +64,7 @@ export default function PreviewTheme({
         hover:scale-110
         z-50
       `}
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      aria-label={t(`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`)}
     >
       {theme === 'light' ? (
         <Moon className="w-5 h-5 text-gray-700" />

@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import apiClient from '@/lib/api/client'
+import { useTranslation } from '@/lib/i18n'
 
 type OperationType = 'create' | 'update' | 'delete'
 
@@ -12,6 +13,7 @@ interface PreviewRow {
 }
 
 export default function NewBulkOperationPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const fileRef = useRef<HTMLInputElement>(null)
   const [operationType, setOperationType] = useState<OperationType>('create')
@@ -97,7 +99,7 @@ export default function NewBulkOperationPage() {
         router.push('/bulk-operations')
       }
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Failed to execute bulk operation.')
+      setError(err?.response?.data?.message || t('Failed to execute bulk operation.'))
       setExecuting(false)
     }
   }
@@ -106,10 +108,10 @@ export default function NewBulkOperationPage() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">New Bulk Operation</h1>
-          <p className="mt-2 text-sm text-gray-600">Upload a CSV file and execute a bulk operation</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('New Bulk Operation')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Upload a CSV file and execute a bulk operation')}</p>
         </div>
-        <Link href="/bulk-operations" className="text-sm text-blue-600 hover:text-blue-900">← Back</Link>
+        <Link href="/bulk-operations" className="text-sm text-blue-600 hover:text-blue-900">{t('← Back')}</Link>
       </div>
 
       {error && <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">{error}</div>}
@@ -117,21 +119,21 @@ export default function NewBulkOperationPage() {
       <div className="space-y-6">
         {/* Operation Type */}
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <label className="block text-sm font-medium text-gray-700">Operation Type <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-gray-700">{t('Operation Type')} <span className="text-red-500">*</span></label>
           <select
             value={operationType}
             onChange={(e) => setOperationType(e.target.value as OperationType)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:max-w-xs sm:text-sm"
           >
-            <option value="create">Create</option>
-            <option value="update">Update</option>
-            <option value="delete">Delete</option>
+            <option value="create">{t('Create')}</option>
+            <option value="update">{t('Update')}</option>
+            <option value="delete">{t('Delete')}</option>
           </select>
         </div>
 
         {/* CSV Upload */}
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <label className="block text-sm font-medium text-gray-700">Upload CSV File <span className="text-red-500">*</span></label>
+          <label className="block text-sm font-medium text-gray-700">{t('Upload CSV File')} <span className="text-red-500">*</span></label>
           <div className="mt-2 flex items-center gap-4">
             <input
               ref={fileRef}
@@ -141,13 +143,13 @@ export default function NewBulkOperationPage() {
               className="text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100"
             />
           </div>
-          {file && <p className="mt-2 text-xs text-gray-500">Selected: {file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
+          {file && <p className="mt-2 text-xs text-gray-500">{t('Selected')}: {file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
         </div>
 
         {/* Preview Table */}
         {previewRows.length > 0 && (
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-3 text-sm font-medium text-gray-700">Preview (first {previewRows.length} rows)</h2>
+            <h2 className="mb-3 text-sm font-medium text-gray-700">{t('Preview')} ({t('first')} {previewRows.length} {t('rows')})</h2>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-300 text-sm">
                 <thead className="bg-gray-50">
@@ -175,7 +177,7 @@ export default function NewBulkOperationPage() {
         {executing && (
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between text-sm text-gray-600">
-              <span>Processing…</span>
+              <span>{t('Processing...')}</span>
               <span>{progress}%</span>
             </div>
             <div className="mt-2 h-3 overflow-hidden rounded-full bg-gray-200">
@@ -194,7 +196,7 @@ export default function NewBulkOperationPage() {
             disabled={!file || executing}
             className="rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {executing ? 'Executing…' : 'Execute'}
+            {executing ? t('Executing...') : t('Execute')}
           </button>
         </div>
       </div>

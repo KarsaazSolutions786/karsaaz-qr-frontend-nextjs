@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { Grid3x3, List, Minimize2 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export type ViewMode = 'grid' | 'list' | 'minimal';
 
@@ -45,13 +46,14 @@ const VIEW_MODES: ViewModeOption[] = [
 ];
 
 export function ViewModeToggle({ currentMode, onModeChange }: ViewModeToggleProps) {
+  const { t } = useTranslation();
   return (
     <div className="inline-flex items-center bg-white border border-gray-300 rounded-lg overflow-hidden">
       {VIEW_MODES.map((mode, index) => (
         <button
           key={mode.value}
           onClick={() => onModeChange(mode.value)}
-          title={mode.tooltip}
+          title={t(mode.tooltip)}
           className={`
             relative px-3 py-2 text-sm font-medium transition-all
             ${
@@ -65,7 +67,7 @@ export function ViewModeToggle({ currentMode, onModeChange }: ViewModeToggleProp
         >
           <div className="flex items-center gap-1.5">
             {mode.icon}
-            <span className="hidden md:inline">{mode.label}</span>
+            <span className="hidden md:inline">{t(mode.label)}</span>
           </div>
         </button>
       ))}

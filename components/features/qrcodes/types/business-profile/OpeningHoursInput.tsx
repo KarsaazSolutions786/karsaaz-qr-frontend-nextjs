@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import { Clock, Copy, Plus, X } from 'lucide-react';
 import { OpeningHours, DaySchedule } from '@/types/entities/business-profile';
 
@@ -9,17 +10,21 @@ interface OpeningHoursInputProps {
   onChange: (value: OpeningHours) => void;
 }
 
-const DAYS = [
-  { key: 'monday', label: 'Monday' },
-  { key: 'tuesday', label: 'Tuesday' },
-  { key: 'wednesday', label: 'Wednesday' },
-  { key: 'thursday', label: 'Thursday' },
-  { key: 'friday', label: 'Friday' },
-  { key: 'saturday', label: 'Saturday' },
-  { key: 'sunday', label: 'Sunday' },
-] as const;
+const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+
+const getDays = (t: (key: string) => string) => [
+  { key: 'monday' as const, label: t('Monday') },
+  { key: 'tuesday' as const, label: t('Tuesday') },
+  { key: 'wednesday' as const, label: t('Wednesday') },
+  { key: 'thursday' as const, label: t('Thursday') },
+  { key: 'friday' as const, label: t('Friday') },
+  { key: 'saturday' as const, label: t('Saturday') },
+  { key: 'sunday' as const, label: t('Sunday') },
+];
 
 export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
+  const { t } = useTranslation();
+  const DAYS = getDays(t);
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
   const updateDay = (day: string, schedule: DaySchedule) => {
@@ -32,7 +37,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
   const copyToAllDays = (sourceDay: string) => {
     const sourceSchedule = value[sourceDay as keyof OpeningHours] as DaySchedule;
     const newHours = { ...value };
-    DAYS.forEach(({ key }) => {
+    DAY_KEYS.forEach((key) => {
       if (key !== sourceDay) {
         newHours[key] = { ...sourceSchedule };
       }
@@ -74,7 +79,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Opening Hours</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('Opening Hours')}</h3>
       </div>
 
       <div className="space-y-2">
@@ -109,7 +114,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
                         }
                         className="px-3 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
                       />
-                      <span className="text-gray-500">to</span>
+                      <span className="text-gray-500">{t('to')}</span>
                       <input
                         type="time"
                         value={daySchedule.closeTime || '17:00'}
@@ -120,12 +125,12 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
                       />
                       {daySchedule.breaks && daySchedule.breaks.length > 0 && (
                         <span className="text-sm text-gray-500">
-                          ({daySchedule.breaks.length} break{daySchedule.breaks.length > 1 ? 's' : ''})
+                          ({daySchedule.breaks.length} {daySchedule.breaks.length > 1 ? t('breaks') : t('break')})
                         </span>
                       )}
                     </div>
                   ) : (
-                    <span className="text-gray-500 text-sm">Closed</span>
+                    <span className="text-gray-500 text-sm">{t('Closed')}</span>
                   )}
                 </div>
 
@@ -136,7 +141,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
                         type="button"
                         onClick={() => setExpandedDay(isExpanded ? null : key)}
                         className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        title={isExpanded ? 'Collapse' : 'Expand for breaks & notes'}
+                        title={isExpanded ? t('Collapse') : t('Expand for breaks & notes')}
                       >
                         <Clock className="w-4 h-4" />
                       </button>
@@ -144,7 +149,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
                         type="button"
                         onClick={() => copyToAllDays(key)}
                         className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        title="Copy to all days"
+                        title={t('Copy to all days')}
                       >
                         <Copy className="w-4 h-4" />
                       </button>
@@ -158,7 +163,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <label className="text-sm font-medium text-gray-700">
-                        Breaks
+                        {t('Breaks')}
                       </label>
                       <button
                         type="button"
@@ -166,7 +171,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
                         className="flex items-center gap-1 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                         <Plus className="w-4 h-4" />
-                        Add Break
+                        {t('Add Break')}
                       </button>
                     </div>
 
@@ -182,7 +187,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
                               }
                               className="px-3 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
                             />
-                            <span className="text-gray-500 text-sm">to</span>
+                            <span className="text-gray-500 text-sm">{t('to')}</span>
                             <input
                               type="time"
                               value={breakTime.endTime}
@@ -206,7 +211,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Special Note
+                      {t('Special Note')}
                     </label>
                     <input
                       type="text"
@@ -214,7 +219,7 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
                       onChange={(e) =>
                         updateDay(key, { ...daySchedule, note: e.target.value })
                       }
-                      placeholder="e.g., Happy hour 5-7pm"
+                      placeholder={t('e.g., Happy hour 5-7pm')}
                       className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -227,32 +232,32 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
 
       <div className="mt-4 p-4 bg-gray-50 rounded-lg">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Timezone
+          {t('Timezone')}
         </label>
         <select
           value={value.timezone || ''}
           onChange={(e) => onChange({ ...value, timezone: e.target.value })}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Auto-detect</option>
-          <option value="America/New_York">Eastern Time (ET)</option>
-          <option value="America/Chicago">Central Time (CT)</option>
-          <option value="America/Denver">Mountain Time (MT)</option>
-          <option value="America/Los_Angeles">Pacific Time (PT)</option>
-          <option value="Europe/London">London (GMT)</option>
-          <option value="Europe/Paris">Paris (CET)</option>
-          <option value="Asia/Dubai">Dubai (GST)</option>
-          <option value="Asia/Tokyo">Tokyo (JST)</option>
-          <option value="Australia/Sydney">Sydney (AEST)</option>
+          <option value="">{t('Auto-detect')}</option>
+          <option value="America/New_York">{t('Eastern Time (ET)')}</option>
+          <option value="America/Chicago">{t('Central Time (CT)')}</option>
+          <option value="America/Denver">{t('Mountain Time (MT)')}</option>
+          <option value="America/Los_Angeles">{t('Pacific Time (PT)')}</option>
+          <option value="Europe/London">{t('London (GMT)')}</option>
+          <option value="Europe/Paris">{t('Paris (CET)')}</option>
+          <option value="Asia/Dubai">{t('Dubai (GST)')}</option>
+          <option value="Asia/Tokyo">{t('Tokyo (JST)')}</option>
+          <option value="Australia/Sydney">{t('Sydney (AEST)')}</option>
         </select>
 
         <label className="block text-sm font-medium text-gray-700 mb-2 mt-4">
-          Special Hours Note
+          {t('Special Hours Note')}
         </label>
         <textarea
           value={value.specialHours || ''}
           onChange={(e) => onChange({ ...value, specialHours: e.target.value })}
-          placeholder="e.g., Closed on public holidays, Extended hours during summer"
+          placeholder={t('e.g., Closed on public holidays, Extended hours during summer')}
           rows={2}
           className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
         />

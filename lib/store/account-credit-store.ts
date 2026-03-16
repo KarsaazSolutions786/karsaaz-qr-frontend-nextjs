@@ -19,6 +19,10 @@ interface AccountCreditState {
   clearCart: () => void
   cartTotal: () => number
   amountToPay: () => number
+  /** Total number of items in cart (sum of quantities), matching P1 numberOfItems() */
+  numberOfItems: () => number
+  /** Whether cart has any items */
+  hasItems: () => boolean
 }
 
 export const useAccountCreditStore = create<AccountCreditState>()(
@@ -52,6 +56,8 @@ export const useAccountCreditStore = create<AccountCreditState>()(
       clearCart: () => set({ cartItems: [] }),
       cartTotal: () => get().cartItems.reduce((sum, i) => sum + i.unitPrice * i.quantity, 0),
       amountToPay: () => Math.max(0, get().cartTotal() - get().balance),
+      numberOfItems: () => get().cartItems.reduce((sum, i) => sum + i.quantity, 0),
+      hasItems: () => get().cartItems.length > 0,
     }),
     {
       name: 'account-credit-cart',

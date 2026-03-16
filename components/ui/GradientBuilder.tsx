@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import { ColorPicker } from './ColorPicker';
 
 export type GradientType = 'linear' | 'radial';
@@ -34,6 +35,7 @@ export function GradientBuilder({
   showPreview = true,
   className = '',
 }: GradientBuilderProps) {
+  const { t } = useTranslation();
   // Generate CSS gradient for preview
   const gradientCSS = useMemo(() => {
     if (value.type === 'linear') {
@@ -77,7 +79,7 @@ export function GradientBuilder({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Linear
+            {t('Linear')}
           </button>
           <button
             type="button"
@@ -88,7 +90,7 @@ export function GradientBuilder({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            Radial
+            {t('Radial')}
           </button>
         </div>
       </div>
@@ -98,13 +100,13 @@ export function GradientBuilder({
         <ColorPicker
           value={value.startColor}
           onChange={handleStartColorChange}
-          label="Start Color"
+          label={t('Start Color')}
         />
 
         <ColorPicker
           value={value.endColor}
           onChange={handleEndColorChange}
-          label="End Color"
+          label={t('End Color')}
         />
       </div>
 
@@ -112,7 +114,7 @@ export function GradientBuilder({
       {value.type === 'linear' && (
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Rotation: {value.rotation ?? 0}°
+            {t('Rotation:')} {value.rotation ?? 0}°
           </label>
           <input
             type="range"
@@ -136,7 +138,7 @@ export function GradientBuilder({
       {/* Preview */}
       {showPreview && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Preview</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Preview')}</label>
           <div
             className="w-full h-32 rounded-lg border-2 border-gray-300"
             style={{ background: gradientCSS }}
@@ -195,9 +197,10 @@ export function GradientPresetPicker({
   onChange: (gradient: GradientConfig) => void;
   className?: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div className={`gradient-preset-picker ${className}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-3">Gradient Presets</label>
+      <label className="block text-sm font-medium text-gray-700 mb-3">{t('Gradient Presets')}</label>
 
       <div className="grid grid-cols-2 gap-3">
         {GRADIENT_PRESETS.map(preset => {

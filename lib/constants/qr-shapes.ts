@@ -283,7 +283,7 @@ export const REVIEW_COLLECTOR_LOGOS = [
 // ============================================================
 // Preset Logos for Logo Picker — matches legacy qrcg-logo-picker.js
 // ============================================================
-export const PRESET_LOGOS: { value: string; label: string }[] = [
+export const PRESET_LOGOS: ShapeOption[] = [
   { value: 'address-book', label: 'Address Book' },
   { value: 'badoo', label: 'Badoo' },
   { value: 'buymeacoffee', label: 'Buy Me a Coffee' },

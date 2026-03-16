@@ -7,8 +7,10 @@ import { useCreateBiolink } from '@/lib/hooks/mutations/useBiolinkMutations'
 import BiolinkEditor from '@/components/features/biolinks/editor/BiolinkEditor'
 import BiolinkPreview from '@/components/features/biolinks/editor/BiolinkPreview'
 import type { BlockData } from '@/types/entities/biolink'
+import { useTranslation } from '@/lib/i18n'
 
 export default function NewBiolinkPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const createMutation = useCreateBiolink()
 
@@ -20,7 +22,7 @@ export default function NewBiolinkPage() {
 
   const handleSave = async (isPublished: boolean) => {
     if (!title || !slug) {
-      toast.error('Please enter both a title and slug for the biolink.')
+      toast.error(t('Please enter both a title and slug for the biolink.'))
       return
     }
 
@@ -35,16 +37,16 @@ export default function NewBiolinkPage() {
       router.push('/biolinks')
     } catch (error) {
       console.error('Failed to create biolink:', error)
-      toast.error('Unable to create biolink. Please try again.')
+      toast.error(t('Unable to create biolink. Please try again.'))
     }
   }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Create Biolink</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Create Biolink')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Build a custom landing page with links and content blocks
+          {t('Build a custom landing page with links and content blocks')}
         </p>
       </div>
 
@@ -53,36 +55,36 @@ export default function NewBiolinkPage() {
         <div className="lg:col-span-1">
           <div className="sticky top-8 space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Title *</label>
+              <label className="block text-sm font-medium text-gray-700">{t('Title')} *</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                placeholder="My Awesome Page"
+                placeholder={t('My Awesome Page')}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Slug *</label>
+              <label className="block text-sm font-medium text-gray-700">{t('Slug')} *</label>
               <input
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                placeholder="my-page"
+                placeholder={t('my-page')}
               />
               <p className="mt-1 text-xs text-gray-500">yoursite.com/{slug || 'slug'}</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700">{t('Description')}</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                placeholder="Tell people about your page"
+                placeholder={t('Tell people about your page')}
               />
             </div>
 
@@ -92,7 +94,7 @@ export default function NewBiolinkPage() {
                   onClick={() => setShowPreview(!showPreview)}
                   className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50"
                 >
-                  {showPreview ? 'Edit' : 'Preview'}
+                  {showPreview ? t('Edit') : t('Preview')}
                 </button>
               </div>
               <div className="mt-2 flex gap-2">
@@ -101,14 +103,14 @@ export default function NewBiolinkPage() {
                   disabled={createMutation.isPending}
                   className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
                 >
-                  Save Draft
+                  {t('Save Draft')}
                 </button>
                 <button
                   onClick={() => handleSave(true)}
                   disabled={createMutation.isPending}
                   className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
                 >
-                  Publish
+                  {t('Publish')}
                 </button>
               </div>
             </div>

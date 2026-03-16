@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -23,6 +24,7 @@ interface DomainFormProps {
 }
 
 export function DomainForm({ defaultValues, onSubmit, isLoading }: DomainFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -36,7 +38,7 @@ export function DomainForm({ defaultValues, onSubmit, isLoading }: DomainFormPro
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
         <label htmlFor="domain" className="block text-sm font-semibold text-gray-700">
-          Domain Name *
+          {t('Domain Name')} *
         </label>
         <input
           {...register('domain')}
@@ -53,30 +55,30 @@ export function DomainForm({ defaultValues, onSubmit, isLoading }: DomainFormPro
 
       {/* CNAME Instruction Panel */}
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
-        <h3 className="text-sm font-semibold text-blue-900">DNS Configuration</h3>
+        <h3 className="text-sm font-semibold text-blue-900">{t('DNS Configuration')}</h3>
         <p className="mt-1 text-sm text-blue-700">
-          Add the following CNAME record in your DNS provider:
+          {t('Add the following CNAME record in your DNS provider:')}
         </p>
         <div className="mt-3 overflow-x-auto rounded-md bg-white p-3">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs font-medium text-gray-500">
-                <th className="pb-2 pr-4">Type</th>
-                <th className="pb-2 pr-4">Name</th>
-                <th className="pb-2">Value</th>
+                <th className="pb-2 pr-4">{t('Type')}</th>
+                <th className="pb-2 pr-4">{t('Name')}</th>
+                <th className="pb-2">{t('Value')}</th>
               </tr>
             </thead>
             <tbody className="font-mono text-gray-800">
               <tr>
                 <td className="pr-4 py-1">CNAME</td>
-                <td className="pr-4 py-1">Your subdomain</td>
+                <td className="pr-4 py-1">{t('Your subdomain')}</td>
                 <td className="py-1">cname.yourdomain.com</td>
               </tr>
             </tbody>
           </table>
         </div>
         <p className="mt-2 text-xs text-blue-600">
-          DNS changes may take up to 48 hours to propagate.
+          {t('DNS changes may take up to 48 hours to propagate.')}
         </p>
       </div>
 
@@ -86,7 +88,7 @@ export function DomainForm({ defaultValues, onSubmit, isLoading }: DomainFormPro
           disabled={isLoading}
           className="rounded-lg bg-purple-600 px-6 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50"
         >
-          {isLoading ? 'Saving...' : defaultValues?.domain ? 'Update Domain' : 'Add Domain'}
+          {isLoading ? t('Saving...') : defaultValues?.domain ? t('Update Domain') : t('Add Domain')}
         </button>
       </div>
     </form>

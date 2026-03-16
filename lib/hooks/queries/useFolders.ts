@@ -9,7 +9,7 @@ export function useFolders() {
   const { user } = useAuth()
   return useQuery({
     queryKey: queryKeys.folders.all(),
-    queryFn: () => foldersAPI.listByUser(user!.id),
+    queryFn: () => foldersAPI.listByUser(user?.id ?? 0),
     staleTime: 60 * 1000,
     enabled: !!user?.id,
   })

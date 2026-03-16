@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import apiClient from '@/lib/api/client'
 import { AuthSettingsForm, type AuthSettingsFormData } from '@/components/features/auth/AuthSettingsForm'
+import { useTranslation } from '@/lib/i18n'
 
 interface AuthOption {
   key: string
@@ -21,6 +22,7 @@ const authOptions: AuthOption[] = [
 ]
 
 export default function AuthWorkflowPage() {
+  const { t } = useTranslation()
   const [saved, setSaved] = useState(false)
   const [providerDefaults, setProviderDefaults] = useState<Partial<AuthSettingsFormData>>()
   const [providerLoading, setProviderLoading] = useState(true)
@@ -77,8 +79,8 @@ export default function AuthWorkflowPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Auth Workflow</h1>
-        <p className="mt-2 text-sm text-gray-600">Configure authentication and registration settings</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Auth Workflow')}</h1>
+        <p className="mt-2 text-sm text-gray-600">{t('Configure authentication and registration settings')}</p>
       </div>
 
       {/* General auth toggles */}
@@ -104,26 +106,26 @@ export default function AuthWorkflowPage() {
 
       <div className="mt-6 flex items-center justify-end gap-3">
         {saved && (
-          <span className="text-sm font-medium text-green-600">Auth settings saved successfully!</span>
+          <span className="text-sm font-medium text-green-600">{t('Auth settings saved successfully!')}</span>
         )}
         <button
           type="button"
           onClick={handleSave}
           className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Save Settings
+          {t('Save Settings')}
         </button>
       </div>
 
       {/* OAuth Provider Configuration */}
       <div className="mt-12">
-        <h2 className="text-xl font-bold text-gray-900">OAuth Providers</h2>
-        <p className="mt-1 text-sm text-gray-600">Configure social login provider credentials</p>
+        <h2 className="text-xl font-bold text-gray-900">{t('OAuth Providers')}</h2>
+        <p className="mt-1 text-sm text-gray-600">{t('Configure social login provider credentials')}</p>
         <div className="mt-6">
           {providerLoading ? (
             <div className="flex items-center gap-2 text-sm text-gray-400 py-8">
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-200 border-t-indigo-600" />
-              Loading provider settings...
+              {t('Loading provider settings...')}
             </div>
           ) : (
             <AuthSettingsForm

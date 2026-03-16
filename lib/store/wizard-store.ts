@@ -289,6 +289,48 @@ export const useWizardStore = create<WizardState>()(
 );
 
 /**
+ * Cross-tab wizard state sync via BroadcastChannel.
+ *
+ * When a user has multiple tabs open, changes in one tab are reflected
+ * in the others so they never diverge. We use a guard flag to prevent
+ * infinite broadcast loops.
+ */
+if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
+  const channel = new BroadcastChannel('wizard-state-sync');
+  let isSyncUpdate = false;
+
+  // Listen for state updates from other tabs
+  channel.onmessage = (event: MessageEvent) => {
+    if (event.data?.type === 'WIZARD_STATE_UPDATE' && event.data.state) {
+      isSyncUpdate = true;
+      useWizardStore.setState(event.data.state);
+      isSyncUpdate = false;
+    }
+  };
+
+  // Broadcast local changes to other tabs
+  useWizardStore.subscribe((state) => {
+    if (isSyncUpdate) return; // Don't re-broadcast updates received from other tabs
+    try {
+      // Only broadcast persisted fields (avoid serialising functions)
+      const { currentStep, completedSteps, qrType, qrData, qrSize,
+              errorCorrectionLevel, designerConfig, stickerConfig,
+              name, folderId, categoryId, lastModified, sessionId } = state;
+
+      channel.postMessage({
+        type: 'WIZARD_STATE_UPDATE',
+        state: { currentStep, completedSteps, qrType, qrData, qrSize,
+                 errorCorrectionLevel, designerConfig, stickerConfig,
+                 name, folderId, categoryId, lastModified, sessionId },
+      });
+    } catch {
+      // BroadcastChannel may fail in certain contexts (e.g. service workers);
+      // this is non-critical so we silently ignore.
+    }
+  });
+}
+
+/**
  * Check if there's persisted wizard state
  */
 export function hasPersistedWizardState(): boolean {

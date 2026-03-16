@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import Image from 'next/image'
 import { Search, ChevronDown, ChevronUp } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -61,10 +62,12 @@ const FIGMA_DISPLAY_ORDER = [
   'brazilpix',
   'snapchat',
   'spotify',
+  'skype',
+  'wechat',
 ]
 
-/** Number of types shown before "View More" */
-const INITIAL_VISIBLE = 26
+/** Number of types shown before "View More" — matches FIGMA_DISPLAY_ORDER count */
+const INITIAL_VISIBLE = 27
 
 const CARD_BG = 'linear-gradient(180deg, #fff 0%, #f9f9f9 100%)'
 const CARD_SHADOW =
@@ -74,13 +77,13 @@ const CARD_SHADOW =
  * Icon background gradients — extracted from the Figma design.
  * These provide the colored circular/rounded backgrounds behind certain icons.
  */
-const ICON_BG: Record<string, { bg: string; radius: number }> = {
+const ICON_BG: Record<string, { bg: string; radius: number; size?: number }> = {
   sms: { bg: 'linear-gradient(135deg, #8AB8FF 0%, #00B8DB 100%)', radius: 14 },
   x: { bg: 'linear-gradient(-45deg, #020202 0%, #070707 43%, #434343 100%)', radius: 14 },
   spotify: { bg: 'linear-gradient(135deg, #15CC64 0%, #097939 100%)', radius: 14 },
-  email: { bg: 'linear-gradient(135deg, #2196F3 0%, #1798FF 100%)', radius: 11 },
+  email: { bg: 'linear-gradient(135deg, #2196F3 0%, #1798FF 100%)', radius: 11, size: 38 },
   crypto: { bg: 'linear-gradient(135deg, #FFCE33 15%, #FF944D 85%)', radius: 14 },
-  facetime: { bg: '#01CA51', radius: 6 },
+  facetime: { bg: '#01CA51', radius: 6, size: 38 },
   brazilpix: { bg: 'linear-gradient(135deg, #34CAB9 9%, #009F8E 91%)', radius: 14 },
   paypal: { bg: 'rgba(42,171,238,0.5)', radius: 14 },
   linkedin: { bg: 'linear-gradient(135deg, #128ECF 15%, #0472AC 85%)', radius: 14 },
@@ -107,6 +110,7 @@ export function QRCodeTypeSelector({
   disabledTypes = [],
   showSearch = true,
 }: QRCodeTypeSelectorProps) {
+  const { t } = useTranslation()
   const [keyword, setKeyword] = useState('')
   const [showMore, setShowMore] = useState(false)
 
@@ -138,7 +142,7 @@ export function QRCodeTypeSelector({
   )
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="w-full max-w-[1120px] mx-auto">
       {showSearch && <SelectorHeader keyword={keyword} onKeywordChange={setKeyword} />}
 
       {filteredTypes.length === 0 ? (
@@ -170,7 +174,7 @@ export function QRCodeTypeSelector({
                     '0px -1.43px 7.85px 0px rgba(0,0,0,0.03), 0px 2.85px 5px 0px rgba(0,0,0,0.04)',
                 }}
               >
-                {showMore ? 'View Less' : 'View More'}
+                {showMore ? t('View Less') : t('View More')}
                 {showMore ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
               </button>
             </div>
@@ -192,13 +196,14 @@ function SelectorHeader({
   keyword: string
   onKeywordChange: (v: string) => void
 }) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
       <h1
         className="font-extrabold"
         style={{ color: '#595959', fontFamily: 'Inter, sans-serif', fontSize: 32 }}
       >
-        Create QR Code
+        {t('Create QR Code')}
       </h1>
 
       <div
@@ -218,7 +223,7 @@ function SelectorHeader({
         <Search className="h-5 w-5 shrink-0" style={{ color: '#36454f', opacity: 0.5 }} />
         <input
           type="text"
-          placeholder="Search"
+          placeholder={t('Search')}
           value={keyword}
           onChange={e => onKeywordChange(e.target.value)}
           className="flex-1 text-sm bg-transparent
@@ -248,7 +253,7 @@ function BentoGrid({
 }) {
   return (
     <div
-      className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3"
+      className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-x-3.5 gap-y-2.5"
       style={{ gridAutoFlow: 'dense', gridAutoRows: '86px' }}
       role="listbox"
       aria-label="QR code types"
@@ -348,21 +353,23 @@ function TypeIcon({ type, size = 40 }: { type: QRCodeTypeDefinition; size?: numb
   const bgConfig = ICON_BG[type.id]
 
   if (bgConfig) {
+    const containerSize = bgConfig.size ?? 49
+    const iconSize = Math.round(containerSize * 0.65)
     return (
       <div
         className="flex items-center justify-center shrink-0"
         style={{
           background: bgConfig.bg,
           borderRadius: bgConfig.radius,
-          width: 49,
-          height: 49,
+          width: containerSize,
+          height: containerSize,
         }}
       >
         <Image
           src={type.icon}
           alt=""
-          width={size * 0.7}
-          height={size * 0.7}
+          width={iconSize}
+          height={iconSize}
           className="object-contain"
           unoptimized
         />
@@ -601,14 +608,15 @@ function TallCard({ type, isSelected, isDisabled, onClick }: CardProps) {
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 function EmptyState({ keyword }: { keyword: string }) {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
         <Search className="h-7 w-7 text-gray-400" />
       </div>
-      <p className="text-lg font-medium text-gray-700">No QR types found</p>
+      <p className="text-lg font-medium text-gray-700">{t('No QR types found')}</p>
       <p className="mt-1 text-sm text-gray-500 max-w-xs">
-        {keyword.trim() ? `No results for "${keyword}"` : 'No types available'}
+        {keyword.trim() ? `${t('No results for')} "${keyword}"` : t('No types available')}
       </p>
     </div>
   )

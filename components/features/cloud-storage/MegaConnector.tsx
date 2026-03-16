@@ -3,12 +3,14 @@
 import React, { useState } from 'react'
 import { ExclamationCircleIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { useConnectMega } from '@/lib/api/cloud-storage'
+import { useTranslation } from '@/lib/i18n'
 
 interface MegaConnectorProps {
   onSuccess: () => void
 }
 
 export function MegaConnector({ onSuccess }: MegaConnectorProps) {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -20,7 +22,7 @@ export function MegaConnector({ onSuccess }: MegaConnectorProps) {
     setError(null)
 
     if (!email || !password) {
-      setError('Please fill in all fields')
+      setError(t('Please fill in all fields'))
       return
     }
 
@@ -28,23 +30,22 @@ export function MegaConnector({ onSuccess }: MegaConnectorProps) {
       await connectMega.mutateAsync({ email, password })
       onSuccess()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to connect to MEGA')
+      setError(err instanceof Error ? err.message : t('Failed to connect to MEGA'))
     }
   }
 
   return (
     <div className="space-y-4">
       <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="text-sm font-medium text-gray-900 mb-1">MEGA Connection</h4>
+        <h4 className="text-sm font-medium text-gray-900 mb-1">{t('MEGA Connection')}</h4>
         <p className="text-sm text-gray-600">
-          Enter your MEGA account credentials to enable cloud backup. Your credentials are securely
-          encrypted.
+          {t('Enter your MEGA account credentials to enable cloud backup. Your credentials are securely encrypted.')}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Email Address')}</label>
           <input
             type="email"
             value={email}
@@ -56,7 +57,7 @@ export function MegaConnector({ onSuccess }: MegaConnectorProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Password')}</label>
           <input
             type="password"
             value={password}
@@ -77,7 +78,7 @@ export function MegaConnector({ onSuccess }: MegaConnectorProps) {
         {connectMega.isSuccess && (
           <div className="flex items-start gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
             <CheckCircleIcon className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-green-700">Successfully connected to MEGA!</p>
+            <p className="text-sm text-green-700">{t('Successfully connected to MEGA!')}</p>
           </div>
         )}
 
@@ -103,17 +104,16 @@ export function MegaConnector({ onSuccess }: MegaConnectorProps) {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 />
               </svg>
-              Connecting...
+              {t('Connecting...')}
             </span>
           ) : (
-            'Connect to MEGA'
+            t('Connect to MEGA')
           )}
         </button>
       </form>
 
       <p className="text-xs text-gray-500 text-center">
-        By connecting, you agree to allow this application to access your MEGA storage for backup
-        purposes.
+        {t('By connecting, you agree to allow this application to access your MEGA storage for backup purposes.')}
       </p>
     </div>
   )

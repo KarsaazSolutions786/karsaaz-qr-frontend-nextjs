@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n';
 
 interface BreadcrumbLink {
   href: string;
@@ -15,6 +16,7 @@ interface BreadcrumbsProps {
 }
 
 export function Breadcrumbs({ links, className = '' }: BreadcrumbsProps) {
+  const { t } = useTranslation();
   const pathname = usePathname();
 
   // Auto-generate from path if no links provided
@@ -23,7 +25,7 @@ export function Breadcrumbs({ links, className = '' }: BreadcrumbsProps) {
   if (breadcrumbs.length === 0) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className={`flex items-center text-sm text-gray-500 ${className}`}>
+    <nav aria-label={t('Breadcrumb')} className={`flex items-center text-sm text-gray-500 ${className}`}>
       <Link href="/" className="hover:text-gray-700">
         <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />

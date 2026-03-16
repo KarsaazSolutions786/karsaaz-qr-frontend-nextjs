@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface UPIDynamicDesignSettings extends DesignSettings {
   // UPI Dynamic-specific settings
@@ -32,13 +33,14 @@ const tabs: DesignerTab[] = [
 ]
 
 export function UPIDynamicDesigner({ design, onChange }: UPIDynamicDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<UPIDynamicDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderPaymentPageContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Payment Page Settings</h4>
+      <h4 className="font-medium text-gray-900">{t('Payment Page Settings')}</h4>
 
       {/* Logo Settings */}
       <div className="space-y-3">
@@ -51,18 +53,18 @@ export function UPIDynamicDesigner({ design, onChange }: UPIDynamicDesignerProps
             className="rounded border-gray-300"
           />
           <label htmlFor="showLogo" className="text-sm text-gray-700">
-            Show Logo
+            {t('Show Logo')}
           </label>
         </div>
 
         {design.showLogo && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Logo Position</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Position')}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'left', label: 'Left' },
-                { value: 'center', label: 'Center' },
-                { value: 'right', label: 'Right' },
+                { value: 'left', label: t('Left') },
+                { value: 'center', label: t('Center') },
+                { value: 'right', label: t('Right') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -88,12 +90,12 @@ export function UPIDynamicDesigner({ design, onChange }: UPIDynamicDesignerProps
 
       {/* Form Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Form Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Form Style')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'card', label: 'Card' },
-            { value: 'minimal', label: 'Minimal' },
-            { value: 'bordered', label: 'Bordered' },
+            { value: 'card', label: t('Card') },
+            { value: 'minimal', label: t('Minimal') },
+            { value: 'bordered', label: t('Bordered') },
           ].map(option => (
             <button
               key={option.value}
@@ -116,22 +118,22 @@ export function UPIDynamicDesigner({ design, onChange }: UPIDynamicDesignerProps
       {/* Page Content */}
       <div className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Page Title</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Page Title')}</label>
           <input
             type="text"
             value={design.pageTitle || ''}
             onChange={e => updateDesign({ pageTitle: e.target.value })}
-            placeholder="Enter page title"
+            placeholder={t('Enter page title')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Page Text</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Page Text')}</label>
           <textarea
             value={design.pageText || ''}
             onChange={e => updateDesign({ pageText: e.target.value })}
-            placeholder="Enter description or instructions"
+            placeholder={t('Enter description or instructions')}
             className="w-full px-3 py-2 border rounded-lg"
             rows={3}
           />
@@ -140,22 +142,22 @@ export function UPIDynamicDesigner({ design, onChange }: UPIDynamicDesignerProps
 
       {/* Pay Button */}
       <div className="space-y-3">
-        <h5 className="text-sm font-medium text-gray-700">Pay Button</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Pay Button')}</h5>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text')}</label>
           <input
             type="text"
-            value={design.payButtonText || 'Pay Now'}
+            value={design.payButtonText || t('Pay Now')}
             onChange={e => updateDesign({ payButtonText: e.target.value })}
-            placeholder="Pay Now"
+            placeholder={t('Pay Now')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Button Background Color
+            {t('Button Background Color')}
           </label>
           <div className="flex gap-2">
             <input
@@ -174,7 +176,7 @@ export function UPIDynamicDesigner({ design, onChange }: UPIDynamicDesignerProps
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Text Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -203,7 +205,7 @@ export function UPIDynamicDesigner({ design, onChange }: UPIDynamicDesignerProps
             className="rounded border-gray-300"
           />
           <label htmlFor="showPaymentMethods" className="text-sm text-gray-700">
-            Show Payment Method Icons
+            {t('Show Payment Method Icons')}
           </label>
         </div>
 
@@ -216,7 +218,7 @@ export function UPIDynamicDesigner({ design, onChange }: UPIDynamicDesignerProps
             className="rounded border-gray-300"
           />
           <label htmlFor="showSecurityBadge" className="text-sm text-gray-700">
-            Show Security Badge
+            {t('Show Security Badge')}
           </label>
         </div>
       </div>

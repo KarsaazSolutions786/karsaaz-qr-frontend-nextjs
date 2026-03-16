@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface NumberRangeInputProps {
   className?: string
@@ -19,6 +20,7 @@ const inputClasses =
 
 const NumberRangeInput = React.forwardRef<HTMLDivElement, NumberRangeInputProps>(
   ({ className, minValue, maxValue, min, max, step = 1, onChange, disabled = false }, ref) => {
+    const { t } = useTranslation()
     const [internalMin, setInternalMin] = React.useState(minValue ?? min ?? 0)
     const [internalMax, setInternalMax] = React.useState(maxValue ?? max ?? 100)
 
@@ -52,7 +54,7 @@ const NumberRangeInput = React.forwardRef<HTMLDivElement, NumberRangeInputProps>
           max={max}
           step={step}
           disabled={disabled}
-          placeholder="Min"
+          placeholder={t("Min")}
           className={inputClasses}
           onChange={handleMinChange}
         />
@@ -64,7 +66,7 @@ const NumberRangeInput = React.forwardRef<HTMLDivElement, NumberRangeInputProps>
           max={max}
           step={step}
           disabled={disabled}
-          placeholder="Max"
+          placeholder={t("Max")}
           className={inputClasses}
           onChange={handleMaxChange}
         />

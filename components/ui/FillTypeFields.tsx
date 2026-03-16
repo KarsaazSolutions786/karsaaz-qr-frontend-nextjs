@@ -8,6 +8,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from '@/lib/i18n';
 import { FillConfig } from '@/types/entities/designer';
 import { ColorPicker } from './ColorPicker';
 import { GradientBuilder, GradientPresetPicker } from './GradientBuilder';
@@ -37,6 +38,7 @@ export function FillTypeFields({
   showPreview = true,
   className = '',
 }: FillTypeFieldsProps) {
+  const { t } = useTranslation();
   // Handle fill type change
   const handleTypeChange = (type: 'solid' | 'gradient' | 'image') => {
     if (type === 'solid') {
@@ -93,7 +95,7 @@ export function FillTypeFields({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Solid
+              {t('Solid')}
             </button>
             <button
               type="button"
@@ -104,7 +106,7 @@ export function FillTypeFields({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Gradient
+              {t('Gradient')}
             </button>
             <button
               type="button"
@@ -115,7 +117,7 @@ export function FillTypeFields({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Image
+              {t('Image')}
             </button>
           </div>
         </div>
@@ -150,7 +152,7 @@ export function FillTypeFields({
       {isImageFill(value) && (
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Image URL')}</label>
             <input
               type="url"
               value={value.imageUrl}
@@ -158,12 +160,12 @@ export function FillTypeFields({
               placeholder="https://example.com/image.png"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
-            <p className="text-xs text-gray-500 mt-1">Enter a URL to an image file</p>
+            <p className="text-xs text-gray-500 mt-1">{t('Enter a URL to an image file')}</p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Opacity: {Math.round((value.opacity ?? 1) * 100)}%
+              {t('Opacity:')} {Math.round((value.opacity ?? 1) * 100)}%
             </label>
             <input
               type="range"
@@ -178,7 +180,7 @@ export function FillTypeFields({
 
           {showPreview && value.imageUrl && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Preview</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('Preview')}</label>
               <div className="w-full h-32 rounded-lg border-2 border-gray-300 overflow-hidden">
                 <img
                   src={value.imageUrl}
@@ -212,6 +214,7 @@ export function SimpleFillSelector({
   label?: string;
   className?: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div className={`simple-fill-selector ${className}`}>
       {label && <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>}
@@ -242,8 +245,8 @@ export function SimpleFillSelector({
         <div className="flex-1">
           <div className="text-sm font-medium text-gray-900">
             {isSolidFill(value) && `Solid: ${value.color}`}
-            {isGradientFill(value) && `${value.gradientType === 'linear' ? 'Linear' : 'Radial'} Gradient`}
-            {isImageFill(value) && 'Image Fill'}
+            {isGradientFill(value) && `${value.gradientType === 'linear' ? t('Linear') : t('Radial')} ${t('Gradient')}`}
+            {isImageFill(value) && t('Image Fill')}
           </div>
           {isGradientFill(value) && (
             <div className="text-xs text-gray-500">
@@ -257,7 +260,7 @@ export function SimpleFillSelector({
           type="button"
           className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition text-sm font-medium"
         >
-          Edit
+          {t('Edit')}
         </button>
       </div>
     </div>

@@ -1,15 +1,20 @@
 'use client'
 
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, memo } from 'react'
 import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
 import { LogoUpload } from '@/components/qr/LogoUpload'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
-import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer'
 import { useDesignShapes } from '@/lib/hooks/useDesignShapes'
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Loader2, Upload } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Loader2, Upload, Lock } from 'lucide-react'
+import PageDesignPanel, { TYPES_WITH_WEBPAGE_DESIGN, DEFAULT_WEBPAGE_DESIGN } from './PageDesignPanel'
+import type { WebpageDesignData } from './PageDesignPanel'
 import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
+import { useSubscription } from '@/lib/hooks/useSubscription'
+import { StickerEditor } from './StickerEditor'
+import { useTranslation } from '@/lib/i18n'
 
 interface QRDesignStudioProps {
   qrType: string
@@ -31,7 +36,13 @@ interface QRDesignStudioProps {
   isSaving?: boolean
   isSaved?: boolean
   savedQRId?: string | null
+  /** Webpage design data for dynamic types that have a landing page */
+  webpageDesign?: WebpageDesignData
+  /** Callback when webpage design changes */
+  onWebpageDesignChange?: (data: WebpageDesignData) => void
 }
+
+type DesignMode = 'qr' | 'page'
 
 type TabId = 'color' | 'look' | 'sticker'
 
@@ -43,54 +54,156 @@ const TABS: { id: TabId; label: string; emoji: string }[] = [
 
 const PRESET_COLORS = ['#FF0000', '#8B5CF6', '#10B981', '#FFFFFF']
 
-const FONT_FAMILIES = [
-  'Raleway',
-  'Arial',
-  'Helvetica',
-  'Georgia',
-  'Times New Roman',
-  'Verdana',
-  'Roboto',
-  'Open Sans',
-  'Lato',
-  'Montserrat',
-  'Oswald',
-  'Poppins',
-]
+// Color Picker with presets (hoisted to module scope to avoid remount on every render)
+const ColorPickerWithPresets = memo(({
+  label,
+  value,
+  onChange: onColorChange,
+}: {
+  label: string
+  value: string
+  onChange: (c: string) => void
+}) => (
+  <div className="flex items-center justify-between">
+    <span className="text-sm text-gray-700">{label}</span>
+    <div className="flex items-center gap-1">
+      {PRESET_COLORS.map(color => (
+        <button
+          key={color}
+          type="button"
+          onClick={() => onColorChange(color)}
+          className={cn(
+            'w-7 h-7 rounded border-2 transition-all',
+            value === color
+              ? 'border-purple-500 scale-110'
+              : 'border-gray-300 hover:border-gray-400'
+          )}
+          style={{ backgroundColor: color }}
+        />
+      ))}
+      <div className="relative ml-1">
+        <input
+          type="color"
+          value={value}
+          onChange={e => onColorChange(e.target.value)}
+          className="absolute inset-0 opacity-0 w-14 h-7 cursor-pointer"
+        />
+        <button className="px-2 py-1 text-xs font-medium bg-gray-800 text-white rounded">
+          RGB
+        </button>
+      </div>
+    </div>
+  </div>
+))
+ColorPickerWithPresets.displayName = 'ColorPickerWithPresets'
 
-// Review Collector preset logos
-const REVIEW_COLLECTOR_LOGOS = [
-  'airbnb',
-  'ebay',
-  'linkedin',
-  'tripadvisor',
-  'yelp',
-  'aliexpress',
-  'facebook',
-  'pinterest',
-  'trustpilot',
-  'amazon',
-  'foursquare',
-  'skype',
-  'twitch',
-  'youtube',
-  'appstore',
-  'google-maps',
-  'snapchat',
-  'twitter',
-  'zoom',
-  'bitcoin',
-  'google',
-  'telegram',
-  'wechat',
-  'booking',
-  'googleplay',
-  'tiktok',
-  'whatsapp',
-  'discord',
-  'instagram',
-  'trendyol',
-]
+// Section Card Component (hoisted to module scope to avoid remount on every render)
+const SectionCard = memo(({
+  title,
+  sectionKey: _sectionKey,
+  expanded,
+  onToggle,
+  children,
+}: {
+  title: string
+  sectionKey: string
+  expanded: boolean
+  onToggle: () => void
+  children: React.ReactNode
+}) => (
+  <div className="bg-white rounded-xl border border-purple-100 overflow-hidden shadow-sm">
+    <button
+      type="button"
+      onClick={onToggle}
+      className="w-full flex items-center justify-between px-5 py-4 bg-purple-50/30 hover:bg-purple-50/60 transition-colors"
+    >
+      <h3 className="text-base font-semibold text-gray-900">{title}</h3>
+      {expanded ? (
+        <ChevronUp className="w-5 h-5 text-purple-400" />
+      ) : (
+        <ChevronDown className="w-5 h-5 text-purple-400" />
+      )}
+    </button>
+    {expanded && <div className="px-5 py-4 space-y-4">{children}</div>}
+  </div>
+))
+SectionCard.displayName = 'SectionCard'
+
+// Shape Grid Component with optional premium locking (hoisted to module scope to avoid remount on every render)
+const ShapeGrid = memo(({
+  items,
+  selectedValue,
+  onSelect,
+  showAll,
+  onToggleShowAll,
+  maxVisible = 15,
+  premiumLocked = false,
+  onPremiumBlock,
+  t,
+}: {
+  items: { value: string; label: string; image?: string }[]
+  selectedValue: string
+  onSelect: (value: string) => void
+  showAll: boolean
+  onToggleShowAll: () => void
+  maxVisible?: number
+  /** When true, all items except the first (default) are locked for free users */
+  premiumLocked?: boolean
+  onPremiumBlock: () => void
+  t: (key: string) => string
+}) => {
+  const visibleItems = showAll ? items : items.slice(0, maxVisible)
+  return (
+    <div>
+      <div className="grid grid-cols-7 gap-2">
+        {visibleItems.map((item, idx) => {
+          // First item (default shape) is always free; rest are premium
+          const isLocked = premiumLocked && idx > 0
+          return (
+            <button
+              key={item.value}
+              type="button"
+              onClick={() => {
+                if (isLocked) {
+                  onPremiumBlock()
+                  return
+                }
+                onSelect(item.value)
+              }}
+              className={cn(
+                'aspect-square rounded-lg border-2 flex items-center justify-center p-1.5 transition-all relative',
+                selectedValue === item.value
+                  ? 'border-purple-500 bg-purple-50'
+                  : 'border-gray-200 hover:border-gray-300',
+                isLocked && 'opacity-50 cursor-not-allowed'
+              )}
+              title={isLocked ? `${item.label} (requires paid plan)` : item.label}
+            >
+              {item.image ? (
+                <img src={item.image} alt={item.label} className="w-full h-full object-contain" />
+              ) : (
+                <span className="text-[8px] text-gray-500">{item.label}</span>
+              )}
+              {isLocked && (
+                <Lock className="absolute bottom-0.5 right-0.5 w-3 h-3 text-gray-400" />
+              )}
+            </button>
+          )
+        })}
+      </div>
+      {items.length > maxVisible && (
+        <button
+          type="button"
+          onClick={onToggleShowAll}
+          className="mt-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
+        >
+          {showAll ? t('show less') : t('view all')}
+        </button>
+      )}
+    </div>
+  )
+})
+ShapeGrid.displayName = 'ShapeGrid'
 
 export default function QRDesignStudio({
   qrType,
@@ -104,7 +217,10 @@ export default function QRDesignStudio({
   isSaving: _isSaving,
   isSaved: _isSaved,
   savedQRId,
+  webpageDesign,
+  onWebpageDesignChange,
 }: QRDesignStudioProps) {
+  const { t } = useTranslation()
   const {
     MODULE_SHAPES,
     FINDER_STYLES,
@@ -113,6 +229,31 @@ export default function QRDesignStudio({
     ADVANCED_SHAPES,
     PRESET_LOGOS,
   } = useDesignShapes()
+
+  // Subscription-based premium feature gating
+  const { plan, isOnTrial } = useSubscription()
+  const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
+  const handlePremiumBlock = () => {
+    toast.info(t('This design feature requires a paid plan. Upgrade to unlock advanced shapes and effects.'))
+  }
+
+  // Determine if this QR type supports webpage design
+  const hasWebpageDesign = TYPES_WITH_WEBPAGE_DESIGN.has(qrType)
+  const [designMode, setDesignMode] = useState<DesignMode>('qr')
+
+  // Local webpage design state (used when parent doesn't manage it)
+  const [localWebpageDesign, setLocalWebpageDesign] = useState<WebpageDesignData>(
+    webpageDesign || { ...DEFAULT_WEBPAGE_DESIGN }
+  )
+  const currentWebpageDesign = webpageDesign || localWebpageDesign
+  const handleWebpageDesignChange = (data: WebpageDesignData) => {
+    if (onWebpageDesignChange) {
+      onWebpageDesignChange(data)
+    } else {
+      setLocalWebpageDesign(data)
+    }
+  }
+
   const previewRef = useRef<BackendQRPreviewRef>(null)
   const [activeTab, setActiveTab] = useState<TabId>('color')
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -164,132 +305,6 @@ export default function QRDesignStudio({
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }))
   }
 
-  // Color Picker with presets
-  const ColorPickerWithPresets = ({
-    label,
-    value,
-    onChange: onColorChange,
-  }: {
-    label: string
-    value: string
-    onChange: (c: string) => void
-  }) => (
-    <div className="flex items-center justify-between">
-      <span className="text-sm text-gray-700">{label}</span>
-      <div className="flex items-center gap-1">
-        {PRESET_COLORS.map(color => (
-          <button
-            key={color}
-            type="button"
-            onClick={() => onColorChange(color)}
-            className={cn(
-              'w-7 h-7 rounded border-2 transition-all',
-              value === color
-                ? 'border-purple-500 scale-110'
-                : 'border-gray-300 hover:border-gray-400'
-            )}
-            style={{ backgroundColor: color }}
-          />
-        ))}
-        <div className="relative ml-1">
-          <input
-            type="color"
-            value={value}
-            onChange={e => onColorChange(e.target.value)}
-            className="absolute inset-0 opacity-0 w-14 h-7 cursor-pointer"
-          />
-          <button className="px-2 py-1 text-xs font-medium bg-gray-800 text-white rounded">
-            RGB
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-
-  // Section Card Component
-  const SectionCard = ({
-    title,
-    sectionKey,
-    children,
-  }: {
-    title: string
-    sectionKey: string
-    children: React.ReactNode
-  }) => (
-    <div className="bg-white rounded-xl border border-purple-100 overflow-hidden shadow-sm">
-      <button
-        type="button"
-        onClick={() => toggleSection(sectionKey)}
-        className="w-full flex items-center justify-between px-5 py-4 bg-purple-50/30 hover:bg-purple-50/60 transition-colors"
-      >
-        <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-        {expandedSections[sectionKey] ? (
-          <ChevronUp className="w-5 h-5 text-purple-400" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-purple-400" />
-        )}
-      </button>
-      {expandedSections[sectionKey] && <div className="px-5 py-4 space-y-4">{children}</div>}
-    </div>
-  )
-
-  // Shape Grid Component
-  const ShapeGrid = ({
-    items,
-    selectedValue,
-    onSelect,
-    showAll,
-    onToggleShowAll,
-    maxVisible = 15,
-  }: {
-    items: { value: string; label: string; image?: string }[]
-    selectedValue: string
-    onSelect: (value: string) => void
-    showAll: boolean
-    onToggleShowAll: () => void
-    maxVisible?: number
-  }) => {
-    const visibleItems = showAll ? items : items.slice(0, maxVisible)
-    return (
-      <div>
-        <div className="grid grid-cols-7 gap-2">
-          {visibleItems.map(item => (
-            <button
-              key={item.value}
-              type="button"
-              onClick={() => onSelect(item.value)}
-              className={cn(
-                'aspect-square rounded-lg border-2 flex items-center justify-center p-1.5 transition-all',
-                selectedValue === item.value
-                  ? 'border-purple-500 bg-purple-50'
-                  : 'border-gray-200 hover:border-gray-300'
-              )}
-              title={item.label}
-            >
-              {item.image ? (
-                <img src={item.image} alt={item.label} className="w-full h-full object-contain" />
-              ) : (
-                <span className="text-[8px] text-gray-500">{item.label}</span>
-              )}
-            </button>
-          ))}
-        </div>
-        {items.length > maxVisible && (
-          <button
-            type="button"
-            onClick={onToggleShowAll}
-            className="mt-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
-          >
-            {showAll ? 'show less' : 'view all'}
-          </button>
-        )}
-      </div>
-    )
-  }
-
-  // Get current sticker for conditional controls
-  const currentSticker = ADVANCED_SHAPES.find(s => s.value === mergedConfig.advancedShape)
-
   return (
     <div className="min-h-screen karsaaz-bg">
       {/* Header */}
@@ -309,7 +324,36 @@ export default function QRDesignStudio({
             </h1>
           </div>
 
-          {/* Tabs - Figma pill style with emoji icons */}
+          {/* Designer Mode Toggle - only for types with webpage designs */}
+          {hasWebpageDesign && (
+            <div className="flex items-center gap-1 mt-4 p-1 bg-gray-100 rounded-lg w-fit">
+              <button
+                onClick={() => setDesignMode('qr')}
+                className={cn(
+                  'px-4 py-2 rounded-md text-sm font-medium transition-all',
+                  designMode === 'qr'
+                    ? 'bg-white text-purple-700 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                )}
+              >
+                {t('QR Design')}
+              </button>
+              <button
+                onClick={() => setDesignMode('page')}
+                className={cn(
+                  'px-4 py-2 rounded-md text-sm font-medium transition-all',
+                  designMode === 'page'
+                    ? 'bg-white text-purple-700 shadow-sm'
+                    : 'text-gray-500 hover:text-gray-700'
+                )}
+              >
+                {t('Page Design')}
+              </button>
+            </div>
+          )}
+
+          {/* Tabs - Figma pill style with emoji icons (only shown in QR Design mode) */}
+          {designMode === 'qr' && (
           <div className="flex items-center gap-3 mt-4 pb-2 overflow-x-auto">
             {TABS.map(tab => {
               const isActive = activeTab === tab.id
@@ -324,12 +368,13 @@ export default function QRDesignStudio({
                       : 'text-gray-500 hover:text-gray-700'
                   )}
                 >
-                  {tab.label}
+                  {t(tab.label)}
                   <span className="text-base">{tab.emoji}</span>
                 </button>
               )
             })}
           </div>
+          )}
         </div>
       </div>
 
@@ -338,12 +383,20 @@ export default function QRDesignStudio({
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Left Panel - Controls */}
           <div className="lg:col-span-3 space-y-4">
+            {/* ==================== PAGE DESIGN PANEL ==================== */}
+            {designMode === 'page' && hasWebpageDesign && (
+              <PageDesignPanel
+                value={currentWebpageDesign}
+                onChange={handleWebpageDesignChange}
+              />
+            )}
+
             {/* ==================== QR COLOR SECTION ==================== */}
-            {(activeTab === 'color' || activeTab === 'look') && (
-              <SectionCard title="QR Color" sectionKey="qrColor">
+            {designMode === 'qr' && (activeTab === 'color' || activeTab === 'look') && (
+              <SectionCard title={t('QR Color')} sectionKey="qrColor" expanded={!!expandedSections['qrColor']} onToggle={() => toggleSection('qrColor')}>
                 {/* Fill Type */}
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-700">Fill Type</span>
+                  <span className="text-sm text-gray-700">{t('Fill Type')}</span>
                   <select
                     value={
                       (mergedConfig.foregroundFill as any)?.type === 'gradient'
@@ -353,6 +406,10 @@ export default function QRDesignStudio({
                           : 'solid'
                     }
                     onChange={e => {
+                      if (e.target.value !== 'solid' && isFreePlan) {
+                        handlePremiumBlock()
+                        return
+                      }
                       if (e.target.value === 'solid') {
                         handleChange('foregroundFill', { type: 'solid', color: '#000000' })
                       } else if (e.target.value === 'gradient') {
@@ -369,16 +426,16 @@ export default function QRDesignStudio({
                     }}
                     className="px-4 py-1.5 text-sm bg-purple-100 text-purple-700 rounded-full font-medium border border-purple-200 focus:ring-2 focus:ring-purple-300 appearance-none cursor-pointer"
                   >
-                    <option value="solid">Solid Color</option>
-                    <option value="gradient">Gradient</option>
-                    <option value="image">Image Fill</option>
+                    <option value="solid">{t('Solid Color')}</option>
+                    <option value="gradient">{t('Gradient')}</option>
+                    <option value="image">{t('Image Fill')}</option>
                   </select>
                 </div>
 
                 {/* Solid Color Fill */}
                 {(mergedConfig.foregroundFill as any)?.type === 'solid' && (
                   <ColorPickerWithPresets
-                    label="Fill Color"
+                    label={t('Fill Color')}
                     value={(mergedConfig.foregroundFill as any)?.color || '#000000'}
                     onChange={c => handleChange('foregroundFill', { type: 'solid', color: c })}
                   />
@@ -388,7 +445,7 @@ export default function QRDesignStudio({
                 {(mergedConfig.foregroundFill as any)?.type === 'gradient' && (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">Gradient Type</span>
+                      <span className="text-sm text-gray-700">{t('Gradient Type')}</span>
                       <select
                         value={(mergedConfig.foregroundFill as any).gradientType || 'linear'}
                         onChange={e =>
@@ -399,12 +456,12 @@ export default function QRDesignStudio({
                         }
                         className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg"
                       >
-                        <option value="linear">Linear</option>
-                        <option value="radial">Radial</option>
+                        <option value="linear">{t('Linear')}</option>
+                        <option value="radial">{t('Radial')}</option>
                       </select>
                     </div>
                     <ColorPickerWithPresets
-                      label="Start Color"
+                      label={t('Start Color')}
                       value={(mergedConfig.foregroundFill as any).startColor || '#000000'}
                       onChange={c =>
                         handleChange('foregroundFill', {
@@ -414,7 +471,7 @@ export default function QRDesignStudio({
                       }
                     />
                     <ColorPickerWithPresets
-                      label="End Color"
+                      label={t('End Color')}
                       value={(mergedConfig.foregroundFill as any).endColor || '#333333'}
                       onChange={c =>
                         handleChange('foregroundFill', {
@@ -426,7 +483,7 @@ export default function QRDesignStudio({
                     {(mergedConfig.foregroundFill as any).gradientType === 'linear' && (
                       <div>
                         <label className="block text-sm text-gray-700 mb-2">
-                          Angle: {(mergedConfig.foregroundFill as any).rotation || 45}°
+                          {t('Angle')}: {(mergedConfig.foregroundFill as any).rotation || 45}°
                         </label>
                         <input
                           type="range"
@@ -450,7 +507,7 @@ export default function QRDesignStudio({
                 {(mergedConfig.foregroundFill as any)?.type === 'foreground_image' && (
                   <div className="space-y-3">
                     <label className="block text-sm font-medium text-gray-700">
-                      Foreground Image
+                      {t('Foreground Image')}
                     </label>
 
                     {!savedQRId ? (
@@ -460,11 +517,10 @@ export default function QRDesignStudio({
                           <div className="text-yellow-600 text-xl">⚠️</div>
                           <div>
                             <p className="text-sm font-medium text-yellow-800">
-                              Save QR Code First
+                              {t('Save QR Code First')}
                             </p>
                             <p className="text-xs text-yellow-700 mt-1">
-                              Image fill requires the QR code to be saved first. Click "Next" to
-                              save, then you can upload a foreground image.
+                              {t('Image fill requires the QR code to be saved first. Click "Next" to save, then you can upload a foreground image.')}
                             </p>
                           </div>
                         </div>
@@ -523,20 +579,20 @@ export default function QRDesignStudio({
                               )}
                               <div className="text-left">
                                 <p className="text-sm font-medium text-gray-900">
-                                  {isUploadingImage ? 'Uploading...' : 'Image selected'}
+                                  {isUploadingImage ? t('Uploading...') : t('Image selected')}
                                 </p>
-                                <p className="text-xs text-gray-500">Click to replace</p>
+                                <p className="text-xs text-gray-500">{t('Click to replace')}</p>
                               </div>
                             </div>
                           ) : (
                             <>
                               <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                               <p className="text-sm text-gray-600 font-medium">
-                                Drop your file here
+                                {t('Drop your file here')}
                               </p>
-                              <p className="text-xs text-gray-400 my-2">or</p>
+                              <p className="text-xs text-gray-400 my-2">{t('or')}</p>
                               <span className="inline-block px-4 py-1.5 text-sm font-medium text-white bg-purple-500 rounded-lg hover:bg-purple-600 transition-colors">
-                                Browse Files
+                                {t('Browse Files')}
                               </span>
                             </>
                           )}
@@ -562,12 +618,12 @@ export default function QRDesignStudio({
                             }}
                             className="text-sm text-red-600 hover:text-red-700"
                           >
-                            Remove image
+                            {t('Remove image')}
                           </button>
                         )}
 
                         <p className="text-xs text-gray-500">
-                          The image will be used as a pattern fill for the QR code modules.
+                          {t('The image will be used as a pattern fill for the QR code modules.')}
                         </p>
                       </>
                     )}
@@ -576,19 +632,19 @@ export default function QRDesignStudio({
 
                 {/* Eye Colors */}
                 <ColorPickerWithPresets
-                  label="Eye External Color"
+                  label={t('Eye External Color')}
                   value={mergedConfig.eyeExternalColor || '#000000'}
                   onChange={c => handleChange('eyeExternalColor', c)}
                 />
                 <ColorPickerWithPresets
-                  label="Eye Internal Color"
+                  label={t('Eye Internal Color')}
                   value={mergedConfig.eyeInternalColor || '#000000'}
                   onChange={c => handleChange('eyeInternalColor', c)}
                 />
 
                 {/* Background Toggle */}
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-700">Background</span>
+                  <span className="text-sm text-gray-700">{t('Background')}</span>
                   <Switch
                     checked={mergedConfig.background?.type !== 'transparent'}
                     onCheckedChange={checked =>
@@ -603,7 +659,7 @@ export default function QRDesignStudio({
                 {/* Background Color */}
                 {mergedConfig.background?.type !== 'transparent' && (
                   <ColorPickerWithPresets
-                    label="Background Color"
+                    label={t('Background Color')}
                     value={mergedConfig.background?.color || '#FFFFFF'}
                     onChange={c => handleChange('background', { type: 'solid', color: c })}
                   />
@@ -612,60 +668,72 @@ export default function QRDesignStudio({
             )}
 
             {/* ==================== LOOK & FEEL SECTION ==================== */}
-            {(activeTab === 'look' || activeTab === 'color') && (
-              <SectionCard title="Look & Feel" sectionKey="lookFeel">
+            {designMode === 'qr' && (activeTab === 'look' || activeTab === 'color') && (
+              <SectionCard title={t('Look & Feel')} sectionKey="lookFeel" expanded={!!expandedSections['lookFeel']} onToggle={() => toggleSection('lookFeel')}>
                 {/* Module */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Module</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Module')}</label>
                   <ShapeGrid
                     items={MODULE_SHAPES}
                     selectedValue={mergedConfig.moduleShape || 'square'}
                     onSelect={value => handleChange('moduleShape', value)}
                     showAll={showAllModules}
                     onToggleShowAll={() => setShowAllModules(!showAllModules)}
+                    premiumLocked={isFreePlan}
+                    onPremiumBlock={handlePremiumBlock}
+                    t={t}
                   />
                 </div>
 
                 {/* Finder */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Finder</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Finder')}</label>
                   <ShapeGrid
                     items={FINDER_STYLES}
                     selectedValue={mergedConfig.finder || 'default'}
                     onSelect={value => handleChange('finder', value)}
                     showAll={showAllFinders}
                     onToggleShowAll={() => setShowAllFinders(!showAllFinders)}
+                    premiumLocked={isFreePlan}
+                    onPremiumBlock={handlePremiumBlock}
+                    t={t}
                   />
                 </div>
 
                 {/* Finder Dot */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Finder Dot</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Finder Dot')}</label>
                   <ShapeGrid
                     items={FINDER_DOT_STYLES}
                     selectedValue={mergedConfig.finderDot || 'default'}
                     onSelect={value => handleChange('finderDot', value)}
                     showAll={showAllFinderDots}
                     onToggleShowAll={() => setShowAllFinderDots(!showAllFinderDots)}
+                    premiumLocked={isFreePlan}
+                    onPremiumBlock={handlePremiumBlock}
+                    t={t}
                   />
                 </div>
 
                 {/* Shape (Outline) */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Shape</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Shape')}</label>
                   <ShapeGrid
                     items={OUTLINED_SHAPES}
                     selectedValue={mergedConfig.shape || 'none'}
                     onSelect={value => handleChange('shape', value)}
                     showAll={showAllShapes}
                     onToggleShowAll={() => setShowAllShapes(!showAllShapes)}
+                    premiumLocked={isFreePlan}
+                    onPremiumBlock={handlePremiumBlock}
+                    t={t}
                   />
                 </div>
 
                 {/* Frame Color */}
                 {mergedConfig.shape && mergedConfig.shape !== 'none' && (
                   <ColorPickerWithPresets
-                    label="Frame Color"
+                    label={t('Frame Color')}
                     value={mergedConfig.frameColor || '#000000'}
                     onChange={c => handleChange('frameColor', c)}
                   />
@@ -673,7 +741,7 @@ export default function QRDesignStudio({
 
                 {/* Logo Type */}
                 <div className="border-t border-gray-200 pt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Logo Type</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Type')}</label>
                   <div className="flex items-center gap-6">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -683,7 +751,7 @@ export default function QRDesignStudio({
                         onChange={() => handleLogoChange({ logoType: 'preset' })}
                         className="text-purple-600 focus:ring-purple-500"
                       />
-                      <span className="text-sm text-gray-700">Preset</span>
+                      <span className="text-sm text-gray-700">{t('Preset')}</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -693,7 +761,7 @@ export default function QRDesignStudio({
                         onChange={() => handleLogoChange({ logoType: 'custom' })}
                         className="text-purple-600 focus:ring-purple-500"
                       />
-                      <span className="text-sm text-gray-700">Your logo</span>
+                      <span className="text-sm text-gray-700">{t('Your logo')}</span>
                     </label>
                   </div>
 
@@ -712,15 +780,15 @@ export default function QRDesignStudio({
                               : 'border-gray-200 hover:border-gray-300'
                           )}
                         >
-                          NONE
+                          {t('NONE')}
                         </button>
                         {PRESET_LOGOS.map(logo => (
                           <button
                             key={logo.value}
                             type="button"
                             onClick={() => {
-                              // Use the backend's expected path for preset logos
-                              const logoUrl = `/assets/images/png-logos/${logo.value}.png`
+                              // Use DB thumbnail_url if available, fallback to hardcoded path
+                              const logoUrl = logo.image || `/assets/images/png-logos/${logo.value}.png`
                               handleLogoChange({
                                 url: logoUrl,
                                 logoType: 'preset',
@@ -747,7 +815,7 @@ export default function QRDesignStudio({
                             title={logo.label}
                           >
                             <img
-                              src={`/images/logos/${logo.value}.png`}
+                              src={logo.image || `/images/logos/${logo.value}.png`}
                               alt={logo.label}
                               className="w-full h-full object-contain rounded-full"
                               onError={e => {
@@ -791,7 +859,7 @@ export default function QRDesignStudio({
                         }}
                       />
                       <p className="text-xs text-gray-500 mt-2">
-                        Upload your logo (PNG, JPG). The logo will be embedded in the QR code.
+                        {t('Upload your logo (PNG, JPG). The logo will be embedded in the QR code.')}
                       </p>
                     </div>
                   )}
@@ -799,12 +867,12 @@ export default function QRDesignStudio({
                   {/* Logo Customization Controls - Show when logo is selected */}
                   {mergedConfig.logo?.url && (
                     <div className="mt-4 space-y-4 border-t border-gray-200 pt-4">
-                      <h4 className="text-sm font-semibold text-gray-900">Logo Settings</h4>
+                      <h4 className="text-sm font-semibold text-gray-900">{t('Logo Settings')}</h4>
 
                       {/* Logo Scale */}
                       <div>
                         <label className="block text-sm text-gray-700 mb-2">
-                          Logo Scale: {Math.round((mergedConfig.logo.size || 0.2) * 100)}%
+                          {t('Logo Scale')}: {Math.round((mergedConfig.logo.size || 0.2) * 100)}%
                         </label>
                         <input
                           type="range"
@@ -820,7 +888,7 @@ export default function QRDesignStudio({
                       {/* Logo Position X */}
                       <div>
                         <label className="block text-sm text-gray-700 mb-2">
-                          Horizontal Position:{' '}
+                          {t('Horizontal Position')}:{' '}
                           {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
                         </label>
                         <input
@@ -839,7 +907,7 @@ export default function QRDesignStudio({
                       {/* Logo Position Y */}
                       <div>
                         <label className="block text-sm text-gray-700 mb-2">
-                          Vertical Position:{' '}
+                          {t('Vertical Position')}:{' '}
                           {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
                         </label>
                         <input
@@ -858,7 +926,7 @@ export default function QRDesignStudio({
                       {/* Logo Rotation */}
                       <div>
                         <label className="block text-sm text-gray-700 mb-2">
-                          Rotation: {mergedConfig.logo.rotate ?? 0}°
+                          {t('Rotation')}: {mergedConfig.logo.rotate ?? 0}°
                         </label>
                         <input
                           type="range"
@@ -873,7 +941,7 @@ export default function QRDesignStudio({
 
                       {/* Logo Background Toggle */}
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-700">Logo Background</span>
+                        <span className="text-sm text-gray-700">{t('Logo Background')}</span>
                         <Switch
                           checked={mergedConfig.logo.backgroundEnabled ?? true}
                           onCheckedChange={checked =>
@@ -887,7 +955,7 @@ export default function QRDesignStudio({
                         <>
                           {/* Background Shape */}
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">Background Shape</span>
+                            <span className="text-sm text-gray-700">{t('Background Shape')}</span>
                             <div className="flex gap-2">
                               {(['circle', 'square'] as const).map(shape => (
                                 <button
@@ -901,7 +969,7 @@ export default function QRDesignStudio({
                                       : 'border-gray-200 text-gray-600 hover:border-gray-300'
                                   )}
                                 >
-                                  {shape}
+                                  {t(shape)}
                                 </button>
                               ))}
                             </div>
@@ -909,7 +977,7 @@ export default function QRDesignStudio({
 
                           {/* Background Color */}
                           <ColorPickerWithPresets
-                            label="Background Color"
+                            label={t('Background Color')}
                             value={mergedConfig.logo.backgroundFill || '#ffffff'}
                             onChange={c => handleLogoChange({ backgroundFill: c })}
                           />
@@ -917,7 +985,7 @@ export default function QRDesignStudio({
                           {/* Background Scale */}
                           <div>
                             <label className="block text-sm text-gray-700 mb-2">
-                              Background Size:{' '}
+                              {t('Background Size')}:{' '}
                               {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
                             </label>
                             <input
@@ -941,231 +1009,23 @@ export default function QRDesignStudio({
             )}
 
             {/* ==================== STICKER SECTION ==================== */}
-            {(activeTab === 'sticker' || activeTab === 'look') && (
-              <SectionCard title="Sticker" sectionKey="sticker">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Sticker
-                  </label>
-                  <div className="grid grid-cols-7 gap-2">
-                    {ADVANCED_SHAPES.map(shape => (
-                      <button
-                        key={shape.value}
-                        type="button"
-                        onClick={() => handleChange('advancedShape', shape.value)}
-                        className={cn(
-                          'aspect-square rounded-lg border-2 p-1 transition-all',
-                          mergedConfig.advancedShape === shape.value
-                            ? 'border-purple-500 bg-purple-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        )}
-                        title={shape.label}
-                      >
-                        {shape.image ? (
-                          <img
-                            src={shape.image}
-                            alt={shape.label}
-                            className="w-full h-full object-contain"
-                          />
-                        ) : (
-                          <span className="text-[8px] text-gray-500">{shape.label}</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Sticker-specific controls */}
-                {mergedConfig.advancedShape && mergedConfig.advancedShape !== 'none' && (
-                  <div className="space-y-4 border-t border-gray-200 pt-4">
-                    {/* Dropshadow Toggle */}
-                    {(mergedConfig.advancedShape?.startsWith('rect-frame') ||
-                      mergedConfig.advancedShape?.includes('frame')) && (
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-700">Dropshadow</span>
-                        <Switch
-                          checked={mergedConfig.advancedShapeDropShadow || false}
-                          onCheckedChange={checked =>
-                            handleChange('advancedShapeDropShadow', checked)
-                          }
-                        />
-                      </div>
-                    )}
-
-                    {/* Four-corners frame color */}
-                    {mergedConfig.advancedShape?.startsWith('four-corners') && (
-                      <ColorPickerWithPresets
-                        label="Frame Color"
-                        value={mergedConfig.advancedShapeFrameColor || '#000000'}
-                        onChange={c => handleChange('advancedShapeFrameColor', c)}
-                      />
-                    )}
-
-                    {/* Healthcare specific */}
-                    {mergedConfig.advancedShape === 'healthcare' && (
-                      <>
-                        <ColorPickerWithPresets
-                          label="Frame Color"
-                          value={mergedConfig.healthcareFrameColor || '#000000'}
-                          onChange={c => handleChange('healthcareFrameColor', c)}
-                        />
-                        <ColorPickerWithPresets
-                          label="Heart Color"
-                          value={mergedConfig.healthcareHeartColor || '#ff0000'}
-                          onChange={c => handleChange('healthcareHeartColor', c)}
-                        />
-                      </>
-                    )}
-
-                    {/* Review Collector specific */}
-                    {mergedConfig.advancedShape === 'review-collector' && (
-                      <>
-                        <ColorPickerWithPresets
-                          label="Circle Color"
-                          value={mergedConfig.reviewCollectorCircleColor || '#000000'}
-                          onChange={c => handleChange('reviewCollectorCircleColor', c)}
-                        />
-                        <ColorPickerWithPresets
-                          label="Stars Color"
-                          value={mergedConfig.reviewCollectorStarsColor || '#FFD700'}
-                          onChange={c => handleChange('reviewCollectorStarsColor', c)}
-                        />
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Review Platform Logo
-                          </label>
-                          <div className="grid grid-cols-6 gap-2 max-h-[150px] overflow-y-auto">
-                            {REVIEW_COLLECTOR_LOGOS.map(logo => (
-                              <button
-                                key={logo}
-                                type="button"
-                                onClick={() =>
-                                  handleChange(
-                                    'reviewCollectorLogoSrc',
-                                    `/images/review-collector-logos/${logo}.png`
-                                  )
-                                }
-                                className={cn(
-                                  'aspect-square rounded-lg border-2 p-1 transition-all',
-                                  mergedConfig.reviewCollectorLogoSrc?.includes(logo)
-                                    ? 'border-purple-500 bg-purple-50'
-                                    : 'border-gray-200 hover:border-gray-300'
-                                )}
-                              >
-                                <img
-                                  src={`/images/review-collector-logos/${logo}.png`}
-                                  alt={logo}
-                                  className="w-full h-full object-contain"
-                                  onError={e => {
-                                    ;(e.target as HTMLImageElement).style.display = 'none'
-                                  }}
-                                />
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    {/* Coupon specific */}
-                    {mergedConfig.advancedShape === 'coupon' && (
-                      <>
-                        <div className="grid grid-cols-2 gap-3">
-                          <ColorPickerWithPresets
-                            label="Left Color"
-                            value={mergedConfig.couponLeftColor || '#1c57cb'}
-                            onChange={c => handleChange('couponLeftColor', c)}
-                          />
-                          <ColorPickerWithPresets
-                            label="Right Color"
-                            value={mergedConfig.couponRightColor || '#1c57cb'}
-                            onChange={c => handleChange('couponRightColor', c)}
-                          />
-                        </div>
-                        <Input
-                          placeholder="Coupon Line 1 (e.g., EXCLUSIVE)"
-                          value={mergedConfig.couponTextLine1 || ''}
-                          onChange={e => handleChange('couponTextLine1', e.target.value)}
-                        />
-                        <Input
-                          placeholder="Coupon Line 2 (e.g., OFFER)"
-                          value={mergedConfig.couponTextLine2 || ''}
-                          onChange={e => handleChange('couponTextLine2', e.target.value)}
-                        />
-                        <Input
-                          placeholder="Coupon Line 3 (e.g., LIMITED TIME)"
-                          value={mergedConfig.couponTextLine3 || ''}
-                          onChange={e => handleChange('couponTextLine3', e.target.value)}
-                        />
-                      </>
-                    )}
-
-                    {/* Text controls for text-based stickers */}
-                    {currentSticker?.hasText && mergedConfig.advancedShape !== 'coupon' && (
-                      <>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Text to show
-                          </label>
-                          <Input
-                            placeholder="SCAN ME"
-                            value={mergedConfig.text || 'SCAN ME'}
-                            onChange={e => handleChange('text', e.target.value)}
-                          />
-                        </div>
-
-                        {/* Font Family */}
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-700">Font</span>
-                          <select
-                            value={mergedConfig.fontFamily || 'Raleway'}
-                            onChange={e => handleChange('fontFamily', e.target.value)}
-                            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg"
-                          >
-                            {FONT_FAMILIES.map(font => (
-                              <option key={font} value={font}>
-                                {font}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <ColorPickerWithPresets
-                          label="Text Color"
-                          value={mergedConfig.textColor || '#ffffff'}
-                          onChange={c => handleChange('textColor', c)}
-                        />
-
-                        <ColorPickerWithPresets
-                          label="Text Background"
-                          value={mergedConfig.textBackgroundColor || '#1c57cb'}
-                          onChange={c => handleChange('textBackgroundColor', c)}
-                        />
-
-                        <div>
-                          <label className="block text-sm text-gray-700 mb-2">
-                            Text Size: {mergedConfig.textSize || 1}x
-                          </label>
-                          <input
-                            type="range"
-                            min="0.5"
-                            max="3"
-                            step="0.1"
-                            value={mergedConfig.textSize || 1}
-                            onChange={e => handleChange('textSize', parseFloat(e.target.value))}
-                            className="w-full accent-purple-500"
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
+            {designMode === 'qr' && (activeTab === 'sticker' || activeTab === 'look') && (
+              <SectionCard title={t('Sticker')} sectionKey="sticker" expanded={!!expandedSections['sticker']} onToggle={() => toggleSection('sticker')}>
+                <StickerEditor
+                  config={mergedConfig}
+                  advancedShapes={ADVANCED_SHAPES}
+                  onChange={handleChange}
+                  variant="compact"
+                  ColorPicker={ColorPickerWithPresets}
+                  isPremiumLocked={isFreePlan}
+                  onPremiumBlock={handlePremiumBlock}
+                />
               </SectionCard>
             )}
           </div>
 
           {/* ==================== RIGHT PANEL - PREVIEW ==================== */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 lg:self-start">
             <div className="bg-white rounded-xl border border-purple-100 p-6 sticky top-44 shadow-sm">
               {/* QR Preview */}
               <div className="flex justify-center mb-4">
@@ -1182,7 +1042,7 @@ export default function QRDesignStudio({
                   <div className="w-[280px] h-[280px] bg-gray-100 rounded-lg flex items-center justify-center">
                     <div className="text-center text-gray-400">
                       <div className="text-5xl mb-2">⊞</div>
-                      <p className="text-sm">No data to preview</p>
+                      <p className="text-sm">{t('No data to preview')}</p>
                     </div>
                   </div>
                 )}
@@ -1199,25 +1059,25 @@ export default function QRDesignStudio({
                     : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                 )}
               >
-                🔮 Create With AI
+                {t('Create With AI')}
               </button>
 
               {/* AI Options */}
               {mergedConfig.isAi && (
                 <div className="space-y-3 mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
                   <div>
-                    <label className="block text-xs text-purple-700 mb-1">AI Prompt</label>
+                    <label className="block text-xs text-purple-700 mb-1">{t('AI Prompt')}</label>
                     <textarea
                       value={mergedConfig.aiPrompt || ''}
                       onChange={e => handleChange('aiPrompt', e.target.value)}
-                      placeholder="Describe your desired design..."
+                      placeholder={t('Describe your desired design...')}
                       rows={2}
                       className="w-full text-sm border border-purple-200 rounded-lg px-3 py-2"
                     />
                   </div>
                   <div>
                     <label className="block text-xs text-purple-700 mb-1">
-                      Strength: {(mergedConfig.aiStrength ?? 1.8).toFixed(1)}
+                      {t('Strength')}: {(mergedConfig.aiStrength ?? 1.8).toFixed(1)}
                     </label>
                     <input
                       type="range"
@@ -1238,7 +1098,7 @@ export default function QRDesignStudio({
                 onClick={resetToDefaults}
                 className="w-full text-sm text-gray-500 hover:text-gray-700 mt-3 underline"
               >
-                Reset Settings
+                {t('Reset Settings')}
               </button>
             </div>
           </div>
@@ -1249,19 +1109,19 @@ export default function QRDesignStudio({
           <button
             type="button"
             onClick={() => {
-              const currentIndex = TABS.findIndex(t => t.id === activeTab)
+              const currentIndex = TABS.findIndex(tb => tb.id === activeTab)
               if (currentIndex === TABS.length - 1) {
                 // Last step - finish
               }
             }}
             className="text-sm text-gray-500 hover:text-gray-700 font-medium mr-auto"
           >
-            Skip
+            {t('Skip')}
           </button>
           <button
             type="button"
             onClick={() => {
-              const currentIndex = TABS.findIndex(t => t.id === activeTab)
+              const currentIndex = TABS.findIndex(tb => tb.id === activeTab)
               if (currentIndex > 0) {
                 setActiveTab(TABS[currentIndex - 1]!.id)
               } else if (onBack) {
@@ -1271,19 +1131,19 @@ export default function QRDesignStudio({
             className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
-            Back
+            {t('Back')}
           </button>
           <button
             type="button"
             onClick={() => {
-              const currentIndex = TABS.findIndex(t => t.id === activeTab)
+              const currentIndex = TABS.findIndex(tb => tb.id === activeTab)
               if (currentIndex < TABS.length - 1) {
                 setActiveTab(TABS[currentIndex + 1]!.id)
               }
             }}
             className="inline-flex items-center gap-1.5 px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
           >
-            Next
+            {t('Next')}
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>

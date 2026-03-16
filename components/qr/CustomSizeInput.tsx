@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { AlertCircle, Check, Lock, Unlock } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface CustomSizeInputProps {
   width: number;
@@ -50,6 +51,7 @@ export function CustomSizeInput({
   disabled = false,
   className = '',
 }: CustomSizeInputProps) {
+  const { t } = useTranslation();
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(initialMaintainAspectRatio);
   const [aspectRatio, setAspectRatio] = useState(width / height);
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -183,7 +185,7 @@ export function CustomSizeInput({
     <div className={`space-y-3 ${className}`}>
       {/* Header */}
       <label className="text-sm font-medium text-gray-700">
-        Custom Size
+        {t('Custom Size')}
       </label>
       
       {/* Size inputs */}
@@ -191,7 +193,7 @@ export function CustomSizeInput({
         {/* Width */}
         <div className="flex-1">
           <label htmlFor="width" className="block text-xs text-gray-500 mb-1">
-            Width
+            {t('Width')}
           </label>
           <div className="relative">
             <input
@@ -231,7 +233,7 @@ export function CustomSizeInput({
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
-          title={maintainAspectRatio ? 'Unlock aspect ratio' : 'Lock aspect ratio'}
+          title={maintainAspectRatio ? t('Unlock aspect ratio') : t('Lock aspect ratio')}
         >
           {maintainAspectRatio ? (
             <Lock className="w-4 h-4" />
@@ -243,7 +245,7 @@ export function CustomSizeInput({
         {/* Height */}
         <div className="flex-1">
           <label htmlFor="height" className="block text-xs text-gray-500 mb-1">
-            Height
+            {t('Height')}
           </label>
           <div className="relative">
             <input
@@ -288,7 +290,7 @@ export function CustomSizeInput({
           <div className="flex items-start gap-2">
             <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-red-800 mb-1">Invalid size</p>
+              <p className="text-sm font-medium text-red-800 mb-1">{t('Invalid size')}</p>
               <ul className="text-xs text-red-700 space-y-0.5">
                 {errors.map((error, index) => (
                   <li key={index}>{error.message}</li>
@@ -305,7 +307,7 @@ export function CustomSizeInput({
           <div className="flex items-start gap-2">
             <AlertCircle className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-yellow-800 mb-1">Warnings</p>
+              <p className="text-sm font-medium text-yellow-800 mb-1">{t('Warnings')}</p>
               <ul className="text-xs text-yellow-700 space-y-0.5">
                 {warnings.map((warning, index) => (
                   <li key={index}>{warning}</li>
@@ -321,27 +323,27 @@ export function CustomSizeInput({
         <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
           <div className="text-xs text-gray-600 space-y-1">
             <div className="flex justify-between">
-              <span>Pixel dimensions:</span>
+              <span>{t('Pixel dimensions:')}</span>
               <span className="font-medium text-gray-900">
                 {width} × {height} px
               </span>
             </div>
             {unit !== 'px' && (
               <div className="flex justify-between">
-                <span>Physical size:</span>
+                <span>{t('Physical size:')}</span>
                 <span className="font-medium text-gray-900">
                   {displayValue(width)} × {displayValue(height)} {unit}
                 </span>
               </div>
             )}
             <div className="flex justify-between">
-              <span>Total pixels:</span>
+              <span>{t('Total pixels:')}</span>
               <span className="font-medium text-gray-900">
                 {(width * height / 1000000).toFixed(2)} MP
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Estimated file size:</span>
+              <span>{t('Estimated file size:')}</span>
               <span className="font-medium text-gray-900">
                 {formatFileSize(width * height * 4 * 0.3)}
               </span>

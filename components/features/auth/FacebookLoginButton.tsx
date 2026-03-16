@@ -1,8 +1,10 @@
 'use client'
 
 import { authAPI } from '@/lib/api/endpoints/auth'
+import { useTranslation } from '@/lib/i18n'
 
 export function FacebookLoginButton() {
+  const { t } = useTranslation()
   const handleFacebookLogin = () => {
     const redirectUrl = authAPI.getFacebookRedirectUrl()
     window.location.href = redirectUrl
@@ -27,7 +29,7 @@ export function FacebookLoginButton() {
         style={{ boxShadow: 'inset 0px 0px 4px 0px rgba(0,0,0,0.29)' }}
       />
       <img src="/images/auth/facebook-icon.svg" alt="" style={{ width: 24, height: 24 }} />
-      Facebook
+      {t('Facebook')}
     </button>
   )
 }

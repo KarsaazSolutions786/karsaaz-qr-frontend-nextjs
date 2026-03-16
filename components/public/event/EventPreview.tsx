@@ -6,6 +6,7 @@ import { Calendar, Clock, MapPin, Share2, Download, Users, CheckCircle } from 'l
 import { motion } from 'framer-motion';
 import EventDetails from './EventDetails';
 import { SimplePagination } from '@/components/common/SimplePagination';
+import { useTranslation } from '@/lib/i18n';
 
 interface Speaker {
   id: string;
@@ -53,6 +54,7 @@ interface EventPreviewProps {
 }
 
 export default function EventPreview({ event }: EventPreviewProps) {
+  const { t } = useTranslation();
   const [timeLeft, setTimeLeft] = useState<{
     days: number;
     hours: number;
@@ -114,11 +116,11 @@ export default function EventPreview({ event }: EventPreviewProps) {
           url: window.location.href,
         });
       } catch (err) {
-        console.log('Error sharing:', err);
+        // Share dialog was dismissed or failed — not an error worth reporting
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      toast.success('Link copied to clipboard!');
+      toast.success(t('Link copied to clipboard!'));
     }
   };
 
@@ -173,11 +175,11 @@ END:VCALENDAR`;
         setIsRegistered(true);
         setFormData({ name: '', email: '', phone: '' });
       } else {
-        toast.error('Registration failed. Please try again.');
+        toast.error(t('Registration failed. Please try again.'));
       }
     } catch (error) {
       console.error('Registration error:', error);
-      toast.error('Registration failed. Please try again.');
+      toast.error(t('Registration failed. Please try again.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -238,13 +240,13 @@ END:VCALENDAR`;
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl"
               >
-                <h2 className="text-2xl font-bold mb-6 text-center">Event Starts In</h2>
+                <h2 className="text-2xl font-bold mb-6 text-center">{t('Event Starts In')}</h2>
                 <div className="grid grid-cols-4 gap-4">
                   {[
-                    { label: 'Days', value: timeLeft.days },
-                    { label: 'Hours', value: timeLeft.hours },
-                    { label: 'Minutes', value: timeLeft.minutes },
-                    { label: 'Seconds', value: timeLeft.seconds },
+                    { label: t('Days'), value: timeLeft.days },
+                    { label: t('Hours'), value: timeLeft.hours },
+                    { label: t('Minutes'), value: timeLeft.minutes },
+                    { label: t('Seconds'), value: timeLeft.seconds },
                   ].map((item) => (
                     <div key={item.label} className="bg-white/20 backdrop-blur rounded-xl p-4 text-center">
                       <div className="text-4xl md:text-5xl font-bold">{item.value}</div>
@@ -258,7 +260,7 @@ END:VCALENDAR`;
             {/* Description */}
             {event.description && (
               <div className="bg-white rounded-2xl p-8 shadow-lg">
-                <h2 className="text-3xl font-bold mb-4 text-gray-900">About This Event</h2>
+                <h2 className="text-3xl font-bold mb-4 text-gray-900">{t('About This Event')}</h2>
                 <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">{event.description}</p>
               </div>
             )}
@@ -266,7 +268,7 @@ END:VCALENDAR`;
             {/* Agenda/Schedule */}
             {event.agenda && event.agenda.length > 0 && (
               <div className="bg-white rounded-2xl p-8 shadow-lg">
-                <h2 className="text-3xl font-bold mb-6 text-gray-900">Event Agenda</h2>
+                <h2 className="text-3xl font-bold mb-6 text-gray-900">{t('Event Agenda')}</h2>
                 <div className="space-y-4">
                   {paginatedAgenda.map((item, index) => (
                     <motion.div
@@ -285,7 +287,7 @@ END:VCALENDAR`;
                         <div className="text-indigo-600 font-semibold mb-1">{item.time}</div>
                         <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
                         {item.description && <p className="text-gray-600">{item.description}</p>}
-                        {item.speaker && <p className="text-sm text-indigo-600 mt-2">Speaker: {item.speaker}</p>}
+                        {item.speaker && <p className="text-sm text-indigo-600 mt-2">{t('Speaker:')} {item.speaker}</p>}
                       </div>
                     </motion.div>
                   ))}
@@ -306,7 +308,7 @@ END:VCALENDAR`;
             {/* Speakers */}
             {event.speakers && event.speakers.length > 0 && (
               <div className="bg-white rounded-2xl p-8 shadow-lg">
-                <h2 className="text-3xl font-bold mb-6 text-gray-900">Speakers & Hosts</h2>
+                <h2 className="text-3xl font-bold mb-6 text-gray-900">{t('Speakers & Hosts')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {event.speakers.map((speaker, index) => (
                     <motion.div
@@ -341,7 +343,7 @@ END:VCALENDAR`;
             {/* Map */}
             {event.coordinates && (
               <div className="bg-white rounded-2xl p-8 shadow-lg">
-                <h2 className="text-3xl font-bold mb-6 text-gray-900">Venue Location</h2>
+                <h2 className="text-3xl font-bold mb-6 text-gray-900">{t('Venue Location')}</h2>
                 {event.venue && <p className="text-lg font-semibold text-gray-900 mb-2">{event.venue}</p>}
                 {event.address && <p className="text-gray-600 mb-4">{event.address}</p>}
                 <div className="rounded-xl overflow-hidden h-[400px] border border-gray-200">
@@ -370,11 +372,11 @@ END:VCALENDAR`;
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white rounded-2xl p-6 shadow-lg sticky top-8"
               >
-                <h3 className="text-2xl font-bold mb-4 text-gray-900">Register Now</h3>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900">{t('Register Now')}</h3>
                 {event.capacity && event.registeredCount !== undefined && (
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-600">Spots Available</span>
+                      <span className="text-gray-600">{t('Spots Available')}</span>
                       <span className="font-semibold text-indigo-600">
                         {event.capacity - event.registeredCount} / {event.capacity}
                       </span>
@@ -389,7 +391,7 @@ END:VCALENDAR`;
                 )}
                 <form onSubmit={handleRegistration} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('Full Name')}</label>
                     <input
                       type="text"
                       required
@@ -400,7 +402,7 @@ END:VCALENDAR`;
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('Email')}</label>
                     <input
                       type="email"
                       required
@@ -411,7 +413,7 @@ END:VCALENDAR`;
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('Phone')}</label>
                     <input
                       type="tel"
                       value={formData.phone}
@@ -425,7 +427,7 @@ END:VCALENDAR`;
                     disabled={isSubmitting}
                     className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? 'Registering...' : 'Register for Event'}
+                    {isSubmitting ? t('Registering...') : t('Register for Event')}
                   </button>
                 </form>
               </motion.div>
@@ -438,8 +440,8 @@ END:VCALENDAR`;
                 className="bg-green-50 border-2 border-green-500 rounded-2xl p-6 text-center"
               >
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-green-900 mb-2">You're Registered!</h3>
-                <p className="text-green-700">Check your email for confirmation details.</p>
+                <h3 className="text-2xl font-bold text-green-900 mb-2">{t("You're Registered!")}</h3>
+                <p className="text-green-700">{t('Check your email for confirmation details.')}</p>
               </motion.div>
             )}
 
@@ -447,26 +449,26 @@ END:VCALENDAR`;
             <div className="bg-white rounded-2xl p-6 shadow-lg">
               <h3 className="text-lg font-bold mb-4 text-gray-900 flex items-center gap-2">
                 <Download className="w-5 h-5" />
-                Add to Calendar
+                {t('Add to Calendar')}
               </h3>
               <div className="space-y-2">
                 <button
                   onClick={() => addToCalendar('google')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left font-medium"
                 >
-                  Google Calendar
+                  {t('Google Calendar')}
                 </button>
                 <button
                   onClick={() => addToCalendar('apple')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left font-medium"
                 >
-                  Apple Calendar
+                  {t('Apple Calendar')}
                 </button>
                 <button
                   onClick={() => addToCalendar('outlook')}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left font-medium"
                 >
-                  Outlook
+                  {t('Outlook')}
                 </button>
               </div>
             </div>
@@ -475,13 +477,13 @@ END:VCALENDAR`;
             <div className="bg-white rounded-2xl p-6 shadow-lg">
               <h3 className="text-lg font-bold mb-4 text-gray-900 flex items-center gap-2">
                 <Share2 className="w-5 h-5" />
-                Share Event
+                {t('Share Event')}
               </h3>
               <button
                 onClick={handleShare}
                 className="w-full px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
               >
-                Share with Friends
+                {t('Share with Friends')}
               </button>
             </div>
 
@@ -490,7 +492,7 @@ END:VCALENDAR`;
               <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 border border-indigo-100">
                 <h3 className="text-lg font-bold mb-2 text-gray-900 flex items-center gap-2">
                   <Users className="w-5 h-5" />
-                  Organized By
+                  {t('Organized By')}
                 </h3>
                 <p className="text-gray-700 font-medium">{event.organizer}</p>
               </div>

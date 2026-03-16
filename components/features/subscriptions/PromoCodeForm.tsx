@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface PromoCodeFormValues {
   code: string
@@ -17,6 +18,7 @@ interface PromoCodeFormProps {
 }
 
 export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeFormProps) {
+  const { t } = useTranslation()
   const [code, setCode] = useState(initialValues?.code ?? '')
   const [discountPercentage, setDiscountPercentage] = useState(
     initialValues?.discount_percentage ?? 10
@@ -34,11 +36,11 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
     setError(undefined)
 
     if (!code.trim()) {
-      setError('Promo code is required.')
+      setError(t('Promo code is required.'))
       return
     }
     if (discountPercentage < 1 || discountPercentage > 100) {
-      setError('Discount must be between 1% and 100%.')
+      setError(t('Discount must be between 1% and 100%.'))
       return
     }
 
@@ -52,7 +54,7 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
         is_active: isActive,
       })
     } catch {
-      setError('Failed to save promo code. Please try again.')
+      setError(t('Failed to save promo code. Please try again.'))
     } finally {
       setSaving(false)
     }
@@ -64,7 +66,7 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
 
       <div>
         <label htmlFor="promo-code" className="block text-sm font-medium text-gray-700">
-          Promo Code
+          {t('Promo Code')}
         </label>
         <input
           id="promo-code"
@@ -78,7 +80,7 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
 
       <div>
         <label htmlFor="discount-percentage" className="block text-sm font-medium text-gray-700">
-          Discount Percentage
+          {t('Discount Percentage')}
         </label>
         <div className="relative mt-1">
           <input
@@ -98,7 +100,7 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
 
       <div>
         <label htmlFor="expires-at" className="block text-sm font-medium text-gray-700">
-          Expiry Date (Optional)
+          {t('Expiry Date (Optional)')}
         </label>
         <input
           id="expires-at"
@@ -111,7 +113,7 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
 
       <div>
         <label htmlFor="usage-limit" className="block text-sm font-medium text-gray-700">
-          Usage Limit (Optional)
+          {t('Usage Limit (Optional)')}
         </label>
         <input
           id="usage-limit"
@@ -119,7 +121,7 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
           min={1}
           value={usageLimit}
           onChange={e => setUsageLimit(e.target.value)}
-          placeholder="Unlimited if empty"
+          placeholder={t('Unlimited if empty')}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
         />
       </div>
@@ -133,7 +135,7 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
           className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
         <label htmlFor="is-active" className="text-sm font-medium text-gray-700">
-          Active
+          {t('Active')}
         </label>
       </div>
 
@@ -142,7 +144,7 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
         disabled={saving}
         className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
       >
-        {saving ? 'Saving…' : isEdit ? 'Update Promo Code' : 'Create Promo Code'}
+        {saving ? t('Saving...') : isEdit ? t('Update Promo Code') : t('Create Promo Code')}
       </button>
     </form>
   )

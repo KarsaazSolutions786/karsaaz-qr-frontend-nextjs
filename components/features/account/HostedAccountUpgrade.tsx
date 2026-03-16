@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 
 interface HostedAccountUpgradeProps {
   currentPlan?: string
@@ -9,6 +10,7 @@ interface HostedAccountUpgradeProps {
 }
 
 export function HostedAccountUpgrade({ currentPlan, onUpgradeClick }: HostedAccountUpgradeProps) {
+  const { t } = useTranslation()
   const [dismissed, setDismissed] = useState(false)
 
   if (dismissed) return null
@@ -49,23 +51,22 @@ export function HostedAccountUpgrade({ currentPlan, onUpgradeClick }: HostedAcco
         </div>
 
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900">Upgrade Your Plan</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t('Upgrade Your Plan')}</h3>
           {currentPlan && (
             <p className="mt-1 text-sm text-gray-500">
-              Current plan: <span className="font-medium text-gray-700">{currentPlan}</span>
+              {t('Current plan')}: <span className="font-medium text-gray-700">{currentPlan}</span>
             </p>
           )}
           <p className="mt-2 text-sm text-gray-600">
-            Unlock more QR codes, advanced analytics, custom domains, and priority support by
-            upgrading to a higher plan.
+            {t('Unlock more QR codes, advanced analytics, custom domains, and priority support by upgrading to a higher plan.')}
           </p>
 
           <ul className="mt-4 space-y-2">
             {[
-              'Unlimited dynamic QR codes',
-              'Advanced scan analytics & exports',
-              'Custom branded domains',
-              'Priority email support',
+              t('Unlimited dynamic QR codes'),
+              t('Advanced scan analytics & exports'),
+              t('Custom branded domains'),
+              t('Priority email support'),
             ].map(feature => (
               <li key={feature} className="flex items-center gap-2 text-sm text-gray-700">
                 <svg
@@ -92,14 +93,14 @@ export function HostedAccountUpgrade({ currentPlan, onUpgradeClick }: HostedAcco
               onClick={onUpgradeClick}
               className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors"
             >
-              View Plans
+              {t('View Plans')}
             </Link>
             <button
               type="button"
               onClick={() => setDismissed(true)}
               className="text-sm font-medium text-gray-500 hover:text-gray-700"
             >
-              Maybe later
+              {t('Maybe later')}
             </button>
           </div>
         </div>

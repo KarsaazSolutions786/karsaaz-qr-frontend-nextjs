@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react';
 import { Image as ImageIcon, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { ImageBlock as ImageBlockType } from '@/types/entities/biolinks';
+import { useTranslation } from '@/lib/i18n';
 
 interface ImageBlockProps {
   block: ImageBlockType;
@@ -17,6 +20,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   return (
     <div
       className={`group relative bg-white border rounded-lg p-4 transition-all ${
@@ -33,7 +37,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors bg-white"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -44,14 +48,14 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors bg-white"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors bg-white"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -63,14 +67,14 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
           <div className="space-y-2">
             <img
               src={block.url}
-              alt={block.alt || 'Image'}
+              alt={block.alt || t('Image')}
               className="w-full h-48 object-cover rounded-lg"
             />
             {block.caption && (
               <p className="text-sm text-gray-600 text-center">{block.caption}</p>
             )}
             {block.link && (
-              <p className="text-xs text-blue-600 truncate">Links to: {block.link}</p>
+              <p className="text-xs text-blue-600 truncate">{t('Links to:')} {block.link}</p>
             )}
           </div>
         ) : (
@@ -78,7 +82,7 @@ export const ImageBlock: React.FC<ImageBlockProps> = ({
             <div className="flex-shrink-0 w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
               <ImageIcon className="w-5 h-5 text-green-600" />
             </div>
-            <div className="text-gray-500">No image set</div>
+            <div className="text-gray-500">{t('No image set')}</div>
           </div>
         )}
       </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import type { FileBlockData } from '@/types/entities/biolink'
 
 interface FileBlockProps {
@@ -9,13 +10,14 @@ interface FileBlockProps {
 }
 
 export default function FileBlock({ block, isEditing, onUpdate }: FileBlockProps) {
+  const { t } = useTranslation();
   const { fileUrl, fileName, fileSize, downloadCount } = block.data
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">File Name</label>
+          <label className="block text-sm font-medium text-gray-700">{t('File Name')}</label>
           <input
             type="text"
             value={fileName}
@@ -25,7 +27,7 @@ export default function FileBlock({ block, isEditing, onUpdate }: FileBlockProps
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">File URL</label>
+          <label className="block text-sm font-medium text-gray-700">{t('File URL')}</label>
           <input
             type="url"
             value={fileUrl}
@@ -36,7 +38,7 @@ export default function FileBlock({ block, isEditing, onUpdate }: FileBlockProps
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">File Size (optional)</label>
+            <label className="block text-sm font-medium text-gray-700">{t('File Size (optional)')}</label>
             <input
               type="text"
               value={fileSize || ''}
@@ -46,7 +48,7 @@ export default function FileBlock({ block, isEditing, onUpdate }: FileBlockProps
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Downloads</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Downloads')}</label>
             <input
               type="number"
               value={downloadCount || 0}
@@ -64,7 +66,7 @@ export default function FileBlock({ block, isEditing, onUpdate }: FileBlockProps
   if (!fileUrl) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
-        <p className="text-sm text-gray-500">No file set</p>
+        <p className="text-sm text-gray-500">{t('No file set')}</p>
       </div>
     )
   }
@@ -81,13 +83,13 @@ export default function FileBlock({ block, isEditing, onUpdate }: FileBlockProps
         <p className="text-xs text-gray-500">
           {[
             fileSize,
-            downloadCount != null && downloadCount > 0 ? `${downloadCount} downloads` : null,
+            downloadCount != null && downloadCount > 0 ? `${downloadCount} ${t('downloads')}` : null,
           ]
             .filter(Boolean)
-            .join(' · ') || 'File'}
+            .join(' · ') || t('File')}
         </p>
       </div>
-      <span className="shrink-0 text-sm font-medium text-blue-600">Download</span>
+      <span className="shrink-0 text-sm font-medium text-blue-600">{t('Download')}</span>
     </a>
   )
 }

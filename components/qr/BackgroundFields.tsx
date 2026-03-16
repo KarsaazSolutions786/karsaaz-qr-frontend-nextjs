@@ -8,6 +8,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from '@/lib/i18n';
 import { BackgroundConfig } from '@/types/entities/designer';
 import { BackgroundColorPicker, BackgroundPresetPicker } from './BackgroundColorPicker';
 import { BackgroundImageUpload } from './BackgroundImageUpload';
@@ -38,6 +39,7 @@ export function BackgroundFields({
   showTypeSelector = true,
   className = '',
 }: BackgroundFieldsProps) {
+  const { t } = useTranslation();
   // Handle type change
   const handleTypeChange = (type: 'transparent' | 'solid' | 'gradient' | 'image') => {
     if (type === 'transparent') {
@@ -102,7 +104,7 @@ export function BackgroundFields({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Transparent
+              {t('Transparent')}
             </button>
             <button
               type="button"
@@ -113,7 +115,7 @@ export function BackgroundFields({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Solid Color
+              {t('Solid Color')}
             </button>
             <button
               type="button"
@@ -124,7 +126,7 @@ export function BackgroundFields({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Gradient
+              {t('Gradient')}
             </button>
             <button
               type="button"
@@ -135,7 +137,7 @@ export function BackgroundFields({
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              Image
+              {t('Image')}
             </button>
           </div>
         </div>
@@ -154,8 +156,8 @@ export function BackgroundFields({
             }}
           />
           <div className="relative text-center">
-            <p className="text-sm font-medium text-gray-700">Transparent Background</p>
-            <p className="text-xs text-gray-500 mt-1">No background will be rendered</p>
+            <p className="text-sm font-medium text-gray-700">{t('Transparent Background')}</p>
+            <p className="text-xs text-gray-500 mt-1">{t('No background will be rendered')}</p>
           </div>
         </div>
       )}
@@ -202,14 +204,14 @@ export function BackgroundFields({
 
       {/* Background tips */}
       <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-md">
-        <h4 className="text-sm font-medium text-gray-900 mb-2">💡 Background Tips</h4>
+        <h4 className="text-sm font-medium text-gray-900 mb-2">{t('Background Tips')}</h4>
         <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
-          <li>Transparent backgrounds work best for digital displays</li>
-          <li>White or light backgrounds improve print quality</li>
-          <li>High contrast with foreground improves scannability</li>
-          <li>Gradients can reduce scan reliability - test thoroughly</li>
-          <li>Image backgrounds should have low opacity (20-40%)</li>
-          <li>Avoid busy patterns that interfere with QR modules</li>
+          <li>{t('Transparent backgrounds work best for digital displays')}</li>
+          <li>{t('White or light backgrounds improve print quality')}</li>
+          <li>{t('High contrast with foreground improves scannability')}</li>
+          <li>{t('Gradients can reduce scan reliability - test thoroughly')}</li>
+          <li>{t('Image backgrounds should have low opacity (20-40%)')}</li>
+          <li>{t('Avoid busy patterns that interfere with QR modules')}</li>
         </ul>
       </div>
     </div>
@@ -228,13 +230,14 @@ export function BackgroundToggle({
   onToggle: (enabled: boolean) => void;
   className?: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div className={`background-toggle ${className}`}>
       <div className="flex items-center justify-between">
         <div>
-          <label className="text-sm font-medium text-gray-700">Background</label>
+          <label className="text-sm font-medium text-gray-700">{t('Background')}</label>
           <p className="text-xs text-gray-500 mt-1">
-            {enabled ? 'Background enabled' : 'Transparent background'}
+            {enabled ? t('Background enabled') : t('Transparent background')}
           </p>
         </div>
         <button

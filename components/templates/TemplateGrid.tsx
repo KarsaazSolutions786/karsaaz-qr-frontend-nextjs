@@ -3,6 +3,7 @@
 import { QRCodeTemplate } from '@/types/entities/template'
 import TemplateCard from './TemplateCard'
 import { FileQuestion } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface TemplateGridProps {
   templates: QRCodeTemplate[]
@@ -25,6 +26,8 @@ export default function TemplateGrid({
   isLoading = false,
   emptyMessage = 'No templates found',
 }: TemplateGridProps) {
+  const { t } = useTranslation()
+
   // Loading Skeleton
   if (isLoading) {
     return (
@@ -58,7 +61,7 @@ export default function TemplateGrid({
           <FileQuestion className="w-8 h-8 text-gray-400" />
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          No templates available
+          {t('No templates available')}
         </h3>
         <p className="text-sm text-gray-600 text-center max-w-md">
           {emptyMessage}

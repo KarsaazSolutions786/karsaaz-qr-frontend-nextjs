@@ -1,56 +1,86 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * Xendit (Southeast Asia) payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Public Key
+ * - Secret Key
+ * - Webhook Verification Token
+ *
+ * Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
+ * Xendit requires callback URL set in Dashboard > Settings > Callbacks.
+ */
+export function XenditForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function XenditForm({ settings, onChange }: Props) {
   return (
-    <PaymentProcessorFormBase slug="xendit" settings={settings} onChange={onChange}>
+    <PaymentProcessorFormBase
+      slug="xendit"
+      settings={settings}
+      onChange={onChange}
+      showWebhookUrl
+      webhookMessage={t(
+        'Go to Xendit Dashboard > Settings > Callbacks and then from the Invoices section, add the following URL in the invoice paid text input:'
+      )}
+    >
+      {/* Public Key */}
       <div>
-        <label htmlFor="xendit-secret-api-key" className="block text-sm font-medium text-gray-700">
-          Secret API Key
+        <label htmlFor="xendit-public-key" className={labelClass}>
+          {t('Public Key')}
         </label>
         <input
-          id="xendit-secret-api-key"
+          id="xendit-public-key"
           type="password"
-          value={settings.secret_api_key ?? ''}
-          onChange={(e) => onChange('secret_api_key', e.target.value)}
-          placeholder="Enter Secret API Key"
+          value={settings.xendit_public_key ?? ''}
+          onChange={(e) => onChange('xendit_public_key', e.target.value)}
+          placeholder="xnd_public_***"
+          className={inputClass}
+        />
+        <p className={hintClass}>
+          {t('Found in your Xendit Dashboard under Settings > API Keys')}
+        </p>
+      </div>
+
+      {/* Secret Key */}
+      <div>
+        <label htmlFor="xendit-secret-key" className={labelClass}>
+          {t('Secret Key')}
+        </label>
+        <input
+          id="xendit-secret-key"
+          type="password"
+          value={settings.xendit_secret_key ?? ''}
+          onChange={(e) => onChange('xendit_secret_key', e.target.value)}
+          placeholder="xnd_***"
           className={inputClass}
         />
       </div>
+
+      {/* Webhook Verification Token */}
       <div>
-        <label htmlFor="xendit-public-api-key" className="block text-sm font-medium text-gray-700">
-          Public API Key
+        <label htmlFor="xendit-webhook-token" className={labelClass}>
+          {t('Webhook Verification Token')}
         </label>
         <input
-          id="xendit-public-api-key"
-          type="text"
-          value={settings.public_api_key ?? ''}
-          onChange={(e) => onChange('public_api_key', e.target.value)}
-          placeholder="Enter Public API Key"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label htmlFor="xendit-callback-token" className="block text-sm font-medium text-gray-700">
-          Callback Token
-        </label>
-        <input
-          id="xendit-callback-token"
+          id="xendit-webhook-token"
           type="password"
-          value={settings.callback_token ?? ''}
-          onChange={(e) => onChange('callback_token', e.target.value)}
-          placeholder="Enter Callback Token"
+          value={settings.xendit_webhook_verification_token ?? ''}
+          onChange={(e) => onChange('xendit_webhook_verification_token', e.target.value)}
+          placeholder={t('Enter Webhook Verification Token')}
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Used to verify that incoming webhooks are from Xendit')}
+        </p>
       </div>
     </PaymentProcessorFormBase>
   )

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Share2, Facebook, Twitter, Linkedin, Mail, Link2, Check } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface SocialShareProps {
   url: string;
@@ -20,6 +21,7 @@ export default function SocialShare({
   buttonVariant = 'icon',
   size = 'md',
 }: SocialShareProps) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -79,10 +81,10 @@ export default function SocialShare({
       <button
         onClick={handleShare}
         className={`flex items-center justify-center gap-2 ${sizeClasses[size]} rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg`}
-        title="Share"
+        title={t('Share')}
       >
         <Share2 className={iconSizes[size]} />
-        {buttonVariant === 'full' && <span>Share</span>}
+        {buttonVariant === 'full' && <span>{t('Share')}</span>}
       </button>
 
       {/* Share Menu */}
@@ -94,7 +96,7 @@ export default function SocialShare({
           />
           <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 z-50 p-4">
             <div className="text-sm font-semibold text-gray-900 mb-3">
-              Share via
+              {t('Share via')}
             </div>
             
             <div className="space-y-2">
@@ -145,7 +147,7 @@ export default function SocialShare({
                 <div className="w-8 h-8 bg-gray-600 rounded-lg flex items-center justify-center">
                   <Mail className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-sm text-gray-700">Email</span>
+                <span className="text-sm text-gray-700">{t('Email')}</span>
               </a>
 
               {/* Copy Link */}
@@ -161,7 +163,7 @@ export default function SocialShare({
                   )}
                 </div>
                 <span className="text-sm text-gray-700">
-                  {copied ? 'Copied!' : 'Copy Link'}
+                  {copied ? t('Copied!') : t('Copy Link')}
                 </span>
               </button>
             </div>

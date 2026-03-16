@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react';
 import { Link as LinkIcon, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { LinkBlock as LinkBlockType } from '@/types/entities/biolinks';
+import { useTranslation } from '@/lib/i18n';
 
 interface LinkBlockProps {
   block: LinkBlockType;
@@ -17,6 +20,7 @@ export const LinkBlock: React.FC<LinkBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   return (
     <div
       className={`group relative bg-white border rounded-lg p-4 transition-all ${
@@ -33,7 +37,7 @@ export const LinkBlock: React.FC<LinkBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -44,14 +48,14 @@ export const LinkBlock: React.FC<LinkBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -68,9 +72,9 @@ export const LinkBlock: React.FC<LinkBlockProps> = ({
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-medium text-gray-900 truncate">
-            {block.title || 'Untitled Link'}
+            {block.title || t('Untitled Link')}
           </div>
-          <div className="text-sm text-gray-500 truncate">{block.url || 'No URL set'}</div>
+          <div className="text-sm text-gray-500 truncate">{block.url || t('No URL set')}</div>
         </div>
         {block.thumbnail && (
           <img

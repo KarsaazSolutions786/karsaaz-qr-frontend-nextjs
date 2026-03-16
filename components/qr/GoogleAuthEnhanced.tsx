@@ -9,6 +9,7 @@
 
 import React from 'react'
 import { Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface GoogleAuthEnhancedProps {
   onSuccess: (credential: string) => void
@@ -25,12 +26,13 @@ export function GoogleAuthEnhanced({
   label = 'Continue with Google',
   className = '',
 }: GoogleAuthEnhancedProps) {
+  const { t } = useTranslation()
   const handleClick = async () => {
     if (isLoading) return
     try {
       // Trigger Google OAuth flow via backend
       const res = await fetch('/api/auth/google/url')
-      if (!res.ok) throw new Error('Failed to initiate Google auth')
+      if (!res.ok) throw new Error(t('Failed to initiate Google auth'))
       const { authUrl, credential } = await res.json()
 
       if (authUrl) {
@@ -39,7 +41,7 @@ export function GoogleAuthEnhanced({
         onSuccess(credential)
       }
     } catch (err) {
-      onError(err instanceof Error ? err : new Error('Google authentication failed'))
+      onError(err instanceof Error ? err : new Error(t('Google authentication failed')))
     }
   }
 
@@ -72,7 +74,7 @@ export function GoogleAuthEnhanced({
           />
         </svg>
       )}
-      <span>{isLoading ? 'Connecting...' : label}</span>
+      <span>{isLoading ? t('Connecting...') : label}</span>
     </button>
   )
 }

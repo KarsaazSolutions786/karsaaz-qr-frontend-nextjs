@@ -8,6 +8,7 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 import { AlertTriangle, RefreshCw, Home, Wifi, ShieldAlert, FileWarning } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import {
   categorizeError,
   isRetryableError,
@@ -217,20 +218,21 @@ export function withErrorBoundary<P extends object>(
  * Simple error fallback component
  */
 export function ErrorFallback({ error, resetError }: { error: Error; resetError: () => void }) {
+  const { t } = useTranslation()
   return (
     <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
       <div className="flex items-start gap-3">
         <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
         <div className="flex-1">
-          <h3 className="text-sm font-semibold text-red-900 mb-1">Error Loading Component</h3>
+          <h3 className="text-sm font-semibold text-red-900 mb-1">{t('Error Loading Component')}</h3>
           <p className="text-sm text-red-700 mb-3">
-            {error.message || 'An unexpected error occurred'}
+            {error.message || t('An unexpected error occurred')}
           </p>
           <button
             onClick={resetError}
             className="text-sm text-red-600 hover:text-red-700 font-medium"
           >
-            Try again
+            {t('Try again')}
           </button>
         </div>
       </div>

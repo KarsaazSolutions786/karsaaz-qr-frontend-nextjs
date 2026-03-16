@@ -1,30 +1,80 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * Mollie payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - API Key
+ * - Partner ID
+ * - Profile ID
+ *
+ * No webhook registration (P1: shouldRegisterWebhook = false).
+ */
+export function MollieForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function MollieForm({ settings, onChange }: Props) {
   return (
     <PaymentProcessorFormBase slug="mollie" settings={settings} onChange={onChange}>
+      {/* API Key */}
       <div>
-        <label htmlFor="mollie-api-key" className="block text-sm font-medium text-gray-700">
-          API Key
+        <label htmlFor="mollie-api-key" className={labelClass}>
+          {t('API Key')}
         </label>
         <input
           id="mollie-api-key"
           type="password"
-          value={settings.api_key ?? ''}
-          onChange={(e) => onChange('api_key', e.target.value)}
-          placeholder="Enter API Key"
+          value={settings.mollie_api_key ?? ''}
+          onChange={(e) => onChange('mollie_api_key', e.target.value)}
+          placeholder="live_..."
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Found in your Mollie Dashboard under Developers > API keys')}
+        </p>
+      </div>
+
+      {/* Partner ID */}
+      <div>
+        <label htmlFor="mollie-partner-id" className={labelClass}>
+          {t('Partner ID')}
+        </label>
+        <input
+          id="mollie-partner-id"
+          type="text"
+          value={settings.mollie_partner_id ?? ''}
+          onChange={(e) => onChange('mollie_partner_id', e.target.value)}
+          placeholder="****-****"
+          className={inputClass}
+        />
+        <p className={hintClass}>
+          {t('Your Mollie Partner ID (optional for non-partners)')}
+        </p>
+      </div>
+
+      {/* Profile ID */}
+      <div>
+        <label htmlFor="mollie-profile-id" className={labelClass}>
+          {t('Profile ID')}
+        </label>
+        <input
+          id="mollie-profile-id"
+          type="text"
+          value={settings.mollie_profile_id ?? ''}
+          onChange={(e) => onChange('mollie_profile_id', e.target.value)}
+          placeholder="pfl_****"
+          className={inputClass}
+        />
+        <p className={hintClass}>
+          {t('Found in your Mollie Dashboard under Settings > Website profiles')}
+        </p>
       </div>
     </PaymentProcessorFormBase>
   )

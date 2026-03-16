@@ -8,8 +8,10 @@ import { useUpdateBiolink, useDeleteBiolink } from '@/lib/hooks/mutations/useBio
 import BiolinkEditor from '@/components/features/biolinks/editor/BiolinkEditor'
 import BiolinkPreview from '@/components/features/biolinks/editor/BiolinkPreview'
 import type { BlockData } from '@/types/entities/biolink'
+import { useTranslation } from '@/lib/i18n'
 
 export default function EditBiolinkPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const params = useParams()
   const id = parseInt(params.id as string)
@@ -35,7 +37,7 @@ export default function EditBiolinkPage() {
 
   const handleSave = async (isPublished: boolean) => {
     if (!title || !slug) {
-      toast.error('Please enter both a title and slug for the biolink.')
+      toast.error(t('Please enter both a title and slug for the biolink.'))
       return
     }
 
@@ -48,10 +50,10 @@ export default function EditBiolinkPage() {
         blocks,
         isPublished,
       })
-      toast.success('Biolink updated successfully.')
+      toast.success(t('Biolink updated successfully.'))
     } catch (error) {
       console.error('Failed to update biolink:', error)
-      toast.error('Unable to update biolink. Please try again.')
+      toast.error(t('Unable to update biolink. Please try again.'))
     }
   }
 
@@ -62,7 +64,7 @@ export default function EditBiolinkPage() {
         router.push('/biolinks')
       } catch (error) {
         console.error('Failed to delete biolink:', error)
-        toast.error('Unable to delete biolink. Please try again.')
+        toast.error(t('Unable to delete biolink. Please try again.'))
       }
     }
   }
@@ -70,7 +72,7 @@ export default function EditBiolinkPage() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-gray-500">Loading biolink...</div>
+        <div className="text-gray-500">{t('Loading biolink...')}</div>
       </div>
     )
   }
@@ -78,7 +80,7 @@ export default function EditBiolinkPage() {
   if (!biolink) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="text-gray-500">Biolink not found</div>
+        <div className="text-gray-500">{t('Biolink not found')}</div>
       </div>
     )
   }
@@ -87,14 +89,14 @@ export default function EditBiolinkPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Edit Biolink</h1>
-          <p className="mt-2 text-sm text-gray-600">Update your biolink page</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Edit Biolink')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Update your biolink page')}</p>
         </div>
         <button
           onClick={handleDelete}
           className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
         >
-          Delete
+          {t('Delete')}
         </button>
       </div>
 
@@ -103,7 +105,7 @@ export default function EditBiolinkPage() {
         <div className="lg:col-span-1">
           <div className="sticky top-8 space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Title *</label>
+              <label className="block text-sm font-medium text-gray-700">{t('Title')} *</label>
               <input
                 type="text"
                 value={title}
@@ -113,7 +115,7 @@ export default function EditBiolinkPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Slug *</label>
+              <label className="block text-sm font-medium text-gray-700">{t('Slug')} *</label>
               <input
                 type="text"
                 value={slug}
@@ -124,7 +126,7 @@ export default function EditBiolinkPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Description</label>
+              <label className="block text-sm font-medium text-gray-700">{t('Description')}</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -136,15 +138,15 @@ export default function EditBiolinkPage() {
             <div className="border-t border-gray-200 pt-6">
               <div className="mb-3 text-sm text-gray-600">
                 <div className="flex justify-between">
-                  <span>Status:</span>
+                  <span>{t('Status')}:</span>
                   <span
                     className={`font-semibold ${biolink.isPublished ? 'text-green-600' : 'text-gray-600'}`}
                   >
-                    {biolink.isPublished ? 'Published' : 'Draft'}
+                    {biolink.isPublished ? t('Published') : t('Draft')}
                   </span>
                 </div>
                 <div className="mt-1 flex justify-between">
-                  <span>Views:</span>
+                  <span>{t('Views')}:</span>
                   <span className="font-semibold">{biolink.views}</span>
                 </div>
               </div>
@@ -154,7 +156,7 @@ export default function EditBiolinkPage() {
                   onClick={() => setShowPreview(!showPreview)}
                   className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50"
                 >
-                  {showPreview ? 'Edit' : 'Preview'}
+                  {showPreview ? t('Edit') : t('Preview')}
                 </button>
               </div>
               <div className="mt-2 flex gap-2">
@@ -163,14 +165,14 @@ export default function EditBiolinkPage() {
                   disabled={updateMutation.isPending}
                   className="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-50"
                 >
-                  Save Draft
+                  {t('Save Draft')}
                 </button>
                 <button
                   onClick={() => handleSave(true)}
                   disabled={updateMutation.isPending}
                   className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {biolink.isPublished ? 'Update' : 'Publish'}
+                  {biolink.isPublished ? t('Update') : t('Publish')}
                 </button>
               </div>
             </div>

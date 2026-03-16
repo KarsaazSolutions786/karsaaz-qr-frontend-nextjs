@@ -2,6 +2,7 @@
 
 import { usePermissions } from '@/lib/hooks/queries/useRoles'
 import { Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface PermissionsInputProps {
   value: number[]
@@ -9,6 +10,7 @@ interface PermissionsInputProps {
 }
 
 export function PermissionsInput({ value, onChange }: PermissionsInputProps) {
+  const { t } = useTranslation()
   const { data: groups, isLoading } = usePermissions()
 
   const toggle = (id: number) => {
@@ -31,13 +33,13 @@ export function PermissionsInput({ value, onChange }: PermissionsInputProps) {
     return (
       <div className="flex items-center gap-2 text-sm text-gray-500 py-4">
         <Loader2 className="w-4 h-4 animate-spin" />
-        Loading permissions...
+        {t('Loading permissions...')}
       </div>
     )
   }
 
   if (!groups || groups.length === 0) {
-    return <p className="text-sm text-gray-500 italic py-2">No permissions available.</p>
+    return <p className="text-sm text-gray-500 italic py-2">{t('No permissions available.')}</p>
   }
 
   return (

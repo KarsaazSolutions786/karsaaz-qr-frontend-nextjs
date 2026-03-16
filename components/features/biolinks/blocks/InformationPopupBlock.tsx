@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import type { InformationPopupBlockData } from '@/types/entities/biolink'
 
 interface InformationPopupBlockProps {
@@ -14,6 +15,7 @@ export default function InformationPopupBlock({
   isEditing,
   onUpdate,
 }: InformationPopupBlockProps) {
+  const { t } = useTranslation();
   const { triggerText, title, content } = block.data
   const [open, setOpen] = useState(false)
 
@@ -21,17 +23,17 @@ export default function InformationPopupBlock({
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Trigger Text</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Trigger Text')}</label>
           <input
             type="text"
             value={triggerText}
             onChange={e => onUpdate?.({ ...block.data, triggerText: e.target.value })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-            placeholder="Click for more info"
+            placeholder={t('Click for more info')}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Popup Title</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Popup Title')}</label>
           <input
             type="text"
             value={title}
@@ -40,7 +42,7 @@ export default function InformationPopupBlock({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Content</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Content')}</label>
           <textarea
             value={content}
             onChange={e => onUpdate?.({ ...block.data, content: e.target.value })}
@@ -59,7 +61,7 @@ export default function InformationPopupBlock({
         className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
       >
         <span>ℹ️</span>
-        {triggerText || 'More Info'}
+        {triggerText || t('More Info')}
       </button>
       {open && (
         <>
@@ -71,7 +73,7 @@ export default function InformationPopupBlock({
               onClick={() => setOpen(false)}
               className="mt-3 text-xs text-gray-400 hover:text-gray-600"
             >
-              Close
+              {t('Close')}
             </button>
           </div>
         </>

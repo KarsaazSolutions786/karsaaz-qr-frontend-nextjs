@@ -438,8 +438,11 @@ export const createDynamicSMSQRCodeSchema = qrCodeBaseSchema.extend({
 
 // Google Review QR code
 export const googleReviewDataSchema = z.object({
+  business_name: z.string().optional(),
   place: z.string().optional(),
   url_type: z.enum(['my-business', 'review-list', 'review-request']).optional(),
+  custom_message: z.string().optional(),
+  star_rating_prompt: z.string().optional(),
   expires_at: z.string().optional(),
 })
 

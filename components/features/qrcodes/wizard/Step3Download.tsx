@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useMemo, useCallback } from 'react'
+import { toast } from 'sonner'
 import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -18,7 +19,9 @@ import {
   Calendar,
 } from 'lucide-react'
 import { FolderTree } from '@/components/qr/FolderTree'
-import { useFolders } from '@/hooks/useFolders'
+import { useFolders } from '@/lib/hooks/useFolders'
+import { useSubscription } from '@/lib/hooks/useSubscription'
+import { useTranslation } from '@/lib/i18n'
 
 interface Step3DownloadProps {
   qrType: string
@@ -38,12 +41,15 @@ interface Step3DownloadProps {
   isSaved: boolean
 }
 
-const SIZE_OPTIONS = [
+const ALL_SIZE_OPTIONS = [
   { value: 500, label: 'Small (500px)', desc: 'Social media' },
   { value: 1000, label: 'Medium (1000px)', desc: 'Web & email' },
   { value: 2000, label: 'Large (2000px)', desc: 'Print quality' },
   { value: 4000, label: 'Extra Large (4000px)', desc: 'High-res print' },
-]
+] as const
+
+/** Free/trial plans are limited to 512px PNG only */
+const FREE_SIZE_VALUE = 500
 
 export default function Step3Download({
   qrType,
@@ -54,13 +60,27 @@ export default function Step3Download({
   isSubmitting,
   isSaved,
 }: Step3DownloadProps) {
+  const { t } = useTranslation()
   const previewRef = useRef<BackendQRPreviewRef>(null)
   const [downloadingFormat, setDownloadingFormat] = useState<string | null>(null)
   const [downloadedFormats, setDownloadedFormats] = useState<Set<string>>(new Set())
-  const [selectedSize, setSelectedSize] = useState(1000)
   const [showFolderPicker, setShowFolderPicker] = useState(false)
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false)
   const folderManager = useFolders([])
+
+  // Subscription-based download restrictions
+  const { plan, isOnTrial } = useSubscription()
+  const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
+
+  const [selectedSize, setSelectedSize] = useState(isFreePlan ? FREE_SIZE_VALUE : 1000)
+
+  const handleSizeSelect = useCallback((value: number) => {
+    if (isFreePlan && value !== FREE_SIZE_VALUE) {
+      toast.info(t('Higher resolution downloads require a paid plan. Upgrade to unlock all sizes.'))
+      return
+    }
+    setSelectedSize(value)
+  }, [isFreePlan])
 
   // Merge design with defaults
   const mergedConfig: DesignerConfig = useMemo(
@@ -83,6 +103,12 @@ export default function Step3Download({
   const handleDownload = useCallback(
     async (format: string) => {
       if (!previewRef.current) return
+
+      // Enforce format restrictions for free/trial plans
+      if (isFreePlan && (format === 'svg' || format === 'pdf' || format === 'eps')) {
+        toast.info(`${format.toUpperCase()} ${t('download requires a paid plan. Upgrade to unlock all formats.')}`)
+        return
+      }
 
       setDownloadingFormat(format)
       try {
@@ -149,7 +175,7 @@ export default function Step3Download({
         setDownloadingFormat(null)
       }
     },
-    [settings.name, qrType, selectedSize]
+    [settings.name, qrType, selectedSize, isFreePlan]
   )
 
   const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -182,19 +208,19 @@ export default function Step3Download({
           {/* QR Code Name */}
           <div>
             <label htmlFor="qr-name" className="block text-sm font-semibold text-gray-900 mb-2">
-              QR Code Name *
+              {t('QR Code Name')} *
             </label>
             <Input
               id="qr-name"
               type="text"
               value={settings.name || ''}
               onChange={e => handleSettingsChange('name', e.target.value)}
-              placeholder="e.g., My Website QR Code"
+              placeholder={t('e.g., My Website QR Code')}
               className="text-base"
               autoFocus
             />
             <p className="mt-1 text-xs text-gray-500">
-              Give your QR code a name for easy identification
+              {t('Give your QR code a name for easy identification')}
             </p>
           </div>
 
@@ -205,8 +231,8 @@ export default function Step3Download({
               onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
               className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
             >
-              {showAdvancedSettings ? '▾' : '▸'} Advanced Settings
-              <span className="text-gray-400 font-normal">(Folder, PIN, Expiration, Tags)</span>
+              {showAdvancedSettings ? '▾' : '▸'} {t('Advanced Settings')}
+              <span className="text-gray-400 font-normal">({t('Folder')}, {t('PIN')}, {t('Expiration')}, {t('Tags')})</span>
             </button>
 
             {showAdvancedSettings && (
@@ -215,12 +241,12 @@ export default function Step3Download({
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                     <FolderOpen className="w-4 h-4" />
-                    Folder
+                    {t('Folder')}
                   </label>
                   <div className="flex items-center gap-2">
                     <Input
                       type="text"
-                      value={selectedFolder?.name || 'No folder selected'}
+                      value={selectedFolder?.name || t('No folder selected')}
                       readOnly
                       className="flex-1 bg-gray-50 text-sm"
                     />
@@ -230,7 +256,7 @@ export default function Step3Download({
                       size="sm"
                       onClick={() => setShowFolderPicker(!showFolderPicker)}
                     >
-                      {showFolderPicker ? 'Close' : 'Select'}
+                      {showFolderPicker ? t('Close') : t('Select')}
                     </Button>
                   </div>
                   {showFolderPicker && (
@@ -252,7 +278,7 @@ export default function Step3Download({
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                     <Lock className="w-4 h-4" />
-                    PIN Protection
+                    {t('PIN Protection')}
                   </label>
                   <div className="flex items-center gap-3">
                     <input
@@ -263,7 +289,7 @@ export default function Step3Download({
                       className="rounded border-gray-300"
                     />
                     <label htmlFor="pinProtection" className="text-sm text-gray-700">
-                      Require PIN to access
+                      {t('Require PIN to access')}
                     </label>
                   </div>
                   {settings.pinProtected && (
@@ -271,7 +297,7 @@ export default function Step3Download({
                       type="password"
                       value={settings.pin || ''}
                       onChange={e => handleSettingsChange('pin', e.target.value)}
-                      placeholder="Enter 4-6 digit PIN"
+                      placeholder={t('Enter 4-6 digit PIN')}
                       maxLength={6}
                       className="mt-2"
                     />
@@ -282,7 +308,7 @@ export default function Step3Download({
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                     <Calendar className="w-4 h-4" />
-                    Expiration
+                    {t('Expiration')}
                   </label>
                   <div className="flex items-center gap-3">
                     <input
@@ -293,7 +319,7 @@ export default function Step3Download({
                       className="rounded border-gray-300"
                     />
                     <label htmlFor="hasExpiration" className="text-sm text-gray-700">
-                      Set expiration date
+                      {t('Set expiration date')}
                     </label>
                   </div>
                   {settings.hasExpiration && (
@@ -311,11 +337,11 @@ export default function Step3Download({
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                     <Tag className="w-4 h-4" />
-                    Tags
+                    {t('Tags')}
                   </label>
                   <Input
                     type="text"
-                    placeholder="Type a tag and press Enter"
+                    placeholder={t('Type a tag and press Enter')}
                     onKeyDown={handleTagInput}
                     className="text-sm"
                   />
@@ -345,33 +371,47 @@ export default function Step3Download({
 
           {/* Size Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-3">Download Size</label>
+            <label className="block text-sm font-semibold text-gray-900 mb-3">{t('Download Size')}</label>
             <div className="grid grid-cols-2 gap-2">
-              {SIZE_OPTIONS.map(option => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => setSelectedSize(option.value)}
-                  className={`p-3 rounded-lg border-2 text-left transition-all ${
-                    selectedSize === option.value
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <span className="block text-sm font-medium text-gray-900">{option.label}</span>
-                  <span className="block text-xs text-gray-500">{option.desc}</span>
-                </button>
-              ))}
+              {ALL_SIZE_OPTIONS.map(option => {
+                const isLocked = isFreePlan && option.value !== FREE_SIZE_VALUE
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handleSizeSelect(option.value)}
+                    className={`p-3 rounded-lg border-2 text-left transition-all ${
+                      selectedSize === option.value
+                        ? 'border-blue-500 bg-blue-50'
+                        : isLocked
+                          ? 'border-gray-100 bg-gray-50 opacity-60 cursor-not-allowed'
+                          : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                    title={isLocked ? t('Requires paid plan') : undefined}
+                  >
+                    <span className="flex items-center gap-1 text-sm font-medium text-gray-900">
+                      {t(option.label)}
+                      {isLocked && <Lock className="h-3 w-3 text-gray-400" />}
+                    </span>
+                    <span className="block text-xs text-gray-500">{t(option.desc)}</span>
+                  </button>
+                )
+              })}
             </div>
+            {isFreePlan && (
+              <p className="mt-2 text-xs text-gray-500">
+                {t('Free plan: 500px PNG only. Upgrade for higher resolutions and more formats.')}
+              </p>
+            )}
           </div>
 
           {/* Download Buttons */}
           <div>
             <label className="block text-sm font-semibold text-gray-900 mb-3">
-              Download Format
+              {t('Download Format')}
             </label>
             <div className="grid grid-cols-2 gap-3">
-              {/* PNG */}
+              {/* PNG — always available */}
               <Button
                 onClick={() => handleDownload('png')}
                 disabled={!hasPreviewData || !!downloadingFormat || isSubmitting || !isSaved}
@@ -387,74 +427,101 @@ export default function Step3Download({
                 )}
                 <div className="text-center">
                   <span className="block text-sm font-semibold">PNG</span>
-                  <span className="block text-[10px] text-gray-500">Raster image</span>
+                  <span className="block text-[10px] text-gray-500">{t('Raster image')}</span>
                 </div>
               </Button>
 
-              {/* SVG */}
+              {/* SVG — locked for free/trial */}
               <Button
                 onClick={() => handleDownload('svg')}
                 disabled={!hasPreviewData || !!downloadingFormat || isSubmitting || !isSaved}
-                variant="outline"
-                className="h-auto py-4 flex flex-col items-center gap-2 hover:border-green-400 hover:bg-green-50 transition-all"
+                variant={isFreePlan ? 'ghost' : 'outline'}
+                className={`h-auto py-4 flex flex-col items-center gap-2 transition-all ${
+                  isFreePlan
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:border-green-400 hover:bg-green-50'
+                }`}
+                title={isFreePlan ? t('SVG download requires a paid plan') : undefined}
               >
                 {downloadingFormat === 'svg' ? (
                   <Loader2 className="w-6 h-6 animate-spin text-green-600" />
                 ) : downloadedFormats.has('svg') ? (
                   <Check className="w-6 h-6 text-green-600" />
+                ) : isFreePlan ? (
+                  <Lock className="w-6 h-6 text-gray-400" />
                 ) : (
                   <FileCode2 className="w-6 h-6 text-green-600" />
                 )}
                 <div className="text-center">
                   <span className="block text-sm font-semibold">SVG</span>
-                  <span className="block text-[10px] text-gray-500">Vector scalable</span>
+                  <span className="block text-[10px] text-gray-500">
+                    {isFreePlan ? t('Paid plan required') : t('Vector scalable')}
+                  </span>
                 </div>
               </Button>
 
-              {/* PDF */}
+              {/* PDF — locked for free/trial */}
               <Button
                 onClick={() => handleDownload('pdf')}
                 disabled={!hasPreviewData || !!downloadingFormat || isSubmitting || !isSaved}
-                variant="outline"
-                className="h-auto py-4 flex flex-col items-center gap-2 hover:border-red-400 hover:bg-red-50 transition-all"
+                variant={isFreePlan ? 'ghost' : 'outline'}
+                className={`h-auto py-4 flex flex-col items-center gap-2 transition-all ${
+                  isFreePlan
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:border-red-400 hover:bg-red-50'
+                }`}
+                title={isFreePlan ? t('PDF download requires a paid plan') : undefined}
               >
                 {downloadingFormat === 'pdf' ? (
                   <Loader2 className="w-6 h-6 animate-spin text-red-600" />
                 ) : downloadedFormats.has('pdf') ? (
                   <Check className="w-6 h-6 text-green-600" />
+                ) : isFreePlan ? (
+                  <Lock className="w-6 h-6 text-gray-400" />
                 ) : (
                   <FileText className="w-6 h-6 text-red-600" />
                 )}
                 <div className="text-center">
                   <span className="block text-sm font-semibold">PDF</span>
-                  <span className="block text-[10px] text-gray-500">Document format</span>
+                  <span className="block text-[10px] text-gray-500">
+                    {isFreePlan ? t('Paid plan required') : t('Document format')}
+                  </span>
                 </div>
               </Button>
 
-              {/* EPS */}
+              {/* EPS — locked for free/trial */}
               <Button
                 onClick={() => handleDownload('eps')}
                 disabled={!hasPreviewData || !!downloadingFormat || isSubmitting || !isSaved}
-                variant="outline"
-                className="h-auto py-4 flex flex-col items-center gap-2 hover:border-purple-400 hover:bg-purple-50 transition-all"
+                variant={isFreePlan ? 'ghost' : 'outline'}
+                className={`h-auto py-4 flex flex-col items-center gap-2 transition-all ${
+                  isFreePlan
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:border-purple-400 hover:bg-purple-50'
+                }`}
+                title={isFreePlan ? t('EPS download requires a paid plan') : undefined}
               >
                 {downloadingFormat === 'eps' ? (
                   <Loader2 className="w-6 h-6 animate-spin text-purple-600" />
                 ) : downloadedFormats.has('eps') ? (
                   <Check className="w-6 h-6 text-green-600" />
+                ) : isFreePlan ? (
+                  <Lock className="w-6 h-6 text-gray-400" />
                 ) : (
                   <Download className="w-6 h-6 text-purple-600" />
                 )}
                 <div className="text-center">
                   <span className="block text-sm font-semibold">EPS</span>
-                  <span className="block text-[10px] text-gray-500">Print & edit</span>
+                  <span className="block text-[10px] text-gray-500">
+                    {isFreePlan ? t('Paid plan required') : t('Print & edit')}
+                  </span>
                 </div>
               </Button>
             </div>
 
             {!isSaved && (
               <p className="mt-3 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-md p-3">
-                💡 Your QR code will be saved automatically before download becomes available.
+                {t('Your QR code will be saved automatically before download becomes available.')}
               </p>
             )}
           </div>
@@ -462,7 +529,7 @@ export default function Step3Download({
 
         {/* Right: QR Preview */}
         <div className="lg:col-span-2">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Your QR Code</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('Your QR Code')}</h3>
           <div className="bg-white rounded-xl border-2 border-gray-200 p-8 sticky top-6 shadow-sm">
             <div className="flex flex-col items-center gap-4">
               {hasPreviewData ? (
@@ -475,7 +542,7 @@ export default function Step3Download({
                 />
               ) : (
                 <div className="w-[300px] h-[300px] bg-gray-100 rounded-lg flex items-center justify-center">
-                  <p className="text-gray-400 text-sm">No data</p>
+                  <p className="text-gray-400 text-sm">{t('No data')}</p>
                 </div>
               )}
 

@@ -1,6 +1,9 @@
+'use client';
+
 import React from 'react';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface WizardStepProps {
   stepNumber: number;
@@ -25,6 +28,7 @@ export function WizardStep({
   onClick,
   className,
 }: WizardStepProps) {
+  const { t } = useTranslation()
   const handleClick = () => {
     if (!isDisabled && onClick) {
       onClick();
@@ -48,7 +52,7 @@ export function WizardStep({
           onKeyDown={handleKeyDown}
           disabled={isDisabled}
           aria-current={isActive ? 'step' : undefined}
-          aria-label={`Step ${stepNumber}: ${title}`}
+          aria-label={`${t('Step')} ${stepNumber}: ${title}`}
           className={cn(
             'relative flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-200',
             'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',

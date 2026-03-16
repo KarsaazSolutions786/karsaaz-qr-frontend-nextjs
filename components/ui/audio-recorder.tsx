@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 import {
   MicrophoneIcon,
   StopIcon,
@@ -31,6 +32,7 @@ export function AudioRecorder({
   maxDuration = 120,
   className,
 }: AudioRecorderProps) {
+  const { t } = useTranslation()
   const [state, setState] = useState<RecorderState>('idle')
   const [elapsed, setElapsed] = useState(0)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
@@ -161,7 +163,7 @@ export function AudioRecorder({
         {state === 'idle' && (
           <Button type="button" onClick={startRecording} size="sm">
             <MicrophoneIcon className="mr-1.5 h-4 w-4" />
-            Record
+            {t('Record')}
           </Button>
         )}
 
@@ -173,7 +175,7 @@ export function AudioRecorder({
             size="sm"
           >
             <StopIcon className="mr-1.5 h-4 w-4" />
-            Stop
+            {t('Stop')}
           </Button>
         )}
 
@@ -190,7 +192,7 @@ export function AudioRecorder({
               ) : (
                 <PlayIcon className="mr-1.5 h-4 w-4" />
               )}
-              {isPlaying ? 'Pause' : 'Play'}
+              {isPlaying ? t('Pause') : t('Play')}
             </Button>
 
             <Button
@@ -200,7 +202,7 @@ export function AudioRecorder({
               size="sm"
             >
               <ArrowDownTrayIcon className="mr-1.5 h-4 w-4" />
-              Download
+              {t('Download')}
             </Button>
 
             <Button
@@ -211,7 +213,7 @@ export function AudioRecorder({
               className="text-red-500 hover:text-red-700"
             >
               <TrashIcon className="mr-1.5 h-4 w-4" />
-              Delete
+              {t('Delete')}
             </Button>
           </>
         )}

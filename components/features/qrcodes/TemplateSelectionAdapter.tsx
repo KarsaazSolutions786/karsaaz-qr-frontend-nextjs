@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Loader2, FileCode2, ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTemplates, useTemplateCategories } from '@/lib/hooks/queries/useTemplates'
 import type { QRCodeTemplate } from '@/types/entities/template'
+import { useTranslation } from '@/lib/i18n'
 
 interface TemplateSelectionAdapterProps {
   onStartBlank: () => void
@@ -14,22 +15,24 @@ interface TemplateSelectionAdapterProps {
 }
 
 /**
- * TemplateSelectionAdapter — Replicates the original Lit Element project's
+ * TemplateSelectionAdapter -- Replicates the original Lit Element project's
  * qrcg-new-qrcode-form-adapter component.
- * 
+ *
  * Shows two options:
- * 1. "Create Using Template" - Links to templates page
+ * 1. "Create Using Template" - Links to templates page or shows inline categories
  * 2. "Create Blank QR Code" - Starts the wizard without a template
- * 
- * If templates are not available, automatically triggers blank creation.
+ *
+ * If no templates are available at all, auto-falls through to blank creation.
  */
 export function TemplateSelectionAdapter({
   onStartBlank,
   onSelectTemplate,
 }: TemplateSelectionAdapterProps) {
+  const { t } = useTranslation()
   const { data: templates, isLoading: templatesLoading } = useTemplates()
   const { data: categories, isLoading: categoriesLoading } = useTemplateCategories()
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
+  const [autoFallthrough, setAutoFallthrough] = useState(false)
 
   const isLoading = templatesLoading || categoriesLoading
   const hasTemplates = templates && templates.length >= 2
@@ -48,18 +51,15 @@ export function TemplateSelectionAdapter({
     return templates.filter(t => t.category_id === selectedCategoryId)
   }, [templates, selectedCategoryId])
 
-  // If no templates, skip straight to blank creation
-  if (!isLoading && !hasTemplates) {
-    // Auto-start blank after a brief moment
-    setTimeout(() => onStartBlank(), 0)
-    return (
-      <div className="flex items-center justify-center min-h-[300px]">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
-      </div>
-    )
-  }
+  // Auto-fallthrough to blank when no templates exist (via effect, not render)
+  useEffect(() => {
+    if (!isLoading && !hasTemplates && !autoFallthrough) {
+      setAutoFallthrough(true)
+      onStartBlank()
+    }
+  }, [isLoading, hasTemplates, autoFallthrough, onStartBlank])
 
-  if (isLoading) {
+  if (isLoading || autoFallthrough) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
         <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
@@ -70,24 +70,24 @@ export function TemplateSelectionAdapter({
   // Show category templates view
   if (selectedCategoryId && hasCategories) {
     const selectedCategory = categories?.find(c => c.id === selectedCategoryId)
-    
+
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 max-w-5xl mx-auto">
         {/* Back button */}
         <button
           onClick={() => setSelectedCategoryId(null)}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ChevronLeft className="w-5 h-5" />
-          <span>Back to options</span>
+          <span>{t('Back to options')}</span>
         </button>
 
         <h2 className="text-2xl font-semibold text-gray-900">
-          {selectedCategory?.name || 'Templates'}
+          {selectedCategory?.name || t('Templates')}
         </h2>
 
         {filteredTemplates.length === 0 ? (
-          <p className="text-gray-500">No templates in this category.</p>
+          <p className="text-gray-500">{t('No templates in this category.')}</p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredTemplates.map((template) => (
@@ -136,9 +136,9 @@ export function TemplateSelectionAdapter({
             backgroundClip: 'text',
           }}
         >
-          Create QR Code
+          {t('Create QR Code')}
         </h1>
-        <p className="text-gray-600">Choose how you want to start</p>
+        <p className="text-gray-600">{t('Choose how you want to start')}</p>
       </div>
 
       {/* Selection Cards */}
@@ -174,7 +174,7 @@ export function TemplateSelectionAdapter({
               variant="default"
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
             >
-              Create Using Template
+              {t('Create Using Template')}
             </Button>
           </Link>
         </div>
@@ -205,7 +205,7 @@ export function TemplateSelectionAdapter({
             onClick={onStartBlank}
             className="w-full border-purple-500 text-purple-600 hover:bg-purple-50"
           >
-            Create Blank QR Code
+            {t('Create Blank QR Code')}
           </Button>
         </div>
       </div>
@@ -214,7 +214,7 @@ export function TemplateSelectionAdapter({
       {hasCategories && (
         <div className="max-w-3xl mx-auto">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Or browse by category
+            {t('Or browse by category')}
           </h3>
           <div className="flex flex-wrap gap-2">
             {categories?.map((category) => (

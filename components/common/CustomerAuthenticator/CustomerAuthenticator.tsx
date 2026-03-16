@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import apiClient from '@/lib/api/client'
 import { EmailStep } from './steps/EmailStep'
 import { NameStep } from './steps/NameStep'
@@ -32,6 +33,7 @@ export function CustomerAuthenticator({
   onAuthenticated,
   onCancel,
 }: CustomerAuthenticatorProps) {
+  const { t } = useTranslation()
   const [step, setStep] = useState<AuthStep>('email')
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
@@ -57,7 +59,7 @@ export function CustomerAuthenticator({
         })
         setStep('otp')
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Failed to send verification code'
+        const message = err instanceof Error ? err.message : t('Failed to send verification code')
         setError(message)
       } finally {
         setLoading(false)
@@ -91,7 +93,7 @@ export function CustomerAuthenticator({
 
         onAuthenticated(viewerAuth)
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Invalid verification code'
+        const message = err instanceof Error ? err.message : t('Invalid verification code')
         setError(message)
       } finally {
         setLoading(false)
@@ -110,7 +112,7 @@ export function CustomerAuthenticator({
         qr_code_id: qrCodeId,
       })
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to resend code'
+      const message = err instanceof Error ? err.message : t('Failed to resend code')
       setError(message)
     } finally {
       setLoading(false)

@@ -1,6 +1,7 @@
 'use client'
 
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { telegramDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 
@@ -16,6 +17,7 @@ interface TelegramDataFormProps {
 }
 
 export function TelegramDataForm({ defaultValues, onChange }: TelegramDataFormProps) {
+  const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<TelegramDataFormData>({
     schema: telegramDataSchema,
     defaultValues,
@@ -25,8 +27,8 @@ export function TelegramDataForm({ defaultValues, onChange }: TelegramDataFormPr
   return (
     <form className="space-y-5">
       <div>
-        <label htmlFor="username" className={LABEL}>Telegram Username</label>
-        <input {...register('username')} id="username" type="text" placeholder="e.g. myusername (without @)" className={INPUT} />
+        <label htmlFor="username" className={LABEL}>{t('Telegram Username')}</label>
+        <input {...register('username')} id="username" type="text" placeholder={t('e.g. myusername (without @)')} className={INPUT} />
         {errors.username && <p className={ERROR}>{errors.username.message}</p>}
       </div>
     </form>

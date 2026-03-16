@@ -33,6 +33,21 @@ export type BlockType =
   | 'paragraph'
   | 'share'
   | 'upi'
+  | 'countdown'
+  | 'calendar'
+  | 'header-banner'
+  | 'testimonial'
+  | 'carousel'
+  | 'map'
+  | 'app-download'
+  | 'pricing'
+  | 'youtube'
+  | 'vimeo'
+  | 'spotify'
+  | 'soundcloud'
+  | 'tiktok'
+  | 'instagram'
+  | 'twitter'
 
 // Base Block Interface
 export interface BlockBase {
@@ -344,6 +359,181 @@ export interface UPIBlockData extends BlockBase {
   }
 }
 
+// Countdown Block
+export interface CountdownBlockData extends BlockBase {
+  type: 'countdown'
+  data: {
+    title?: string
+    targetDate: string
+    expiredMessage?: string
+    style?: 'cards' | 'inline' | 'minimal'
+  }
+}
+
+// Calendar Event Block
+export interface CalendarBlockData extends BlockBase {
+  type: 'calendar'
+  data: {
+    eventName: string
+    startDate?: string
+    endDate?: string
+    location?: string
+    description?: string
+  }
+}
+
+// Header/Banner Block
+export interface HeaderBannerBlockData extends BlockBase {
+  type: 'header-banner'
+  data: {
+    title: string
+    subtitle?: string
+    backgroundImage?: string
+    backgroundColor?: string
+    textColor?: string
+    height?: number
+    align?: 'left' | 'center' | 'right'
+    overlayOpacity?: number
+    buttonText?: string
+    buttonUrl?: string
+  }
+}
+
+// Testimonial Block
+export interface TestimonialBlockData extends BlockBase {
+  type: 'testimonial'
+  data: {
+    testimonials: Array<{
+      name: string
+      photo?: string
+      rating: number
+      text: string
+      title?: string
+    }>
+  }
+}
+
+// Carousel Block
+export interface CarouselBlockData extends BlockBase {
+  type: 'carousel'
+  data: {
+    images: Array<{
+      url: string
+      alt?: string
+      caption?: string
+    }>
+    autoplay?: boolean
+    interval?: number
+    showDots?: boolean
+    showArrows?: boolean
+    height?: number
+  }
+}
+
+// Map Block (embedded map with coordinates)
+export interface MapBlockData extends BlockBase {
+  type: 'map'
+  data: {
+    lat?: number
+    lng?: number
+    zoom?: number
+    address?: string
+    title?: string
+    height?: number
+    provider?: 'google' | 'openstreetmap'
+  }
+}
+
+// App Download Block
+export interface AppDownloadBlockData extends BlockBase {
+  type: 'app-download'
+  data: {
+    appName: string
+    description?: string
+    appIcon?: string
+    iosUrl?: string
+    androidUrl?: string
+    style?: 'badges' | 'buttons' | 'card'
+  }
+}
+
+// Pricing Block
+export interface PricingBlockData extends BlockBase {
+  type: 'pricing'
+  data: {
+    title?: string
+    plans: Array<{
+      name: string
+      price: string
+      currency: string
+      period: string
+      features: string[]
+      buttonText: string
+      buttonUrl?: string
+      highlighted?: boolean
+    }>
+  }
+}
+
+// Social Media Embed Block Types
+export interface YouTubeBlockData extends BlockBase {
+  type: 'youtube'
+  data: {
+    url: string
+    autoplay?: boolean
+    startTime?: number
+  }
+}
+
+export interface VimeoBlockData extends BlockBase {
+  type: 'vimeo'
+  data: {
+    url: string
+    autoplay?: boolean
+    loop?: boolean
+  }
+}
+
+export interface SpotifyBlockData extends BlockBase {
+  type: 'spotify'
+  data: {
+    url: string
+    theme?: 'dark' | 'light'
+    compact?: boolean
+  }
+}
+
+export interface SoundCloudBlockData extends BlockBase {
+  type: 'soundcloud'
+  data: {
+    url: string
+    color?: string
+    autoplay?: boolean
+  }
+}
+
+export interface TikTokBlockData extends BlockBase {
+  type: 'tiktok'
+  data: {
+    url: string
+  }
+}
+
+export interface InstagramBlockData extends BlockBase {
+  type: 'instagram'
+  data: {
+    url: string
+  }
+}
+
+export interface TwitterBlockData extends BlockBase {
+  type: 'twitter'
+  data: {
+    url: string
+    theme?: 'dark' | 'light'
+  }
+}
+
 // Union type of all blocks
 export type BlockData =
   | LinkBlockData
@@ -377,6 +567,21 @@ export type BlockData =
   | ParagraphBlockData
   | ShareBlockData
   | UPIBlockData
+  | CountdownBlockData
+  | CalendarBlockData
+  | HeaderBannerBlockData
+  | TestimonialBlockData
+  | CarouselBlockData
+  | MapBlockData
+  | AppDownloadBlockData
+  | PricingBlockData
+  | YouTubeBlockData
+  | VimeoBlockData
+  | SpotifyBlockData
+  | SoundCloudBlockData
+  | TikTokBlockData
+  | InstagramBlockData
+  | TwitterBlockData
 
 // Biolink Theme
 export interface BiolinkTheme {

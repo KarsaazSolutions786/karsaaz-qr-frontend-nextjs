@@ -9,6 +9,7 @@
 import React from 'react'
 import { TemplateCategory } from '@/types/entities/template'
 import { Folder } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface TemplateCategoryFilterProps {
   categories: TemplateCategory[]
@@ -23,6 +24,7 @@ export default function TemplateCategoryFilter({
   onCategoryChange,
   templateCounts = {},
 }: TemplateCategoryFilterProps) {
+  const { t } = useTranslation()
   const totalCount = Object.values(templateCounts).reduce((sum, count) => sum + count, 0)
   const isAllSelected = selectedCategoryId === undefined
 
@@ -30,7 +32,7 @@ export default function TemplateCategoryFilter({
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
-        <h3 className="text-sm font-semibold text-gray-900">Categories</h3>
+        <h3 className="text-sm font-semibold text-gray-900">{t('Categories')}</h3>
       </div>
 
       {/* Categories List */}
@@ -55,7 +57,7 @@ export default function TemplateCategoryFilter({
               />
             </div>
             <span className={`text-sm font-medium ${isAllSelected ? 'text-primary-900' : ''}`}>
-              All Categories
+              {t('All Categories')}
             </span>
           </div>
           {totalCount > 0 && (
@@ -141,7 +143,7 @@ export default function TemplateCategoryFilter({
       {categories.length === 0 && (
         <div className="px-4 py-8 text-center">
           <Folder className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-sm text-gray-500">No categories available</p>
+          <p className="text-sm text-gray-500">{t('No categories available')}</p>
         </div>
       )}
     </div>

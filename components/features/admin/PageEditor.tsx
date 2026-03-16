@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import DOMPurify from 'dompurify'
 import { Save, Loader2, Eye } from 'lucide-react'
 import { pagesAPI } from '@/lib/api/endpoints/pages'
 import type { Page, CreatePageRequest } from '@/types/entities/page'
+import { useTranslation } from '@/lib/i18n'
 
 interface PageEditorProps {
   page?: Page
@@ -17,6 +19,7 @@ interface PageEditorProps {
  * TODO: Integrate TipTap rich text editor when @tiptap/react is added to dependencies.
  */
 export function PageEditor({ page, onSave }: PageEditorProps) {
+  const { t } = useTranslation()
   const [title, setTitle] = useState(page?.title || '')
   const [slug, setSlug] = useState(page?.slug || '')
   const [content, setContent] = useState(page?.htmlContent || '')
@@ -41,7 +44,7 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
 
   const handleSave = async () => {
     if (!title.trim() || !content.trim()) {
-      setError('Title and content are required.')
+      setError(t('Title and content are required.'))
       return
     }
 
@@ -61,7 +64,7 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
 
       onSave?.(saved)
     } catch {
-      setError('Failed to save page. Please try again.')
+      setError(t('Failed to save page. Please try again.'))
     } finally {
       setSaving(false)
     }
@@ -70,18 +73,18 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
   return (
     <div className="space-y-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Page Title *</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Page Title')} *</label>
         <input
           type="text"
           value={title}
           onChange={e => handleTitleChange(e.target.value)}
-          placeholder="Page title"
+          placeholder={t('Page title')}
           className="block w-full rounded-md border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">URL Slug</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('URL Slug')}</label>
         <div className="flex items-center">
           <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-500">
             /pages/
@@ -100,7 +103,7 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
       <div>
         <div className="flex items-center justify-between mb-1">
           <label className="block text-sm font-medium text-gray-700">
-            Content * <span className="text-gray-400 font-normal">(HTML supported)</span>
+            {t('Content')} * <span className="text-gray-400 font-normal">({t('HTML supported')})</span>
           </label>
           <button
             type="button"
@@ -108,20 +111,20 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
             className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
           >
             <Eye className="h-3.5 w-3.5" />
-            {showPreview ? 'Edit' : 'Preview'}
+            {showPreview ? t('Edit') : t('Preview')}
           </button>
         </div>
         {showPreview ? (
           <div
             className="min-h-[200px] rounded-md border border-gray-300 p-4 prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
           />
         ) : (
           <textarea
             value={content}
             onChange={e => setContent(e.target.value)}
             rows={12}
-            placeholder="Write your page content here... HTML is supported."
+            placeholder={t('Write your page content here... HTML is supported.')}
             className="block w-full rounded-md border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 font-mono"
           />
         )}
@@ -129,13 +132,13 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Meta Description <span className="text-gray-400 font-normal">(optional)</span>
+          {t('Meta Description')} <span className="text-gray-400 font-normal">({t('optional')})</span>
         </label>
         <textarea
           value={metaDescription}
           onChange={e => setMetaDescription(e.target.value)}
           rows={2}
-          placeholder="SEO meta description"
+          placeholder={t('SEO meta description')}
           className="block w-full rounded-md border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
       </div>
@@ -149,7 +152,7 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
           className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
         <label htmlFor="published" className="text-sm font-medium text-gray-700">
-          Published
+          {t('Published')}
         </label>
       </div>
 
@@ -167,7 +170,7 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
           className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          {saving ? 'Saving...' : page ? 'Update Page' : 'Create Page'}
+          {saving ? t('Saving...') : page ? t('Update Page') : t('Create Page')}
         </button>
       </div>
     </div>

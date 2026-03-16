@@ -1,6 +1,7 @@
 'use client';
 
 import { Phone, Mail, Globe, MapPin, Download } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface BusinessCardProps {
   profile: {
@@ -23,6 +24,7 @@ interface BusinessCardProps {
 }
 
 export default function BusinessCard({ profile }: BusinessCardProps) {
+  const { t } = useTranslation();
   const primaryColor = profile.theme?.primaryColor || '#2563eb';
   const accentColor = profile.theme?.accentColor || '#3b82f6';
 
@@ -102,10 +104,10 @@ export default function BusinessCard({ profile }: BusinessCardProps) {
               onClick={handleDownloadVCard}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium transition-all hover:scale-105 shadow-lg"
               style={{ backgroundColor: primaryColor }}
-              title="Download Contact Card"
+              title={t('Download Contact Card')}
             >
               <Download className="w-4 h-4" />
-              <span className="hidden sm:inline">Save Contact</span>
+              <span className="hidden sm:inline">{t('Save Contact')}</span>
             </button>
           </div>
 
@@ -120,7 +122,7 @@ export default function BusinessCard({ profile }: BusinessCardProps) {
                   <Phone className="w-5 h-5 text-white" />
                 </div>
                 <div className="overflow-hidden">
-                  <div className="text-xs text-gray-400 mb-0.5">Phone</div>
+                  <div className="text-xs text-gray-400 mb-0.5">{t('Phone')}</div>
                   <div className="font-medium text-white truncate">{profile.phone}</div>
                 </div>
               </a>
@@ -135,7 +137,7 @@ export default function BusinessCard({ profile }: BusinessCardProps) {
                   <Mail className="w-5 h-5 text-white" />
                 </div>
                 <div className="overflow-hidden">
-                  <div className="text-xs text-gray-400 mb-0.5">Email</div>
+                  <div className="text-xs text-gray-400 mb-0.5">{t('Email')}</div>
                   <div className="font-medium text-white truncate">{profile.email}</div>
                 </div>
               </a>
@@ -152,7 +154,7 @@ export default function BusinessCard({ profile }: BusinessCardProps) {
                   <Globe className="w-5 h-5 text-white" />
                 </div>
                 <div className="overflow-hidden">
-                  <div className="text-xs text-gray-400 mb-0.5">Website</div>
+                  <div className="text-xs text-gray-400 mb-0.5">{t('Website')}</div>
                   <div className="font-medium text-white truncate">{profile.website}</div>
                 </div>
               </a>
@@ -169,7 +171,7 @@ export default function BusinessCard({ profile }: BusinessCardProps) {
                   <MapPin className="w-5 h-5 text-white" />
                 </div>
                 <div className="overflow-hidden">
-                  <div className="text-xs text-gray-400 mb-0.5">Address</div>
+                  <div className="text-xs text-gray-400 mb-0.5">{t('Address')}</div>
                   <div className="font-medium text-white truncate">{fullAddress}</div>
                 </div>
               </a>

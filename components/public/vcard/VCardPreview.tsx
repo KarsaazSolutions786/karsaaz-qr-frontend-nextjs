@@ -8,6 +8,7 @@ import SocialShare from '@/components/public/shared/SocialShare';
 import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
 import ContactCard from './ContactCard';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n';
 
 interface VCardData {
   firstName?: string;
@@ -48,6 +49,7 @@ interface VCardPreviewProps {
 }
 
 export default function VCardPreview({ vcard }: VCardPreviewProps) {
+  const { t } = useTranslation();
   const primaryColor = vcard.theme?.primaryColor || '#2563eb';
   const fullName = [vcard.firstName, vcard.lastName].filter(Boolean).join(' ');
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
@@ -121,14 +123,14 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
               style={{ backgroundColor: primaryColor }}
             >
               <Download className="w-5 h-5 mr-2" />
-              Add to Contacts
+              {t('Add to Contacts')}
             </Button>
           </div>
 
           {/* Bio/Description */}
           {vcard.bio && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">About</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">{t('About')}</h2>
               <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{vcard.bio}</p>
             </div>
           )}
@@ -136,7 +138,7 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
           {/* Social Media Links */}
           {vcard.socialMedia && Object.values(vcard.socialMedia).some(v => v) && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Connect</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-6">{t('Connect')}</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {Object.entries(vcard.socialMedia).map(([platform, url]) => {
                   if (!url) return null;
@@ -162,7 +164,7 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
           {/* Custom Fields */}
           {vcard.customFields && vcard.customFields.length > 0 && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Additional Information</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-6">{t('Additional Information')}</h2>
               <div className="space-y-4">
                 {vcard.customFields.map((field, index) => (
                   <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-2 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
@@ -176,7 +178,7 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
 
           {/* Quick Contact Actions */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-6">{t('Quick Actions')}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {vcard.phone && (
                 <a
@@ -187,7 +189,7 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
                     <Phone className="w-6 h-6 text-blue-600" />
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">Call Now</div>
+                    <div className="font-semibold text-gray-900">{t('Call Now')}</div>
                     <div className="text-sm text-gray-600">{vcard.phone}</div>
                   </div>
                 </a>
@@ -202,7 +204,7 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
                     <Mail className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">Send Email</div>
+                    <div className="font-semibold text-gray-900">{t('Send Email')}</div>
                     <div className="text-sm text-gray-600 truncate max-w-[200px]">{vcard.email}</div>
                   </div>
                 </a>
@@ -219,7 +221,7 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
                     <Globe className="w-6 h-6 text-purple-600" />
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">Visit Website</div>
+                    <div className="font-semibold text-gray-900">{t('Visit Website')}</div>
                     <div className="text-sm text-gray-600 truncate max-w-[200px]">{vcard.website}</div>
                   </div>
                 </a>
@@ -238,7 +240,7 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
                     <MapPin className="w-6 h-6 text-red-600" />
                   </div>
                   <div>
-                    <div className="font-semibold text-gray-900">Get Directions</div>
+                    <div className="font-semibold text-gray-900">{t('Get Directions')}</div>
                     <div className="text-sm text-gray-600 truncate max-w-[200px]">
                       {[vcard.address, vcard.city].filter(Boolean).join(', ')}
                     </div>

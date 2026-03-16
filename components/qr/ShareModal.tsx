@@ -11,6 +11,7 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface ShareModalProps {
   url: string;
@@ -20,6 +21,7 @@ export interface ShareModalProps {
 }
 
 export function ShareModal({ url, title, open, onClose }: ShareModalProps) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   if (!open) return null;
@@ -69,7 +71,7 @@ export function ShareModal({ url, title, open, onClose }: ShareModalProps) {
       href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`,
     },
     {
-      name: 'Copy Link',
+      name: t('Copy Link'),
       icon: copied ? Check : Copy,
       color: copied
         ? 'bg-green-600 hover:bg-green-700'
@@ -85,7 +87,7 @@ export function ShareModal({ url, title, open, onClose }: ShareModalProps) {
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Share2 className="w-5 h-5 text-primary-600" />
-            <h2 className="text-lg font-bold text-gray-900">Share</h2>
+            <h2 className="text-lg font-bold text-gray-900">{t('Share')}</h2>
           </div>
           <button
             type="button"
@@ -131,7 +133,7 @@ export function ShareModal({ url, title, open, onClose }: ShareModalProps) {
                 >
                   <Icon className="w-5 h-5" />
                   <span className="text-xs font-medium">
-                    {copied && btn.name === 'Copy Link' ? 'Copied!' : btn.name}
+                    {copied && btn.name === t('Copy Link') ? t('Copied!') : btn.name}
                   </span>
                 </button>
               );

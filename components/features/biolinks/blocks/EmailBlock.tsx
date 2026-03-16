@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { EmailBlockData } from '@/types/entities/biolink'
 
 interface EmailBlockProps {
@@ -8,12 +11,13 @@ interface EmailBlockProps {
 
 export default function EmailBlock({ block, isEditing, onUpdate }: EmailBlockProps) {
   const { email, subject, buttonText = 'Send Email' } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email Address</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Email Address')}</label>
           <input
             type="email"
             value={email}
@@ -22,7 +26,7 @@ export default function EmailBlock({ block, isEditing, onUpdate }: EmailBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Subject (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Subject (optional)')}</label>
           <input
             type="text"
             value={subject || ''}
@@ -31,7 +35,7 @@ export default function EmailBlock({ block, isEditing, onUpdate }: EmailBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Button Text</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Button Text')}</label>
           <input
             type="text"
             value={buttonText}

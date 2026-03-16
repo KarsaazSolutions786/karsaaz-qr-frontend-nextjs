@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Plus, X } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface GradientSettings {
   type: 'linear' | 'radial' | 'none';
@@ -67,6 +68,7 @@ const presetGradients: GradientSettings[] = [
 ];
 
 export default function GradientEditor({ gradient, onChange }: GradientEditorProps) {
+  const { t } = useTranslation();
   const [localGradient, setLocalGradient] = useState<GradientSettings>(
     gradient || {
       type: 'none',
@@ -127,7 +129,7 @@ export default function GradientEditor({ gradient, onChange }: GradientEditorPro
     <div className="space-y-6">
       {/* Gradient Type Selector */}
       <div className="space-y-2">
-        <Label>Gradient Type</Label>
+        <Label>{t('Gradient Type')}</Label>
         <div className="grid grid-cols-3 gap-2">
           <Button
             variant={localGradient.type === 'none' ? 'default' : 'outline'}
@@ -175,7 +177,7 @@ export default function GradientEditor({ gradient, onChange }: GradientEditorPro
           {/* Color Stops Editor */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label>Color Stops</Label>
+              <Label>{t('Color Stops')}</Label>
               <Button
                 variant="outline"
                 size="sm"
@@ -229,7 +231,7 @@ export default function GradientEditor({ gradient, onChange }: GradientEditorPro
 
           {/* Visual Preview */}
           <div className="space-y-2">
-            <Label>Preview</Label>
+            <Label>{t('Preview')}</Label>
             <div
               className="h-24 rounded-lg border-2 border-dashed border-gray-300"
               style={{ background: getGradientPreview(localGradient) }}
@@ -238,7 +240,7 @@ export default function GradientEditor({ gradient, onChange }: GradientEditorPro
 
           {/* Preset Gradients Library */}
           <div className="space-y-2">
-            <Label>Preset Gradients</Label>
+            <Label>{t('Preset Gradients')}</Label>
             <div className="grid grid-cols-3 gap-2">
               {presetGradients.map((preset, index) => (
                 <button

@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { X, Download, Printer } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface DesignerPreviewModalProps {
   src: string;
@@ -24,6 +25,7 @@ export function DesignerPreviewModal({
   onPrint,
   title = 'QR Code Preview',
 }: DesignerPreviewModalProps) {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -57,7 +59,7 @@ export function DesignerPreviewModal({
           <!DOCTYPE html>
           <html>
             <head>
-              <title>Print QR Code</title>
+              <title>{t('Print QR Code')}</title>
               <style>
                 body {
                   margin: 0;
@@ -102,7 +104,7 @@ export function DesignerPreviewModal({
           <button
             onClick={onClose}
             className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Close preview"
+            aria-label={t('Close preview')}
           >
             <X className="w-5 h-5" />
           </button>
@@ -127,14 +129,14 @@ export function DesignerPreviewModal({
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             <Printer className="w-4 h-4" />
-            Print
+            {t('Print')}
           </button>
           <button
             onClick={handleDownload}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Download className="w-4 h-4" />
-            Download
+            {t('Download')}
           </button>
         </div>
       </div>

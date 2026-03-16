@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { ImageBlockData } from '@/types/entities/biolink'
 
 interface ImageBlockProps {
@@ -8,12 +11,13 @@ interface ImageBlockProps {
 
 export default function ImageBlock({ block, isEditing, onUpdate }: ImageBlockProps) {
   const { url, alt = '', link, caption } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Image URL</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Image URL')}</label>
           <input
             type="url"
             value={url}
@@ -23,7 +27,7 @@ export default function ImageBlock({ block, isEditing, onUpdate }: ImageBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Alt Text</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Alt Text')}</label>
           <input
             type="text"
             value={alt}
@@ -32,7 +36,7 @@ export default function ImageBlock({ block, isEditing, onUpdate }: ImageBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Link (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Link (optional)')}</label>
           <input
             type="url"
             value={link || ''}
@@ -41,7 +45,7 @@ export default function ImageBlock({ block, isEditing, onUpdate }: ImageBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Caption (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Caption (optional)')}</label>
           <input
             type="text"
             value={caption || ''}
@@ -56,7 +60,7 @@ export default function ImageBlock({ block, isEditing, onUpdate }: ImageBlockPro
   if (!url) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
-        <p className="text-sm text-gray-500">No image set</p>
+        <p className="text-sm text-gray-500">{t('No image set')}</p>
       </div>
     )
   }

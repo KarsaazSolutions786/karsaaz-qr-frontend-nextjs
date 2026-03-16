@@ -15,6 +15,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select'
+import { useTranslation } from '@/lib/i18n'
 
 const CONFIG_KEYS = [
   'security.password_min_length',
@@ -38,6 +39,7 @@ const CONFIG_KEYS = [
 ]
 
 export default function AdvancedSettingsPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
   const saveMutation = useSaveSystemConfigs(CONFIG_KEYS)
   const [saved, setSaved] = useState(false)
@@ -69,20 +71,20 @@ export default function AdvancedSettingsPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Advanced Settings</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Advanced Settings')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Security, integrations, billing, feature flags, and system limits.
+          {t('Security, integrations, billing, feature flags, and system limits.')}
         </p>
       </div>
 
       {saveMutation.error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
@@ -90,12 +92,12 @@ export default function AdvancedSettingsPage() {
         {/* Security */}
         <Card>
           <CardHeader>
-            <CardTitle>Security</CardTitle>
+            <CardTitle>{t('Security')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <Label>Password Min Length</Label>
+                <Label>{t('Password Min Length')}</Label>
                 <Input
                   type="number"
                   className="mt-1"
@@ -107,7 +109,7 @@ export default function AdvancedSettingsPage() {
                 />
               </div>
               <div>
-                <Label>Password Characters</Label>
+                <Label>{t('Password Characters')}</Label>
                 <Select
                   value={
                     form['security.password_characters'] ?? 'letters_numbers'
@@ -115,21 +117,21 @@ export default function AdvancedSettingsPage() {
                   onValueChange={(v) => set('security.password_characters', v)}
                 >
                   <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select rule" />
+                    <SelectValue placeholder={t('Select rule')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="letters_numbers">
-                      Letters &amp; Numbers
+                      {t('Letters & Numbers')}
                     </SelectItem>
                     <SelectItem value="letters_numbers_symbols">
-                      Letters, Numbers &amp; Symbols
+                      {t('Letters, Numbers & Symbols')}
                     </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <Label>Account Lock Enabled</Label>
+              <Label>{t('Account Lock Enabled')}</Label>
               <Switch
                 checked={form['security.account_lock_enabled'] === 'true'}
                 onCheckedChange={(v) =>
@@ -139,7 +141,7 @@ export default function AdvancedSettingsPage() {
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <Label>Login Attempts Before Lock</Label>
+                <Label>{t('Login Attempts Before Lock')}</Label>
                 <Input
                   type="number"
                   className="mt-1"
@@ -151,7 +153,7 @@ export default function AdvancedSettingsPage() {
                 />
               </div>
               <div>
-                <Label>Minutes to Reset Attempts</Label>
+                <Label>{t('Minutes to Reset Attempts')}</Label>
                 <Input
                   type="number"
                   className="mt-1"
@@ -169,11 +171,11 @@ export default function AdvancedSettingsPage() {
         {/* Google Services */}
         <Card>
           <CardHeader>
-            <CardTitle>Google Services</CardTitle>
+            <CardTitle>{t('Google Services')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Google API Key</Label>
+              <Label>{t('Google API Key')}</Label>
               <Input
                 type="password"
                 className="mt-1"
@@ -184,7 +186,7 @@ export default function AdvancedSettingsPage() {
             </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <Label>reCAPTCHA Site Key</Label>
+                <Label>{t('reCAPTCHA Site Key')}</Label>
                 <Input
                   className="mt-1"
                   value={form['google_recaptcha.site_key'] ?? ''}
@@ -194,7 +196,7 @@ export default function AdvancedSettingsPage() {
                 />
               </div>
               <div>
-                <Label>reCAPTCHA Secret Key</Label>
+                <Label>{t('reCAPTCHA Secret Key')}</Label>
                 <Input
                   type="password"
                   className="mt-1"
@@ -206,7 +208,7 @@ export default function AdvancedSettingsPage() {
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <Label>reCAPTCHA Enabled</Label>
+              <Label>{t('reCAPTCHA Enabled')}</Label>
               <Switch
                 checked={form['google_recaptcha.enabled'] === 'true'}
                 onCheckedChange={(v) =>
@@ -220,11 +222,11 @@ export default function AdvancedSettingsPage() {
         {/* Billing */}
         <Card>
           <CardHeader>
-            <CardTitle>Billing</CardTitle>
+            <CardTitle>{t('Billing')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Paid Subscriptions</Label>
+              <Label>{t('Paid Subscriptions')}</Label>
               <Switch
                 checked={form['app.paid_subscriptions'] === 'true'}
                 onCheckedChange={(v) =>
@@ -233,18 +235,18 @@ export default function AdvancedSettingsPage() {
               />
             </div>
             <div>
-              <Label>Billing Mode</Label>
+              <Label>{t('Billing Mode')}</Label>
               <Select
                 value={form['billing.mode'] ?? 'subscription'}
                 onValueChange={(v) => set('billing.mode', v)}
               >
                 <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select mode" />
+                  <SelectValue placeholder={t('Select mode')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="subscription">Subscription</SelectItem>
-                  <SelectItem value="one_time">One Time</SelectItem>
-                  <SelectItem value="both">Both</SelectItem>
+                  <SelectItem value="subscription">{t('Subscription')}</SelectItem>
+                  <SelectItem value="one_time">{t('One Time')}</SelectItem>
+                  <SelectItem value="both">{t('Both')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -254,11 +256,11 @@ export default function AdvancedSettingsPage() {
         {/* Features */}
         <Card>
           <CardHeader>
-            <CardTitle>Features</CardTitle>
+            <CardTitle>{t('Features')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Allow Iframe Embed</Label>
+              <Label>{t('Allow Iframe Embed')}</Label>
               <Switch
                 checked={form['app.allow_iframe_embed'] === 'true'}
                 onCheckedChange={(v) =>
@@ -267,7 +269,7 @@ export default function AdvancedSettingsPage() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label>Cookie Consent</Label>
+              <Label>{t('Cookie Consent')}</Label>
               <Switch
                 checked={form['cookie_consent_enabled'] === 'true'}
                 onCheckedChange={(v) =>
@@ -276,7 +278,7 @@ export default function AdvancedSettingsPage() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label>Users Can Delete QR Codes</Label>
+              <Label>{t('Users Can Delete QR Codes')}</Label>
               <Switch
                 checked={form['users_can_delete_qrcodes'] === 'true'}
                 onCheckedChange={(v) =>
@@ -285,7 +287,7 @@ export default function AdvancedSettingsPage() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label>Reset Scans Monthly</Label>
+              <Label>{t('Reset Scans Monthly')}</Label>
               <Switch
                 checked={form['reset_scans_every_month'] === 'true'}
                 onCheckedChange={(v) =>
@@ -294,7 +296,7 @@ export default function AdvancedSettingsPage() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label>Customer Short Link Change</Label>
+              <Label>{t('Customer Short Link Change')}</Label>
               <Switch
                 checked={form['customer.short_link_change'] === 'true'}
                 onCheckedChange={(v) =>
@@ -308,12 +310,12 @@ export default function AdvancedSettingsPage() {
         {/* Limits */}
         <Card>
           <CardHeader>
-            <CardTitle>Limits</CardTitle>
+            <CardTitle>{t('Limits')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <Label>Bulk Operation Max Rows</Label>
+                <Label>{t('Bulk Operation Max Rows')}</Label>
                 <Input
                   type="number"
                   className="mt-1"
@@ -325,7 +327,7 @@ export default function AdvancedSettingsPage() {
                 />
               </div>
               <div>
-                <Label>Log Max File Size (MB)</Label>
+                <Label>{t('Log Max File Size (MB)')}</Label>
                 <Input
                   type="number"
                   className="mt-1"
@@ -341,7 +343,7 @@ export default function AdvancedSettingsPage() {
 
       <div className="mt-6 flex justify-end">
         <Button onClick={handleSave} disabled={saveMutation.isPending}>
-          {saveMutation.isPending ? 'Saving…' : 'Save Settings'}
+          {saveMutation.isPending ? t('Saving...') : t('Save Settings')}
         </Button>
       </div>
     </div>

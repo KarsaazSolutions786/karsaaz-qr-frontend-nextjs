@@ -654,7 +654,7 @@ describe('deepMerge', () => {
   it('should merge objects deeply', () => {
     const target = { a: 1, b: { c: 2 } }
     const source = { b: { d: 3 }, e: 4 }
-    expect(deepMerge(target, source)).toEqual({
+    expect(deepMerge(target, source as any)).toEqual({
       a: 1,
       b: { c: 2, d: 3 },
       e: 4,
@@ -665,7 +665,7 @@ describe('deepMerge', () => {
     const target = { a: 1 }
     const source1 = { b: 2 }
     const source2 = { c: 3 }
-    expect(deepMerge(target, source1, source2)).toEqual({ a: 1, b: 2, c: 3 })
+    expect(deepMerge(target, source1 as any, source2 as any)).toEqual({ a: 1, b: 2, c: 3 })
   })
 })
 

@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { useTranslation } from '@/lib/i18n'
 import { withdrawalsAPI } from '@/lib/api/endpoints/withdrawals'
 import type { WithdrawalRequest } from '@/types/entities/referral'
 
@@ -22,6 +24,7 @@ interface WithdrawalHistoryProps {
 }
 
 export function WithdrawalHistory({ refreshKey }: WithdrawalHistoryProps) {
+  const { t } = useTranslation()
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -35,7 +38,7 @@ export function WithdrawalHistory({ refreshKey }: WithdrawalHistoryProps) {
         setWithdrawals(res.data)
         setLastPage(res.pagination.lastPage)
       })
-      .catch(() => {})
+      .catch(() => { toast.error('Failed to load withdrawal history') })
       .finally(() => setLoading(false))
   }, [page, refreshKey])
 
@@ -55,12 +58,12 @@ export function WithdrawalHistory({ refreshKey }: WithdrawalHistoryProps) {
   return (
     <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
       <div className="border-b border-gray-200 px-6 py-4">
-        <h3 className="text-lg font-semibold text-gray-900">Withdrawal History</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('Withdrawal History')}</h3>
       </div>
 
       {withdrawals.length === 0 ? (
         <div className="px-6 py-12 text-center text-sm text-gray-500">
-          No withdrawal requests yet.
+          {t('No withdrawal requests yet.')}
         </div>
       ) : (
         <>
@@ -68,11 +71,11 @@ export function WithdrawalHistory({ refreshKey }: WithdrawalHistoryProps) {
             <table className="w-full text-left text-sm">
               <thead className="border-b border-gray-200 bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 font-medium text-gray-600">Amount</th>
-                  <th className="px-6 py-3 font-medium text-gray-600">Method</th>
-                  <th className="px-6 py-3 font-medium text-gray-600">Status</th>
-                  <th className="px-6 py-3 font-medium text-gray-600">Requested</th>
-                  <th className="px-6 py-3 font-medium text-gray-600">Processed</th>
+                  <th className="px-6 py-3 font-medium text-gray-600">{t('Amount')}</th>
+                  <th className="px-6 py-3 font-medium text-gray-600">{t('Method')}</th>
+                  <th className="px-6 py-3 font-medium text-gray-600">{t('Status')}</th>
+                  <th className="px-6 py-3 font-medium text-gray-600">{t('Requested')}</th>
+                  <th className="px-6 py-3 font-medium text-gray-600">{t('Processed')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -113,10 +116,10 @@ export function WithdrawalHistory({ refreshKey }: WithdrawalHistoryProps) {
                 onClick={() => setPage((p) => p - 1)}
                 className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Previous
+                {t('Previous')}
               </button>
               <span className="text-sm text-gray-600">
-                Page {page} of {lastPage}
+                {t('Page')} {page} {t('of')} {lastPage}
               </span>
               <button
                 type="button"
@@ -124,7 +127,7 @@ export function WithdrawalHistory({ refreshKey }: WithdrawalHistoryProps) {
                 onClick={() => setPage((p) => p + 1)}
                 className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Next
+                {t('Next')}
               </button>
             </div>
           )}

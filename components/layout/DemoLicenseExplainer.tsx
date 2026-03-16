@@ -9,6 +9,7 @@
 
 import React from 'react'
 import { Zap, AlertCircle } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import {
   Dialog,
   DialogContent,
@@ -33,26 +34,27 @@ const DEMO_LIMITATIONS = [
 ]
 
 export function DemoLicenseExplainer({ isOpen, onClose }: DemoLicenseExplainerProps) {
+  const { t } = useTranslation()
   return (
     <Dialog open={isOpen} onOpenChange={open => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <AlertCircle className="w-5 h-5 text-amber-500" />
-            <DialogTitle>Demo Mode Active</DialogTitle>
+            <DialogTitle>{t('Demo Mode Active')}</DialogTitle>
           </div>
           <DialogDescription>
-            You are currently using the demo version. Some features are restricted.
+            {t('You are currently using the demo version. Some features are restricted.')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3 py-2">
-          <h4 className="text-sm font-medium text-gray-900">Demo limitations:</h4>
+          <h4 className="text-sm font-medium text-gray-900">{t('Demo limitations:')}</h4>
           <ul className="space-y-2">
             {DEMO_LIMITATIONS.map(item => (
               <li key={item} className="flex items-center gap-2 text-sm text-gray-600">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                {item}
+                {t(item)}
               </li>
             ))}
           </ul>
@@ -60,7 +62,7 @@ export function DemoLicenseExplainer({ isOpen, onClose }: DemoLicenseExplainerPr
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={onClose}>
-            Continue Demo
+            {t('Continue Demo')}
           </Button>
           <Button
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
@@ -69,7 +71,7 @@ export function DemoLicenseExplainer({ isOpen, onClose }: DemoLicenseExplainerPr
             }}
           >
             <Zap className="w-4 h-4 mr-1.5" />
-            Upgrade Now
+            {t('Upgrade Now')}
           </Button>
         </DialogFooter>
       </DialogContent>

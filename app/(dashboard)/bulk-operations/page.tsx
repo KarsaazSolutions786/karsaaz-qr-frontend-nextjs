@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import apiClient from '@/lib/api/client'
 import { useBulkImportInstances, useBulkOperationsMutations } from '@/lib/hooks/queries/useBulkOperations'
+import { useTranslation } from '@/lib/i18n'
 
 interface BulkInstance {
   id: number
@@ -20,6 +21,7 @@ const statusStyles: Record<string, string> = {
 }
 
 export default function BulkOperationsPage() {
+  const { t } = useTranslation()
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
@@ -46,14 +48,14 @@ export default function BulkOperationsPage() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Delete this bulk operation instance?')) return
+    if (!confirm(t('Delete this bulk operation instance?'))) return
     try {
       await deleteInstance.mutateAsync(id)
     } catch { /* error */ }
   }
 
   const handleDeleteAllQR = async (id: number) => {
-    if (!confirm('Delete ALL QR codes from this instance? This cannot be undone.')) return
+    if (!confirm(t('Delete ALL QR codes from this instance? This cannot be undone.'))) return
     try {
       await deleteAllQRCodes.mutateAsync(id)
     } catch { /* error */ }
@@ -76,16 +78,16 @@ export default function BulkOperationsPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-gray-900">Bulk Operations</h1>
-      <p className="mt-2 text-sm text-gray-600">Import QR codes in bulk from CSV files.</p>
+      <h1 className="text-3xl font-bold text-gray-900">{t('Bulk Operations')}</h1>
+      <p className="mt-2 text-sm text-gray-600">{t('Import QR codes in bulk from CSV files.')}</p>
 
       {/* Upload Section */}
       <div className="mt-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900">Import URL QR Codes</h2>
+        <h2 className="text-lg font-semibold text-gray-900">{t('Import URL QR Codes')}</h2>
         <p className="mt-1 text-sm text-gray-500">
-          Upload a CSV file with URLs to create QR codes in bulk.{' '}
+          {t('Upload a CSV file with URLs to create QR codes in bulk.')}{' '}
           <button onClick={handleSampleCsv} className="text-indigo-600 hover:underline">
-            Download sample CSV
+            {t('Download sample CSV')}
           </button>
         </p>
         <div className="mt-4 flex items-center gap-3">
@@ -95,14 +97,14 @@ export default function BulkOperationsPage() {
             disabled={uploading}
             className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
           >
-            {uploading ? 'Uploading...' : 'Upload & Import'}
+            {uploading ? t('Uploading...') : t('Upload & Import')}
           </button>
         </div>
       </div>
 
       {/* Instances List */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold text-gray-900">Operation Instances</h2>
+        <h2 className="text-lg font-semibold text-gray-900">{t('Operation Instances')}</h2>
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
@@ -110,8 +112,8 @@ export default function BulkOperationsPage() {
           </div>
         ) : instances.length === 0 ? (
           <div className="mt-4 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
-            <h3 className="text-sm font-medium text-gray-900">No bulk operations yet</h3>
-            <p className="mt-1 text-sm text-gray-500">Upload a CSV file above to get started.</p>
+            <h3 className="text-sm font-medium text-gray-900">{t('No bulk operations yet')}</h3>
+            <p className="mt-1 text-sm text-gray-500">{t('Upload a CSV file above to get started.')}</p>
           </div>
         ) : (
           <div className="mt-4 space-y-4">
@@ -127,8 +129,8 @@ export default function BulkOperationsPage() {
                           className="rounded border border-gray-300 px-2 py-1 text-sm"
                           autoFocus
                         />
-                        <button onClick={() => handleRename(inst.id)} className="text-sm text-indigo-600">Save</button>
-                        <button onClick={() => setEditingId(null)} className="text-sm text-gray-500">Cancel</button>
+                        <button onClick={() => handleRename(inst.id)} className="text-sm text-indigo-600">{t('Save')}</button>
+                        <button onClick={() => setEditingId(null)} className="text-sm text-gray-500">{t('Cancel')}</button>
                       </div>
                     ) : (
                       <h3 className="text-sm font-medium text-gray-900">
@@ -142,7 +144,7 @@ export default function BulkOperationsPage() {
                       </h3>
                     )}
                     <p className="mt-1 text-xs text-gray-500">
-                      Created: {new Date(inst.created_at).toLocaleString()}
+                      {t('Created')}: {new Date(inst.created_at).toLocaleString()}
                     </p>
                   </div>
                   <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusStyles[inst.status] || 'bg-gray-100 text-gray-600'}`}>
@@ -170,17 +172,17 @@ export default function BulkOperationsPage() {
                 <div className="mt-4 flex flex-wrap gap-2">
                   {inst.status !== 'running' && (
                     <button onClick={() => handleReRun(inst.id)} className="rounded bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100">
-                      Re-Run
+                      {t('Re-Run')}
                     </button>
                   )}
                   <button onClick={() => handleExportCsv(inst.id)} className="rounded bg-green-50 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-100">
-                    Export CSV
+                    {t('Export CSV')}
                   </button>
                   <button onClick={() => handleDelete(inst.id)} className="rounded bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100">
-                    Delete
+                    {t('Delete')}
                   </button>
                   <button onClick={() => handleDeleteAllQR(inst.id)} className="rounded bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100">
-                    Delete All QR Codes
+                    {t('Delete All QR Codes')}
                   </button>
                 </div>
               </div>

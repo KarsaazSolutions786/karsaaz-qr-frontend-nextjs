@@ -9,6 +9,7 @@ import {
   MoreHorizontal,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface PaginationProps {
   currentPage: number;
@@ -45,6 +46,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   compact = false,
   disabled = false,
 }) => {
+  const { t } = useTranslation();
   const hasNextPage = currentPage < totalPages;
   const hasPreviousPage = currentPage > 1;
 
@@ -109,22 +111,22 @@ export const Pagination: React.FC<PaginationProps> = ({
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
         {showTotalItems && totalItems !== undefined && (
           <div className="text-sm text-muted-foreground" role="status" aria-live="polite">
-            Showing{' '}
+            {t('Showing')}{' '}
             <span className="font-medium text-foreground">
               {totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1}
             </span>{' '}
-            to{' '}
+            {t('to')}{' '}
             <span className="font-medium text-foreground">
               {Math.min(currentPage * pageSize, totalItems)}
             </span>{' '}
-            of <span className="font-medium text-foreground">{totalItems}</span> results
+            {t('of')} <span className="font-medium text-foreground">{totalItems}</span> {t('results')}
           </div>
         )}
 
         {showPageSize && onPageSizeChange && (
           <div className="flex items-center gap-2">
             <label htmlFor="page-size" className="text-sm text-muted-foreground">
-              Show
+              {t('Show')}
             </label>
             <select
               id="page-size"
@@ -144,7 +146,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 </option>
               ))}
             </select>
-            <span className="text-sm text-muted-foreground">per page</span>
+            <span className="text-sm text-muted-foreground">{t('per page')}</span>
           </div>
         )}
       </div>
@@ -184,7 +186,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           aria-label="Go to previous page"
         >
           <ChevronLeft className="h-4 w-4" />
-          {!compact && <span className="ml-1 hidden sm:inline">Previous</span>}
+          {!compact && <span className="ml-1 hidden sm:inline">{t('Previous')}</span>}
         </button>
 
         {/* Page numbers */}
@@ -236,7 +238,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             role="status"
             aria-live="polite"
           >
-            Page {currentPage} of {totalPages}
+            {t('Page')} {currentPage} {t('of')} {totalPages}
           </div>
         )}
 
@@ -253,7 +255,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           )}
           aria-label="Go to next page"
         >
-          {!compact && <span className="mr-1 hidden sm:inline">Next</span>}
+          {!compact && <span className="mr-1 hidden sm:inline">{t('Next')}</span>}
           <ChevronRight className="h-4 w-4" />
         </button>
 

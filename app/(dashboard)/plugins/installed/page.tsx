@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { pluginsAPI, type PluginInfo } from '@/lib/api/endpoints/plugins'
 import { Settings, Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function PluginsInstalledPage() {
+  const { t } = useTranslation()
   const [plugins, setPlugins] = useState<PluginInfo[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -14,9 +16,9 @@ export default function PluginsInstalledPage() {
     pluginsAPI
       .getInstalled()
       .then((data) => setPlugins(Array.isArray(data) ? data : []))
-      .catch(() => setError('Failed to load installed plugins'))
+      .catch(() => setError(t('Failed to load installed plugins')))
       .finally(() => setLoading(false))
-  }, [])
+  }, [t])
 
   if (loading) {
     return (
@@ -30,15 +32,15 @@ export default function PluginsInstalledPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Installed Plugins</h1>
-          <p className="mt-2 text-sm text-gray-600">Manage your installed plugins</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Installed Plugins')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Manage your installed plugins')}</p>
         </div>
         <div className="mt-4 sm:mt-0">
           <Link
             href="/plugins/available"
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
-            Browse Plugins
+            {t('Browse Plugins')}
           </Link>
         </div>
       </div>
@@ -63,16 +65,16 @@ export default function PluginsInstalledPage() {
                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
               />
             </svg>
-            <h3 className="mt-4 text-sm font-medium text-gray-900">No plugins installed</h3>
+            <h3 className="mt-4 text-sm font-medium text-gray-900">{t('No plugins installed')}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              Get started by installing plugins from the marketplace.
+              {t('Get started by installing plugins from the marketplace.')}
             </p>
             <div className="mt-6">
               <Link
                 href="/plugins/available"
                 className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
               >
-                Browse Available Plugins
+                {t('Browse Available Plugins')}
               </Link>
             </div>
           </div>
@@ -81,9 +83,9 @@ export default function PluginsInstalledPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Plugin</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Tags</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Plugin')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Tags')}</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">{t('Actions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -109,7 +111,7 @@ export default function PluginsInstalledPage() {
                           className="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-500"
                         >
                           <Settings className="h-3.5 w-3.5" />
-                          Settings
+                          {t('Settings')}
                         </Link>
                       )}
                     </td>

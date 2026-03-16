@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react';
 import { Type, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { TextBlock as TextBlockType } from '@/types/entities/biolinks';
+import { useTranslation } from '@/lib/i18n';
 
 interface TextBlockProps {
   block: TextBlockType;
@@ -17,6 +20,7 @@ export const TextBlock: React.FC<TextBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   const alignmentClass = {
     left: 'text-left',
     center: 'text-center',
@@ -39,7 +43,7 @@ export const TextBlock: React.FC<TextBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -50,14 +54,14 @@ export const TextBlock: React.FC<TextBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -70,7 +74,7 @@ export const TextBlock: React.FC<TextBlockProps> = ({
         </div>
         <div className="flex-1 min-w-0">
           <div className={`text-gray-700 ${alignmentClass} line-clamp-3`}>
-            {block.content || 'Empty text block'}
+            {block.content || t('Empty text block')}
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import type { Domain } from '@/types/entities/domain'
 
 interface DomainStatusModalProps {
@@ -17,10 +18,12 @@ export function DomainStatusModal({
   onConfirm,
   isLoading,
 }: DomainStatusModalProps) {
+  const { t } = useTranslation()
+
   if (!open) return null
 
   const isActive = domain.status === 'verified'
-  const action = isActive ? 'deactivate' : 'activate'
+  const action = isActive ? t('deactivate') : t('activate')
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -30,12 +33,12 @@ export function DomainStatusModal({
           <span className="text-2xl">{isActive ? '⚠️' : '✅'}</span>
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-gray-900">
-              {isActive ? 'Deactivate' : 'Activate'} Domain
+              {isActive ? t('Deactivate') : t('Activate')} {t('Domain')}
             </h3>
             <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to {action}{' '}
+              {t('Are you sure you want to')} {action}{' '}
               <span className="font-medium text-gray-900">{domain.domain}</span>?
-              {isActive && ' This domain will no longer serve your QR codes.'}
+              {isActive && ` ${t('This domain will no longer serve your QR codes.')}`}
             </p>
           </div>
         </div>
@@ -46,7 +49,7 @@ export function DomainStatusModal({
             disabled={isLoading}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="button"
@@ -58,7 +61,7 @@ export function DomainStatusModal({
                 : 'bg-green-600 hover:bg-green-700'
             }`}
           >
-            {isLoading ? 'Processing...' : isActive ? 'Deactivate' : 'Activate'}
+            {isLoading ? t('Processing...') : isActive ? t('Deactivate') : t('Activate')}
           </button>
         </div>
       </div>

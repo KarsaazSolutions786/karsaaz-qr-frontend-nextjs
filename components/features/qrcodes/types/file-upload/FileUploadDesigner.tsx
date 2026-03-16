@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface FileUploadDesignSettings extends DesignSettings {
   // File Upload-specific settings (minimal as it's a direct file link)
@@ -31,13 +32,14 @@ const tabs: DesignerTab[] = [
 ]
 
 export function FileUploadDesigner({ design, onChange }: FileUploadDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<FileUploadDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderFileOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">File Display Options</h4>
+      <h4 className="font-medium text-gray-900">{t('File Display Options')}</h4>
 
       {/* Display Options */}
       <div className="space-y-2">
@@ -50,7 +52,7 @@ export function FileUploadDesigner({ design, onChange }: FileUploadDesignerProps
             className="rounded border-gray-300"
           />
           <label htmlFor="showFileName" className="text-sm text-gray-700">
-            Show File Name
+            {t('Show File Name')}
           </label>
         </div>
 
@@ -63,7 +65,7 @@ export function FileUploadDesigner({ design, onChange }: FileUploadDesignerProps
             className="rounded border-gray-300"
           />
           <label htmlFor="showFileSize" className="text-sm text-gray-700">
-            Show File Size
+            {t('Show File Size')}
           </label>
         </div>
 
@@ -76,7 +78,7 @@ export function FileUploadDesigner({ design, onChange }: FileUploadDesignerProps
             className="rounded border-gray-300"
           />
           <label htmlFor="showFileType" className="text-sm text-gray-700">
-            Show File Type
+            {t('Show File Type')}
           </label>
         </div>
 
@@ -89,7 +91,7 @@ export function FileUploadDesigner({ design, onChange }: FileUploadDesignerProps
             className="rounded border-gray-300"
           />
           <label htmlFor="showPreview" className="text-sm text-gray-700">
-            Show Preview (for images/PDFs)
+            {t('Show Preview (for images/PDFs)')}
           </label>
         </div>
       </div>
@@ -97,12 +99,12 @@ export function FileUploadDesigner({ design, onChange }: FileUploadDesignerProps
       {/* Preview Size */}
       {design.showPreview && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Preview Size</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Preview Size')}</label>
           <div className="flex flex-wrap gap-2">
             {[
-              { value: 'small', label: 'Small' },
-              { value: 'medium', label: 'Medium' },
-              { value: 'large', label: 'Large' },
+              { value: 'small', label: t('Small') },
+              { value: 'medium', label: t('Medium') },
+              { value: 'large', label: t('Large') },
             ].map(option => (
               <button
                 key={option.value}
@@ -127,12 +129,12 @@ export function FileUploadDesigner({ design, onChange }: FileUploadDesignerProps
 
       {/* Icon Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Icon Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Icon Style')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'default', label: 'Default' },
-            { value: 'minimal', label: 'Minimal' },
-            { value: 'colorful', label: 'Colorful' },
+            { value: 'default', label: t('Default') },
+            { value: 'minimal', label: t('Minimal') },
+            { value: 'colorful', label: t('Colorful') },
           ].map(option => (
             <button
               key={option.value}
@@ -154,21 +156,21 @@ export function FileUploadDesigner({ design, onChange }: FileUploadDesignerProps
 
       {/* Download Button */}
       <div className="space-y-3">
-        <h5 className="text-sm font-medium text-gray-700">Download Button</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Download Button')}</h5>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text')}</label>
           <input
             type="text"
-            value={design.downloadButtonText || 'Download File'}
+            value={design.downloadButtonText || t('Download File')}
             onChange={e => updateDesign({ downloadButtonText: e.target.value })}
-            placeholder="Download File"
+            placeholder={t('Download File')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -186,7 +188,7 @@ export function FileUploadDesigner({ design, onChange }: FileUploadDesignerProps
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Text Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"

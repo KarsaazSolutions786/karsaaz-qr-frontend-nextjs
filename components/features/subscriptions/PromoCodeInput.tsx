@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { useValidatePromoCode } from '@/lib/hooks/mutations/useValidatePromoCode'
 
 interface PromoCodeInputProps {
@@ -14,6 +15,7 @@ export function PromoCodeInput({
   onPromoApplied,
   onPromoRemoved,
 }: PromoCodeInputProps) {
+  const { t } = useTranslation()
   const [code, setCode] = useState('')
   const [appliedCode, setAppliedCode] = useState<string>()
   const [error, setError] = useState<string>()
@@ -36,10 +38,10 @@ export function PromoCodeInput({
         onPromoApplied(code.toUpperCase(), result.discountedPrice)
         setCode('')
       } else {
-        setError('Invalid or expired promo code')
+        setError(t('Invalid or expired promo code'))
       }
     } catch (err) {
-      setError('Invalid or expired promo code')
+      setError(t('Invalid or expired promo code'))
     }
   }
 
@@ -54,7 +56,7 @@ export function PromoCodeInput({
       <div className="flex items-center justify-between rounded-lg border border-green-300 bg-green-50 p-4">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-green-800">
-            Promo code applied: <strong>{appliedCode}</strong>
+            {t('Promo code applied:')} <strong>{appliedCode}</strong>
           </span>
         </div>
         <button
@@ -62,7 +64,7 @@ export function PromoCodeInput({
           onClick={handleRemove}
           className="text-sm font-medium text-green-700 hover:text-green-800"
         >
-          Remove
+          {t('Remove')}
         </button>
       </div>
     )
@@ -71,7 +73,7 @@ export function PromoCodeInput({
   return (
     <div>
       <label htmlFor="promo-code" className="block text-sm font-medium text-gray-700">
-        Promo Code (Optional)
+        {t('Promo Code (Optional)')}
       </label>
       <div className="mt-1 flex gap-2">
         <input
@@ -79,7 +81,7 @@ export function PromoCodeInput({
           id="promo-code"
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="Enter code"
+          placeholder={t('Enter code')}
           className="block flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
         <button
@@ -88,7 +90,7 @@ export function PromoCodeInput({
           disabled={!code || validatePromo.isPending}
           className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {validatePromo.isPending ? 'Checking...' : 'Apply'}
+          {validatePromo.isPending ? t('Checking...') : t('Apply')}
         </button>
       </div>
       {error && (

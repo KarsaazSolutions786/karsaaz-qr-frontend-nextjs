@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { EyeShapeFields, CornerFields } from '../fields'
 import type { QRDesign } from './types'
+import { useTranslation } from '@/lib/i18n'
 
 interface AdvancedSettingsTabProps {
   design: QRDesign
@@ -12,10 +13,11 @@ interface AdvancedSettingsTabProps {
 }
 
 export default function AdvancedSettingsTab({ design, onChange }: AdvancedSettingsTabProps) {
+  const { t } = useTranslation()
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="error-correction">Error Correction Level</Label>
+        <Label htmlFor="error-correction">{t('Error Correction Level')}</Label>
         <select
           id="error-correction"
           value={design.errorCorrectionLevel}
@@ -27,14 +29,14 @@ export default function AdvancedSettingsTab({ design, onChange }: AdvancedSettin
           }
           className="w-full px-3 py-2 border rounded-md"
         >
-          <option value="L">Low (7%)</option>
-          <option value="M">Medium (15%)</option>
-          <option value="Q">Quartile (25%)</option>
-          <option value="H">High (30%)</option>
+          <option value="L">{t('Low (7%)')}</option>
+          <option value="M">{t('Medium (15%)')}</option>
+          <option value="Q">{t('Quartile (25%)')}</option>
+          <option value="H">{t('High (30%)')}</option>
         </select>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="quiet-zone">Quiet Zone: {design.quietZone}px</Label>
+        <Label htmlFor="quiet-zone">{t('Quiet Zone:')} {design.quietZone}px</Label>
         <Input
           id="quiet-zone"
           type="range"
@@ -53,12 +55,12 @@ export default function AdvancedSettingsTab({ design, onChange }: AdvancedSettin
             onChange={e => onChange({ ...design, roundedCorners: e.target.checked })}
             className="w-4 h-4"
           />
-          <Label htmlFor="rounded-corners">Rounded Corners</Label>
+          <Label htmlFor="rounded-corners">{t('Rounded Corners')}</Label>
         </div>
       </div>
       {design.roundedCorners && (
         <div className="space-y-2">
-          <Label htmlFor="corner-radius">Corner Radius: {design.cornerRadius}px</Label>
+          <Label htmlFor="corner-radius">{t('Corner Radius:')} {design.cornerRadius}px</Label>
           <Input
             id="corner-radius"
             type="range"
@@ -71,7 +73,7 @@ export default function AdvancedSettingsTab({ design, onChange }: AdvancedSettin
       )}
 
       <div className="border-t pt-4">
-        <Label className="mb-3 block">Eye Shape</Label>
+        <Label className="mb-3 block">{t('Eye Shape')}</Label>
         <EyeShapeFields
           eyeSettings={{
             outerShape: 'square',
@@ -83,7 +85,7 @@ export default function AdvancedSettingsTab({ design, onChange }: AdvancedSettin
       </div>
 
       <div className="border-t pt-4">
-        <Label className="mb-3 block">Corner Style</Label>
+        <Label className="mb-3 block">{t('Corner Style')}</Label>
         <CornerFields
           cornerSettings={{
             style: design.roundedCorners ? 'rounded' : 'square',

@@ -12,6 +12,7 @@ import { usersAPI } from '@/lib/api/endpoints/users'
 import { queryKeys } from '@/lib/query/keys'
 import { SubuserInviteModal } from '@/components/features/users/SubuserInviteModal'
 import { SubuserPermissionsForm } from '@/components/features/users/SubuserPermissionsForm'
+import { useTranslation } from '@/lib/i18n'
 
 interface FormState {
   name: string
@@ -23,6 +24,7 @@ interface FormState {
 }
 
 export default function EditUserPage() {
+  const { t } = useTranslation()
   const params = useParams()
   const userId = params.id as string
 
@@ -118,9 +120,9 @@ export default function EditUserPage() {
   if (!user) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-12 text-center">
-        <p className="text-gray-600">User not found.</p>
+        <p className="text-gray-600">{t('User not found.')}</p>
         <Link href="/users" className="mt-4 inline-block text-blue-600 text-sm hover:underline">
-          Back to users
+          {t('Back to users')}
         </Link>
       </div>
     )
@@ -136,14 +138,14 @@ export default function EditUserPage() {
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Users
+        {t('Back to Users')}
       </Link>
 
       {/* Main form */}
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
         <div className="px-6 py-6 border-b border-gray-200 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Edit User</h1>
+            <h1 className="text-xl font-semibold text-gray-900">{t('Edit User')}</h1>
             <p className="mt-1 text-sm text-gray-500">ID: {user.id}</p>
           </div>
           {/* Email verification status */}
@@ -151,13 +153,13 @@ export default function EditUserPage() {
             {isEmailVerified ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-1 text-xs font-medium text-green-700">
                 <CheckCircle className="w-3 h-3" />
-                Email Verified
+                {t('Email Verified')}
               </span>
             ) : (
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-xs font-medium text-red-700">
                   <XCircle className="w-3 h-3" />
-                  Unverified
+                  {t('Unverified')}
                 </span>
                 <button
                   onClick={handleVerifyEmail}
@@ -167,7 +169,7 @@ export default function EditUserPage() {
                   {verifyEmailMutation.isPending ? (
                     <Loader2 className="w-3 h-3 animate-spin inline" />
                   ) : null}{' '}
-                  Verify
+                  {t('Verify')}
                 </button>
               </div>
             )}
@@ -182,13 +184,13 @@ export default function EditUserPage() {
           )}
           {saved && (
             <div className="rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-700">
-              Changes saved successfully.
+              {t('Changes saved successfully.')}
             </div>
           )}
 
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Full Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Full Name')}</label>
             <input
               type="text"
               value={form.name}
@@ -201,7 +203,7 @@ export default function EditUserPage() {
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Email Address <span className="text-red-500">*</span>
+              {t('Email Address')} <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -214,7 +216,7 @@ export default function EditUserPage() {
 
           {/* Mobile */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Mobile Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Mobile Number')}</label>
             <input
               type="tel"
               value={form.mobile_number}
@@ -226,7 +228,7 @@ export default function EditUserPage() {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">New Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('New Password')}</label>
             <input
               type="password"
               value={form.password}
@@ -239,7 +241,7 @@ export default function EditUserPage() {
           {/* Password Confirmation */}
           {form.password && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Confirm New Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Confirm New Password')}</label>
               <input
                 type="password"
                 value={form.password_confirmation}
@@ -252,12 +254,12 @@ export default function EditUserPage() {
           {/* Role — hidden for sub-users */}
           {user.is_sub ? (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Role</label>
-              <p className="text-sm text-gray-500 italic">Sub User — role is managed by the parent account.</p>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Role')}</label>
+              <p className="text-sm text-gray-500 italic">{t('Sub User — role is managed by the parent account.')}</p>
             </div>
           ) : (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">Role</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Role')}</label>
               <select
                 value={form.role_id}
                 onChange={set('role_id')}
@@ -279,7 +281,7 @@ export default function EditUserPage() {
               href="/users"
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              Cancel
+              {t('Cancel')}
             </Link>
             <button
               type="submit"
@@ -287,7 +289,7 @@ export default function EditUserPage() {
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {updateMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              Save Changes
+              {t('Save Changes')}
             </button>
           </div>
         </form>
@@ -299,20 +301,20 @@ export default function EditUserPage() {
         <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
           <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-gray-900">Sub Users</h2>
-              <p className="mt-0.5 text-sm text-gray-500">Users associated with this account.</p>
+              <h2 className="text-base font-semibold text-gray-900">{t('Sub Users')}</h2>
+              <p className="mt-0.5 text-sm text-gray-500">{t('Users associated with this account.')}</p>
             </div>
             <button
               onClick={() => setShowInviteModal(true)}
               className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-500"
             >
               <UserPlus className="w-3.5 h-3.5" />
-              Invite Sub-User
+              {t('Invite Sub-User')}
             </button>
           </div>
           <div className="px-6 py-4">
             {!subUsers || (Array.isArray(subUsers) && subUsers.length === 0) ? (
-              <p className="text-sm text-gray-500 italic">No sub users found.</p>
+              <p className="text-sm text-gray-500 italic">{t('No sub users found.')}</p>
             ) : (
               <ul className="divide-y divide-gray-100">
                 {(Array.isArray(subUsers) ? subUsers : (subUsers as any)?.data || []).map((sub: any) => (
@@ -325,7 +327,7 @@ export default function EditUserPage() {
                       href={`/users/${sub.id}`}
                       className="text-xs text-blue-600 hover:text-blue-800"
                     >
-                      Edit
+                      {t('Edit')}
                     </Link>
                   </li>
                 ))}
@@ -337,8 +339,8 @@ export default function EditUserPage() {
         {/* Permissions */}
         <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-base font-semibold text-gray-900">Sub-User Permissions</h2>
-            <p className="mt-0.5 text-sm text-gray-500">Configure default permissions for sub-users.</p>
+            <h2 className="text-base font-semibold text-gray-900">{t('Sub-User Permissions')}</h2>
+            <p className="mt-0.5 text-sm text-gray-500">{t('Configure default permissions for sub-users.')}</p>
           </div>
           <div className="px-6 py-4">
             <SubuserPermissionsForm

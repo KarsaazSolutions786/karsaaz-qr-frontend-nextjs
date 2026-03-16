@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { format } from 'date-fns'
+import { useTranslation } from '@/lib/i18n'
 import type { ScanEvent } from '@/types/entities/analytics'
 
 interface ActivityFeedProps {
@@ -10,6 +11,8 @@ interface ActivityFeedProps {
 }
 
 export default function ActivityFeed({ scans, isLoading }: ActivityFeedProps) {
+  const { t } = useTranslation()
+
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -23,7 +26,7 @@ export default function ActivityFeed({ scans, isLoading }: ActivityFeedProps) {
   if (!scans || scans.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
-        <p className="text-sm text-gray-500">No recent activity</p>
+        <p className="text-sm text-gray-500">{t('No recent activity')}</p>
       </div>
     )
   }
@@ -38,9 +41,9 @@ export default function ActivityFeed({ scans, isLoading }: ActivityFeedProps) {
           <div className="flex-1">
             <p className="font-medium text-gray-900">{scan.qrcodeName}</p>
             <div className="mt-1 flex items-center gap-4 text-sm text-gray-500">
-              <span>{scan.location?.country || 'Unknown location'}</span>
+              <span>{scan.location?.country || t('Unknown location')}</span>
               <span>•</span>
-              <span>{scan.device.type || 'Unknown device'}</span>
+              <span>{scan.device.type || t('Unknown device')}</span>
               {scan.browser && (
                 <>
                   <span>•</span>

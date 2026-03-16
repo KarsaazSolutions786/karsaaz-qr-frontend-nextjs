@@ -4,6 +4,7 @@ import React from 'react'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
+import { useTranslation } from '@/lib/i18n'
 
 type StrokeStyle = 'solid' | 'dashed' | 'dotted'
 
@@ -25,6 +26,7 @@ const STROKE_STYLES: Array<{ type: StrokeStyle; name: string; dasharray: string 
 ]
 
 export default function OutlinedShapesFields({ value, onChange }: OutlinedShapesFieldsProps) {
+  const { t } = useTranslation()
   const handleStrokeWidthChange = (strokeWidth: number) => {
     onChange({ ...value, strokeWidth })
   }
@@ -41,7 +43,7 @@ export default function OutlinedShapesFields({ value, onChange }: OutlinedShapes
     <div className="space-y-6">
       {/* Stroke Width Slider */}
       <div className="space-y-3">
-        <Label htmlFor="stroke-width">Stroke Width: {value.strokeWidth}px</Label>
+        <Label htmlFor="stroke-width">{t('Stroke Width:')} {value.strokeWidth}px</Label>
         <Input
           id="stroke-width"
           type="range"
@@ -59,7 +61,7 @@ export default function OutlinedShapesFields({ value, onChange }: OutlinedShapes
 
       {/* Stroke Style Selector */}
       <div>
-        <Label className="mb-3 block">Stroke Style</Label>
+        <Label className="mb-3 block">{t('Stroke Style')}</Label>
         <div className="grid grid-cols-3 gap-3">
           {STROKE_STYLES.map(style => (
             <button
@@ -84,7 +86,7 @@ export default function OutlinedShapesFields({ value, onChange }: OutlinedShapes
                   />
                 </svg>
               </div>
-              <div className="text-xs font-medium text-center">{style.name}</div>
+              <div className="text-xs font-medium text-center">{t(style.name)}</div>
             </button>
           ))}
         </div>
@@ -92,7 +94,7 @@ export default function OutlinedShapesFields({ value, onChange }: OutlinedShapes
 
       {/* Fill Opacity Control */}
       <div className="space-y-3">
-        <Label htmlFor="fill-opacity">Fill Opacity: {Math.round(value.fillOpacity * 100)}%</Label>
+        <Label htmlFor="fill-opacity">{t('Fill Opacity:')} {Math.round(value.fillOpacity * 100)}%</Label>
         <Input
           id="fill-opacity"
           type="range"
@@ -103,14 +105,14 @@ export default function OutlinedShapesFields({ value, onChange }: OutlinedShapes
           onChange={e => handleFillOpacityChange(parseFloat(e.target.value))}
         />
         <div className="flex justify-between text-xs text-muted-foreground">
-          <span>Hollow</span>
-          <span>Filled</span>
+          <span>{t('Hollow')}</span>
+          <span>{t('Filled')}</span>
         </div>
       </div>
 
       {/* Outline Preview */}
       <div>
-        <Label className="mb-3 block">Preview</Label>
+        <Label className="mb-3 block">{t('Preview')}</Label>
         <Card className="p-6 bg-gray-50">
           <div className="flex items-center justify-center gap-4">
             {/* Square preview */}
@@ -127,7 +129,7 @@ export default function OutlinedShapesFields({ value, onChange }: OutlinedShapes
                   strokeDasharray={STROKE_STYLES.find(s => s.type === value.strokeStyle)?.dasharray}
                 />
               </svg>
-              <span className="text-xs text-muted-foreground">Square</span>
+              <span className="text-xs text-muted-foreground">{t('Square')}</span>
             </div>
             {/* Circle preview */}
             <div className="text-center">
@@ -142,7 +144,7 @@ export default function OutlinedShapesFields({ value, onChange }: OutlinedShapes
                   strokeDasharray={STROKE_STYLES.find(s => s.type === value.strokeStyle)?.dasharray}
                 />
               </svg>
-              <span className="text-xs text-muted-foreground">Circle</span>
+              <span className="text-xs text-muted-foreground">{t('Circle')}</span>
             </div>
             {/* Rounded preview */}
             <div className="text-center">
@@ -159,7 +161,7 @@ export default function OutlinedShapesFields({ value, onChange }: OutlinedShapes
                   strokeDasharray={STROKE_STYLES.find(s => s.type === value.strokeStyle)?.dasharray}
                 />
               </svg>
-              <span className="text-xs text-muted-foreground">Rounded</span>
+              <span className="text-xs text-muted-foreground">{t('Rounded')}</span>
             </div>
           </div>
         </Card>
@@ -169,8 +171,7 @@ export default function OutlinedShapesFields({ value, onChange }: OutlinedShapes
       {value.fillOpacity < 0.3 && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
           <p className="text-xs text-amber-800">
-            <strong>⚠️ Scanning Notice:</strong> Very low fill opacity may reduce QR code
-            scannability. Consider using at least 30% fill for reliable scanning.
+            <strong>{t('Scanning Notice:')}</strong> {t('Very low fill opacity may reduce QR code scannability. Consider using at least 30% fill for reliable scanning.')}
           </p>
         </div>
       )}

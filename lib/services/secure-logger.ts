@@ -15,6 +15,8 @@ const isProduction = (): boolean => {
 
 const isDebugMode = (): boolean => {
   if (typeof window === 'undefined') return false;
+  // Only allow debug mode in development, never in production
+  if (isProduction()) return false;
   return localStorage.getItem('debug_mode') === 'true';
 };
 
@@ -76,19 +78,6 @@ class SecureLogger {
     console.error('[ERROR]', ...this.sanitize(args));
   }
 
-  /** Enable debug mode (admin-only, saved to localStorage) */
-  enableDebug(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('debug_mode', 'true');
-    }
-  }
-
-  /** Disable debug mode */
-  disableDebug(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('debug_mode');
-    }
-  }
 }
 
 export const secureLogger = SecureLogger.getInstance();

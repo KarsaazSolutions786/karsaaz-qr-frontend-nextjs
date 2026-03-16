@@ -1,6 +1,7 @@
 'use client'
 
-import { useOnlineStatus } from '@/hooks/useOnlineStatus'
+import { useOnlineStatus } from '@/lib/hooks/useOnlineStatus'
+import { useTranslation } from '@/lib/i18n'
 import { WifiOff } from 'lucide-react'
 
 /**
@@ -8,6 +9,7 @@ import { WifiOff } from 'lucide-react'
  * Automatically hides when connectivity is restored.
  */
 export function OfflineNotification() {
+  const { t } = useTranslation()
   const isOnline = useOnlineStatus()
 
   if (isOnline) return null
@@ -18,7 +20,7 @@ export function OfflineNotification() {
       className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-lg bg-yellow-50 border border-yellow-200 px-4 py-3 text-sm text-yellow-800 shadow-lg"
     >
       <WifiOff className="h-4 w-4 flex-shrink-0" />
-      <span>You are offline. Some features may be unavailable.</span>
+      <span>{t('You are offline. Some features may be unavailable.')}</span>
     </div>
   )
 }

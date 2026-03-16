@@ -53,12 +53,49 @@ function setupLocalStorageMock() {
   })
 }
 
+// ---- Location mock ----
+// jsdom throws "Not implemented: navigation" when setting window.location.href.
+// Replace window.location with a writable stub so the 401 redirect test works.
+let locationHref = ''
+
+function setupLocationMock() {
+  locationHref = ''
+  const locationMock = {
+    get href() {
+      return locationHref
+    },
+    set href(url: string) {
+      locationHref = url
+    },
+    assign: vi.fn((url: string) => { locationHref = url }),
+    replace: vi.fn((url: string) => { locationHref = url }),
+    reload: vi.fn(),
+    toString: () => locationHref,
+    origin: 'http://localhost',
+    protocol: 'http:',
+    host: 'localhost',
+    hostname: 'localhost',
+    port: '',
+    pathname: '/',
+    search: '',
+    hash: '',
+    ancestorOrigins: {} as DOMStringList,
+  } as unknown as Location
+
+  Object.defineProperty(window, 'location', {
+    value: locationMock,
+    writable: true,
+    configurable: true,
+  })
+}
+
 // ---- Tests ----
 
 describe('API Client', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     setupLocalStorageMock()
+    setupLocationMock()
     // Re-import client module fresh for each test is complex,
     // so we test via the interceptor behavior directly.
   })
@@ -187,7 +224,7 @@ describe('API Client', () => {
 
       const error = {
         response: { status: 401 },
-        config: { url: '/myself', _retry: false } as InternalAxiosRequestConfig,
+        config: { url: '/myself', _retry: false } as unknown as InternalAxiosRequestConfig,
         isAxiosError: true,
       }
 
@@ -195,6 +232,7 @@ describe('API Client', () => {
 
       expect(window.localStorage.removeItem).toHaveBeenCalledWith('user')
       expect(window.localStorage.removeItem).toHaveBeenCalledWith('token')
+      expect(locationHref).toBe('/login')
     })
 
     it('should NOT redirect on 401 for login request', async () => {
@@ -205,7 +243,7 @@ describe('API Client', () => {
 
       const error = {
         response: { status: 401 },
-        config: { url: '/login', _retry: false } as InternalAxiosRequestConfig,
+        config: { url: '/login', _retry: false } as unknown as InternalAxiosRequestConfig,
         isAxiosError: true,
       }
 
@@ -225,7 +263,7 @@ describe('API Client', () => {
 
       const error = {
         response: { status: 500, data: { message: 'Server Error' } },
-        config: { url: '/api/test', _silent: true, _retry: false } as InternalAxiosRequestConfig,
+        config: { url: '/api/test', _silent: true, _retry: false } as unknown as InternalAxiosRequestConfig,
         isAxiosError: true,
       }
 
@@ -245,7 +283,7 @@ describe('API Client', () => {
           status: 500,
           data: { message: 'Internal Server Error' },
         },
-        config: { url: '/api/data', _retry: false } as InternalAxiosRequestConfig,
+        config: { url: '/api/data', _retry: false } as unknown as InternalAxiosRequestConfig,
         isAxiosError: true,
         message: 'Request failed',
       }
@@ -269,7 +307,7 @@ describe('API Client', () => {
           headers: { 'retry-after': '30' },
           data: {},
         },
-        config: { url: '/api/test', _retry: false } as InternalAxiosRequestConfig,
+        config: { url: '/api/test', _retry: false } as unknown as InternalAxiosRequestConfig,
         isAxiosError: true,
       }
 
@@ -286,7 +324,7 @@ describe('API Client', () => {
 
       const error = {
         response: { status: 429, headers: {}, data: {} },
-        config: { url: '/api/test', _retry: false } as InternalAxiosRequestConfig,
+        config: { url: '/api/test', _retry: false } as unknown as InternalAxiosRequestConfig,
         isAxiosError: true,
       }
 
@@ -305,7 +343,7 @@ describe('API Client', () => {
 
       const error = {
         response: { status: 404, data: {} },
-        config: { url: '/config', _retry: false } as InternalAxiosRequestConfig,
+        config: { url: '/config', _retry: false } as unknown as InternalAxiosRequestConfig,
         isAxiosError: true,
       }
 
@@ -324,7 +362,7 @@ describe('API Client', () => {
 
       const error = {
         response: undefined,
-        config: { url: '/api/test', _retry: false } as InternalAxiosRequestConfig,
+        config: { url: '/api/test', _retry: false } as unknown as InternalAxiosRequestConfig,
         code: 'ECONNABORTED',
         isAxiosError: true,
         message: 'timeout',
@@ -343,7 +381,7 @@ describe('API Client', () => {
 
       const error = {
         response: undefined,
-        config: { url: '/api/test', _retry: false } as InternalAxiosRequestConfig,
+        config: { url: '/api/test', _retry: false } as unknown as InternalAxiosRequestConfig,
         code: 'ERR_NETWORK',
         isAxiosError: true,
         message: 'Network Error',

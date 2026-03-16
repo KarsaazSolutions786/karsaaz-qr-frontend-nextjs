@@ -1,6 +1,7 @@
 'use client';
 
 import React, { type JSX } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import {
   BiolinkBlock,
   BlockType,
@@ -21,6 +22,7 @@ interface BiolinksPreviewProps {
 }
 
 export function BiolinksPreview({ profile, blocks, theme }: BiolinksPreviewProps) {
+  const { t } = useTranslation();
   const visibleBlocks = blocks.filter((block) => block.visible).sort((a, b) => a.order - b.order);
 
   const getBackgroundStyle = () => {
@@ -139,7 +141,7 @@ export function BiolinksPreview({ profile, blocks, theme }: BiolinksPreviewProps
             className="block w-full px-6 py-4 text-center font-medium transition-transform hover:scale-105"
             style={getButtonStyle()}
           >
-            ✉️ {emailBlock.buttonText || 'Send Email'}
+            ✉️ {emailBlock.buttonText || t('Send Email')}
           </a>
         );
 
@@ -152,7 +154,7 @@ export function BiolinksPreview({ profile, blocks, theme }: BiolinksPreviewProps
               className="flex-1 px-6 py-4 text-center font-medium transition-transform hover:scale-105"
               style={getButtonStyle()}
             >
-              📞 {phoneBlock.buttonText || 'Call Now'}
+              📞 {phoneBlock.buttonText || t('Call Now')}
             </a>
             {phoneBlock.showWhatsApp && (
               <a
@@ -183,7 +185,7 @@ export function BiolinksPreview({ profile, blocks, theme }: BiolinksPreviewProps
       default:
         return (
           <div className="text-center text-gray-500 text-sm">
-            Preview for {block.type} coming soon
+            {t('Preview for')} {block.type} {t('coming soon')}
           </div>
         );
     }
@@ -192,7 +194,7 @@ export function BiolinksPreview({ profile, blocks, theme }: BiolinksPreviewProps
   return (
     <div className="h-full flex flex-col bg-gray-100 rounded-lg overflow-hidden">
       <div className="bg-gray-800 text-white text-center py-2 text-sm font-medium">
-        📱 Live Preview
+        {t('Live Preview')}
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
@@ -245,7 +247,7 @@ export function BiolinksPreview({ profile, blocks, theme }: BiolinksPreviewProps
                 ) : (
                   <div className="text-center py-12 opacity-50">
                     <div className="text-4xl mb-2">📱</div>
-                    <p style={{ color: theme.textColor }}>Add blocks to see them here</p>
+                    <p style={{ color: theme.textColor }}>{t('Add blocks to see them here')}</p>
                   </div>
                 )}
               </div>

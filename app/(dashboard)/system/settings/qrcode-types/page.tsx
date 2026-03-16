@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
+import { useTranslation } from '@/lib/i18n'
 
 const CONFIG_KEYS = [
   'app.available_qrcode_types',
@@ -33,6 +34,7 @@ const ERROR_CORRECTION_OPTIONS = [
 ]
 
 export default function QrCodeTypesSettingsPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
   const { mutateAsync: save, isPending: isSaving, error } = useSaveSystemConfigs(CONFIG_KEYS)
   const [formData, setFormData] = useState<Record<string, string>>({})
@@ -81,27 +83,27 @@ export default function QrCodeTypesSettingsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">QR Code Types Settings</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('QR Code Types Settings')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Configure which QR code types are available and their defaults.
+          {t('Configure which QR code types are available and their defaults.')}
         </p>
       </div>
 
       {error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
       <form onSubmit={handleSave} className="space-y-8">
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold text-gray-900">Available QR Code Types</h2>
-          <p className="mb-4 text-sm text-gray-500">Select which QR code types users can create.</p>
+          <h2 className="mb-2 text-lg font-semibold text-gray-900">{t('Available QR Code Types')}</h2>
+          <p className="mb-4 text-sm text-gray-500">{t('Select which QR code types users can create.')}</p>
           <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
             {QR_TYPE_OPTIONS.map(({ value, label }) => (
               <label
@@ -121,7 +123,7 @@ export default function QrCodeTypesSettingsPage() {
         </section>
 
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Defaults</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Defaults')}</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -155,9 +157,9 @@ export default function QrCodeTypesSettingsPage() {
         </section>
 
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold text-gray-900">Prevented Slugs</h2>
+          <h2 className="mb-2 text-lg font-semibold text-gray-900">{t('Prevented Slugs')}</h2>
           <p className="mb-4 text-sm text-gray-500">
-            Slugs that cannot be used for QR codes. Enter one per line or comma-separated.
+            {t('Slugs that cannot be used for QR codes. Enter one per line or comma-separated.')}
           </p>
           <textarea
             rows={5}
@@ -174,7 +176,7 @@ export default function QrCodeTypesSettingsPage() {
             disabled={isSaving}
             className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
-            {isSaving ? 'Saving…' : 'Save Settings'}
+            {isSaving ? t('Saving...') : t('Save Settings')}
           </button>
         </div>
       </form>

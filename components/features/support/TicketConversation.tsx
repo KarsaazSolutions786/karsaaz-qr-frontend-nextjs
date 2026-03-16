@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { TicketMessage } from '@/types/entities/support-ticket'
+import { useTranslation } from '@/lib/i18n'
 
 interface TicketConversationProps {
   messages: TicketMessage[]
@@ -10,6 +11,7 @@ interface TicketConversationProps {
 }
 
 export default function TicketConversation({ messages, onReply, isReplying }: TicketConversationProps) {
+  const { t } = useTranslation()
   const [replyText, setReplyText] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,7 +26,7 @@ export default function TicketConversation({ messages, onReply, isReplying }: Ti
       {/* Message thread */}
       <div className="space-y-4">
         {messages.length === 0 ? (
-          <p className="text-center text-sm text-gray-500 py-8">No messages yet</p>
+          <p className="text-center text-sm text-gray-500 py-8">{t('No messages yet')}</p>
         ) : (
           messages.map((msg) => {
             const isUser = msg.sender_type === 'user'
@@ -57,14 +59,14 @@ export default function TicketConversation({ messages, onReply, isReplying }: Ti
       {/* Reply form */}
       <form onSubmit={handleSubmit} className="border-t pt-4">
         <label htmlFor="reply" className="block text-sm font-medium text-gray-700 mb-2">
-          Reply
+          {t('Reply')}
         </label>
         <textarea
           id="reply"
           rows={4}
           value={replyText}
           onChange={(e) => setReplyText(e.target.value)}
-          placeholder="Type your reply..."
+          placeholder={t('Type your reply...')}
           className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
         <div className="mt-3 flex justify-end">
@@ -73,7 +75,7 @@ export default function TicketConversation({ messages, onReply, isReplying }: Ti
             disabled={isReplying || !replyText.trim()}
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
           >
-            {isReplying ? 'Sending...' : 'Send Reply'}
+            {isReplying ? t('Sending...') : t('Send Reply')}
           </button>
         </div>
       </form>

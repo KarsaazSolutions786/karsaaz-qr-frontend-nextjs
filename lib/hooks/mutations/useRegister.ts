@@ -25,9 +25,11 @@ export function useRegister() {
       })
     },
     onSuccess: (response, variables) => {
-      // Store token + user immediately (even before email verification)
+      // Store session flag + user immediately (even before email verification).
+      // Token is stored in httpOnly cookie by backend.
       if (response.token && typeof window !== 'undefined') {
-        localStorage.setItem('token', response.token)
+        localStorage.setItem('logged_in', 'true')
+        localStorage.removeItem('token') // Clean up legacy token
       }
       if (response.user) {
         setUser(response.user)

@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import DOMPurify from 'dompurify'
 import { DynamicBlockDefinition, DynamicBlockData } from '@/types/entities/dynamic-blocks'
 
 interface DynamicBlockPreviewProps {
@@ -56,7 +57,7 @@ export function DynamicBlockPreview({ definition, block }: DynamicBlockPreviewPr
 
       case 'custom-code':
         return (
-          <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: value }} />
+          <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(value) }} />
         )
 
       case 'textarea':

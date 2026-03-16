@@ -8,6 +8,7 @@ import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
 import { useCheckout } from '@/lib/hooks/mutations/useSubscribe'
 import Link from 'next/link'
 import { CreditCard, Building2, Wallet, RefreshCcw, Shield, ArrowLeft } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 // Development fallback processors (used when API fails or returns empty)
 const DEV_FALLBACK_PROCESSORS: PaymentProcessor[] = [
@@ -32,6 +33,7 @@ const ProcessorIcon = ({ slug }: { slug: string }) => {
 }
 
 function CheckoutContent() {
+  const { t } = useTranslation()
   const searchParams = useSearchParams()
   const planId = searchParams.get('plan-id') || searchParams.get('plan')
   const isChangePlan = searchParams.get('action') === 'change-plan'
@@ -89,7 +91,7 @@ function CheckoutContent() {
       }
     } catch (error) {
       console.error('[Checkout] Failed to fetch payment processors:', error)
-      setProcessorError('Failed to load payment methods.')
+      setProcessorError(t('Failed to load payment methods.'))
 
       // Use fallback in development
       if (process.env.NODE_ENV === 'development') {
@@ -126,7 +128,7 @@ function CheckoutContent() {
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading checkout...</p>
+          <p className="mt-4 text-gray-600">{t('Loading checkout...')}</p>
         </div>
       </div>
     )
@@ -140,16 +142,16 @@ function CheckoutContent() {
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl">⚠️</span>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Invalid Plan</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('Invalid Plan')}</h2>
           <p className="mt-2 text-gray-600">
-            The selected plan could not be found. Please select a plan from our pricing page.
+            {t('The selected plan could not be found. Please select a plan from our pricing page.')}
           </p>
           <Link
             href="/pricing"
             className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            View Pricing
+            {t('View Pricing')}
           </Link>
         </div>
       </div>
@@ -166,30 +168,30 @@ function CheckoutContent() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
-            {isChangePlan ? 'Change Plan' : 'Complete Your Purchase'}
+            {isChangePlan ? t('Change Plan') : t('Complete Your Purchase')}
           </h1>
           <p className="mt-2 text-gray-600">
-            You&apos;re subscribing to the{' '}
-            <span className="font-semibold text-primary-600">{selectedPlan.name}</span> plan
+            {t("You're subscribing to the")}{' '}
+            <span className="font-semibold text-primary-600">{selectedPlan.name}</span> {t('plan')}
           </p>
         </div>
 
         <div className="space-y-6">
           {/* Order Summary Card */}
           <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('Order Summary')}</h2>
             <dl className="space-y-3">
               <div className="flex justify-between py-2 border-b border-gray-100">
-                <dt className="text-gray-600">Plan</dt>
-                <dd className="font-medium text-gray-900">{selectedPlan.name} Plan</dd>
+                <dt className="text-gray-600">{t('Plan')}</dt>
+                <dd className="font-medium text-gray-900">{selectedPlan.name} {t('Plan')}</dd>
               </div>
 
               {selectedPlan.limits.maxQRCodes !== null && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
-                  <dt className="text-gray-600">Dynamic QR codes</dt>
+                  <dt className="text-gray-600">{t('Dynamic QR codes')}</dt>
                   <dd className="font-medium text-primary-600">
                     {selectedPlan.limits.maxQRCodes === -1
-                      ? 'Unlimited'
+                      ? t('Unlimited')
                       : selectedPlan.limits.maxQRCodes?.toLocaleString()}
                   </dd>
                 </div>
@@ -197,24 +199,24 @@ function CheckoutContent() {
 
               {selectedPlan.limits.maxScans !== null && (
                 <div className="flex justify-between py-2 border-b border-gray-100">
-                  <dt className="text-gray-600">Scans</dt>
+                  <dt className="text-gray-600">{t('Scans')}</dt>
                   <dd className="font-medium text-primary-600">
                     {selectedPlan.limits.maxScans === -1
-                      ? 'Unlimited'
+                      ? t('Unlimited')
                       : selectedPlan.limits.maxScans?.toLocaleString()}
                   </dd>
                 </div>
               )}
 
               <div className="flex justify-between py-2 border-b border-gray-100">
-                <dt className="text-gray-600">Billing Frequency</dt>
+                <dt className="text-gray-600">{t('Billing Frequency')}</dt>
                 <dd className="font-medium text-gray-900 capitalize">
                   {selectedPlan.frequency ?? 'monthly'}
                 </dd>
               </div>
 
               <div className="flex justify-between pt-4 border-t-2 border-gray-200">
-                <dt className="text-lg font-bold text-gray-900">Total</dt>
+                <dt className="text-lg font-bold text-gray-900">{t('Total')}</dt>
                 <dd className="text-lg font-bold text-gray-900">
                   {currencySymbol}{price}
                   <span className="text-sm font-normal text-gray-500">
@@ -231,10 +233,9 @@ function CheckoutContent() {
               <div className="flex items-start gap-3">
                 <span className="text-blue-500 text-lg">🔧</span>
                 <div className="text-sm">
-                  <p className="font-medium text-blue-800">Development Mode</p>
+                  <p className="font-medium text-blue-800">{t('Development Mode')}</p>
                   <p className="text-blue-600 mt-1">
-                    Using fallback payment processors. Configure your backend payment processors
-                    for production.
+                    {t('Using fallback payment processors. Configure your backend payment processors for production.')}
                   </p>
                 </div>
               </div>
@@ -244,7 +245,7 @@ function CheckoutContent() {
           {/* Payment Method Selection */}
           {processors.length > 0 && (
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Select Payment Method</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('Select Payment Method')}</h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {processors.map((proc) => (
                   <button
@@ -275,9 +276,9 @@ function CheckoutContent() {
                         {proc.name || proc.slug}
                       </span>
                       <span className="text-xs text-gray-500">
-                        {proc.slug === 'stripe' && 'Credit/Debit Card'}
-                        {proc.slug === 'paypal' && 'PayPal Account'}
-                        {!['stripe', 'paypal'].includes(proc.slug) && 'Payment Gateway'}
+                        {proc.slug === 'stripe' && t('Credit/Debit Card')}
+                        {proc.slug === 'paypal' && t('PayPal Account')}
+                        {!['stripe', 'paypal'].includes(proc.slug) && t('Payment Gateway')}
                       </span>
                     </div>
                     {selectedProcessor === proc.slug && (
@@ -317,17 +318,17 @@ function CheckoutContent() {
                     className="mt-4 inline-flex items-center gap-2 text-sm text-amber-700 hover:text-amber-800 font-medium"
                   >
                     <RefreshCcw className="w-4 h-4" />
-                    Try Again
+                    {t('Try Again')}
                   </button>
                 </>
               ) : (
                 <>
                   <span className="text-3xl mb-3 block">🔧</span>
                   <p className="text-sm text-amber-700 font-medium mb-2">
-                    No payment processors are currently configured.
+                    {t('No payment processors are currently configured.')}
                   </p>
                   <p className="text-xs text-amber-600">
-                    Please configure payment processors in the admin dashboard at{' '}
+                    {t('Please configure payment processors in the admin dashboard at')}{' '}
                     <code className="bg-amber-100 px-1 rounded">/dashboard/payment-processors</code>
                   </p>
                 </>
@@ -361,12 +362,12 @@ function CheckoutContent() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                     />
                   </svg>
-                  Processing Payment...
+                  {t('Processing Payment...')}
                 </span>
               ) : (
                 <span className="flex items-center justify-center gap-2">
                   <Shield className="w-5 h-5" />
-                  Pay {currencySymbol}{price}
+                  {t('Pay')} {currencySymbol}{price}
                 </span>
               )}
             </button>
@@ -378,10 +379,9 @@ function CheckoutContent() {
               <div className="flex items-start gap-3">
                 <span className="text-red-500 text-lg">❌</span>
                 <div className="text-sm">
-                  <p className="font-medium text-red-800">Payment Failed</p>
+                  <p className="font-medium text-red-800">{t('Payment Failed')}</p>
                   <p className="text-red-600 mt-1">
-                    Unable to process payment. Please try again or choose a different payment
-                    method.
+                    {t('Unable to process payment. Please try again or choose a different payment method.')}
                   </p>
                 </div>
               </div>
@@ -391,20 +391,20 @@ function CheckoutContent() {
           {/* Security Notice */}
           <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
             <Shield className="w-4 h-4" />
-            <span>Secure payment powered by {selectedProcessor || 'trusted providers'}</span>
+            <span>{t('Secure payment powered by')} {selectedProcessor || t('trusted providers')}</span>
           </div>
 
           {/* Terms */}
           <p className="text-center text-xs text-gray-500">
-            By subscribing, you agree to our{' '}
+            {t('By subscribing, you agree to our')}{' '}
             <Link href="/terms" className="text-primary-600 hover:underline">
-              Terms of Service
+              {t('Terms of Service')}
             </Link>{' '}
-            and{' '}
+            {t('and')}{' '}
             <Link href="/privacy" className="text-primary-600 hover:underline">
-              Privacy Policy
+              {t('Privacy Policy')}
             </Link>
-            . You can cancel at any time.
+            {t('. You can cancel at any time.')}
           </p>
 
           {/* Back Link */}
@@ -414,7 +414,7 @@ function CheckoutContent() {
               className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Pricing
+              {t('Back to Pricing')}
             </Link>
           </div>
         </div>
@@ -424,13 +424,14 @@ function CheckoutContent() {
 }
 
 export default function CheckoutPage() {
+  const { t } = useTranslation()
   return (
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading checkout...</p>
+            <p className="mt-4 text-gray-600">{t('Loading checkout...')}</p>
           </div>
         </div>
       }

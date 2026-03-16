@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 interface Connection {
   id: string
@@ -79,6 +80,7 @@ const initialConnections: Connection[] = [
 ]
 
 export default function ConnectionsPage() {
+  const { t } = useTranslation()
   const [connections, setConnections] = useState<Connection[]>(initialConnections)
   const [filter, setFilter] = useState<string>('All')
 
@@ -99,14 +101,14 @@ export default function ConnectionsPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Connections</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Connections')}</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Manage third-party integrations and API connections
+            {t('Manage third-party integrations and API connections')}
           </p>
         </div>
         <div className="mt-4 sm:mt-0">
           <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">
-            {connectedCount} connected
+            {connectedCount} {t('connected')}
           </span>
         </div>
       </div>
@@ -123,7 +125,7 @@ export default function ConnectionsPage() {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            {cat}
+            {t(cat)}
           </button>
         ))}
       </div>
@@ -146,11 +148,11 @@ export default function ConnectionsPage() {
                     : 'bg-gray-100 text-gray-500'
                 }`}
               >
-                {conn.connected ? 'Connected' : 'Not connected'}
+                {conn.connected ? t('Connected') : t('Not connected')}
               </span>
             </div>
             <h3 className="mt-3 text-sm font-semibold text-gray-900">{conn.name}</h3>
-            <p className="mt-1 text-xs text-gray-500 line-clamp-2">{conn.description}</p>
+            <p className="mt-1 text-xs text-gray-500 line-clamp-2">{t(conn.description)}</p>
             <div className="mt-4">
               <button
                 onClick={() => toggleConnection(conn.id)}
@@ -160,7 +162,7 @@ export default function ConnectionsPage() {
                     : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
               >
-                {conn.connected ? 'Disconnect' : 'Connect'}
+                {conn.connected ? t('Disconnect') : t('Connect')}
               </button>
             </div>
           </div>

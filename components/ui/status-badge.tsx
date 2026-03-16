@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface StatusBadgeProps {
   status: 'active' | 'inactive' | 'pending' | 'error'
@@ -25,6 +26,7 @@ const defaultLabels: Record<StatusBadgeProps['status'], string> = {
 }
 
 export function StatusBadge({ status, label, animated = false, className }: StatusBadgeProps) {
+  const { t } = useTranslation()
   const styles = statusStyles[status]
   return (
     <span
@@ -41,7 +43,7 @@ export function StatusBadge({ status, label, animated = false, className }: Stat
         )}
         <span className={cn('relative inline-flex h-2 w-2 rounded-full', styles.dot)} />
       </span>
-      {label || defaultLabels[status]}
+      {label || t(defaultLabels[status])}
     </span>
   )
 }

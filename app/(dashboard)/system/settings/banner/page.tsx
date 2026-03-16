@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { bannerApi, type BannerSettings } from '@/lib/api/endpoints/banner'
 import { BannerSettingsForm } from '@/components/features/settings/BannerSettingsForm'
+import { useTranslation } from '@/lib/i18n'
 
 const DEFAULT_BANNER: BannerSettings = {
   enabled: false,
@@ -18,6 +19,7 @@ const DEFAULT_BANNER: BannerSettings = {
 }
 
 export default function BannerSettingsPage() {
+  const { t } = useTranslation()
   const { data, isLoading, isError } = useQuery({
     queryKey: ['banner-settings'],
     queryFn: () => bannerApi.getSettings(),
@@ -29,17 +31,17 @@ export default function BannerSettingsPage() {
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-1 text-sm text-gray-500">
         <Link href="/system/settings" className="hover:text-gray-700 transition-colors">
-          Settings
+          {t('Settings')}
         </Link>
         <ChevronRightIcon className="h-3.5 w-3.5" />
-        <span className="font-medium text-gray-900">Website Banner</span>
+        <span className="font-medium text-gray-900">{t('Website Banner')}</span>
       </nav>
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Website Banner</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Website Banner')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Configure the banner that appears at the top of the website
+          {t('Configure the banner that appears at the top of the website')}
         </p>
       </div>
 
@@ -52,7 +54,7 @@ export default function BannerSettingsPage() {
         )}
         {isError && (
           <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">
-            Failed to load banner settings. Please try again.
+            {t('Failed to load banner settings. Please try again.')}
           </div>
         )}
         {!isLoading && !isError && (

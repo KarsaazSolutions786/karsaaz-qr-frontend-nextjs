@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { memo, useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { QRCode } from '@/types/entities/qrcode'
 import { formatDate } from '@/lib/utils/format'
@@ -17,6 +17,7 @@ import {
   Share2,
 } from 'lucide-react'
 import { QRPreviewImage } from '@/components/qr/QRPreviewImage'
+import { useTranslation } from '@/lib/i18n'
 
 interface QRCodeCardProps {
   qrcode: QRCode
@@ -42,7 +43,8 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string }> =
   archived: { bg: 'bg-orange-50', text: 'text-orange-700', dot: 'bg-orange-500' },
 }
 
-export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
+export const QRCodeCard = memo(function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
+  const { t } = useTranslation()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -88,13 +90,13 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
         <h3 className="text-sm font-semibold text-gray-900 truncate">{qrcode.name}</h3>
         <div className="mt-1 flex items-center gap-2">
           <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
-            {TYPE_LABELS[qrcode.type] || qrcode.type}
+            {t(TYPE_LABELS[qrcode.type] || qrcode.type)}
           </span>
           <span
             className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${statusStyle.bg} ${statusStyle.text}`}
           >
             <span className={`inline-block w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {t(status.charAt(0).toUpperCase() + status.slice(1))}
           </span>
         </div>
       </Link>
@@ -128,57 +130,57 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
                 onClick={() => handleAction('view')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
-                <Eye className="w-3.5 h-3.5" /> View
+                <Eye className="w-3.5 h-3.5" /> {t('View')}
               </button>
               <button
                 onClick={() => handleAction('edit')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
-                <Edit className="w-3.5 h-3.5" /> Edit
+                <Edit className="w-3.5 h-3.5" /> {t('Edit')}
               </button>
               <button
                 onClick={() => handleAction('stats')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
-                <BarChart3 className="w-3.5 h-3.5" /> Stats
+                <BarChart3 className="w-3.5 h-3.5" /> {t('Stats')}
               </button>
               <button
                 onClick={() => handleAction('duplicate')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
-                <Copy className="w-3.5 h-3.5" /> Duplicate
+                <Copy className="w-3.5 h-3.5" /> {t('Duplicate')}
               </button>
               <button
                 onClick={() => handleAction('download')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
-                <Download className="w-3.5 h-3.5" /> Download
+                <Download className="w-3.5 h-3.5" /> {t('Download')}
               </button>
               <hr className="my-1 border-gray-100" />
               <button
                 onClick={() => handleAction('move-to-folder')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
-                <FolderInput className="w-3.5 h-3.5" /> Select Folder
+                <FolderInput className="w-3.5 h-3.5" /> {t('Select Folder')}
               </button>
               <button
                 onClick={() => handleAction('share')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
               >
-                <Share2 className="w-3.5 h-3.5" /> Share
+                <Share2 className="w-3.5 h-3.5" /> {t('Share')}
               </button>
               <hr className="my-1 border-gray-100" />
               <button
                 onClick={() => handleAction('archive')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-orange-600 hover:bg-orange-50"
               >
-                <Archive className="w-3.5 h-3.5" /> Archive
+                <Archive className="w-3.5 h-3.5" /> {t('Archive')}
               </button>
               <button
                 onClick={() => handleAction('delete')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50"
               >
-                <Trash2 className="w-3.5 h-3.5" /> Delete
+                <Trash2 className="w-3.5 h-3.5" /> {t('Delete')}
               </button>
             </div>
           )}
@@ -186,4 +188,4 @@ export function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
       </div>
     </div>
   )
-}
+})

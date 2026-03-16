@@ -7,6 +7,7 @@ import PreviewFooter from '@/components/public/shared/PreviewFooter';
 import SocialShare from '@/components/public/shared/SocialShare';
 import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
 import BusinessCard from './BusinessCard';
+import { useTranslation } from '@/lib/i18n';
 
 interface TeamMember {
   name: string;
@@ -64,6 +65,7 @@ interface BusinessProfilePreviewProps {
 }
 
 export default function BusinessProfilePreview({ profile }: BusinessProfilePreviewProps) {
+  const { t } = useTranslation();
   const primaryColor = profile.theme?.primaryColor || '#2563eb';
   
   const fullAddress = [
@@ -150,14 +152,14 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
                       <Clock className="w-6 h-6 text-white" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Opening Hours</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{t('Opening Hours')}</h2>
                   </div>
                   <div className="space-y-3">
                     {profile.openingHours.map((schedule, index) => (
                       <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
                         <span className="font-medium text-gray-900">{schedule.day}</span>
                         <span className={schedule.isClosed ? 'text-red-600 font-medium' : 'text-gray-600'}>
-                          {schedule.isClosed ? 'Closed' : schedule.hours}
+                          {schedule.isClosed ? t('Closed') : schedule.hours}
                         </span>
                       </div>
                     ))}
@@ -172,7 +174,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
                       <Briefcase className="w-6 h-6 text-white" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Services</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{t('Services')}</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {profile.services.map((service, index) => (
@@ -201,7 +203,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
                       <Users className="w-6 h-6 text-white" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Meet Our Team</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{t('Meet Our Team')}</h2>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {profile.teamMembers.map((member, index) => (
@@ -237,7 +239,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
                       <ImageIcon className="w-6 h-6 text-white" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Gallery</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{t('Gallery')}</h2>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {profile.gallery.map((image, index) => (
@@ -258,7 +260,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
             <div className="space-y-6">
               {/* Contact Information */}
               <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sticky top-4">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Contact Information</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-6">{t('Contact Information')}</h2>
                 <div className="space-y-4">
                   {profile.phone && (
                     <a href={`tel:${profile.phone}`} className="flex items-start gap-3 text-gray-700 hover:text-blue-600 transition-colors group">
@@ -266,7 +268,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                         <Phone className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 mb-1">Phone</div>
+                        <div className="text-xs text-gray-500 mb-1">{t('Phone')}</div>
                         <div className="font-medium">{profile.phone}</div>
                       </div>
                     </a>
@@ -278,7 +280,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                         <Mail className="w-5 h-5 text-green-600" />
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 mb-1">Email</div>
+                        <div className="text-xs text-gray-500 mb-1">{t('Email')}</div>
                         <div className="font-medium break-all">{profile.email}</div>
                       </div>
                     </a>
@@ -290,7 +292,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                         <Globe className="w-5 h-5 text-purple-600" />
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 mb-1">Website</div>
+                        <div className="text-xs text-gray-500 mb-1">{t('Website')}</div>
                         <div className="font-medium break-all">{profile.website}</div>
                       </div>
                     </a>
@@ -310,7 +312,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                         <MapPin className="w-5 h-5 text-red-600" />
                       </div>
                       <div>
-                        <div className="text-xs text-gray-500 mb-1">Address</div>
+                        <div className="text-xs text-gray-500 mb-1">{t('Address')}</div>
                         <div className="font-medium">{fullAddress}</div>
                       </div>
                     </a>
@@ -320,7 +322,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                 {/* Social Media */}
                 {profile.socialMedia && Object.values(profile.socialMedia).some(v => v) && (
                   <div className="mt-6 pt-6 border-t border-gray-200">
-                    <h3 className="text-sm font-semibold text-gray-900 mb-4">Follow Us</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-4">{t('Follow Us')}</h3>
                     <div className="flex gap-2 flex-wrap">
                       {Object.entries(profile.socialMedia).map(([platform, url]) => {
                         if (!url) return null;
@@ -346,7 +348,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
               {/* Map */}
               {mapUrl && (
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">Location</h2>
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">{t('Location')}</h2>
                   <div className="aspect-video rounded-xl overflow-hidden border border-gray-200">
                     <iframe
                       src={mapUrl}

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { ExclamationCircleIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import { getAuthUrl, handleOAuthCallback } from '@/lib/api/cloud-storage'
 import { CloudProviderType } from '@/types/entities/cloud-storage'
+import { useTranslation } from '@/lib/i18n'
 
 interface OAuthConnectorProps {
   provider: CloudProviderType
@@ -14,6 +15,7 @@ interface OAuthConnectorProps {
 type Status = 'idle' | 'getting-url' | 'waiting' | 'processing' | 'success' | 'error'
 
 export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConnectorProps) {
+  const { t } = useTranslation()
   const [status, setStatus] = useState<Status>('idle')
   const [error, setError] = useState<string | null>(null)
   const [authWindow, setAuthWindow] = useState<Window | null>(null)
@@ -42,7 +44,7 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
           setTimeout(onSuccess, 1000)
         } catch (err) {
           setStatus('error')
-          setError(err instanceof Error ? err.message : 'Failed to complete authorization')
+          setError(err instanceof Error ? err.message : t('Failed to complete authorization'))
         }
       }
     },
@@ -95,11 +97,11 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
         setAuthWindow(popup)
         setStatus('waiting')
       } else {
-        throw new Error('Popup was blocked. Please allow popups for this site.')
+        throw new Error(t('Popup was blocked. Please allow popups for this site.'))
       }
     } catch (err) {
       setStatus('error')
-      setError(err instanceof Error ? err.message : 'Failed to start authorization')
+      setError(err instanceof Error ? err.message : t('Failed to start authorization'))
     }
   }
 
@@ -110,7 +112,7 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
           <>
             <div className="text-center mb-6">
               <p className="text-gray-600">
-                Click the button below to connect your {providerName} account.
+                {t('Click the button below to connect your')} {providerName} {t('account')}.
               </p>
             </div>
             <button
@@ -118,7 +120,7 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
               onClick={startOAuth}
               className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Connect with {providerName}
+              {t('Connect with')} {providerName}
             </button>
           </>
         )
@@ -145,7 +147,7 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            <p className="text-gray-600">Preparing authorization...</p>
+            <p className="text-gray-600">{t('Preparing authorization...')}</p>
           </div>
         )
 
@@ -154,17 +156,17 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
           <div className="text-center py-8">
             <ArrowPathIcon className="h-8 w-8 mx-auto text-blue-600 mb-4 animate-pulse" />
             <p className="text-gray-900 font-medium mb-2">
-              Complete authorization in the popup window
+              {t('Complete authorization in the popup window')}
             </p>
             <p className="text-sm text-gray-500 mb-4">
-              Waiting for you to authorize access in {providerName}...
+              {t('Waiting for you to authorize access in')} {providerName}...
             </p>
             <button
               type="button"
               onClick={() => authWindow?.focus()}
               className="text-sm text-blue-600 hover:text-blue-700"
             >
-              Reopen popup window
+              {t('Reopen popup window')}
             </button>
           </div>
         )
@@ -191,7 +193,7 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            <p className="text-gray-600">Completing authorization...</p>
+            <p className="text-gray-600">{t('Completing authorization...')}</p>
           </div>
         )
 
@@ -213,8 +215,8 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
                 />
               </svg>
             </div>
-            <p className="text-gray-900 font-medium">Successfully connected!</p>
-            <p className="text-sm text-gray-500 mt-1">Your {providerName} account is now linked.</p>
+            <p className="text-gray-900 font-medium">{t('Successfully connected!')}</p>
+            <p className="text-sm text-gray-500 mt-1">{t('Your')} {providerName} {t('account is now linked.')}</p>
           </div>
         )
 
@@ -224,7 +226,7 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
             <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg mb-4">
               <ExclamationCircleIcon className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-red-800">Connection failed</p>
+                <p className="text-sm font-medium text-red-800">{t('Connection failed')}</p>
                 <p className="text-sm text-red-700 mt-1">{error}</p>
               </div>
             </div>
@@ -233,7 +235,7 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
               onClick={startOAuth}
               className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Try Again
+              {t('Try Again')}
             </button>
           </>
         )
@@ -243,16 +245,16 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
   return (
     <div className="space-y-4">
       <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="text-sm font-medium text-gray-900 mb-1">{providerName} Authorization</h4>
+        <h4 className="text-sm font-medium text-gray-900 mb-1">{providerName} {t('Authorization')}</h4>
         <p className="text-sm text-gray-600">
-          You&apos;ll be redirected to {providerName} to authorize access to your storage.
+          {t("You'll be redirected to")} {providerName} {t('to authorize access to your storage.')}
         </p>
       </div>
 
       {renderContent()}
 
       <p className="text-xs text-gray-500 text-center">
-        We only request access to create and read backup files in a dedicated folder.
+        {t('We only request access to create and read backup files in a dedicated folder.')}
       </p>
     </div>
   )

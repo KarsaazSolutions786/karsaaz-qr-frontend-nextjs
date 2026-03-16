@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 const PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100, 300, 500, 1000] as const;
 const STORAGE_KEY = 'qrcode_list_settings';
@@ -26,6 +27,7 @@ function getStoredSettings(): ListSettings {
 }
 
 export function QRCodeListSettingsModal({ open, onClose, onApply }: QRCodeListSettingsModalProps) {
+  const { t } = useTranslation();
   const [pageSize, setPageSize] = useState(25);
   const [showPreview, setShowPreview] = useState(true);
 
@@ -50,10 +52,10 @@ export function QRCodeListSettingsModal({ open, onClose, onApply }: QRCodeListSe
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
       <div className="relative z-10 w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
-        <h3 className="text-lg font-semibold text-gray-900">List Settings</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('List Settings')}</h3>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700">Items per page</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Items per page')}</label>
           <div className="mt-2 flex flex-wrap gap-2">
             {PAGE_SIZE_OPTIONS.map((size) => (
               <button
@@ -73,7 +75,7 @@ export function QRCodeListSettingsModal({ open, onClose, onApply }: QRCodeListSe
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700">Show QR Code Preview</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Show QR Code Preview')}</label>
           <div className="mt-2 flex gap-3">
             {[true, false].map((val) => (
               <button
@@ -86,7 +88,7 @@ export function QRCodeListSettingsModal({ open, onClose, onApply }: QRCodeListSe
                     : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                {val ? 'Yes' : 'No'}
+                {val ? t('Yes') : t('No')}
               </button>
             ))}
           </div>
@@ -98,14 +100,14 @@ export function QRCodeListSettingsModal({ open, onClose, onApply }: QRCodeListSe
             onClick={onClose}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="button"
             onClick={handleApply}
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
-            Apply
+            {t('Apply')}
           </button>
         </div>
       </div>

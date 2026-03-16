@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { X, Link2, Copy, Check, MessageCircle, Mail, Twitter } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface ShareableLinkModalProps {
   qrCodeId: string
@@ -15,6 +16,7 @@ export function ShareableLinkModal({
   isOpen,
   onClose,
 }: ShareableLinkModalProps) {
+  const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
 
   if (!isOpen) return null
@@ -67,7 +69,7 @@ export function ShareableLinkModal({
         <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
           <div className="flex items-center gap-2">
             <Link2 className="h-5 w-5 text-purple-600" />
-            <h2 className="text-lg font-bold text-gray-900">Shareable Link</h2>
+            <h2 className="text-lg font-bold text-gray-900">{t('Shareable Link')}</h2>
           </div>
           <button
             type="button"
@@ -103,11 +105,11 @@ export function ShareableLinkModal({
             >
               {copied ? (
                 <span className="flex items-center gap-1">
-                  <Check className="h-3 w-3" /> Copied!
+                  <Check className="h-3 w-3" /> {t('Copied!')}
                 </span>
               ) : (
                 <span className="flex items-center gap-1">
-                  <Copy className="h-3 w-3" /> Copy
+                  <Copy className="h-3 w-3" /> {t('Copy')}
                 </span>
               )}
             </button>

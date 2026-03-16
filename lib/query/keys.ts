@@ -99,6 +99,13 @@ export const queryKeys = {
     paymentProcessors: () => ['billing', 'payment-processors'] as const,
   },
 
+  // Account Credits
+  accountCredits: {
+    balance: (userId: number | string) => ['account-credits', 'balance', userId] as const,
+    history: (userId: number | string, page?: number) =>
+      ['account-credits', 'history', userId, page] as const,
+  },
+
   // Blog Posts
   blogPosts: {
     all: () => ['blog-posts'] as const,
@@ -248,5 +255,10 @@ export const queryKeys = {
   designAssets: {
     all: () => ['design-assets'] as const,
     list: (type?: string) => ['design-assets', 'list', type] as const,
+  },
+
+  // System Health
+  systemHealth: {
+    status: () => ['system', 'health'] as const,
   },
 }

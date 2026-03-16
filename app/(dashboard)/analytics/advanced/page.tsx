@@ -8,20 +8,22 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import ConversionFunnel from '@/components/analytics/ConversionFunnel'
 import ABTestResults from '@/components/analytics/ABTestResults'
-
-const PERIOD_OPTIONS = [
-  { label: '7 days', value: '7d' },
-  { label: '30 days', value: '30d' },
-  { label: '90 days', value: '90d' },
-] as const
-
-const STATUS_OPTIONS = [
-  { label: 'All', value: 'all' },
-  { label: 'Running', value: 'running' },
-  { label: 'Completed', value: 'completed' },
-] as const
+import { useTranslation } from '@/lib/i18n'
 
 export default function AdvancedAnalyticsPage() {
+  const { t } = useTranslation()
+
+  const PERIOD_OPTIONS = [
+    { label: t('7 days'), value: '7d' },
+    { label: t('30 days'), value: '30d' },
+    { label: t('90 days'), value: '90d' },
+  ] as const
+
+  const STATUS_OPTIONS = [
+    { label: t('All'), value: 'all' },
+    { label: t('Running'), value: 'running' },
+    { label: t('Completed'), value: 'completed' },
+  ] as const
   const [activeTab, setActiveTab] = useState('funnels')
   const [period, setPeriod] = useState('30d')
   const [testStatus, setTestStatus] = useState('all')
@@ -52,18 +54,18 @@ export default function AdvancedAnalyticsPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Advanced Analytics
+          {t('Advanced Analytics')}
         </h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Conversion funnels and A/B test insights
+          {t('Conversion funnels and A/B test insights')}
         </p>
       </div>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="funnels">Conversion Funnels</TabsTrigger>
-          <TabsTrigger value="abtests">A/B Tests</TabsTrigger>
+          <TabsTrigger value="funnels">{t('Conversion Funnels')}</TabsTrigger>
+          <TabsTrigger value="abtests">{t('A/B Tests')}</TabsTrigger>
         </TabsList>
 
         {/* ── Funnels Tab ── */}
@@ -112,10 +114,10 @@ export default function AdvancedAnalyticsPage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center p-12 text-center">
                 <p className="text-lg font-medium text-gray-500 dark:text-gray-400">
-                  No funnels found
+                  {t('No funnels found')}
                 </p>
                 <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
-                  Funnels will appear here once conversion tracking is configured.
+                  {t('Funnels will appear here once conversion tracking is configured.')}
                 </p>
               </CardContent>
             </Card>
@@ -168,10 +170,10 @@ export default function AdvancedAnalyticsPage() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center p-12 text-center">
                 <p className="text-lg font-medium text-gray-500 dark:text-gray-400">
-                  No A/B tests found
+                  {t('No A/B tests found')}
                 </p>
                 <p className="mt-1 text-sm text-gray-400 dark:text-gray-500">
-                  A/B tests will appear here once experiments are created.
+                  {t('A/B tests will appear here once experiments are created.')}
                 </p>
               </CardContent>
             </Card>

@@ -4,6 +4,7 @@ import * as React from 'react'
 import { cva } from 'class-variance-authority'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 const ToastProvider = React.createContext<{
   toasts: ToastProps[]
@@ -86,6 +87,8 @@ export function Toast({
   action,
   onClose,
 }: ToastProps & { onClose: () => void }) {
+  const { t } = useTranslation()
+
   return (
     <div
       className={cn(toastVariants({ variant }))}
@@ -106,7 +109,7 @@ export function Toast({
         type="button"
         onClick={onClose}
         className="absolute right-2 top-2 rounded-md p-1 text-gray-400 opacity-0 transition-opacity hover:text-gray-600 focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100"
-        aria-label="Close"
+        aria-label={t('Close')}
       >
         <X className="h-4 w-4" />
       </button>
@@ -115,10 +118,12 @@ export function Toast({
 }
 
 export function ToastViewport({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation()
+
   return (
     <div
       className="fixed top-0 right-0 z-[100] flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:top-auto sm:bottom-0 sm:right-0 sm:flex-col md:max-w-[420px]"
-      aria-label="Notifications"
+      aria-label={t('Notifications')}
     >
       {children}
     </div>

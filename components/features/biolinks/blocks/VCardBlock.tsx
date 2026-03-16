@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { VCardBlockData } from '@/types/entities/biolink'
 
 interface VCardBlockProps {
@@ -22,13 +25,14 @@ function generateVCardString(data: VCardBlockData['data']): string {
 
 export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockProps) {
   const { firstName, lastName, organization, phone, email, website, address, title: jobTitle } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">First Name</label>
+            <label className="block text-sm font-medium text-gray-700">{t('First Name')}</label>
             <input
               type="text"
               value={firstName}
@@ -37,7 +41,7 @@ export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockPro
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Last Name</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Last Name')}</label>
             <input
               type="text"
               value={lastName || ''}
@@ -47,7 +51,7 @@ export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockPro
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Organization</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Organization')}</label>
           <input
             type="text"
             value={organization || ''}
@@ -56,7 +60,7 @@ export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Job Title</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Job Title')}</label>
           <input
             type="text"
             value={jobTitle || ''}
@@ -66,7 +70,7 @@ export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockPro
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Phone</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Phone')}</label>
             <input
               type="tel"
               value={phone || ''}
@@ -75,7 +79,7 @@ export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockPro
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Email')}</label>
             <input
               type="email"
               value={email || ''}
@@ -85,7 +89,7 @@ export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockPro
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Website</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Website')}</label>
           <input
             type="url"
             value={website || ''}
@@ -94,7 +98,7 @@ export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Address</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Address')}</label>
           <input
             type="text"
             value={address || ''}
@@ -128,7 +132,7 @@ export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockPro
         download={`${fullName.replace(/\s/g, '_')}.vcf`}
         className="block w-full rounded-lg bg-blue-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-blue-700"
       >
-        Save Contact
+        {t('Save Contact')}
       </a>
     </div>
   )

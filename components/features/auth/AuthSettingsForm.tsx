@@ -1,6 +1,7 @@
 'use client'
 
 import { useForm } from 'react-hook-form'
+import { useTranslation } from '@/lib/i18n'
 import type { OAuthProviderName } from '@/lib/services/auth-workflow'
 
 export interface AuthProviderSettings {
@@ -37,6 +38,7 @@ const DEFAULT_VALUES: AuthSettingsFormData = {
 }
 
 export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSettingsFormProps) {
+  const { t } = useTranslation()
   const { register, handleSubmit, watch } = useForm<AuthSettingsFormData>({
     defaultValues: { ...DEFAULT_VALUES, ...defaultValues },
   })
@@ -73,7 +75,7 @@ export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSet
                 {key === 'auth0' && (
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Domain
+                      {t('Domain')}
                     </label>
                     <input
                       type="text"
@@ -85,7 +87,7 @@ export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSet
                 )}
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Client ID
+                    {t('Client ID')}
                   </label>
                   <input
                     type="text"
@@ -96,7 +98,7 @@ export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSet
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Client Secret
+                    {t('Client Secret')}
                   </label>
                   <input
                     type="password"
@@ -117,7 +119,7 @@ export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSet
           disabled={isLoading}
           className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          {isLoading ? 'Saving...' : 'Save Auth Settings'}
+          {isLoading ? t('Saving...') : t('Save Auth Settings')}
         </button>
       </div>
     </form>

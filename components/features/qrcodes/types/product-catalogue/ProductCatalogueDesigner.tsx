@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface ProductCatalogueDesignSettings extends DesignSettings {
   // Product Catalogue-specific settings
@@ -45,30 +46,31 @@ const tabs: DesignerTab[] = [
 ]
 
 export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<ProductCatalogueDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderCatalogueOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Catalogue Settings</h4>
+      <h4 className="font-medium text-gray-900">{t('Catalogue Settings')}</h4>
 
       {/* Catalogue Name */}
       <div className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Catalogue Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Catalogue Name')}</label>
           <input
             type="text"
             value={design.catalogueName || ''}
             onChange={e => updateDesign({ catalogueName: e.target.value })}
-            placeholder="Our Catalogue"
+            placeholder={t('Our Catalogue')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Name Font Size: {design.catalogueNameFontSize || 24}px
+            {t('Name Font Size')}: {design.catalogueNameFontSize || 24}px
           </label>
           <input
             type="range"
@@ -83,13 +85,13 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
 
       {/* Category Layout */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Category Layout</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Category Layout')}</label>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { value: 'tabs', label: 'Tabs' },
-            { value: 'accordion', label: 'Accordion' },
-            { value: 'sidebar', label: 'Sidebar' },
-            { value: 'grid', label: 'Grid' },
+            { value: 'tabs', label: t('Tabs') },
+            { value: 'accordion', label: t('Accordion') },
+            { value: 'sidebar', label: t('Sidebar') },
+            { value: 'grid', label: t('Grid') },
           ].map(option => (
             <button
               key={option.value}
@@ -115,7 +117,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
       <div className="space-y-3">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Category Background
+            {t('Category Background')}
           </label>
           <div className="flex gap-2">
             <input
@@ -135,7 +137,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Category Text Color
+            {t('Category Text Color')}
           </label>
           <div className="flex gap-2">
             <input
@@ -164,7 +166,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
           className="rounded border-gray-300"
         />
         <label htmlFor="showReviewSites" className="text-sm text-gray-700">
-          Show Review Sites
+          {t('Show Review Sites')}
         </label>
       </div>
     </div>
@@ -172,16 +174,16 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
 
   const renderProductsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Product Display</h4>
+      <h4 className="font-medium text-gray-900">{t('Product Display')}</h4>
 
       {/* Product Layout */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Product Layout</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Product Layout')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'grid', label: 'Grid' },
-            { value: 'list', label: 'List' },
-            { value: 'cards', label: 'Cards' },
+            { value: 'grid', label: t('Grid') },
+            { value: 'list', label: t('List') },
+            { value: 'cards', label: t('Cards') },
           ].map(option => (
             <button
               key={option.value}
@@ -206,7 +208,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
       {/* Product Columns */}
       {design.productLayout === 'grid' && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Grid Columns</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Grid Columns')}</label>
           <div className="flex flex-wrap gap-2">
             {[2, 3, 4].map(cols => (
               <button
@@ -223,7 +225,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
                     : 'border-gray-300'
                 )}
               >
-                {cols} Columns
+                {cols} {t('Columns')}
               </button>
             ))}
           </div>
@@ -234,13 +236,13 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
       <div className="space-y-3">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Show Product Images
+            {t('Show Product Images')}
           </label>
           <div className="flex flex-wrap gap-2">
             {[
-              { value: 'always', label: 'Always' },
-              { value: 'only-if-uploaded', label: 'Only if Uploaded' },
-              { value: 'do-not-show-images', label: 'Do Not Show' },
+              { value: 'always', label: t('Always') },
+              { value: 'only-if-uploaded', label: t('Only if Uploaded') },
+              { value: 'do-not-show-images', label: t('Do Not Show') },
             ].map(option => (
               <button
                 key={option.value}
@@ -266,12 +268,12 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
         {design.showProductImage !== 'do-not-show-images' && (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Image Size</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('Image Size')}</label>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { value: 'small', label: 'Small' },
-                  { value: 'medium', label: 'Medium' },
-                  { value: 'large', label: 'Large' },
+                  { value: 'small', label: t('Small') },
+                  { value: 'medium', label: t('Medium') },
+                  { value: 'large', label: t('Large') },
                 ].map(option => (
                   <button
                     key={option.value}
@@ -295,14 +297,14 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image Aspect Ratio
+                {t('Image Aspect Ratio')}
               </label>
               <div className="flex flex-wrap gap-2">
                 {[
                   { value: 'square', label: '1:1' },
                   { value: '4:3', label: '4:3' },
                   { value: '16:9', label: '16:9' },
-                  { value: 'original', label: 'Original' },
+                  { value: 'original', label: t('Original') },
                 ].map(option => (
                   <button
                     key={option.value}
@@ -339,7 +341,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
             className="rounded border-gray-300"
           />
           <label htmlFor="showProductPrice" className="text-sm text-gray-700">
-            Show Product Price
+            {t('Show Product Price')}
           </label>
         </div>
 
@@ -352,7 +354,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
             className="rounded border-gray-300"
           />
           <label htmlFor="showProductDescription" className="text-sm text-gray-700">
-            Show Product Description
+            {t('Show Product Description')}
           </label>
         </div>
       </div>
@@ -360,12 +362,12 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
       {/* Price Settings */}
       {design.showProductPrice && (
         <div className="space-y-3">
-          <h5 className="text-sm font-medium text-gray-700">Price Settings</h5>
+          <h5 className="text-sm font-medium text-gray-700">{t('Price Settings')}</h5>
 
           <div className="flex gap-3">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Currency Symbol
+                {t('Currency Symbol')}
               </label>
               <input
                 type="text"
@@ -377,7 +379,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Position</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Position')}</label>
               <div className="flex gap-1">
                 {[
                   { value: 'before', label: '$10' },
@@ -406,7 +408,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Price Color</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('Price Color')}</label>
             <div className="flex gap-2">
               <input
                 type="color"
@@ -427,14 +429,14 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
 
       {/* Product Button */}
       <div className="space-y-3">
-        <h5 className="text-sm font-medium text-gray-700">Product Button</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Product Button')}</h5>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Open Link In</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Open Link In')}</label>
           <div className="flex gap-2">
             {[
-              { value: 'self', label: 'Same Window' },
-              { value: '_blank', label: 'New Window' },
+              { value: 'self', label: t('Same Window') },
+              { value: '_blank', label: t('New Window') },
             ].map(option => (
               <button
                 key={option.value}
@@ -458,18 +460,18 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text')}</label>
           <input
             type="text"
-            value={design.productButtonText || 'Order Now'}
+            value={design.productButtonText || t('Order Now')}
             onChange={e => updateDesign({ productButtonText: e.target.value })}
-            placeholder="Order Now"
+            placeholder={t('Order Now')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -487,7 +489,7 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Text Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -507,10 +509,10 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
 
       {/* Card Styling */}
       <div className="space-y-3">
-        <h5 className="text-sm font-medium text-gray-700">Card Styling</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Card Styling')}</h5>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Card Background</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Card Background')}</label>
           <div className="flex gap-2">
             <input
               type="color"

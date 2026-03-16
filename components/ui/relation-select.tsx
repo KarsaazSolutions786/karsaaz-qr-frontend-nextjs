@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface RelationOption {
   value: string
@@ -23,6 +24,7 @@ export function RelationSelect({
   placeholder = 'Search…',
   className,
 }: RelationSelectProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
   const [options, setOptions] = React.useState<RelationOption[]>([])
@@ -96,9 +98,9 @@ export function RelationSelect({
             />
           </div>
           <div className="max-h-48 overflow-auto">
-            {loading && <div className="px-3 py-2 text-sm text-gray-500">Loading…</div>}
+            {loading && <div className="px-3 py-2 text-sm text-gray-500">{t('Loading...')}</div>}
             {!loading && options.length === 0 && (
-              <div className="px-3 py-2 text-sm text-gray-500">No results</div>
+              <div className="px-3 py-2 text-sm text-gray-500">{t('No results')}</div>
             )}
             {!loading &&
               options.map((opt) => (

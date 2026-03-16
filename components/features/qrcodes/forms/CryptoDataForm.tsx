@@ -1,5 +1,6 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { cryptoDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 const INPUT =
@@ -14,6 +15,7 @@ interface CryptoDataFormProps {
   onChange?: (data: Partial<CryptoDataFormData>) => void
 }
 export function CryptoDataForm({ defaultValues, onChange }: CryptoDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -22,27 +24,27 @@ export function CryptoDataForm({ defaultValues, onChange }: CryptoDataFormProps)
     <form className="space-y-5">
       <div>
         <label htmlFor="coin" className={LABEL}>
-          Coin
+          {t('Coin')}
         </label>
         <select {...register('coin')} id="coin" className={SELECT}>
-          <option value="bitcoin">Bitcoin</option>
-          <option value="ethereum">Ethereum</option>
-          <option value="litecoin">Litecoin</option>
-          <option value="bitcoincash">Bitcoin Cash</option>
-          <option value="dash">Dash</option>
+          <option value="bitcoin">{t('Bitcoin')}</option>
+          <option value="ethereum">{t('Ethereum')}</option>
+          <option value="litecoin">{t('Litecoin')}</option>
+          <option value="bitcoincash">{t('Bitcoin Cash')}</option>
+          <option value="dash">{t('Dash')}</option>
         </select>
         {errors.coin && <p className={ERROR}>{errors.coin.message}</p>}
       </div>
       <div>
         <label htmlFor="address" className={LABEL}>
-          Wallet Address
+          {t('Wallet Address')}
         </label>
         <input {...register('address')} id="address" type="text" className={INPUT} />
         {errors.address && <p className={ERROR}>{errors.address.message}</p>}
       </div>
       <div>
         <label htmlFor="amount" className={LABEL}>
-          Amount <span className="text-gray-400 font-normal">(optional)</span>
+          {t('Amount')} <span className="text-gray-400 font-normal">({t('optional')})</span>
         </label>
         <input
           {...register('amount', { valueAsNumber: true })}
@@ -55,7 +57,7 @@ export function CryptoDataForm({ defaultValues, onChange }: CryptoDataFormProps)
       </div>
       <div>
         <label htmlFor="message" className={LABEL}>
-          Message <span className="text-gray-400 font-normal">(optional)</span>
+          {t('Message')} <span className="text-gray-400 font-normal">({t('optional')})</span>
         </label>
         <input {...register('message')} id="message" type="text" className={INPUT} />
         {errors.message && <p className={ERROR}>{errors.message.message}</p>}

@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { CreateTicketPayload } from '@/types/entities/support-ticket'
+import { useTranslation } from '@/lib/i18n'
 
 const ticketSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -29,6 +30,7 @@ export default function CreateTicketForm({
   defaultEmail,
   defaultName,
 }: CreateTicketFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     handleSubmit,
@@ -50,7 +52,7 @@ export default function CreateTicketForm({
       {/* Name */}
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          Name <span className="text-red-500">*</span>
+          {t('Name')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -64,7 +66,7 @@ export default function CreateTicketForm({
       {/* Email */}
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email <span className="text-red-500">*</span>
+          {t('Email')} <span className="text-red-500">*</span>
         </label>
         <input
           type="email"
@@ -78,7 +80,7 @@ export default function CreateTicketForm({
       {/* Subject */}
       <div>
         <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
-          Subject <span className="text-red-500">*</span>
+          {t('Subject')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -92,14 +94,14 @@ export default function CreateTicketForm({
       {/* Message */}
       <div>
         <label htmlFor="message" className="block text-sm font-medium text-gray-700">
-          Message <span className="text-red-500">*</span>
+          {t('Message')} <span className="text-red-500">*</span>
         </label>
         <textarea
           id="message"
           rows={6}
           {...register('message')}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-          placeholder="Describe your issue in detail..."
+          placeholder={t('Describe your issue in detail...')}
         />
         {errors.message && <p className="mt-1 text-xs text-red-600">{errors.message.message}</p>}
       </div>
@@ -108,32 +110,32 @@ export default function CreateTicketForm({
         {/* Priority */}
         <div>
           <label htmlFor="priority" className="block text-sm font-medium text-gray-700">
-            Priority
+            {t('Priority')}
           </label>
           <select
             id="priority"
             {...register('priority')}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
           >
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            <option value="Urgent">Urgent</option>
+            <option value="Low">{t('Low')}</option>
+            <option value="Medium">{t('Medium')}</option>
+            <option value="High">{t('High')}</option>
+            <option value="Urgent">{t('Urgent')}</option>
           </select>
         </div>
 
         {/* Department */}
         <div>
           <label htmlFor="department" className="block text-sm font-medium text-gray-700">
-            Department
+            {t('Department')}
           </label>
           <select
             id="department"
             {...register('department')}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
           >
-            <option value="Technical">Technical</option>
-            <option value="Billing">Billing</option>
+            <option value="Technical">{t('Technical')}</option>
+            <option value="Billing">{t('Billing')}</option>
           </select>
         </div>
       </div>
@@ -145,7 +147,7 @@ export default function CreateTicketForm({
           disabled={isLoading}
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
         >
-          {isLoading ? 'Submitting...' : 'Submit Ticket'}
+          {isLoading ? t('Submitting...') : t('Submit Ticket')}
         </button>
       </div>
     </form>

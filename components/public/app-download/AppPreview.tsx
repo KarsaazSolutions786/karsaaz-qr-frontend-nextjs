@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import DownloadButtons from './DownloadButtons'
+import { useTranslation } from '@/lib/i18n'
 
 interface AppData {
   appName: string
@@ -50,6 +51,7 @@ interface AppPreviewProps {
 }
 
 export default function AppPreview({ app }: AppPreviewProps) {
+  const { t } = useTranslation()
   const [currentScreenshot, setCurrentScreenshot] = useState(0)
 
   const nextScreenshot = () => {
@@ -133,7 +135,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
                   <div className="text-white/90">
                     <span className="text-2xl font-bold">{app.rating.toFixed(1)}</span>
                     {app.totalRatings && (
-                      <span className="text-sm ml-2">({app.totalRatings.toLocaleString()} ratings)</span>
+                      <span className="text-sm ml-2">({app.totalRatings.toLocaleString()} {t('ratings')})</span>
                     )}
                   </div>
                 </div>
@@ -183,7 +185,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
               <Card className="overflow-hidden shadow-xl border-0">
                 <CardContent className="p-6">
                   <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Screenshots
+                    {t('Screenshots')}
                   </h2>
                   <div className="relative">
                     <div className="aspect-[9/19.5] max-w-sm mx-auto bg-gray-100 dark:bg-gray-800 rounded-3xl overflow-hidden shadow-2xl relative">
@@ -242,11 +244,11 @@ export default function AppPreview({ app }: AppPreviewProps) {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                      What&apos;s New
+                      {t("What's New")}
                     </h2>
                     {app.version && (
                       <Badge variant="secondary" className="text-sm">
-                        Version {app.version}
+                        {t('Version')} {app.version}
                       </Badge>
                     )}
                   </div>
@@ -260,7 +262,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
                   </ul>
                   {app.releaseDate && (
                     <p className="text-sm text-gray-500 mt-4">
-                      Released on {new Date(app.releaseDate).toLocaleDateString()}
+                      {t('Released on')} {new Date(app.releaseDate).toLocaleDateString()}
                     </p>
                   )}
                 </CardContent>
@@ -271,7 +273,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
             <Card className="shadow-xl border-0">
               <CardContent className="p-6">
                 <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  About This App
+                  {t('About This App')}
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">
                   {app.description}
@@ -284,7 +286,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
               <Card className="shadow-xl border-0">
                 <CardContent className="p-6">
                   <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Features
+                    {t('Features')}
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {app.features.map((feature, index) => (
@@ -303,7 +305,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
               <Card className="shadow-xl border-0">
                 <CardContent className="p-6">
                   <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Ratings & Reviews
+                    {t('Ratings & Reviews')}
                   </h2>
                   <div className="space-y-6">
                     {app.reviews.map((review) => (
@@ -348,36 +350,36 @@ export default function AppPreview({ app }: AppPreviewProps) {
             <Card className="shadow-xl border-0">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Information
+                  {t('Information')}
                 </h3>
                 <div className="space-y-3 text-sm">
                   {app.version && (
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400">Version</p>
+                      <p className="text-gray-500 dark:text-gray-400">{t('Version')}</p>
                       <p className="font-semibold text-gray-900 dark:text-white">{app.version}</p>
                     </div>
                   )}
                   {app.size && (
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400">Size</p>
+                      <p className="text-gray-500 dark:text-gray-400">{t('Size')}</p>
                       <p className="font-semibold text-gray-900 dark:text-white">{app.size}</p>
                     </div>
                   )}
                   {app.minOsVersion && (
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400">Requires</p>
+                      <p className="text-gray-500 dark:text-gray-400">{t('Requires')}</p>
                       <p className="font-semibold text-gray-900 dark:text-white">{app.minOsVersion}</p>
                     </div>
                   )}
                   {app.developer && (
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400">Developer</p>
+                      <p className="text-gray-500 dark:text-gray-400">{t('Developer')}</p>
                       <p className="font-semibold text-gray-900 dark:text-white">{app.developer}</p>
                     </div>
                   )}
                   {app.ageRating && (
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400">Age Rating</p>
+                      <p className="text-gray-500 dark:text-gray-400">{t('Age Rating')}</p>
                       <p className="font-semibold text-gray-900 dark:text-white">{app.ageRating}</p>
                     </div>
                   )}
@@ -390,7 +392,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
               <Card className="shadow-xl border-0">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    Languages
+                    {t('Languages')}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {app.languages.map((lang, index) => (
@@ -406,9 +408,9 @@ export default function AppPreview({ app }: AppPreviewProps) {
             {/* Download Again CTA */}
             <Card className="shadow-xl border-0 bg-gradient-to-br from-blue-600 to-purple-600 text-white">
               <CardContent className="p-6 text-center">
-                <h3 className="text-xl font-bold mb-2">Ready to Download?</h3>
+                <h3 className="text-xl font-bold mb-2">{t('Ready to Download?')}</h3>
                 <p className="text-white/80 mb-4 text-sm">
-                  Get {app.appName} on your device now
+                  {t('Get {{name}} on your device now').replace('{{name}}', app.appName)}
                 </p>
                 <DownloadButtons
                   appStoreUrl={app.appStoreUrl}

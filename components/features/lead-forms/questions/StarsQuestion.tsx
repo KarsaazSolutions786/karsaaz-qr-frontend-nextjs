@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Star } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface StarsQuestionProps {
   value: number
@@ -20,6 +21,7 @@ export function StarsQuestion({
   className,
 }: StarsQuestionProps) {
   const [hovered, setHovered] = useState(0)
+  const { t } = useTranslation()
 
   return (
     <div className={cn('space-y-2', className)}>
@@ -27,7 +29,7 @@ export function StarsQuestion({
       <div
         className="flex gap-1"
         role="radiogroup"
-        aria-label={label ?? 'Star rating'}
+        aria-label={label ?? t('Star rating')}
         onMouseLeave={() => setHovered(0)}
       >
         {Array.from({ length: maxStars }, (_, i) => i + 1).map(star => {
@@ -39,7 +41,7 @@ export function StarsQuestion({
               onClick={() => onChange(star)}
               onMouseEnter={() => setHovered(star)}
               className="transition-transform hover:scale-110 focus:outline-none"
-              aria-label={`${star} star${star !== 1 ? 's' : ''}`}
+              aria-label={star === 1 ? t('1 star') : `${star} ${t('stars')}`}
             >
               <Star
                 className={cn(

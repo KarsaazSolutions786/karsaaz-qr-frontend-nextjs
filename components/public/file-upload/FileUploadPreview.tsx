@@ -1,6 +1,7 @@
 'use client'
 
 import { ArrowDownTrayIcon, DocumentIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from '@/lib/i18n'
 
 interface FileUploadData {
   name: string
@@ -18,7 +19,7 @@ interface FileUploadData {
 }
 
 function formatFileSize(bytes?: number): string {
-  if (!bytes) return 'Unknown size'
+  if (!bytes) return 'Unknown size' // translated at render time
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
@@ -41,6 +42,7 @@ export default function FileUploadPreview({
 }: {
   fileUpload: FileUploadData
 }) {
+  const { t } = useTranslation()
   const isExpired =
     fileUpload.expires_at && new Date(fileUpload.expires_at) < new Date()
   const primaryColor = fileUpload.branding?.primary_color || '#2563eb'
@@ -61,7 +63,7 @@ export default function FileUploadPreview({
             />
           )}
           <h1 className="text-2xl font-bold">
-            {fileUpload.branding?.title || 'File Download'}
+            {fileUpload.branding?.title || t('File Download')}
           </h1>
         </div>
 
@@ -73,7 +75,7 @@ export default function FileUploadPreview({
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="truncate font-medium text-gray-900">
-                {fileUpload.name || fileUpload.file_name || 'Untitled File'}
+                {fileUpload.name || fileUpload.file_name || t('Untitled File')}
               </p>
               <div className="mt-1 flex items-center gap-2 text-sm text-gray-500">
                 <DocumentIcon className="h-4 w-4" />
@@ -98,9 +100,9 @@ export default function FileUploadPreview({
 
           {isExpired ? (
             <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
-              <p className="font-medium text-red-800">This file has expired</p>
+              <p className="font-medium text-red-800">{t('This file has expired')}</p>
               <p className="mt-1 text-sm text-red-600">
-                This download link is no longer available.
+                {t('This download link is no longer available.')}
               </p>
             </div>
           ) : fileUpload.file_url ? (
@@ -111,22 +113,22 @@ export default function FileUploadPreview({
               style={{ backgroundColor: primaryColor }}
             >
               <ArrowDownTrayIcon className="h-5 w-5" />
-              Download File
+              {t('Download File')}
             </a>
           ) : (
             <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-center">
               <p className="font-medium text-yellow-800">
-                File not yet available
+                {t('File not yet available')}
               </p>
               <p className="mt-1 text-sm text-yellow-600">
-                The file has not been uploaded yet. Please check back later.
+                {t('The file has not been uploaded yet. Please check back later.')}
               </p>
             </div>
           )}
 
           {fileUpload.expires_at && !isExpired && (
             <p className="mt-4 text-center text-xs text-gray-400">
-              Available until{' '}
+              {t('Available until')}{' '}
               {new Date(fileUpload.expires_at).toLocaleDateString(undefined, {
                 year: 'numeric',
                 month: 'long',

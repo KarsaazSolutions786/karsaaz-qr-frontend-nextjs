@@ -1,6 +1,7 @@
 'use client'
 
 import { AlertTriangle } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import { useDeleteTemplate } from '@/lib/hooks/queries/useTemplates'
 import type { QRCodeTemplate } from '@/types/entities/template'
 
@@ -17,6 +18,7 @@ export default function DeleteTemplateDialog({
   template,
   onConfirm,
 }: DeleteTemplateDialogProps) {
+  const { t } = useTranslation()
   const deleteTemplateMutation = useDeleteTemplate({
     onSuccess: () => {
       onConfirm?.()
@@ -45,16 +47,16 @@ export default function DeleteTemplateDialog({
         </div>
 
         <h3 className="text-center text-lg font-semibold text-gray-900">
-          Delete Template?
+          {t('Delete Template?')}
         </h3>
         
         <p className="mt-3 text-center text-sm text-gray-600">
-          Are you sure you want to delete{' '}
+          {t('Are you sure you want to delete')}{' '}
           <strong className="font-semibold text-gray-900">&ldquo;{template.name}&rdquo;</strong>?
         </p>
         
         <p className="mt-2 text-center text-sm text-gray-500">
-          This action cannot be undone. The template will be permanently removed.
+          {t('This action cannot be undone. The template will be permanently removed.')}
         </p>
 
         {template.template_access_level === 'public' && (
@@ -71,7 +73,7 @@ export default function DeleteTemplateDialog({
             disabled={deleteTemplateMutation.isPending}
             className="flex-1 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {deleteTemplateMutation.isPending ? 'Deleting...' : 'Delete Template'}
+            {deleteTemplateMutation.isPending ? t('Deleting...') : t('Delete Template')}
           </button>
 
           <button
@@ -79,7 +81,7 @@ export default function DeleteTemplateDialog({
             disabled={deleteTemplateMutation.isPending}
             className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
         </div>
       </div>

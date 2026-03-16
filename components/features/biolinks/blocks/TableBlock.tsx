@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { TableBlockData } from '@/types/entities/biolink'
 
 interface TableBlockProps {
@@ -15,12 +18,13 @@ function parseTableData(csv: string): string[][] {
 
 export default function TableBlock({ block, isEditing, onUpdate }: TableBlockProps) {
   const { tableData, textColor, bordered = true } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Table Data</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Table Data')}</label>
           <textarea
             value={tableData}
             onChange={e => onUpdate?.({ ...block.data, tableData: e.target.value })}
@@ -29,11 +33,11 @@ export default function TableBlock({ block, isEditing, onUpdate }: TableBlockPro
             placeholder="Header 1, Header 2, Header 3&#10;Row 1 Col 1, Row 1 Col 2, Row 1 Col 3"
           />
           <p className="mt-1 text-xs text-gray-500">
-            Comma separated values. Each row on a new line.
+            {t('Comma separated values. Each row on a new line.')}
           </p>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Text Color</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Text Color')}</label>
           <input
             type="color"
             value={textColor || '#000000'}
@@ -50,7 +54,7 @@ export default function TableBlock({ block, isEditing, onUpdate }: TableBlockPro
             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
           <label htmlFor={`bordered-${block.id}`} className="text-sm font-medium text-gray-700">
-            Show Borders
+            {t('Show Borders')}
           </label>
         </div>
       </div>

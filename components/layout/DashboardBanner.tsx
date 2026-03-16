@@ -9,6 +9,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { X, Info, AlertTriangle, CheckCircle, Megaphone } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface DashboardBannerProps {
   type: 'info' | 'warning' | 'success' | 'promo'
@@ -41,6 +42,7 @@ export function DashboardBanner({
   actionLabel,
   onDismiss,
 }: DashboardBannerProps) {
+  const { t } = useTranslation()
   const storageKey = `${STORAGE_PREFIX}${btoa(message).slice(0, 20)}`
   const [isDismissed, setIsDismissed] = useState(true) // default hidden to avoid flash
 
@@ -77,7 +79,7 @@ export function DashboardBanner({
             <button
               onClick={handleDismiss}
               className="p-1.5 hover:bg-white/20 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-white"
-              aria-label="Dismiss banner"
+              aria-label={t('Dismiss banner')}
             >
               <X className="w-4 h-4" />
             </button>

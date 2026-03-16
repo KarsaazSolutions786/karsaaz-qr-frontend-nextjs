@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 interface FileImageProps {
   file: File | null
@@ -10,7 +11,8 @@ interface FileImageProps {
   fallback?: React.ReactNode
 }
 
-export function FileImage({ file, alt = 'Preview', className, fallback }: FileImageProps) {
+export function FileImage({ file, alt, className, fallback }: FileImageProps) {
+  const { t } = useTranslation()
   const [src, setSrc] = useState<string | null>(null)
 
   useEffect(() => {
@@ -27,5 +29,5 @@ export function FileImage({ file, alt = 'Preview', className, fallback }: FileIm
     return <>{fallback ?? null}</>
   }
 
-  return <img src={src} alt={alt} className={cn('rounded-lg object-cover', className)} />
+  return <img src={src} alt={alt ?? t('Preview')} className={cn('rounded-lg object-cover', className)} />
 }

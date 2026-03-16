@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { useDeletePlan, useDuplicatePlan } from '@/lib/hooks/mutations/usePlanMutations'
 import type { SubscriptionPlan } from '@/types/entities/plan'
+import { useTranslation } from '@/lib/i18n'
 
 export default function PlansPage() {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const { data, isLoading } = usePlans({ page, search: search || undefined })
@@ -14,7 +16,7 @@ export default function PlansPage() {
   const duplicateMutation = useDuplicatePlan()
 
   const handleDelete = async (id: number, name: string) => {
-    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+    if (confirm(t('Are you sure you want to delete "{{name}}"?').replace('{{name}}', name))) {
       await deleteMutation.mutateAsync(id)
     }
   }
@@ -27,9 +29,9 @@ export default function PlansPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Subscription Plans</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Subscription Plans')}</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Manage subscription plans and pricing
+            {t('Manage subscription plans and pricing')}
           </p>
         </div>
         <div className="mt-4 sm:mt-0">
@@ -37,7 +39,7 @@ export default function PlansPage() {
             href="/plans/new"
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
-            Create Plan
+            {t('Create Plan')}
           </Link>
         </div>
       </div>
@@ -46,7 +48,7 @@ export default function PlansPage() {
         <div className="mb-6">
           <input
             type="search"
-            placeholder="Search plans..."
+            placeholder={t('Search plans...')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:max-w-md"
@@ -56,7 +58,7 @@ export default function PlansPage() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-            <p className="mt-2 text-sm text-gray-600">Loading plans...</p>
+            <p className="mt-2 text-sm text-gray-600">{t('Loading plans...')}</p>
           </div>
         ) : data && data.data.length > 0 ? (
           <>
@@ -64,15 +66,15 @@ export default function PlansPage() {
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Name</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Price</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Frequency</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">QR Codes</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Hidden</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Trial</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Sort Order</th>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{t('Name')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Price')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Frequency')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('QR Codes')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Hidden')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Trial')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Sort Order')}</th>
                     <th className="relative py-3.5 pl-3 pr-4">
-                      <span className="sr-only">Actions</span>
+                      <span className="sr-only">{t('Actions')}</span>
                     </th>
                   </tr>
                 </thead>
@@ -101,11 +103,11 @@ export default function PlansPage() {
                               : 'bg-green-100 text-green-800'
                           }`}
                         >
-                          {plan.isHidden ? 'Yes' : 'No'}
+                          {plan.isHidden ? t('Yes') : t('No')}
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {plan.isTrial ? 'Yes' : 'No'}
+                        {plan.isTrial ? t('Yes') : t('No')}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {plan.sortOrder}
@@ -115,21 +117,21 @@ export default function PlansPage() {
                           href={`/plans/${plan.id}`}
                           className="text-blue-600 hover:text-blue-900 mr-4"
                         >
-                          Edit
+                          {t('Edit')}
                         </Link>
                         <button
                           onClick={() => handleDuplicate(plan.id)}
                           className="text-indigo-600 hover:text-indigo-900 mr-4"
                           disabled={duplicateMutation.isPending}
                         >
-                          Duplicate
+                          {t('Duplicate')}
                         </button>
                         <button
                           onClick={() => handleDelete(plan.id, plan.name)}
                           className="text-red-600 hover:text-red-900"
                           disabled={deleteMutation.isPending}
                         >
-                          Delete
+                          {t('Delete')}
                         </button>
                       </td>
                     </tr>
@@ -145,17 +147,17 @@ export default function PlansPage() {
                   disabled={page === 1}
                   className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Previous
+                  {t('Previous')}
                 </button>
                 <span className="text-sm text-gray-600">
-                  Page {page} of {data.pagination.lastPage}
+                  {t('Page')} {page} {t('of')} {data.pagination.lastPage}
                 </span>
                 <button
                   onClick={() => setPage((p) => p + 1)}
                   disabled={page >= data.pagination.lastPage}
                   className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Next
+                  {t('Next')}
                 </button>
               </div>
             )}
@@ -175,16 +177,16 @@ export default function PlansPage() {
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No plans</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No plans')}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              Get started by creating a new subscription plan.
+              {t('Get started by creating a new subscription plan.')}
             </p>
             <div className="mt-6">
               <Link
                 href="/plans/new"
                 className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
               >
-                Create Plan
+                {t('Create Plan')}
               </Link>
             </div>
           </div>

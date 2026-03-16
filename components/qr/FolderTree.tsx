@@ -18,6 +18,7 @@ import {
   FolderPlus,
   Move,
 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 /** Minimal folder shape required by FolderTree */
 export interface FolderTreeItem {
@@ -177,6 +178,7 @@ function FolderTreeItem({
   onDragEnd,
   dragEnabled = false,
 }: FolderTreeItemProps) {
+  const { t } = useTranslation();
   const [showMenu, setShowMenu] = useState(false);
   const hasChildren = (folder.children?.length ?? 0) > 0;
   const indent = ((folder.level ?? 1) - 1) * 20;
@@ -277,7 +279,7 @@ function FolderTreeItem({
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                   >
                     <FolderPlus className="w-4 h-4" />
-                    <span>New Subfolder</span>
+                    <span>{t('New Subfolder')}</span>
                   </button>
                 )}
                 
@@ -290,7 +292,7 @@ function FolderTreeItem({
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                   >
                     <Edit2 className="w-4 h-4" />
-                    <span>Rename</span>
+                    <span>{t('Rename')}</span>
                   </button>
                 )}
                 
@@ -299,7 +301,7 @@ function FolderTreeItem({
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-move"
                   >
                     <Move className="w-4 h-4" />
-                    <span>Drag to move</span>
+                    <span>{t('Drag to move')}</span>
                   </button>
                 )}
                 
@@ -314,7 +316,7 @@ function FolderTreeItem({
                       className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
                     >
                       <Trash2 className="w-4 h-4" />
-                      <span>Delete</span>
+                      <span>{t('Delete')}</span>
                     </button>
                   </>
                 )}

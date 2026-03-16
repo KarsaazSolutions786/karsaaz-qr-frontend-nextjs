@@ -1,56 +1,149 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  selectClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * Dintero (Norway) payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Mode (test / production)
+ * - Account ID
+ * - Client ID
+ * - Client Secret
+ * - Profile ID
+ * - VAT Percentage
+ * - Reference Prefix
+ *
+ * No auto-webhook registration; no manual webhook URL display.
+ */
+export function DinteroForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function DinteroForm({ settings, onChange }: Props) {
   return (
     <PaymentProcessorFormBase slug="dintero" settings={settings} onChange={onChange}>
+      {/* Mode */}
       <div>
-        <label htmlFor="dintero-client-id" className="block text-sm font-medium text-gray-700">
-          Client ID
+        <label htmlFor="dintero-mode" className={labelClass}>
+          {t('Mode')}
         </label>
-        <input
-          id="dintero-client-id"
-          type="text"
-          value={settings.client_id ?? ''}
-          onChange={(e) => onChange('client_id', e.target.value)}
-          placeholder="Enter Client ID"
-          className={inputClass}
-        />
+        <select
+          id="dintero-mode"
+          value={settings.dintero_mode ?? 'test'}
+          onChange={(e) => onChange('dintero_mode', e.target.value)}
+          className={selectClass}
+        >
+          <option value="test">{t('Test')}</option>
+          <option value="production">{t('Production')}</option>
+        </select>
+        <p className={hintClass}>
+          {t('Default: Test. Switch to Production when ready to accept live payments.')}
+        </p>
       </div>
+
+      {/* Account ID */}
       <div>
-        <label htmlFor="dintero-client-secret" className="block text-sm font-medium text-gray-700">
-          Client Secret
-        </label>
-        <input
-          id="dintero-client-secret"
-          type="password"
-          value={settings.client_secret ?? ''}
-          onChange={(e) => onChange('client_secret', e.target.value)}
-          placeholder="Enter Client Secret"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label htmlFor="dintero-account-id" className="block text-sm font-medium text-gray-700">
-          Account ID
+        <label htmlFor="dintero-account-id" className={labelClass}>
+          {t('Account ID')}
         </label>
         <input
           id="dintero-account-id"
           type="text"
-          value={settings.account_id ?? ''}
-          onChange={(e) => onChange('account_id', e.target.value)}
-          placeholder="Enter Account ID"
+          value={settings.dintero_account_id ?? ''}
+          onChange={(e) => onChange('dintero_account_id', e.target.value)}
+          placeholder="Account ID"
           className={inputClass}
         />
+      </div>
+
+      {/* Client ID */}
+      <div>
+        <label htmlFor="dintero-client-id" className={labelClass}>
+          {t('Client ID')}
+        </label>
+        <input
+          id="dintero-client-id"
+          type="text"
+          value={settings.dintero_client_id ?? ''}
+          onChange={(e) => onChange('dintero_client_id', e.target.value)}
+          placeholder="AsD3UQFE******"
+          className={inputClass}
+        />
+      </div>
+
+      {/* Client Secret */}
+      <div>
+        <label htmlFor="dintero-client-secret" className={labelClass}>
+          {t('Client Secret')}
+        </label>
+        <input
+          id="dintero-client-secret"
+          type="password"
+          value={settings.dintero_client_secret ?? ''}
+          onChange={(e) => onChange('dintero_client_secret', e.target.value)}
+          placeholder={t('Client Secret')}
+          className={inputClass}
+        />
+      </div>
+
+      {/* Profile ID */}
+      <div>
+        <label htmlFor="dintero-profile-id" className={labelClass}>
+          {t('Profile ID')}
+        </label>
+        <input
+          id="dintero-profile-id"
+          type="text"
+          value={settings.dintero_profile_id ?? ''}
+          onChange={(e) => onChange('dintero_profile_id', e.target.value)}
+          placeholder="default"
+          className={inputClass}
+        />
+        <p className={hintClass}>
+          {t('Optional. Defaults to "default" if left empty.')}
+        </p>
+      </div>
+
+      {/* VAT Percentage */}
+      <div>
+        <label htmlFor="dintero-vat" className={labelClass}>
+          {t('VAT Percentage')}
+        </label>
+        <input
+          id="dintero-vat"
+          type="text"
+          value={settings.dintero_vat ?? ''}
+          onChange={(e) => onChange('dintero_vat', e.target.value)}
+          placeholder="E.g. 25"
+          className={inputClass}
+        />
+        <p className={hintClass}>
+          {t('Norwegian standard VAT rate is 25%')}
+        </p>
+      </div>
+
+      {/* Reference Prefix */}
+      <div>
+        <label htmlFor="dintero-reference" className={labelClass}>
+          {t('Reference Prefix')}
+        </label>
+        <input
+          id="dintero-reference"
+          type="text"
+          value={settings.dintero_reference ?? ''}
+          onChange={(e) => onChange('dintero_reference', e.target.value)}
+          placeholder="e.g. SUBSCRIPTION-"
+          className={inputClass}
+        />
+        <p className={hintClass}>
+          {t('Prefix added to payment reference identifiers')}
+        </p>
       </div>
     </PaymentProcessorFormBase>
   )

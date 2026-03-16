@@ -1,56 +1,101 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  selectClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * PayTR (Turkey) payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Mode (test / production)
+ * - Merchant ID
+ * - Merchant Key
+ * - Merchant Salt
+ *
+ * Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
+ */
+export function PayTRForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function PayTRForm({ settings, onChange }: Props) {
   return (
-    <PaymentProcessorFormBase slug="paytr" settings={settings} onChange={onChange}>
+    <PaymentProcessorFormBase
+      slug="paytr"
+      settings={settings}
+      onChange={onChange}
+      showWebhookUrl
+      webhookMessage={t('Add the following callback URL in your PayTR merchant dashboard:')}
+    >
+      {/* Mode */}
       <div>
-        <label htmlFor="paytr-merchant-id" className="block text-sm font-medium text-gray-700">
-          Merchant ID
+        <label htmlFor="paytr-mode" className={labelClass}>
+          {t('Mode')}
+        </label>
+        <select
+          id="paytr-mode"
+          value={settings.paytr_mode ?? 'test'}
+          onChange={(e) => onChange('paytr_mode', e.target.value)}
+          className={selectClass}
+        >
+          <option value="test">{t('Test')}</option>
+          <option value="production">{t('Production')}</option>
+        </select>
+      </div>
+
+      {/* Merchant ID */}
+      <div>
+        <label htmlFor="paytr-merchant-id" className={labelClass}>
+          {t('Merchant ID')}
         </label>
         <input
           id="paytr-merchant-id"
           type="text"
-          value={settings.merchant_id ?? ''}
-          onChange={(e) => onChange('merchant_id', e.target.value)}
-          placeholder="Enter Merchant ID"
+          value={settings.paytr_merchant_id ?? ''}
+          onChange={(e) => onChange('paytr_merchant_id', e.target.value)}
+          placeholder={t('Enter Merchant ID')}
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Your PayTR merchant identifier')}
+        </p>
       </div>
+
+      {/* Merchant Key */}
       <div>
-        <label htmlFor="paytr-merchant-key" className="block text-sm font-medium text-gray-700">
-          Merchant Key
+        <label htmlFor="paytr-merchant-key" className={labelClass}>
+          {t('Merchant Key')}
         </label>
         <input
           id="paytr-merchant-key"
           type="password"
-          value={settings.merchant_key ?? ''}
-          onChange={(e) => onChange('merchant_key', e.target.value)}
-          placeholder="Enter Merchant Key"
+          value={settings.paytr_merchant_key ?? ''}
+          onChange={(e) => onChange('paytr_merchant_key', e.target.value)}
+          placeholder="****-****"
           className={inputClass}
         />
       </div>
+
+      {/* Merchant Salt */}
       <div>
-        <label htmlFor="paytr-merchant-salt" className="block text-sm font-medium text-gray-700">
-          Merchant Salt
+        <label htmlFor="paytr-merchant-salt" className={labelClass}>
+          {t('Merchant Salt')}
         </label>
         <input
           id="paytr-merchant-salt"
           type="password"
-          value={settings.merchant_salt ?? ''}
-          onChange={(e) => onChange('merchant_salt', e.target.value)}
-          placeholder="Enter Merchant Salt"
+          value={settings.paytr_merchant_salt ?? ''}
+          onChange={(e) => onChange('paytr_merchant_salt', e.target.value)}
+          placeholder="****-****"
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('The merchant salt value from your PayTR dashboard')}
+        </p>
       </div>
     </PaymentProcessorFormBase>
   )

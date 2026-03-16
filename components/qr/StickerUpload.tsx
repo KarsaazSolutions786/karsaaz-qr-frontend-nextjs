@@ -14,6 +14,7 @@ import {
   estimateUploadTime,
   getCategoryDisplayName,
 } from '@/lib/utils/sticker-utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface StickerUploadProps {
   onUpload: (file: File, name: string, category?: StickerCategory) => Promise<void>;
@@ -28,6 +29,7 @@ export function StickerUpload({
   maxSize = 2 * 1024 * 1024, // 2MB default
   className = '',
 }: StickerUploadProps) {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -171,7 +173,7 @@ export function StickerUpload({
           <p className="mt-2 text-sm font-medium text-gray-900">
             {isDragging ? 'Drop your sticker here' : 'Drag and drop your sticker'}
           </p>
-          <p className="mt-1 text-xs text-gray-500">or click to browse</p>
+          <p className="mt-1 text-xs text-gray-500">{t('or click to browse')}</p>
           <p className="mt-2 text-xs text-gray-500">
             PNG, JPG, SVG, WebP up to {formatFileSize(maxSize)}
           </p>
@@ -226,12 +228,12 @@ export function StickerUpload({
 
           {/* Name input */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sticker Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Sticker Name')}</label>
             <input
               type="text"
               value={stickerName}
               onChange={(e) => setStickerName(e.target.value)}
-              placeholder="Enter sticker name"
+              placeholder={t('Enter sticker name')}
               maxLength={50}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
@@ -240,7 +242,7 @@ export function StickerUpload({
 
           {/* Category selector */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Category')}</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value as StickerCategory)}
@@ -272,7 +274,7 @@ export function StickerUpload({
               {isUploading ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>Uploading...</span>
+                  <span>{t('Uploading...')}</span>
                 </>
               ) : (
                 <>
@@ -284,7 +286,7 @@ export function StickerUpload({
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
                     />
                   </svg>
-                  <span>Upload Sticker</span>
+                  <span>{t('Upload Sticker')}</span>
                 </>
               )}
             </button>

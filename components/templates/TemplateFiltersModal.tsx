@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { X, Filter, RotateCcw } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import { TemplateFilters, TemplateCategory } from '@/types/entities/template'
 
 export interface TemplateFiltersModalProps {
@@ -43,6 +44,7 @@ export default function TemplateFiltersModal({
   onApplyFilters,
   categories,
 }: TemplateFiltersModalProps) {
+  const { t } = useTranslation()
   const [localFilters, setLocalFilters] = useState<TemplateFilters>(filters)
 
   useEffect(() => {
@@ -107,7 +109,7 @@ export default function TemplateFiltersModal({
           <div className="flex items-center gap-2">
             <Filter className="w-5 h-5 text-primary-600" />
             <h2 id="filter-modal-title" className="text-lg font-semibold text-gray-900">
-              Filter Templates
+              {t('Filter Templates')}
             </h2>
           </div>
           <button
@@ -127,7 +129,7 @@ export default function TemplateFiltersModal({
               htmlFor="category-filter"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Category
+              {t('Category')}
             </label>
             <select
               id="category-filter"
@@ -140,7 +142,7 @@ export default function TemplateFiltersModal({
               }
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
-              <option value="">All Categories</option>
+              <option value="">{t('All Categories')}</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -155,7 +157,7 @@ export default function TemplateFiltersModal({
               htmlFor="type-filter"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              QR Code Type
+              {t('QR Code Type')}
             </label>
             <select
               id="type-filter"
@@ -170,7 +172,7 @@ export default function TemplateFiltersModal({
             >
               {QR_TYPES.map((type) => (
                 <option key={type.value} value={type.value}>
-                  {type.label}
+                  {t(type.label)}
                 </option>
               ))}
             </select>
@@ -182,7 +184,7 @@ export default function TemplateFiltersModal({
               htmlFor="access-filter"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Access Level
+              {t('Access Level')}
             </label>
             <div className="space-y-2">
               {ACCESS_LEVELS.map((level) => (
@@ -203,7 +205,7 @@ export default function TemplateFiltersModal({
                     }
                     className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-sm text-gray-700">{level.label}</span>
+                  <span className="text-sm text-gray-700">{t(level.label)}</span>
                 </label>
               ))}
             </div>
@@ -217,20 +219,20 @@ export default function TemplateFiltersModal({
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
           >
             <RotateCcw className="w-4 h-4" />
-            Clear Filters
+            {t('Clear Filters')}
           </button>
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               onClick={handleApply}
               className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
-              Apply Filters
+              {t('Apply Filters')}
             </button>
           </div>
         </div>

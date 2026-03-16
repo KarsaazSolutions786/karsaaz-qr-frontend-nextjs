@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { LocationBlockData } from '@/types/entities/biolink'
 
 interface LocationBlockProps {
@@ -8,12 +11,13 @@ interface LocationBlockProps {
 
 export default function LocationBlock({ block, isEditing, onUpdate }: LocationBlockProps) {
   const { address, mapUrl } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Address</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Address')}</label>
           <textarea
             value={address}
             onChange={(e) => onUpdate?.({ ...block.data, address: e.target.value })}
@@ -22,7 +26,7 @@ export default function LocationBlock({ block, isEditing, onUpdate }: LocationBl
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Map URL (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Map URL (optional)')}</label>
           <input
             type="url"
             value={mapUrl || ''}

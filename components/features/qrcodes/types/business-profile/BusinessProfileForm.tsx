@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from '@/lib/i18n';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -73,6 +74,7 @@ export function BusinessProfileForm({
   onCancel,
   isLoading,
 }: BusinessProfileFormProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabKey>('basic');
   const [services, setServices] = useState<Service[]>(initialData?.services || []);
   const [openingHours, setOpeningHours] = useState<OpeningHours>(
@@ -133,7 +135,7 @@ export function BusinessProfileForm({
       {/* Header */}
       <div className="border-b bg-white">
         <div className="flex items-center justify-between px-6 py-4">
-          <h2 className="text-2xl font-bold text-gray-900">Business Profile Builder</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('Business Profile Builder')}</h2>
           <div className="flex gap-2">
             {onCancel && (
               <button
@@ -142,7 +144,7 @@ export function BusinessProfileForm({
                 className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                 disabled={isLoading}
               >
-                Cancel
+                {t('Cancel')}
               </button>
             )}
             <button
@@ -150,7 +152,7 @@ export function BusinessProfileForm({
               disabled={isLoading}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
-              {isLoading ? 'Saving...' : 'Save & Generate QR'}
+              {isLoading ? t('Saving...') : t('Save & Generate QR')}
             </button>
           </div>
         </div>
@@ -169,7 +171,7 @@ export function BusinessProfileForm({
               }`}
             >
               <Icon className="w-4 h-4" />
-              {label}
+              {t(label)}
             </button>
           ))}
         </div>
@@ -183,17 +185,17 @@ export function BusinessProfileForm({
             <div className="space-y-6 bg-white rounded-lg border p-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Basic Information
+                  {t('Basic Information')}
                 </h3>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Business Name *
+                      {t('Business Name')} *
                     </label>
                     <input
                       {...register('basicInfo.name')}
                       type="text"
-                      placeholder="e.g., Acme Corporation"
+                      placeholder={t('e.g., Acme Corporation')}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                     {errors.basicInfo?.name && (
@@ -205,55 +207,55 @@ export function BusinessProfileForm({
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tagline
+                      {t('Tagline')}
                     </label>
                     <input
                       {...register('basicInfo.tagline')}
                       type="text"
-                      placeholder="e.g., Your trusted partner in digital solutions"
+                      placeholder={t('e.g., Your trusted partner in digital solutions')}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Description
+                      {t('Description')}
                     </label>
                     <textarea
                       {...register('basicInfo.description')}
                       rows={4}
-                      placeholder="Tell people about your business..."
+                      placeholder={t('Tell people about your business...')}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Category
+                      {t('Category')}
                     </label>
                     <select
                       {...register('basicInfo.category')}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value="">Select a category</option>
-                      <option value="restaurant">Restaurant & Food</option>
-                      <option value="retail">Retail & Shopping</option>
-                      <option value="services">Professional Services</option>
-                      <option value="health">Health & Wellness</option>
-                      <option value="beauty">Beauty & Spa</option>
-                      <option value="fitness">Fitness & Sports</option>
-                      <option value="education">Education & Training</option>
-                      <option value="technology">Technology & IT</option>
-                      <option value="entertainment">Entertainment & Events</option>
-                      <option value="real-estate">Real Estate</option>
-                      <option value="automotive">Automotive</option>
-                      <option value="other">Other</option>
+                      <option value="">{t('Select a category')}</option>
+                      <option value="restaurant">{t('Restaurant & Food')}</option>
+                      <option value="retail">{t('Retail & Shopping')}</option>
+                      <option value="services">{t('Professional Services')}</option>
+                      <option value="health">{t('Health & Wellness')}</option>
+                      <option value="beauty">{t('Beauty & Spa')}</option>
+                      <option value="fitness">{t('Fitness & Sports')}</option>
+                      <option value="education">{t('Education & Training')}</option>
+                      <option value="technology">{t('Technology & IT')}</option>
+                      <option value="entertainment">{t('Entertainment & Events')}</option>
+                      <option value="real-estate">{t('Real Estate')}</option>
+                      <option value="automotive">{t('Automotive')}</option>
+                      <option value="other">{t('Other')}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Logo URL
+                      {t('Logo URL')}
                     </label>
                     <input
                       {...register('basicInfo.logo')}
@@ -284,17 +286,17 @@ export function BusinessProfileForm({
             <div className="space-y-6 bg-white rounded-lg border p-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Contact Information
+                  {t('Contact Information')}
                 </h3>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Street Address
+                      {t('Street Address')}
                     </label>
                     <input
                       {...register('contact.address')}
                       type="text"
-                      placeholder="123 Main Street"
+                      placeholder={t('123 Main Street')}
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -302,23 +304,23 @@ export function BusinessProfileForm({
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        City
+                        {t('City')}
                       </label>
                       <input
                         {...register('contact.city')}
                         type="text"
-                        placeholder="San Francisco"
+                        placeholder={t('San Francisco')}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        State/Province
+                        {t('State/Province')}
                       </label>
                       <input
                         {...register('contact.state')}
                         type="text"
-                        placeholder="CA"
+                        placeholder={t('CA')}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
@@ -327,23 +329,23 @@ export function BusinessProfileForm({
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        ZIP/Postal Code
+                        {t('ZIP/Postal Code')}
                       </label>
                       <input
                         {...register('contact.zipCode')}
                         type="text"
-                        placeholder="94102"
+                        placeholder={t('94102')}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Country
+                        {t('Country')}
                       </label>
                       <input
                         {...register('contact.country')}
                         type="text"
-                        placeholder="United States"
+                        placeholder={t('United States')}
                         className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
@@ -352,7 +354,7 @@ export function BusinessProfileForm({
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone
+                        {t('Phone')}
                       </label>
                       <input
                         {...register('contact.phone')}
@@ -363,7 +365,7 @@ export function BusinessProfileForm({
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email
+                        {t('Email')}
                       </label>
                       <input
                         {...register('contact.email')}
@@ -381,7 +383,7 @@ export function BusinessProfileForm({
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Website
+                      {t('Website')}
                     </label>
                     <input
                       {...register('contact.website')}
@@ -392,7 +394,7 @@ export function BusinessProfileForm({
                   </div>
 
                   <div className="pt-4 border-t">
-                    <h4 className="font-medium text-gray-900 mb-3">Social Media</h4>
+                    <h4 className="font-medium text-gray-900 mb-3">{t('Social Media')}</h4>
                     <div className="space-y-3">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -500,15 +502,15 @@ export function BusinessProfileForm({
             <div className="space-y-6 bg-white rounded-lg border p-6">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Theme & Styling
+                  {t('Theme & Styling')}
                 </h3>
                 <div className="space-y-6">
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Colors</h4>
+                    <h4 className="font-medium text-gray-900 mb-3">{t('Colors')}</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Primary Color
+                          {t('Primary Color')}
                         </label>
                         <div className="flex gap-2">
                           <input
@@ -531,7 +533,7 @@ export function BusinessProfileForm({
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Secondary Color
+                          {t('Secondary Color')}
                         </label>
                         <div className="flex gap-2">
                           <input
@@ -554,7 +556,7 @@ export function BusinessProfileForm({
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Background Color
+                          {t('Background Color')}
                         </label>
                         <div className="flex gap-2">
                           <input
@@ -577,7 +579,7 @@ export function BusinessProfileForm({
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Text Color
+                          {t('Text Color')}
                         </label>
                         <div className="flex gap-2">
                           <input
@@ -602,11 +604,11 @@ export function BusinessProfileForm({
                   </div>
 
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Layout</h4>
+                    <h4 className="font-medium text-gray-900 mb-3">{t('Layout')}</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Layout Style
+                          {t('Layout Style')}
                         </label>
                         <select
                           value={theme.layout}
@@ -618,15 +620,15 @@ export function BusinessProfileForm({
                           }
                           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         >
-                          <option value="modern">Modern</option>
-                          <option value="classic">Classic</option>
-                          <option value="minimal">Minimal</option>
-                          <option value="corporate">Corporate</option>
+                          <option value="modern">{t('Modern')}</option>
+                          <option value="classic">{t('Classic')}</option>
+                          <option value="minimal">{t('Minimal')}</option>
+                          <option value="corporate">{t('Corporate')}</option>
                         </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Card Style
+                          {t('Card Style')}
                         </label>
                         <select
                           value={theme.cardStyle}
@@ -638,14 +640,14 @@ export function BusinessProfileForm({
                           }
                           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         >
-                          <option value="rounded">Rounded</option>
-                          <option value="square">Square</option>
-                          <option value="elevated">Elevated</option>
+                          <option value="rounded">{t('Rounded')}</option>
+                          <option value="square">{t('Square')}</option>
+                          <option value="elevated">{t('Elevated')}</option>
                         </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Header Style
+                          {t('Header Style')}
                         </label>
                         <select
                           value={theme.headerStyle}
@@ -658,14 +660,14 @@ export function BusinessProfileForm({
                           }
                           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         >
-                          <option value="center">Center</option>
-                          <option value="left">Left</option>
-                          <option value="full-width">Full Width</option>
+                          <option value="center">{t('Center')}</option>
+                          <option value="left">{t('Left')}</option>
+                          <option value="full-width">{t('Full Width')}</option>
                         </select>
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Logo Size
+                          {t('Logo Size')}
                         </label>
                         <select
                           value={theme.logoSize}
@@ -677,9 +679,9 @@ export function BusinessProfileForm({
                           }
                           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                         >
-                          <option value="small">Small</option>
-                          <option value="medium">Medium</option>
-                          <option value="large">Large</option>
+                          <option value="small">{t('Small')}</option>
+                          <option value="medium">{t('Medium')}</option>
+                          <option value="large">{t('Large')}</option>
                         </select>
                       </div>
                     </div>
@@ -687,7 +689,7 @@ export function BusinessProfileForm({
 
                   <div>
                     <h4 className="font-medium text-gray-900 mb-3">
-                      Visible Sections
+                      {t('Visible Sections')}
                     </h4>
                     <div className="space-y-2">
                       {[
@@ -713,7 +715,7 @@ export function BusinessProfileForm({
                             }
                             className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                           />
-                          <span className="text-sm text-gray-700">{label}</span>
+                          <span className="text-sm text-gray-700">{t(label)}</span>
                         </label>
                       ))}
                     </div>

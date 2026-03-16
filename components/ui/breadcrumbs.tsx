@@ -4,6 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { ChevronRightIcon, HomeIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface BreadcrumbItem {
   href?: string
@@ -28,15 +29,18 @@ export function Breadcrumbs({
   separator,
   showHomeIcon = false,
   homeHref = '/dashboard',
-  homeText = 'Home',
+  homeText,
   className,
   itemClassName,
   activeClassName,
   separatorClassName,
 }: BreadcrumbsProps) {
+  const { t } = useTranslation()
+  const resolvedHomeText = homeText ?? t('Home')
+
   // Build full items list with optional home
   const allItems: BreadcrumbItem[] = showHomeIcon
-    ? [{ href: homeHref, text: homeText, icon: <HomeIcon className="h-4 w-4" /> }, ...items]
+    ? [{ href: homeHref, text: resolvedHomeText, icon: <HomeIcon className="h-4 w-4" /> }, ...items]
     : items
 
   const defaultSeparator = (
@@ -46,7 +50,7 @@ export function Breadcrumbs({
   const renderSeparator = separator || defaultSeparator
 
   return (
-    <nav aria-label="Breadcrumb" className={cn('flex items-center', className)}>
+    <nav aria-label={t("Breadcrumb")} className={cn('flex items-center', className)}>
       <ol className="flex items-center flex-wrap gap-1">
         {allItems.map((item, index) => {
           const isLast = index === allItems.length - 1
@@ -163,6 +167,7 @@ interface BreadcrumbListProps {
 }
 
 export function BreadcrumbList({ children, separator, className }: BreadcrumbListProps) {
+  const { t } = useTranslation()
   const childArray = React.Children.toArray(children)
 
   const defaultSeparator = <ChevronRightIcon className="h-4 w-4 text-gray-400 flex-shrink-0" />
@@ -170,7 +175,7 @@ export function BreadcrumbList({ children, separator, className }: BreadcrumbLis
   const renderSeparator = separator || defaultSeparator
 
   return (
-    <nav aria-label="Breadcrumb" className={cn('flex items-center', className)}>
+    <nav aria-label={t("Breadcrumb")} className={cn('flex items-center', className)}>
       <ol className="flex items-center flex-wrap gap-1">
         {childArray.map((child, index) => (
           <li key={index} className="flex items-center">

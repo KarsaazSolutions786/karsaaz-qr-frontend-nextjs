@@ -9,12 +9,14 @@ import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
 import FormDisplay from './FormDisplay';
 import { LeadForm } from '@/types/entities/lead-form';
 import { isSafeUrl } from '@/lib/utils/dom-safety';
+import { useTranslation } from '@/lib/i18n';
 
 interface FormPreviewProps {
   form: LeadForm;
 }
 
 export default function FormPreview({ form }: FormPreviewProps) {
+  const { t } = useTranslation();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
@@ -62,12 +64,12 @@ export default function FormPreview({ form }: FormPreviewProps) {
               </h2>
               
               <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
-                Your submission has been received. We'll get back to you soon.
+                {t("Your submission has been received. We'll get back to you soon.")}
               </p>
 
               {form.settings.redirectUrl && (
                 <p className="text-sm text-gray-500">
-                  Redirecting you shortly...
+                  {t('Redirecting you shortly...')}
                 </p>
               )}
             </div>
@@ -86,7 +88,7 @@ export default function FormPreview({ form }: FormPreviewProps) {
                 {/* Trust Indicators */}
                 <div className="mt-8 flex items-center gap-2 text-blue-100">
                   <Shield className="w-5 h-5" />
-                  <span className="text-sm">Your information is secure and encrypted</span>
+                  <span className="text-sm">{t('Your information is secure and encrypted')}</span>
                 </div>
               </div>
 
@@ -98,23 +100,23 @@ export default function FormPreview({ form }: FormPreviewProps) {
               {/* Privacy Policy Footer */}
               <div className="text-center text-sm text-gray-600">
                 <p>
-                  By submitting this form, you agree to our{' '}
+                  {t('By submitting this form, you agree to our')}{' '}
                   <a
                     href="/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-700 underline"
                   >
-                    Privacy Policy
+                    {t('Privacy Policy')}
                   </a>
-                  {' '}and{' '}
+                  {' '}{t('and')}{' '}
                   <a
                     href="/terms"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-700 underline"
                   >
-                    Terms of Service
+                    {t('Terms of Service')}
                   </a>
                 </p>
               </div>

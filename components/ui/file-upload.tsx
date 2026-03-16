@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface FileUploadProps {
   className?: string
@@ -14,6 +15,7 @@ export interface FileUploadProps {
 
 const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
   ({ className, accept, maxSize, multiple = false, onChange, disabled = false }, ref) => {
+    const { t } = useTranslation()
     const [dragActive, setDragActive] = React.useState(false)
     const [files, setFiles] = React.useState<File[]>([])
     const [error, setError] = React.useState<string | null>(null)
@@ -104,10 +106,10 @@ const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
           </svg>
           <p className="text-sm text-gray-600">
-            <span className="font-medium text-blue-600">Click to upload</span> or drag and drop
+            <span className="font-medium text-blue-600">{t('Click to upload')}</span> {t('or drag and drop')}
           </p>
-          {accept && <p className="mt-1 text-xs text-gray-400">Accepted: {accept}</p>}
-          {maxSize && <p className="mt-1 text-xs text-gray-400">Max size: {(maxSize / 1024 / 1024).toFixed(1)}MB</p>}
+          {accept && <p className="mt-1 text-xs text-gray-400">{t('Accepted:')} {accept}</p>}
+          {maxSize && <p className="mt-1 text-xs text-gray-400">{t('Max size:')} {(maxSize / 1024 / 1024).toFixed(1)}MB</p>}
           <input
             ref={inputRef}
             type="file"

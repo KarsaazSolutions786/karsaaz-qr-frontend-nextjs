@@ -6,6 +6,7 @@ import { LineChartWrapper } from '@/components/ui/charts';
 import { DoughnutChartWrapper } from '@/components/ui/charts';
 import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage';
 import { ScansPerHour } from '@/components/analytics/ScansPerHour';
+import { useTranslation } from '@/lib/i18n';
 
 interface AnalyticsData {
   totalScans: number;
@@ -32,6 +33,7 @@ const EMPTY_DATA: AnalyticsData = {
 };
 
 export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
+  const { t } = useTranslation();
   const { data: rawData, isLoading: loading, error: queryError } = useQRCodeAnalytics(qrCodeId);
   const data: AnalyticsData = rawData ?? EMPTY_DATA;
   const error = queryError ? (queryError as any)?.response?.data?.message || 'Failed to load analytics' : '';
@@ -73,7 +75,7 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
             data={data.scanTimeline}
             xKey="date"
             yKey="scans"
-            title="Scan Timeline"
+            title={t('Scan Timeline')}
           />
         </div>
 
@@ -83,7 +85,7 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
             data={data.deviceBreakdown}
             dataKey="value"
             nameKey="name"
-            title="Device Breakdown"
+            title={t('Device Breakdown')}
           />
         </div>
       </div>
@@ -104,9 +106,9 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Referring Sources */}
         <div className="rounded-lg border border-gray-200 bg-white p-5">
-          <h3 className="mb-3 text-sm font-medium text-gray-700">Top Referring Sources</h3>
+          <h3 className="mb-3 text-sm font-medium text-gray-700">{t('Top Referring Sources')}</h3>
           {data.topReferrers.length === 0 ? (
-            <p className="text-sm text-gray-400">No referrer data yet</p>
+            <p className="text-sm text-gray-400">{t('No referrer data yet')}</p>
           ) : (
             <ul className="divide-y divide-gray-100">
               {data.topReferrers.map((r) => (
@@ -121,17 +123,17 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
 
         {/* Country / City Table */}
         <div className="rounded-lg border border-gray-200 bg-white p-5">
-          <h3 className="mb-3 text-sm font-medium text-gray-700">Location Breakdown</h3>
+          <h3 className="mb-3 text-sm font-medium text-gray-700">{t('Location Breakdown')}</h3>
           {data.locations.length === 0 ? (
-            <p className="text-sm text-gray-400">No location data yet</p>
+            <p className="text-sm text-gray-400">{t('No location data yet')}</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-gray-500 border-b border-gray-200">
-                    <th className="pb-2 font-medium">Country</th>
-                    <th className="pb-2 font-medium">City</th>
-                    <th className="pb-2 font-medium text-right">Scans</th>
+                    <th className="pb-2 font-medium">{t('Country')}</th>
+                    <th className="pb-2 font-medium">{t('City')}</th>
+                    <th className="pb-2 font-medium text-right">{t('Scans')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">

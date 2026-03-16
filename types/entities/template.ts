@@ -85,16 +85,17 @@ export interface TemplateFilters {
   search?: string
 }
 
+/**
+ * Input for creating a template from an existing QR code.
+ * The backend derives type/data/design/settings from the referenced QR code.
+ */
 export interface CreateTemplateInput {
+  qrcode_id: number | string
   name: string
-  description?: string
-  type: string
-  category_id?: number
-  template_access_level: 'public' | 'private'
-  settings: Record<string, any>
-  data: Record<string, any>
-  design: TemplateDesign
-  thumbnail_url?: string
+  description: string
+  screenshot_id?: number | null
+  template_access_level?: 'public' | 'private'
+  category_id?: number | null
 }
 
 export interface UpdateTemplateInput extends Partial<CreateTemplateInput> {

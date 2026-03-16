@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import type { CopyableDataBlockData } from '@/types/entities/biolink'
 
 interface CopyableDataBlockProps {
@@ -10,6 +11,7 @@ interface CopyableDataBlockProps {
 }
 
 export default function CopyableDataBlock({ block, isEditing, onUpdate }: CopyableDataBlockProps) {
+  const { t } = useTranslation();
   const { label, value } = block.data
   const [copied, setCopied] = useState(false)
 
@@ -35,7 +37,7 @@ export default function CopyableDataBlock({ block, isEditing, onUpdate }: Copyab
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Label</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Label')}</label>
           <input
             type="text"
             value={label}
@@ -45,13 +47,13 @@ export default function CopyableDataBlock({ block, isEditing, onUpdate }: Copyab
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Value</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Value')}</label>
           <input
             type="text"
             value={value}
             onChange={e => onUpdate?.({ ...block.data, value: e.target.value })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-            placeholder="Data to copy"
+            placeholder={t('Data to copy')}
           />
         </div>
       </div>
@@ -74,7 +76,7 @@ export default function CopyableDataBlock({ block, isEditing, onUpdate }: Copyab
             : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
         }`}
       >
-        {copied ? '✓ Copied' : '📋 Copy'}
+        {copied ? `✓ ${t('Copied')}` : `📋 ${t('Copy')}`}
       </button>
     </div>
   )

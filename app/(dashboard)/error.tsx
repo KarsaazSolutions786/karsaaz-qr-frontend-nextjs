@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { AlertTriangle, RefreshCw, Home, ArrowLeft } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function DashboardError({
   error,
@@ -12,6 +13,7 @@ export default function DashboardError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const { t } = useTranslation()
   const router = useRouter()
 
   useEffect(() => {
@@ -25,10 +27,10 @@ export default function DashboardError({
           <AlertTriangle className="w-8 h-8 text-red-600" />
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Something went wrong')}</h1>
 
         <p className="text-gray-600 mb-6">
-          {error.message || 'An unexpected error occurred while loading this page.'}
+          {error.message || t('An unexpected error occurred while loading this page.')}
         </p>
 
         {process.env.NODE_ENV === 'development' && error.digest && (
@@ -41,7 +43,7 @@ export default function DashboardError({
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
-            Try Again
+            {t('Try Again')}
           </button>
 
           <button
@@ -49,7 +51,7 @@ export default function DashboardError({
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Go Back
+            {t('Go Back')}
           </button>
 
           <Link
@@ -57,7 +59,7 @@ export default function DashboardError({
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center gap-2"
           >
             <Home className="w-4 h-4" />
-            Dashboard
+            {t('Dashboard')}
           </Link>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Apple, Smartphone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/lib/i18n'
 
 interface DownloadButtonsProps {
   appStoreUrl?: string
@@ -19,6 +20,7 @@ export default function DownloadButtons({
   apkUrl,
   className = '',
 }: DownloadButtonsProps) {
+  const { t } = useTranslation()
   const [platform, setPlatform] = useState<Platform>('other')
   const [mounted, setMounted] = useState(false)
 
@@ -51,8 +53,8 @@ export default function DownloadButtons({
       <a href={appStoreUrl} target="_blank" rel="noopener noreferrer">
         <Apple className="w-7 h-7 mr-3" />
         <div className="flex flex-col items-start">
-          <span className="text-[10px] font-normal opacity-90">Download on the</span>
-          <span className="text-lg font-semibold -mt-0.5">App Store</span>
+          <span className="text-[10px] font-normal opacity-90">{t('Download on the')}</span>
+          <span className="text-lg font-semibold -mt-0.5">{t('App Store')}</span>
         </div>
       </a>
     </Button>
@@ -69,8 +71,8 @@ export default function DownloadButtons({
           <path d="M3 20.5v-17c0-.59.34-1.11.84-1.35L13.69 12l-9.85 9.85c-.5-.24-.84-.76-.84-1.35zm13.81-5.38L6.05 21.34l8.49-8.49 2.27 2.27zm2.69-1.51c.48-.26.77-.76.77-1.31s-.29-1.05-.77-1.31l-2.38-1.27-2.48 2.48 2.48 2.48 2.38-1.27zM6.05 2.66l10.76 6.22-2.27 2.27L6.05 2.66z"/>
         </svg>
         <div className="flex flex-col items-start">
-          <span className="text-[10px] font-normal opacity-90">GET IT ON</span>
-          <span className="text-lg font-semibold -mt-0.5">Google Play</span>
+          <span className="text-[10px] font-normal opacity-90">{t('GET IT ON')}</span>
+          <span className="text-lg font-semibold -mt-0.5">{t('Google Play')}</span>
         </div>
       </a>
     </Button>
@@ -86,8 +88,8 @@ export default function DownloadButtons({
       <a href={apkUrl} download>
         <Smartphone className="w-6 h-6 mr-3" />
         <div className="flex flex-col items-start">
-          <span className="text-[10px] font-normal opacity-70">Download</span>
-          <span className="text-lg font-semibold -mt-0.5">APK File</span>
+          <span className="text-[10px] font-normal opacity-70">{t('Download')}</span>
+          <span className="text-lg font-semibold -mt-0.5">{t('APK File')}</span>
         </div>
       </a>
     </Button>

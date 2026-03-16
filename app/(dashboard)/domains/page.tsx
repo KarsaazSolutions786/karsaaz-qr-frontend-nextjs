@@ -1,15 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { useRouter } from 'next/navigation'
-import { useDomains } from '@/hooks/queries/useDomains'
-import { useDeleteDomain, useChangeDomainStatus } from '@/hooks/mutations/useDomainMutations'
+import { useDomains } from '@/lib/hooks/queries/useDomains'
+import { useDeleteDomain, useChangeDomainStatus } from '@/lib/hooks/mutations/useDomainMutations'
 import { DomainList } from '@/components/features/domains/DomainList'
 import { DomainStatusModal } from '@/components/features/domains/DomainStatusModal'
 import type { Domain } from '@/types/entities/domain'
 import Link from 'next/link'
 
 export default function DomainsPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { data, isLoading } = useDomains()
   const deleteMutation = useDeleteDomain()
@@ -24,7 +26,7 @@ export default function DomainsPage() {
   }
 
   const handleDelete = async (domain: Domain) => {
-    if (!confirm(`Delete domain "${domain.domain}"? This action cannot be undone.`)) return
+    if (!confirm(t('Delete domain "{{domain}}"? This action cannot be undone.').replace('{{domain}}', domain.domain))) return
     await deleteMutation.mutateAsync(domain.id)
   }
 
@@ -39,16 +41,16 @@ export default function DomainsPage() {
     <div className="px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Domains</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Domains')}</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Manage custom domains for your QR codes
+            {t('Manage custom domains for your QR codes')}
           </p>
         </div>
         <Link
           href="/domains/new"
           className="rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-purple-700"
         >
-          Add Domain
+          {t('Add Domain')}
         </Link>
       </div>
 

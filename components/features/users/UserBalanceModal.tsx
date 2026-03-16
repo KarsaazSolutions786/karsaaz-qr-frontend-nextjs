@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,7 @@ interface UserBalanceModalProps {
 }
 
 export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalanceModalProps) {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const [operation, setOperation] = useState<'add' | 'subtract'>('add')
   const [amount, setAmount] = useState('')
@@ -43,9 +45,12 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
 
   const mutation = useMutation({
     mutationFn: async () => {
-      const value = operation === 'subtract' ? -Math.abs(Number(amount)) : Math.abs(Number(amount))
+      // Backend's changeAccountBalance calls setAccountBalance() which sets the
+      // absolute value (not a relative delta). Compute the new absolute balance.
+      const delta = operation === 'subtract' ? -Math.abs(Number(amount)) : Math.abs(Number(amount))
+      const newBalance = Math.max(0, currentBalance + delta)
       const response = await apiClient.post(`/users/${user.id}/change-account-balance`, {
-        account_balance: value,
+        account_balance: newBalance,
         reason,
       })
       return response.data
@@ -57,7 +62,7 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
       handleClose()
     },
     onError: (err: any) => {
-      setError(err?.response?.data?.message || 'Failed to update balance.')
+      setError(err?.response?.data?.message || t('Failed to update balance.'))
     },
   })
 
@@ -74,7 +79,7 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
     setError(null)
 
     if (!amount || Number(amount) <= 0) {
-      setError('Please enter a valid amount greater than 0.')
+      setError(t('Please enter a valid amount greater than 0.'))
       return
     }
 
@@ -87,9 +92,9 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adjust Account Balance</DialogTitle>
+          <DialogTitle>{t('Adjust Account Balance')}</DialogTitle>
           <DialogDescription>
-            {user.name || user.email} — Current balance:{' '}
+            {user.name || user.email} — {t('Current balance:')}{' '}
             {balanceLoading ? (
               <Loader2 className="inline w-3 h-3 animate-spin" />
             ) : (
@@ -107,7 +112,7 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
 
           {/* Operation */}
           <div>
-            <Label className="mb-2 block">Operation</Label>
+            <Label className="mb-2 block">{t('Operation')}</Label>
             <RadioGroup
               value={operation}
               onValueChange={(val) => setOperation(val as 'add' | 'subtract')}
@@ -115,11 +120,11 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
             >
               <label className="flex cursor-pointer items-center gap-2 text-sm">
                 <RadioGroupItem value="add" />
-                Add
+                {t('Add')}
               </label>
               <label className="flex cursor-pointer items-center gap-2 text-sm">
                 <RadioGroupItem value="subtract" />
-                Subtract
+                {t('Subtract')}
               </label>
             </RadioGroup>
           </div>
@@ -127,7 +132,7 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
           {/* Amount */}
           <div>
             <Label htmlFor="balance-amount" className="mb-1.5 block">
-              Amount
+              {t('Amount')}
             </Label>
             <Input
               id="balance-amount"
@@ -144,11 +149,11 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
           {/* Reason */}
           <div>
             <Label htmlFor="balance-reason" className="mb-1.5 block">
-              Reason (optional)
+              {t('Reason (optional)')}
             </Label>
             <Textarea
               id="balance-reason"
-              placeholder="Describe the reason for this adjustment..."
+              placeholder={t('Describe the reason for this adjustment...')}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={3}
@@ -157,11 +162,11 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              {operation === 'add' ? 'Add' : 'Subtract'} Balance
+              {operation === 'add' ? t('Add') : t('Subtract')} {t('Balance')}
             </Button>
           </DialogFooter>
         </form>

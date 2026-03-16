@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 type ImageMode = 'upload' | 'url' | 'gallery';
 
@@ -11,19 +12,19 @@ interface ImageSelectorProps {
   mode?: ImageMode;
 }
 
-const TABS: { key: ImageMode; label: string }[] = [
-  { key: 'upload', label: 'Upload' },
-  { key: 'url', label: 'URL' },
-  { key: 'gallery', label: 'Gallery' },
-];
-
 export function ImageSelector({
   value,
   onChange,
   galleryImages = [],
   mode: initialMode = 'upload',
 }: ImageSelectorProps) {
+  const { t } = useTranslation();
   const [activeMode, setActiveMode] = useState<ImageMode>(initialMode);
+  const TABS: { key: ImageMode; label: string }[] = [
+    { key: 'upload', label: t('Upload') },
+    { key: 'url', label: 'URL' },
+    { key: 'gallery', label: t('Gallery') },
+  ];
   const [urlInput, setUrlInput] = useState(value || '');
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -96,7 +97,7 @@ export function ImageSelector({
         >
           <span className="text-3xl mb-2">📁</span>
           <p className="text-sm text-gray-600">
-            Drag & drop an image here, or click to browse
+            {t('Drag & drop an image here, or click to browse')}
           </p>
           <input
             ref={fileInputRef}
@@ -125,7 +126,7 @@ export function ImageSelector({
             }}
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
-            Apply
+            {t('Apply')}
           </button>
         </div>
       )}
@@ -135,7 +136,7 @@ export function ImageSelector({
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {galleryImages.length === 0 ? (
             <p className="col-span-full py-8 text-center text-sm text-gray-500">
-              No gallery images available
+              {t('No gallery images available')}
             </p>
           ) : (
             galleryImages.map((img, idx) => (
@@ -161,7 +162,7 @@ export function ImageSelector({
       {/* Preview */}
       {value && (
         <div className="mt-2">
-          <p className="mb-1 text-xs text-gray-500">Preview</p>
+          <p className="mb-1 text-xs text-gray-500">{t('Preview')}</p>
           <img
             src={value}
             alt="Selected"

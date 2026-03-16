@@ -1,5 +1,6 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { twitterXDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 const TEXTAREA =
@@ -12,6 +13,7 @@ interface TwitterXDataFormProps {
   onChange?: (data: Partial<TwitterXDataFormData>) => void
 }
 export function TwitterXDataForm({ defaultValues, onChange }: TwitterXDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -20,7 +22,7 @@ export function TwitterXDataForm({ defaultValues, onChange }: TwitterXDataFormPr
     <form className="space-y-5">
       <div>
         <label htmlFor="x" className={LABEL}>
-          X (Twitter) Username or URL
+          {t('X (Twitter) Username or URL')}
         </label>
         <textarea
           {...register('x')}

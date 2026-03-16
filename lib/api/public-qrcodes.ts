@@ -154,6 +154,18 @@ export async function getAppDownloadData(slug: string) {
   return response.json();
 }
 
+export async function getGoogleReviewData(slug: string) {
+  const response = await fetch(`${getApiBaseURL()}/qrcodes/${slug}/redirect`);
+  if (!response.ok) throw new Error('Failed to fetch Google review data');
+  return response.json();
+}
+
+export async function getPayPalData(slug: string) {
+  const response = await fetch(`${getApiBaseURL()}/qrcodes/${slug}/redirect`);
+  if (!response.ok) throw new Error('Failed to fetch PayPal data');
+  return response.json();
+}
+
 /**
  * Submit review (for business-review type)
  */

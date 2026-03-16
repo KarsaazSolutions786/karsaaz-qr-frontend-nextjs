@@ -9,6 +9,7 @@ import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
 import MenuDisplay from './MenuDisplay';
 import { Input } from '@/components/ui/input';
 import SimplePagination from '@/components/common/SimplePagination';
+import { useTranslation } from '@/lib/i18n';
 
 interface AllergenInfo {
   glutenFree?: boolean;
@@ -75,6 +76,7 @@ const allergenIcons: Record<keyof AllergenInfo, { icon: typeof Wheat; label: str
 };
 
 export default function MenuPreview({ menu }: MenuPreviewProps) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedAllergenFilter, setSelectedAllergenFilter] = useState<keyof AllergenInfo | null>(null);
@@ -254,7 +256,7 @@ export default function MenuPreview({ menu }: MenuPreviewProps) {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="Search menu items..."
+                  placeholder={t('Search menu items...')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-12 pr-12 h-12 text-base border-gray-300 focus:border-red-500 focus:ring-red-500"
@@ -272,7 +274,7 @@ export default function MenuPreview({ menu }: MenuPreviewProps) {
               {/* Allergen Filters */}
               {availableAllergens.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Dietary Preferences</h3>
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('Dietary Preferences')}</h3>
                   <div className="flex flex-wrap gap-2">
                     {availableAllergens.map((allergen) => {
                       const config = allergenIcons[allergen];
@@ -380,7 +382,7 @@ export default function MenuPreview({ menu }: MenuPreviewProps) {
               >
                 <Search className="w-10 h-10" style={{ color: primaryColor }} />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No items found</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('No items found')}</h3>
               <p className="text-gray-600 mb-4">
                 Try adjusting your search or filters to find what you're looking for.
               </p>
@@ -392,7 +394,7 @@ export default function MenuPreview({ menu }: MenuPreviewProps) {
                 className="px-6 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: primaryColor }}
               >
-                Clear Filters
+                {t('Clear Filters')}
               </button>
             </div>
           )}

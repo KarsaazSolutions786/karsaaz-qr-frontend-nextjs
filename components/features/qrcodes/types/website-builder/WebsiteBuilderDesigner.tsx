@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
+import { useTranslation } from '@/lib/i18n'
 
 export interface WebsiteBuilderDesignSettings extends DesignSettings {
   // Website Builder-specific settings
@@ -27,40 +28,41 @@ const tabs: DesignerTab[] = [
 ]
 
 export function WebsiteBuilderDesigner({ design, onChange }: WebsiteBuilderDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<WebsiteBuilderDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderSeoContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">SEO Settings</h4>
+      <h4 className="font-medium text-gray-900">{t('SEO Settings')}</h4>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Page Title</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Page Title')}</label>
         <input
           type="text"
           value={design.seoTitle || ''}
           onChange={e => updateDesign({ seoTitle: e.target.value })}
-          placeholder="Enter page title for SEO"
+          placeholder={t('Enter page title for SEO')}
           className="w-full px-3 py-2 border rounded-lg"
         />
-        <p className="text-xs text-gray-500 mt-1">Recommended: 50-60 characters</p>
+        <p className="text-xs text-gray-500 mt-1">{t('Recommended: 50-60 characters')}</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Meta Description</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Meta Description')}</label>
         <textarea
           value={design.seoDescription || ''}
           onChange={e => updateDesign({ seoDescription: e.target.value })}
-          placeholder="Enter meta description for SEO"
+          placeholder={t('Enter meta description for SEO')}
           className="w-full px-3 py-2 border rounded-lg"
           rows={3}
         />
-        <p className="text-xs text-gray-500 mt-1">Recommended: 150-160 characters</p>
+        <p className="text-xs text-gray-500 mt-1">{t('Recommended: 150-160 characters')}</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Keywords</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Keywords')}</label>
         <input
           type="text"
           value={design.seoKeywords || ''}
@@ -68,11 +70,11 @@ export function WebsiteBuilderDesigner({ design, onChange }: WebsiteBuilderDesig
           placeholder="keyword1, keyword2, keyword3"
           className="w-full px-3 py-2 border rounded-lg"
         />
-        <p className="text-xs text-gray-500 mt-1">Separate keywords with commas</p>
+        <p className="text-xs text-gray-500 mt-1">{t('Separate keywords with commas')}</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Favicon URL</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Favicon URL')}</label>
         <input
           type="url"
           value={design.faviconUrl || ''}
@@ -83,7 +85,7 @@ export function WebsiteBuilderDesigner({ design, onChange }: WebsiteBuilderDesig
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Open Graph Image URL</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Open Graph Image URL')}</label>
         <input
           type="url"
           value={design.ogImage || ''}
@@ -92,14 +94,13 @@ export function WebsiteBuilderDesigner({ design, onChange }: WebsiteBuilderDesig
           className="w-full px-3 py-2 border rounded-lg"
         />
         <p className="text-xs text-gray-500 mt-1">
-          Used when sharing on social media. Recommended: 1200x630 pixels
+          {t('Used when sharing on social media. Recommended: 1200x630 pixels')}
         </p>
       </div>
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-800">
-          <strong>Note:</strong> The Website Builder uses its own WYSIWYG editor for page design.
-          Use the Website Builder tool to create and edit your page content.
+          <strong>{t('Note')}:</strong> {t('The Website Builder uses its own WYSIWYG editor for page design. Use the Website Builder tool to create and edit your page content.')}
         </p>
       </div>
     </div>

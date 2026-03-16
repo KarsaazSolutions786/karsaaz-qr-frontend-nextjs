@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { Label } from '@/components/ui/label'
 import { AlertCircle, Upload, X } from 'lucide-react'
 
@@ -25,6 +26,7 @@ export default function FileQuestion({
   error,
   accept,
 }: FileQuestionProps) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +69,7 @@ export default function FileQuestion({
           }`}
         >
           <Upload className="h-5 w-5" />
-          Click to upload a file
+          {t('Click to upload a file')}
         </button>
       )}
 

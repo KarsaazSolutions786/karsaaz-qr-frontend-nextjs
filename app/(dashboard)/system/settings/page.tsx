@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
+import { useTranslation } from '@/lib/i18n'
 
 const CONFIG_KEYS = [
   'app.site_name',
@@ -17,6 +18,7 @@ const CONFIG_KEYS = [
 ]
 
 export default function SystemSettingsPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
   const { mutateAsync: save, isPending: isSaving, error } = useSaveSystemConfigs(CONFIG_KEYS)
   const [formData, setFormData] = useState<Record<string, string>>({})
@@ -59,12 +61,12 @@ export default function SystemSettingsPage() {
     <div className="mx-auto max-w-4xl">
       {error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
@@ -72,12 +74,12 @@ export default function SystemSettingsPage() {
         {/* Site Settings */}
         <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
           <div className="border-b border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Site Settings</h2>
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">{t('Site Settings')}</h2>
           </div>
           <div className="px-4 py-5 sm:px-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Site Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Site Name')}</label>
                 <input
                   type="text"
                   value={formData['app.site_name'] || ''}
@@ -86,7 +88,7 @@ export default function SystemSettingsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Site Description</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Site Description')}</label>
                 <input
                   type="text"
                   value={formData['app.site_description'] || ''}
@@ -95,7 +97,7 @@ export default function SystemSettingsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Logo URL</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Logo URL')}</label>
                 <input
                   type="text"
                   value={formData['app.logo_url'] || ''}
@@ -104,7 +106,7 @@ export default function SystemSettingsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Favicon URL</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Favicon URL')}</label>
                 <input
                   type="text"
                   value={formData['app.favicon_url'] || ''}
@@ -119,45 +121,45 @@ export default function SystemSettingsPage() {
         {/* General */}
         <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
           <div className="border-b border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white">General</h2>
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">{t('General')}</h2>
           </div>
           <div className="px-4 py-5 sm:px-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Default Language</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Default Language')}</label>
                 <select
                   value={formData['app.default_language'] || 'en'}
                   onChange={(e) => update('app.default_language', e.target.value)}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 >
-                  <option value="en">English</option>
-                  <option value="es">Spanish</option>
-                  <option value="fr">French</option>
-                  <option value="de">German</option>
-                  <option value="ar">Arabic</option>
-                  <option value="ur">Urdu</option>
+                  <option value="en">{t('English')}</option>
+                  <option value="es">{t('Spanish')}</option>
+                  <option value="fr">{t('French')}</option>
+                  <option value="de">{t('German')}</option>
+                  <option value="ar">{t('Arabic')}</option>
+                  <option value="ur">{t('Urdu')}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Default Timezone</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Default Timezone')}</label>
                 <select
                   value={formData['app.default_timezone'] || 'UTC'}
                   onChange={(e) => update('app.default_timezone', e.target.value)}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 >
-                  <option value="UTC">UTC</option>
-                  <option value="America/New_York">Eastern Time (US)</option>
-                  <option value="America/Chicago">Central Time (US)</option>
-                  <option value="America/Los_Angeles">Pacific Time (US)</option>
-                  <option value="Europe/London">London</option>
-                  <option value="Asia/Karachi">Pakistan (PKT)</option>
+                  <option value="UTC">{t('UTC')}</option>
+                  <option value="America/New_York">{t('Eastern Time (US)')}</option>
+                  <option value="America/Chicago">{t('Central Time (US)')}</option>
+                  <option value="America/Los_Angeles">{t('Pacific Time (US)')}</option>
+                  <option value="Europe/London">{t('London')}</option>
+                  <option value="Asia/Karachi">{t('Pakistan (PKT)')}</option>
                 </select>
               </div>
               <div className="sm:col-span-2">
                 <div className="flex items-center justify-between">
                   <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Registration Enabled</label>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Allow new users to register</p>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('Registration Enabled')}</label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('Allow new users to register')}</p>
                   </div>
                   <button
                     type="button"
@@ -175,12 +177,12 @@ export default function SystemSettingsPage() {
         {/* SEO */}
         <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
           <div className="border-b border-gray-200 dark:border-gray-700 px-4 py-5 sm:px-6">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white">SEO</h2>
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">{t('SEO')}</h2>
           </div>
           <div className="px-4 py-5 sm:px-6">
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Meta Title</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Meta Title')}</label>
                 <input
                   type="text"
                   value={formData['seo.meta_title'] || ''}
@@ -189,7 +191,7 @@ export default function SystemSettingsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Meta Description</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Meta Description')}</label>
                 <textarea
                   rows={3}
                   value={formData['seo.meta_description'] || ''}
@@ -207,7 +209,7 @@ export default function SystemSettingsPage() {
             disabled={isSaving}
             className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            {isSaving ? 'Saving…' : 'Save Settings'}
+            {isSaving ? t('Saving...') : t('Save Settings')}
           </button>
         </div>
       </form>

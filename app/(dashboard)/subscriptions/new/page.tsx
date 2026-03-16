@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { useSubscriptionStatuses } from '@/lib/hooks/queries/useAdminSubscriptions'
 import { useCreateAdminSubscription } from '@/lib/hooks/mutations/useAdminSubscriptionMutations'
 
 export default function NewSubscriptionPage() {
+  const { t } = useTranslation()
   const createMutation = useCreateAdminSubscription()
   const { data: plansData } = usePlans()
   const { data: statuses } = useSubscriptionStatuses()
@@ -35,14 +37,14 @@ export default function NewSubscriptionPage() {
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex items-center gap-4">
         <Link href="/subscriptions" className="text-sm text-blue-600 hover:text-blue-800">
-          ← Back to Subscriptions
+          {t('← Back to Subscriptions')}
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Create Subscription</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('Create Subscription')}</h1>
       </div>
 
       {createMutation.error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to create subscription. Please check the details and try again.
+          {t('Failed to create subscription. Please check the details and try again.')}
         </div>
       )}
 
@@ -51,7 +53,7 @@ export default function NewSubscriptionPage() {
           {/* User ID */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              User ID <span className="text-red-500">*</span>
+              {t('User ID')} <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -59,19 +61,19 @@ export default function NewSubscriptionPage() {
               min={1}
               value={form.user_id}
               onChange={(e) => set('user_id', e.target.value)}
-              placeholder="Enter user ID"
+              placeholder={t('Enter user ID')}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
             />
             <p className="mt-1 text-xs text-gray-500">
-              You can find user IDs in the{' '}
-              <Link href="/users" className="text-blue-600 hover:underline">Users</Link> section.
+              {t('You can find user IDs in the')}{' '}
+              <Link href="/users" className="text-blue-600 hover:underline">{t('Users')}</Link> {t('section.')}
             </p>
           </div>
 
           {/* Subscription Plan */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Subscription Plan <span className="text-red-500">*</span>
+              {t('Subscription Plan')} <span className="text-red-500">*</span>
             </label>
             <select
               required
@@ -79,10 +81,10 @@ export default function NewSubscriptionPage() {
               onChange={(e) => set('subscription_plan_id', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
             >
-              <option value="">Select a plan…</option>
+              <option value="">{t('Select a plan…')}</option>
               {plansData?.data.map((plan) => (
                 <option key={plan.id} value={String(plan.id)}>
-                  {plan.name} — {plan.frequency} {plan.price > 0 ? `($${plan.price})` : '(free)'}
+                  {plan.name} — {plan.frequency} {plan.price > 0 ? `($${plan.price})` : t('(free)')}
                 </option>
               ))}
             </select>
@@ -91,7 +93,7 @@ export default function NewSubscriptionPage() {
           {/* Status */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Status <span className="text-red-500">*</span>
+              {t('Status')} <span className="text-red-500">*</span>
             </label>
             <select
               required
@@ -99,7 +101,7 @@ export default function NewSubscriptionPage() {
               onChange={(e) => set('subscription_status', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
             >
-              <option value="">Select a status…</option>
+              <option value="">{t('Select a status…')}</option>
               {statuses?.map((s) => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -118,7 +120,7 @@ export default function NewSubscriptionPage() {
 
           {/* Expires At */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Expires At</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Expires At')}</label>
             <input
               type="date"
               value={form.expires_at}
@@ -133,14 +135,14 @@ export default function NewSubscriptionPage() {
             href="/subscriptions"
             className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Cancel
+            {t('Cancel')}
           </Link>
           <button
             type="submit"
             disabled={createMutation.isPending}
             className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
-            {createMutation.isPending ? 'Creating…' : 'Create Subscription'}
+            {createMutation.isPending ? t('Creating…') : t('Create Subscription')}
           </button>
         </div>
       </form>

@@ -1,6 +1,7 @@
 'use client'
 
 import type { PaymentGateway } from '@/types/entities/payment-gateway'
+import { useTranslation } from '@/lib/i18n'
 
 interface PaymentGatewayListProps {
   gateways: PaymentGateway[]
@@ -10,10 +11,12 @@ interface PaymentGatewayListProps {
 }
 
 export default function PaymentGatewayList({ gateways, onToggle, onEdit, onDelete }: PaymentGatewayListProps) {
+  const { t } = useTranslation()
+
   if (gateways.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <p className="text-sm text-gray-500">No payment gateways configured yet.</p>
+        <p className="text-sm text-gray-500">{t('No payment gateways configured yet.')}</p>
       </div>
     )
   }
@@ -23,11 +26,11 @@ export default function PaymentGatewayList({ gateways, onToggle, onEdit, onDelet
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Name</th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Slug</th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Mode</th>
-            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Enabled</th>
-            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Name')}</th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Slug')}</th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Mode')}</th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Enabled')}</th>
+            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">{t('Actions')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -67,13 +70,13 @@ export default function PaymentGatewayList({ gateways, onToggle, onEdit, onDelet
                   onClick={() => onEdit(gw.id)}
                   className="mr-3 font-medium text-blue-600 hover:text-blue-800 transition-colors"
                 >
-                  Edit
+                  {t('Edit')}
                 </button>
                 <button
                   onClick={() => onDelete(gw.id)}
                   className="font-medium text-red-600 hover:text-red-800 transition-colors"
                 >
-                  Delete
+                  {t('Delete')}
                 </button>
               </td>
             </tr>

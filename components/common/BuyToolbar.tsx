@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 import { Sparkles } from 'lucide-react'
 
 interface BuyToolbarProps {
@@ -11,11 +12,14 @@ interface BuyToolbarProps {
 }
 
 export function BuyToolbar({
-  message = 'Upgrade to unlock all features',
-  ctaText = 'Upgrade Now',
+  message,
+  ctaText,
   ctaUrl = '/pricing',
   className,
 }: BuyToolbarProps) {
+  const { t } = useTranslation()
+  const resolvedMessage = message ?? t('Upgrade to unlock all features')
+  const resolvedCtaText = ctaText ?? t('Upgrade Now')
   return (
     <div
       className={cn(
@@ -25,13 +29,13 @@ export function BuyToolbar({
     >
       <div className="flex items-center gap-2 text-sm font-medium">
         <Sparkles className="h-4 w-4" />
-        <span>{message}</span>
+        <span>{resolvedMessage}</span>
       </div>
       <a
         href={ctaUrl}
         className="rounded-md bg-white px-4 py-1.5 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50"
       >
-        {ctaText}
+        {resolvedCtaText}
       </a>
     </div>
   )

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import type { LeadFormBlockData } from '@/types/entities/biolink'
 
 interface LeadFormBlockProps {
@@ -10,6 +11,7 @@ interface LeadFormBlockProps {
 }
 
 export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBlockProps) {
+  const { t } = useTranslation();
   const { title, fields, buttonText = 'Submit', apiEndpoint } = block.data
   const [formData, setFormData] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
@@ -35,7 +37,7 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Form Title</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Form Title')}</label>
           <input
             type="text"
             value={title || ''}
@@ -44,9 +46,9 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
           />
         </div>
         <div className="flex items-center justify-between">
-          <label className="block text-sm font-medium text-gray-700">Fields</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Fields')}</label>
           <button type="button" onClick={addField} className="text-sm text-blue-600 hover:text-blue-700">
-            + Add Field
+            {t('+ Add Field')}
           </button>
         </div>
         {fields.map((field, index) => (
@@ -55,14 +57,14 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
               type="text"
               value={field.label}
               onChange={(e) => updateField(index, 'label', e.target.value)}
-              placeholder="Label"
+              placeholder={t('Label')}
               className="block flex-1 rounded-md border-gray-300 text-sm shadow-sm"
             />
             <input
               type="text"
               value={field.name}
               onChange={(e) => updateField(index, 'name', e.target.value)}
-              placeholder="Field name"
+              placeholder={t('Field name')}
               className="block w-28 rounded-md border-gray-300 text-sm shadow-sm"
             />
             <select
@@ -70,10 +72,10 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
               onChange={(e) => updateField(index, 'type', e.target.value)}
               className="block w-24 rounded-md border-gray-300 text-sm shadow-sm"
             >
-              <option value="text">Text</option>
-              <option value="email">Email</option>
-              <option value="phone">Phone</option>
-              <option value="textarea">Textarea</option>
+              <option value="text">{t('Text')}</option>
+              <option value="email">{t('Email')}</option>
+              <option value="phone">{t('Phone')}</option>
+              <option value="textarea">{t('Textarea')}</option>
             </select>
             <button type="button" onClick={() => removeField(index)} className="text-red-600 hover:text-red-700">
               ✕
@@ -81,7 +83,7 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
           </div>
         ))}
         <div>
-          <label className="block text-sm font-medium text-gray-700">Button Text</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Button Text')}</label>
           <input
             type="text"
             value={buttonText}
@@ -90,7 +92,7 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">API Endpoint (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('API Endpoint (optional)')}</label>
           <input
             type="url"
             value={apiEndpoint || ''}
@@ -105,7 +107,7 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
   if (submitted) {
     return (
       <div className="rounded-lg bg-green-50 p-6 text-center">
-        <p className="font-medium text-green-800">✓ Thank you for your submission!</p>
+        <p className="font-medium text-green-800">{t('Thank you for your submission!')}</p>
       </div>
     )
   }

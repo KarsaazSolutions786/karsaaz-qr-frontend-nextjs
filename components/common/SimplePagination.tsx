@@ -3,6 +3,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 export type SimplePaginationVariant = 'buttons' | 'load-more';
 
@@ -28,13 +29,16 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
   variant = 'buttons',
   loading = false,
   hasMore,
-  loadingText = 'Loading...',
-  loadMoreText = 'Load More',
+  loadingText,
+  loadMoreText,
   className,
   disabled = false,
   showPageIndicator = true,
   compact = false,
 }) => {
+  const { t } = useTranslation();
+  const resolvedLoadingText = loadingText ?? t('Loading...');
+  const resolvedLoadMoreText = loadMoreText ?? t('Load More');
   const hasNextPage = hasMore !== undefined ? hasMore : currentPage < totalPages;
   const hasPreviousPage = currentPage > 1;
 
@@ -71,7 +75,7 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
             role="status"
             aria-live="polite"
           >
-            Page {currentPage} of {totalPages}
+            {t('Page')} {currentPage} {t('of')} {totalPages}
           </div>
         )}
 
@@ -88,15 +92,15 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
               'transition-colors',
               compact && 'px-4 py-2'
             )}
-            aria-label="Load more items"
+            aria-label={t('Load more items')}
           >
             {loading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                {loadingText}
+                {resolvedLoadingText}
               </>
             ) : (
-              loadMoreText
+              resolvedLoadMoreText
             )}
           </button>
         )}
@@ -127,11 +131,11 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
         >
           {totalPages > 0 ? (
             <>
-              Page <span className="font-medium text-foreground">{currentPage}</span> of{' '}
+              {t('Page')} <span className="font-medium text-foreground">{currentPage}</span> {t('of')}{' '}
               <span className="font-medium text-foreground">{totalPages}</span>
             </>
           ) : (
-            'No pages'
+            t('No pages')
           )}
         </div>
       )}
@@ -153,7 +157,7 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
           aria-label="Go to previous page"
         >
           <ChevronLeft className={cn('h-4 w-4', compact && 'h-3 w-3')} />
-          <span className={cn(!compact && 'hidden sm:inline')}>Previous</span>
+          <span className={cn(!compact && 'hidden sm:inline')}>{t('Previous')}</span>
         </button>
 
         <button
@@ -173,11 +177,11 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
           {loading ? (
             <>
               <Loader2 className={cn('h-4 w-4 animate-spin', compact && 'h-3 w-3')} />
-              <span className={cn(!compact && 'hidden sm:inline')}>Loading...</span>
+              <span className={cn(!compact && 'hidden sm:inline')}>{t('Loading...')}</span>
             </>
           ) : (
             <>
-              <span className={cn(!compact && 'hidden sm:inline')}>Next</span>
+              <span className={cn(!compact && 'hidden sm:inline')}>{t('Next')}</span>
               <ChevronRight className={cn('h-4 w-4', compact && 'h-3 w-3')} />
             </>
           )}

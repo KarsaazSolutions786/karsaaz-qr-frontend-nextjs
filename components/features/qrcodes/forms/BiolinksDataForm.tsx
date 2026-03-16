@@ -1,5 +1,6 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { biolinksDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 const INPUT =
@@ -12,6 +13,7 @@ interface BiolinksDataFormProps {
   onChange?: (data: Partial<BiolinksData>) => void
 }
 export function BiolinksDataForm({ defaultValues, onChange }: BiolinksDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -20,20 +22,20 @@ export function BiolinksDataForm({ defaultValues, onChange }: BiolinksDataFormPr
     <form className="space-y-5">
       <div>
         <label htmlFor="page_name" className={LABEL}>
-          Page Name *
+          {t('Page Name')} *
         </label>
         <input
           {...register('page_name')}
           id="page_name"
           type="text"
-          placeholder="My Bio Link Page"
+          placeholder={t('My Bio Link Page')}
           className={INPUT}
         />
         {errors.page_name && <p className={ERROR}>{errors.page_name.message}</p>}
       </div>
       <div>
         <label htmlFor="email" className={LABEL}>
-          Email <span className="text-gray-400 font-normal">(optional)</span>
+          {t('Email')} <span className="text-gray-400 font-normal">({t('optional')})</span>
         </label>
         <input
           {...register('email')}
@@ -46,13 +48,12 @@ export function BiolinksDataForm({ defaultValues, onChange }: BiolinksDataFormPr
       </div>
       <div>
         <label htmlFor="expires_at" className={LABEL}>
-          Expiry Date
+          {t('Expiry Date')}
         </label>
         <input {...register('expires_at')} id="expires_at" type="date" className={INPUT} />
       </div>
       <div className="p-4 bg-purple-50 rounded-xl border border-purple-200 text-sm text-purple-700">
-        🔗 After creating the QR code, use the full Biolinks editor to add blocks, customize themes,
-        and manage your bio link page.
+        {t('After creating the QR code, use the full Biolinks editor to add blocks, customize themes, and manage your bio link page.')}
       </div>
     </form>
   )

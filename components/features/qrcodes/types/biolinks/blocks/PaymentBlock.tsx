@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react';
 import { CreditCard, DollarSign, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { PaymentBlock as PaymentBlockType } from '@/types/entities/biolinks';
+import { useTranslation } from '@/lib/i18n';
 
 interface PaymentBlockProps {
   block: PaymentBlockType;
@@ -17,6 +20,7 @@ export const PaymentBlock: React.FC<PaymentBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   const formatAmount = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -40,7 +44,7 @@ export const PaymentBlock: React.FC<PaymentBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -51,14 +55,14 @@ export const PaymentBlock: React.FC<PaymentBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -77,7 +81,7 @@ export const PaymentBlock: React.FC<PaymentBlockProps> = ({
             </span>
           </div>
           <div className="text-sm text-gray-600 mb-2">
-            {block.description || 'Payment link'}
+            {block.description || t('Payment link')}
           </div>
           {block.paymentUrl && (
             <div className="text-xs text-blue-600 truncate">

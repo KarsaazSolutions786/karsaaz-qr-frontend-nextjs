@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 interface PlanFeaturesEditorProps {
   features: string[]
@@ -8,6 +9,7 @@ interface PlanFeaturesEditorProps {
 }
 
 export function PlanFeaturesEditor({ features, onChange }: PlanFeaturesEditorProps) {
+  const { t } = useTranslation()
   const [newFeature, setNewFeature] = useState('')
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [editValue, setEditValue] = useState('')
@@ -75,7 +77,7 @@ export function PlanFeaturesEditor({ features, onChange }: PlanFeaturesEditorPro
           disabled={!newFeature.trim()}
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Add
+          {t('Add')}
         </button>
       </div>
 
@@ -183,7 +185,7 @@ export function PlanFeaturesEditor({ features, onChange }: PlanFeaturesEditorPro
       )}
 
       {features.length === 0 && (
-        <p className="text-xs text-gray-400">No features added yet. Add features that will be displayed on the pricing page.</p>
+        <p className="text-xs text-gray-400">{t('No features added yet. Add features that will be displayed on the pricing page.')}</p>
       )}
     </div>
   )

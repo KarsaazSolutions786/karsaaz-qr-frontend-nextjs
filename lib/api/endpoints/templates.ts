@@ -73,11 +73,14 @@ export async function deleteTemplate(id: number): Promise<void> {
 }
 
 /**
- * Use a template to create a new QR code
- * Returns template data pre-filled for QR code creation
+ * Use a template to create a new QR code.
+ * Backend copies the template QR code and returns the new QR code object.
+ * Route: POST /qrcode-templates/{id}/use
  */
-export async function useTemplate(input: UseTemplateInput): Promise<Partial<any>> {
-  const response = await apiClient.post('qrcode-templates/use', input)
+export async function useTemplate(input: UseTemplateInput): Promise<any> {
+  const response = await apiClient.post(`qrcode-templates/${input.template_id}/use`, {
+    name: input.name,
+  })
   return response.data
 }
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
 import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
+import { useTranslation } from '@/lib/i18n'
 
 const CONFIG_KEYS = [
   'app.storage_type',
@@ -16,6 +17,7 @@ const CONFIG_KEYS = [
 ]
 
 export default function StorageSettingsPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
   const { mutateAsync: save, isPending: isSaving, error } = useSaveSystemConfigs(CONFIG_KEYS)
   const [formData, setFormData] = useState<Record<string, string>>({})
@@ -56,45 +58,45 @@ export default function StorageSettingsPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">File Storage</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('File Storage')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Configure where uploaded files are stored.
+          {t('Configure where uploaded files are stored.')}
         </p>
       </div>
 
       {error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
       <form onSubmit={handleSave} className="space-y-8">
         <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Storage Driver</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Storage Driver')}</h2>
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Storage Type</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">{t('Storage Type')}</label>
             <select
               value={formData['app.storage_type'] || 'local'}
               onChange={(e) => update('app.storage_type', e.target.value)}
               className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="local">Local</option>
-              <option value="s3">Amazon S3 / S3-Compatible</option>
+              <option value="local">{t('Local')}</option>
+              <option value="s3">{t('Amazon S3 / S3-Compatible')}</option>
             </select>
           </div>
         </section>
 
         {isS3 && (
           <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">S3 Configuration</h2>
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('S3 Configuration')}</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Access Key</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">{t('Access Key')}</label>
                 <input
                   type="text"
                   value={formData['filesystems.s3.key'] || ''}
@@ -104,7 +106,7 @@ export default function StorageSettingsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Secret Key</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">{t('Secret Key')}</label>
                 <input
                   type="password"
                   value={formData['filesystems.s3.secret'] || ''}
@@ -114,7 +116,7 @@ export default function StorageSettingsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Region</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">{t('Region')}</label>
                 <input
                   type="text"
                   value={formData['filesystems.s3.region'] || ''}
@@ -124,7 +126,7 @@ export default function StorageSettingsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Bucket</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">{t('Bucket')}</label>
                 <input
                   type="text"
                   value={formData['filesystems.s3.bucket'] || ''}
@@ -134,7 +136,7 @@ export default function StorageSettingsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">URL</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">{t('URL')}</label>
                 <input
                   type="text"
                   value={formData['filesystems.s3.url'] || ''}
@@ -144,7 +146,7 @@ export default function StorageSettingsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Endpoint</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">{t('Endpoint')}</label>
                 <input
                   type="text"
                   value={formData['filesystems.s3.endpoint'] || ''}
@@ -168,26 +170,26 @@ export default function StorageSettingsPage() {
                 const result = await systemConfigsAPI.testStorage()
                 setTestResult(result)
               } catch {
-                setTestResult({ success: false, message: 'Connection test failed. Verify your storage settings.' })
+                setTestResult({ success: false, message: t('Connection test failed. Verify your storage settings.') })
               } finally {
                 setIsTesting(false)
               }
             }}
             className="rounded-md bg-green-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 disabled:opacity-50"
           >
-            {isTesting ? 'Testing…' : 'Test Connection'}
+            {isTesting ? t('Testing...') : t('Test Connection')}
           </button>
           <button
             type="submit"
             disabled={isSaving}
             className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
-            {isSaving ? 'Saving…' : 'Save Settings'}
+            {isSaving ? t('Saving...') : t('Save Settings')}
           </button>
         </div>
         {testResult && (
           <div className={`rounded-md p-4 text-sm ${testResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-            <p className="font-medium">{testResult.success ? '✅ Storage connection successful!' : '❌ Storage connection failed'}</p>
+            <p className="font-medium">{testResult.success ? t('Storage connection successful!') : t('Storage connection failed')}</p>
             {testResult.message && <p className="mt-1">{testResult.message}</p>}
           </div>
         )}

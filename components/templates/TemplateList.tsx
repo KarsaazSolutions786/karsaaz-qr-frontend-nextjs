@@ -3,14 +3,15 @@
 import { QRCodeTemplate } from '@/types/entities/template'
 import Image from 'next/image'
 import { useState } from 'react'
-import { 
-  ArrowUpDown, 
-  Eye, 
-  Edit, 
-  Trash2, 
+import {
+  ArrowUpDown,
+  Eye,
+  Edit,
+  Trash2,
   MoreVertical,
-  FileQuestion 
+  FileQuestion
 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface TemplateListProps {
   templates: QRCodeTemplate[]
@@ -36,6 +37,7 @@ export default function TemplateList({
   isLoading = false,
   emptyMessage = 'No templates found',
 }: TemplateListProps) {
+  const { t } = useTranslation()
   const [sortField, setSortField] = useState<SortField>('created_at')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [activeMenu, setActiveMenu] = useState<number | null>(null)
@@ -88,16 +90,16 @@ export default function TemplateList({
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                  Template
+                  {t('Template')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">
-                  Type
+                  {t('Type')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">
-                  Category
+                  {t('Category')}
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                  Actions
+                  {t('Actions')}
                 </th>
               </tr>
             </thead>
@@ -140,7 +142,7 @@ export default function TemplateList({
             <FileQuestion className="w-8 h-8 text-gray-400" />
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            No templates available
+            {t('No templates available')}
           </h3>
           <p className="text-sm text-gray-600 text-center max-w-md">
             {emptyMessage}
@@ -176,16 +178,16 @@ export default function TemplateList({
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <SortButton field="name" label="Template" />
+                <SortButton field="name" label={t('Template')} />
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <SortButton field="type" label="Type" />
+                <SortButton field="type" label={t('Type')} />
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
-                <SortButton field="category" label="Category" />
+                <SortButton field="category" label={t('Category')} />
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
+                {t('Actions')}
               </th>
             </tr>
           </thead>
@@ -246,7 +248,7 @@ export default function TemplateList({
                         onClick={() => onUseTemplate?.(template)}
                         className="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded hover:bg-primary-700 transition-colors"
                       >
-                        Use
+                        {t('Use')}
                       </button>
                       
                       {isPrivate && showActions && (
@@ -275,7 +277,7 @@ export default function TemplateList({
                                       className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                                     >
                                       <Eye className="w-4 h-4 mr-2" />
-                                      View
+                                      {t('View')}
                                     </button>
                                   )}
                                   {onEdit && (
@@ -287,7 +289,7 @@ export default function TemplateList({
                                       className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                                     >
                                       <Edit className="w-4 h-4 mr-2" />
-                                      Edit
+                                      {t('Edit')}
                                     </button>
                                   )}
                                   {onDelete && (
@@ -299,7 +301,7 @@ export default function TemplateList({
                                       className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                                     >
                                       <Trash2 className="w-4 h-4 mr-2" />
-                                      Delete
+                                      {t('Delete')}
                                     </button>
                                   )}
                                 </div>
@@ -365,7 +367,7 @@ export default function TemplateList({
                       onClick={() => onUseTemplate?.(template)}
                       className="flex-1 px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded hover:bg-primary-700 transition-colors"
                     >
-                      Use Template
+                      {t('Use Template')}
                     </button>
                     
                     {isPrivate && showActions && (
@@ -394,7 +396,7 @@ export default function TemplateList({
                                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                                   >
                                     <Eye className="w-4 h-4 mr-2" />
-                                    View
+                                    {t('View')}
                                   </button>
                                 )}
                                 {onEdit && (
@@ -406,7 +408,7 @@ export default function TemplateList({
                                     className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                                   >
                                     <Edit className="w-4 h-4 mr-2" />
-                                    Edit
+                                    {t('Edit')}
                                   </button>
                                 )}
                                 {onDelete && (
@@ -418,7 +420,7 @@ export default function TemplateList({
                                     className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                                   >
                                     <Trash2 className="w-4 h-4 mr-2" />
-                                    Delete
+                                    {t('Delete')}
                                   </button>
                                 )}
                               </div>

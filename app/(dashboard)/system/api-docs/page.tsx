@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { useTranslation } from '@/lib/i18n'
 
 interface ApiEndpoint {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -95,24 +96,25 @@ const apiResources: ApiResource[] = [
 ]
 
 export default function ApiDocsPage() {
+  const { t } = useTranslation()
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold dark:text-gray-100">API Documentation</h1>
+        <h1 className="text-2xl font-bold dark:text-gray-100">{t('API Documentation')}</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          REST API endpoint reference. All endpoints use JSON request/response bodies.
+          {t('REST API endpoint reference. All endpoints use JSON request/response bodies.')}
         </p>
       </div>
 
       <Card>
         <CardContent className="p-4">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">Base URL</h3>
+          <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">{t('Base URL')}</h3>
           <code className="text-sm bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 font-mono text-gray-800 dark:text-gray-200">
             {typeof window !== 'undefined' ? window.location.origin : 'https://app.karsaazqr.com'}
           </code>
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 mt-4 mb-2">Authentication</h3>
+          <h3 className="font-medium text-gray-900 dark:text-gray-100 mt-4 mb-2">{t('Authentication')}</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Include the access token in the <code className="bg-gray-100 dark:bg-gray-700 rounded px-1 font-mono text-xs">Authorization</code> header:
+            {t('Include the access token in the')} <code className="bg-gray-100 dark:bg-gray-700 rounded px-1 font-mono text-xs">Authorization</code> {t('header:')}
           </p>
           <code className="block mt-1 text-sm bg-gray-100 dark:bg-gray-700 rounded px-2 py-1 font-mono text-gray-800 dark:text-gray-200">
             Authorization: Bearer {'<token>'}

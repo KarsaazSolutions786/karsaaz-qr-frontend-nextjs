@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { QRCodeTypeSelector } from './QRCodeTypeSelector'
 import { QRCodeCustomizer } from './QRCodeCustomizer'
 import { URLDataForm } from './forms/URLDataForm'
@@ -78,6 +79,7 @@ export function QRCodeForm({
   submitLabel = 'Create QR Code',
   isSubmitting = false,
 }: QRCodeFormProps) {
+  const { t } = useTranslation()
   const [name, setName] = useState(initialName)
   const [type, setType] = useState(initialType)
   const [data, setData] = useState(initialData)
@@ -189,7 +191,7 @@ export function QRCodeForm({
       case 'business-profile':
         return <BusinessProfileDataForm {...formProps} />
       default:
-        return <div className="text-sm text-gray-500">Unknown QR code type</div>
+        return <div className="text-sm text-gray-500">{t('Unknown QR code type')}</div>
     }
   }
 
@@ -198,14 +200,14 @@ export function QRCodeForm({
       {/* Name */}
       <div className="rounded-lg border border-gray-200 bg-white p-6">
         <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-          QR Code Name *
+          {t('QR Code Name *')}
         </label>
         <input
           id="name"
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder="e.g., My Website Link"
+          placeholder={t('e.g., My Website Link')}
           className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
       </div>
@@ -230,7 +232,7 @@ export function QRCodeForm({
 
       {/* Data Form */}
       <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Data</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('Data')}</h2>
         {renderDataForm()}
       </div>
 
@@ -247,7 +249,7 @@ export function QRCodeForm({
           disabled={!name || !data || isSubmitting}
           className="rounded-md bg-blue-600 px-6 py-3 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isSubmitting ? 'Processing...' : submitLabel}
+          {isSubmitting ? t('Processing...') : t(submitLabel)}
         </button>
 
         <button
@@ -256,7 +258,7 @@ export function QRCodeForm({
           disabled={isSubmitting}
           className="rounded-md border border-gray-300 px-6 py-3 text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
     </div>

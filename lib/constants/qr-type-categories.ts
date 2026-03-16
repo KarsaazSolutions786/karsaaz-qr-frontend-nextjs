@@ -41,6 +41,8 @@ export const QR_TYPE_CATEGORIES: QRTypeCategory[] = [
       'snapchat',
       'spotify',
       'tiktok',
+      'skype',
+      'wechat',
     ],
   },
   {

@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslation } from '@/lib/i18n'
 import { useUsers } from '@/lib/hooks/queries/useUsers'
 import {
   useDeleteUser,
@@ -23,6 +24,7 @@ interface UserListContentProps {
 // ─── Magic URL Modal ──────────────────────────────────────────────────────────
 
 function MagicUrlModal({ url, onClose }: { url: string; onClose: () => void }) {
+  const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
@@ -36,14 +38,13 @@ function MagicUrlModal({ url, onClose }: { url: string; onClose: () => void }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Magic Login URL</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t('Magic Login URL')}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
         </div>
         <p className="text-sm text-gray-600 mb-3">
-          This URL is valid for <strong>24 hours</strong>. Share it with the user for one-time
-          access.
+          {t('This URL is valid for 24 hours. Share it with the user for one-time access.')}
         </p>
         <div className="flex gap-2">
           <input
@@ -57,7 +58,7 @@ function MagicUrlModal({ url, onClose }: { url: string; onClose: () => void }) {
             className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            {copied ? 'Copied!' : 'Copy'}
+            {copied ? t('Copied!') : t('Copy')}
           </button>
         </div>
         <div className="mt-4 flex justify-end">
@@ -65,7 +66,7 @@ function MagicUrlModal({ url, onClose }: { url: string; onClose: () => void }) {
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
           >
-            Close
+            {t('Close')}
           </button>
         </div>
       </div>
@@ -84,6 +85,7 @@ function FilterModal({
   onApply: (f: { minQRCodes: string; maxQRCodes: string }) => void
   onClose: () => void
 }) {
+  const { t } = useTranslation()
   const [min, setMin] = useState(filters.minQRCodes)
   const [max, setMax] = useState(filters.maxQRCodes)
 
@@ -91,17 +93,17 @@ function FilterModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Filter Users</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t('Filter Users')}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Number of QR Codes</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Number of QR Codes')}</label>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Min</label>
+              <label className="block text-xs text-gray-500 mb-1">{t('Min')}</label>
               <input
                 type="number"
                 min={0}
@@ -112,13 +114,13 @@ function FilterModal({
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Max</label>
+              <label className="block text-xs text-gray-500 mb-1">{t('Max')}</label>
               <input
                 type="number"
                 min={0}
                 value={max}
                 onChange={e => setMax(e.target.value)}
-                placeholder="No limit"
+                placeholder={t('No limit')}
                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
@@ -130,13 +132,13 @@ function FilterModal({
             onClick={() => onApply({ minQRCodes: '', maxQRCodes: '' })}
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
           >
-            Clear
+            {t('Clear')}
           </button>
           <button
             onClick={() => onApply({ minQRCodes: min, maxQRCodes: max })}
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
           >
-            Apply
+            {t('Apply')}
           </button>
         </div>
       </div>
@@ -147,6 +149,7 @@ function FilterModal({
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function UserListContent({ paying }: UserListContentProps) {
+  const { t } = useTranslation()
   const pathname = usePathname()
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(15)
@@ -264,9 +267,9 @@ export function UserListContent({ paying }: UserListContentProps) {
   }
 
   const tabs = [
-    { label: 'All Users', href: '/users', active: pathname === '/users' },
-    { label: 'Paying', href: '/users/paying', active: pathname === '/users/paying' },
-    { label: 'Non-Paying', href: '/users/non-paying', active: pathname === '/users/non-paying' },
+    { label: t('All Users'), href: '/users', active: pathname === '/users' },
+    { label: t('Paying'), href: '/users/paying', active: pathname === '/users/paying' },
+    { label: t('Non-Paying'), href: '/users/non-paying', active: pathname === '/users/non-paying' },
   ]
 
   return (
@@ -274,8 +277,8 @@ export function UserListContent({ paying }: UserListContentProps) {
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Users</h1>
-          <p className="mt-2 text-sm text-gray-600">Manage all registered users</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Users')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Manage all registered users')}</p>
         </div>
         <div className="mt-4 sm:mt-0">
           <Link
@@ -283,7 +286,7 @@ export function UserListContent({ paying }: UserListContentProps) {
             className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
           >
             <Plus className="w-4 h-4" />
-            Create User
+            {t('Create User')}
           </Link>
         </div>
       </div>
@@ -311,7 +314,7 @@ export function UserListContent({ paying }: UserListContentProps) {
       <div className="mt-6 flex items-center gap-3">
         <input
           type="search"
-          placeholder="Search by name or email..."
+          placeholder={t('Search by name or email...')}
           value={search}
           onChange={e => {
             setSearch(e.target.value)
@@ -328,7 +331,7 @@ export function UserListContent({ paying }: UserListContentProps) {
           }`}
         >
           <Filter className="w-4 h-4" />
-          Filters
+          {t('Filters')}
           {hasActiveFilters && (
             <span className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-xs">
               1
@@ -347,7 +350,7 @@ export function UserListContent({ paying }: UserListContentProps) {
         {isLoading ? (
           <div className="text-center py-12">
             <Loader2 className="inline-block h-8 w-8 animate-spin text-gray-400" />
-            <p className="mt-2 text-sm text-gray-600">Loading users...</p>
+            <p className="mt-2 text-sm text-gray-600">{t('Loading users...')}</p>
           </div>
         ) : isError ? (
           <div className="text-center py-12">
@@ -364,9 +367,9 @@ export function UserListContent({ paying }: UserListContentProps) {
                 d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Failed to load users</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('Failed to load users')}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              {(error as Error)?.message || 'An error occurred while fetching user data.'}
+              {(error as Error)?.message || t('An error occurred while fetching user data.')}
             </p>
           </div>
         ) : users.length > 0 ? (
@@ -376,37 +379,37 @@ export function UserListContent({ paying }: UserListContentProps) {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="py-3.5 pl-4 pr-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide w-12">
-                      ID
+                      {t('ID')}
                     </th>
                     <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Name
+                      {t('Name')}
                     </th>
                     <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Email
+                      {t('Email')}
                     </th>
                     <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Mobile
+                      {t('Mobile')}
                     </th>
                     <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Role
+                      {t('Role')}
                     </th>
                     <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Plan
+                      {t('Plan')}
                     </th>
                     <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      QRs
+                      {t('QRs')}
                     </th>
                     <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Scans
+                      {t('Scans')}
                     </th>
                     <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Main User
+                      {t('Main User')}
                     </th>
                     <th className="px-3 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Created
+                      {t('Created')}
                     </th>
                     <th className="relative py-3.5 pl-3 pr-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                      Actions
+                      {t('Actions')}
                     </th>
                   </tr>
                 </thead>
@@ -433,11 +436,11 @@ export function UserListContent({ paying }: UserListContentProps) {
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
                         {user.plan?.name || (user.transactions && user.transactions.length > 0) ? (
                           <span className="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">
-                            {user.plan?.name || 'Paid'}
+                            {user.plan?.name || t('Paid')}
                           </span>
                         ) : (
                           <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-500">
-                            Free / Trial
+                            {t('Free / Trial')}
                           </span>
                         )}
                       </td>
@@ -466,7 +469,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                             {pendingAction === `actas-${user.id}` ? (
                               <Loader2 className="w-3 h-3 animate-spin inline" />
                             ) : null}{' '}
-                            Act As
+                            {t('Act As')}
                           </button>
 
                           {/* Edit */}
@@ -474,7 +477,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                             href={`/users/${user.id}`}
                             className="text-blue-600 hover:text-blue-900 text-xs"
                           >
-                            Edit
+                            {t('Edit')}
                           </Link>
 
                           {/* Magic Login */}
@@ -486,7 +489,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                             {pendingAction === `magic-${user.id}` ? (
                               <Loader2 className="w-3 h-3 animate-spin inline" />
                             ) : null}{' '}
-                            Magic Link
+                            {t('Magic Link')}
                           </button>
 
                           {/* Balance */}
@@ -494,7 +497,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                             onClick={() => setBalanceUser(user)}
                             className="text-emerald-600 hover:text-emerald-900 text-xs"
                           >
-                            Balance
+                            {t('Balance')}
                           </button>
 
                           {/* Delete */}
@@ -503,7 +506,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                             disabled={deleteMutation.isPending}
                             className="text-red-600 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
                           >
-                            Delete
+                            {t('Delete')}
                           </button>
 
                           {/* Reset Role */}
@@ -515,7 +518,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                             {pendingAction === `resetrole-${user.id}` ? (
                               <Loader2 className="w-3 h-3 animate-spin inline" />
                             ) : null}{' '}
-                            Reset Role
+                            {t('Reset Role')}
                           </button>
 
                           {/* Reset Scans */}
@@ -527,7 +530,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                             {pendingAction === `resetscans-${user.id}` ? (
                               <Loader2 className="w-3 h-3 animate-spin inline" />
                             ) : null}{' '}
-                            Reset Scans
+                            {t('Reset Scans')}
                           </button>
                         </div>
                       </td>
@@ -541,7 +544,7 @@ export function UserListContent({ paying }: UserListContentProps) {
             {pagination.lastPage > 1 && (
               <div className="mt-6 flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span>Rows per page:</span>
+                  <span>{t('Rows per page:')}</span>
                   <select
                     value={perPage}
                     onChange={e => handlePerPageChange(Number(e.target.value))}
@@ -556,7 +559,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                   <span className="ml-2">
                     {pagination.total > 0
                       ? `${(page - 1) * perPage + 1}–${Math.min(page * perPage, pagination.total)} of ${pagination.total}`
-                      : '0 results'}
+                      : t('0 results')}
                   </span>
                 </div>
                 <div className="flex gap-2">
@@ -565,7 +568,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                     disabled={page === 1}
                     className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Previous
+                    {t('Previous')}
                   </button>
                   <span className="flex items-center px-3 text-sm text-gray-600">
                     Page {page} of {pagination.lastPage}
@@ -575,7 +578,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                     disabled={page >= pagination.lastPage}
                     className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Next
+                    {t('Next')}
                   </button>
                 </div>
               </div>
@@ -602,9 +605,9 @@ export function UserListContent({ paying }: UserListContentProps) {
                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No users found</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No users found')}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              {search ? 'Try adjusting your search.' : 'No users match the current filter.'}
+              {search ? t('Try adjusting your search.') : t('No users match the current filter.')}
             </p>
           </div>
         )}

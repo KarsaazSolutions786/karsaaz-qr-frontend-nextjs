@@ -1,6 +1,7 @@
 'use client';
 
 import { AlertCircle } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface UsageProgressProps {
   used: number;
@@ -19,6 +20,7 @@ export default function UsageProgress({
   showWarning = true,
   warningThreshold = 80,
 }: UsageProgressProps) {
+  const { t } = useTranslation();
   const isUnlimited = total === -1;
   const percentage = isUnlimited ? 0 : (used / total) * 100;
   const isNearLimit = percentage >= warningThreshold;
@@ -44,7 +46,7 @@ export default function UsageProgress({
         </span>
         <span className="text-sm text-gray-600">
           {isUnlimited ? (
-            <span className="text-green-600 font-semibold">Unlimited</span>
+            <span className="text-green-600 font-semibold">{t('Unlimited')}</span>
           ) : (
             <>
               {used.toLocaleString()} / {total.toLocaleString()}
@@ -71,8 +73,8 @@ export default function UsageProgress({
               <AlertCircle className="w-4 h-4" />
               <span>
                 {isAtLimit
-                  ? `You've reached your ${type} limit`
-                  : `You're using ${percentage.toFixed(0)}% of your ${type} quota`}
+                  ? `${t("You've reached your")} ${type} ${t('limit')}`
+                  : `${t("You're using")} ${percentage.toFixed(0)}% ${t('of your')} ${type} ${t('quota')}`}
               </span>
             </div>
           )}

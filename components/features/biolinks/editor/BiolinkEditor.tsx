@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import {
   DndContext,
   closestCenter,
@@ -27,6 +28,45 @@ import TitleBlock from '../blocks/TitleBlock'
 import SocialLinksBlock from '../blocks/SocialLinksBlock'
 import VideoBlock from '../blocks/VideoBlock'
 import DividerBlock from '../blocks/DividerBlock'
+import ContactBlock from '../blocks/ContactBlock'
+import EmailBlock from '../blocks/EmailBlock'
+import PhoneBlock from '../blocks/PhoneBlock'
+import LocationBlock from '../blocks/LocationBlock'
+import EmbedBlock from '../blocks/EmbedBlock'
+import DownloadBlock from '../blocks/DownloadBlock'
+import PaymentBlock from '../blocks/PaymentBlock'
+import NewsletterBlock from '../blocks/NewsletterBlock'
+import FAQsBlock from '../blocks/FAQsBlock'
+import VCardBlock from '../blocks/VCardBlock'
+import LeadFormBlock from '../blocks/LeadFormBlock'
+import OpeningHoursBlock from '../blocks/OpeningHoursBlock'
+import TableBlock from '../blocks/TableBlock'
+import ListBlock from '../blocks/ListBlock'
+import ImageGridBlock from '../blocks/ImageGridBlock'
+import AudioBlock from '../blocks/AudioBlock'
+import ProfileBlock from '../blocks/ProfileBlock'
+import CustomCodeBlock from '../blocks/CustomCodeBlock'
+import CopyableDataBlock from '../blocks/CopyableDataBlock'
+import FileBlock from '../blocks/FileBlock'
+import InformationPopupBlock from '../blocks/InformationPopupBlock'
+import ParagraphBlock from '../blocks/ParagraphBlock'
+import ShareBlock from '../blocks/ShareBlock'
+import UPIBlock from '../blocks/UPIBlock'
+import CountdownBlock from '../blocks/CountdownBlock'
+import CalendarBlock from '../blocks/CalendarBlock'
+import HeaderBannerBlock from '../blocks/HeaderBannerBlock'
+import TestimonialBlock from '../blocks/TestimonialBlock'
+import CarouselBlock from '../blocks/CarouselBlock'
+import MapBlock from '../blocks/MapBlock'
+import AppDownloadBlock from '../blocks/AppDownloadBlock'
+import PricingBlock from '../blocks/PricingBlock'
+import YouTubeBlock from '../blocks/YouTubeBlock'
+import VimeoBlock from '../blocks/VimeoBlock'
+import SpotifyBlock from '../blocks/SpotifyBlock'
+import SoundCloudBlock from '../blocks/SoundCloudBlock'
+import TikTokBlock from '../blocks/TikTokBlock'
+import InstagramBlock from '../blocks/InstagramBlock'
+import TwitterBlock from '../blocks/TwitterBlock'
 
 interface BiolinkEditorProps {
   blocks: BlockData[]
@@ -42,6 +82,7 @@ function SortableBlock({
   onUpdate: (data: any) => void
   onDelete: () => void
 }) {
+  const { t } = useTranslation()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: block.id,
   })
@@ -68,8 +109,86 @@ function SortableBlock({
         return <VideoBlock block={block} isEditing onUpdate={onUpdate} />
       case 'divider':
         return <DividerBlock block={block} isEditing onUpdate={onUpdate} />
+      case 'contact':
+        return <ContactBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'email':
+        return <EmailBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'phone':
+        return <PhoneBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'location':
+        return <LocationBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'embed':
+        return <EmbedBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'download':
+        return <DownloadBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'payment':
+        return <PaymentBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'newsletter':
+        return <NewsletterBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'faqs':
+        return <FAQsBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'vcard':
+        return <VCardBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'lead-form':
+        return <LeadFormBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'opening-hours':
+        return <OpeningHoursBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'table':
+        return <TableBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'list':
+        return <ListBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'image-grid':
+        return <ImageGridBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'audio':
+        return <AudioBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'profile':
+        return <ProfileBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'custom-code':
+        return <CustomCodeBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'copyable-data':
+        return <CopyableDataBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'file':
+        return <FileBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'information-popup':
+        return <InformationPopupBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'paragraph':
+        return <ParagraphBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'share':
+        return <ShareBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'upi':
+        return <UPIBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'countdown':
+        return <CountdownBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'calendar':
+        return <CalendarBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'header-banner':
+        return <HeaderBannerBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'testimonial':
+        return <TestimonialBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'carousel':
+        return <CarouselBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'map':
+        return <MapBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'app-download':
+        return <AppDownloadBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'pricing':
+        return <PricingBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'youtube':
+        return <YouTubeBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'vimeo':
+        return <VimeoBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'spotify':
+        return <SpotifyBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'soundcloud':
+        return <SoundCloudBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'tiktok':
+        return <TikTokBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'instagram':
+        return <InstagramBlock block={block as any} isEditing onUpdate={onUpdate} />
+      case 'twitter':
+        return <TwitterBlock block={block as any} isEditing onUpdate={onUpdate} />
       default:
-        return <div>Unknown block type</div>
+        return <div>{t('Unknown block type')}</div>
     }
   }
 
@@ -80,7 +199,7 @@ function SortableBlock({
           {...attributes}
           {...listeners}
           className="cursor-grab rounded bg-gray-200 p-1 text-gray-600 hover:bg-gray-300 active:cursor-grabbing"
-          title="Drag to reorder"
+          title={t('Drag to reorder')}
         >
           ⋮⋮
         </button>
@@ -90,7 +209,7 @@ function SortableBlock({
         <button
           onClick={onDelete}
           className="absolute -right-10 top-4 rounded bg-red-100 p-1 text-red-600 opacity-0 transition-opacity hover:bg-red-200 group-hover:opacity-100"
-          title="Delete block"
+          title={t('Delete block')}
         >
           🗑️
         </button>
@@ -100,6 +219,7 @@ function SortableBlock({
 }
 
 export default function BiolinkEditor({ blocks, onChange }: BiolinkEditorProps) {
+  const { t } = useTranslation();
   const [showBlockSelector, setShowBlockSelector] = useState(false)
 
   const sensors = useSensors(
@@ -162,7 +282,7 @@ export default function BiolinkEditor({ blocks, onChange }: BiolinkEditorProps) 
 
       {blocks.length === 0 && (
         <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
-          <p className="text-gray-500">No blocks yet. Add your first block below.</p>
+          <p className="text-gray-500">{t('No blocks yet. Add your first block below.')}</p>
         </div>
       )}
 
@@ -170,7 +290,7 @@ export default function BiolinkEditor({ blocks, onChange }: BiolinkEditorProps) 
         {showBlockSelector ? (
           <div className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">Add Block</h3>
+              <h3 className="font-semibold text-gray-900">{t('Add Block')}</h3>
               <button
                 onClick={() => setShowBlockSelector(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -196,7 +316,7 @@ export default function BiolinkEditor({ blocks, onChange }: BiolinkEditorProps) 
             onClick={() => setShowBlockSelector(true)}
             className="rounded-lg border-2 border-dashed border-gray-300 px-6 py-3 text-sm font-medium text-gray-600 transition-colors hover:border-blue-500 hover:text-blue-600"
           >
-            + Add Block
+            {t('+ Add Block')}
           </button>
         )}
       </div>

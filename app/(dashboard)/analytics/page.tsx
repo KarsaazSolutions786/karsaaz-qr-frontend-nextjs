@@ -17,8 +17,10 @@ import { ReferrerTracker } from '@/components/analytics/ReferrerTracker'
 import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage'
 import { ScansPerHour } from '@/components/analytics/ScansPerHour'
 import type { DateRange } from '@/types/entities/analytics'
+import { useTranslation } from '@/lib/i18n'
 
 export default function AnalyticsPage() {
+  const { t } = useTranslation()
   const [dateRange, setDateRange] = useState<DateRange>(
     getPresetDateRange('last30days')
   )
@@ -93,9 +95,9 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t('Analytics')}</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Track your QR code performance and engagement
+            {t('Track your QR code performance and engagement')}
           </p>
         </div>
         <DateRangePicker value={dateRange} onChange={setDateRange} />
@@ -107,24 +109,24 @@ export default function AnalyticsPage() {
       {/* Metrics Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          title="Total Scans"
+          title={t("Total Scans")}
           value={overview?.totalScans.toLocaleString() ?? '0'}
           change={overview?.scanGrowth}
           isLoading={overviewLoading}
         />
         <MetricCard
-          title="Unique Users"
+          title={t("Unique Users")}
           value={overview?.uniqueUsers.toLocaleString() ?? '0'}
           isLoading={overviewLoading}
         />
         <MetricCard
-          title="Active QR Codes"
+          title={t("Active QR Codes")}
           value={overview?.activeQRCodes ?? '0'}
           change={overview?.activeGrowth}
           isLoading={overviewLoading}
         />
         <MetricCard
-          title="Total QR Codes"
+          title={t("Total QR Codes")}
           value={overview?.totalQRCodes ?? '0'}
           isLoading={overviewLoading}
         />
@@ -133,8 +135,8 @@ export default function AnalyticsPage() {
       {/* Charts Row */}
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartContainer
-          title="Scans Over Time"
-          description="Daily scan activity"
+          title={t("Scans Over Time")}
+          description={t("Daily scan activity")}
           isLoading={overviewLoading}
           error={overviewError}
         >
@@ -147,8 +149,8 @@ export default function AnalyticsPage() {
         </ChartContainer>
 
         <ChartContainer
-          title="Top Performing QR Codes"
-          description="Most scanned QR codes"
+          title={t("Top Performing QR Codes")}
+          description={t("Most scanned QR codes")}
           isLoading={topLoading}
           error={topError}
         >
@@ -199,7 +201,7 @@ export default function AnalyticsPage() {
       {/* Breakdown Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartContainer
-          title="Scans by Device"
+          title={t("Scans by Device")}
           isLoading={overviewLoading}
           error={overviewError}
         >
@@ -207,7 +209,7 @@ export default function AnalyticsPage() {
         </ChartContainer>
 
         <ChartContainer
-          title="Scans by Location"
+          title={t("Scans by Location")}
           isLoading={overviewLoading}
           error={overviewError}
         >
@@ -217,8 +219,8 @@ export default function AnalyticsPage() {
 
       {/* Recent Activity */}
       <ChartContainer
-        title="Recent Scans"
-        description="Latest QR code scans"
+        title={t("Recent Scans")}
+        description={t("Latest QR code scans")}
         isLoading={overviewLoading}
         error={overviewError}
       >

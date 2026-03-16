@@ -8,8 +8,10 @@ import React, { Suspense } from 'react';
 import { toast } from 'sonner';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Download, Printer, X } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 function PreviewContent() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const router = useRouter();
   const src = searchParams.get('src');
@@ -101,13 +103,13 @@ function PreviewContent() {
       <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
         <div className="text-center">
           <p className="text-xl text-gray-600 dark:text-gray-400">
-            No QR code source provided
+            {t('No QR code source provided')}
           </p>
           <button
             onClick={handleClose}
             className="mt-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Go Back
+            {t('Go Back')}
           </button>
         </div>
       </div>
@@ -121,7 +123,7 @@ function PreviewContent() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-              QR Code Preview
+              {t('QR Code Preview')}
             </h1>
             
             <div className="flex items-center gap-3">
@@ -131,7 +133,7 @@ function PreviewContent() {
                 aria-label="Print QR code"
               >
                 <Printer className="w-4 h-4" />
-                <span className="hidden sm:inline">Print</span>
+                <span className="hidden sm:inline">{t('Print')}</span>
               </button>
               
               <button
@@ -140,7 +142,7 @@ function PreviewContent() {
                 aria-label="Download QR code"
               >
                 <Download className="w-4 h-4" />
-                <span className="hidden sm:inline">Download</span>
+                <span className="hidden sm:inline">{t('Download')}</span>
               </button>
               
               <button

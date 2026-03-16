@@ -8,6 +8,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import { useRouter } from 'next/navigation';
 import { BiolinksForm } from './BiolinksForm';
 import { biolinksAPI } from '@/lib/api/endpoints/biolinks';
@@ -45,6 +46,7 @@ export default function QuickStartBiolinks({
   existingBiolinksId,
   onSuccess,
 }: QuickStartBiolinksProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [initialData, setInitialData] = useState<BiolinksFormData | undefined>();
@@ -63,7 +65,7 @@ export default function QuickStartBiolinks({
         })
         .catch((error) => {
           console.error('Failed to load biolinks:', error);
-          toast.error('Failed to load biolinks data');
+          toast.error(t('Failed to load biolinks data'));
         });
     }
   });
@@ -82,7 +84,7 @@ export default function QuickStartBiolinks({
           blocks: formData.blocks as any,
           theme: formData.theme as any,
         });
-        toast.success('✅ Biolinks page updated successfully!');
+        toast.success(t('Biolinks page updated successfully!'));
       } else {
         // CREATE new biolinks
         result = await biolinksAPI.create({
@@ -91,7 +93,7 @@ export default function QuickStartBiolinks({
           blocks: formData.blocks as any,
           theme: formData.theme as any,
         });
-        toast.success('✅ Biolinks page created successfully!');
+        toast.success(t('Biolinks page created successfully!'));
       }
 
       // Call success callback or navigate
@@ -104,8 +106,8 @@ export default function QuickStartBiolinks({
       console.error('Failed to save biolinks:', error);
       
       // Show user-friendly error message
-      const message = error.response?.data?.message || error.message || 'Failed to save biolinks';
-      toast.error(`❌ ${message}`);
+      const message = error.response?.data?.message || error.message || t('Failed to save biolinks');
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +115,7 @@ export default function QuickStartBiolinks({
 
   const handleCancel = () => {
     // Navigate back or show confirmation dialog
-    if (confirm('Are you sure you want to cancel? Unsaved changes will be lost.')) {
+    if (confirm(t('Are you sure you want to cancel? Unsaved changes will be lost.'))) {
       router.back();
     }
   };
@@ -136,13 +138,16 @@ export default function QuickStartBiolinks({
  * For when you just need the form without the wrapper
  */
 export function MinimalBiolinksIntegration({ qrCodeId }: { qrCodeId: string }) {
+  const { t } = useTranslation();
   const handleSubmit = async (data: BiolinksFormData) => {
     const biolinks = await biolinksAPI.create({
       slug: qrCodeId,
-      title: data.profile?.name || 'Untitled',
+      title: data.profile?.name || t('Untitled'),
       ...data as any,
     });
-    console.log('Created:', biolinks);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Created:', biolinks);
+    }
   };
 
   return <BiolinksForm onSubmit={handleSubmit} />;
@@ -159,7 +164,9 @@ export function ExampleUsageInPage() {
     <QuickStartBiolinks
       qrCodeId={qrCodeId}
       onSuccess={(biolinksId) => {
-        console.log('Biolinks created with ID:', biolinksId);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Biolinks created with ID:', biolinksId);
+        }
         // Redirect, update state, etc.
       }}
     />
@@ -177,7 +184,9 @@ export function ExampleEditMode() {
       qrCodeId="qr-123"
       existingBiolinksId={biolinksId}
       onSuccess={(id) => {
-        console.log('Updated biolinks:', id);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Updated biolinks:', id);
+        }
       }}
     />
   );

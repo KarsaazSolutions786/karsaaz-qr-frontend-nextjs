@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuth0Enabled } from '@/lib/hooks/queries/useAppConfig'
+import { useTranslation } from '@/lib/i18n'
 
 /**
  * Auth0LoginButton — shows "Sign in with Auth0" when Auth0 is enabled in backend config.
@@ -9,6 +10,7 @@ import { useAuth0Enabled } from '@/lib/hooks/queries/useAppConfig'
  */
 export function Auth0LoginButton() {
   const { enabled, isLoading: loading } = useAuth0Enabled()
+  const { t } = useTranslation()
 
   if (loading || !enabled) return null
 
@@ -36,7 +38,7 @@ export function Auth0LoginButton() {
           fill="#EB5424"
         />
       </svg>
-      Sign in with Auth0
+      {t('Sign in with Auth0')}
     </a>
   )
 }

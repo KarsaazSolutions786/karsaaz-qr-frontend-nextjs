@@ -8,6 +8,7 @@
 
 import React, { useMemo } from 'react';
 import { Clock } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 import {
   LineChart,
   Line,
@@ -35,6 +36,8 @@ function formatHour(hour: number): string {
 }
 
 export function ScansPerHour({ data, loading = false }: ScansPerHourProps) {
+  const { t } = useTranslation();
+
   const chartData = useMemo(
     () =>
       data
@@ -57,14 +60,14 @@ export function ScansPerHour({ data, loading = false }: ScansPerHourProps) {
             <Clock className="w-5 h-5 text-teal-600" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">Scans by Hour</h3>
-            <p className="text-sm text-gray-500">24-hour scan distribution</p>
+            <h3 className="text-lg font-bold text-gray-900">{t('Scans by Hour')}</h3>
+            <p className="text-sm text-gray-500">{t('24-hour scan distribution')}</p>
           </div>
         </div>
 
         {peakHour && (
           <div className="text-right">
-            <p className="text-xs text-gray-500">Peak Hour</p>
+            <p className="text-xs text-gray-500">{t('Peak Hour')}</p>
             <p className="text-sm font-bold text-teal-600">
               {formatHour(peakHour.hour)}{' '}
               <span className="text-gray-500 font-normal">
@@ -82,7 +85,7 @@ export function ScansPerHour({ data, loading = false }: ScansPerHourProps) {
       ) : data.length === 0 ? (
         <div className="text-center py-8">
           <Clock className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No hourly data available</p>
+          <p className="text-gray-500">{t('No hourly data available')}</p>
         </div>
       ) : (
         <ResponsiveContainer width="100%" height={300}>
@@ -105,7 +108,7 @@ export function ScansPerHour({ data, loading = false }: ScansPerHourProps) {
               labelFormatter={(label) => `Time: ${label}`}
               formatter={(value: number | undefined) => [
                 (value ?? 0).toLocaleString(),
-                'Scans',
+                t('Scans'),
               ]}
             />
             <Line

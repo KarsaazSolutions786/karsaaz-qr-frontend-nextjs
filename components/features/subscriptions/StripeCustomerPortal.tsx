@@ -9,8 +9,10 @@ import {
   type StripePaymentMethod,
 } from '@/lib/api/endpoints/stripe'
 import { CreditCard, ExternalLink, Trash2, Star } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export function StripeCustomerPortal() {
+  const { t } = useTranslation()
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
   const [loading, setLoading] = useState(true)
   const [portalLoading, setPortalLoading] = useState(false)
@@ -56,7 +58,7 @@ export function StripeCustomerPortal() {
   }
 
   async function handleRemove(id: string) {
-    if (!confirm('Remove this payment method?')) return
+    if (!confirm(t('Remove this payment method?'))) return
     setActionLoading(id)
     try {
       await removePaymentMethod(id)
@@ -79,28 +81,28 @@ export function StripeCustomerPortal() {
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Stripe Billing Management</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('Stripe Billing Management')}</h3>
         <button
           onClick={handleOpenPortal}
           disabled={portalLoading}
           className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 disabled:opacity-50 transition-colors"
         >
           <ExternalLink className="w-4 h-4" />
-          {portalLoading ? 'Opening...' : 'Open Billing Portal'}
+          {portalLoading ? t('Opening...') : t('Open Billing Portal')}
         </button>
       </div>
 
       {/* Payment Methods */}
       <div className="px-6 py-4">
-        <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Payment Methods</h4>
+        <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">{t('Payment Methods')}</h4>
 
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-gray-400">
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-200 border-t-purple-600" />
-            Loading...
+            {t('Loading...')}
           </div>
         ) : paymentMethods.length === 0 ? (
-          <p className="text-sm text-gray-500">No payment methods on file.</p>
+          <p className="text-sm text-gray-500">{t('No payment methods on file.')}</p>
         ) : (
           <div className="space-y-2">
             {paymentMethods.map((pm) => (
@@ -120,7 +122,7 @@ export function StripeCustomerPortal() {
                   </div>
                   {pm.is_default && (
                     <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">
-                      Default
+                      {t('Default')}
                     </span>
                   )}
                 </div>
@@ -130,7 +132,7 @@ export function StripeCustomerPortal() {
                       onClick={() => handleSetDefault(pm.id)}
                       disabled={actionLoading === pm.id}
                       className="p-1.5 text-gray-400 hover:text-purple-600 disabled:opacity-50"
-                      title="Set as default"
+                      title={t('Set as default')}
                     >
                       <Star className="w-4 h-4" />
                     </button>
@@ -139,7 +141,7 @@ export function StripeCustomerPortal() {
                     onClick={() => handleRemove(pm.id)}
                     disabled={actionLoading === pm.id}
                     className="p-1.5 text-gray-400 hover:text-red-600 disabled:opacity-50"
-                    title="Remove"
+                    title={t('Remove')}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

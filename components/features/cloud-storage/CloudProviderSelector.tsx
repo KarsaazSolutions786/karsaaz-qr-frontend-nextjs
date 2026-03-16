@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { CLOUD_PROVIDERS, CloudProvider, CloudProviderType } from '@/types/entities/cloud-storage'
 import { MegaConnector } from './MegaConnector'
 import { OAuthConnector } from './OAuthConnector'
+import { useTranslation } from '@/lib/i18n'
 
 interface CloudProviderSelectorProps {
   isOpen: boolean
@@ -20,6 +21,7 @@ export function CloudProviderSelector({
   onClose,
   onConnectionSuccess,
 }: CloudProviderSelectorProps) {
+  const { t } = useTranslation()
   const [step, setStep] = useState<Step>('select')
   const [selectedProvider, setSelectedProvider] = useState<CloudProvider | null>(null)
 
@@ -47,8 +49,8 @@ export function CloudProviderSelector({
 
   const title =
     step === 'connect' && selectedProvider
-      ? `Connect ${selectedProvider.name}`
-      : 'Choose Cloud Provider'
+      ? `${t('Connect')} ${selectedProvider.name}`
+      : t('Choose Cloud Provider')
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -96,7 +98,7 @@ export function CloudProviderSelector({
                 className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 mb-4"
               >
                 <ArrowLeftIcon className="w-4 h-4" />
-                Back to providers
+                {t('Back to providers')}
               </button>
 
               {selectedProvider?.type === 'credentials' ? (
@@ -120,7 +122,7 @@ export function CloudProviderSelector({
               onClick={onClose}
               className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
             >
-              Cancel
+              {t('Cancel')}
             </button>
           </div>
         )}
@@ -152,6 +154,7 @@ export function CloudConnectionCard({
   isDeleting,
   isTesting,
 }: CloudConnectionCardProps) {
+  const { t } = useTranslation()
   const provider = CLOUD_PROVIDERS.find(p => p.id === connection.provider)
 
   return (
@@ -186,7 +189,7 @@ export function CloudConnectionCard({
             {connection.status}
           </span>
           <span className="text-xs text-gray-400">
-            Connected {new Date(connection.connected_at).toLocaleDateString()}
+            {t('Connected')} {new Date(connection.connected_at).toLocaleDateString()}
           </span>
         </div>
       </div>
@@ -199,7 +202,7 @@ export function CloudConnectionCard({
           disabled={isTesting}
           className="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg disabled:opacity-50"
         >
-          {isTesting ? 'Testing...' : 'Test'}
+          {isTesting ? t('Testing...') : t('Test')}
         </button>
         <button
           type="button"
@@ -207,7 +210,7 @@ export function CloudConnectionCard({
           disabled={isDeleting}
           className="px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50"
         >
-          {isDeleting ? 'Removing...' : 'Remove'}
+          {isDeleting ? t('Removing...') : t('Remove')}
         </button>
       </div>
     </div>

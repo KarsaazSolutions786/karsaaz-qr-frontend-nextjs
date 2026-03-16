@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 /**
  * This route handles payment success redirects from payment processors.
@@ -12,6 +13,7 @@ import { Suspense } from 'react'
  * This page redirects to the proper /payment/success page with the same params.
  */
 function PaymentRedirectHandler() {
+  const { t } = useTranslation()
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -45,21 +47,22 @@ function PaymentRedirectHandler() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Processing payment...</p>
-        <p className="mt-2 text-sm text-gray-500">Please wait while we verify your payment.</p>
+        <p className="mt-4 text-gray-600">{t('Processing payment...')}</p>
+        <p className="mt-2 text-sm text-gray-500">{t('Please wait while we verify your payment.')}</p>
       </div>
     </div>
   )
 }
 
 export default function AccountDashboardPage() {
+  const { t } = useTranslation()
   return (
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading...</p>
+            <p className="mt-4 text-gray-600">{t('Loading...')}</p>
           </div>
         </div>
       }

@@ -9,12 +9,14 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { useTranslation } from '@/lib/i18n'
 
 interface TwoFactorTabProps {
   userId: number | string
 }
 
 export function TwoFactorTab({ userId }: TwoFactorTabProps) {
+  const { t } = useTranslation()
   const [status, setStatus] = useState<TwoFactorStatus | null>(null)
   const [setup, setSetup] = useState<TwoFactorSetup | null>(null)
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([])
@@ -35,7 +37,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
       setStatus(res)
       setFetched(true)
     } catch {
-      setError('Failed to load 2FA status')
+      setError(t('Failed to load 2FA status'))
       setFetched(true)
     } finally {
       setLoading(false)
@@ -53,7 +55,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
       const res = await twoFactorAPI.enable(userId)
       setSetup(res)
     } catch {
-      setError('Failed to initiate 2FA setup')
+      setError(t('Failed to initiate 2FA setup'))
     } finally {
       setLoading(false)
     }
@@ -67,10 +69,10 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
       await twoFactorAPI.confirm(userId, confirmCode)
       setSetup(null)
       setConfirmCode('')
-      setSuccess('Two-factor authentication enabled successfully!')
+      setSuccess(t('Two-factor authentication enabled successfully!'))
       await fetchStatus()
     } catch {
-      setError('Invalid verification code. Please try again.')
+      setError(t('Invalid verification code. Please try again.'))
     } finally {
       setLoading(false)
     }
@@ -85,10 +87,10 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
       setShowDisable(false)
       setDisablePassword('')
       setDisableCode('')
-      setSuccess('Two-factor authentication disabled.')
+      setSuccess(t('Two-factor authentication disabled.'))
       await fetchStatus()
     } catch {
-      setError('Invalid password or code. Cannot disable 2FA.')
+      setError(t('Invalid password or code. Cannot disable 2FA.'))
     } finally {
       setLoading(false)
     }
@@ -101,7 +103,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
       setRecoveryCodes(res.data)
       setShowRecovery(true)
     } catch {
-      setError('Failed to load recovery codes')
+      setError(t('Failed to load recovery codes'))
     } finally {
       setLoading(false)
     }
@@ -111,15 +113,15 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
     <div className="space-y-6">
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between mb-1">
-          <h2 className="text-lg font-semibold text-gray-900">Two-Factor Authentication</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('Two-Factor Authentication')}</h2>
           {status && (
             <Badge variant={status.enabled ? 'default' : 'secondary'}>
-              {status.enabled ? 'Enabled' : 'Disabled'}
+              {status.enabled ? t('Enabled') : t('Disabled')}
             </Badge>
           )}
         </div>
         <p className="text-sm text-gray-500 mb-6">
-          Add an extra layer of security to your account using a TOTP authenticator app.
+          {t('Add an extra layer of security to your account using a TOTP authenticator app.')}
         </p>
 
         {error && <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>}
@@ -131,21 +133,21 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
         {setup && (
           <div className="mb-6 space-y-4 rounded-md border border-blue-200 bg-blue-50 p-4">
             <p className="text-sm font-medium text-blue-800">
-              Scan this QR code with your authenticator app:
+              {t('Scan this QR code with your authenticator app:')}
             </p>
             <div
               className="flex justify-center bg-white rounded-md p-4"
               dangerouslySetInnerHTML={{ __html: setup.qr_code_svg }}
             />
             <div>
-              <p className="text-xs text-gray-500 mb-1">Or enter this secret manually:</p>
+              <p className="text-xs text-gray-500 mb-1">{t('Or enter this secret manually:')}</p>
               <code className="block rounded bg-white px-3 py-2 text-sm font-mono border break-all">
                 {setup.secret}
               </code>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Enter verification code
+                {t('Enter verification code')}
               </label>
               <div className="flex gap-2">
                 <Input
@@ -155,7 +157,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
                   maxLength={6}
                 />
                 <Button onClick={handleConfirm} disabled={loading || confirmCode.length < 6}>
-                  {loading ? 'Verifying...' : 'Verify & Enable'}
+                  {loading ? t('Verifying...') : t('Verify & Enable')}
                 </Button>
               </div>
             </div>
@@ -165,7 +167,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
         {/* Current status actions */}
         {!setup && status && !status.enabled && (
           <Button onClick={handleEnable} disabled={loading}>
-            {loading ? 'Setting up...' : 'Enable Two-Factor Authentication'}
+            {loading ? t('Setting up...') : t('Enable Two-Factor Authentication')}
           </Button>
         )}
 
@@ -174,14 +176,13 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
             {/* Recovery codes */}
             {!showRecovery ? (
               <Button variant="outline" onClick={handleShowRecovery} disabled={loading}>
-                View Recovery Codes
+                {t('View Recovery Codes')}
               </Button>
             ) : (
               <div className="rounded-md border border-gray-200 p-4">
-                <h3 className="text-sm font-medium text-gray-900 mb-2">Recovery Codes</h3>
+                <h3 className="text-sm font-medium text-gray-900 mb-2">{t('Recovery Codes')}</h3>
                 <p className="text-xs text-gray-500 mb-3">
-                  Store these codes securely. Each can be used once if you lose access to your
-                  authenticator.
+                  {t('Store these codes securely. Each can be used once if you lose access to your authenticator.')}
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   {recoveryCodes.map(code => (
@@ -199,26 +200,26 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
             {/* Disable 2FA */}
             {!showDisable ? (
               <Button variant="destructive" onClick={() => setShowDisable(true)}>
-                Disable Two-Factor Authentication
+                {t('Disable Two-Factor Authentication')}
               </Button>
             ) : (
               <div className="rounded-md border border-red-200 bg-red-50 p-4 space-y-3">
                 <p className="text-sm text-red-800">
-                  Enter your password and authenticator code to disable 2FA:
+                  {t('Enter your password and authenticator code to disable 2FA:')}
                 </p>
                 <div className="space-y-2">
                   <Input
                     type="password"
                     value={disablePassword}
                     onChange={e => setDisablePassword(e.target.value)}
-                    placeholder="Current password"
+                    placeholder={t('Current password')}
                   />
                   <Input
                     type="text"
                     inputMode="numeric"
                     value={disableCode}
                     onChange={e => setDisableCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    placeholder="6-digit code"
+                    placeholder={t('6-digit code')}
                     maxLength={6}
                   />
                   <div className="flex gap-2">
@@ -227,7 +228,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
                       onClick={handleDisable}
                       disabled={loading || !disablePassword || disableCode.length < 6}
                     >
-                      {loading ? 'Disabling...' : 'Confirm Disable'}
+                      {loading ? t('Disabling...') : t('Confirm Disable')}
                     </Button>
                     <Button
                       variant="outline"
@@ -237,7 +238,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
                         setDisableCode('')
                       }}
                     >
-                      Cancel
+                      {t('Cancel')}
                     </Button>
                   </div>
                 </div>

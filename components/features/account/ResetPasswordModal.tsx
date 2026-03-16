@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { toast } from 'sonner'
 import { authAPI } from '@/lib/api/endpoints/auth'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useTranslation } from '@/lib/i18n'
 
 interface ResetPasswordModalProps {
   open: boolean
@@ -11,6 +12,7 @@ interface ResetPasswordModalProps {
 }
 
 export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -26,7 +28,7 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
     setErrors({})
 
     if (newPassword !== confirmPassword) {
-      setErrors({ password_confirmation: ['Passwords do not match'] })
+      setErrors({ password_confirmation: [t('Passwords do not match')] })
       return
     }
 
@@ -37,7 +39,7 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
         password: newPassword,
         password_confirmation: confirmPassword,
       })
-      toast.success('Password updated successfully')
+      toast.success(t('Password updated successfully'))
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
@@ -46,7 +48,7 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
       if (err?.response?.status === 422) {
         setErrors(err.response.data?.errors || {})
       } else {
-        setErrors({ general: ['Failed to update password'] })
+        setErrors({ general: [t('Failed to update password')] })
       }
     } finally {
       setLoading(false)
@@ -78,7 +80,7 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Reset Password</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">{t('Reset Password')}</h2>
 
         {errors.general && (
           <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
@@ -88,13 +90,13 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
 
         {/* Current Password */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Current Password')}</label>
           <div className="relative">
             <input
               type={showCurrent ? 'text' : 'password'}
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Enter current password"
+              placeholder={t('Enter current password')}
               disabled={loading}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
             />
@@ -105,13 +107,13 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
 
         {/* New Password */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('New Password')}</label>
           <div className="relative">
             <input
               type={showNew ? 'text' : 'password'}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Enter new password"
+              placeholder={t('Enter new password')}
               disabled={loading}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
             />
@@ -124,13 +126,13 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
 
         {/* Confirm Password */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Confirm New Password')}</label>
           <div className="relative">
             <input
               type={showConfirm ? 'text' : 'password'}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm new password"
+              placeholder={t('Confirm new password')}
               disabled={loading}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
             />
@@ -149,7 +151,7 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
             disabled={loading}
             className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="button"
@@ -157,7 +159,7 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
             disabled={loading}
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? 'Updating...' : 'Confirm'}
+            {loading ? t('Updating...') : t('Confirm')}
           </button>
         </div>
       </div>

@@ -5,8 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/lib/validations/auth'
 import { useForgotPassword } from '@/lib/hooks/mutations/useForgotPassword'
+import { useTranslation } from '@/lib/i18n'
 
 export function ForgotPasswordForm() {
+  const { t } = useTranslation()
   const forgotPasswordMutation = useForgotPassword()
 
   const {
@@ -30,14 +32,14 @@ export function ForgotPasswordForm() {
       <div className="text-center space-y-4">
         <div className="rounded-md bg-green-50 p-4">
           <p className="text-sm text-green-800">
-            Password reset instructions sent! Check your email.
+            {t('Password reset instructions sent! Check your email.')}
           </p>
         </div>
         <Link
           href="/login"
           className="inline-block text-sm font-medium text-blue-600 hover:text-blue-500"
         >
-          Back to login
+          {t('Back to login')}
         </Link>
       </div>
     )
@@ -47,7 +49,7 @@ export function ForgotPasswordForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email address
+          {t('Email address')}
         </label>
         <input
           {...register('email')}
@@ -65,7 +67,7 @@ export function ForgotPasswordForm() {
         <div role="alert" className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
             {(forgotPasswordMutation.error as any)?.message ||
-              'Failed to send reset email. Please try again.'}
+              t('Failed to send reset email. Please try again.')}
           </p>
         </div>
       )}
@@ -76,13 +78,13 @@ export function ForgotPasswordForm() {
         className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting || forgotPasswordMutation.isPending
-          ? 'Sending...'
-          : 'Send reset instructions'}
+          ? t('Sending...')
+          : t('Send reset instructions')}
       </button>
 
       <p className="text-center text-sm text-gray-600">
         <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-          Back to login
+          {t('Back to login')}
         </Link>
       </p>
     </form>

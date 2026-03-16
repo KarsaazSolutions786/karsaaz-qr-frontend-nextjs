@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 interface CustomCodeRendererProps {
   html?: string
@@ -18,6 +19,7 @@ export function CustomCodeRenderer({
   sandbox = true,
   className,
 }: CustomCodeRendererProps) {
+  const { t } = useTranslation()
   const srcdoc = useMemo(
     () =>
       `<!DOCTYPE html><html><head><style>${css}</style></head><body>${html}<script>${js}<\/script></body></html>`,
@@ -30,17 +32,20 @@ export function CustomCodeRenderer({
         srcDoc={srcdoc}
         sandbox="allow-scripts"
         className={cn('w-full border border-gray-200 rounded-lg', className)}
-        title="Custom code preview"
+        title={t("Custom code preview")}
         style={{ minHeight: 200 }}
       />
     )
   }
 
+  // Non-sandbox mode still uses sandboxed iframe to prevent XSS
   return (
-    <div className={cn('border border-gray-200 rounded-lg p-4', className)}>
-      {css && <style dangerouslySetInnerHTML={{ __html: css }} />}
-      <div dangerouslySetInnerHTML={{ __html: html }} />
-      {js && <script dangerouslySetInnerHTML={{ __html: js }} />}
-    </div>
+    <iframe
+      srcDoc={srcdoc}
+      sandbox="allow-scripts"
+      className={cn('w-full border border-gray-200 rounded-lg', className)}
+      title={t("Custom code preview")}
+      style={{ minHeight: 200 }}
+    />
   )
 }

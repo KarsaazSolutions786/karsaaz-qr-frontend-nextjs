@@ -7,6 +7,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface GoogleAuthButtonProps {
   onSuccess?: (credential: string) => void;
@@ -21,6 +22,7 @@ export function GoogleAuthButton({
   text = 'signin_with',
   className = '',
 }: GoogleAuthButtonProps) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleAuth = async () => {
@@ -34,7 +36,9 @@ export function GoogleAuthButton({
       // const { authUrl } = await response.json();
       // window.location.href = authUrl;
       
-      console.log('Google OAuth would be triggered here');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Google OAuth would be triggered here');
+      }
       
       // Simulate OAuth flow
       setTimeout(() => {
@@ -43,15 +47,15 @@ export function GoogleAuthButton({
       }, 1000);
     } catch (error) {
       console.error('Google auth error:', error);
-      onError?.(error instanceof Error ? error : new Error('Authentication failed'));
+      onError?.(error instanceof Error ? error : new Error(t('Authentication failed')));
       setIsLoading(false);
     }
   };
 
   const buttonText = {
-    signin_with: 'Sign in with Google',
-    signup_with: 'Sign up with Google',
-    continue_with: 'Continue with Google',
+    signin_with: t('Sign in with Google'),
+    signup_with: t('Sign up with Google'),
+    continue_with: t('Continue with Google'),
   }[text];
 
   return (
@@ -81,7 +85,7 @@ export function GoogleAuthButton({
         />
       </svg>
       <span>
-        {isLoading ? 'Connecting...' : buttonText}
+        {isLoading ? t('Connecting...') : buttonText}
       </span>
     </button>
   );

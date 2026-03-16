@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { CheckIcon, ChevronUpDownIcon, XMarkIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 // Option types
 export interface SelectOptionBase {
@@ -107,6 +108,7 @@ export function EnhancedSearchableSelect<T extends SelectOptionBase = SelectOpti
   renderValue,
   renderSelectedTag,
 }: EnhancedSearchableSelectProps<T>) {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
   const [highlightIndex, setHighlightIndex] = React.useState(0)
@@ -323,7 +325,7 @@ export function EnhancedSearchableSelect<T extends SelectOptionBase = SelectOpti
 
     if (multiple) {
       if (selectedOptions.length > maxSelectedDisplay) {
-        return <span className="text-gray-700">{selectedOptions.length} selected</span>
+        return <span className="text-gray-700">{selectedOptions.length} {t('selected')}</span>
       }
 
       return (

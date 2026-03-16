@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Check, X } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface ExtendedLicenseProps {
   isOpen: boolean
@@ -17,6 +18,7 @@ export function ExtendedLicense({
   features = [],
   className,
 }: ExtendedLicenseProps) {
+  const { t } = useTranslation()
   if (!isOpen) return null
 
   return (
@@ -33,9 +35,9 @@ export function ExtendedLicense({
           <X className="h-5 w-5" />
         </button>
 
-        <h2 className="text-lg font-bold text-gray-900">Extended License</h2>
+        <h2 className="text-lg font-bold text-gray-900">{t('Extended License')}</h2>
         <p className="mt-2 text-sm text-gray-600">
-          Unlock additional capabilities with an extended license:
+          {t('Unlock additional capabilities with an extended license:')}
         </p>
 
         {features.length > 0 && (
@@ -55,13 +57,13 @@ export function ExtendedLicense({
             onClick={onClose}
             className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Maybe Later
+            {t('Maybe Later')}
           </button>
           <Link
             href="/pricing"
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
-            View Plans
+            {t('View Plans')}
           </Link>
         </div>
       </div>

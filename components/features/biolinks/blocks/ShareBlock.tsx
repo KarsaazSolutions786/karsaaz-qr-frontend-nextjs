@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import type { ShareBlockData } from '@/types/entities/biolink'
 
 interface ShareBlockProps {
@@ -37,6 +38,7 @@ const shareChannels = [
 ]
 
 export default function ShareBlock({ block, isEditing, onUpdate }: ShareBlockProps) {
+  const { t } = useTranslation();
   const { url, title = '' } = block.data
   const [copied, setCopied] = useState(false)
 
@@ -54,7 +56,7 @@ export default function ShareBlock({ block, isEditing, onUpdate }: ShareBlockPro
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">URL to Share</label>
+          <label className="block text-sm font-medium text-gray-700">{t('URL to Share')}</label>
           <input
             type="url"
             value={url}
@@ -64,7 +66,7 @@ export default function ShareBlock({ block, isEditing, onUpdate }: ShareBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Title (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Title (optional)')}</label>
           <input
             type="text"
             value={title}
@@ -79,14 +81,14 @@ export default function ShareBlock({ block, isEditing, onUpdate }: ShareBlockPro
   if (!url) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
-        <p className="text-sm text-gray-500">No URL set for sharing</p>
+        <p className="text-sm text-gray-500">{t('No URL set for sharing')}</p>
       </div>
     )
   }
 
   return (
     <div className="space-y-2">
-      <p className="text-center text-sm font-medium text-gray-700">Share</p>
+      <p className="text-center text-sm font-medium text-gray-700">{t('Share')}</p>
       <div className="flex items-center justify-center gap-2">
         {shareChannels.map(channel => (
           <a

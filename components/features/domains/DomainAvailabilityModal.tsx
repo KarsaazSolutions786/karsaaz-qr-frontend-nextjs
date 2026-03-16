@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ export function DomainAvailabilityModal({
   onClose,
   onConfirm,
 }: DomainAvailabilityModalProps) {
+  const { t } = useTranslation()
   const [domain, setDomain] = useState('')
   const [status, setStatus] = useState<CheckStatus>('idle')
   const [message, setMessage] = useState('')
@@ -39,14 +41,14 @@ export function DomainAvailabilityModal({
       )
       if (res.data.available) {
         setStatus('available')
-        setMessage(res.data.message ?? 'This domain is available!')
+        setMessage(res.data.message ?? t('This domain is available!'))
       } else {
         setStatus('taken')
-        setMessage(res.data.message ?? 'This domain is already taken.')
+        setMessage(res.data.message ?? t('This domain is already taken.'))
       }
     } catch {
       setStatus('error')
-      setMessage('Failed to check domain availability.')
+      setMessage(t('Failed to check domain availability.'))
     }
   }
 
@@ -82,9 +84,9 @@ export function DomainAvailabilityModal({
     <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Check Domain Availability</DialogTitle>
+          <DialogTitle>{t('Check Domain Availability')}</DialogTitle>
           <DialogDescription>
-            Enter a domain to check if it&apos;s available for use.
+            {t("Enter a domain to check if it's available for use.")}
           </DialogDescription>
         </DialogHeader>
 
@@ -107,7 +109,7 @@ export function DomainAvailabilityModal({
               disabled={!domain.trim() || status === 'checking'}
               className="rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 disabled:opacity-50"
             >
-              {status === 'checking' ? 'Checking…' : 'Check'}
+              {status === 'checking' ? t('Checking...') : t('Check')}
             </button>
           </div>
 
@@ -124,7 +126,7 @@ export function DomainAvailabilityModal({
               onClick={handleConfirm}
               className="w-full rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700"
             >
-              Add This Domain
+              {t('Add This Domain')}
             </button>
           )}
         </div>

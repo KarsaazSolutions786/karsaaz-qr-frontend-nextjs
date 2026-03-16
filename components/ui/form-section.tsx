@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 interface FormSectionProps {
   title: string
@@ -31,6 +32,7 @@ export function FormSection({
   badge,
   required,
 }: FormSectionProps) {
+  const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(defaultExpanded)
   const contentRef = useRef<HTMLDivElement>(null)
   const [contentHeight, setContentHeight] = useState<number | 'auto'>('auto')
@@ -88,7 +90,7 @@ export function FormSection({
             type="button"
             className="p-1 hover:bg-gray-200 rounded transition-colors"
             aria-expanded={isExpanded}
-            aria-label={isExpanded ? 'Collapse section' : 'Expand section'}
+            aria-label={isExpanded ? t('Collapse section') : t('Expand section')}
           >
             {isExpanded ? (
               <ChevronUpIcon className="h-5 w-5 text-gray-500" />

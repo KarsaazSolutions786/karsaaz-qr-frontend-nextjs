@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { Loader2, CheckCircle, XCircle } from 'lucide-react'
 import apiClient from '@/lib/api/client'
 
@@ -10,13 +11,14 @@ interface LicenseStepProps {
 }
 
 export function LicenseStep({ purchaseCode, onChange }: LicenseStepProps) {
+  const { t } = useTranslation();
   const [status, setStatus] = useState<'idle' | 'validating' | 'valid' | 'invalid'>('idle')
   const [message, setMessage] = useState('')
 
   const validate = async () => {
     if (!purchaseCode.trim()) {
       setStatus('invalid')
-      setMessage('Please enter a purchase code.')
+      setMessage(t('Please enter a purchase code.'))
       return
     }
     setStatus('validating')
@@ -25,21 +27,21 @@ export function LicenseStep({ purchaseCode, onChange }: LicenseStepProps) {
       const res = await apiClient.post('/install/validate-license', { purchaseCode })
       if (res.data.valid) {
         setStatus('valid')
-        setMessage('License validated successfully!')
+        setMessage(t('License validated successfully!'))
       } else {
         setStatus('invalid')
-        setMessage(res.data.message || 'Invalid purchase code.')
+        setMessage(res.data.message || t('Invalid purchase code.'))
       }
     } catch {
       setStatus('invalid')
-      setMessage('Validation failed. Please check your purchase code.')
+      setMessage(t('Validation failed. Please check your purchase code.'))
     }
   }
 
   return (
     <div className="space-y-4">
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Purchase Code</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('Purchase Code')}</label>
         <input
           type="text"
           value={purchaseCode}
@@ -65,7 +67,7 @@ export function LicenseStep({ purchaseCode, onChange }: LicenseStepProps) {
         className="inline-flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:opacity-50"
       >
         {status === 'validating' && <Loader2 className="h-4 w-4 animate-spin" />}
-        Validate
+        {t('Validate')}
       </button>
     </div>
   )

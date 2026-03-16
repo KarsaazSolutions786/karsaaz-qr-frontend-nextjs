@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 interface MetricCardProps {
   title: string
@@ -17,6 +18,8 @@ export default function MetricCard({
   icon,
   isLoading,
 }: MetricCardProps) {
+  const { t } = useTranslation()
+
   const formatChange = (val: number) => {
     const sign = val >= 0 ? '+' : ''
     return `${sign}${val.toFixed(1)}%`
@@ -41,7 +44,7 @@ export default function MetricCard({
           )}
           {change !== undefined && !isLoading && (
             <p className={`mt-2 text-sm font-medium ${changeColor}`}>
-              {formatChange(change)} vs previous period
+              {formatChange(change)} {t('vs previous period')}
             </p>
           )}
         </div>

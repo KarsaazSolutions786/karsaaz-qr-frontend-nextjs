@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
+
 type BillingMode = 'monthly' | 'annual' | 'credit'
 
 interface BillingModeToggleProps {
@@ -14,6 +16,8 @@ const OPTIONS: { value: BillingMode; label: string; badge?: string }[] = [
 ]
 
 export function BillingModeToggle({ mode, onChange }: BillingModeToggleProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="inline-flex items-center rounded-lg border border-gray-200 bg-gray-100 p-1">
       {OPTIONS.map((opt) => (
@@ -27,10 +31,10 @@ export function BillingModeToggle({ mode, onChange }: BillingModeToggleProps) {
               : 'text-gray-500 hover:text-gray-700'
           }`}
         >
-          {opt.label}
+          {t(opt.label)}
           {opt.badge && (
             <span className="ml-1.5 inline-flex items-center rounded-full bg-green-100 px-1.5 py-0.5 text-[10px] font-semibold text-green-700">
-              {opt.badge}
+              {t(opt.badge)}
             </span>
           )}
         </button>

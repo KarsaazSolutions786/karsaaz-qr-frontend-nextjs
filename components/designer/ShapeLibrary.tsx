@@ -4,6 +4,7 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/lib/i18n';
 
 type ModuleShape = 'square' | 'rounded' | 'dots' | 'hearts' | 'stars' | 'custom';
 
@@ -20,6 +21,7 @@ export default function ShapeLibrary({
   moduleSpacing,
   onChange,
 }: ShapeLibraryProps) {
+  const { t } = useTranslation();
   const shapeOptions: Array<{
     type: ModuleShape;
     name: string;
@@ -28,8 +30,8 @@ export default function ShapeLibrary({
   }> = [
     {
       type: 'square',
-      name: 'Square',
-      description: 'Classic square modules',
+      name: t('Square'),
+      description: t('Classic square modules'),
       preview: (
         <div className="grid grid-cols-5 gap-1 p-4">
           {Array.from({ length: 25 }).map((_, i) => (
@@ -40,8 +42,8 @@ export default function ShapeLibrary({
     },
     {
       type: 'rounded',
-      name: 'Rounded',
-      description: 'Smooth rounded modules',
+      name: t('Rounded'),
+      description: t('Smooth rounded modules'),
       preview: (
         <div className="grid grid-cols-5 gap-1 p-4">
           {Array.from({ length: 25 }).map((_, i) => (
@@ -52,8 +54,8 @@ export default function ShapeLibrary({
     },
     {
       type: 'dots',
-      name: 'Dots',
-      description: 'Circular dot modules',
+      name: t('Dots'),
+      description: t('Circular dot modules'),
       preview: (
         <div className="grid grid-cols-5 gap-1 p-4">
           {Array.from({ length: 25 }).map((_, i) => (
@@ -64,8 +66,8 @@ export default function ShapeLibrary({
     },
     {
       type: 'hearts',
-      name: 'Hearts',
-      description: 'Heart-shaped modules',
+      name: t('Hearts'),
+      description: t('Heart-shaped modules'),
       preview: (
         <div className="grid grid-cols-5 gap-1 p-4">
           {Array.from({ length: 25 }).map((_, i) => (
@@ -80,8 +82,8 @@ export default function ShapeLibrary({
     },
     {
       type: 'stars',
-      name: 'Stars',
-      description: 'Star-shaped modules',
+      name: t('Stars'),
+      description: t('Star-shaped modules'),
       preview: (
         <div className="grid grid-cols-5 gap-1 p-4">
           {Array.from({ length: 25 }).map((_, i) => (
@@ -96,8 +98,8 @@ export default function ShapeLibrary({
     },
     {
       type: 'custom',
-      name: 'Custom',
-      description: 'Upload custom shape (SVG)',
+      name: t('Custom'),
+      description: t('Upload custom shape (SVG)'),
       preview: (
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
@@ -114,7 +116,7 @@ export default function ShapeLibrary({
                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
               />
             </svg>
-            <p className="text-xs text-gray-500 mt-2">Upload SVG</p>
+            <p className="text-xs text-gray-500 mt-2">{t('Upload SVG')}</p>
           </div>
         </div>
       ),
@@ -190,7 +192,7 @@ export default function ShapeLibrary({
   return (
     <div className="space-y-6">
       <div>
-        <Label className="mb-3 block">Module Shape</Label>
+        <Label className="mb-3 block">{t('Module Shape')}</Label>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {shapeOptions.map((option) => (
             <button
@@ -215,7 +217,7 @@ export default function ShapeLibrary({
       {/* Shape Controls */}
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="module-size">Module Size: {moduleSize}px</Label>
+          <Label htmlFor="module-size">{t('Module Size:')} {moduleSize}px</Label>
           <Input
             id="module-size"
             type="range"
@@ -224,11 +226,11 @@ export default function ShapeLibrary({
             value={moduleSize}
             onChange={(e) => onChange(selectedShape, parseInt(e.target.value), moduleSpacing)}
           />
-          <p className="text-xs text-muted-foreground">Adjust the size of individual modules</p>
+          <p className="text-xs text-muted-foreground">{t('Adjust the size of individual modules')}</p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="module-spacing">Module Spacing: {moduleSpacing}px</Label>
+          <Label htmlFor="module-spacing">{t('Module Spacing:')} {moduleSpacing}px</Label>
           <Input
             id="module-spacing"
             type="range"
@@ -237,27 +239,27 @@ export default function ShapeLibrary({
             value={moduleSpacing}
             onChange={(e) => onChange(selectedShape, moduleSize, parseInt(e.target.value))}
           />
-          <p className="text-xs text-muted-foreground">Add spacing between modules</p>
+          <p className="text-xs text-muted-foreground">{t('Add spacing between modules')}</p>
         </div>
       </div>
 
       {/* Shape Preview with Sample QR */}
       <div className="space-y-2">
-        <Label>Preview with Sample QR</Label>
+        <Label>{t('Preview with Sample QR')}</Label>
         <Card className="p-6 bg-gray-50">
           <div className="flex items-center justify-center">
             {getSampleQRPattern(selectedShape)}
           </div>
         </Card>
         <p className="text-xs text-muted-foreground text-center">
-          Sample QR code pattern with {selectedShape} modules
+          {t('Sample QR code pattern with')} {selectedShape} {t('modules')}
         </p>
       </div>
 
       {/* Custom Shape Upload */}
       {selectedShape === 'custom' && (
         <div className="space-y-2">
-          <Label>Upload Custom Shape (SVG)</Label>
+          <Label>{t('Upload Custom Shape (SVG)')}</Label>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
             <svg
               className="w-12 h-12 mx-auto text-gray-400 mb-3"
@@ -272,9 +274,9 @@ export default function ShapeLibrary({
                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
               />
             </svg>
-            <p className="text-sm text-gray-600 mb-2">Upload SVG file</p>
+            <p className="text-sm text-gray-600 mb-2">{t('Upload SVG file')}</p>
             <p className="text-xs text-gray-400">
-              Recommended: Simple SVG shape, 24x24px viewBox
+              {t('Recommended: Simple SVG shape, 24x24px viewBox')}
             </p>
             <input
               type="file"
@@ -284,7 +286,7 @@ export default function ShapeLibrary({
             />
             <label htmlFor="custom-shape-upload">
               <span className="mt-4 inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer hover:bg-primary/90 transition-colors text-sm">
-                Choose File
+                {t('Choose File')}
               </span>
             </label>
           </div>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import type { SupportTicket } from '@/types/entities/support-ticket'
+import { useTranslation } from '@/lib/i18n'
 
 const STATUS_BADGES: Record<SupportTicket['status'], { label: string; className: string }> = {
   OPEN: { label: 'Open', className: 'bg-blue-100 text-blue-800' },
@@ -21,6 +22,7 @@ interface SupportTicketListProps {
 }
 
 export default function SupportTicketList({ tickets }: SupportTicketListProps) {
+  const { t } = useTranslation()
   if (tickets.length === 0) {
     return (
       <div className="text-center py-12">
@@ -37,14 +39,14 @@ export default function SupportTicketList({ tickets }: SupportTicketListProps) {
             d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
           />
         </svg>
-        <h3 className="mt-2 text-sm font-medium text-gray-900">No tickets yet</h3>
-        <p className="mt-1 text-sm text-gray-500">Create a support ticket to get help</p>
+        <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No tickets yet')}</h3>
+        <p className="mt-1 text-sm text-gray-500">{t('Create a support ticket to get help')}</p>
         <div className="mt-6">
           <Link
             href="/support-tickets/new"
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
-            New Ticket
+            {t('New Ticket')}
           </Link>
         </div>
       </div>
@@ -56,13 +58,13 @@ export default function SupportTicketList({ tickets }: SupportTicketListProps) {
       <table className="min-w-full divide-y divide-gray-300">
         <thead className="bg-gray-50">
           <tr>
-            <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Reference</th>
-            <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Subject</th>
-            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Priority</th>
-            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Created</th>
+            <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{t('Reference')}</th>
+            <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{t('Subject')}</th>
+            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Status')}</th>
+            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Priority')}</th>
+            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Created')}</th>
             <th className="relative py-3.5 pl-3 pr-4">
-              <span className="sr-only">View</span>
+              <span className="sr-only">{t('View')}</span>
             </th>
           </tr>
         </thead>
@@ -94,7 +96,7 @@ export default function SupportTicketList({ tickets }: SupportTicketListProps) {
                     href={`/support-tickets/${ticket.id}`}
                     className="text-blue-600 hover:text-blue-900"
                   >
-                    View
+                    {t('View')}
                   </Link>
                 </td>
               </tr>

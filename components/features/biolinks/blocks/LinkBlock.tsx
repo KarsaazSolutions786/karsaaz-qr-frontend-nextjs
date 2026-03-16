@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { LinkBlockData } from '@/types/entities/biolink'
 
 interface LinkBlockProps {
@@ -8,12 +11,13 @@ interface LinkBlockProps {
 
 export default function LinkBlock({ block, isEditing, onUpdate }: LinkBlockProps) {
   const { url, title, style = 'button' } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Title</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Title')}</label>
           <input
             type="text"
             value={title}
@@ -22,7 +26,7 @@ export default function LinkBlock({ block, isEditing, onUpdate }: LinkBlockProps
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">URL</label>
+          <label className="block text-sm font-medium text-gray-700">{t('URL')}</label>
           <input
             type="url"
             value={url}
@@ -31,7 +35,7 @@ export default function LinkBlock({ block, isEditing, onUpdate }: LinkBlockProps
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Style</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Style')}</label>
           <select
             value={style}
             onChange={(e) =>
@@ -39,9 +43,9 @@ export default function LinkBlock({ block, isEditing, onUpdate }: LinkBlockProps
             }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
           >
-            <option value="button">Button</option>
-            <option value="card">Card</option>
-            <option value="minimal">Minimal</option>
+            <option value="button">{t('Button')}</option>
+            <option value="card">{t('Card')}</option>
+            <option value="minimal">{t('Minimal')}</option>
           </select>
         </div>
       </div>

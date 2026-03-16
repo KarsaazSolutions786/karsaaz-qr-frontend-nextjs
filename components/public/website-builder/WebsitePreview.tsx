@@ -5,6 +5,7 @@ import WebsiteDisplay from './WebsiteDisplay'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Monitor, Smartphone, Tablet, Loader2, AlertCircle } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface Website {
   title?: string
@@ -28,6 +29,7 @@ const viewportSizes = {
 }
 
 export default function WebsitePreview({ website }: WebsitePreviewProps) {
+  const { t } = useTranslation()
   const [viewport, setViewport] = useState<ViewportSize>('desktop')
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
@@ -52,7 +54,7 @@ export default function WebsitePreview({ website }: WebsitePreviewProps) {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {website.title || 'Custom Website'}
+                {website.title || t('Custom Website')}
               </h1>
               {website.description && (
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -74,7 +76,7 @@ export default function WebsitePreview({ website }: WebsitePreviewProps) {
                     className="gap-2"
                   >
                     <Icon className="h-4 w-4" />
-                    <span className="hidden sm:inline">{config.label}</span>
+                    <span className="hidden sm:inline">{t(config.label)}</span>
                   </Button>
                 )
               })}
@@ -91,7 +93,7 @@ export default function WebsitePreview({ website }: WebsitePreviewProps) {
             <div className="flex items-center justify-center h-[600px] bg-white dark:bg-gray-950">
               <div className="text-center">
                 <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400">Loading website...</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('Loading website...')}</p>
               </div>
             </div>
           )}
@@ -102,10 +104,10 @@ export default function WebsitePreview({ website }: WebsitePreviewProps) {
               <div className="text-center">
                 <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  Failed to Load Website
+                  {t('Failed to Load Website')}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  There was an error rendering the website. Please check the code for issues.
+                  {t('There was an error rendering the website. Please check the code for issues.')}
                 </p>
               </div>
             </div>

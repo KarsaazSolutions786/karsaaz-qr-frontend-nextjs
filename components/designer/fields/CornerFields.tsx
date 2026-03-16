@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Lock, Unlock } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 type CornerStyle = 'square' | 'rounded' | 'extra-rounded';
 
@@ -30,6 +31,7 @@ export default function CornerFields({
   cornerSettings,
   onChange,
 }: CornerFieldsProps) {
+  const { t } = useTranslation();
   const [localSettings, setLocalSettings] = useState<CornerSettings>(cornerSettings);
 
   const updateSettings = (updates: Partial<CornerSettings>) => {
@@ -127,7 +129,7 @@ export default function CornerFields({
     <div className="space-y-6">
       {/* Corner Style Selector */}
       <div className="space-y-3">
-        <Label>Corner Style</Label>
+        <Label>{t('Corner Style')}</Label>
         <div className="grid grid-cols-3 gap-3">
           {cornerStyleOptions.map((option) => (
             <button
@@ -161,7 +163,7 @@ export default function CornerFields({
             <Unlock className="w-5 h-5 text-gray-400" />
           )}
           <div>
-            <Label className="text-sm">Apply to All Corners</Label>
+            <Label className="text-sm">{t('Apply to All Corners')}</Label>
             <p className="text-xs text-muted-foreground">
               {localSettings.applyToAll
                 ? 'All corners use the same radius'
@@ -199,7 +201,7 @@ export default function CornerFields({
       ) : (
         /* Individual Corner Controls */
         <div className="space-y-4">
-          <Label className="text-sm">Individual Corner Control</Label>
+          <Label className="text-sm">{t('Individual Corner Control')}</Label>
           
           {/* Top Left */}
           <div className="space-y-2">
@@ -273,7 +275,7 @@ export default function CornerFields({
 
       {/* Corner Preview */}
       <div className="space-y-3">
-        <Label>Corner Preview</Label>
+        <Label>{t('Corner Preview')}</Label>
         <Card className="p-6">
           {localSettings.applyToAll ? (
             <div className="flex justify-center">
@@ -296,7 +298,7 @@ export default function CornerFields({
 
       {/* Corner Styles Comparison */}
       <div className="space-y-2">
-        <Label className="text-sm">Style Comparison</Label>
+        <Label className="text-sm">{t('Style Comparison')}</Label>
         <Card className="p-6 bg-gray-50">
           <div className="grid grid-cols-3 gap-4">
             {getQRPreview(0, 'Square (0px)')}
@@ -309,7 +311,7 @@ export default function CornerFields({
       {/* Info */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
         <p className="text-xs text-blue-800">
-          <strong>Tip:</strong> Rounded corners give your QR code a modern, friendly
+          <strong>{t('Tip:')}</strong> Rounded corners give your QR code a modern, friendly
           appearance. Ensure corner radius doesn't interfere with the QR code's eye
           patterns (corner squares).
         </p>

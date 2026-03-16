@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { ProfileBlockData } from '@/types/entities/biolink'
 
 interface ProfileBlockProps {
@@ -8,12 +11,13 @@ interface ProfileBlockProps {
 
 export default function ProfileBlock({ block, isEditing, onUpdate }: ProfileBlockProps) {
   const { profileImage, backgroundImage, text, borderStyle = 'circle', size = 7 } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Profile Image URL</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Profile Image URL')}</label>
           <input
             type="url"
             value={profileImage || ''}
@@ -22,7 +26,7 @@ export default function ProfileBlock({ block, isEditing, onUpdate }: ProfileBloc
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Background Image URL (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Background Image URL (optional)')}</label>
           <input
             type="url"
             value={backgroundImage || ''}
@@ -31,7 +35,7 @@ export default function ProfileBlock({ block, isEditing, onUpdate }: ProfileBloc
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Text / Handle</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Text / Handle')}</label>
           <input
             type="text"
             value={text || ''}
@@ -41,7 +45,7 @@ export default function ProfileBlock({ block, isEditing, onUpdate }: ProfileBloc
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Border Style</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Border Style')}</label>
           <select
             value={borderStyle}
             onChange={(e) =>
@@ -49,12 +53,12 @@ export default function ProfileBlock({ block, isEditing, onUpdate }: ProfileBloc
             }
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
           >
-            <option value="circle">Circle</option>
-            <option value="default">Default</option>
+            <option value="circle">{t('Circle')}</option>
+            <option value="default">{t('Default')}</option>
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Size ({size}rem)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Size')} ({size}rem)</label>
           <input
             type="range"
             min={3}
@@ -82,7 +86,7 @@ export default function ProfileBlock({ block, isEditing, onUpdate }: ProfileBloc
       {profileImage && (
         <img
           src={profileImage}
-          alt={text || 'Profile'}
+          alt={text || t('Profile')}
           className="mx-auto mb-2 object-cover"
           style={{
             width: sizeStyle,

@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 const COUNTRY_CODES = [
   { code: '+1', country: 'US', flag: '🇺🇸' },
@@ -27,7 +28,8 @@ export interface MobileInputProps {
 }
 
 const MobileInput = React.forwardRef<HTMLDivElement, MobileInputProps>(
-  ({ className, value, onChange, placeholder = 'Phone number', disabled = false }, ref) => {
+  ({ className, value, onChange, placeholder, disabled = false }, ref) => {
+    const { t } = useTranslation()
     const [countryCode, setCountryCode] = React.useState('+1')
     const [phone, setPhone] = React.useState('')
     const [open, setOpen] = React.useState(false)
@@ -102,7 +104,7 @@ const MobileInput = React.forwardRef<HTMLDivElement, MobileInputProps>(
             className="w-full bg-transparent px-3 outline-none placeholder:text-gray-400"
             value={phone}
             onChange={handlePhoneChange}
-            placeholder={placeholder}
+            placeholder={placeholder ?? t('Phone number')}
             disabled={disabled}
           />
         </div>

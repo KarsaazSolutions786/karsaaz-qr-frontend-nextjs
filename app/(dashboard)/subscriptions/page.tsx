@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { useTranslation } from '@/lib/i18n'
 import { useAdminSubscriptions } from '@/lib/hooks/queries/useAdminSubscriptions'
 import { useDeletePendingSubscriptions } from '@/lib/hooks/mutations/useAdminSubscriptionMutations'
 import type { AdminSubscription } from '@/lib/api/endpoints/admin-subscriptions'
@@ -24,15 +25,16 @@ function StatusBadge({ status }: { status?: string }) {
 }
 
 export default function SubscriptionsPage() {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [keyword, setKeyword] = useState('')
   const { data, isLoading } = useAdminSubscriptions({ page, keyword: keyword || undefined })
   const deletePendingMutation = useDeletePendingSubscriptions()
 
   const handleDeletePending = async () => {
-    if (!confirm('Delete all pending subscriptions? This cannot be undone.')) return
+    if (!confirm(t('Delete all pending subscriptions? This cannot be undone.'))) return
     const result = await deletePendingMutation.mutateAsync()
-    toast.success(`Deleted ${result?.deleted ?? 0} pending subscription(s).`)
+    toast.success(t('Deleted {{count}} pending subscription(s).').replace('{{count}}', String(result?.deleted ?? 0)))
   }
 
   return (
@@ -40,8 +42,8 @@ export default function SubscriptionsPage() {
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Subscriptions</h1>
-          <p className="mt-2 text-sm text-gray-600">Manage user subscriptions</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Subscriptions')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Manage user subscriptions')}</p>
         </div>
         <div className="mt-4 flex gap-3 sm:mt-0">
           <button
@@ -49,13 +51,13 @@ export default function SubscriptionsPage() {
             disabled={deletePendingMutation.isPending}
             className="inline-flex items-center rounded-md border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
           >
-            Delete Pending
+            {t('Delete Pending')}
           </button>
           <Link
             href="/subscriptions/new"
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
-            + Create
+            {t('+ Create')}
           </Link>
         </div>
       </div>
@@ -64,7 +66,7 @@ export default function SubscriptionsPage() {
       <div className="mt-8 mb-6">
         <input
           type="search"
-          placeholder="Search by user name, email, or plan…"
+          placeholder={t('Search by user name, email, or plan…')}
           value={keyword}
           onChange={(e) => { setKeyword(e.target.value); setPage(1) }}
           className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:max-w-md sm:text-sm"
@@ -82,14 +84,14 @@ export default function SubscriptionsPage() {
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">ID</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Name</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Email</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Plan</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Expires At</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Started At</th>
-                  <th className="relative py-3.5 pl-3 pr-4"><span className="sr-only">Actions</span></th>
+                  <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{t('ID')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Name')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Email')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Plan')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Status')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Expires At')}</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Started At')}</th>
+                  <th className="relative py-3.5 pl-3 pr-4"><span className="sr-only">{t('Actions')}</span></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -128,7 +130,7 @@ export default function SubscriptionsPage() {
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                       <Link href={`/subscriptions/${sub.id}`} className="text-blue-600 hover:text-blue-900">
-                        Edit
+                        {t('Edit')}
                       </Link>
                     </td>
                   </tr>
@@ -144,17 +146,17 @@ export default function SubscriptionsPage() {
                 disabled={page === 1}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
-                Previous
+                {t('Previous')}
               </button>
               <span className="text-sm text-gray-600">
-                Page {page} of {data.pagination.lastPage}
+                {t('Page')} {page} {t('of')} {data.pagination.lastPage}
               </span>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= data.pagination.lastPage}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
-                Next
+                {t('Next')}
               </button>
             </div>
           )}
@@ -164,10 +166,10 @@ export default function SubscriptionsPage() {
           <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No subscriptions</h3>
-          <p className="mt-1 text-sm text-gray-500">Get started by creating a subscription.</p>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No subscriptions')}</h3>
+          <p className="mt-1 text-sm text-gray-500">{t('Get started by creating a subscription.')}</p>
           <Link href="/subscriptions/new" className="mt-6 inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-            + Create
+            {t('+ Create')}
           </Link>
         </div>
       )}

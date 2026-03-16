@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 export function OfflineIndicator() {
+  const { t } = useTranslation()
   const [isOffline, setIsOffline] = useState(false)
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export function OfflineIndicator() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-500 text-white text-center py-2 text-sm font-medium">
-      You are offline. Some features may not be available.
+      {t('You are offline. Some features may not be available.')}
     </div>
   )
 }

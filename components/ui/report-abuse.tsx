@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Flag } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface ReportAbuseProps {
   qrId: string
@@ -10,6 +11,7 @@ interface ReportAbuseProps {
 }
 
 export function ReportAbuse({ qrId, className }: ReportAbuseProps) {
+  const { t } = useTranslation()
   const [state, setState] = useState<'idle' | 'confirm' | 'sending' | 'done' | 'error'>('idle')
 
   const handleReport = async () => {
@@ -27,27 +29,27 @@ export function ReportAbuse({ qrId, className }: ReportAbuseProps) {
   }
 
   if (state === 'done') {
-    return <p className={cn('text-sm text-green-600', className)}>Report submitted. Thank you.</p>
+    return <p className={cn('text-sm text-green-600', className)}>{t('Report submitted. Thank you.')}</p>
   }
 
   if (state === 'confirm' || state === 'sending') {
     return (
       <div className={cn('flex items-center gap-2 text-sm', className)}>
-        <span className="text-gray-600">Report this QR code?</span>
+        <span className="text-gray-600">{t('Report this QR code?')}</span>
         <button
           type="button"
           onClick={handleReport}
           disabled={state === 'sending'}
           className="font-medium text-red-600 hover:underline disabled:opacity-50"
         >
-          {state === 'sending' ? 'Sending…' : 'Yes, report'}
+          {state === 'sending' ? t('Sending...') : t('Yes, report')}
         </button>
         <button
           type="button"
           onClick={() => setState('idle')}
           className="font-medium text-gray-500 hover:underline"
         >
-          Cancel
+          {t('Cancel')}
         </button>
       </div>
     )
@@ -63,7 +65,7 @@ export function ReportAbuse({ qrId, className }: ReportAbuseProps) {
       )}
     >
       <Flag className="h-4 w-4" />
-      {state === 'error' ? 'Failed — try again' : 'Report abuse'}
+      {state === 'error' ? t('Failed — try again') : t('Report abuse')}
     </button>
   )
 }

@@ -1,8 +1,10 @@
 'use client'
 
 import { authAPI } from '@/lib/api/endpoints/auth'
+import { useTranslation } from '@/lib/i18n'
 
 export function TwitterLoginButton() {
+  const { t } = useTranslation()
   const handleTwitterLogin = () => {
     const redirectUrl = authAPI.getTwitterRedirectUrl()
     window.location.href = redirectUrl
@@ -20,7 +22,7 @@ export function TwitterLoginButton() {
           fill="currentColor"
         />
       </svg>
-      Continue with X
+      {t('Continue with X')}
     </button>
   )
 }

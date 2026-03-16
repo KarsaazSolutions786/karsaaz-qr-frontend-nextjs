@@ -1,6 +1,9 @@
+'use client';
+
 import React, { useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface WizardNavigationProps {
   onBack?: () => void;
@@ -27,12 +30,16 @@ export function WizardNavigation({
   isLastStep = false,
   isSubmitting = false,
   isValidating = false,
-  backLabel = 'Back',
-  nextLabel = 'Next',
-  submitLabel = 'Submit',
+  backLabel,
+  nextLabel,
+  submitLabel,
   className,
   enableKeyboardShortcuts = true,
 }: WizardNavigationProps) {
+  const { t } = useTranslation();
+  const resolvedBackLabel = backLabel || t('Back');
+  const resolvedNextLabel = nextLabel || t('Next');
+  const resolvedSubmitLabel = submitLabel || t('Submit');
   const isLoading = isSubmitting || isValidating;
 
   useEffect(() => {
@@ -77,10 +84,10 @@ export function WizardNavigation({
             : 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed',
           !canGoBack && 'invisible'
         )}
-        aria-label="Go to previous step"
+        aria-label={t("Go to previous step")}
       >
         <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-        {backLabel}
+        {resolvedBackLabel}
       </button>
 
       {/* Next/Submit Button */}
@@ -96,15 +103,15 @@ export function WizardNavigation({
               ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg'
               : 'bg-gray-300 cursor-not-allowed'
           )}
-          aria-label="Submit form"
+          aria-label={t("Submit form")}
         >
           {isSubmitting ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              Submitting...
+              {t('Submitting...')}
             </>
           ) : (
-            submitLabel
+            resolvedSubmitLabel
           )}
         </button>
       ) : (
@@ -119,16 +126,16 @@ export function WizardNavigation({
               ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg'
               : 'bg-gray-300 cursor-not-allowed'
           )}
-          aria-label="Go to next step"
+          aria-label={t("Go to next step")}
         >
           {isValidating ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              Validating...
+              {t('Validating...')}
             </>
           ) : (
             <>
-              {nextLabel}
+              {resolvedNextLabel}
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </>
           )}

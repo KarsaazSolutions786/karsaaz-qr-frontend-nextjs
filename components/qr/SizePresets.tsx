@@ -9,6 +9,7 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 import { PNG_SIZE_PRESETS } from '@/lib/utils/export-png';
+import { useTranslation } from '@/lib/i18n';
 
 export type SizePresetKey = keyof typeof PNG_SIZE_PRESETS;
 
@@ -66,17 +67,18 @@ export function SizePresets({
   disabled = false,
   className = '',
 }: SizePresetsProps) {
+  const { t } = useTranslation();
   return (
     <div className={`space-y-2 ${className}`}>
       <label className="text-sm font-medium text-gray-700">
-        Size Preset
+        {t('Size Preset')}
       </label>
-      
+
       <div className="grid grid-cols-2 gap-2">
         {(Object.keys(PNG_SIZE_PRESETS) as SizePresetKey[]).map((preset) => {
           const info = PRESET_INFO[preset];
           const isSelected = selected === preset;
-          
+
           return (
             <button
               key={preset}
@@ -99,16 +101,16 @@ export function SizePresets({
                   </div>
                 </div>
               )}
-              
+
               {/* Preset info */}
               <div className="pr-6">
                 <div className="flex items-center gap-2 mb-1">
                   <span className={`font-medium ${isSelected ? 'text-blue-700' : 'text-gray-900'}`}>
-                    {info.label}
+                    {t(info.label)}
                   </span>
                   {info.recommended && (
                     <span className="px-1.5 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded">
-                      Recommended
+                      {t('Recommended')}
                     </span>
                   )}
                 </div>
@@ -116,7 +118,7 @@ export function SizePresets({
                   {info.description}
                 </div>
                 <div className="text-xs text-gray-400">
-                  {info.useCase}
+                  {t(info.useCase)}
                 </div>
               </div>
             </button>
@@ -136,12 +138,13 @@ export function SizePresetsCompact({
   disabled = false,
   className = '',
 }: Omit<SizePresetsProps, 'format'>) {
+  const { t } = useTranslation();
   return (
     <div className={className}>
       <label htmlFor="size-preset" className="block text-sm font-medium text-gray-700 mb-1">
-        Size Preset
+        {t('Size Preset')}
       </label>
-      
+
       <select
         id="size-preset"
         value={selected}
@@ -157,16 +160,16 @@ export function SizePresetsCompact({
           const info = PRESET_INFO[preset];
           return (
             <option key={preset} value={preset}>
-              {info.label} - {info.description}
+              {t(info.label)} - {info.description}
               {info.recommended ? ' ⭐' : ''}
             </option>
           );
         })}
       </select>
-      
+
       {/* Use case hint */}
       <p className="mt-1 text-xs text-gray-500">
-        {PRESET_INFO[selected].useCase}
+        {t(PRESET_INFO[selected].useCase)}
       </p>
     </div>
   );
@@ -181,6 +184,7 @@ export function SizePresetsWithPreview({
   disabled = false,
   className = '',
 }: Omit<SizePresetsProps, 'format'>) {
+  const { t } = useTranslation();
   const selectedSize = PNG_SIZE_PRESETS[selected];
   
   return (
@@ -194,7 +198,7 @@ export function SizePresetsWithPreview({
       {/* Visual preview */}
       <div className="mt-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">Preview Size</span>
+          <span className="text-sm font-medium text-gray-700">{t('Preview Size')}</span>
           <span className="text-xs text-gray-500">
             {selectedSize.width} × {selectedSize.height} px
           </span>
@@ -219,7 +223,7 @@ export function SizePresetsWithPreview({
         
         {/* File size estimate */}
         <div className="mt-2 text-xs text-gray-500 text-center">
-          Estimated file size: {estimateFileSize(selectedSize.width, selectedSize.height)}
+          {t('Estimated file size:')} {estimateFileSize(selectedSize.width, selectedSize.height)}
         </div>
       </div>
     </div>

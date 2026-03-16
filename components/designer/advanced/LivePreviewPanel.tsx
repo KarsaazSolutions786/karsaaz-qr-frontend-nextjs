@@ -4,6 +4,7 @@ import React from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { QRCodeSVG } from 'qrcode.react'
 import type { QRDesign } from './types'
+import { useTranslation } from '@/lib/i18n'
 
 interface LivePreviewPanelProps {
   design: QRDesign
@@ -11,11 +12,12 @@ interface LivePreviewPanelProps {
 }
 
 export default function LivePreviewPanel({ design, qrData }: LivePreviewPanelProps) {
+  const { t } = useTranslation()
   return (
     <Card className="sticky top-4">
       <CardHeader>
-        <CardTitle>Live Preview</CardTitle>
-        <CardDescription>See your changes in real-time</CardDescription>
+        <CardTitle>{t('Live Preview')}</CardTitle>
+        <CardDescription>{t('See your changes in real-time')}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 flex items-center justify-center">
@@ -63,11 +65,11 @@ export default function LivePreviewPanel({ design, qrData }: LivePreviewPanelPro
         </div>
         <div className="mt-4 space-y-2 text-xs text-muted-foreground">
           <div className="flex justify-between">
-            <span>Shape:</span>
+            <span>{t('Shape:')}</span>
             <span className="font-medium text-foreground capitalize">{design.moduleShape}</span>
           </div>
           <div className="flex justify-between">
-            <span>Colors:</span>
+            <span>{t('Colors:')}</span>
             <div className="flex gap-1">
               <div
                 className="w-4 h-4 rounded border"
@@ -81,26 +83,26 @@ export default function LivePreviewPanel({ design, qrData }: LivePreviewPanelPro
           </div>
           {design.gradient && design.gradient.type !== 'none' && (
             <div className="flex justify-between">
-              <span>Gradient:</span>
+              <span>{t('Gradient:')}</span>
               <span className="font-medium text-foreground capitalize">{design.gradient.type}</span>
             </div>
           )}
           {design.shadow?.enabled && (
             <div className="flex justify-between">
-              <span>Shadow:</span>
-              <span className="font-medium text-foreground">On</span>
+              <span>{t('Shadow:')}</span>
+              <span className="font-medium text-foreground">{t('On')}</span>
             </div>
           )}
           {design.stroke?.enabled && (
             <div className="flex justify-between">
-              <span>Stroke:</span>
+              <span>{t('Stroke:')}</span>
               <span className="font-medium text-foreground">{design.stroke.width}px</span>
             </div>
           )}
           {design.depth?.enabled && (
             <div className="flex justify-between">
               <span>3D:</span>
-              <span className="font-medium text-foreground">On</span>
+              <span className="font-medium text-foreground">{t('On')}</span>
             </div>
           )}
         </div>

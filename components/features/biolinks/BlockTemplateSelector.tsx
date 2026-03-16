@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,6 +24,7 @@ const CATEGORIES = [
 type CategoryFilter = 'all' | BioLinkTemplate['category']
 
 export default function BlockTemplateSelector({ onSelect, className }: BlockTemplateSelectorProps) {
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all')
 
   const filtered =
@@ -41,7 +43,7 @@ export default function BlockTemplateSelector({ onSelect, className }: BlockTemp
             size="sm"
             onClick={() => setActiveCategory(cat.value as CategoryFilter)}
           >
-            {cat.label}
+            {t(cat.label)}
           </Button>
         ))}
       </div>
@@ -66,10 +68,10 @@ export default function BlockTemplateSelector({ onSelect, className }: BlockTemp
             </CardHeader>
             <CardContent className="mt-auto flex items-center justify-between pt-2">
               <Badge variant="secondary">
-                {template.blocks.length} {template.blocks.length === 1 ? 'block' : 'blocks'}
+                {template.blocks.length} {template.blocks.length === 1 ? t('block') : t('blocks')}
               </Badge>
               <Button size="sm" onClick={() => onSelect(template.blocks)}>
-                Use Template
+                {t('Use Template')}
               </Button>
             </CardContent>
           </Card>

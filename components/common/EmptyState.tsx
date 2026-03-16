@@ -7,15 +7,16 @@
 'use client';
 
 import React from 'react';
-import { 
-  Search, 
-  Inbox, 
-  AlertCircle, 
+import {
+  Search,
+  Inbox,
+  AlertCircle,
   Plus,
   FolderOpen,
   QrCode,
   BarChart3
 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -65,13 +66,14 @@ export function EmptyState({
  * No QR Codes Empty State
  */
 export function NoQRCodesEmptyState({ onCreate }: { onCreate?: () => void }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
       icon={<QrCode className="w-full h-full" />}
-      title="No QR Codes Yet"
-      description="Get started by creating your first QR code. Choose from 10+ types including URL, vCard, WiFi, and more."
+      title={t('No QR Codes Yet')}
+      description={t('Get started by creating your first QR code. Choose from 10+ types including URL, vCard, WiFi, and more.')}
       action={onCreate ? {
-        label: 'Create QR Code',
+        label: t('Create QR Code'),
         onClick: onCreate,
       } : undefined}
     />
@@ -82,14 +84,15 @@ export function NoQRCodesEmptyState({ onCreate }: { onCreate?: () => void }) {
  * No Search Results Empty State
  */
 export function NoSearchResultsEmptyState({ query }: { query?: string }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
       icon={<Search className="w-full h-full" />}
-      title="No Results Found"
+      title={t('No Results Found')}
       description={
         query
-          ? `No results found for "${query}". Try adjusting your search terms.`
-          : 'Try a different search query or filter.'
+          ? `${t('No results found for')} "${query}". ${t('Try adjusting your search terms.')}`
+          : t('Try a different search query or filter.')
       }
     />
   );
@@ -99,11 +102,12 @@ export function NoSearchResultsEmptyState({ query }: { query?: string }) {
  * No Data Empty State
  */
 export function NoDataEmptyState({ message }: { message?: string }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
       icon={<Inbox className="w-full h-full" />}
-      title="No Data Available"
-      description={message || 'There is no data to display at this time.'}
+      title={t('No Data Available')}
+      description={message || t('There is no data to display at this time.')}
     />
   );
 }
@@ -112,13 +116,14 @@ export function NoDataEmptyState({ message }: { message?: string }) {
  * Empty Folder State
  */
 export function EmptyFolderState({ onAddItem }: { onAddItem?: () => void }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
       icon={<FolderOpen className="w-full h-full" />}
-      title="Empty Folder"
-      description="This folder doesn't contain any items yet."
+      title={t('Empty Folder')}
+      description={t("This folder doesn't contain any items yet.")}
       action={onAddItem ? {
-        label: 'Add Item',
+        label: t('Add Item'),
         onClick: onAddItem,
       } : undefined}
     />
@@ -129,11 +134,12 @@ export function EmptyFolderState({ onAddItem }: { onAddItem?: () => void }) {
  * No Analytics Empty State
  */
 export function NoAnalyticsEmptyState() {
+  const { t } = useTranslation();
   return (
     <EmptyState
       icon={<BarChart3 className="w-full h-full" />}
-      title="No Analytics Data"
-      description="Analytics data will appear here once your QR code receives its first scan."
+      title={t('No Analytics Data')}
+      description={t('Analytics data will appear here once your QR code receives its first scan.')}
     />
   );
 }
@@ -141,22 +147,23 @@ export function NoAnalyticsEmptyState() {
 /**
  * Error Empty State
  */
-export function ErrorEmptyState({ 
-  title = 'Something Went Wrong',
+export function ErrorEmptyState({
+  title,
   message,
   onRetry,
-}: { 
+}: {
   title?: string;
   message?: string;
   onRetry?: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <EmptyState
       icon={<AlertCircle className="w-full h-full text-red-300" />}
-      title={title}
-      description={message || 'An error occurred while loading the data. Please try again.'}
+      title={title || t('Something Went Wrong')}
+      description={message || t('An error occurred while loading the data. Please try again.')}
       action={onRetry ? {
-        label: 'Retry',
+        label: t('Retry'),
         onClick: onRetry,
       } : undefined}
     />

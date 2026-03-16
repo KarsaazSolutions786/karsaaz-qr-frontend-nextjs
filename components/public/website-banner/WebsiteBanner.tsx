@@ -3,6 +3,7 @@
 import React from 'react'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 interface WebsiteBannerProps {
   type: 'info' | 'warning' | 'success' | 'promo'
@@ -19,6 +20,7 @@ const typeStyles: Record<WebsiteBannerProps['type'], string> = {
 }
 
 export function WebsiteBanner({ type, message, dismissible = false, onDismiss }: WebsiteBannerProps) {
+  const { t } = useTranslation()
   return (
     <div className={cn('relative px-4 py-2.5 text-center text-sm font-medium', typeStyles[type])}>
       <span>{message}</span>
@@ -26,7 +28,7 @@ export function WebsiteBanner({ type, message, dismissible = false, onDismiss }:
         <button
           onClick={onDismiss}
           className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 hover:bg-white/20 transition-colors"
-          aria-label="Dismiss banner"
+          aria-label={t("Dismiss banner")}
         >
           <X className="h-4 w-4" />
         </button>

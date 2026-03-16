@@ -1,56 +1,104 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  selectClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * Razorpay payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Integration Type (onetime / recurring)
+ * - Key ID
+ * - Key Secret
+ * - Webhook Secret
+ *
+ * Webhook is NOT auto-registered; a manual webhook URL is displayed.
+ */
+export function RazorpayForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function RazorpayForm({ settings, onChange }: Props) {
   return (
-    <PaymentProcessorFormBase slug="razorpay" settings={settings} onChange={onChange}>
+    <PaymentProcessorFormBase
+      slug="razorpay"
+      settings={settings}
+      onChange={onChange}
+      showWebhookUrl
+      webhookMessage={t('Add the following webhook URL in your Razorpay Dashboard under Settings > Webhooks:')}
+    >
+      {/* Integration Type */}
       <div>
-        <label htmlFor="razorpay-key-id" className="block text-sm font-medium text-gray-700">
-          Key ID
+        <label htmlFor="razorpay-integration-type" className={labelClass}>
+          {t('Integration Type')}
+        </label>
+        <select
+          id="razorpay-integration-type"
+          value={settings.razorpay_integration_type ?? 'recurring'}
+          onChange={(e) => onChange('razorpay_integration_type', e.target.value)}
+          className={selectClass}
+        >
+          <option value="onetime">{t('One Time')}</option>
+          <option value="recurring">{t('Recurring')}</option>
+        </select>
+        <p className={hintClass}>
+          {t('Default: Recurring. Use "One Time" for single payments only.')}
+        </p>
+      </div>
+
+      {/* Key ID */}
+      <div>
+        <label htmlFor="razorpay-key-id" className={labelClass}>
+          {t('Key ID')}
         </label>
         <input
           id="razorpay-key-id"
-          type="text"
-          value={settings.key_id ?? ''}
-          onChange={(e) => onChange('key_id', e.target.value)}
-          placeholder="Enter Key ID"
+          type="password"
+          value={settings.razorpay_key_id ?? ''}
+          onChange={(e) => onChange('razorpay_key_id', e.target.value)}
+          placeholder="rzp_***"
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Found in your Razorpay Dashboard under Settings > API Keys')}
+        </p>
       </div>
+
+      {/* Key Secret */}
       <div>
-        <label htmlFor="razorpay-key-secret" className="block text-sm font-medium text-gray-700">
-          Key Secret
+        <label htmlFor="razorpay-key-secret" className={labelClass}>
+          {t('Key Secret')}
         </label>
         <input
           id="razorpay-key-secret"
           type="password"
-          value={settings.key_secret ?? ''}
-          onChange={(e) => onChange('key_secret', e.target.value)}
-          placeholder="Enter Key Secret"
+          value={settings.razorpay_key_secret ?? ''}
+          onChange={(e) => onChange('razorpay_key_secret', e.target.value)}
+          placeholder="gAR***"
           className={inputClass}
         />
       </div>
+
+      {/* Webhook Secret */}
       <div>
-        <label htmlFor="razorpay-webhook-secret" className="block text-sm font-medium text-gray-700">
-          Webhook Secret
+        <label htmlFor="razorpay-webhook-secret" className={labelClass}>
+          {t('Webhook Secret')}
         </label>
         <input
           id="razorpay-webhook-secret"
           type="password"
-          value={settings.webhook_secret ?? ''}
-          onChange={(e) => onChange('webhook_secret', e.target.value)}
-          placeholder="Enter Webhook Secret"
+          value={settings.razorpay_webhook_secret ?? ''}
+          onChange={(e) => onChange('razorpay_webhook_secret', e.target.value)}
+          placeholder={t('Enter Webhook Secret')}
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Generated when creating a webhook endpoint in Razorpay Dashboard')}
+        </p>
       </div>
     </PaymentProcessorFormBase>
   )

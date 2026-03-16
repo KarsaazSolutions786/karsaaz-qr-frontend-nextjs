@@ -1,7 +1,10 @@
+'use client'
+
 import React, { ReactNode } from 'react'
 import { WizardNavigation } from './WizardNavigation'
 import { cn } from '@/lib/utils'
 import { Check } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface Step {
   id: string
@@ -48,6 +51,7 @@ export function StepperWizard({
   contentClassName,
   footerClassName,
 }: StepperWizardProps) {
+  const { t } = useTranslation()
   const isLastStep = currentStep === steps.length - 1
 
   const handleStepClick = (stepIndex: number) => {
@@ -60,17 +64,24 @@ export function StepperWizard({
     <div
       className={cn('flex w-full flex-col min-h-screen', className)}
       role="region"
-      aria-label="Multi-step form wizard"
+      aria-label={t('Multi-step form wizard')}
     >
       {/* ── Horizontal Step Bar ── */}
       <div
         className={cn(
-          'sticky top-0 z-10 border-b border-gray-200 bg-white px-6 py-4 shadow-sm',
+          'sticky top-0 z-10 bg-white px-6 py-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)]',
           headerClassName
         )}
       >
-        <div className="mx-auto max-w-4xl">
-          <nav aria-label="Form steps">
+        {/* Purple progress bar at very top */}
+        <div className="absolute inset-x-0 top-0 h-1 bg-gray-100">
+          <div
+            className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500 ease-out"
+            style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+          />
+        </div>
+        <div className="mx-auto max-w-5xl">
+          <nav aria-label={t('Form steps')}>
             <ol className="flex items-center justify-between gap-2">
               {steps.map((step, index) => {
                 const isCompleted = index < currentStep
@@ -144,15 +155,15 @@ export function StepperWizard({
 
       {/* ── Content ── */}
       <div
-        className={cn('flex-1 bg-gray-50 px-4 py-8 sm:px-6', contentClassName)}
+        className={cn('flex-1 bg-gray-50/60 px-4 py-6 sm:px-6 lg:py-8', contentClassName)}
         role="main"
         aria-live="polite"
         aria-atomic="true"
       >
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-5xl">
           {/* Step heading */}
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="mb-5">
+            <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
               {steps[currentStep]?.title}
             </h2>
             {steps[currentStep]?.description && (
@@ -163,7 +174,7 @@ export function StepperWizard({
           </div>
 
           {/* Content card */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+          <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-gray-100 sm:p-8">
             {children}
           </div>
         </div>
@@ -172,11 +183,11 @@ export function StepperWizard({
       {/* ── Footer Navigation ── */}
       <div
         className={cn(
-          'sticky bottom-0 border-t border-gray-200 bg-white px-6 py-4 shadow-[0_-2px_8px_rgba(0,0,0,0.06)]',
+          'sticky bottom-0 border-t border-gray-100 bg-white px-6 py-4 shadow-[0_-2px_8px_rgba(0,0,0,0.04)]',
           footerClassName
         )}
       >
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-5xl">
           <WizardNavigation
             onBack={onBack}
             onNext={onNext}

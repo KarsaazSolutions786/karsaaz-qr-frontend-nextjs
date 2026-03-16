@@ -8,6 +8,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Link2, ExternalLink, Search } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface ReferrerData {
   url: string;
@@ -31,6 +32,7 @@ export function ReferrerTracker({
   directScans = 0,
   unknownScans = 0,
 }: ReferrerTrackerProps) {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'scans' | 'domain'>('scans');
   
@@ -84,7 +86,7 @@ export function ReferrerTracker({
             <Link2 className="w-5 h-5 text-indigo-600" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">Referrer Sources</h3>
+            <h3 className="text-lg font-bold text-gray-900">{t('Referrer Sources')}</h3>
             <p className="text-sm text-gray-500">
               {referrers.length} referrer{referrers.length !== 1 ? 's' : ''} tracked
             </p>
@@ -97,8 +99,8 @@ export function ReferrerTracker({
           onChange={(e) => setSortBy(e.target.value as 'scans' | 'domain')}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
         >
-          <option value="scans">Sort by Scans</option>
-          <option value="domain">Sort by Domain</option>
+          <option value="scans">{t('Sort by Scans')}</option>
+          <option value="domain">{t('Sort by Domain')}</option>
         </select>
       </div>
       
@@ -106,14 +108,14 @@ export function ReferrerTracker({
       <div className="p-6 border-b border-gray-200 bg-gray-50">
         <div className="grid grid-cols-4 gap-6">
           <div>
-            <div className="text-sm text-gray-600 mb-1">Total Scans</div>
+            <div className="text-sm text-gray-600 mb-1">{t('Total Scans')}</div>
             <div className="text-2xl font-bold text-gray-900">
               {totalScans.toLocaleString()}
             </div>
           </div>
           
           <div>
-            <div className="text-sm text-gray-600 mb-1">From Referrers</div>
+            <div className="text-sm text-gray-600 mb-1">{t('From Referrers')}</div>
             <div className="text-2xl font-bold text-indigo-600">
               {referrers.reduce((sum, r) => sum + r.scans, 0).toLocaleString()}
             </div>
@@ -123,7 +125,7 @@ export function ReferrerTracker({
           </div>
           
           <div>
-            <div className="text-sm text-gray-600 mb-1">Direct Scans</div>
+            <div className="text-sm text-gray-600 mb-1">{t('Direct Scans')}</div>
             <div className="text-2xl font-bold text-green-600">
               {directScans.toLocaleString()}
             </div>
@@ -133,7 +135,7 @@ export function ReferrerTracker({
           </div>
           
           <div>
-            <div className="text-sm text-gray-600 mb-1">Unknown</div>
+            <div className="text-sm text-gray-600 mb-1">{t('Unknown')}</div>
             <div className="text-2xl font-bold text-gray-400">
               {unknownScans.toLocaleString()}
             </div>
@@ -146,7 +148,7 @@ export function ReferrerTracker({
       
       {/* Top Domains */}
       <div className="p-6 border-b border-gray-200">
-        <h4 className="text-sm font-semibold text-gray-900 mb-4">Top 5 Domains</h4>
+        <h4 className="text-sm font-semibold text-gray-900 mb-4">{t('Top 5 Domains')}</h4>
         <div className="grid grid-cols-5 gap-4">
           {topDomains.map((domain, index) => (
             <div key={domain.domain} className="text-center p-4 bg-gray-50 rounded-lg">
@@ -175,7 +177,7 @@ export function ReferrerTracker({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search referrers..."
+            placeholder={t('Search referrers...')}
             className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
@@ -187,7 +189,7 @@ export function ReferrerTracker({
           <div className="text-center py-8">
             <Link2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500">
-              {searchQuery ? 'No referrers found' : 'No referrers tracked yet'}
+              {searchQuery ? t('No referrers found') : t('No referrers tracked yet')}
             </p>
           </div>
         ) : (
@@ -220,7 +222,7 @@ export function ReferrerTracker({
                   </div>
                   {referrer.lastSeen && (
                     <div className="text-xs text-gray-400 mt-1">
-                      Last seen: {referrer.lastSeen.toLocaleDateString()}
+                      {t('Last seen')}: {referrer.lastSeen.toLocaleDateString()}
                     </div>
                   )}
                 </div>
@@ -265,24 +267,26 @@ export function ReferrerStatsCompact({
   directScans: number;
   totalScans: number;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex items-center gap-6">
       <div>
-        <div className="text-xs text-gray-600 mb-1">Top Referrer</div>
+        <div className="text-xs text-gray-600 mb-1">{t('Top Referrer')}</div>
         <div className="text-sm font-medium text-gray-900">
           {topReferrers[0]?.domain || 'N/A'}
         </div>
       </div>
       
       <div>
-        <div className="text-xs text-gray-600 mb-1">Direct</div>
+        <div className="text-xs text-gray-600 mb-1">{t('Direct')}</div>
         <div className="text-sm font-medium text-gray-900">
           {((directScans / totalScans) * 100).toFixed(0)}%
         </div>
       </div>
-      
+
       <div>
-        <div className="text-xs text-gray-600 mb-1">Referrers</div>
+        <div className="text-xs text-gray-600 mb-1">{t('Referrers')}</div>
         <div className="text-sm font-medium text-gray-900">
           {topReferrers.length}
         </div>

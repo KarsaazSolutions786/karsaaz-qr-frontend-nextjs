@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 // ============================================
 // Image Captcha Component
@@ -38,6 +39,7 @@ export function ImageCaptcha({
   fetchUrl = '/api/captcha',
   className,
 }: ImageCaptchaProps) {
+  const { t } = useTranslation()
   const [image, setImage] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [code, setCode] = useState(value?.code || '')
@@ -104,7 +106,7 @@ export function ImageCaptcha({
             <img src={image} alt="Captcha" className="w-full h-full object-contain" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
-              Failed to load
+              {t('Failed to load')}
             </div>
           )}
         </div>
@@ -172,6 +174,7 @@ export function GoogleRecaptcha({
   error,
   className,
 }: GoogleRecaptchaProps) {
+  const { t } = useTranslation()
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetIdRef = useRef<number | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -257,7 +260,7 @@ export function GoogleRecaptcha({
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          Loading reCAPTCHA...
+          {t('Loading reCAPTCHA...')}
         </div>
       )}
       {error && <p className="text-sm text-red-600">{error}</p>}

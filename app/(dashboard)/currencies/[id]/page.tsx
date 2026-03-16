@@ -5,9 +5,11 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useCurrency } from '@/lib/hooks/queries/useCurrencies'
 import { useUpdateCurrency } from '@/lib/hooks/mutations/useCurrencyMutations'
+import { useTranslation } from '@/lib/i18n'
 
 export default function EditCurrencyPage() {
   const { id } = useParams<{ id: string }>()
+  const { t } = useTranslation()
   const currencyId = Number(id)
   const { data: currency, isLoading } = useCurrency(currencyId)
   const updateMutation = useUpdateCurrency()
@@ -58,8 +60,8 @@ export default function EditCurrencyPage() {
   if (!currency) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-8">
-        <p className="text-red-600">Currency not found.</p>
-        <Link href="/currencies" className="mt-2 text-sm text-blue-600">← Back to Currencies</Link>
+        <p className="text-red-600">{t('Currency not found.')}</p>
+        <Link href="/currencies" className="mt-2 text-sm text-blue-600">{t('← Back to Currencies')}</Link>
       </div>
     )
   }
@@ -68,22 +70,22 @@ export default function EditCurrencyPage() {
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex items-center gap-4">
         <Link href="/currencies" className="text-sm text-blue-600 hover:text-blue-800">
-          ← Back to Currencies
+          {t('← Back to Currencies')}
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Edit Currency</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('Edit Currency')}</h1>
       </div>
 
       {updateMutation.error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">Failed to update currency.</div>
+        <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">{t('Failed to update currency.')}</div>
       )}
       {saved && (
-        <div className="mb-4 rounded-md bg-green-50 p-4 text-sm text-green-700">Currency saved successfully.</div>
+        <div className="mb-4 rounded-md bg-green-50 p-4 text-sm text-green-700">{t('Currency saved successfully.')}</div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Name <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-gray-700">{t('Name')} <span className="text-red-500">*</span></label>
             <input
               type="text" required value={form.name}
               onChange={(e) => set('name', e.target.value)}
@@ -92,7 +94,7 @@ export default function EditCurrencyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Currency Code <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-gray-700">{t('Currency Code')} <span className="text-red-500">*</span></label>
             <input
               type="text" required value={form.currencyCode} maxLength={5}
               onChange={(e) => set('currencyCode', e.target.value.toUpperCase())}
@@ -101,7 +103,7 @@ export default function EditCurrencyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Symbol <span className="text-red-500">*</span></label>
+            <label className="block text-sm font-medium text-gray-700">{t('Symbol')} <span className="text-red-500">*</span></label>
             <input
               type="text" required value={form.symbol}
               onChange={(e) => set('symbol', e.target.value)}
@@ -110,7 +112,7 @@ export default function EditCurrencyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Thousands Separator</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Thousands Separator')}</label>
             <input
               type="text" value={form.thousandsSeparator} maxLength={2}
               onChange={(e) => set('thousandsSeparator', e.target.value)}
@@ -119,7 +121,7 @@ export default function EditCurrencyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Decimal Separator</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Decimal Separator')}</label>
             <input
               type="text" value={form.decimalSeparator} maxLength={2}
               onChange={(e) => set('decimalSeparator', e.target.value)}
@@ -128,14 +130,14 @@ export default function EditCurrencyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Symbol Position</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Symbol Position')}</label>
             <select
               value={form.symbolPosition}
               onChange={(e) => set('symbolPosition', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
             >
-              <option value="before">Before Number</option>
-              <option value="after">After Number</option>
+              <option value="before">{t('Before Number')}</option>
+              <option value="after">{t('After Number')}</option>
             </select>
           </div>
 
@@ -146,20 +148,20 @@ export default function EditCurrencyPage() {
                 onChange={(e) => set('decimalSeparatorEnabled', e.target.checked)}
                 className="h-4 w-4 rounded border-gray-300 text-blue-600"
               />
-              Always show decimal separator
+              {t('Always show decimal separator')}
             </label>
           </div>
         </div>
 
         <div className="flex items-center justify-end gap-4 pt-2">
           <Link href="/currencies" className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
-            Cancel
+            {t('Cancel')}
           </Link>
           <button
             type="submit" disabled={updateMutation.isPending}
             className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
           >
-            {updateMutation.isPending ? 'Saving…' : 'Save Currency'}
+            {updateMutation.isPending ? t('Saving…') : t('Save Currency')}
           </button>
         </div>
       </form>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { CheckCircle, Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import { useUseTemplate } from '@/lib/hooks/queries/useTemplates'
 import type { QRCodeTemplate } from '@/types/entities/template'
 
@@ -24,6 +25,7 @@ export default function UseTemplateButton({
   className = '',
   children,
 }: UseTemplateButtonProps) {
+  const { t } = useTranslation()
   const [showSuccess, setShowSuccess] = useState(false)
   const useTemplateMutation = useUseTemplate({
     onSuccess: (data) => {
@@ -74,9 +76,9 @@ export default function UseTemplateButton({
         <CheckCircle className="w-4 h-4" />
       )}
       
-      {isLoading && 'Loading...'}
-      {isSuccess && 'Template Applied!'}
-      {!isLoading && !isSuccess && (children || 'Use Template')}
+      {isLoading && t('Loading...')}
+      {isSuccess && t('Template Applied!')}
+      {!isLoading && !isSuccess && (children || t('Use Template'))}
     </button>
   )
 }

@@ -21,6 +21,7 @@ import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
 import PaymentForm from './PaymentForm';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useTranslation } from '@/lib/i18n';
 
 interface UPIData {
   merchantName: string;
@@ -68,6 +69,7 @@ const UPI_APPS = [
 ];
 
 export default function UPIPreview({ upiData }: UPIPreviewProps) {
+  const { t } = useTranslation();
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('idle');
   const [paymentReceipt, setPaymentReceipt] = useState<PaymentReceipt | null>(null);
   const [upiString, setUpiString] = useState<string>('');
@@ -175,7 +177,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
   if (paymentStatus === 'success' && paymentReceipt) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
-        <PreviewHeader title="Payment Successful" />
+        <PreviewHeader title={t('Payment Successful')} />
         
         <div className="container mx-auto px-4 py-8 max-w-2xl">
           <Card className="p-8 text-center">
@@ -183,38 +185,38 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
               <CheckCircle2 className="h-12 w-12 text-white" />
             </div>
             
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
-            <p className="text-gray-600 mb-8">Your payment has been processed successfully</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('Payment Successful!')}</h1>
+            <p className="text-gray-600 mb-8">{t('Your payment has been processed successfully')}</p>
 
             <div className="bg-gray-50 rounded-lg p-6 mb-6 text-left space-y-4">
               <div className="flex justify-between items-center pb-4 border-b">
-                <span className="text-gray-600">Amount Paid</span>
+                <span className="text-gray-600">{t('Amount Paid')}</span>
                 <span className="text-2xl font-bold text-green-600">₹{paymentReceipt.amount.toFixed(2)}</span>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Transaction ID</span>
+                <span className="text-gray-600">{t('Transaction ID')}</span>
                 <span className="font-mono text-sm font-semibold">{paymentReceipt.transactionId}</span>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Paid to</span>
+                <span className="text-gray-600">{t('Paid to')}</span>
                 <span className="font-semibold">{paymentReceipt.merchantName}</span>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">UPI ID</span>
+                <span className="text-gray-600">{t('UPI ID')}</span>
                 <span className="font-mono text-sm">{paymentReceipt.vpa}</span>
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Date & Time</span>
+                <span className="text-gray-600">{t('Date & Time')}</span>
                 <span className="text-sm">{new Date(paymentReceipt.timestamp).toLocaleString('en-IN')}</span>
               </div>
               
               {paymentReceipt.note && (
                 <div className="flex justify-between items-center pt-4 border-t">
-                  <span className="text-gray-600">Note</span>
+                  <span className="text-gray-600">{t('Note')}</span>
                   <span className="text-sm">{paymentReceipt.note}</span>
                 </div>
               )}
@@ -223,10 +225,10 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
             <div className="flex gap-4">
               <Button variant="outline" className="flex-1" onClick={() => window.print()}>
                 <Download className="mr-2 h-4 w-4" />
-                Download Receipt
+                {t('Download Receipt')}
               </Button>
               <Button className="flex-1" onClick={resetPayment}>
-                Make Another Payment
+                {t('Make Another Payment')}
               </Button>
             </div>
           </Card>
@@ -240,7 +242,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
   if (paymentStatus === 'failed') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-100">
-        <PreviewHeader title="Payment Failed" />
+        <PreviewHeader title={t('Payment Failed')} />
         
         <div className="container mx-auto px-4 py-8 max-w-2xl">
           <Card className="p-8 text-center">
@@ -248,15 +250,15 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
               <XCircle className="h-12 w-12 text-white" />
             </div>
             
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Failed</h1>
-            <p className="text-gray-600 mb-8">Your payment could not be processed. Please try again.</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('Payment Failed')}</h1>
+            <p className="text-gray-600 mb-8">{t('Your payment could not be processed. Please try again.')}</p>
 
             <div className="flex gap-4">
               <Button variant="outline" className="flex-1" onClick={resetPayment}>
-                Try Again
+                {t('Try Again')}
               </Button>
               <Button className="flex-1" onClick={() => window.history.back()}>
-                Go Back
+                {t('Go Back')}
               </Button>
             </div>
           </Card>
@@ -270,7 +272,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
   if (paymentStatus === 'pending' && paymentReceipt) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <PreviewHeader title="Payment Pending" />
+        <PreviewHeader title={t('Payment Pending')} />
         
         <div className="container mx-auto px-4 py-8 max-w-2xl">
           <Card className="p-8 text-center">
@@ -278,13 +280,13 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
               <Clock className="h-12 w-12 text-white" />
             </div>
             
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Payment Pending</h1>
-            <p className="text-gray-600 mb-8">Please complete the payment in your UPI app</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('Payment Pending')}</h1>
+            <p className="text-gray-600 mb-8">{t('Please complete the payment in your UPI app')}</p>
 
             <div className="bg-gray-50 rounded-lg p-6 mb-6">
-              <p className="text-sm text-gray-600 mb-4">Check your UPI app to complete the payment</p>
+              <p className="text-sm text-gray-600 mb-4">{t('Check your UPI app to complete the payment')}</p>
               <div className="flex items-center justify-center gap-2 mb-4">
-                <span className="text-gray-700">Transaction ID:</span>
+                <span className="text-gray-700">{t('Transaction ID')}:</span>
                 <span className="font-mono text-sm font-semibold">{paymentReceipt.transactionId}</span>
               </div>
             </div>
@@ -294,10 +296,10 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
                 className="w-full"
                 onClick={() => setPaymentStatus('success')}
               >
-                I've Completed the Payment
+                {t('I\'ve Completed the Payment')}
               </Button>
               <Button variant="outline" className="w-full" onClick={resetPayment}>
-                Cancel Payment
+                {t('Cancel Payment')}
               </Button>
             </div>
           </Card>
@@ -355,7 +357,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
           {/* Security Badge */}
           <div className="mt-4 pt-4 border-t flex items-center gap-2 text-sm text-gray-600">
             <Shield className="h-4 w-4 text-green-600" />
-            <span>Secured by UPI - Certified by NPCI</span>
+            <span>{t('Secured by UPI - Certified by NPCI')}</span>
           </div>
         </Card>
 
@@ -382,7 +384,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
             {upiString && (
               <Card className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4 text-center">
-                  Scan QR Code to Pay
+                  {t('Scan QR Code to Pay')}
                 </h2>
                 
                 <div className="bg-white p-4 rounded-lg border-2 flex justify-center" style={{ borderColor: theme.primary }}>
@@ -404,7 +406,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
                     onClick={handleDownloadQR}
                   >
                     <Download className="mr-2 h-4 w-4" />
-                    Download
+                    {t('Download')}
                   </Button>
                   <Button
                     variant="outline"
@@ -421,7 +423,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
                     }}
                   >
                     <Share2 className="mr-2 h-4 w-4" />
-                    Share
+                    {t('Share')}
                   </Button>
                 </div>
               </Card>
@@ -432,7 +434,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
               <Card className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                   <Smartphone className="h-5 w-5" />
-                  Pay with UPI App
+                  {t('Pay with UPI App')}
                 </h2>
                 
                 <div className="grid grid-cols-3 gap-3">
@@ -459,7 +461,7 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg flex items-start gap-2">
                   <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                   <p className="text-xs text-blue-900">
-                    Clicking on an app will open it on your device. Complete the payment in the app to finish the transaction.
+                    {t('Clicking on an app will open it on your device. Complete the payment in the app to finish the transaction.')}
                   </p>
                 </div>
               </Card>
@@ -469,15 +471,15 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
 
         {/* How it Works */}
         <Card className="p-6 mt-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">How UPI Payment Works</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('How UPI Payment Works')}</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 font-bold text-blue-600">
                 1
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Enter Amount</h3>
-                <p className="text-sm text-gray-600">Enter the payment amount and optional note</p>
+                <h3 className="font-semibold text-gray-900 mb-1">{t('Enter Amount')}</h3>
+                <p className="text-sm text-gray-600">{t('Enter the payment amount and optional note')}</p>
               </div>
             </div>
             
@@ -486,8 +488,8 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
                 2
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Choose Method</h3>
-                <p className="text-sm text-gray-600">Scan QR code or click your UPI app</p>
+                <h3 className="font-semibold text-gray-900 mb-1">{t('Choose Method')}</h3>
+                <p className="text-sm text-gray-600">{t('Scan QR code or click your UPI app')}</p>
               </div>
             </div>
             
@@ -496,8 +498,8 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
                 3
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 mb-1">Complete Payment</h3>
-                <p className="text-sm text-gray-600">Verify and confirm in your UPI app</p>
+                <h3 className="font-semibold text-gray-900 mb-1">{t('Complete Payment')}</h3>
+                <p className="text-sm text-gray-600">{t('Verify and confirm in your UPI app')}</p>
               </div>
             </div>
           </div>

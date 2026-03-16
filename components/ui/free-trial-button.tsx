@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { Sparkles } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface FreeTrialButtonProps {
   planId: string
@@ -18,6 +19,7 @@ export function FreeTrialButton({
   className,
   disabled = false,
 }: FreeTrialButtonProps) {
+  const { t } = useTranslation()
   return (
     <button
       type="button"
@@ -29,9 +31,9 @@ export function FreeTrialButton({
       )}
     >
       <Sparkles className="h-4 w-4" />
-      <span>Start {trialDays}-Day Free Trial</span>
+      <span>{t('Start')} {trialDays}-{t('Day Free Trial')}</span>
       <span className="ml-1 rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold">
-        FREE
+        {t('FREE')}
       </span>
     </button>
   )

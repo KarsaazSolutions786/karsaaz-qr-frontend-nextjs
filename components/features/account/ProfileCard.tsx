@@ -1,6 +1,7 @@
 'use client'
 
 import { User } from '@/types/entities/user'
+import { useTranslation } from '@/lib/i18n'
 
 interface ProfileCardProps {
   user: User
@@ -19,6 +20,7 @@ function formatMobileNumber(mobileNumber: any): string {
 }
 
 export function ProfileCard({ user, onEditProfile, onResetPassword }: ProfileCardProps) {
+  const { t } = useTranslation()
   const profileImageUrl = (user as any).profile_image_url || null
   const initial = user.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'
   const phone = formatMobileNumber((user as any).mobile_number)
@@ -67,7 +69,7 @@ export function ProfileCard({ user, onEditProfile, onResetPassword }: ProfileCar
             <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
             </svg>
-            Reset Password
+            {t('Reset Password')}
           </button>
           <button
             type="button"
@@ -77,7 +79,7 @@ export function ProfileCard({ user, onEditProfile, onResetPassword }: ProfileCar
             <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
             </svg>
-            Edit Profile
+            {t('Edit Profile')}
           </button>
         </div>
       </div>

@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon, Move, Square, Circle } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface LogoSettings {
   url?: string;
@@ -28,6 +31,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
   const [preview, setPreview] = useState<string>(logoSettings.url || '');
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   const handleFileUpload = (file: File) => {
     if (file && file.type.startsWith('image/')) {
@@ -87,7 +91,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
       {/* Logo Upload Section */}
       <div className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
-          Logo Upload
+          {t('Logo Upload')}
         </label>
         
         {/* Drag and Drop Area */}
@@ -105,7 +109,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
             <div className="relative inline-block">
               <img
                 src={preview}
-                alt="Logo preview"
+                alt={t('Logo preview')}
                 className="max-w-[200px] max-h-[200px] mx-auto rounded-lg shadow-md"
               />
               <button
@@ -122,15 +126,15 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
             <div className="space-y-3">
               <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
               <div className="text-sm text-gray-600">
-                <p>Drag and drop your logo here, or</p>
+                <p>{t('Drag and drop your logo here, or')}</p>
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   className="text-blue-600 hover:text-blue-700 font-medium"
                 >
-                  browse files
+                  {t('browse files')}
                 </button>
               </div>
-              <p className="text-xs text-gray-500">PNG, JPG, SVG up to 5MB</p>
+              <p className="text-xs text-gray-500">{t('PNG, JPG, SVG up to 5MB')}</p>
             </div>
           )}
           <input
@@ -149,7 +153,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
         <div className="flex gap-2">
           <input
             type="url"
-            placeholder="Or paste image URL"
+            placeholder={t('Or paste image URL')}
             value={logoSettings.url || ''}
             onChange={(e) => handleUrlChange(e.target.value)}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -166,7 +170,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
       {/* Logo Size */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">
-          Logo Size: {logoSettings.size}% of QR Code
+          {t(`Logo Size: ${logoSettings.size}% of QR Code`)}
         </label>
         <input
           type="range"
@@ -187,7 +191,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
       {/* Position Selector */}
       <div className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
-          Logo Position
+          {t('Logo Position')}
         </label>
         <div className="grid grid-cols-2 gap-2">
           {(['center', 'top', 'bottom', 'custom'] as const).map((pos) => (
@@ -202,7 +206,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
             >
               <div className="flex items-center justify-center gap-2">
                 <Move size={16} />
-                <span className="capitalize">{pos}</span>
+                <span className="capitalize">{t(pos)}</span>
               </div>
             </button>
           ))}
@@ -212,7 +216,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
         {logoSettings.position === 'custom' && (
           <div className="grid grid-cols-2 gap-3 mt-3">
             <div>
-              <label className="block text-xs text-gray-600 mb-1">X Position (%)</label>
+              <label className="block text-xs text-gray-600 mb-1">{t('X Position (%)')}</label>
               <input
                 type="number"
                 min="0"
@@ -225,7 +229,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Y Position (%)</label>
+              <label className="block text-xs text-gray-600 mb-1">{t('Y Position (%)')}</label>
               <input
                 type="number"
                 min="0"
@@ -245,7 +249,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Margin: {logoSettings.margin}px
+            {t(`Margin: ${logoSettings.margin}px`)}
           </label>
           <input
             type="range"
@@ -260,7 +264,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Padding: {logoSettings.padding}px
+            {t(`Padding: ${logoSettings.padding}px`)}
           </label>
           <input
             type="range"
@@ -278,7 +282,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
       {/* Background Style */}
       <div className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
-          Background Style
+          {t('Background Style')}
         </label>
         <div className="grid grid-cols-3 gap-2">
           {(['transparent', 'solid', 'blur'] as const).map((bg) => (
@@ -291,14 +295,14 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
                   : 'border-gray-300 hover:border-gray-400'
               }`}
             >
-              {bg}
+              {t(bg)}
             </button>
           ))}
         </div>
 
         {logoSettings.background === 'solid' && (
           <div className="flex items-center gap-2 mt-2">
-            <label className="text-sm text-gray-600">Background Color:</label>
+            <label className="text-sm text-gray-600">{t('Background Color:')}</label>
             <input
               type="color"
               value={logoSettings.backgroundColor || '#ffffff'}
@@ -322,7 +326,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
       {/* Logo Shape */}
       <div className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
-          Logo Shape
+          {t('Logo Shape')}
         </label>
         <div className="grid grid-cols-2 gap-2">
           {(['circle', 'square', 'rounded', 'custom'] as const).map((shape) => (
@@ -337,7 +341,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
             >
               <div className="flex items-center justify-center gap-2">
                 {shape === 'circle' ? <Circle size={16} /> : <Square size={16} />}
-                <span className="capitalize">{shape}</span>
+                <span className="capitalize">{t(shape)}</span>
               </div>
             </button>
           ))}
@@ -346,7 +350,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
         {(logoSettings.shape === 'rounded' || logoSettings.shape === 'custom') && (
           <div className="mt-3">
             <label className="block text-sm text-gray-600 mb-2">
-              Border Radius: {logoSettings.borderRadius || 0}px
+              {t(`Border Radius: ${logoSettings.borderRadius || 0}px`)}
             </label>
             <input
               type="range"
@@ -365,7 +369,7 @@ const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
       {/* Position Preview */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">
-          Position Preview
+          {t('Position Preview')}
         </label>
         <div className="relative w-full h-48 bg-gray-100 rounded-lg border-2 border-gray-300 overflow-hidden">
           {/* QR Code Placeholder */}

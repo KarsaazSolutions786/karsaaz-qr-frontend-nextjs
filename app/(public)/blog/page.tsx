@@ -5,8 +5,10 @@ import Link from 'next/link'
 import { blogPostsAPI } from '@/lib/api/endpoints/blog-posts'
 import type { BlogPost } from '@/types/entities/blog-post'
 import { Loader2, Calendar } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function BlogListingPage() {
+  const { t } = useTranslation()
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -21,7 +23,7 @@ export default function BlogListingPage() {
         setPosts(res.data)
         setLastPage(res.pagination.lastPage)
       })
-      .catch(() => setError('Failed to load blog posts'))
+      .catch(() => setError(t('Failed to load blog posts')))
       .finally(() => setLoading(false))
   }, [page])
 
@@ -43,10 +45,10 @@ export default function BlogListingPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      <h1 className="mb-8 text-3xl font-bold text-gray-900">Blog</h1>
+      <h1 className="mb-8 text-3xl font-bold text-gray-900">{t('Blog')}</h1>
 
       {posts.length === 0 ? (
-        <p className="text-center text-gray-500">No posts published yet.</p>
+        <p className="text-center text-gray-500">{t('No posts published yet.')}</p>
       ) : (
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
@@ -82,7 +84,7 @@ export default function BlogListingPage() {
                   </span>
                 </div>
                 <span className="mt-3 inline-block text-sm font-medium text-purple-600 group-hover:underline">
-                  Read More →
+                  {t('Read More')} →
                 </span>
               </div>
             </Link>
@@ -97,17 +99,17 @@ export default function BlogListingPage() {
             disabled={page === 1}
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
           >
-            Previous
+            {t('Previous')}
           </button>
           <span className="flex items-center px-3 text-sm text-gray-500">
-            Page {page} of {lastPage}
+            {t('Page')} {page} {t('of')} {lastPage}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(lastPage, p + 1))}
             disabled={page === lastPage}
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
           >
-            Next
+            {t('Next')}
           </button>
         </div>
       )}

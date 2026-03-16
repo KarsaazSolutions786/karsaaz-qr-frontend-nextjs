@@ -3,6 +3,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { useDirection } from '@/lib/context/DirectionContext'
+import { useTranslation } from '@/lib/i18n'
 
 interface DirectionToggleProps {
   className?: string
@@ -16,6 +17,7 @@ export function DirectionToggle({
   size = 'md',
 }: DirectionToggleProps) {
   const { toggleDirection, isRTL } = useDirection()
+  const { t } = useTranslation()
 
   const sizeClasses = {
     sm: 'h-6 w-12 text-xs',
@@ -31,12 +33,12 @@ export function DirectionToggle({
 
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      {showLabel && <span className="text-sm text-gray-600">{isRTL ? 'RTL' : 'LTR'}</span>}
+      {showLabel && <span className="text-sm text-gray-600">{isRTL ? t('RTL') : t('LTR')}</span>}
       <button
         type="button"
         role="switch"
         aria-checked={isRTL}
-        aria-label={`Switch to ${isRTL ? 'left-to-right' : 'right-to-left'} direction`}
+        aria-label={isRTL ? t('Switch to left-to-right direction') : t('Switch to right-to-left direction')}
         onClick={toggleDirection}
         className={cn(
           'relative inline-flex flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2',
@@ -54,7 +56,7 @@ export function DirectionToggle({
             transform: isRTL ? `translateX(calc(100% - 0.25rem))` : 'translateX(0.125rem)',
           }}
         />
-        <span className="sr-only">{isRTL ? 'Right-to-left' : 'Left-to-right'}</span>
+        <span className="sr-only">{isRTL ? t('Right-to-left') : t('Left-to-right')}</span>
       </button>
     </div>
   )
@@ -67,7 +69,8 @@ interface DirectionIconToggleProps {
 }
 
 export function DirectionIconToggle({ className, size = 'md' }: DirectionIconToggleProps) {
-  const { direction, toggleDirection, isRTL } = useDirection()
+  const { toggleDirection, isRTL } = useDirection()
+  const { t } = useTranslation()
 
   const sizeClasses = {
     sm: 'p-1',
@@ -90,8 +93,8 @@ export function DirectionIconToggle({ className, size = 'md' }: DirectionIconTog
         sizeClasses[size],
         className
       )}
-      title={`Switch to ${isRTL ? 'LTR' : 'RTL'}`}
-      aria-label={`Current direction: ${direction}. Click to switch to ${isRTL ? 'left-to-right' : 'right-to-left'}`}
+      title={isRTL ? t('Switch to LTR') : t('Switch to RTL')}
+      aria-label={isRTL ? t('Current direction: RTL. Click to switch to left-to-right') : t('Current direction: LTR. Click to switch to right-to-left')}
     >
       {isRTL ? (
         // RTL icon - text aligned right
@@ -135,6 +138,7 @@ interface DirectionSelectorProps {
 
 export function DirectionSelector({ className }: DirectionSelectorProps) {
   const { direction, setDirection } = useDirection()
+  const { t } = useTranslation()
 
   return (
     <div className={cn('inline-flex rounded-md shadow-sm', className)}>
@@ -148,7 +152,7 @@ export function DirectionSelector({ className }: DirectionSelectorProps) {
             : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
         )}
       >
-        LTR
+        {t('LTR')}
       </button>
       <button
         type="button"
@@ -160,7 +164,7 @@ export function DirectionSelector({ className }: DirectionSelectorProps) {
             : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
         )}
       >
-        RTL
+        {t('RTL')}
       </button>
     </div>
   )

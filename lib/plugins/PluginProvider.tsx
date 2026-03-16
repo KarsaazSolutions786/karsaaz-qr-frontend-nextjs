@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { PluginManager } from './PluginManager';
 
 interface PluginContextValue {
@@ -21,15 +21,15 @@ export function PluginProvider({ children }: { children: ReactNode }) {
     setIsReady(true);
   }, []);
 
+  const contextValue = useMemo<PluginContextValue>(() => ({
+    manager: PluginManager.instance(),
+    applyFilters: PluginManager.applyFilters,
+    doActions: PluginManager.doActions,
+    isReady,
+  }), [isReady]);
+
   return (
-    <PluginContext.Provider
-      value={{
-        manager: PluginManager.instance(),
-        applyFilters: PluginManager.applyFilters,
-        doActions: PluginManager.doActions,
-        isReady,
-      }}
-    >
+    <PluginContext.Provider value={contextValue}>
       {children}
     </PluginContext.Provider>
   );

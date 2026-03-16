@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { Download, FileText, FileImage, FileArchive, File, Eye } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/lib/i18n'
 
 interface FileUploadDesignerProps {
   fileName: string
@@ -44,6 +45,7 @@ export default function FileUploadDesigner({
   brandName,
   theme,
 }: FileUploadDesignerProps) {
+  const { t } = useTranslation()
   const [downloadCount, setDownloadCount] = useState(0)
   const primaryColor = theme?.primaryColor || '#2563eb'
   const bgColor = theme?.backgroundColor || '#f8fafc'
@@ -76,7 +78,7 @@ export default function FileUploadDesigner({
             ) : brandName ? (
               <h2 className="text-lg font-bold">{brandName}</h2>
             ) : null}
-            <h1 className="text-xl font-bold">File Download</h1>
+            <h1 className="text-xl font-bold">{t('File Download')}</h1>
           </div>
 
           <CardContent className="p-6 space-y-5">
@@ -105,14 +107,14 @@ export default function FileUploadDesigner({
               disabled={!fileUrl}
             >
               <Download className="w-5 h-5 mr-2" />
-              {fileUrl ? 'Download File' : 'File Not Available'}
+              {fileUrl ? t('Download File') : t('File Not Available')}
             </Button>
 
             {downloadCount > 0 && (
               <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
                 <Eye className="w-4 h-4" />
                 <span>
-                  {downloadCount} download{downloadCount !== 1 ? 's' : ''} in this session
+                  {downloadCount} {t('download')}{downloadCount !== 1 ? 's' : ''} {t('in this session')}
                 </span>
               </div>
             )}
@@ -120,7 +122,7 @@ export default function FileUploadDesigner({
             {!fileUrl && (
               <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-center">
                 <p className="text-sm text-yellow-800">
-                  The file has not been uploaded yet. Please check back later.
+                  {t('The file has not been uploaded yet. Please check back later.')}
                 </p>
               </div>
             )}
@@ -128,7 +130,7 @@ export default function FileUploadDesigner({
         </Card>
 
         {/* Footer */}
-        <p className="text-center text-xs text-muted-foreground mt-4">Powered by Karsaaz QR</p>
+        <p className="text-center text-xs text-muted-foreground mt-4">{t('Powered by Karsaaz QR')}</p>
       </div>
     </div>
   )

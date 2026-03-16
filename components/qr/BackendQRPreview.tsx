@@ -23,6 +23,7 @@ import apiClient from '@/lib/api/client'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer'
 import { transformDesignToBackend } from '@/lib/qr/design-transformer'
 import { sanitizeSvg } from '@/lib/utils/dom-safety'
+import { useTranslation } from '@/lib/i18n'
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -93,6 +94,7 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
     { data, qrType = 'url', config = {}, qrId, className = '', debounce = 500 },
     ref
   ) {
+    const { t } = useTranslation()
     const [svg, setSvg] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -261,7 +263,7 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
               onClick={() => fetchPreview()}
               className="mt-2 text-xs text-indigo-600 hover:underline"
             >
-              Retry
+              {t('Retry')}
             </button>
           </div>
         </div>

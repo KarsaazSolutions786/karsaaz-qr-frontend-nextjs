@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import {
   EnvelopeIcon,
   CheckCircleIcon,
@@ -36,6 +37,7 @@ export function MailStep({
   onSkip,
   showSkipOption = true,
 }: MailStepProps) {
+  const { t } = useTranslation();
   const [testEmail, setTestEmail] = useState('')
   const [isTesting, setIsTesting] = useState(false)
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null)
@@ -59,7 +61,7 @@ export function MailStep({
     } catch (error) {
       setTestResult({
         success: false,
-        message: error instanceof Error ? error.message : 'Failed to send test email',
+        message: error instanceof Error ? error.message : t('Failed to send test email'),
       })
     } finally {
       setIsTesting(false)
@@ -72,7 +74,7 @@ export function MailStep({
     <div className="space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">SMTP Host</label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">{t('SMTP Host')}</label>
           <input
             type="text"
             value={config.host}
@@ -82,7 +84,7 @@ export function MailStep({
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Port</label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">{t('Port')}</label>
           <input
             type="text"
             value={config.port}
@@ -95,7 +97,7 @@ export function MailStep({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Username</label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">{t('Username')}</label>
           <input
             type="text"
             value={config.username}
@@ -105,7 +107,7 @@ export function MailStep({
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">Password</label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">{t('Password')}</label>
           <input
             type="password"
             value={config.password}
@@ -117,7 +119,7 @@ export function MailStep({
       </div>
 
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">Encryption</label>
+        <label className="mb-1 block text-sm font-medium text-gray-700">{t('Encryption')}</label>
         <select
           value={config.encryption}
           onChange={e => update('encryption', e.target.value)}
@@ -125,13 +127,13 @@ export function MailStep({
         >
           <option value="tls">TLS</option>
           <option value="ssl">SSL</option>
-          <option value="none">None</option>
+          <option value="none">{t('None')}</option>
         </select>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">From Address</label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">{t('From Address')}</label>
           <input
             type="email"
             value={config.fromAddress}
@@ -141,7 +143,7 @@ export function MailStep({
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">From Name</label>
+          <label className="mb-1 block text-sm font-medium text-gray-700">{t('From Name')}</label>
           <input
             type="text"
             value={config.fromName}
@@ -154,9 +156,9 @@ export function MailStep({
 
       {/* Test Email Section */}
       <div className="mt-6 border-t pt-6">
-        <h4 className="mb-3 text-sm font-medium text-gray-900">Test Email Configuration</h4>
+        <h4 className="mb-3 text-sm font-medium text-gray-900">{t('Test Email Configuration')}</h4>
         <p className="mb-4 text-sm text-gray-500">
-          Send a test email to verify your SMTP settings are correct.
+          {t('Send a test email to verify your SMTP settings are correct.')}
         </p>
 
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -165,7 +167,7 @@ export function MailStep({
               type="email"
               value={testEmail}
               onChange={e => setTestEmail(e.target.value)}
-              placeholder="Enter email address to test"
+              placeholder={t('Enter email address to test')}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
@@ -192,12 +194,12 @@ export function MailStep({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                Sending...
+                {t('Sending...')}
               </>
             ) : (
               <>
                 <EnvelopeIcon className="h-4 w-4" />
-                Send Test Email
+                {t('Send Test Email')}
               </>
             )}
           </button>
@@ -217,7 +219,7 @@ export function MailStep({
             )}
             <div className="text-sm">
               <p className="font-medium">
-                {testResult.success ? 'Test email sent successfully!' : 'Failed to send test email'}
+                {testResult.success ? t('Test email sent successfully!') : t('Failed to send test email')}
               </p>
               <p className="mt-1 opacity-80">{testResult.message}</p>
             </div>
@@ -226,7 +228,7 @@ export function MailStep({
 
         {!onTestEmail && (
           <p className="mt-3 text-xs text-gray-400">
-            Test email functionality will be available after the installation is complete.
+            {t('Test email functionality will be available after the installation is complete.')}
           </p>
         )}
       </div>
@@ -239,7 +241,7 @@ export function MailStep({
             onClick={() => setShowSkipConfirm(true)}
             className="text-sm text-gray-500 underline hover:text-gray-700 transition-colors"
           >
-            Skip Mail Configuration
+            {t('Skip Mail Configuration')}
           </button>
         </div>
       )}
@@ -255,14 +257,12 @@ export function MailStep({
                   <ExclamationTriangleIcon className="w-5 h-5 text-yellow-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900">Skip Mail Configuration?</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{t('Skip Mail Configuration?')}</h3>
                   <p className="mt-2 text-sm text-gray-600">
-                    Are you sure you want to skip mail configuration? Password reset emails and
-                    other notifications won&apos;t work until you configure SMTP settings.
+                    {t('Are you sure you want to skip mail configuration? Password reset emails and other notifications won\'t work until you configure SMTP settings.')}
                   </p>
                   <p className="mt-2 text-sm text-gray-500">
-                    You can change SMTP configurations later from{' '}
-                    <strong>Settings → Email Settings</strong>.
+                    {t('You can change SMTP configurations later from Settings > Email Settings.')}
                   </p>
                 </div>
               </div>
@@ -272,7 +272,7 @@ export function MailStep({
                   onClick={() => setShowSkipConfirm(false)}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
                 >
-                  Cancel
+                  {t('Cancel')}
                 </button>
                 <button
                   type="button"
@@ -282,7 +282,7 @@ export function MailStep({
                   }}
                   className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-lg hover:bg-yellow-700"
                 >
-                  Skip Configuration
+                  {t('Skip Configuration')}
                 </button>
               </div>
             </div>

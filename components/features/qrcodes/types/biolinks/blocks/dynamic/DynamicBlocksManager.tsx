@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useMemo } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { useDynamicBlockDefinitions } from '@/lib/api/dynamic-blocks'
 import {
   DynamicBlockDefinition,
@@ -89,10 +90,11 @@ interface DynamicBlockTypeMenuProps {
 }
 
 export function DynamicBlockTypeMenu({ onSelect }: DynamicBlockTypeMenuProps) {
+  const { t } = useTranslation()
   const { definitions, isLoading, isError } = useDynamicBlocks()
 
   if (isLoading) {
-    return <div className="px-3 py-2 text-sm text-gray-500">Loading custom blocks...</div>
+    return <div className="px-3 py-2 text-sm text-gray-500">{t('Loading custom blocks...')}</div>
   }
 
   if (isError || definitions.length === 0) {
@@ -102,7 +104,7 @@ export function DynamicBlockTypeMenu({ onSelect }: DynamicBlockTypeMenuProps) {
   return (
     <>
       <div className="border-t my-2" />
-      <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">Custom Blocks</div>
+      <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">{t('Custom Blocks')}</div>
       {definitions.map(definition => (
         <button
           key={definition.id}

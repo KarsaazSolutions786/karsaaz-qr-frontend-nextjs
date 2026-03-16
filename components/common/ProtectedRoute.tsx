@@ -3,6 +3,7 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/context/AuthContext'
+import { useTranslation } from '@/lib/i18n'
 import { permitted, verified } from '@/lib/utils/permissions'
 import { Loader2 } from 'lucide-react'
 
@@ -38,6 +39,7 @@ export function ProtectedRoute({
   redirectDelay = 2000,
   children,
 }: ProtectedRouteProps) {
+  const { t } = useTranslation()
   const router = useRouter()
   const pathname = usePathname()
   const { user, isLoading } = useAuth()
@@ -90,8 +92,8 @@ export function ProtectedRoute({
         <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
         <p className="text-muted-foreground text-center">
           {accessState === 'checking'
-            ? 'Verifying access...'
-            : 'Access denied. Redirecting...'}
+            ? t('Verifying access...')
+            : t('Access denied. Redirecting...')}
         </p>
       </div>
     )

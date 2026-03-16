@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface PaymentFormProps {
   merchantName: string;
@@ -32,6 +33,7 @@ export default function PaymentForm({
   onPaymentInitiate,
   isProcessing = false,
 }: PaymentFormProps) {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState<string>(fixedAmount?.toString() || '');
   const [note, setNote] = useState<string>(transactionNote || '');
   const [errors, setErrors] = useState<{ amount?: string; note?: string }>({});
@@ -104,7 +106,7 @@ export default function PaymentForm({
         {/* Amount Input */}
         <div className="space-y-2">
           <Label htmlFor="amount" className="text-base font-semibold">
-            Payment Amount {!fixedAmount && <span className="text-red-500">*</span>}
+            {t('Payment Amount')} {!fixedAmount && <span className="text-red-500">*</span>}
           </Label>
           
           {fixedAmount ? (
@@ -168,7 +170,7 @@ export default function PaymentForm({
         {/* Transaction Note */}
         <div className="space-y-2">
           <Label htmlFor="note" className="text-base font-semibold">
-            Transaction Note (Optional)
+            {t('Transaction Note (Optional)')}
           </Label>
           <Input
             id="note"
@@ -200,7 +202,7 @@ export default function PaymentForm({
           {isProcessing ? (
             <>
               <span className="animate-spin mr-2">⏳</span>
-              Processing...
+              {t('Processing...')}
             </>
           ) : (
             `Pay ₹${amount || '0.00'} to ${merchantName}`
@@ -209,7 +211,7 @@ export default function PaymentForm({
 
         {/* UPI ID Display */}
         <div className="text-center pt-2 border-t">
-          <p className="text-xs text-gray-500">Paying to UPI ID</p>
+          <p className="text-xs text-gray-500">{t('Paying to UPI ID')}</p>
           <p className="text-sm font-mono font-semibold text-gray-700 mt-1">{vpa}</p>
         </div>
       </form>

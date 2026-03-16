@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label'
 import GradientEditor from '../GradientEditor'
 import { ColorFields } from '../fields'
 import type { QRDesign } from './types'
+import { useTranslation } from '@/lib/i18n'
 
 interface ColorsTabProps {
   design: QRDesign
@@ -12,6 +13,7 @@ interface ColorsTabProps {
 }
 
 export default function ColorsTab({ design, onChange }: ColorsTabProps) {
+  const { t } = useTranslation()
   return (
     <div className="space-y-4">
       <ColorFields
@@ -21,7 +23,7 @@ export default function ColorsTab({ design, onChange }: ColorsTabProps) {
       />
 
       <div className="border-t pt-4">
-        <Label className="mb-3 block">Gradient Settings</Label>
+        <Label className="mb-3 block">{t('Gradient Settings')}</Label>
         <GradientEditor
           gradient={design.gradient}
           onChange={gradient => onChange({ ...design, gradient })}
@@ -29,7 +31,7 @@ export default function ColorsTab({ design, onChange }: ColorsTabProps) {
       </div>
 
       <div className="border-t pt-4 space-y-3">
-        <Label className="mb-1 block">Fill Type</Label>
+        <Label className="mb-1 block">{t('Fill Type')}</Label>
         <div className="flex gap-2">
           {(['solid', 'gradient', 'image'] as const).map(ft => (
             <button
@@ -48,7 +50,7 @@ export default function ColorsTab({ design, onChange }: ColorsTabProps) {
         </div>
         {design.fillType === 'image' && (
           <div className="space-y-2">
-            <Label className="text-xs">Module Fill Image</Label>
+            <Label className="text-xs">{t('Module Fill Image')}</Label>
             {design.foregroundImage && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -68,7 +70,7 @@ export default function ColorsTab({ design, onChange }: ColorsTabProps) {
                 onChange({ ...design, foregroundImage: url })
               }}
             />
-            <p className="text-xs text-gray-400">PNG or JPG. Used as a mask over QR modules.</p>
+            <p className="text-xs text-gray-400">{t('PNG or JPG. Used as a mask over QR modules.')}</p>
           </div>
         )}
       </div>

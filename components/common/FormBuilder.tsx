@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface FormField {
   id: string;
@@ -25,12 +26,13 @@ const FIELD_TYPES: FormField['type'][] = [
 ];
 
 export function FormBuilder({ fields, onChange }: FormBuilderProps) {
+  const { t } = useTranslation();
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const addField = () => {
     const newField: FormField = {
       id: `field_${Date.now()}`,
-      label: 'New Field',
+      label: t('New Field'),
       type: 'text',
       required: false,
     };
@@ -62,19 +64,19 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
       {/* Field List */}
       <div className="flex-1 space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-gray-900">Fields</h3>
+          <h3 className="text-sm font-semibold text-gray-900">{t('Fields')}</h3>
           <button
             type="button"
             onClick={addField}
             className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
           >
-            + Add Field
+            + {t('Add Field')}
           </button>
         </div>
 
         {fields.length === 0 && (
           <p className="py-8 text-center text-sm text-gray-500">
-            No fields yet. Click &quot;Add Field&quot; to start.
+            {t('No fields yet. Click "Add Field" to start.')}
           </p>
         )}
 
@@ -116,7 +118,7 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
                 </span>
                 <span className="ml-2 text-xs text-gray-400">
                   {field.type}
-                  {field.required && ' • required'}
+                  {field.required && ` • ${t('required')}`}
                 </span>
               </div>
 
@@ -127,14 +129,14 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
                 }
                 className="text-xs text-blue-600 hover:text-blue-800"
               >
-                {editingId === field.id ? 'Done' : 'Edit'}
+                {editingId === field.id ? t('Done') : t('Edit')}
               </button>
               <button
                 type="button"
                 onClick={() => removeField(field.id)}
                 className="text-xs text-red-500 hover:text-red-700"
               >
-                Remove
+                {t('Remove')}
               </button>
             </div>
 
@@ -143,7 +145,7 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
               <div className="mt-3 space-y-2 border-t border-gray-200 pt-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-600">
-                    Label
+                    {t('Label')}
                   </label>
                   <input
                     type="text"
@@ -156,7 +158,7 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-600">
-                    Type
+                    {t('Type')}
                   </label>
                   <select
                     value={field.type}
@@ -183,12 +185,12 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
                     }
                     className="rounded border-gray-300"
                   />
-                  Required
+                  {t('Required')}
                 </label>
                 {field.type === 'select' && (
                   <div>
                     <label className="block text-xs font-medium text-gray-600">
-                      Options (one per line)
+                      {t('Options (one per line)')}
                     </label>
                     <textarea
                       value={(field.options || []).join('\n')}
@@ -212,11 +214,11 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
 
       {/* Live Preview */}
       <div className="w-72 shrink-0">
-        <h3 className="mb-3 text-sm font-semibold text-gray-900">Preview</h3>
+        <h3 className="mb-3 text-sm font-semibold text-gray-900">{t('Preview')}</h3>
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3">
           {fields.length === 0 && (
             <p className="text-center text-xs text-gray-400">
-              Form preview will appear here
+              {t('Form preview will appear here')}
             </p>
           )}
           {fields.map((field) => (
@@ -239,7 +241,7 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
                   disabled
                   className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-400"
                 >
-                  <option>Select...</option>
+                  <option>{t('Select...')}</option>
                   {(field.options || []).map((opt, i) => (
                     <option key={i}>{opt}</option>
                   ))}

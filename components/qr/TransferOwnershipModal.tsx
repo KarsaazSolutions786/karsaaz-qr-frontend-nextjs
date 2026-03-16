@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import { X, UserPlus, AlertCircle, Search } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface TransferOwnershipModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export function TransferOwnershipModal({
   onTransfer,
   availableUsers = [],
 }: TransferOwnershipModalProps) {
+  const { t } = useTranslation();
   const [selectedUserId, setSelectedUserId] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [transferDesign, setTransferDesign] = useState(true);
@@ -50,7 +52,7 @@ export function TransferOwnershipModal({
   
   const handleTransfer = async () => {
     if (!selectedUserId) {
-      setError('Please select a user to transfer to');
+      setError(t('Please select a user to transfer to'));
       return;
     }
     
@@ -66,7 +68,7 @@ export function TransferOwnershipModal({
       });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Transfer failed');
+      setError(err instanceof Error ? err.message : t('Transfer failed'));
     } finally {
       setIsTransferring(false);
     }
@@ -82,8 +84,8 @@ export function TransferOwnershipModal({
               <UserPlus className="w-5 h-5 text-indigo-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Transfer Ownership</h2>
-              <p className="text-sm text-gray-500">Transfer "{qrCodeName}" to another user</p>
+              <h2 className="text-xl font-bold text-gray-900">{t('Transfer Ownership')}</h2>
+              <p className="text-sm text-gray-500">{t('Transfer')} "{qrCodeName}" {t('to another user')}</p>
             </div>
           </div>
           <button
@@ -102,10 +104,10 @@ export function TransferOwnershipModal({
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-red-800">Important</p>
+                <p className="text-sm font-medium text-red-800">{t('Important')}</p>
                 <p className="text-xs text-red-700 mt-1">
-                  Once transferred, you will lose access to this QR code unless the new owner grants you permission.
-                  This action cannot be undone.
+                  {t('Once transferred, you will lose access to this QR code unless the new owner grants you permission.')}
+                  {t('This action cannot be undone.')}
                 </p>
               </div>
             </div>
@@ -113,7 +115,7 @@ export function TransferOwnershipModal({
             {/* Current Owner */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Current Owner
+                {t('Current Owner')}
               </label>
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg">
                 <span className="text-sm text-gray-900">{currentOwner}</span>
@@ -123,7 +125,7 @@ export function TransferOwnershipModal({
             {/* User Search */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Transfer To
+                {t('Transfer To')}
               </label>
               <div className="relative mb-2">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -131,7 +133,7 @@ export function TransferOwnershipModal({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search users by name or email..."
+                  placeholder={t('Search users by name or email...')}
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
@@ -140,7 +142,7 @@ export function TransferOwnershipModal({
               <div className="border border-gray-200 rounded-lg max-h-48 overflow-y-auto">
                 {filteredUsers.length === 0 ? (
                   <div className="p-4 text-center text-sm text-gray-500">
-                    {searchQuery ? 'No users found' : 'No users available'}
+                    {searchQuery ? t('No users found') : t('No users available')}
                   </div>
                 ) : (
                   <div className="divide-y divide-gray-100">
@@ -174,7 +176,7 @@ export function TransferOwnershipModal({
             {/* Transfer Options */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                What to Transfer
+                {t('What to Transfer')}
               </label>
               <div className="space-y-2">
                 <label className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
@@ -185,9 +187,9 @@ export function TransferOwnershipModal({
                     className="mt-0.5"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">Design Settings</div>
+                    <div className="text-sm font-medium text-gray-900">{t('Design Settings')}</div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      Transfer custom colors, logos, and styling
+                      {t('Transfer custom colors, logos, and styling')}
                     </div>
                   </div>
                 </label>
@@ -200,9 +202,9 @@ export function TransferOwnershipModal({
                     className="mt-0.5"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">Analytics Data</div>
+                    <div className="text-sm font-medium text-gray-900">{t('Analytics Data')}</div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      Transfer scan history and analytics (not recommended)
+                      {t('Transfer scan history and analytics (not recommended)')}
                     </div>
                   </div>
                 </label>
@@ -215,9 +217,9 @@ export function TransferOwnershipModal({
                     className="mt-0.5"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">Notify New Owner</div>
+                    <div className="text-sm font-medium text-gray-900">{t('Notify New Owner')}</div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      Send email notification about the transfer
+                      {t('Send email notification about the transfer')}
                     </div>
                   </div>
                 </label>
@@ -228,7 +230,7 @@ export function TransferOwnershipModal({
             {selectedUser && (
               <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
                 <p className="text-sm text-indigo-800">
-                  Transferring to: <span className="font-medium">{selectedUser.name}</span> ({selectedUser.email})
+                  {t('Transferring to:')} <span className="font-medium">{selectedUser.name}</span> ({selectedUser.email})
                 </p>
               </div>
             )}
@@ -249,7 +251,7 @@ export function TransferOwnershipModal({
             disabled={isTransferring}
             className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             onClick={handleTransfer}
@@ -259,12 +261,12 @@ export function TransferOwnershipModal({
             {isTransferring ? (
               <>
                 <UserPlus className="w-4 h-4 animate-pulse" />
-                <span>Transferring...</span>
+                <span>{t('Transferring...')}</span>
               </>
             ) : (
               <>
                 <UserPlus className="w-4 h-4" />
-                <span>Transfer Ownership</span>
+                <span>{t('Transfer Ownership')}</span>
               </>
             )}
           </button>

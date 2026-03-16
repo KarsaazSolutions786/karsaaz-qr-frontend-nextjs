@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface AppDownloadDesignSettings extends DesignSettings {
   // App Download-specific settings
@@ -36,24 +37,25 @@ const tabs: DesignerTab[] = [
 ]
 
 export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<AppDownloadDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderAppOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">App Display Options</h4>
+      <h4 className="font-medium text-gray-900">{t('App Display Options')}</h4>
 
       {/* App Store Badge Style */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          App Store Badge Style
+          {t('App Store Badge Style')}
         </label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'black', label: 'Black' },
-            { value: 'white', label: 'White' },
-            { value: 'custom', label: 'Custom' },
+            { value: 'black', label: t('Black') },
+            { value: 'white', label: t('White') },
+            { value: 'custom', label: t('Custom') },
           ].map(option => (
             <button
               key={option.value}
@@ -78,12 +80,12 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
 
       {/* App Icon Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">App Icon Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('App Icon Style')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'rounded', label: 'Rounded' },
-            { value: 'square', label: 'Square' },
-            { value: 'circle', label: 'Circle' },
+            { value: 'rounded', label: t('Rounded') },
+            { value: 'square', label: t('Square') },
+            { value: 'circle', label: t('Circle') },
           ].map(option => (
             <button
               key={option.value}
@@ -107,12 +109,12 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
 
       {/* Screenshot Layout */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Screenshot Layout</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Screenshot Layout')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'carousel', label: 'Carousel' },
-            { value: 'grid', label: 'Grid' },
-            { value: 'stack', label: 'Stack' },
+            { value: 'carousel', label: t('Carousel') },
+            { value: 'grid', label: t('Grid') },
+            { value: 'stack', label: t('Stack') },
           ].map(option => (
             <button
               key={option.value}
@@ -136,7 +138,7 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
 
       {/* Display Options */}
       <div className="space-y-2">
-        <h5 className="text-sm font-medium text-gray-700">Display Options</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Display Options')}</h5>
 
         <div className="flex items-center gap-2">
           <input
@@ -147,7 +149,7 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
             className="rounded border-gray-300"
           />
           <label htmlFor="showAppStoreButtons" className="text-sm text-gray-700">
-            Show App Store Buttons
+            {t('Show App Store Buttons')}
           </label>
         </div>
 
@@ -160,7 +162,7 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
             className="rounded border-gray-300"
           />
           <label htmlFor="showAppDescription" className="text-sm text-gray-700">
-            Show App Description
+            {t('Show App Description')}
           </label>
         </div>
 
@@ -173,7 +175,7 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
             className="rounded border-gray-300"
           />
           <label htmlFor="showAppScreenshots" className="text-sm text-gray-700">
-            Show App Screenshots
+            {t('Show App Screenshots')}
           </label>
         </div>
 
@@ -186,7 +188,7 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
             className="rounded border-gray-300"
           />
           <label htmlFor="showAppRating" className="text-sm text-gray-700">
-            Show App Rating
+            {t('Show App Rating')}
           </label>
         </div>
 
@@ -199,7 +201,7 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
             className="rounded border-gray-300"
           />
           <label htmlFor="showAppSize" className="text-sm text-gray-700">
-            Show App Size
+            {t('Show App Size')}
           </label>
         </div>
 
@@ -212,28 +214,28 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
             className="rounded border-gray-300"
           />
           <label htmlFor="showAppVersion" className="text-sm text-gray-700">
-            Show App Version
+            {t('Show App Version')}
           </label>
         </div>
       </div>
 
       {/* Download Button */}
       <div className="space-y-3">
-        <h5 className="text-sm font-medium text-gray-700">Download Button</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Download Button')}</h5>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text')}</label>
           <input
             type="text"
-            value={design.downloadButtonText || 'Download Now'}
+            value={design.downloadButtonText || t('Download Now')}
             onChange={e => updateDesign({ downloadButtonText: e.target.value })}
-            placeholder="Download Now"
+            placeholder={t('Download Now')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -251,7 +253,7 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Text Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Text Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -273,15 +275,15 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
 
   const renderAdvancedContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Advanced Settings</h4>
+      <h4 className="font-medium text-gray-900">{t('Advanced Settings')}</h4>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Desktop Behavior</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Desktop Behavior')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'redirect', label: 'Redirect to App Store' },
-            { value: 'qrcode', label: 'Show QR Code' },
-            { value: 'message', label: 'Show Message' },
+            { value: 'redirect', label: t('Redirect to App Store') },
+            { value: 'qrcode', label: t('Show QR Code') },
+            { value: 'message', label: t('Show Message') },
           ].map(option => (
             <button
               key={option.value}

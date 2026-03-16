@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { PhoneBlockData } from '@/types/entities/biolink'
 
 interface PhoneBlockProps {
@@ -8,12 +11,13 @@ interface PhoneBlockProps {
 
 export default function PhoneBlock({ block, isEditing, onUpdate }: PhoneBlockProps) {
   const { phone, buttonText = 'Call Now', showWhatsApp } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Phone Number')}</label>
           <input
             type="tel"
             value={phone}
@@ -22,7 +26,7 @@ export default function PhoneBlock({ block, isEditing, onUpdate }: PhoneBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Button Text</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Button Text')}</label>
           <input
             type="text"
             value={buttonText}
@@ -37,7 +41,7 @@ export default function PhoneBlock({ block, isEditing, onUpdate }: PhoneBlockPro
             onChange={(e) => onUpdate?.({ ...block.data, showWhatsApp: e.target.checked })}
             className="rounded border-gray-300"
           />
-          <label className="text-sm text-gray-700">Show WhatsApp button</label>
+          <label className="text-sm text-gray-700">{t('Show WhatsApp button')}</label>
         </div>
       </div>
     )
@@ -60,7 +64,7 @@ export default function PhoneBlock({ block, isEditing, onUpdate }: PhoneBlockPro
           rel="noopener noreferrer"
           className="block w-full rounded-lg bg-green-600 px-6 py-3 text-center text-white transition-colors hover:bg-green-700"
         >
-          💬 WhatsApp
+          💬 {t('WhatsApp')}
         </a>
       )}
     </div>

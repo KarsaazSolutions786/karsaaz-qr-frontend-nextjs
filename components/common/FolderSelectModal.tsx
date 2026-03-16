@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import { foldersAPI, type Folder } from '@/lib/api/endpoints/folders'
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from '@/lib/i18n'
 import { useAuth } from '@/lib/hooks/useAuth'
 
 interface FolderSelectModalProps {
@@ -22,6 +24,7 @@ export function FolderSelectModal({
   onConfirm,
   onClose,
 }: FolderSelectModalProps) {
+  const { t } = useTranslation()
   const { user } = useAuth()
   const [folders, setFolders] = useState<Folder[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set(selectedIds))
@@ -60,7 +63,7 @@ export function FolderSelectModal({
       setSelected(prev => new Set(prev).add(String(folder.id)))
       setNewFolderName('')
     } catch {
-      // Failed
+      toast.error('Failed to create folder')
     } finally {
       setCreating(false)
     }
@@ -68,7 +71,7 @@ export function FolderSelectModal({
 
   async function handleDeleteFolder(folderId: number) {
     if (!user?.id) return
-    if (!confirm('Delete this folder?')) return
+    if (!confirm(t('Delete this folder?'))) return
     try {
       await foldersAPI.delete(user.id, folderId)
       setFolders(prev => prev.filter(f => f.id !== folderId))
@@ -78,7 +81,7 @@ export function FolderSelectModal({
         return next
       })
     } catch {
-      // Failed
+      toast.error('Failed to delete folder')
     }
   }
 
@@ -88,7 +91,7 @@ export function FolderSelectModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h3 className="text-lg font-bold text-gray-900">
-            {multi ? 'Select Folders' : 'Select Folder'}
+            {multi ? t('Select Folders') : t('Select Folder')}
           </h3>
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600">
             <XMarkIcon className="w-5 h-5" />
@@ -100,11 +103,11 @@ export function FolderSelectModal({
           {loading ? (
             <div className="flex items-center gap-2 text-sm text-gray-400 py-4">
               <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-200 border-t-purple-600" />
-              Loading folders...
+              {t('Loading folders...')}
             </div>
           ) : folders.length === 0 ? (
             <p className="text-sm text-gray-500 py-4 text-center">
-              No folders yet. Create one below.
+              {t('No folders yet. Create one below.')}
             </p>
           ) : (
             <div className="space-y-1">
@@ -141,7 +144,7 @@ export function FolderSelectModal({
                         handleDeleteFolder(folder.id)
                       }}
                       className="p-1 text-gray-400 hover:text-red-500 transition-colors"
-                      title="Delete folder"
+                      title={t('Delete folder')}
                     >
                       <XMarkIcon className="w-4 h-4" />
                     </button>
@@ -160,7 +163,7 @@ export function FolderSelectModal({
               value={newFolderName}
               onChange={e => setNewFolderName(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleCreateFolder()}
-              placeholder="New folder name..."
+              placeholder={t('New folder name...')}
               className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-purple-500 focus:ring-purple-500"
             />
             <button
@@ -179,14 +182,14 @@ export function FolderSelectModal({
             onClick={onClose}
             className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             onClick={() => onConfirm(Array.from(selected))}
             disabled={selected.size === 0}
             className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
           >
-            Confirm ({selected.size})
+            {t('Confirm')} ({selected.size})
           </button>
         </div>
       </div>

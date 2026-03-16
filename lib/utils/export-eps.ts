@@ -35,7 +35,7 @@ export async function exportEPS(svg: string, options: EPSExportOptions = {}): Pr
     metadata,
   } = options;
 
-  const eps = generateEPSFromSVG(svg, {
+  let eps = generateEPSFromSVG(svg, {
     width,
     height,
     boundingBox,
@@ -43,6 +43,11 @@ export async function exportEPS(svg: string, options: EPSExportOptions = {}): Pr
     includePreview,
     metadata,
   });
+
+  // If vector conversion produced a raster placeholder, render it async
+  if (eps.includes('% [RASTER_PLACEHOLDER]')) {
+    eps = await generateRasterEPS(svg, eps, width, height);
+  }
 
   // Create blob and download
   const blob = new Blob([eps], { type: 'application/postscript' });
@@ -130,9 +135,32 @@ function generateEPSFromSVG(svg: string, options: EPSExportOptions): string {
 }
 
 /**
- * Convert SVG to PostScript commands (simplified)
+ * Convert SVG to PostScript commands.
+ *
+ * Strategy: try vector conversion first (rects, circles, paths).
+ * If the SVG produces zero drawing commands (complex SVG the regex parser
+ * cannot handle), fall back to rasterising the SVG onto a canvas and
+ * embedding the image data as ASCII85-encoded Level-2 PostScript.
  */
 function svgToPostScript(svg: string, width: number, height: number): string {
+  const vectorPS = svgToPostScriptVector(svg, width, height);
+
+  // If the vector converter produced at least one drawing command, use it.
+  // We detect this by checking for any fill/stroke operator.
+  if (/\b[fs]\b/.test(vectorPS)) {
+    return vectorPS;
+  }
+
+  // Fallback: embed a rasterised PNG via PostScript Level 2 image operator.
+  // This path is async-unfriendly, so we return a placeholder that exportEPS
+  // will replace.  See generateEPSFromSVG for the async handling.
+  return `% [RASTER_PLACEHOLDER]\n`;
+}
+
+/**
+ * Vector SVG-to-PostScript conversion for rects, circles, and path elements.
+ */
+function svgToPostScriptVector(svg: string, width: number, height: number): string {
   let ps = '';
 
   // Extract SVG dimensions
@@ -148,9 +176,6 @@ function svgToPostScript(svg: string, width: number, height: number): string {
   // Set scale
   ps += `${scale} ${scale} scale\n`;
 
-  // Parse SVG elements (simplified - handles basic shapes)
-  // In a full implementation, you'd parse the SVG DOM and convert each element
-
   // Extract rectangles
   const rectMatches = svg.matchAll(/<rect[^>]*>/g);
   for (const match of rectMatches) {
@@ -161,18 +186,19 @@ function svgToPostScript(svg: string, width: number, height: number): string {
     const h = parseFloat(rect.match(/height="([^"]+)"/)?.[ 1] || '0');
     const fill = rect.match(/fill="([^"]+)"/)?.[ 1] || '#000000';
 
-    // Convert fill color to RGB
+    if (fill === 'none') continue;
     const rgb = hexToRGB(fill);
     ps += `${rgb.r} ${rgb.g} ${rgb.b} rgb\n`;
     ps += `${x} ${svgHeight - y - h} ${w} ${h} rec f\n`;
   }
 
-  // Extract paths (basic support)
+  // Extract paths
   const pathMatches = svg.matchAll(/<path[^>]*d="([^"]+)"[^>]*>/g);
   for (const match of pathMatches) {
     const d = match[1] ?? '';
     const fill = match[0]?.match(/fill="([^"]+)"/)?.[ 1] || '#000000';
 
+    if (fill === 'none') continue;
     const rgb = hexToRGB(fill);
     ps += `${rgb.r} ${rgb.g} ${rgb.b} rgb\n`;
     ps += pathToPostScript(d, svgHeight);
@@ -188,12 +214,80 @@ function svgToPostScript(svg: string, width: number, height: number): string {
     const r = parseFloat(circle.match(/r="([^"]+)"/)?.[ 1] || '0');
     const fill = circle.match(/fill="([^"]+)"/)?.[ 1] || '#000000';
 
+    if (fill === 'none') continue;
     const rgb = hexToRGB(fill);
     ps += `${rgb.r} ${rgb.g} ${rgb.b} rgb\n`;
     ps += `${cx} ${svgHeight - cy} ${r} 0 360 arc f\n`;
   }
 
   return ps;
+}
+
+/**
+ * Generate EPS with raster fallback (async).
+ * Renders the SVG onto a canvas, then embeds the raw RGB pixel data
+ * using PostScript Level 2 image / colorimage operator with ASCII hex encoding.
+ */
+async function generateRasterEPS(
+  svg: string,
+  epsTemplate: string,
+  width: number,
+  height: number,
+): Promise<string> {
+  // Render SVG to canvas
+  const pixelSize = Math.min(Math.max(Math.round(width), 512), 2048);
+  const canvas = document.createElement('canvas');
+  canvas.width = pixelSize;
+  canvas.height = pixelSize;
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    throw new Error('Could not create canvas context for EPS raster fallback');
+  }
+
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Failed to rasterize SVG for EPS export'));
+    const encoded = encodeURIComponent(svg)
+      .replace(/'/g, '%27')
+      .replace(/"/g, '%22');
+    image.src = `data:image/svg+xml;charset=utf-8,${encoded}`;
+  });
+
+  ctx.drawImage(img, 0, 0, pixelSize, pixelSize);
+  const imageData = ctx.getImageData(0, 0, pixelSize, pixelSize);
+
+  // Build hex-encoded RGB data (drop alpha channel)
+  const hexLines: string[] = [];
+  let line = '';
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const r = (imageData.data[i] ?? 0).toString(16).padStart(2, '0');
+    const g = (imageData.data[i + 1] ?? 0).toString(16).padStart(2, '0');
+    const b = (imageData.data[i + 2] ?? 0).toString(16).padStart(2, '0');
+    line += r + g + b;
+    if (line.length >= 72) {
+      hexLines.push(line);
+      line = '';
+    }
+  }
+  if (line.length > 0) hexLines.push(line);
+
+  // PostScript image operator
+  const imagePS = [
+    `% Raster image fallback (${pixelSize}x${pixelSize})`,
+    'gsave',
+    `${width} ${height} scale`,
+    `${pixelSize} ${pixelSize} 8`,
+    `[${pixelSize} 0 0 -${pixelSize} 0 ${pixelSize}]`,
+    '{currentfile /ASCIIHexDecode filter}',
+    'false 3 colorimage',
+    ...hexLines,
+    '>',
+    'grestore',
+  ].join('\n');
+
+  return epsTemplate.replace('% [RASTER_PLACEHOLDER]\n', imagePS + '\n');
 }
 
 /**
@@ -278,10 +372,20 @@ function downloadBlob(blob: Blob, filename: string): void {
 }
 
 /**
- * Get EPS as blob
+ * Get EPS as blob (async to support raster fallback)
  */
-export function getEPSBlob(svg: string, options: EPSExportOptions = {}): Blob {
-  const eps = generateEPSFromSVG(svg, options);
+export async function getEPSBlob(svg: string, options: EPSExportOptions = {}): Promise<Blob> {
+  let eps = generateEPSFromSVG(svg, options);
+
+  if (eps.includes('% [RASTER_PLACEHOLDER]')) {
+    eps = await generateRasterEPS(
+      svg,
+      eps,
+      options.width ?? 300,
+      options.height ?? 300,
+    );
+  }
+
   return new Blob([eps], { type: 'application/postscript' });
 }
 

@@ -8,7 +8,8 @@
 
 import React, { useState } from 'react';
 import { X, Filter, Save, RotateCcw, Search } from 'lucide-react';
-import { FilterState, QRCodeType, QRCodeStatus, DateRangeType } from '@/hooks/useFilters';
+import { useTranslation } from '@/lib/i18n';
+import { FilterState, QRCodeType, QRCodeStatus, DateRangeType } from '@/lib/hooks/useFilters';
 
 export interface FilterModalProps {
   isOpen: boolean;
@@ -55,6 +56,7 @@ export function FilterModal({
   onReset,
   onSavePreset,
 }: FilterModalProps) {
+  const { t } = useTranslation();
   const [localFilters, setLocalFilters] = useState<FilterState>(filters);
   const [presetName, setPresetName] = useState('');
   const [showSavePreset, setShowSavePreset] = useState(false);
@@ -101,8 +103,8 @@ export function FilterModal({
               <Filter className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Advanced Filters</h2>
-              <p className="text-sm text-gray-500">Refine your QR code search</p>
+              <h2 className="text-xl font-bold text-gray-900">{t('Advanced Filters')}</h2>
+              <p className="text-sm text-gray-500">{t('Refine your QR code search')}</p>
             </div>
           </div>
           <button
@@ -119,7 +121,7 @@ export function FilterModal({
             {/* Search */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Search
+                {t('Search')}
               </label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -127,7 +129,7 @@ export function FilterModal({
                   type="text"
                   value={localFilters.search}
                   onChange={(e) => updateLocalFilter('search', e.target.value)}
-                  placeholder="Search by name, content, or description..."
+                  placeholder={t('Search by name, content, or description...')}
                   className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -137,7 +139,7 @@ export function FilterModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  QR Code Type
+                  {t('QR Code Type')}
                 </label>
                 <select
                   value={localFilters.type}
@@ -146,7 +148,7 @@ export function FilterModal({
                 >
                   {QR_TYPES.map(type => (
                     <option key={type.value} value={type.value}>
-                      {type.label}
+                      {t(type.label)}
                     </option>
                   ))}
                 </select>
@@ -154,7 +156,7 @@ export function FilterModal({
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Status
+                  {t('Status')}
                 </label>
                 <select
                   value={localFilters.status}
@@ -163,7 +165,7 @@ export function FilterModal({
                 >
                   {STATUSES.map(status => (
                     <option key={status.value} value={status.value}>
-                      {status.label}
+                      {t(status.label)}
                     </option>
                   ))}
                 </select>
@@ -173,7 +175,7 @@ export function FilterModal({
             {/* Date Range */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date Range
+                {t('Date Range')}
               </label>
               <select
                 value={localFilters.dateRange}
@@ -182,7 +184,7 @@ export function FilterModal({
               >
                 {DATE_RANGES.map(range => (
                   <option key={range.value} value={range.value}>
-                    {range.label}
+                    {t(range.label)}
                   </option>
                 ))}
               </select>
@@ -191,7 +193,7 @@ export function FilterModal({
               {localFilters.dateRange === 'custom' && (
                 <div className="grid grid-cols-2 gap-4 mt-3">
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">From</label>
+                    <label className="block text-xs text-gray-600 mb-1">{t('From')}</label>
                     <input
                       type="date"
                       value={localFilters.dateFrom?.toISOString().split('T')[0] || ''}
@@ -200,7 +202,7 @@ export function FilterModal({
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-600 mb-1">To</label>
+                    <label className="block text-xs text-gray-600 mb-1">{t('To')}</label>
                     <input
                       type="date"
                       value={localFilters.dateTo?.toISOString().split('T')[0] || ''}
@@ -215,7 +217,7 @@ export function FilterModal({
             {/* Scan Count Range */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Scan Count Range
+                {t('Scan Count Range')}
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -224,7 +226,7 @@ export function FilterModal({
                     min={0}
                     value={localFilters.scanCountMin || ''}
                     onChange={(e) => updateLocalFilter('scanCountMin', parseInt(e.target.value) || undefined)}
-                    placeholder="Min scans"
+                    placeholder={t('Min scans')}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
@@ -234,7 +236,7 @@ export function FilterModal({
                     min={0}
                     value={localFilters.scanCountMax || ''}
                     onChange={(e) => updateLocalFilter('scanCountMax', parseInt(e.target.value) || undefined)}
-                    placeholder="Max scans"
+                    placeholder={t('Max scans')}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
@@ -244,7 +246,7 @@ export function FilterModal({
             {/* Advanced Options */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Advanced Options
+                {t('Advanced Options')}
               </label>
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm text-gray-700">
@@ -254,7 +256,7 @@ export function FilterModal({
                     onChange={(e) => updateLocalFilter('hasLogo', e.target.checked ? true : undefined)}
                     className="rounded"
                   />
-                  Has Logo
+                  {t('Has Logo')}
                 </label>
                 
                 <label className="flex items-center gap-2 text-sm text-gray-700">
@@ -264,7 +266,7 @@ export function FilterModal({
                     onChange={(e) => updateLocalFilter('hasSticker', e.target.checked ? true : undefined)}
                     className="rounded"
                   />
-                  Has Sticker
+                  {t('Has Sticker')}
                 </label>
               </div>
             </div>
@@ -278,12 +280,12 @@ export function FilterModal({
                     className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
-                    Save as Preset
+                    {t('Save as Preset')}
                   </button>
                 ) : (
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">
-                      Preset Name
+                      {t('Preset Name')}
                     </label>
                     <div className="flex gap-2">
                       <input
@@ -299,7 +301,7 @@ export function FilterModal({
                         disabled={!presetName.trim()}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                       >
-                        Save
+                        {t('Save')}
                       </button>
                       <button
                         onClick={() => {
@@ -308,7 +310,7 @@ export function FilterModal({
                         }}
                         className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
                       >
-                        Cancel
+                        {t('Cancel')}
                       </button>
                     </div>
                   </div>
@@ -325,7 +327,7 @@ export function FilterModal({
             className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg flex items-center gap-2"
           >
             <RotateCcw className="w-4 h-4" />
-            Reset All
+            {t('Reset All')}
           </button>
           
           <div className="flex items-center gap-3">
@@ -333,13 +335,13 @@ export function FilterModal({
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               onClick={handleApply}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
             >
-              Apply Filters
+              {t('Apply Filters')}
             </button>
           </div>
         </div>

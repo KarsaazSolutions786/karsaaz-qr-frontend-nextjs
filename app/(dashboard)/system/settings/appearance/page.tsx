@@ -15,6 +15,7 @@ import {
   SelectContent,
   SelectItem,
 } from '@/components/ui/select'
+import { useTranslation } from '@/lib/i18n'
 
 const CONFIG_KEYS = [
   'theme.primary_0',
@@ -65,6 +66,7 @@ function ColorField({
 }
 
 export default function AppearanceSettingsPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
   const saveMutation = useSaveSystemConfigs(CONFIG_KEYS)
   const [saved, setSaved] = useState(false)
@@ -96,20 +98,20 @@ export default function AppearanceSettingsPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Appearance Settings</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Appearance Settings')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Customize brand colors, gradients, and visual elements.
+          {t('Customize brand colors, gradients, and visual elements.')}
         </p>
       </div>
 
       {saveMutation.error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
@@ -117,32 +119,32 @@ export default function AppearanceSettingsPage() {
         {/* Brand Colors */}
         <Card>
           <CardHeader>
-            <CardTitle>Brand Colors</CardTitle>
+            <CardTitle>{t('Brand Colors')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <ColorField
-                label="Primary Color 0"
+                label={t('Primary Color 0')}
                 value={form['theme.primary_0'] ?? ''}
                 onChange={(v) => set('theme.primary_0', v)}
               />
               <ColorField
-                label="Primary Color 1"
+                label={t('Primary Color 1')}
                 value={form['theme.primary_1'] ?? ''}
                 onChange={(v) => set('theme.primary_1', v)}
               />
               <ColorField
-                label="Accent Color 0"
+                label={t('Accent Color 0')}
                 value={form['theme.accent_0'] ?? ''}
                 onChange={(v) => set('theme.accent_0', v)}
               />
               <ColorField
-                label="Accent Color 1"
+                label={t('Accent Color 1')}
                 value={form['theme.accent_1'] ?? ''}
                 onChange={(v) => set('theme.accent_1', v)}
               />
               <ColorField
-                label="Dynamic Ribbon Color"
+                label={t('Dynamic Ribbon Color')}
                 value={form['theme.dynamic_ribbon_color'] ?? ''}
                 onChange={(v) => set('theme.dynamic_ribbon_color', v)}
               />
@@ -153,17 +155,17 @@ export default function AppearanceSettingsPage() {
         {/* Dashboard Sidebar */}
         <Card>
           <CardHeader>
-            <CardTitle>Dashboard Sidebar</CardTitle>
+            <CardTitle>{t('Dashboard Sidebar')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <ColorField
-                label="Gradient Start"
+                label={t('Gradient Start')}
                 value={form['theme.dashboard_sidebar_gradient_start'] ?? ''}
                 onChange={(v) => set('theme.dashboard_sidebar_gradient_start', v)}
               />
               <ColorField
-                label="Gradient End"
+                label={t('Gradient End')}
                 value={form['theme.dashboard_sidebar_gradient_end'] ?? ''}
                 onChange={(v) => set('theme.dashboard_sidebar_gradient_end', v)}
               />
@@ -174,17 +176,17 @@ export default function AppearanceSettingsPage() {
         {/* Checkout Page */}
         <Card>
           <CardHeader>
-            <CardTitle>Checkout Page</CardTitle>
+            <CardTitle>{t('Checkout Page')}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <ColorField
-                label="Gradient Start"
+                label={t('Gradient Start')}
                 value={form['theme.checkout_page_gradient_start'] ?? ''}
                 onChange={(v) => set('theme.checkout_page_gradient_start', v)}
               />
               <ColorField
-                label="Gradient End"
+                label={t('Gradient End')}
                 value={form['theme.checkout_page_gradient_end'] ?? ''}
                 onChange={(v) => set('theme.checkout_page_gradient_end', v)}
               />
@@ -195,11 +197,11 @@ export default function AppearanceSettingsPage() {
         {/* Account Page */}
         <Card>
           <CardHeader>
-            <CardTitle>Account Page</CardTitle>
+            <CardTitle>{t('Account Page')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Background Image URL</Label>
+              <Label>{t('Background Image URL')}</Label>
               <Input
                 className="mt-1"
                 value={form['account_page.background_image'] ?? ''}
@@ -208,7 +210,7 @@ export default function AppearanceSettingsPage() {
               />
             </div>
             <div>
-              <Label>Gradient</Label>
+              <Label>{t('Gradient')}</Label>
               <Input
                 className="mt-1"
                 value={form['account_page.gradient'] ?? ''}
@@ -217,7 +219,7 @@ export default function AppearanceSettingsPage() {
               />
             </div>
             <div className="flex items-center justify-between">
-              <Label>Image Round Corner</Label>
+              <Label>{t('Image Round Corner')}</Label>
               <Switch
                 checked={form['account_page.image_round_corner'] === 'true'}
                 onCheckedChange={(v) =>
@@ -226,18 +228,18 @@ export default function AppearanceSettingsPage() {
               />
             </div>
             <div>
-              <Label>Image Position</Label>
+              <Label>{t('Image Position')}</Label>
               <Select
                 value={form['account_page.image_position'] ?? 'center'}
                 onValueChange={(v) => set('account_page.image_position', v)}
               >
                 <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select position" />
+                  <SelectValue placeholder={t('Select position')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="left">Left</SelectItem>
-                  <SelectItem value="right">Right</SelectItem>
-                  <SelectItem value="center">Center</SelectItem>
+                  <SelectItem value="left">{t('Left')}</SelectItem>
+                  <SelectItem value="right">{t('Right')}</SelectItem>
+                  <SelectItem value="center">{t('Center')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -247,11 +249,11 @@ export default function AppearanceSettingsPage() {
         {/* Miscellaneous */}
         <Card>
           <CardHeader>
-            <CardTitle>Miscellaneous</CardTitle>
+            <CardTitle>{t('Miscellaneous')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label>Website Banner Image URL</Label>
+              <Label>{t('Website Banner Image URL')}</Label>
               <Input
                 className="mt-1"
                 value={form['appearance.website_banner'] ?? ''}
@@ -260,7 +262,7 @@ export default function AppearanceSettingsPage() {
               />
             </div>
             <div>
-              <Label>Stats Image URL</Label>
+              <Label>{t('Stats Image URL')}</Label>
               <Input
                 className="mt-1"
                 value={form['appearance.stats_image'] ?? ''}
@@ -274,7 +276,7 @@ export default function AppearanceSettingsPage() {
 
       <div className="mt-6 flex justify-end">
         <Button onClick={handleSave} disabled={saveMutation.isPending}>
-          {saveMutation.isPending ? 'Saving…' : 'Save Settings'}
+          {saveMutation.isPending ? t('Saving...') : t('Save Settings')}
         </Button>
       </div>
     </div>

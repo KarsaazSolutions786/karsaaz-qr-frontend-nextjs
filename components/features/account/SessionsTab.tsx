@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { sessionsAPI, type UserSession } from '@/lib/api/endpoints/account'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { useTranslation } from '@/lib/i18n'
 
 interface SessionsTabProps {
   userId: number | string
@@ -27,6 +28,7 @@ function parseDevice(ua: string): string {
 }
 
 export function SessionsTab({ userId }: SessionsTabProps) {
+  const { t } = useTranslation()
   const [sessions, setSessions] = useState<UserSession[]>([])
   const [loading, setLoading] = useState(false)
   const [fetched, setFetched] = useState(false)
@@ -41,7 +43,7 @@ export function SessionsTab({ userId }: SessionsTabProps) {
       setSessions(res.data)
       setFetched(true)
     } catch {
-      setError('Failed to load sessions')
+      setError(t('Failed to load sessions'))
       setFetched(true)
     } finally {
       setLoading(false)
@@ -58,9 +60,9 @@ export function SessionsTab({ userId }: SessionsTabProps) {
       setError(null)
       await sessionsAPI.revoke(userId, sessionId)
       setSessions((prev) => prev.filter((s) => s.id !== sessionId))
-      setSuccess('Session revoked.')
+      setSuccess(t('Session revoked.'))
     } catch {
-      setError('Failed to revoke session')
+      setError(t('Failed to revoke session'))
     } finally {
       setLoading(false)
     }
@@ -72,9 +74,9 @@ export function SessionsTab({ userId }: SessionsTabProps) {
       setError(null)
       await sessionsAPI.revokeAllOthers(userId)
       setSessions((prev) => prev.filter((s) => s.is_current))
-      setSuccess('All other sessions revoked.')
+      setSuccess(t('All other sessions revoked.'))
     } catch {
-      setError('Failed to revoke sessions')
+      setError(t('Failed to revoke sessions'))
     } finally {
       setLoading(false)
     }
@@ -86,24 +88,24 @@ export function SessionsTab({ userId }: SessionsTabProps) {
     <div className="space-y-6">
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between mb-1">
-          <h2 className="text-lg font-semibold text-gray-900">Active Sessions</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('Active Sessions')}</h2>
           {otherSessions.length > 0 && (
             <Button size="sm" variant="destructive" onClick={handleRevokeAll} disabled={loading}>
-              Revoke All Others
+              {t('Revoke All Others')}
             </Button>
           )}
         </div>
         <p className="text-sm text-gray-500 mb-6">
-          Manage devices and browsers where you&apos;re currently signed in.
+          {t('Manage devices and browsers where you\'re currently signed in.')}
         </p>
 
         {error && <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>}
         {success && <div className="mb-4 rounded-md bg-green-50 p-3 text-sm text-green-700">{success}</div>}
 
         {loading && !fetched ? (
-          <p className="text-sm text-gray-500">Loading sessions...</p>
+          <p className="text-sm text-gray-500">{t('Loading sessions...')}</p>
         ) : sessions.length === 0 ? (
-          <p className="text-sm text-gray-500">No active sessions found.</p>
+          <p className="text-sm text-gray-500">{t('No active sessions found.')}</p>
         ) : (
           <div className="space-y-3">
             {sessions.map((session) => (
@@ -123,11 +125,11 @@ export function SessionsTab({ userId }: SessionsTabProps) {
                         {parseDevice(session.user_agent)}
                       </p>
                       {session.is_current && (
-                        <Badge variant="default">Current</Badge>
+                        <Badge variant="default">{t('Current')}</Badge>
                       )}
                     </div>
                     <p className="text-xs text-gray-500">
-                      {session.ip_address} · Last active: {new Date(session.last_active_at).toLocaleString()}
+                      {session.ip_address} · {t('Last active')}: {new Date(session.last_active_at).toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -138,7 +140,7 @@ export function SessionsTab({ userId }: SessionsTabProps) {
                     onClick={() => handleRevoke(session.id)}
                     disabled={loading}
                   >
-                    Revoke
+                    {t('Revoke')}
                   </Button>
                 )}
               </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { z } from 'zod'
 
 const superUserSchema = z.object({
@@ -26,6 +27,7 @@ interface SuperUserStepProps {
 }
 
 export function SuperUserStep({ config, onChange }: SuperUserStepProps) {
+  const { t } = useTranslation();
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   const update = (field: keyof SuperUserConfig, value: string) => {
@@ -47,10 +49,10 @@ export function SuperUserStep({ config, onChange }: SuperUserStepProps) {
   }
 
   const fields: { key: keyof SuperUserConfig; label: string; type: string; placeholder: string }[] = [
-    { key: 'name', label: 'Full Name', type: 'text', placeholder: 'Admin User' },
-    { key: 'email', label: 'Email', type: 'email', placeholder: 'admin@example.com' },
-    { key: 'password', label: 'Password', type: 'password', placeholder: '••••••••' },
-    { key: 'confirmPassword', label: 'Confirm Password', type: 'password', placeholder: '••••••••' },
+    { key: 'name', label: t('Full Name'), type: 'text', placeholder: 'Admin User' },
+    { key: 'email', label: t('Email'), type: 'email', placeholder: 'admin@example.com' },
+    { key: 'password', label: t('Password'), type: 'password', placeholder: '••••••••' },
+    { key: 'confirmPassword', label: t('Confirm Password'), type: 'password', placeholder: '••••••••' },
   ]
 
   return (

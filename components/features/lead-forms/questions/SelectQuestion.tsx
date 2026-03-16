@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import { Label } from '@/components/ui/label'
 import { AlertCircle } from 'lucide-react'
 
@@ -26,6 +27,7 @@ export default function SelectQuestion({
   required,
   error,
 }: SelectQuestionProps) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-2">
       <Label htmlFor={id} className="text-gray-700 font-medium">
@@ -44,7 +46,7 @@ export default function SelectQuestion({
             : 'border-gray-300 bg-white focus:border-blue-500 focus:ring-blue-500'
         }`}
       >
-        <option value="">{placeholder || 'Select an option'}</option>
+        <option value="">{placeholder || t('Select an option')}</option>
         {options.map((option) => (
           <option key={option} value={option}>
             {option}

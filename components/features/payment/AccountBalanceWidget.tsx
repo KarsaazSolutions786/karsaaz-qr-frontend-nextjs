@@ -1,26 +1,31 @@
 'use client'
 
-import { useEffect } from 'react'
 import Link from 'next/link'
+import { Wallet } from 'lucide-react'
 import { useAccountCredit } from '@/lib/hooks/useAccountCredit'
+import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Compact widget showing the user's current credit balance.
+ * Displayed in the dashboard header when account-credit billing mode is active.
+ * The balance is derived from the user object (populated by GET /api/myself)
+ * so no additional API call is needed.
+ */
 export function AccountBalanceWidget() {
-  const { balance, refreshBalance } = useAccountCredit()
+  const { balance, isAccountCreditMode } = useAccountCredit()
+  const { t } = useTranslation()
 
-  useEffect(() => {
-    refreshBalance()
-  }, [refreshBalance])
+  // Don't render if not in credit mode
+  if (!isAccountCreditMode) return null
 
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm">
-      <span className="text-gray-500">Credits:</span>
+    <Link
+      href="/account-credits"
+      className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm transition-colors hover:bg-gray-50"
+    >
+      <Wallet className="h-3.5 w-3.5 text-blue-600" />
+      <span className="text-gray-500">{t('Credits:')}</span>
       <span className="font-semibold text-gray-900">${balance.toFixed(2)}</span>
-      <Link
-        href="/account-credits"
-        className="ml-1 text-xs text-blue-600 hover:text-blue-700"
-      >
-        Add
-      </Link>
-    </div>
+    </Link>
   )
 }

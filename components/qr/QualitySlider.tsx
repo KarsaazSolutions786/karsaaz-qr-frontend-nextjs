@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import { Info } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface QualitySliderProps {
   value: number;
@@ -63,6 +64,7 @@ export function QualitySlider({
   disabled = false,
   className = '',
 }: QualitySliderProps) {
+  const { t } = useTranslation();
   const [showTooltip, setShowTooltip] = useState(false);
   
   const percentage = Math.round(value * 100);
@@ -111,7 +113,7 @@ export function QualitySlider({
             
             {showTooltip && (
               <div className="absolute left-0 top-6 z-10 w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg">
-                <p className="mb-1 font-medium">Quality Settings</p>
+                <p className="mb-1 font-medium">{t('Quality Settings')}</p>
                 <p className="text-gray-300">
                   Higher quality results in better image clarity but larger file sizes.
                   For {format.toUpperCase()}, this affects compression and detail retention.
@@ -242,6 +244,7 @@ export function QualitySliderWithEstimate({
   disabled = false,
   className = '',
 }: QualitySliderProps & { baseFileSize: number }) {
+  const { t } = useTranslation();
   // Estimate file size based on quality
   // Lower quality = better compression = smaller size
   const compressionFactor = 1 - (value * 0.5); // 50% reduction at max quality
@@ -264,7 +267,7 @@ export function QualitySliderWithEstimate({
       {/* File size estimate */}
       <div className="mt-2 p-2 bg-gray-50 rounded border border-gray-200">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-gray-600">Estimated file size:</span>
+          <span className="text-gray-600">{t('Estimated file size:')}</span>
           <span className="font-medium text-gray-900">
             {formatSize(estimatedSize)}
           </span>

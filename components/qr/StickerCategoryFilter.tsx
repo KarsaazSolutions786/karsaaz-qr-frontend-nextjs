@@ -9,6 +9,7 @@
 import React from 'react';
 import { StickerCategory } from '@/types/entities/sticker';
 import { getCategoryDisplayName, getCategoryIcon } from '@/lib/utils/sticker-utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface StickerCategoryFilterProps {
   selectedCategory: StickerCategory | 'all';
@@ -104,11 +105,12 @@ export function StickerCategoryDropdown({
   onCategoryChange,
   className = '',
 }: StickerCategoryDropdownProps) {
+  const { t } = useTranslation();
   const icon = getCategoryIcon(selectedCategory);
 
   return (
     <div className={`sticker-category-dropdown ${className}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">{t('Category')}</label>
       <div className="relative">
         <select
           value={selectedCategory}

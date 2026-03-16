@@ -1,38 +1,31 @@
 'use client'
 
 import { useAuth } from '@/lib/hooks/useAuth'
-import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/lib/i18n'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 /**
  * Banner shown when admin is impersonating another user.
- * Displays warning with user email and "Stop Impersonating" button.
+ * Displays warning with user name/email and "Return to Admin" button.
+ * Spans the full width above the sidebar and header.
  */
 export function ActAsBanner() {
+  const { t } = useTranslation()
   const { isActingAs, actingAsUser, removeActAs } = useAuth()
-  const router = useRouter()
 
   if (!isActingAs) return null
 
-  function handleStop() {
-    removeActAs()
-    router.push('/users')
-    setTimeout(() => window.location.reload(), 100)
-  }
-
   return (
-    <div className="bg-yellow-500 text-yellow-900 px-4 py-2 flex items-center justify-between text-sm z-50">
-      <div className="flex items-center gap-2">
-        <ExclamationTriangleIcon className="h-5 w-5" />
-        <span className="font-medium">
-          Impersonating: {actingAsUser?.email || 'Unknown user'}
-        </span>
-      </div>
+    <div className="bg-amber-500 text-white px-4 py-2 text-center text-sm font-medium flex items-center justify-center gap-3 z-50">
+      <ExclamationTriangleIcon className="h-5 w-5 shrink-0" />
+      <span>
+        {t('You are viewing as')} {actingAsUser?.name || actingAsUser?.email || t('another user')}
+      </span>
       <button
-        onClick={handleStop}
-        className="rounded-md bg-yellow-600 px-3 py-1 text-xs font-semibold text-white hover:bg-yellow-700 transition-colors"
+        onClick={removeActAs}
+        className="underline font-bold hover:no-underline transition-all"
       >
-        Stop Impersonating
+        {t('Return to Admin')}
       </button>
     </div>
   )

@@ -1,43 +1,61 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * MercadoPago payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Public Key
+ * - Access Token
+ *
+ * No auto-webhook registration; no manual webhook URL display.
+ */
+export function MercadoPagoForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function MercadoPagoForm({ settings, onChange }: Props) {
   return (
     <PaymentProcessorFormBase slug="mercadopago" settings={settings} onChange={onChange}>
+      {/* Public Key */}
       <div>
-        <label htmlFor="mercadopago-public-key" className="block text-sm font-medium text-gray-700">
-          Public Key
+        <label htmlFor="mercadopago-public-key" className={labelClass}>
+          {t('Public Key')}
         </label>
         <input
           id="mercadopago-public-key"
-          type="text"
-          value={settings.public_key ?? ''}
-          onChange={(e) => onChange('public_key', e.target.value)}
-          placeholder="Enter Public Key"
+          type="password"
+          value={settings.mercadopago_public_key ?? ''}
+          onChange={(e) => onChange('mercadopago_public_key', e.target.value)}
+          placeholder="****-****"
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Found in your Mercado Pago developer dashboard under Credentials')}
+        </p>
       </div>
+
+      {/* Access Token */}
       <div>
-        <label htmlFor="mercadopago-access-token" className="block text-sm font-medium text-gray-700">
-          Access Token
+        <label htmlFor="mercadopago-access-token" className={labelClass}>
+          {t('Access Token')}
         </label>
         <input
           id="mercadopago-access-token"
           type="password"
-          value={settings.access_token ?? ''}
-          onChange={(e) => onChange('access_token', e.target.value)}
-          placeholder="Enter Access Token"
+          value={settings.mercadopago_access_token ?? ''}
+          onChange={(e) => onChange('mercadopago_access_token', e.target.value)}
+          placeholder="****-****"
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Your production or sandbox access token from Mercado Pago')}
+        </p>
       </div>
     </PaymentProcessorFormBase>
   )

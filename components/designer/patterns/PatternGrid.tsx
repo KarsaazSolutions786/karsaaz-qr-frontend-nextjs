@@ -4,6 +4,7 @@ import React from 'react'
 import { Upload } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import type { PatternSettings } from './types'
+import { useTranslation } from '@/lib/i18n'
 
 interface PatternGridProps {
   pattern: PatternSettings
@@ -11,6 +12,7 @@ interface PatternGridProps {
 }
 
 export default function PatternGrid({ pattern, onSelectType }: PatternGridProps) {
+  const { t } = useTranslation()
   const patternOptions = [
     {
       type: 'none' as const,
@@ -158,7 +160,7 @@ export default function PatternGrid({ pattern, onSelectType }: PatternGridProps)
 
   return (
     <div>
-      <Label className="mb-3 block">Pattern Type</Label>
+      <Label className="mb-3 block">{t('Pattern Type')}</Label>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {patternOptions.map(option => (
           <button

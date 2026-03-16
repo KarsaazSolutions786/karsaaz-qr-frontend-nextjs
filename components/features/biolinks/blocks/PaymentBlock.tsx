@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { PaymentBlockData } from '@/types/entities/biolink'
 
 interface PaymentBlockProps {
@@ -8,12 +11,13 @@ interface PaymentBlockProps {
 
 export default function PaymentBlock({ block, isEditing, onUpdate }: PaymentBlockProps) {
   const { amount, currency, description, paymentUrl } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Description</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Description')}</label>
           <input
             type="text"
             value={description}
@@ -23,7 +27,7 @@ export default function PaymentBlock({ block, isEditing, onUpdate }: PaymentBloc
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Amount</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Amount')}</label>
             <input
               type="number"
               value={amount}
@@ -32,7 +36,7 @@ export default function PaymentBlock({ block, isEditing, onUpdate }: PaymentBloc
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Currency</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Currency')}</label>
             <input
               type="text"
               value={currency}
@@ -43,7 +47,7 @@ export default function PaymentBlock({ block, isEditing, onUpdate }: PaymentBloc
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Payment URL</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Payment URL')}</label>
           <input
             type="url"
             value={paymentUrl}
@@ -63,7 +67,7 @@ export default function PaymentBlock({ block, isEditing, onUpdate }: PaymentBloc
       className="block w-full rounded-lg bg-green-600 px-6 py-4 text-center text-white transition-colors hover:bg-green-700"
     >
       <span className="text-lg font-semibold">
-        💳 Pay {currency} {amount.toFixed(2)}
+        💳 {t('Pay')} {currency} {amount.toFixed(2)}
       </span>
       {description && <p className="mt-1 text-sm text-green-100">{description}</p>}
     </a>

@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import { StickerPosition, StickerPositionPreset, POSITION_PRESETS } from '@/types/entities/sticker';
+import { useTranslation } from '@/lib/i18n';
 
 export interface StickerPositioningProps {
   position: StickerPosition;
@@ -26,6 +27,7 @@ export function StickerPositioning({
   showPreview = true,
   className = '',
 }: StickerPositioningProps) {
+  const { t } = useTranslation();
   const [showCustom, setShowCustom] = useState(position.preset === 'custom');
 
   // Handle preset selection
@@ -62,7 +64,7 @@ export function StickerPositioning({
   return (
     <div className={`sticker-positioning ${className}`}>
       {/* Label */}
-      <label className="block text-sm font-medium text-gray-700 mb-3">Sticker Position</label>
+      <label className="block text-sm font-medium text-gray-700 mb-3">{t('Sticker Position')}</label>
 
       {/* Preset selector */}
       <div className="mb-4">
@@ -70,21 +72,21 @@ export function StickerPositioning({
           {/* Top row */}
           <PositionButton
             preset="top-left"
-            label="Top Left"
+            label={t('Top Left')}
             icon="↖"
             isSelected={position.preset === 'top-left'}
             onClick={() => handlePresetSelect('top-left')}
           />
           <PositionButton
             preset="top"
-            label="Top"
+            label={t('Top')}
             icon="↑"
             isSelected={position.preset === 'top'}
             onClick={() => handlePresetSelect('top')}
           />
           <PositionButton
             preset="top-right"
-            label="Top Right"
+            label={t('Top Right')}
             icon="↗"
             isSelected={position.preset === 'top-right'}
             onClick={() => handlePresetSelect('top-right')}
@@ -93,21 +95,21 @@ export function StickerPositioning({
           {/* Middle row */}
           <PositionButton
             preset="left"
-            label="Left"
+            label={t('Left')}
             icon="←"
             isSelected={position.preset === 'left'}
             onClick={() => handlePresetSelect('left')}
           />
           <PositionButton
             preset="custom"
-            label="Custom"
+            label={t('Custom')}
             icon="⊕"
             isSelected={position.preset === 'custom'}
             onClick={() => handlePresetSelect('custom')}
           />
           <PositionButton
             preset="right"
-            label="Right"
+            label={t('Right')}
             icon="→"
             isSelected={position.preset === 'right'}
             onClick={() => handlePresetSelect('right')}
@@ -116,21 +118,21 @@ export function StickerPositioning({
           {/* Bottom row */}
           <PositionButton
             preset="bottom-left"
-            label="Bottom Left"
+            label={t('Bottom Left')}
             icon="↙"
             isSelected={position.preset === 'bottom-left'}
             onClick={() => handlePresetSelect('bottom-left')}
           />
           <PositionButton
             preset="bottom"
-            label="Bottom"
+            label={t('Bottom')}
             icon="↓"
             isSelected={position.preset === 'bottom'}
             onClick={() => handlePresetSelect('bottom')}
           />
           <PositionButton
             preset="bottom-right"
-            label="Bottom Right"
+            label={t('Bottom Right')}
             icon="↘"
             isSelected={position.preset === 'bottom-right'}
             onClick={() => handlePresetSelect('bottom-right')}
@@ -141,12 +143,12 @@ export function StickerPositioning({
       {/* Custom position sliders */}
       {showCustom && (
         <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-          <p className="text-sm font-medium text-gray-700 mb-3">Custom Position</p>
+          <p className="text-sm font-medium text-gray-700 mb-3">{t('Custom Position')}</p>
           
           {/* X position */}
           <div className="mb-3">
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs text-gray-600">Horizontal</label>
+              <label className="text-xs text-gray-600">{t('Horizontal')}</label>
               <span className="text-xs font-medium text-gray-900">
                 {Math.round((position.x ?? 0.5) * 100)}%
               </span>
@@ -161,16 +163,16 @@ export function StickerPositioning({
               className="w-full"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>Left</span>
-              <span>Center</span>
-              <span>Right</span>
+              <span>{t('Left')}</span>
+              <span>{t('Center')}</span>
+              <span>{t('Right')}</span>
             </div>
           </div>
 
           {/* Y position */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-xs text-gray-600">Vertical</label>
+              <label className="text-xs text-gray-600">{t('Vertical')}</label>
               <span className="text-xs font-medium text-gray-900">
                 {Math.round((position.y ?? 1) * 100)}%
               </span>
@@ -185,9 +187,9 @@ export function StickerPositioning({
               className="w-full"
             />
             <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>Top</span>
-              <span>Middle</span>
-              <span>Bottom</span>
+              <span>{t('Top')}</span>
+              <span>{t('Middle')}</span>
+              <span>{t('Bottom')}</span>
             </div>
           </div>
         </div>
@@ -196,11 +198,11 @@ export function StickerPositioning({
       {/* Visual preview */}
       {showPreview && (
         <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-          <p className="text-xs text-gray-600 mb-2">Preview</p>
+          <p className="text-xs text-gray-600 mb-2">{t('Preview')}</p>
           <div className="relative w-full aspect-square bg-white border border-gray-300 rounded-lg overflow-hidden">
             {/* QR code representation */}
             <div className="absolute inset-2 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
-              <span className="text-xs text-gray-400">QR Code</span>
+              <span className="text-xs text-gray-400">{t('QR Code')}</span>
             </div>
 
             {/* Sticker position indicator */}
@@ -220,7 +222,7 @@ export function StickerPositioning({
 
       {/* Current coordinates */}
       <div className="text-xs text-gray-500">
-        Current position: X: {Math.round(currentCoords.x * 100)}%, Y: {Math.round(currentCoords.y * 100)}%
+        {t('Current position:')} X: {Math.round(currentCoords.x * 100)}%, Y: {Math.round(currentCoords.y * 100)}%
       </div>
     </div>
   );
@@ -269,23 +271,24 @@ export function StickerPositioningCompact({
   onChange,
   className = '',
 }: StickerPositioningCompactProps) {
+  const { t } = useTranslation();
   const presets: Array<{ value: StickerPositionPreset; label: string; icon: string }> = [
-    { value: 'top-left', label: 'Top Left', icon: '↖' },
-    { value: 'top', label: 'Top Center', icon: '↑' },
-    { value: 'top-right', label: 'Top Right', icon: '↗' },
-    { value: 'left', label: 'Left', icon: '←' },
-    { value: 'right', label: 'Right', icon: '→' },
-    { value: 'bottom-left', label: 'Bottom Left', icon: '↙' },
-    { value: 'bottom', label: 'Bottom Center', icon: '↓' },
-    { value: 'bottom-right', label: 'Bottom Right', icon: '↘' },
-    { value: 'custom', label: 'Custom', icon: '⊕' },
+    { value: 'top-left', label: t('Top Left'), icon: '↖' },
+    { value: 'top', label: t('Top Center'), icon: '↑' },
+    { value: 'top-right', label: t('Top Right'), icon: '↗' },
+    { value: 'left', label: t('Left'), icon: '←' },
+    { value: 'right', label: t('Right'), icon: '→' },
+    { value: 'bottom-left', label: t('Bottom Left'), icon: '↙' },
+    { value: 'bottom', label: t('Bottom Center'), icon: '↓' },
+    { value: 'bottom-right', label: t('Bottom Right'), icon: '↘' },
+    { value: 'custom', label: t('Custom'), icon: '⊕' },
   ];
 
   const selectedPreset = presets.find((p) => p.value === position.preset);
 
   return (
     <div className={`sticker-positioning-compact ${className}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Position</label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">{t('Position')}</label>
       <div className="relative">
         <select
           value={position.preset}

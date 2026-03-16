@@ -49,6 +49,7 @@ import { BiolinksDataForm } from '@/components/features/qrcodes/forms/BiolinksDa
 import { BusinessProfileDataForm } from '@/components/features/qrcodes/forms/BusinessProfileDataForm'
 import { QRCodePreview } from '@/components/features/qrcodes/QRCodePreview'
 import { Info } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface Step2TypeAndDataProps {
   qrType: string
@@ -65,6 +66,7 @@ export default function Step2TypeAndData({
   errors = {},
   showPreview = true,
 }: Step2TypeAndDataProps) {
+  const { t } = useTranslation()
   const handleTypeChange = (type: string) => {
     onChange('type', type)
     // Reset data when type changes
@@ -177,7 +179,7 @@ export default function Step2TypeAndData({
       default:
         return (
           <div className="text-center py-8 text-gray-500">
-            Please select a QR code type
+            {t('Please select a QR code type')}
           </div>
         )
     }
@@ -199,7 +201,7 @@ export default function Step2TypeAndData({
           {/* Data Form */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Enter QR Code Data
+              {t('Enter QR Code Data')}
             </h3>
             <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
               {renderDataForm()}
@@ -213,7 +215,7 @@ export default function Step2TypeAndData({
           {showPreview && (
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Preview
+                {t('Preview')}
               </h3>
               <div className="bg-white rounded-lg p-6 border border-gray-200 sticky top-6">
                 <div className="flex flex-col items-center gap-4">
@@ -234,7 +236,7 @@ export default function Step2TypeAndData({
                   <div className="flex items-start gap-2 text-xs text-gray-500 bg-blue-50 border border-blue-200 rounded-md p-3">
                     <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-600" />
                     <p>
-                      Preview updates as you fill in the form. You can customize the design in the next step.
+                      {t('Preview updates as you fill in the form. You can customize the design in the next step.')}
                     </p>
                   </div>
                 </div>
@@ -248,7 +250,7 @@ export default function Step2TypeAndData({
       {Object.keys(errors).length > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-md p-4">
           <h4 className="text-sm font-semibold text-red-800 mb-2">
-            Please fix the following errors:
+            {t('Please fix the following errors:')}
           </h4>
           <ul className="list-disc list-inside text-sm text-red-700 space-y-1">
             {Object.entries(errors).map(([field, error]) => (

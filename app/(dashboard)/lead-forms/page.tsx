@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { useLeadForms, useLeadFormResponses } from '@/lib/hooks/queries/useLeadForms'
 import { useDeleteLeadFormResponse } from '@/lib/hooks/mutations/useLeadFormMutations'
 import type { LeadForm, LeadFormResponse, LeadFormResponseField } from '@/types/entities/lead-form'
+import { useTranslation } from '@/lib/i18n'
 
 // ─── CSV helpers ─────────────────────────────────────────────────────────────
 
@@ -47,6 +48,7 @@ function getFields(response: LeadFormResponse): LeadFormResponseField[] {
 }
 
 function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
+  const { t } = useTranslation()
   const [keyword, setKeyword] = useState('')
   const deleteMutation = useDeleteLeadFormResponse()
   const { data, isLoading } = useLeadFormResponses(formId)
@@ -72,7 +74,7 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
   }
 
   const handleDelete = async (responseId: number) => {
-    if (!confirm('Delete this response? This cannot be undone.')) return
+    if (!confirm(t('Delete this response? This cannot be undone.'))) return
     await deleteMutation.mutateAsync(responseId)
   }
 
@@ -80,7 +82,7 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
     return (
       <div className="flex items-center gap-2 py-4 text-sm text-gray-500">
         <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
-        Loading responses…
+        {t('Loading responses…')}
       </div>
     )
   }
@@ -91,7 +93,7 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
       <div className="flex flex-wrap items-center gap-3 mb-3">
         <input
           type="search"
-          placeholder="Search responses…"
+          placeholder={t('Search responses…')}
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           className="block w-full max-w-xs rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
@@ -104,7 +106,7 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
-            Export CSV
+            {t('Export CSV')}
           </button>
         )}
       </div>
@@ -112,7 +114,7 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
       {/* Scrollable responses list */}
       {filtered.length === 0 ? (
         <p className="py-4 text-sm text-gray-400 italic">
-          {responses.length === 0 ? 'No responses yet.' : 'No responses match your search.'}
+          {responses.length === 0 ? t('No responses yet.') : t('No responses match your search.')}
         </p>
       ) : (
         <div className="overflow-y-auto max-h-[300px] space-y-3 pr-1">
@@ -138,7 +140,7 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
                     disabled={deleteMutation.isPending}
                     className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
                   >
-                    Delete
+                    {t('Delete')}
                   </button>
                 </div>
 
@@ -165,7 +167,7 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
 
       {/* Footer count */}
       <p className="mt-2 text-xs text-gray-400">
-        Total {responses.length} response{responses.length !== 1 ? 's' : ''}
+        {t('Total')} {responses.length} {responses.length !== 1 ? t('responses') : t('response')}
       </p>
     </div>
   )
@@ -178,7 +180,8 @@ interface FormCardProps {
 }
 
 function LeadFormCard({ form }: FormCardProps) {
-  const title = form.qrcode_name ?? `Lead Form #${form.id} - QR Code Not Found`
+  const { t } = useTranslation()
+  const title = form.qrcode_name ?? t('Lead Form #{{id}} - QR Code Not Found').replace('{{id}}', String(form.id))
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
@@ -187,11 +190,11 @@ function LeadFormCard({ form }: FormCardProps) {
         <div>
           <h2 className="text-base font-semibold text-gray-900">{title}</h2>
           <p className="text-xs text-gray-400 mt-0.5">
-            Created {new Date(form.createdAt).toLocaleDateString()}
+            {t('Created')} {new Date(form.createdAt).toLocaleDateString()}
           </p>
         </div>
         <span className="text-xs text-gray-500">
-          {form.responseCount ?? 0} response{(form.responseCount ?? 0) !== 1 ? 's' : ''} total
+          {form.responseCount ?? 0} {(form.responseCount ?? 0) !== 1 ? t('responses') : t('response')} {t('total')}
         </span>
       </div>
 
@@ -206,6 +209,7 @@ function LeadFormCard({ form }: FormCardProps) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LeadFormsPage() {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const { data, isLoading } = useLeadForms({ page })
 
@@ -213,16 +217,16 @@ export default function LeadFormsPage() {
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header — no Create button */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Lead Forms</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Lead Forms')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          View and manage lead form responses collected from your QR codes.
+          {t('View and manage lead form responses collected from your QR codes.')}
         </p>
       </div>
 
       {isLoading ? (
         <div className="text-center py-16">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
-          <p className="mt-3 text-sm text-gray-500">Loading lead forms…</p>
+          <p className="mt-3 text-sm text-gray-500">{t('Loading lead forms…')}</p>
         </div>
       ) : data && data.data.length > 0 ? (
         <>
@@ -240,17 +244,17 @@ export default function LeadFormsPage() {
                 disabled={page === 1}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Previous
+                {t('Previous')}
               </button>
               <span className="text-sm text-gray-600">
-                Page {page} of {data.pagination.lastPage}
+                {t('Page')} {page} {t('of')} {data.pagination.lastPage}
               </span>
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= data.pagination.lastPage}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Next
+                {t('Next')}
               </button>
             </div>
           )}
@@ -270,9 +274,9 @@ export default function LeadFormsPage() {
               d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
             />
           </svg>
-          <h3 className="mt-3 text-sm font-medium text-gray-900">No lead forms found</h3>
+          <h3 className="mt-3 text-sm font-medium text-gray-900">{t('No lead forms found')}</h3>
           <p className="mt-1 text-sm text-gray-500">
-            Lead forms are created when setting up a QR code.
+            {t('Lead forms are created when setting up a QR code.')}
           </p>
         </div>
       )}

@@ -8,6 +8,7 @@
 
 import React from 'react';
 import Head from 'next/head';
+import { useTranslation } from '@/lib/i18n';
 
 export interface SEOProps {
   title: string;
@@ -36,8 +37,9 @@ export function SEO({
   noindex = false,
   canonical,
 }: SEOProps) {
+  const { t } = useTranslation()
   const siteName = 'Karsaaz QR';
-  const defaultDescription = 'Create, manage, and track QR codes with advanced analytics and customization options.';
+  const defaultDescription = t('Create, manage, and track QR codes with advanced analytics and customization options.');
   const defaultImage = '/og-image.png';
   
   const fullTitle = `${title} | ${siteName}`;
@@ -131,7 +133,7 @@ export function generateOrganizationStructuredData() {
     name: 'Karsaaz QR',
     url: 'https://karsaaz-qr.com',
     logo: 'https://karsaaz-qr.com/logo.png',
-    description: 'QR Code generation and management platform',
+    description: t('QR Code generation and management platform'),
     sameAs: [
       // Social media links
     ],

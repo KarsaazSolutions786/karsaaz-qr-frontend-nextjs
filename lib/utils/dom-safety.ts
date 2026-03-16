@@ -1,7 +1,11 @@
 /**
  * DOM Safety Utilities
  * Ported from legacy qr-code-frontend/src/core/helpers.js and dom-patches.js
+ *
+ * Uses DOMPurify for robust HTML sanitization (client-side).
+ * Falls back to tag-stripping on the server where DOMPurify is not available.
  */
+import DOMPurify from 'dompurify'
 
 /** Escape HTML entities to prevent XSS */
 export function escapeHtml(str: string): string {
@@ -22,50 +26,75 @@ export function escapeHtml(str: string): string {
 /** Sanitize SVG string — remove script tags, event handlers, javascript: URIs */
 export function sanitizeSvg(svg: string): string {
   if (!svg) return ''
-  return svg
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/\bon\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/javascript\s*:/gi, '')
+  if (typeof window === 'undefined') {
+    // SSR fallback: strip dangerous patterns
+    return svg
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/\bon\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+      .replace(/javascript\s*:/gi, '')
+  }
+  return DOMPurify.sanitize(svg, {
+    USE_PROFILES: { svg: true },
+    ADD_TAGS: ['use'],
+    ADD_ATTR: ['xlink:href', 'href', 'mask', 'transform', 'viewBox', 'preserveAspectRatio'],
+    ALLOW_DATA_ATTR: false,
+  })
 }
 
-/** Sanitize HTML string — remove script tags and event handlers */
+/** Sanitize HTML string using DOMPurify with a safe allowlist */
 export function sanitizeHTML(html: string): string {
   if (!html) return ''
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/\bon\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+  if (typeof window === 'undefined') {
+    // Server-side: strip all HTML tags as fallback
+    return html.replace(/<[^>]*>/g, '')
+  }
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style'],
+    ALLOW_DATA_ATTR: false,
+  })
 }
 
-/** Check if a URL is safe (no javascript: or data: protocols) */
+/** Check if a URL is safe — uses protocol allowlist instead of denylist */
 export function isSafeUrl(url: string): boolean {
   if (!url) return false
-  const trimmed = url.trim().toLowerCase()
-  return !trimmed.startsWith('javascript:') && !trimmed.startsWith('data:text/html')
+  const trimmed = url.trim()
+  // Allow relative URLs
+  if (trimmed.startsWith('/') || trimmed.startsWith('?') || trimmed.startsWith('#')) {
+    return true
+  }
+  // Strict protocol allowlist — reject anything not explicitly allowed
+  const SAFE_PROTOCOLS = /^(https?:\/\/|mailto:|tel:)/i
+  return SAFE_PROTOCOLS.test(trimmed)
 }
 
 /**
  * Strips script tags and inline event handlers from an HTML string.
- * Stricter than sanitizeHTML — also removes data: URIs in attributes.
+ * Uses DOMPurify for robust sanitization on the client.
  */
 export function preventScriptInjection(html: string): string {
   if (!html) return ''
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/\bon\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-    .replace(/javascript\s*:/gi, '')
-    .replace(/data\s*:\s*text\/html/gi, '')
+  if (typeof window === 'undefined') {
+    return html
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/\bon\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+      .replace(/javascript\s*:/gi, '')
+      .replace(/data\s*:\s*text\/html/gi, '')
+  }
+  return DOMPurify.sanitize(html)
 }
 
 /** Validate that a URL uses only an allowed scheme (http, https, mailto, tel) */
 export function sanitizeUrl(url: string): string {
   if (!url) return ''
   const trimmed = url.trim()
-  const ALLOWED_SCHEMES = /^(https?:\/\/|mailto:|tel:)/i
-  // Relative URLs (starting with / or ?) are safe
+  // Relative URLs (starting with / or ? or #) are safe
   if (trimmed.startsWith('/') || trimmed.startsWith('?') || trimmed.startsWith('#')) {
     return trimmed
   }
-  return ALLOWED_SCHEMES.test(trimmed) ? trimmed : ''
+  // Only allow http, https, mailto, tel protocols
+  if (/^(https?:|mailto:|tel:)/i.test(trimmed)) return trimmed
+  return ''
 }
 
 /**

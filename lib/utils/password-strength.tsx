@@ -1,3 +1,7 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
+
 /**
  * Password strength calculator — reused across RegisterForm, ResetPasswordForm, etc.
  *
@@ -33,6 +37,7 @@ export function getPasswordStrength(password: string): {
  * Renders a progress bar with label text.
  */
 export function PasswordStrengthBar({ password }: { password: string }) {
+  const { t } = useTranslation()
   const strength = getPasswordStrength(password)
 
   if (!password) return null
@@ -46,10 +51,10 @@ export function PasswordStrengthBar({ password }: { password: string }) {
             style={{ width: `${(strength.score / 5) * 100}%` }}
           />
         </div>
-        <span className="text-xs font-medium text-gray-600">{strength.label}</span>
+        <span className="text-xs font-medium text-gray-600">{t(strength.label)}</span>
       </div>
       <p className="mt-1 text-xs text-gray-500">
-        Use 8+ characters with a mix of letters, numbers &amp; symbols
+        {t('Use 8+ characters with a mix of letters, numbers & symbols')}
       </p>
     </div>
   )

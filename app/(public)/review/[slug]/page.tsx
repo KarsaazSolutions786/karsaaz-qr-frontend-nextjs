@@ -1,63 +1,73 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import ReviewPreview from '@/components/public/business-review/ReviewPreview'
+import GoogleReviewPreview from '@/components/public/google-review/GoogleReviewPreview'
 import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
-async function getBusinessReview(slug: string) {
+const BUSINESS_REVIEW_TYPES = ['business-review', 'review', 'rating']
+const GOOGLE_REVIEW_TYPES = ['google-review']
+const ALL_REVIEW_TYPES = [...BUSINESS_REVIEW_TYPES, ...GOOGLE_REVIEW_TYPES]
+
+async function getReviewData(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
-    
-    // Validate type is business-review, review, or rating
-    const validTypes = ['business-review', 'google-review', 'review', 'rating']
-    if (!validTypes.includes(qrData.type)) {
-      console.error(`Invalid QR type for business review: ${qrData.type}`)
+
+    if (!ALL_REVIEW_TYPES.includes(qrData.type)) {
+      console.error(`Invalid QR type for review page: ${qrData.type}`)
       return null
     }
-    
-    // Track the view
+
     trackQRView(slug)
-    
-    return qrData.data
+
+    return { type: qrData.type as string, data: qrData.data }
   } catch (error) {
-    console.error('Failed to fetch business review:', error)
+    console.error('Failed to fetch review data:', error)
     return null
   }
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const review = await getBusinessReview(params.slug)
+  const result = await getReviewData(params.slug)
 
-  if (!review) {
+  if (!result) {
     return {
       title: 'Review Not Found',
       description: 'The requested review page could not be found.',
     }
   }
 
+  const { data } = result
+  const businessName = data.businessName || data.business_name || 'Business'
+  const description = data.reviewMessage || data.customMessage || `Share your experience with ${businessName}. Your feedback helps us improve!`
+
   return {
-    title: `Review ${review.businessName}`,
-    description: review.reviewMessage || `Share your experience with ${review.businessName}. Your feedback helps us improve!`,
+    title: `Review ${businessName}`,
+    description,
     openGraph: {
-      title: `Review ${review.businessName}`,
-      description: review.reviewMessage || `Share your experience with ${review.businessName}`,
-      images: review.logo ? [review.logo] : [],
+      title: `Review ${businessName}`,
+      description,
+      images: data.logo ? [data.logo] : [],
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Review ${review.businessName}`,
-      description: review.reviewMessage || `Share your experience with ${review.businessName}`,
-      images: review.logo ? [review.logo] : [],
+      title: `Review ${businessName}`,
+      description,
+      images: data.logo ? [data.logo] : [],
     },
   }
 }
 
-export default async function PublicBusinessReviewPage({ params }: { params: { slug: string } }) {
-  const review = await getBusinessReview(params.slug)
+export default async function PublicReviewPage({ params }: { params: { slug: string } }) {
+  const result = await getReviewData(params.slug)
 
-  if (!review) {
+  if (!result) {
     notFound()
   }
 
-  return <ReviewPreview review={review} />
+  if (GOOGLE_REVIEW_TYPES.includes(result.type)) {
+    return <GoogleReviewPreview data={result.data} />
+  }
+
+  return <ReviewPreview review={result.data} />
 }

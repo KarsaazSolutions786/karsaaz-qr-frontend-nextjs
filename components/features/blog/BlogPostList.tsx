@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 import type { BlogPost } from '@/types/entities/blog-post'
 
 interface BlogPostListProps {
@@ -21,14 +22,15 @@ function StatusBadge({ post }: { post: BlogPost }) {
 }
 
 export default function BlogPostList({ posts, onEdit, onDelete }: BlogPostListProps) {
+  const { t } = useTranslation();
   if (posts.length === 0) {
     return (
       <div className="py-12 text-center">
         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        <h3 className="mt-2 text-sm font-medium text-gray-900">No posts yet</h3>
-        <p className="mt-1 text-sm text-gray-500">Get started by creating your first blog post.</p>
+        <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No posts yet')}</h3>
+        <p className="mt-1 text-sm text-gray-500">{t('Get started by creating your first blog post.')}</p>
       </div>
     )
   }
@@ -38,10 +40,10 @@ export default function BlogPostList({ posts, onEdit, onDelete }: BlogPostListPr
       <table className="min-w-full divide-y divide-gray-300">
         <thead className="bg-gray-50">
           <tr>
-            <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Title</th>
-            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
-            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Author</th>
-            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Published</th>
+            <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{t('Title')}</th>
+            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Status')}</th>
+            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Author')}</th>
+            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Published')}</th>
             <th className="relative py-3.5 pl-3 pr-4"><span className="sr-only">Actions</span></th>
           </tr>
         </thead>
@@ -55,7 +57,7 @@ export default function BlogPostList({ posts, onEdit, onDelete }: BlogPostListPr
                 <StatusBadge post={post} />
               </td>
               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                {post.translation?.name ?? 'Default'}
+                {post.translation?.name ?? t('Default')}
               </td>
               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                 {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : '—'}
@@ -66,11 +68,11 @@ export default function BlogPostList({ posts, onEdit, onDelete }: BlogPostListPr
                     onClick={() => onEdit(post)}
                     className="text-blue-600 hover:text-blue-900 mr-4"
                   >
-                    Edit
+                    {t('Edit')}
                   </button>
                 ) : (
                   <Link href={`/blog-posts/${post.id}`} className="text-blue-600 hover:text-blue-900 mr-4">
-                    Edit
+                    {t('Edit')}
                   </Link>
                 )}
                 {onDelete && (
@@ -78,7 +80,7 @@ export default function BlogPostList({ posts, onEdit, onDelete }: BlogPostListPr
                     onClick={() => onDelete(post)}
                     className="text-red-600 hover:text-red-900"
                   >
-                    Delete
+                    {t('Delete')}
                   </button>
                 )}
               </td>

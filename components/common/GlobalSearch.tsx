@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/lib/i18n'
 import {
   MagnifyingGlassIcon,
   QrCodeIcon,
@@ -41,6 +42,7 @@ const mockResults: SearchResult[] = [
 ]
 
 export function GlobalSearch() {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -107,7 +109,7 @@ export function GlobalSearch() {
         className="flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1.5 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
       >
         <MagnifyingGlassIcon className="h-4 w-4" />
-        <span className="hidden sm:inline">Search...</span>
+        <span className="hidden sm:inline">{t('Search...')}</span>
         <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-gray-200 dark:border-gray-500 bg-gray-100 dark:bg-gray-600 px-1.5 py-0.5 text-[10px] font-mono text-gray-500 dark:text-gray-300">
           Ctrl K
         </kbd>
@@ -128,7 +130,7 @@ export function GlobalSearch() {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search QR codes, pages, users..."
+            placeholder={t('Search QR codes, pages, users...')}
             value={query}
             onChange={(e) => {
               setQuery(e.target.value)
@@ -146,12 +148,12 @@ export function GlobalSearch() {
         <div className="max-h-80 overflow-y-auto p-2">
           {query.length === 0 && (
             <p className="px-3 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-              Start typing to search...
+              {t('Start typing to search...')}
             </p>
           )}
           {query.length > 0 && flatResults.length === 0 && (
             <p className="px-3 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
-              No results found for &quot;{query}&quot;
+              {t('No results found for')} &quot;{query}&quot;
             </p>
           )}
           {Object.entries(groupedResults).map(([category, items]) => (
@@ -187,9 +189,9 @@ export function GlobalSearch() {
 
         {/* Footer hint */}
         <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-2 flex gap-4 text-[11px] text-gray-400">
-          <span><kbd className="font-mono">↑↓</kbd> navigate</span>
-          <span><kbd className="font-mono">↵</kbd> select</span>
-          <span><kbd className="font-mono">esc</kbd> close</span>
+          <span><kbd className="font-mono">↑↓</kbd> {t('navigate')}</span>
+          <span><kbd className="font-mono">↵</kbd> {t('select')}</span>
+          <span><kbd className="font-mono">esc</kbd> {t('close')}</span>
         </div>
       </div>
     </div>

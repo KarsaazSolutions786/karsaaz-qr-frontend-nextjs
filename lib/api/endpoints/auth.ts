@@ -1,5 +1,6 @@
 import apiClient from '@/lib/api/client'
 import { User } from '@/types/entities/user'
+import { generateOAuthStateForRedirect } from '@/lib/services/auth-workflow'
 
 // Auth API Endpoints — matching original Laravel backend
 
@@ -294,19 +295,22 @@ export const authAPI = {
   // Google OAuth — returns the redirect URL for server-side flow (fallback)
   getGoogleRedirectUrl: () => {
     const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
-    return `${rootUrl}/auth-workflow/google/redirect`
+    const state = generateOAuthStateForRedirect()
+    return `${rootUrl}/auth-workflow/google/redirect?state=${state}`
   },
 
   // Twitter/X OAuth
   getTwitterRedirectUrl: () => {
     const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
-    return `${rootUrl}/auth-workflow/twitter/redirect`
+    const state = generateOAuthStateForRedirect()
+    return `${rootUrl}/auth-workflow/twitter/redirect?state=${state}`
   },
 
   // Facebook OAuth
   getFacebookRedirectUrl: () => {
     const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
-    return `${rootUrl}/auth-workflow/facebook/redirect`
+    const state = generateOAuthStateForRedirect()
+    return `${rootUrl}/auth-workflow/facebook/redirect?state=${state}`
   },
 
   // Update profile

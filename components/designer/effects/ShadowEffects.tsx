@@ -3,6 +3,7 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/lib/i18n';
 
 interface ShadowSettings {
   enabled: boolean;
@@ -30,6 +31,7 @@ const defaultShadow: ShadowSettings = {
 };
 
 export default function ShadowEffects({ shadow, onChange }: ShadowEffectsProps) {
+  const { t } = useTranslation();
   const s = shadow ?? defaultShadow;
 
   const update = (partial: Partial<ShadowSettings>) => {
@@ -46,7 +48,7 @@ export default function ShadowEffects({ shadow, onChange }: ShadowEffectsProps) 
           onChange={(e) => update({ enabled: e.target.checked })}
           className="h-4 w-4"
         />
-        <Label htmlFor="shadow-enabled" className="font-semibold">Drop Shadow</Label>
+        <Label htmlFor="shadow-enabled" className="font-semibold">{t('Drop Shadow')}</Label>
       </div>
 
       {s.enabled && (
@@ -99,7 +101,7 @@ export default function ShadowEffects({ shadow, onChange }: ShadowEffectsProps) 
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">Color</Label>
+              <Label className="text-xs">{t('Color')}</Label>
               <div className="flex gap-2">
                 <Input
                   type="color"

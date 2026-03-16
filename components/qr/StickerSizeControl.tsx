@@ -7,6 +7,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface StickerSizeControlProps {
   size: number; // 0-1 (percentage)
@@ -33,6 +34,7 @@ export function StickerSizeControl({
   showOpacity = true,
   className = '',
 }: StickerSizeControlProps) {
+  const { t } = useTranslation();
   const pixelSize = Math.round(qrSize * size);
 
   return (
@@ -40,7 +42,7 @@ export function StickerSizeControl({
       {/* Size slider */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-gray-700">Sticker Size</label>
+          <label className="text-sm font-medium text-gray-700">{t('Sticker Size')}</label>
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-900">{Math.round(size * 100)}%</span>
             <span className="text-xs text-gray-500">({pixelSize}px)</span>
@@ -56,9 +58,9 @@ export function StickerSizeControl({
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
         />
         <div className="flex justify-between text-xs text-gray-500 mt-1">
-          <span>5% (Small)</span>
-          <span>20% (Default)</span>
-          <span>50% (Large)</span>
+          <span>5% ({t('Small')})</span>
+          <span>20% ({t('Default')})</span>
+          <span>50% ({t('Large')})</span>
         </div>
       </div>
 
@@ -66,7 +68,7 @@ export function StickerSizeControl({
       {showRotation && onRotationChange && (
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">Rotation</label>
+            <label className="text-sm font-medium text-gray-700">{t('Rotation')}</label>
             <span className="text-sm font-medium text-gray-900">{Math.round(rotation)}°</span>
           </div>
           <input
@@ -124,7 +126,7 @@ export function StickerSizeControl({
       {showOpacity && onOpacityChange && (
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">Opacity</label>
+            <label className="text-sm font-medium text-gray-700">{t('Opacity')}</label>
             <span className="text-sm font-medium text-gray-900">{Math.round(opacity * 100)}%</span>
           </div>
           <input
@@ -137,16 +139,16 @@ export function StickerSizeControl({
             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider-thumb"
           />
           <div className="flex justify-between text-xs text-gray-500 mt-1">
-            <span>10% (Transparent)</span>
+            <span>10% ({t('Transparent')})</span>
             <span>50%</span>
-            <span>100% (Opaque)</span>
+            <span>100% ({t('Opaque')})</span>
           </div>
         </div>
       )}
 
       {/* Visual indicator */}
       <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-        <p className="text-xs text-gray-600 mb-2">Preview Transform</p>
+        <p className="text-xs text-gray-600 mb-2">{t('Preview Transform')}</p>
         <div className="flex items-center justify-center h-24 bg-white rounded border border-gray-300">
           <div
             className="bg-primary-600 rounded flex items-center justify-center text-white font-bold transition-all"
@@ -164,12 +166,12 @@ export function StickerSizeControl({
 
       {/* Size recommendations */}
       <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-xs font-medium text-blue-900 mb-1">💡 Recommendations</p>
+        <p className="text-xs font-medium text-blue-900 mb-1">{t('Recommendations')}</p>
         <ul className="text-xs text-blue-800 space-y-1">
-          <li>• Default size (20%) works well for most stickers</li>
-          <li>• Keep stickers under 30% for better scannability</li>
-          <li>• Use rotation sparingly to maintain readability</li>
-          <li>• Full opacity (100%) recommended for best visibility</li>
+          <li>{t('Default size (20%) works well for most stickers')}</li>
+          <li>{t('Keep stickers under 30% for better scannability')}</li>
+          <li>{t('Use rotation sparingly to maintain readability')}</li>
+          <li>{t('Full opacity (100%) recommended for best visibility')}</li>
         </ul>
       </div>
     </div>
@@ -192,10 +194,11 @@ export function StickerSizeControlCompact({
   label = 'Size',
   className = '',
 }: StickerSizeControlCompactProps) {
+  const { t } = useTranslation();
   return (
     <div className={`sticker-size-control-compact ${className}`}>
       <div className="flex items-center justify-between mb-2">
-        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <label className="text-sm font-medium text-gray-700">{t(label)}</label>
         <span className="text-sm font-medium text-gray-900">{Math.round(size * 100)}%</span>
       </div>
       <input
@@ -232,6 +235,7 @@ export function StickerSizeControlAdvanced({
   ],
   ...props
 }: StickerSizeControlAdvancedProps) {
+  const { t } = useTranslation();
   const handlePresetClick = (preset: typeof presets[0]) => {
     onSizeChange(preset.size);
     if (preset.rotation !== undefined && onRotationChange) {
@@ -246,7 +250,7 @@ export function StickerSizeControlAdvanced({
     <div className="sticker-size-control-advanced">
       {/* Presets */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Quick Presets</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Quick Presets')}</label>
         <div className="grid grid-cols-3 gap-2">
           {presets.map((preset, index) => (
             <button
@@ -255,7 +259,7 @@ export function StickerSizeControlAdvanced({
               onClick={() => handlePresetClick(preset)}
               className="px-3 py-2 text-sm font-medium border-2 border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition"
             >
-              {preset.label}
+              {t(preset.label)}
             </button>
           ))}
         </div>

@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { VideoBlockData } from '@/types/entities/biolink'
 
 interface VideoBlockProps {
@@ -26,25 +29,26 @@ function getVideoEmbedUrl(url: string): string | null {
 
 export default function VideoBlock({ block, isEditing, onUpdate }: VideoBlockProps) {
   const { url, title } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Video URL</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Video URL')}</label>
           <input
             type="url"
             value={url}
             onChange={(e) => onUpdate?.({ ...block.data, url: e.target.value })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-            placeholder="YouTube or Vimeo URL"
+            placeholder={t('YouTube or Vimeo URL')}
           />
           <p className="mt-1 text-xs text-gray-500">
-            Supports YouTube and Vimeo links
+            {t('Supports YouTube and Vimeo links')}
           </p>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Title (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Title (optional)')}</label>
           <input
             type="text"
             value={title || ''}
@@ -61,7 +65,7 @@ export default function VideoBlock({ block, isEditing, onUpdate }: VideoBlockPro
   if (!embedUrl) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
-        <p className="text-sm text-gray-500">Invalid video URL</p>
+        <p className="text-sm text-gray-500">{t('Invalid video URL')}</p>
       </div>
     )
   }

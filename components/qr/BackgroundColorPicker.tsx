@@ -9,6 +9,7 @@
 
 import React from 'react';
 import { ColorPicker } from '../ui/ColorPicker';
+import { useTranslation } from '@/lib/i18n';
 
 export interface BackgroundColorPickerProps {
   value: string | null; // null = transparent
@@ -25,6 +26,7 @@ export function BackgroundColorPicker({
   showTransparent = true,
   className = '',
 }: BackgroundColorPickerProps) {
+  const { t } = useTranslation();
   const isTransparent = value === null || value === 'transparent';
 
   const handleColorChange = (color: string) => {
@@ -54,7 +56,7 @@ export function BackgroundColorPicker({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            {isTransparent ? '✓ Transparent' : 'Make Transparent'}
+            {isTransparent ? t('Transparent') : t('Make Transparent')}
           </button>
         )}
       </div>
@@ -76,15 +78,15 @@ export function BackgroundColorPicker({
             }}
           />
           <div className="relative text-center">
-            <p className="text-sm font-medium text-gray-700">Transparent Background</p>
-            <p className="text-xs text-gray-500 mt-1">QR code will have no background</p>
+            <p className="text-sm font-medium text-gray-700">{t('Transparent Background')}</p>
+            <p className="text-xs text-gray-500 mt-1">{t('QR code will have no background')}</p>
           </div>
         </div>
       )}
 
       {/* Preview */}
       <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Preview</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Preview')}</label>
         <div className="flex items-center gap-4">
           <div
             className="w-20 h-20 rounded-md border-2 border-gray-300 relative overflow-hidden"
@@ -104,12 +106,12 @@ export function BackgroundColorPicker({
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-900">
-              {isTransparent ? 'Transparent' : value || '#FFFFFF'}
+              {isTransparent ? t('Transparent') : value || '#FFFFFF'}
             </p>
             <p className="text-xs text-gray-500">
               {isTransparent
-                ? 'No background color'
-                : 'Background will be filled with this color'}
+                ? t('No background color')
+                : t('Background will be filled with this color')}
             </p>
           </div>
         </div>
@@ -139,9 +141,10 @@ export function BackgroundPresetPicker({
   onChange: (color: string | null) => void;
   className?: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div className={`background-preset-picker ${className}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Quick Presets</label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">{t('Quick Presets')}</label>
 
       <div className="grid grid-cols-5 gap-2">
         {BACKGROUND_PRESETS.map(preset => (

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, 
@@ -9,6 +11,7 @@ import {
   Trash2,
   Copy
 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface AIDesign {
   id: string;
@@ -34,6 +37,7 @@ interface AIDesignGeneratorProps {
 }
 
 const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose }) => {
+  const { t } = useTranslation();
   const [prompt, setPrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('modern');
   const [selectedColorScheme, setSelectedColorScheme] = useState('vibrant');
@@ -236,7 +240,7 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
               }}
               className="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors"
             >
-              Apply
+              {t('Apply')}
             </button>
             <button
               onClick={(e) => {
@@ -244,7 +248,7 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
                 duplicateDesign(design);
               }}
               className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-              title="Duplicate"
+              title={t('Duplicate')}
             >
               <Copy size={16} />
             </button>
@@ -255,7 +259,7 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
                   deleteFromHistory(design.id);
                 }}
                 className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors"
-                title="Delete"
+                title={t('Delete')}
               >
                 <Trash2 size={16} />
               </button>
@@ -276,8 +280,8 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
               <Sparkles className="text-white" size={20} />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">AI Design Generator</h2>
-              <p className="text-sm text-gray-500">Create stunning QR code designs with AI</p>
+              <h2 className="text-xl font-bold text-gray-900">{t('AI Design Generator')}</h2>
+              <p className="text-sm text-gray-500">{t('Create stunning QR code designs with AI')}</p>
             </div>
           </div>
           {onClose && (
@@ -293,9 +297,9 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
         {/* Tabs */}
         <div className="flex border-b border-gray-200 px-6">
           {[
-            { id: 'generate', label: 'Generate', icon: Sparkles },
-            { id: 'favorites', label: 'Favorites', icon: Star, count: favorites.length },
-            { id: 'history', label: 'History', icon: History, count: history.length },
+            { id: 'generate', label: t('Generate'), icon: Sparkles },
+            { id: 'favorites', label: t('Favorites'), icon: Star, count: favorites.length },
+            { id: 'history', label: t('History'), icon: History, count: history.length },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -325,48 +329,48 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Design Description
+                    {t('Design Description')}
                   </label>
                   <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Describe the QR code design you want..."
+                    placeholder={t('Describe the QR code design you want...')}
                     rows={4}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Style</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Style')}</label>
                   <select
                     value={selectedStyle}
                     onChange={(e) => setSelectedStyle(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                   >
-                    <option value="modern">Modern</option>
-                    <option value="vintage">Vintage</option>
-                    <option value="minimalist">Minimalist</option>
-                    <option value="playful">Playful</option>
-                    <option value="professional">Professional</option>
-                    <option value="artistic">Artistic</option>
+                    <option value="modern">{t('Modern')}</option>
+                    <option value="vintage">{t('Vintage')}</option>
+                    <option value="minimalist">{t('Minimalist')}</option>
+                    <option value="playful">{t('Playful')}</option>
+                    <option value="professional">{t('Professional')}</option>
+                    <option value="artistic">{t('Artistic')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Color Scheme
+                    {t('Color Scheme')}
                   </label>
                   <select
                     value={selectedColorScheme}
                     onChange={(e) => setSelectedColorScheme(e.target.value)}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                   >
-                    <option value="vibrant">Vibrant</option>
-                    <option value="pastel">Pastel</option>
-                    <option value="monochrome">Monochrome</option>
-                    <option value="dark">Dark</option>
-                    <option value="light">Light</option>
-                    <option value="neon">Neon</option>
+                    <option value="vibrant">{t('Vibrant')}</option>
+                    <option value="pastel">{t('Pastel')}</option>
+                    <option value="monochrome">{t('Monochrome')}</option>
+                    <option value="dark">{t('Dark')}</option>
+                    <option value="light">{t('Light')}</option>
+                    <option value="neon">{t('Neon')}</option>
                   </select>
                 </div>
 
@@ -382,12 +386,12 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
                   {isGenerating ? (
                     <>
                       <Loader2 className="animate-spin" size={20} />
-                      Generating...
+                      {t('Generating...')}
                     </>
                   ) : (
                     <>
                       <Sparkles size={20} />
-                      Generate Designs
+                      {t('Generate Designs')}
                     </>
                   )}
                 </button>
@@ -396,7 +400,7 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
               {/* Right: Results */}
               <div>
                 <h3 className="text-sm font-medium text-gray-700 mb-3">
-                  Generated Variations
+                  {t('Generated Variations')}
                 </h3>
                 {designs.length > 0 ? (
                   <div className="grid gap-3">
@@ -407,7 +411,7 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
                 ) : (
                   <div className="text-center py-12 text-gray-400">
                     <Sparkles size={48} className="mx-auto mb-3 opacity-50" />
-                    <p>Generate designs to see variations</p>
+                    <p>{t('Generate designs to see variations')}</p>
                   </div>
                 )}
               </div>
@@ -423,7 +427,7 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
               ) : (
                 <div className="col-span-full text-center py-12 text-gray-400">
                   <Star size={48} className="mx-auto mb-3 opacity-50" />
-                  <p>No favorite designs yet</p>
+                  <p>{t('No favorite designs yet')}</p>
                 </div>
               )}
             </div>
@@ -438,7 +442,7 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
               ) : (
                 <div className="col-span-full text-center py-12 text-gray-400">
                   <History size={48} className="mx-auto mb-3 opacity-50" />
-                  <p>No design history yet</p>
+                  <p>{t('No design history yet')}</p>
                 </div>
               )}
             </div>

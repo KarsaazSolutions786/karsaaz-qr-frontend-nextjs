@@ -16,6 +16,7 @@ import {
   PrintOptions,
   PrintMetadata,
 } from '@/lib/utils/print-utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface PrintButtonProps {
   svgElement: SVGElement | null;
@@ -38,6 +39,7 @@ export function PrintButton({
   disabled = false,
   className = '',
 }: PrintButtonProps) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [printOptions, setPrintOptions] = useState<PrintOptions>(options);
@@ -104,14 +106,14 @@ export function PrintButton({
         ) : (
           <Printer className="w-4 h-4" />
         )}
-        <span>Print</span>
+        <span>{t('Print')}</span>
       </button>
       
       {/* Preview button */}
       <button
         onClick={handlePreview}
         disabled={disabled || isLoading || !svgElement}
-        title="Print Preview"
+        title={t('Print Preview')}
         className={`
           inline-flex items-center justify-center rounded-lg
           transition-all disabled:opacity-50 disabled:cursor-not-allowed
@@ -130,7 +132,7 @@ export function PrintButton({
         <button
           onClick={() => setShowOptions(!showOptions)}
           disabled={disabled}
-          title="Print Settings"
+          title={t('Print Settings')}
           className={`
             inline-flex items-center justify-center rounded-lg
             transition-all disabled:opacity-50 disabled:cursor-not-allowed
@@ -148,41 +150,41 @@ export function PrintButton({
       {/* Settings panel */}
       {showSettings && showOptions && (
         <div className="absolute top-full left-0 mt-2 p-4 bg-white rounded-lg shadow-lg border border-gray-200 z-10 min-w-[300px]">
-          <h3 className="text-sm font-medium text-gray-900 mb-3">Print Settings</h3>
+          <h3 className="text-sm font-medium text-gray-900 mb-3">{t('Print Settings')}</h3>
           
           <div className="space-y-3">
             {/* Page size */}
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Page Size</label>
+              <label className="block text-xs text-gray-600 mb-1">{t('Page Size')}</label>
               <select
                 value={printOptions.pageSize || 'a4'}
                 onChange={(e) => setPrintOptions({ ...printOptions, pageSize: e.target.value as any })}
                 className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded"
               >
-                <option value="a4">A4</option>
-                <option value="letter">Letter</option>
-                <option value="legal">Legal</option>
-                <option value="a3">A3</option>
-                <option value="a5">A5</option>
+                <option value="a4">{t('A4')}</option>
+                <option value="letter">{t('Letter')}</option>
+                <option value="legal">{t('Legal')}</option>
+                <option value="a3">{t('A3')}</option>
+                <option value="a5">{t('A5')}</option>
               </select>
             </div>
             
             {/* Orientation */}
             <div>
-              <label className="block text-xs text-gray-600 mb-1">Orientation</label>
+              <label className="block text-xs text-gray-600 mb-1">{t('Orientation')}</label>
               <select
                 value={printOptions.orientation || 'portrait'}
                 onChange={(e) => setPrintOptions({ ...printOptions, orientation: e.target.value as any })}
                 className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded"
               >
-                <option value="portrait">Portrait</option>
-                <option value="landscape">Landscape</option>
+                <option value="portrait">{t('Portrait')}</option>
+                <option value="landscape">{t('Landscape')}</option>
               </select>
             </div>
             
             {/* QR Size */}
             <div>
-              <label className="block text-xs text-gray-600 mb-1">QR Size (px)</label>
+              <label className="block text-xs text-gray-600 mb-1">{t('QR Size (px)')}</label>
               <input
                 type="number"
                 min={100}
@@ -242,6 +244,7 @@ export function PrintButtonCompact({
   disabled = false,
   className = '',
 }: Omit<PrintButtonProps, 'variant' | 'size' | 'showSettings'>) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   
   const handlePrint = async () => {
@@ -266,7 +269,7 @@ export function PrintButtonCompact({
     <button
       onClick={handlePrint}
       disabled={disabled || isLoading || !svgElement}
-      title="Print QR Code"
+      title={t('Print QR Code')}
       className={`
         inline-flex items-center justify-center w-10 h-10 rounded-lg
         bg-gray-100 text-gray-600 hover:bg-gray-200

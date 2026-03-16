@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
 import { CalendarIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from '@/lib/i18n'
 import type { DateRange } from 'react-day-picker'
 
 export interface DateRangeValue {
@@ -92,6 +93,7 @@ export function DateRangeInput({
   presets,
   className,
 }: DateRangeInputProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const resolvedPresets = presets ?? defaultPresets
 
@@ -100,7 +102,7 @@ export function DateRangeInput({
       return `${formatDate(value.from)} – ${formatDate(value.to)}`
     }
     if (value.from) return formatDate(value.from)
-    return 'Select date range'
+    return t('Select date range')
   }, [value])
 
   const handleCalendarSelect = useCallback(
@@ -147,7 +149,7 @@ export function DateRangeInput({
                 className="justify-start text-xs"
                 onClick={() => handlePreset(preset)}
               >
-                {preset.label}
+                {t(preset.label)}
               </Button>
             ))}
           </div>

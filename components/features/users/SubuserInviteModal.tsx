@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import {
   Dialog,
   DialogContent,
@@ -27,6 +28,7 @@ interface SubuserInviteModalProps {
 }
 
 export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }: SubuserInviteModalProps) {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { data: rolesData } = useRoles()
   const roles = rolesData?.data ?? []
@@ -54,7 +56,7 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
       const msg =
         err?.response?.data?.message ||
         Object.values(err?.response?.data?.errors || {}).flat().join(' ') ||
-        'Failed to send invitation.'
+        t('Failed to send invitation.')
       setError(msg as string)
     },
   })
@@ -73,7 +75,7 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
     setError(null)
 
     if (!email) {
-      setError('Email is required.')
+      setError(t('Email is required.'))
       return
     }
 
@@ -84,9 +86,9 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Invite Sub-User</DialogTitle>
+          <DialogTitle>{t('Invite Sub-User')}</DialogTitle>
           <DialogDescription>
-            Send an invitation to join as a sub-user under this account.
+            {t('Send an invitation to join as a sub-user under this account.')}
           </DialogDescription>
         </DialogHeader>
 
@@ -100,12 +102,12 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
           {/* Name */}
           <div>
             <Label htmlFor="invite-name" className="mb-1.5 block">
-              Name
+              {t('Name')}
             </Label>
             <Input
               id="invite-name"
               type="text"
-              placeholder="Sub-user name"
+              placeholder={t('Sub-user name')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -115,7 +117,7 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
           {/* Email */}
           <div>
             <Label htmlFor="invite-email" className="mb-1.5 block">
-              Email Address <span className="text-red-500">*</span>
+              {t('Email Address')} <span className="text-red-500">*</span>
             </Label>
             <Input
               id="invite-email"
@@ -130,7 +132,7 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
           {/* Role */}
           <div>
             <Label htmlFor="invite-role" className="mb-1.5 block">
-              Role
+              {t('Role')}
             </Label>
             <select
               id="invite-role"
@@ -138,7 +140,7 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
               onChange={(e) => setRoleId(e.target.value)}
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="">— Select a role —</option>
+              <option value="">{t('Select a role')}</option>
               {roles.map((role) => (
                 <option key={role.id} value={role.id}>
                   {role.name}
@@ -150,11 +152,11 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
           {/* Message */}
           <div>
             <Label htmlFor="invite-message" className="mb-1.5 block">
-              Message (optional)
+              {t('Message (optional)')}
             </Label>
             <Textarea
               id="invite-message"
-              placeholder="Add a personal message to the invitation..."
+              placeholder={t('Add a personal message to the invitation...')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
@@ -163,11 +165,11 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose}>
-              Cancel
+              {t('Cancel')}
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              Send Invitation
+              {t('Send Invitation')}
             </Button>
           </DialogFooter>
         </form>

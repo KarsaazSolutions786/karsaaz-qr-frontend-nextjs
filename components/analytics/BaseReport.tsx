@@ -3,6 +3,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { AlertCircle, BarChart3 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface BaseReportProps {
   title: string
@@ -21,6 +22,8 @@ export function BaseReport({
   children,
   className,
 }: BaseReportProps) {
+  const { t } = useTranslation()
+
   return (
     <div className={cn('rounded-lg border border-gray-200 bg-white p-6', className)}>
       <h3 className="mb-4 text-lg font-bold text-gray-900">{title}</h3>
@@ -39,7 +42,7 @@ export function BaseReport({
       ) : isEmpty ? (
         <div className="py-8 text-center">
           <BarChart3 className="mx-auto h-12 w-12 text-gray-300" />
-          <p className="mt-3 text-sm text-gray-500">No data available</p>
+          <p className="mt-3 text-sm text-gray-500">{t('No data available')}</p>
         </div>
       ) : (
         children

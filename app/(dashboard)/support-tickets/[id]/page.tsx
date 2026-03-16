@@ -1,6 +1,7 @@
 'use client'
 
 import { use, useState, useEffect } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { useAuth } from '@/lib/context/AuthContext'
@@ -16,6 +17,7 @@ const STATUS_BADGES: Record<SupportTicket['status'], { label: string; className:
 }
 
 export default function TicketDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { t } = useTranslation()
   const { id } = use(params)
   const { user } = useAuth()
   const [ticket, setTicket] = useState<SupportTicket | null>(null)
@@ -107,7 +109,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6">
         <Link href="/support-tickets" className="text-sm text-blue-600 hover:text-blue-900">
-          ← Back to Tickets
+          {t('Back to Tickets')}
         </Link>
       </div>
 
@@ -127,17 +129,17 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
           </div>
           <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-gray-600 sm:grid-cols-4">
             <div>
-              <span className="font-medium text-gray-900">Priority:</span> {ticket.priority}
+              <span className="font-medium text-gray-900">{t('Priority:')}</span> {ticket.priority}
             </div>
             <div>
-              <span className="font-medium text-gray-900">Department:</span> {ticket.department}
+              <span className="font-medium text-gray-900">{t('Department:')}</span> {ticket.department}
             </div>
             <div>
-              <span className="font-medium text-gray-900">Created:</span>{' '}
+              <span className="font-medium text-gray-900">{t('Created:')}</span>{' '}
               {new Date(ticket.created_at).toLocaleDateString()}
             </div>
             <div>
-              <span className="font-medium text-gray-900">Updated:</span>{' '}
+              <span className="font-medium text-gray-900">{t('Updated:')}</span>{' '}
               {new Date(ticket.updated_at).toLocaleDateString()}
             </div>
           </div>
@@ -146,7 +148,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
 
       {/* Conversation */}
       <div className="bg-white shadow-md rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Conversation</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('Conversation')}</h2>
         <TicketConversation
           messages={messages}
           onReply={handleReply}

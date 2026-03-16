@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useTranslation } from '@/lib/i18n'
 import { Suspense } from 'react'
 import { User } from '@/types/entities/user'
-import { authWorkflowEngine, type OAuthProviderName } from '@/lib/services/auth-workflow'
+import { authWorkflowEngine, validateOAuthState, type OAuthProviderName } from '@/lib/services/auth-workflow'
 import Link from 'next/link'
 
 /**
@@ -18,6 +19,7 @@ function AuthCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { setUser } = useAuth()
+  const { t } = useTranslation()
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -27,28 +29,36 @@ function AuthCallbackContent() {
         const provider = searchParams.get('provider') as OAuthProviderName | null
         const userParam = searchParams.get('user')
         const tokenParam = searchParams.get('token')
+        const stateParam = searchParams.get('state')
 
-        let userData: User
-        let token: string
-
-        if (code && provider) {
-          // OAuth code exchange flow
-          const result = await authWorkflowEngine.handleCallback(provider, code)
-          userData = result.user as unknown as User
-          token = result.token
-        } else if (userParam && tokenParam) {
-          // Base64 encoded flow (existing)
-          userData = JSON.parse(atob(userParam))
-          token = atob(tokenParam)
-        } else {
-          setError('Invalid callback parameters. Please try logging in again.')
+        // SECURITY: Validate OAuth state parameter to prevent CSRF attacks
+        if (!validateOAuthState(stateParam)) {
+          console.error('[Security] OAuth state mismatch - possible CSRF attack')
+          router.replace('/login?error=state_mismatch')
           return
         }
 
-        // Store auth data
+        let userData: User
+
+        if (code && provider) {
+          // OAuth code exchange flow (token is set as httpOnly cookie by backend)
+          const result = await authWorkflowEngine.handleCallback(provider, code)
+          userData = result.user as unknown as User
+        } else if (userParam && tokenParam) {
+          // SECURITY: Block direct token injection via URL params
+          console.error('[Security] Direct token injection attempted via URL params')
+          router.replace('/login?error=invalid_callback')
+          return
+        } else {
+          setError(t('Invalid callback parameters. Please try logging in again.'))
+          return
+        }
+
+        // Store auth data. Token is in httpOnly cookie from backend response.
         if (typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(userData))
-          localStorage.setItem('token', token)
+          localStorage.setItem('logged_in', 'true')
+          localStorage.removeItem('token') // Clean up legacy token
         }
         setUser(userData)
 
@@ -59,7 +69,7 @@ function AuthCallbackContent() {
         }
         router.push(homePage)
       } catch {
-        setError('Failed to process login. Please try again.')
+        setError(t('Failed to process login. Please try again.'))
       }
     }
 
@@ -70,13 +80,13 @@ function AuthCallbackContent() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
         <div className="w-full max-w-md text-center space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900">Login Failed</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('Login Failed')}</h2>
           <p className="text-sm text-gray-600">{error}</p>
           <Link
             href="/login"
             className="inline-block rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
           >
-            Back to Login
+            {t('Back to Login')}
           </Link>
         </div>
       </div>
@@ -87,7 +97,7 @@ function AuthCallbackContent() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="text-center space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
-        <p className="text-gray-600">Completing login...</p>
+        <p className="text-gray-600">{t('Completing login...')}</p>
       </div>
     </div>
   )
@@ -95,11 +105,13 @@ function AuthCallbackContent() {
 
 // T145: OAuth callback route supporting both base64 and code-exchange flows
 export default function AuthCallbackPage() {
+  const { t } = useTranslation()
+
   return (
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center">
-          <div className="text-gray-600">Loading...</div>
+          <div className="text-gray-600">{t('Loading...')}</div>
         </div>
       }
     >

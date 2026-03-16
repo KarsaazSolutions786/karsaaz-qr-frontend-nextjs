@@ -4,20 +4,23 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { promoCodesAPI, type PromoCode } from '@/lib/api/endpoints/promo-codes'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from '@/lib/i18n'
 
 function StatusBadge({ active }: { active: boolean }) {
+  const { t } = useTranslation()
   return (
     <span
       className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
         active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
       }`}
     >
-      {active ? 'Active' : 'Inactive'}
+      {active ? t('Active') : t('Inactive')}
     </span>
   )
 }
 
 export default function PromoCodesPage() {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const queryClient = useQueryClient()
@@ -33,7 +36,7 @@ export default function PromoCodesPage() {
   })
 
   const handleDelete = async (id: number, code: string) => {
-    if (!confirm(`Delete promo code "${code}"? This cannot be undone.`)) return
+    if (!confirm(t('Delete promo code "{{code}}"? This cannot be undone.').replace('{{code}}', code))) return
     await deleteMutation.mutateAsync(id)
   }
 
@@ -42,15 +45,15 @@ export default function PromoCodesPage() {
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Promo Codes</h1>
-          <p className="mt-2 text-sm text-gray-600">Manage discount codes for subscriptions</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Promo Codes')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Manage discount codes for subscriptions')}</p>
         </div>
         <div className="mt-4 sm:mt-0">
           <Link
             href="/promo-codes/new"
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
-            + Create Promo Code
+            {t('+ Create Promo Code')}
           </Link>
         </div>
       </div>
@@ -59,7 +62,7 @@ export default function PromoCodesPage() {
       <div className="mt-8 mb-6">
         <input
           type="search"
-          placeholder="Search by code…"
+          placeholder={t('Search by code...')}
           value={search}
           onChange={e => {
             setSearch(e.target.value)
@@ -81,22 +84,22 @@ export default function PromoCodesPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
-                    Code
+                    {t('Code')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Discount
+                    {t('Discount')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Usage
+                    {t('Usage')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Expiry
+                    {t('Expiry')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Status
+                    {t('Status')}
                   </th>
                   <th className="relative py-3.5 pl-3 pr-4">
-                    <span className="sr-only">Actions</span>
+                    <span className="sr-only">{t('Actions')}</span>
                   </th>
                 </tr>
               </thead>
@@ -110,12 +113,12 @@ export default function PromoCodesPage() {
                       {promo.discount_percentage}%
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {promo.times_used} / {promo.usage_limit ?? '∞'}
+                      {promo.times_used} / {promo.usage_limit ?? '\u221E'}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {promo.expires_at
                         ? new Date(promo.expires_at).toLocaleDateString()
-                        : 'No expiry'}
+                        : t('No expiry')}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm">
                       <StatusBadge active={promo.is_active} />
@@ -125,13 +128,13 @@ export default function PromoCodesPage() {
                         href={`/promo-codes/${promo.id}`}
                         className="text-blue-600 hover:text-blue-900"
                       >
-                        Edit
+                        {t('Edit')}
                       </Link>
                       <button
                         onClick={() => handleDelete(promo.id, promo.code)}
                         className="text-red-600 hover:text-red-900"
                       >
-                        Delete
+                        {t('Delete')}
                       </button>
                     </td>
                   </tr>
@@ -147,17 +150,17 @@ export default function PromoCodesPage() {
                 disabled={page === 1}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
-                Previous
+                {t('Previous')}
               </button>
               <span className="text-sm text-gray-600">
-                Page {page} of {data.pagination.lastPage}
+                {t('Page')} {page} {t('of')} {data.pagination.lastPage}
               </span>
               <button
                 onClick={() => setPage(p => p + 1)}
                 disabled={page >= data.pagination.lastPage}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
-                Next
+                {t('Next')}
               </button>
             </div>
           )}
@@ -177,13 +180,13 @@ export default function PromoCodesPage() {
               d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No promo codes</h3>
-          <p className="mt-1 text-sm text-gray-500">Get started by creating a promo code.</p>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No promo codes')}</h3>
+          <p className="mt-1 text-sm text-gray-500">{t('Get started by creating a promo code.')}</p>
           <Link
             href="/promo-codes/new"
             className="mt-6 inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
           >
-            + Create Promo Code
+            {t('+ Create Promo Code')}
           </Link>
         </div>
       )}

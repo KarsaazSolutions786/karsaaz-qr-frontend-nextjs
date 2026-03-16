@@ -9,6 +9,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, X, Zap, AlertCircle } from 'lucide-react';
 import { differenceInDays, differenceInHours, formatDistanceToNow } from 'date-fns';
+import { useTranslation } from '@/lib/i18n';
 
 export interface TrialMessageProps {
   trialEndsAt: Date | string;
@@ -17,6 +18,7 @@ export interface TrialMessageProps {
 }
 
 export function TrialMessage({ trialEndsAt, onUpgrade, onDismiss }: TrialMessageProps) {
+  const { t } = useTranslation();
   const [isDismissed, setIsDismissed] = useState(false);
   const [timeLeft, setTimeLeft] = useState('');
 
@@ -107,8 +109,8 @@ export function TrialMessage({ trialEndsAt, onUpgrade, onDismiss }: TrialMessage
               `}
             >
               <Zap className="w-4 h-4" />
-              <span className="hidden sm:inline">Upgrade Now</span>
-              <span className="sm:hidden">Upgrade</span>
+              <span className="hidden sm:inline">{t('Upgrade Now')}</span>
+              <span className="sm:hidden">{t('Upgrade')}</span>
             </button>
 
             {onDismiss && !isExpired && (

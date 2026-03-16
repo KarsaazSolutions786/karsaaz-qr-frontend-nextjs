@@ -7,13 +7,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Download, Loader2, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { X, Download, Loader2, AlertCircle, Lock } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 import {
   downloadQRCodesAsZipWithProgress,
   estimateZipSize,
   ZipDownloadOptions,
   QRCodeData,
 } from '@/lib/utils/zip-download';
+import { useSubscription } from '@/lib/hooks/useSubscription';
 
 export interface BulkActionsModalProps {
   isOpen: boolean;
@@ -52,22 +55,55 @@ function BulkDownloadModal({
   onClose: () => void;
   qrCodes: QRCodeData[];
 }) {
+  const { t } = useTranslation();
+  // Subscription-based download restrictions
+  const { plan, isOnTrial } = useSubscription();
+  const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0;
+
   const [format, setFormat] = useState<'svg' | 'png' | 'pdf' | 'all'>('png');
-  const [pngSize, setPngSize] = useState(1024);
+  const [pngSize, setPngSize] = useState(isFreePlan ? 512 : 1024);
   const [includeMetadata, setIncludeMetadata] = useState(false);
   const [folderStructure, setFolderStructure] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentFile, setCurrentFile] = useState('');
   const [error, setError] = useState<string | null>(null);
-  
+
+  const isPremiumFormat = (f: string) => f === 'svg' || f === 'pdf' || f === 'all';
+
+  const handleFormatSelect = (f: 'svg' | 'png' | 'pdf' | 'all') => {
+    if (isFreePlan && isPremiumFormat(f)) {
+      toast.info(`${f.toUpperCase()} bulk download requires a paid plan. Upgrade to unlock all formats.`);
+      return;
+    }
+    setFormat(f);
+  };
+
+  const handlePngSizeSelect = (size: number) => {
+    if (isFreePlan && size > 512) {
+      toast.info('Higher resolution downloads require a paid plan. Upgrade to unlock all sizes.');
+      return;
+    }
+    setPngSize(size);
+  };
+
   const estimatedSize = estimateZipSize(qrCodes.length, format, pngSize);
   
   const handleDownload = async () => {
+    // Enforce format restrictions for free/trial plans
+    if (isFreePlan && isPremiumFormat(format)) {
+      toast.info(`${format.toUpperCase()} download requires a paid plan. Upgrade to unlock all formats.`);
+      return;
+    }
+    if (isFreePlan && pngSize > 512) {
+      toast.info('This PNG size requires a paid plan. Please select 512px or smaller.');
+      return;
+    }
+
     setIsDownloading(true);
     setError(null);
     setProgress(0);
-    
+
     try {
       const options: ZipDownloadOptions = {
         format,
@@ -120,47 +156,68 @@ function BulkDownloadModal({
           {/* Format selector */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Download Format
+              {t('Download Format')}
             </label>
             <div className="grid grid-cols-2 gap-2">
-              {(['png', 'svg', 'pdf', 'all'] as const).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFormat(f)}
-                  disabled={isDownloading}
-                  className={`
-                    px-4 py-2 rounded-lg border-2 font-medium text-sm transition-all
-                    ${format === f
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
-                    }
-                    ${isDownloading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                  `}
-                >
-                  {f.toUpperCase()}
-                </button>
-              ))}
+              {(['png', 'svg', 'pdf', 'all'] as const).map((f) => {
+                const locked = isFreePlan && isPremiumFormat(f);
+                return (
+                  <button
+                    key={f}
+                    onClick={() => handleFormatSelect(f)}
+                    disabled={isDownloading}
+                    className={`
+                      px-4 py-2 rounded-lg border-2 font-medium text-sm transition-all flex items-center justify-center gap-1
+                      ${locked
+                        ? 'border-gray-100 bg-gray-50 text-gray-400 opacity-50 cursor-not-allowed'
+                        : format === f
+                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300'
+                      }
+                      ${isDownloading ? 'opacity-50 cursor-not-allowed' : !locked ? 'cursor-pointer' : ''}
+                    `}
+                    title={locked ? `${f.toUpperCase()} requires a paid plan` : undefined}
+                  >
+                    {f.toUpperCase()}
+                    {locked && <Lock className="w-3 h-3" />}
+                  </button>
+                );
+              })}
             </div>
+            {isFreePlan && (
+              <p className="mt-2 text-xs text-gray-500">
+                {t('Free plan: PNG only (up to 512px). Upgrade for more formats.')}
+              </p>
+            )}
           </div>
           
           {/* PNG size */}
           {(format === 'png' || format === 'all') && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                PNG Size
+                {t('PNG Size')}
               </label>
               <select
                 value={pngSize}
-                onChange={(e) => setPngSize(parseInt(e.target.value))}
+                onChange={(e) => handlePngSizeSelect(parseInt(e.target.value))}
                 disabled={isDownloading}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               >
-                <option value={256}>256 × 256</option>
-                <option value={512}>512 × 512</option>
-                <option value={1024}>1024 × 1024</option>
-                <option value={2048}>2048 × 2048</option>
-                <option value={4096}>4096 × 4096</option>
+                <option value={256}>256 x 256</option>
+                <option value={512}>512 x 512</option>
+                <option value={1024} disabled={isFreePlan}>
+                  1024 x 1024{isFreePlan ? ' (paid plan)' : ''}
+                </option>
+                <option value={2048} disabled={isFreePlan}>
+                  2048 x 2048{isFreePlan ? ' (paid plan)' : ''}
+                </option>
+                <option value={4096} disabled={isFreePlan}>
+                  4096 x 4096{isFreePlan ? ' (paid plan)' : ''}
+                </option>
               </select>
+              {isFreePlan && (
+                <p className="mt-1 text-xs text-gray-500">{t('Free plan: up to 512px. Upgrade for larger sizes.')}</p>
+              )}
             </div>
           )}
           
@@ -174,7 +231,7 @@ function BulkDownloadModal({
                 disabled={isDownloading}
                 className="rounded"
               />
-              Include metadata (JSON files)
+              {t('Include metadata (JSON files)')}
             </label>
             
             <label className="flex items-center gap-2 text-sm text-gray-700">
@@ -185,14 +242,14 @@ function BulkDownloadModal({
                 disabled={isDownloading}
                 className="rounded"
               />
-              Preserve folder structure
+              {t('Preserve folder structure')}
             </label>
           </div>
           
           {/* Estimated size */}
           <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Estimated ZIP size:</span>
+              <span className="text-gray-600">{t('Estimated ZIP size:')}</span>
               <span className="font-medium text-gray-900">{estimatedSize.formatted}</span>
             </div>
           </div>
@@ -201,7 +258,7 @@ function BulkDownloadModal({
           {isDownloading && (
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-gray-600">
-                <span>Creating ZIP...</span>
+                <span>{t('Creating ZIP...')}</span>
                 <span>{progress}%</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
@@ -223,7 +280,7 @@ function BulkDownloadModal({
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
               <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-red-800">Error</p>
+                <p className="text-sm font-medium text-red-800">{t('Error')}</p>
                 <p className="text-xs text-red-700 mt-1">{error}</p>
               </div>
             </div>
@@ -237,7 +294,7 @@ function BulkDownloadModal({
             disabled={isDownloading}
             className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg disabled:opacity-50"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             onClick={handleDownload}
@@ -247,12 +304,12 @@ function BulkDownloadModal({
             {isDownloading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Creating ZIP...</span>
+                <span>{t('Creating ZIP...')}</span>
               </>
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                <span>Download ZIP</span>
+                <span>{t('Download ZIP')}</span>
               </>
             )}
           </button>
@@ -274,6 +331,7 @@ function BulkDeleteModal({
   onClose: () => void;
   qrCodes: QRCodeData[];
 }) {
+  const { t } = useTranslation();
   const [isDeleting, setIsDeleting] = useState(false);
   
   const handleDelete = async () => {
@@ -293,8 +351,8 @@ function BulkDeleteModal({
               <AlertCircle className="w-6 h-6 text-red-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Delete QR Codes</h2>
-              <p className="text-sm text-gray-600">This action cannot be undone</p>
+              <h2 className="text-lg font-bold text-gray-900">{t('Delete QR Codes')}</h2>
+              <p className="text-sm text-gray-600">{t('This action cannot be undone')}</p>
             </div>
           </div>
           
@@ -309,7 +367,7 @@ function BulkDeleteModal({
               disabled={isDeleting}
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               onClick={handleDelete}
@@ -319,7 +377,7 @@ function BulkDeleteModal({
               {isDeleting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Deleting...</span>
+                  <span>{t('Deleting...')}</span>
                 </>
               ) : (
                 <span>Delete {qrCodes.length} {qrCodes.length === 1 ? 'Code' : 'Codes'}</span>

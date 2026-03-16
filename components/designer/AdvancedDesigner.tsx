@@ -25,6 +25,7 @@ import StrokeEffects from './effects/StrokeEffects'
 import DepthEffects from './effects/DepthEffects'
 import { ColorFields, EyeShapeFields, CornerFields } from './fields'
 import { QRCodeSVG } from 'qrcode.react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface QRDesign {
   // Colors
@@ -164,6 +165,7 @@ const designPresets = [
 ]
 
 export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedDesignerProps) {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('colors')
 
   const handleExport = () => {
@@ -209,22 +211,22 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Advanced QR Designer</CardTitle>
-                <CardDescription>Customize every aspect of your QR code</CardDescription>
+                <CardTitle>{t('Advanced QR Designer')}</CardTitle>
+                <CardDescription>{t('Customize every aspect of your QR code')}</CardDescription>
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={handleReset}>
                   <RotateCcw className="w-4 h-4 mr-2" />
-                  Reset
+                  {t('Reset')}
                 </Button>
                 <Button variant="outline" size="sm" onClick={handleExport}>
                   <Download className="w-4 h-4 mr-2" />
-                  Export
+                  {t('Export')}
                 </Button>
                 <label htmlFor="import-design">
                   <span className="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 cursor-pointer">
                     <Upload className="w-4 h-4 mr-2" />
-                    Import
+                    {t('Import')}
                   </span>
                   <input
                     id="import-design"
@@ -240,7 +242,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
           <CardContent>
             {/* Design Presets */}
             <div className="mb-6">
-              <Label className="mb-3 block">Quick Presets</Label>
+              <Label className="mb-3 block">{t('Quick Presets')}</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {designPresets.map(preset => (
                   <Button
@@ -249,7 +251,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                     className="h-auto py-3"
                     onClick={() => applyPreset(preset.design)}
                   >
-                    {preset.name}
+                    {t(preset.name)}
                   </Button>
                 ))}
               </div>
@@ -260,23 +262,23 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
               <TabsList className="grid grid-cols-6 w-full">
                 <TabsTrigger value="colors">
                   <Palette className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Colors</span>
+                  <span className="hidden sm:inline">{t('Colors')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="shapes">
                   <Shapes className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Shapes</span>
+                  <span className="hidden sm:inline">{t('Shapes')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="logo">
                   <ImageIcon className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Logo</span>
+                  <span className="hidden sm:inline">{t('Logo')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="advanced">
                   <Settings className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Advanced</span>
+                  <span className="hidden sm:inline">{t('Advanced')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="effects">
                   <Layers className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">Effects</span>
+                  <span className="hidden sm:inline">{t('Effects')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="ai">
                   <Sparkles className="w-4 h-4 mr-2" />
@@ -296,7 +298,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                   />
 
                   <div className="border-t pt-4">
-                    <Label className="mb-3 block">Gradient Settings</Label>
+                    <Label className="mb-3 block">{t('Gradient Settings')}</Label>
                     <GradientEditor
                       gradient={design.gradient}
                       onChange={gradient => onChange({ ...design, gradient })}
@@ -330,7 +332,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
               <TabsContent value="logo" className="space-y-6 mt-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="logo-url">Logo URL</Label>
+                    <Label htmlFor="logo-url">{t('Logo URL')}</Label>
                     <Input
                       id="logo-url"
                       type="url"
@@ -352,7 +354,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                   {design.logo?.url && (
                     <>
                       <div className="space-y-2">
-                        <Label htmlFor="logo-size">Logo Size: {design.logo.size}px</Label>
+                        <Label htmlFor="logo-size">{t('Logo Size:')} {design.logo.size}px</Label>
                         <Input
                           id="logo-size"
                           type="range"
@@ -368,7 +370,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="logo-padding">Logo Padding: {design.logo.padding}px</Label>
+                        <Label htmlFor="logo-padding">{t('Logo Padding:')} {design.logo.padding}px</Label>
                         <Input
                           id="logo-padding"
                           type="range"
@@ -384,7 +386,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="logo-bg">Logo Background (optional)</Label>
+                        <Label htmlFor="logo-bg">{t('Logo Background (optional)')}</Label>
                         <div className="flex gap-2">
                           <Input
                             id="logo-bg"
@@ -407,7 +409,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                               onChange({ ...design, logo: rest })
                             }}
                           >
-                            Clear
+                            {t('Clear')}
                           </Button>
                         </div>
                       </div>
@@ -420,7 +422,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
               <TabsContent value="advanced" className="space-y-6 mt-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="error-correction">Error Correction Level</Label>
+                    <Label htmlFor="error-correction">{t('Error Correction Level')}</Label>
                     <select
                       id="error-correction"
                       value={design.errorCorrectionLevel}
@@ -432,14 +434,14 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                       }
                       className="w-full px-3 py-2 border rounded-md"
                     >
-                      <option value="L">Low (7%)</option>
-                      <option value="M">Medium (15%)</option>
-                      <option value="Q">Quartile (25%)</option>
-                      <option value="H">High (30%)</option>
+                      <option value="L">{t('Low (7%)')}</option>
+                      <option value="M">{t('Medium (15%)')}</option>
+                      <option value="Q">{t('Quartile (25%)')}</option>
+                      <option value="H">{t('High (30%)')}</option>
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="quiet-zone">Quiet Zone: {design.quietZone}px</Label>
+                    <Label htmlFor="quiet-zone">{t('Quiet Zone:')} {design.quietZone}px</Label>
                     <Input
                       id="quiet-zone"
                       type="range"
@@ -458,12 +460,12 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                         onChange={e => onChange({ ...design, roundedCorners: e.target.checked })}
                         className="w-4 h-4"
                       />
-                      <Label htmlFor="rounded-corners">Rounded Corners</Label>
+                      <Label htmlFor="rounded-corners">{t('Rounded Corners')}</Label>
                     </div>
                   </div>
                   {design.roundedCorners && (
                     <div className="space-y-2">
-                      <Label htmlFor="corner-radius">Corner Radius: {design.cornerRadius}px</Label>
+                      <Label htmlFor="corner-radius">{t('Corner Radius:')} {design.cornerRadius}px</Label>
                       <Input
                         id="corner-radius"
                         type="range"
@@ -478,7 +480,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                   )}
 
                   <div className="border-t pt-4">
-                    <Label className="mb-3 block">Eye Shape</Label>
+                    <Label className="mb-3 block">{t('Eye Shape')}</Label>
                     <EyeShapeFields
                       eyeSettings={{
                         outerShape: 'square',
@@ -490,7 +492,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
                   </div>
 
                   <div className="border-t pt-4">
-                    <Label className="mb-3 block">Corner Style</Label>
+                    <Label className="mb-3 block">{t('Corner Style')}</Label>
                     <CornerFields
                       cornerSettings={{
                         style: design.roundedCorners ? 'rounded' : 'square',
@@ -531,11 +533,11 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
               <TabsContent value="ai" className="space-y-6 mt-6">
                 <div className="text-center py-12">
                   <Sparkles className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-semibold mb-2">AI-Powered Design</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('AI-Powered Design')}</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Coming soon: Generate unique QR designs with AI
+                    {t('Coming soon: Generate unique QR designs with AI')}
                   </p>
-                  <Button disabled>Generate with AI</Button>
+                  <Button disabled>{t('Generate with AI')}</Button>
                 </div>
               </TabsContent>
             </Tabs>
@@ -547,8 +549,8 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
       <div className="lg:col-span-1">
         <Card className="sticky top-4">
           <CardHeader>
-            <CardTitle>Live Preview</CardTitle>
-            <CardDescription>See your changes in real-time</CardDescription>
+            <CardTitle>{t('Live Preview')}</CardTitle>
+            <CardDescription>{t('See your changes in real-time')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 flex items-center justify-center">
@@ -596,11 +598,11 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
             </div>
             <div className="mt-4 space-y-2 text-xs text-muted-foreground">
               <div className="flex justify-between">
-                <span>Shape:</span>
+                <span>{t('Shape:')}</span>
                 <span className="font-medium text-foreground capitalize">{design.moduleShape}</span>
               </div>
               <div className="flex justify-between">
-                <span>Colors:</span>
+                <span>{t('Colors:')}</span>
                 <div className="flex gap-1">
                   <div
                     className="w-4 h-4 rounded border"
@@ -614,7 +616,7 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
               </div>
               {design.gradient && design.gradient.type !== 'none' && (
                 <div className="flex justify-between">
-                  <span>Gradient:</span>
+                  <span>{t('Gradient:')}</span>
                   <span className="font-medium text-foreground capitalize">
                     {design.gradient.type}
                   </span>
@@ -622,20 +624,20 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
               )}
               {design.shadow?.enabled && (
                 <div className="flex justify-between">
-                  <span>Shadow:</span>
-                  <span className="font-medium text-foreground">On</span>
+                  <span>{t('Shadow:')}</span>
+                  <span className="font-medium text-foreground">{t('On')}</span>
                 </div>
               )}
               {design.stroke?.enabled && (
                 <div className="flex justify-between">
-                  <span>Stroke:</span>
+                  <span>{t('Stroke:')}</span>
                   <span className="font-medium text-foreground">{design.stroke.width}px</span>
                 </div>
               )}
               {design.depth?.enabled && (
                 <div className="flex justify-between">
                   <span>3D:</span>
-                  <span className="font-medium text-foreground">On</span>
+                  <span className="font-medium text-foreground">{t('On')}</span>
                 </div>
               )}
             </div>

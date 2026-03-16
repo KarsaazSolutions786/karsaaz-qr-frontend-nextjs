@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Star, Send, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { submitReview } from '@/lib/api/public-qrcodes';
+import { useTranslation } from '@/lib/i18n';
 
 interface ReviewFormProps {
   businessName: string;
@@ -13,6 +14,7 @@ interface ReviewFormProps {
 }
 
 export default function ReviewForm({ businessName, slug, onSuccess, primaryColor = '#2563eb' }: ReviewFormProps) {
+  const { t } = useTranslation();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [formData, setFormData] = useState({
@@ -28,22 +30,22 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
     setError('');
 
     if (rating === 0) {
-      setError('Please select a rating');
+      setError(t('Please select a rating'));
       return;
     }
 
     if (!formData.name.trim()) {
-      setError('Please enter your name');
+      setError(t('Please enter your name'));
       return;
     }
 
     if (!formData.email.trim()) {
-      setError('Please enter your email');
+      setError(t('Please enter your email'));
       return;
     }
 
     if (!formData.comment.trim()) {
-      setError('Please enter your review');
+      setError(t('Please enter your review'));
       return;
     }
 
@@ -64,7 +66,7 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
         onSuccess();
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to submit review. Please try again.');
+      setError(err.message || t('Failed to submit review. Please try again.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -82,7 +84,7 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
       {/* Star Rating */}
       <div>
         <label className="block text-sm font-semibold text-gray-900 mb-3">
-          Rate Your Experience
+          {t('Rate Your Experience')}
         </label>
         <div className="flex items-center gap-2">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -109,7 +111,7 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
           ))}
           {rating > 0 && (
             <span className="ml-3 text-lg font-semibold text-gray-700">
-              {rating} {rating === 1 ? 'Star' : 'Stars'}
+              {rating} {rating === 1 ? t('Star') : t('Stars')}
             </span>
           )}
         </div>
@@ -118,7 +120,7 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
       {/* Name Input */}
       <div>
         <label htmlFor="name" className="block text-sm font-semibold text-gray-900 mb-2">
-          Your Name <span className="text-red-500">*</span>
+          {t('Your Name')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -130,7 +132,7 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
           style={{ 
             '--tw-ring-color': primaryColor,
           } as any}
-          placeholder="Enter your full name"
+          placeholder={t('Enter your full name')}
           disabled={isSubmitting}
           required
         />
@@ -139,7 +141,7 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
       {/* Email Input */}
       <div>
         <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-2">
-          Your Email <span className="text-red-500">*</span>
+          {t('Your Email')} <span className="text-red-500">*</span>
         </label>
         <input
           type="email"
@@ -160,7 +162,7 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
       {/* Comment Textarea */}
       <div>
         <label htmlFor="comment" className="block text-sm font-semibold text-gray-900 mb-2">
-          Your Review <span className="text-red-500">*</span>
+          {t('Your Review')} <span className="text-red-500">*</span>
         </label>
         <textarea
           id="comment"
@@ -177,7 +179,7 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
           required
         />
         <p className="mt-2 text-sm text-gray-500">
-          Tell us about your experience, what you liked, or how we can improve.
+          {t('Tell us about your experience, what you liked, or how we can improve.')}
         </p>
       </div>
 
@@ -198,18 +200,18 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
         {isSubmitting ? (
           <>
             <Loader2 className="w-5 h-5 animate-spin" />
-            Submitting...
+            {t('Submitting...')}
           </>
         ) : (
           <>
             <Send className="w-5 h-5" />
-            Submit Review
+            {t('Submit Review')}
           </>
         )}
       </button>
 
       <p className="text-xs text-center text-gray-500">
-        Your review will be visible to others after approval
+        {t('Your review will be visible to others after approval')}
       </p>
     </form>
   );

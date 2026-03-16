@@ -3,6 +3,7 @@
 import { useState, useCallback, FormEvent } from 'react'
 import { Button } from '@/components/ui/button'
 import { Loader2, ArrowRight, AlertCircle } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import QuestionRenderer from '@/components/features/lead-forms/questions/QuestionRenderer'
 import type { LeadFormField, ValidationRule } from '@/types/entities/lead-form'
 
@@ -80,9 +81,11 @@ function validateField(
 export default function FormDynamicRenderer({
   fields,
   onSubmit,
-  submitLabel = 'Submit',
+  submitLabel,
   className,
 }: FormDynamicRendererProps) {
+  const { t } = useTranslation()
+  const resolvedSubmitLabel = submitLabel ?? t('Submit')
   const [formData, setFormData] = useState<Record<string, unknown>>({})
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -124,7 +127,7 @@ export default function FormDynamicRenderer({
       await onSubmit(formData)
     } catch (err) {
       setSubmitError(
-        err instanceof Error ? err.message : 'An error occurred. Please try again.'
+        err instanceof Error ? err.message : t('An error occurred. Please try again.')
       )
     } finally {
       setIsSubmitting(false)
@@ -147,7 +150,7 @@ export default function FormDynamicRenderer({
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-red-900 mb-1">Submission Failed</h4>
+            <h4 className="font-semibold text-red-900 mb-1">{t('Submission Failed')}</h4>
             <p className="text-sm text-red-700">{submitError}</p>
           </div>
         </div>
@@ -161,11 +164,11 @@ export default function FormDynamicRenderer({
         {isSubmitting ? (
           <>
             <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-            Submitting…
+            {t('Submitting...')}
           </>
         ) : (
           <>
-            {submitLabel}
+            {resolvedSubmitLabel}
             <ArrowRight className="w-5 h-5 ml-2" />
           </>
         )}
@@ -173,7 +176,7 @@ export default function FormDynamicRenderer({
 
       {sortedFields.some((f) => f.required) && (
         <p className="text-sm text-gray-500 text-center">
-          <span className="text-red-500">*</span> Required fields
+          <span className="text-red-500">*</span> {t('Required fields')}
         </p>
       )}
     </form>

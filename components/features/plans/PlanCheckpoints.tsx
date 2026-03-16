@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface Checkpoint {
   id: string
@@ -18,6 +19,7 @@ function generateId() {
 }
 
 export function PlanCheckpoints({ checkpoints, onChange }: PlanCheckpointsProps) {
+  const { t } = useTranslation()
   const [newText, setNewText] = useState('')
   const [newAvailable, setNewAvailable] = useState(true)
 
@@ -101,7 +103,7 @@ export function PlanCheckpoints({ checkpoints, onChange }: PlanCheckpointsProps)
                     onChange={() => toggleAvailable(cp.id)}
                     className="h-3.5 w-3.5 rounded border-gray-300 text-green-600"
                   />
-                  Avail
+                  {t('Avail')}
                 </label>
                 <input
                   type="text"
@@ -134,14 +136,14 @@ export function PlanCheckpoints({ checkpoints, onChange }: PlanCheckpointsProps)
             onChange={(e) => setNewAvailable(e.target.checked)}
             className="h-3.5 w-3.5 rounded border-gray-300 text-green-600"
           />
-          Avail
+          {t('Avail')}
         </label>
         <input
           type="text"
           value={newText}
           onChange={(e) => setNewText(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Add new checkpoint (e.g. QR Limit: 10)"
+          placeholder={t('Add new checkpoint (e.g. QR Limit: 10)')}
           className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
         <button
@@ -150,13 +152,13 @@ export function PlanCheckpoints({ checkpoints, onChange }: PlanCheckpointsProps)
           disabled={!newText.trim()}
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Add
+          {t('Add')}
         </button>
       </div>
 
       {checkpoints.length === 0 && (
         <p className="text-xs text-gray-400">
-          No checkpoints added yet. Checkpoints are displayed on the pricing page as plan milestones.
+          {t('No checkpoints added yet. Checkpoints are displayed on the pricing page as plan milestones.')}
         </p>
       )}
     </div>

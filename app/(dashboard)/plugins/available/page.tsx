@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { pluginsAPI } from '@/lib/api/endpoints/plugins'
+import { useTranslation } from '@/lib/i18n'
 
 interface Plugin {
   id: string
@@ -45,6 +46,7 @@ const availablePlugins: Plugin[] = [
 ]
 
 export default function PluginsAvailablePage() {
+  const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [installedSlugs, setInstalledSlugs] = useState<string[]>([])
   const [, setLoading] = useState(true)
@@ -67,9 +69,9 @@ export default function PluginsAvailablePage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Available Plugins</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Available Plugins')}</h1>
           <p className="mt-2 text-sm text-gray-600">
-            Browse and install plugins to extend functionality
+            {t('Browse and install plugins to extend functionality')}
           </p>
         </div>
       </div>
@@ -86,7 +88,7 @@ export default function PluginsAvailablePage() {
           </svg>
           <input
             type="text"
-            placeholder="Search plugins..."
+            placeholder={t('Search plugins...')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="block w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -121,14 +123,14 @@ export default function PluginsAvailablePage() {
                 )}
                 <div className="mt-3 flex items-center space-x-3 text-xs text-gray-400">
                   <span>v{plugin.version}</span>
-                  <span>·</span>
-                  <span>by {plugin.author}</span>
+                  <span>&middot;</span>
+                  <span>{t('by')} {plugin.author}</span>
                 </div>
               </div>
               <div className="mt-5">
                 {isInstalled ? (
                   <span className="inline-flex w-full items-center justify-center rounded-md bg-green-50 py-2 text-sm font-medium text-green-700">
-                    ✓ Installed
+                    {t('Installed')}
                   </span>
                 ) : (
                   <a
@@ -137,7 +139,7 @@ export default function PluginsAvailablePage() {
                     rel="noopener noreferrer"
                     className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
                   >
-                    {plugin.price ? `Buy — ${plugin.price}` : 'Get Plugin'}
+                    {plugin.price ? t('Buy') + ` \u2014 ${plugin.price}` : t('Get Plugin')}
                   </a>
                 )}
               </div>
@@ -148,7 +150,7 @@ export default function PluginsAvailablePage() {
 
       {filtered.length === 0 && (
         <div className="mt-12 text-center">
-          <p className="text-sm text-gray-500">No plugins match your search.</p>
+          <p className="text-sm text-gray-500">{t('No plugins match your search.')}</p>
         </div>
       )}
     </div>

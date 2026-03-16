@@ -225,7 +225,9 @@ export function measurePerformance<T>(
   const result = fn();
   const end = performance.now();
   
-  console.log(`[Performance] ${name}: ${(end - start).toFixed(2)}ms`);
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[Performance] ${name}: ${(end - start).toFixed(2)}ms`);
+  }
   
   return result;
 }

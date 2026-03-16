@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { TitleBlockData } from '@/types/entities/biolink'
 
 interface TitleBlockProps {
@@ -8,12 +11,13 @@ interface TitleBlockProps {
 
 export default function TitleBlock({ block, isEditing, onUpdate }: TitleBlockProps) {
   const { text, level = 'h2', align = 'center' } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Text</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Text')}</label>
           <input
             type="text"
             value={text}
@@ -23,7 +27,7 @@ export default function TitleBlock({ block, isEditing, onUpdate }: TitleBlockPro
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Level</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Level')}</label>
             <select
               value={level}
               onChange={(e) =>
@@ -37,7 +41,7 @@ export default function TitleBlock({ block, isEditing, onUpdate }: TitleBlockPro
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Alignment</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Alignment')}</label>
             <select
               value={align}
               onChange={(e) =>
@@ -45,9 +49,9 @@ export default function TitleBlock({ block, isEditing, onUpdate }: TitleBlockPro
               }
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
             >
-              <option value="left">Left</option>
-              <option value="center">Center</option>
-              <option value="right">Right</option>
+              <option value="left">{t('Left')}</option>
+              <option value="center">{t('Center')}</option>
+              <option value="right">{t('Right')}</option>
             </select>
           </div>
         </div>

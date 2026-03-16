@@ -8,6 +8,7 @@
 'use client';
 
 import React, { useState, useCallback, useRef } from 'react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface LogoUploadProps {
   value: string | null; // URL of uploaded logo
@@ -29,6 +30,7 @@ export function LogoUpload({
   allowedTypes = DEFAULT_ALLOWED_TYPES,
   className = '',
 }: LogoUploadProps) {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -171,7 +173,7 @@ export function LogoUpload({
 
   return (
     <div className={`logo-upload ${className}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Logo</label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo')}</label>
 
       {/* Upload area */}
       {!value ? (
@@ -198,7 +200,7 @@ export function LogoUpload({
           {isLoading ? (
             <div className="flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-3"></div>
-              <p className="text-sm text-gray-600">Processing...</p>
+              <p className="text-sm text-gray-600">{t('Processing...')}</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
@@ -215,7 +217,7 @@ export function LogoUpload({
                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                 />
               </svg>
-              <p className="text-sm text-gray-700 font-medium mb-1">Click to upload or drag and drop</p>
+              <p className="text-sm text-gray-700 font-medium mb-1">{t('Click to upload or drag and drop')}</p>
               <p className="text-xs text-gray-500">
                 PNG, JPG, SVG, or WebP (max {Math.round(maxSizeKB / 1024)}MB)
               </p>
@@ -233,7 +235,7 @@ export function LogoUpload({
 
             {/* Info and actions */}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 mb-2">Logo uploaded</p>
+              <p className="text-sm font-medium text-gray-900 mb-2">{t('Logo uploaded')}</p>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -272,7 +274,7 @@ export function LogoUpload({
 
       {/* URL input as alternative */}
       <div className="mt-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Or enter image URL</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Or enter image URL')}</label>
         <input
           type="url"
           value={value || ''}

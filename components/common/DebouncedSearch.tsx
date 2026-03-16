@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, X, Loader2 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 import { useDebounce, useDebouncedCallback } from '@/lib/utils/performance-utils';
 
 export interface DebouncedSearchProps {
@@ -22,13 +23,15 @@ export interface DebouncedSearchProps {
 
 export function DebouncedSearch({
   onSearch,
-  placeholder = 'Search...',
+  placeholder,
   delay = 300,
   minLength = 0,
   showClearButton = true,
   className = '',
   autoFocus = false,
 }: DebouncedSearchProps) {
+  const { t } = useTranslation();
+  const resolvedPlaceholder = placeholder ?? t('Search...');
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const debouncedQuery = useDebounce(query, delay);
@@ -63,9 +66,9 @@ export function DebouncedSearch({
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           autoFocus={autoFocus}
-          aria-label="Search"
+          aria-label={t('Search')}
           className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         
@@ -87,7 +90,7 @@ export function DebouncedSearch({
       {/* Search Info */}
       {query && query.length < minLength && (
         <p className="text-xs text-gray-500 mt-1">
-          Type at least {minLength} characters to search
+          {t('Type at least')} {minLength} {t('characters to search')}
         </p>
       )}
     </div>
@@ -152,10 +155,12 @@ export interface SearchWithSuggestionsProps {
 export function SearchWithSuggestions({
   onSearch,
   getSuggestions,
-  placeholder = 'Search...',
+  placeholder,
   delay = 300,
   className = '',
 }: SearchWithSuggestionsProps) {
+  const { t: tSugg } = useTranslation()
+  const resolvedSuggPlaceholder = placeholder ?? tSugg('Search...');
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -205,8 +210,8 @@ export function SearchWithSuggestions({
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-            placeholder={placeholder}
-            aria-label="Search"
+            placeholder={resolvedSuggPlaceholder}
+            aria-label={tSugg('Search')}
             className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           

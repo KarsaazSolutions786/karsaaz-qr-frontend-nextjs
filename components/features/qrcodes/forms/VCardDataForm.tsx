@@ -1,5 +1,6 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { vcardDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 
@@ -17,6 +18,7 @@ interface VCardDataFormProps {
 }
 
 export function VCardDataForm({ defaultValues, onChange }: VCardDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -27,14 +29,14 @@ export function VCardDataForm({ defaultValues, onChange }: VCardDataFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="firstName" className={LABEL}>
-            First Name *
+            {t('First Name')} *
           </label>
           <input {...register('firstName')} id="firstName" type="text" className={INPUT} />
           {errors.firstName && <p className={ERROR}>{errors.firstName.message}</p>}
         </div>
         <div>
           <label htmlFor="lastName" className={LABEL}>
-            Last Name *
+            {t('Last Name')} *
           </label>
           <input {...register('lastName')} id="lastName" type="text" className={INPUT} />
           {errors.lastName && <p className={ERROR}>{errors.lastName.message}</p>}
@@ -43,7 +45,7 @@ export function VCardDataForm({ defaultValues, onChange }: VCardDataFormProps) {
 
       <div>
         <label htmlFor="phones" className={LABEL}>
-          Phone
+          {t('Phone')}
         </label>
         <input
           {...register('phones')}
@@ -56,7 +58,7 @@ export function VCardDataForm({ defaultValues, onChange }: VCardDataFormProps) {
 
       <div>
         <label htmlFor="emails" className={LABEL}>
-          Email
+          {t('Email')}
         </label>
         <input
           {...register('emails')}
@@ -70,7 +72,7 @@ export function VCardDataForm({ defaultValues, onChange }: VCardDataFormProps) {
 
       <div>
         <label htmlFor="website_list" className={LABEL}>
-          Website
+          {t('Website')}
         </label>
         <input
           {...register('website_list')}
@@ -83,40 +85,40 @@ export function VCardDataForm({ defaultValues, onChange }: VCardDataFormProps) {
       </div>
 
       {/* Work */}
-      <h4 className={SECTION}>Work</h4>
+      <h4 className={SECTION}>{t('Work')}</h4>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="company" className={LABEL}>
-            Company
+            {t('Company')}
           </label>
           <input {...register('company')} id="company" type="text" className={INPUT} />
         </div>
         <div>
           <label htmlFor="job" className={LABEL}>
-            Job Title
+            {t('Job Title')}
           </label>
           <input {...register('job')} id="job" type="text" className={INPUT} />
         </div>
       </div>
 
       {/* Address */}
-      <h4 className={SECTION}>Address</h4>
+      <h4 className={SECTION}>{t('Address')}</h4>
       <div>
         <label htmlFor="street" className={LABEL}>
-          Street
+          {t('Street')}
         </label>
         <input {...register('street')} id="street" type="text" className={INPUT} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="city" className={LABEL}>
-            City
+            {t('City')}
           </label>
           <input {...register('city')} id="city" type="text" className={INPUT} />
         </div>
         <div>
           <label htmlFor="zip" className={LABEL}>
-            Postal Code
+            {t('Postal Code')}
           </label>
           <input {...register('zip')} id="zip" type="text" className={INPUT} />
         </div>
@@ -124,13 +126,13 @@ export function VCardDataForm({ defaultValues, onChange }: VCardDataFormProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="state" className={LABEL}>
-            State / Province
+            {t('State / Province')}
           </label>
           <input {...register('state')} id="state" type="text" className={INPUT} />
         </div>
         <div>
           <label htmlFor="country" className={LABEL}>
-            Country
+            {t('Country')}
           </label>
           <input {...register('country')} id="country" type="text" className={INPUT} />
         </div>

@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from '@/lib/i18n';
 
 type EyeShape = 'square' | 'rounded' | 'circle' | 'leaf' | 'custom';
 
@@ -24,6 +25,7 @@ export default function EyeShapeFields({
   eyeSettings,
   onChange,
 }: EyeShapeFieldsProps) {
+  const { t } = useTranslation();
   const [localSettings, setLocalSettings] = useState<EyeSettings>(eyeSettings);
 
   const updateSettings = (updates: Partial<EyeSettings>) => {
@@ -100,7 +102,7 @@ export default function EyeShapeFields({
     <div className="space-y-6">
       {/* Outer Eye Shape */}
       <div className="space-y-3">
-        <Label>Outer Eye Shape</Label>
+        <Label>{t('Outer Eye Shape')}</Label>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
           {eyeShapeOptions.map((option) => (
             <button
@@ -129,7 +131,7 @@ export default function EyeShapeFields({
 
       {/* Inner Eye Shape */}
       <div className="space-y-3">
-        <Label>Inner Eye Shape</Label>
+        <Label>{t('Inner Eye Shape')}</Label>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
           {eyeShapeOptions.map((option) => (
             <button
@@ -159,7 +161,7 @@ export default function EyeShapeFields({
       {/* Eye Color */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label>Custom Eye Color</Label>
+          <Label>{t('Custom Eye Color')}</Label>
           <Button
             variant={localSettings.useCustomColor ? 'default' : 'outline'}
             size="sm"
@@ -192,7 +194,7 @@ export default function EyeShapeFields({
 
       {/* Visual Preview of All 3 Eyes */}
       <div className="space-y-3">
-        <Label>All Eyes Preview</Label>
+        <Label>{t('All Eyes Preview')}</Label>
         <Card className="p-6">
           <div className="flex items-center justify-center gap-8">
             {/* Top-Left Eye */}
@@ -222,7 +224,7 @@ export default function EyeShapeFields({
 
       {/* Eye Styles Comparison */}
       <div className="space-y-2">
-        <Label className="text-sm">Style Combinations</Label>
+        <Label className="text-sm">{t('Style Combinations')}</Label>
         <Card className="p-4">
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
@@ -241,7 +243,7 @@ export default function EyeShapeFields({
       {/* Info Card */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
         <p className="text-xs text-blue-800">
-          <strong>Eyes (Position Detection Patterns):</strong> These are the three large
+          <strong>{t('Eyes (Position Detection Patterns):')}</strong> These are the three large
           squares in the corners of every QR code. They help scanners identify the code's
           orientation and position. Customizing them can make your QR code more distinctive.
         </p>

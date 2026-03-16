@@ -3,12 +3,14 @@
 import { useState, useCallback } from 'react'
 import { apiTokensAPI, type ApiToken } from '@/lib/api/endpoints/account'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/lib/i18n'
 
 interface ApiTokensTabProps {
   userId: number | string
 }
 
 export function ApiTokensTab({ userId }: ApiTokensTabProps) {
+  const { t } = useTranslation()
   const [tokens, setTokens] = useState<ApiToken[]>([])
   const [newToken, setNewToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -23,7 +25,7 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
       setTokens(res.data)
       setFetched(true)
     } catch {
-      setError('Failed to load tokens')
+      setError(t('Failed to load tokens'))
     } finally {
       setLoading(false)
     }
@@ -43,7 +45,7 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
       setConfirmRegen(false)
       await fetchTokens()
     } catch {
-      setError('Failed to generate token')
+      setError(t('Failed to generate token'))
     } finally {
       setLoading(false)
     }
@@ -55,7 +57,7 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
       await apiTokensAPI.revoke(userId, tokenId)
       setTokens((prev) => prev.filter((t) => t.id !== tokenId))
     } catch {
-      setError('Failed to revoke token')
+      setError(t('Failed to revoke token'))
     } finally {
       setLoading(false)
     }
@@ -68,8 +70,8 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-gray-900 mb-1">API Tokens</h2>
-        <p className="text-sm text-gray-500 mb-6">Manage API access tokens for programmatic usage.</p>
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">{t('API Tokens')}</h2>
+        <p className="text-sm text-gray-500 mb-6">{t('Manage API access tokens for programmatic usage.')}</p>
 
         {error && (
           <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>
@@ -79,14 +81,14 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
         {newToken && (
           <div className="mb-6 rounded-md border border-green-200 bg-green-50 p-4">
             <p className="text-sm font-medium text-green-800 mb-2">
-              New token generated — copy it now, it won&apos;t be shown again.
+              {t('New token generated — copy it now, it won\'t be shown again.')}
             </p>
             <div className="flex items-center gap-2">
               <code className="flex-1 rounded bg-white px-3 py-2 text-sm font-mono border border-green-200 break-all">
                 {newToken}
               </code>
               <Button size="sm" variant="outline" onClick={() => copyToClipboard(newToken)}>
-                Copy
+                {t('Copy')}
               </Button>
             </div>
           </div>
@@ -113,7 +115,7 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
                 <div className="flex items-center gap-3">
                   {token.last_used_at && (
                     <span className="text-xs text-gray-400">
-                      Last used: {new Date(token.last_used_at).toLocaleDateString()}
+                      {t('Last used')}: {new Date(token.last_used_at).toLocaleDateString()}
                     </span>
                   )}
                   <Button
@@ -122,7 +124,7 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
                     onClick={() => handleRevoke(token.id)}
                     disabled={loading}
                   >
-                    Revoke
+                    {t('Revoke')}
                   </Button>
                 </div>
               </div>
@@ -130,25 +132,25 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
           </div>
         ) : (
           fetched && (
-            <p className="mb-6 text-sm text-gray-500">No API tokens. Generate one below.</p>
+            <p className="mb-6 text-sm text-gray-500">{t('No API tokens. Generate one below.')}</p>
           )
         )}
 
         {/* Generate / Regenerate */}
         {!confirmRegen ? (
           <Button onClick={tokens.length > 0 ? () => setConfirmRegen(true) : handleGenerate} disabled={loading}>
-            {loading ? 'Processing...' : tokens.length > 0 ? 'Regenerate Token' : 'Generate Token'}
+            {loading ? t('Processing...') : tokens.length > 0 ? t('Regenerate Token') : t('Generate Token')}
           </Button>
         ) : (
           <div className="flex items-center gap-3 rounded-md border border-yellow-200 bg-yellow-50 p-4">
             <p className="flex-1 text-sm text-yellow-800">
-              Regenerating will invalidate the current token. Continue?
+              {t('Regenerating will invalidate the current token. Continue?')}
             </p>
             <Button size="sm" variant="destructive" onClick={handleGenerate} disabled={loading}>
-              Yes, Regenerate
+              {t('Yes, Regenerate')}
             </Button>
             <Button size="sm" variant="outline" onClick={() => setConfirmRegen(false)}>
-              Cancel
+              {t('Cancel')}
             </Button>
           </div>
         )}

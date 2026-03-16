@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { cn } from '@/lib/utils'
 import { Smartphone } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface DeviceBrandData {
   brand: string
@@ -15,6 +16,7 @@ interface ScansPerDeviceBrandProps {
 }
 
 export function ScansPerDeviceBrand({ data, className }: ScansPerDeviceBrandProps) {
+  const { t } = useTranslation()
   const sorted = useMemo(() => [...data].sort((a, b) => b.count - a.count), [data])
   const maxCount = sorted[0]?.count ?? 1
 
@@ -22,7 +24,7 @@ export function ScansPerDeviceBrand({ data, className }: ScansPerDeviceBrandProp
     return (
       <div className={cn('rounded-lg border border-gray-200 bg-white p-6 text-center', className)}>
         <Smartphone className="mx-auto h-12 w-12 text-gray-300" />
-        <p className="mt-3 text-sm text-gray-500">No device brand data available</p>
+        <p className="mt-3 text-sm text-gray-500">{t('No device brand data available')}</p>
       </div>
     )
   }
@@ -34,7 +36,7 @@ export function ScansPerDeviceBrand({ data, className }: ScansPerDeviceBrandProp
           <Smartphone className="h-5 w-5 text-purple-600" />
         </div>
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Scans by Device Brand</h3>
+          <h3 className="text-lg font-bold text-gray-900">{t('Scans by Device Brand')}</h3>
           <p className="text-sm text-gray-500">{data.length} brands detected</p>
         </div>
       </div>

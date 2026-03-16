@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface RestaurantMenuDesignSettings extends DesignSettings {
   // Restaurant-specific settings
@@ -43,23 +44,24 @@ const tabs: DesignerTab[] = [
 ]
 
 export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<RestaurantMenuDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderMenuOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Menu Layout</h4>
+      <h4 className="font-medium text-gray-900">{t('Menu Layout')}</h4>
 
       {/* Menu Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Menu Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Menu Style')}</label>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { value: 'grid', label: 'Grid' },
-            { value: 'list', label: 'List' },
-            { value: 'cards', label: 'Cards' },
-            { value: 'elegant', label: 'Elegant' },
+            { value: 'grid', label: t('Grid') },
+            { value: 'list', label: t('List') },
+            { value: 'cards', label: t('Cards') },
+            { value: 'elegant', label: t('Elegant') },
           ].map(option => (
             <button
               key={option.value}
@@ -83,13 +85,13 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
 
       {/* Category Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Category Navigation</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Category Navigation')}</label>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { value: 'tabs', label: 'Tabs' },
-            { value: 'accordion', label: 'Accordion' },
-            { value: 'sidebar', label: 'Sidebar' },
-            { value: 'dropdown', label: 'Dropdown' },
+            { value: 'tabs', label: t('Tabs') },
+            { value: 'accordion', label: t('Accordion') },
+            { value: 'sidebar', label: t('Sidebar') },
+            { value: 'dropdown', label: t('Dropdown') },
           ].map(option => (
             <button
               key={option.value}
@@ -113,12 +115,12 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
 
       {/* Logo Position */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Logo Position</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Position')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'left', label: 'Left' },
-            { value: 'center', label: 'Center' },
-            { value: 'right', label: 'Right' },
+            { value: 'left', label: t('Left') },
+            { value: 'center', label: t('Center') },
+            { value: 'right', label: t('Right') },
           ].map(option => (
             <button
               key={option.value}
@@ -151,18 +153,18 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showImages" className="text-sm text-gray-700">
-            Show Item Images
+            {t('Show Item Images')}
           </label>
         </div>
 
         {design.showImages && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Image Size</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Image Size')}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'small', label: 'Small' },
-                { value: 'medium', label: 'Medium' },
-                { value: 'large', label: 'Large' },
+                { value: 'small', label: t('Small') },
+                { value: 'medium', label: t('Medium') },
+                { value: 'large', label: t('Large') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -197,7 +199,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showPrices" className="text-sm text-gray-700">
-            Show Prices
+            {t('Show Prices')}
           </label>
         </div>
 
@@ -205,7 +207,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Currency Symbol
+                {t('Currency Symbol')}
               </label>
               <input
                 type="text"
@@ -218,7 +220,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Currency Position
+                {t('Currency Position')}
               </label>
               <div className="flex gap-2">
                 {[
@@ -247,7 +249,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price Color</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Price Color')}</label>
               <div className="flex gap-2">
                 <input
                   type="color"
@@ -271,7 +273,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
 
   const renderDisplayContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Display Options</h4>
+      <h4 className="font-medium text-gray-900">{t('Display Options')}</h4>
 
       {/* Item Information */}
       <div className="space-y-2">
@@ -284,7 +286,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showDescription" className="text-sm text-gray-700">
-            Show Item Descriptions
+            {t('Show Item Descriptions')}
           </label>
         </div>
 
@@ -297,7 +299,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showAllergens" className="text-sm text-gray-700">
-            Show Allergen Information
+            {t('Show Allergen Information')}
           </label>
         </div>
 
@@ -310,7 +312,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showCalories" className="text-sm text-gray-700">
-            Show Calorie Information
+            {t('Show Calorie Information')}
           </label>
         </div>
 
@@ -323,7 +325,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showSpicyIndicator" className="text-sm text-gray-700">
-            Show Spicy Indicator
+            {t('Show Spicy Indicator')}
           </label>
         </div>
 
@@ -336,14 +338,14 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showVegetarianIndicator" className="text-sm text-gray-700">
-            Show Vegetarian/Vegan Indicator
+            {t('Show Vegetarian/Vegan Indicator')}
           </label>
         </div>
       </div>
 
       {/* Restaurant Information */}
       <div className="space-y-2">
-        <h5 className="text-sm font-medium text-gray-700">Restaurant Info</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Restaurant Info')}</h5>
 
         <div className="flex items-center gap-2">
           <input
@@ -354,7 +356,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showOpeningHours" className="text-sm text-gray-700">
-            Show Opening Hours
+            {t('Show Opening Hours')}
           </label>
         </div>
 
@@ -367,17 +369,17 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
             className="rounded border-gray-300"
           />
           <label htmlFor="showContactInfo" className="text-sm text-gray-700">
-            Show Contact Information
+            {t('Show Contact Information')}
           </label>
         </div>
       </div>
 
       {/* Additional Colors */}
       <div className="space-y-4">
-        <h5 className="text-sm font-medium text-gray-700">Additional Colors</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Additional Colors')}</h5>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Accent Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Accent Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -395,7 +397,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Card Background</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Card Background')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -414,7 +416,7 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Category Background
+            {t('Category Background')}
           </label>
           <div className="flex gap-2">
             <input

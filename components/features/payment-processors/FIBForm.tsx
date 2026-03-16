@@ -1,83 +1,80 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  selectClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * FIB (First Iraqi Bank) payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Mode (staging / production)
+ * - Client ID
+ * - Client Secret
+ *
+ * No auto-webhook registration; no manual webhook URL display.
+ * Test credentials are verified after save (shouldTestCredentialsAfterSave = true in P1).
+ */
+export function FIBForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function FIBForm({ settings, onChange }: Props) {
   return (
     <PaymentProcessorFormBase slug="fib" settings={settings} onChange={onChange}>
+      {/* Mode */}
       <div>
-        <label htmlFor="fib-client-id" className="block text-sm font-medium text-gray-700">
-          Client ID
+        <label htmlFor="fib-mode" className={labelClass}>
+          {t('Mode')}
+        </label>
+        <select
+          id="fib-mode"
+          value={settings.fib_mode ?? 'staging'}
+          onChange={(e) => onChange('fib_mode', e.target.value)}
+          className={selectClass}
+        >
+          <option value="staging">{t('Staging')}</option>
+          <option value="production">{t('Production')}</option>
+        </select>
+        <p className={hintClass}>
+          {t('Default: Staging. Switch to Production when ready to accept live payments.')}
+        </p>
+      </div>
+
+      {/* Client ID */}
+      <div>
+        <label htmlFor="fib-client-id" className={labelClass}>
+          {t('Client ID')}
         </label>
         <input
           id="fib-client-id"
           type="text"
-          value={settings.client_id ?? ''}
-          onChange={e => onChange('client_id', e.target.value)}
-          placeholder="Enter Client ID"
+          value={settings.fib_client_id ?? ''}
+          onChange={(e) => onChange('fib_client_id', e.target.value)}
+          placeholder={t('Client ID')}
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Your FIB merchant client identifier')}
+        </p>
       </div>
+
+      {/* Client Secret */}
       <div>
-        <label htmlFor="fib-client-secret" className="block text-sm font-medium text-gray-700">
-          Client Secret
+        <label htmlFor="fib-client-secret" className={labelClass}>
+          {t('Client Secret')}
         </label>
         <input
           id="fib-client-secret"
           type="password"
-          value={settings.client_secret ?? ''}
-          onChange={e => onChange('client_secret', e.target.value)}
-          placeholder="Enter Client Secret"
+          value={settings.fib_client_secret ?? ''}
+          onChange={(e) => onChange('fib_client_secret', e.target.value)}
+          placeholder="a3b17**************"
           className={inputClass}
         />
-      </div>
-      <div>
-        <label htmlFor="fib-merchant-id" className="block text-sm font-medium text-gray-700">
-          Merchant ID
-        </label>
-        <input
-          id="fib-merchant-id"
-          type="text"
-          value={settings.merchant_id ?? ''}
-          onChange={e => onChange('merchant_id', e.target.value)}
-          placeholder="Enter Merchant ID"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label htmlFor="fib-callback-url" className="block text-sm font-medium text-gray-700">
-          Callback URL
-        </label>
-        <input
-          id="fib-callback-url"
-          type="text"
-          value={settings.callback_url ?? ''}
-          onChange={e => onChange('callback_url', e.target.value)}
-          placeholder="https://example.com/api/webhooks/fib"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label htmlFor="fib-mode" className="block text-sm font-medium text-gray-700">
-          Mode
-        </label>
-        <select
-          id="fib-mode"
-          value={settings.mode ?? 'staging'}
-          onChange={e => onChange('mode', e.target.value)}
-          className={inputClass}
-        >
-          <option value="staging">Test (Staging)</option>
-          <option value="production">Live (Production)</option>
-        </select>
       </div>
     </PaymentProcessorFormBase>
   )

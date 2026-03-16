@@ -15,6 +15,7 @@ import { generateQRCodeSync } from '@/lib/utils/qrcode-generator';
 import { generateQRCodeSVG } from '@/lib/utils/svg-renderer';
 import { downloadPNG, downloadSVG, downloadPDF, downloadEPS } from '@/lib/utils/download-utils';
 import { sanitizeSvg } from '@/lib/utils/dom-safety';
+import { useTranslation } from '@/lib/i18n';
 
 export interface QRCodePreviewProps {
   data: string;
@@ -35,6 +36,7 @@ export interface QRCodePreviewRef {
 
 export const QRCodePreview = React.forwardRef<QRCodePreviewRef, QRCodePreviewProps>(
   ({ data, config = {}, stickerConfig, className = '', showError = true, onGenerationError }, ref) => {
+    const { t } = useTranslation();
     // Merge with defaults
     const mergedConfig: DesignerConfig = useMemo(
       () => ({
@@ -137,7 +139,7 @@ export const QRCodePreview = React.forwardRef<QRCodePreviewRef, QRCodePreviewPro
         <div className={`qr-preview-error ${className}`}>
           <div className="flex flex-col items-center justify-center p-8 text-center">
             <div className="text-red-500 text-4xl mb-4">⚠️</div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">QR Code Generation Failed</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('QR Code Generation Failed')}</h3>
             <p className="text-sm text-gray-600">{qrResult.error}</p>
           </div>
         </div>

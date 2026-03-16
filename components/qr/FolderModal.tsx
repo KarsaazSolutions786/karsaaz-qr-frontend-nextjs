@@ -8,7 +8,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Folder, Check } from 'lucide-react';
-import { Folder as FolderType } from '@/hooks/useFolders';
+import { useTranslation } from '@/lib/i18n';
+import { Folder as FolderType } from '@/lib/hooks/useFolders';
 
 export interface FolderModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export function FolderModal({
   colors,
   maxNameLength = 50,
 }: FolderModalProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
   const [error, setError] = useState('');
@@ -50,12 +52,12 @@ export function FolderModal({
     
     // Validate
     if (!name.trim()) {
-      setError('Folder name is required');
+      setError(t('Folder name is required'));
       return;
     }
     
     if (name.length > maxNameLength) {
-      setError(`Folder name must be ${maxNameLength} characters or less`);
+      setError(`${t('Folder name must be')} ${maxNameLength} ${t('characters or less')}`);
       return;
     }
     
@@ -79,11 +81,11 @@ export function FolderModal({
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">
-                {mode === 'create' ? 'New Folder' : 'Edit Folder'}
+                {mode === 'create' ? t('New Folder') : t('Edit Folder')}
               </h2>
               {parentFolder && (
                 <p className="text-sm text-gray-500">
-                  in {parentFolder.name}
+                  {t('in')} {parentFolder.name}
                 </p>
               )}
             </div>
@@ -101,7 +103,7 @@ export function FolderModal({
           {/* Name input */}
           <div>
             <label htmlFor="folder-name" className="block text-sm font-medium text-gray-700 mb-2">
-              Folder Name
+              {t('Folder Name')}
             </label>
             <input
               id="folder-name"
@@ -111,7 +113,7 @@ export function FolderModal({
                 setName(e.target.value);
                 setError('');
               }}
-              placeholder="Enter folder name"
+              placeholder={t('Enter folder name')}
               maxLength={maxNameLength}
               autoFocus
               className={`
@@ -140,7 +142,7 @@ export function FolderModal({
           {/* Color picker */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Folder Color (Optional)
+              {t('Folder Color (Optional)')}
             </label>
             <div className="grid grid-cols-9 gap-2">
               {/* No color option */}
@@ -155,7 +157,7 @@ export function FolderModal({
                     : 'border-gray-300 bg-white hover:border-gray-400'
                   }
                 `}
-                title="No color"
+                title={t('No color')}
               >
                 <div className="w-6 h-6 rounded-full border-2 border-gray-300 bg-white" />
               </button>
@@ -193,7 +195,7 @@ export function FolderModal({
           {/* Preview */}
           <div className="pt-4 border-t border-gray-200">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Preview
+              {t('Preview')}
             </label>
             <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
               <div className="flex items-center gap-2">
@@ -202,7 +204,7 @@ export function FolderModal({
                   style={{ color: selectedColor || '#6b7280' }}
                 />
                 <span className="font-medium text-gray-900">
-                  {name || 'Folder Name'}
+                  {name || t('Folder Name')}
                 </span>
               </div>
             </div>
@@ -215,14 +217,14 @@ export function FolderModal({
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               type="submit"
               disabled={!name.trim()}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {mode === 'create' ? 'Create Folder' : 'Save Changes'}
+              {mode === 'create' ? t('Create Folder') : t('Save Changes')}
             </button>
           </div>
         </form>
@@ -249,6 +251,7 @@ export function FolderDeleteModal({
   onConfirm,
   hasItems,
 }: FolderDeleteModalProps) {
+  const { t } = useTranslation();
   const [moveItems, setMoveItems] = useState(true);
   
   if (!isOpen) return null;
@@ -262,22 +265,22 @@ export function FolderDeleteModal({
               <Folder className="w-6 h-6 text-red-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Delete Folder</h2>
-              <p className="text-sm text-gray-600">This action cannot be undone</p>
+              <h2 className="text-lg font-bold text-gray-900">{t('Delete Folder')}</h2>
+              <p className="text-sm text-gray-600">{t('This action cannot be undone')}</p>
             </div>
           </div>
           
           <div className="space-y-4">
             <p className="text-sm text-gray-700">
-              Are you sure you want to delete the folder{' '}
+              {t('Are you sure you want to delete the folder')}{' '}
               <span className="font-medium">"{folder.name}"</span>?
             </p>
             
             {hasItems && (
               <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-800 mb-3">
-                  This folder contains {folder.itemCount} item{folder.itemCount !== 1 ? 's' : ''}.
-                  What would you like to do with {folder.itemCount === 1 ? 'it' : 'them'}?
+                  {t('This folder contains')} {folder.itemCount} {folder.itemCount !== 1 ? t('items') : t('item')}.
+                  {t('What would you like to do with')} {folder.itemCount === 1 ? t('it') : t('them')}?
                 </p>
                 
                 <div className="space-y-2">
@@ -289,8 +292,8 @@ export function FolderDeleteModal({
                       className="mt-0.5"
                     />
                     <span>
-                      Move to parent folder
-                      {folder.parentId && ' (recommended)'}
+                      {t('Move to parent folder')}
+                      {folder.parentId && ` (${t('recommended')})`}
                     </span>
                   </label>
                   
@@ -302,7 +305,7 @@ export function FolderDeleteModal({
                       className="mt-0.5"
                     />
                     <span className="text-red-600">
-                      Delete all items in this folder
+                      {t('Delete all items in this folder')}
                     </span>
                   </label>
                 </div>
@@ -315,7 +318,7 @@ export function FolderDeleteModal({
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               onClick={() => {
@@ -324,7 +327,7 @@ export function FolderDeleteModal({
               }}
               className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg"
             >
-              Delete Folder
+              {t('Delete Folder')}
             </button>
           </div>
         </div>

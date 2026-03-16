@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useTranslation } from '@/lib/i18n'
 import {
   DynamicBlockDefinition,
   DynamicBlockField,
@@ -14,6 +15,7 @@ interface DynamicBlockEditorProps {
 }
 
 export function DynamicBlockEditor({ definition, block, onChange }: DynamicBlockEditorProps) {
+  const { t } = useTranslation()
   const sortedFields = [...definition.fields].sort((a, b) => a.sort_order - b.sort_order)
 
   const updateFieldValue = (fieldName: string, value: string) => {
@@ -164,13 +166,13 @@ export function DynamicBlockEditor({ definition, block, onChange }: DynamicBlock
               type="url"
               value={value}
               onChange={e => updateFieldValue(field.name, e.target.value)}
-              placeholder="Image URL or upload"
+              placeholder={t('Image URL or upload')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             {value && (
               <img
                 src={value}
-                alt="Preview"
+                alt={t('Preview')}
                 className="mt-2 max-h-32 rounded-lg object-contain"
                 onError={e => {
                   ;(e.target as HTMLImageElement).style.display = 'none'
@@ -190,7 +192,7 @@ export function DynamicBlockEditor({ definition, block, onChange }: DynamicBlock
             <textarea
               value={value}
               onChange={e => updateFieldValue(field.name, e.target.value)}
-              placeholder={field.placeholder || 'Enter HTML/CSS code'}
+              placeholder={field.placeholder || t('Enter HTML/CSS code')}
               rows={6}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
             />
@@ -220,11 +222,11 @@ export function DynamicBlockEditor({ definition, block, onChange }: DynamicBlock
 
       {/* Style Options */}
       <div className="border-t pt-4 mt-4 space-y-4">
-        <h4 className="font-medium text-gray-900">Style Options</h4>
+        <h4 className="font-medium text-gray-900">{t('Style Options')}</h4>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Text Color</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Text Color')}</label>
             <div className="flex gap-2">
               <input
                 type="color"
@@ -243,7 +245,7 @@ export function DynamicBlockEditor({ definition, block, onChange }: DynamicBlock
           </div>
 
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Background Color</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Background Color')}</label>
             <div className="flex gap-2">
               <input
                 type="color"

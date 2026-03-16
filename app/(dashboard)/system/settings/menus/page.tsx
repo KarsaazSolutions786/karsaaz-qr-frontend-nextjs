@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { useTranslation } from '@/lib/i18n'
 
 const CONFIG_KEYS = [
   'app.dashboard-client-menu',
@@ -31,6 +32,7 @@ const PLACEHOLDER_JSON = JSON.stringify(
 )
 
 export default function MenuManagementPage() {
+  const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
   const saveMutation = useSaveSystemConfigs(CONFIG_KEYS)
   const [saved, setSaved] = useState(false)
@@ -93,20 +95,20 @@ export default function MenuManagementPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Menu Management</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Menu Management')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          Configure navigation menus for the dashboard, website header, and footer.
+          {t('Configure navigation menus for the dashboard, website header, and footer.')}
         </p>
       </div>
 
       {saveMutation.error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to save settings. Please try again.
+          {t('Failed to save settings. Please try again.')}
         </div>
       )}
       {saved && (
         <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
-          Settings saved successfully.
+          {t('Settings saved successfully.')}
         </div>
       )}
 
@@ -152,7 +154,7 @@ export default function MenuManagementPage() {
 
       <div className="mt-6 flex justify-end">
         <Button onClick={handleSave} disabled={saveMutation.isPending}>
-          {saveMutation.isPending ? 'Saving…' : 'Save Settings'}
+          {saveMutation.isPending ? t('Saving...') : t('Save Settings')}
         </Button>
       </div>
     </div>

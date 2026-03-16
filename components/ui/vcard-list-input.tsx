@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 import {
   PlusIcon,
   TrashIcon,
@@ -62,6 +63,7 @@ function createEmptyEntry(): VCardEntry {
 }
 
 export function VCardListInput({ value, onChange, className }: VCardListInputProps) {
+  const { t } = useTranslation()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState<VCardEntry>(createEmptyEntry())
   const [isAdding, setIsAdding] = useState(false)
@@ -168,11 +170,11 @@ export function VCardListInput({ value, onChange, className }: VCardListInputPro
       <div className="flex justify-end gap-2">
         <Button type="button" variant="ghost" size="sm" onClick={onCancel}>
           <XMarkIcon className="mr-1 h-4 w-4" />
-          Cancel
+          {t('Cancel')}
         </Button>
         <Button type="button" size="sm" onClick={onSave}>
           <CheckIcon className="mr-1 h-4 w-4" />
-          Save
+          {t('Save')}
         </Button>
       </div>
     </div>
@@ -190,7 +192,7 @@ export function VCardListInput({ value, onChange, className }: VCardListInputPro
           >
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-gray-900">
-                {entry.name || 'Unnamed'}
+                {entry.name || t('Unnamed')}
               </p>
               <p className="truncate text-xs text-gray-500">
                 {[entry.title, entry.organization].filter(Boolean).join(' · ') ||
@@ -248,7 +250,7 @@ export function VCardListInput({ value, onChange, className }: VCardListInputPro
       {!isAdding && (
         <Button type="button" variant="outline" size="sm" className="w-full" onClick={handleAdd}>
           <PlusIcon className="mr-1 h-4 w-4" />
-          Add Entry
+          {t('Add Entry')}
         </Button>
       )}
     </div>

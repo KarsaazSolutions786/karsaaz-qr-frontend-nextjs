@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
+import { useTranslation } from '@/lib/i18n'
 
 type ShapeType = 'custom-svg' | 'mixed' | 'geometric'
 type ModulePattern = 'uniform' | 'alternating' | 'random' | 'gradient'
@@ -36,6 +37,7 @@ const MODULE_PATTERNS: Array<{ type: ModulePattern; name: string }> = [
 ]
 
 export default function AdvancedShapesFields({ value, onChange }: AdvancedShapesFieldsProps) {
+  const { t } = useTranslation()
   const [previewShape, setPreviewShape] = useState<ShapeType>(value.shapeType)
 
   const handleShapeTypeChange = (shapeType: ShapeType) => {
@@ -83,7 +85,7 @@ export default function AdvancedShapesFields({ value, onChange }: AdvancedShapes
     <div className="space-y-6">
       {/* Shape Type Selector */}
       <div>
-        <Label className="mb-3 block">Shape Type</Label>
+        <Label className="mb-3 block">{t('Shape Type')}</Label>
         <div className="grid grid-cols-3 gap-3">
           {SHAPE_TYPES.map(option => (
             <button
@@ -107,7 +109,7 @@ export default function AdvancedShapesFields({ value, onChange }: AdvancedShapes
 
       {/* Module Pattern Options */}
       <div>
-        <Label className="mb-3 block">Module Pattern</Label>
+        <Label className="mb-3 block">{t('Module Pattern')}</Label>
         <div className="grid grid-cols-2 gap-3">
           {MODULE_PATTERNS.map(pattern => (
             <button
@@ -127,7 +129,7 @@ export default function AdvancedShapesFields({ value, onChange }: AdvancedShapes
 
       {/* Preview of Selected Shape */}
       <div>
-        <Label className="mb-3 block">Shape Preview</Label>
+        <Label className="mb-3 block">{t('Shape Preview')}</Label>
         <Card className="p-6 bg-gray-50">
           <div className="flex items-center justify-center">
             <div className="grid grid-cols-5 gap-1 p-4 bg-white rounded-lg shadow-sm">
@@ -168,7 +170,7 @@ export default function AdvancedShapesFields({ value, onChange }: AdvancedShapes
       {/* Custom SVG Upload */}
       {previewShape === 'custom-svg' && (
         <div className="space-y-2">
-          <Label>Upload Custom SVG</Label>
+          <Label>{t('Upload Custom SVG')}</Label>
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
             <svg
               className="w-10 h-10 mx-auto text-gray-400 mb-2"
@@ -183,8 +185,8 @@ export default function AdvancedShapesFields({ value, onChange }: AdvancedShapes
                 d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
               />
             </svg>
-            <p className="text-sm text-gray-600">Drop an SVG file or click to upload</p>
-            <p className="text-xs text-gray-400 mt-1">Recommended: 24×24px viewBox</p>
+            <p className="text-sm text-gray-600">{t('Drop an SVG file or click to upload')}</p>
+            <p className="text-xs text-gray-400 mt-1">{t('Recommended: 24×24px viewBox')}</p>
             <input type="file" accept=".svg" className="hidden" id="advanced-shape-upload" />
             <label htmlFor="advanced-shape-upload">
               <span className="mt-3 inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer hover:bg-primary/90 transition-colors text-sm">

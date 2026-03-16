@@ -14,6 +14,7 @@ import {
   isPersistedStateStale,
   useWizardStore,
 } from '@/lib/store/wizard-store';
+import { useTranslation } from '@/lib/i18n';
 
 export interface StateRecoveryModalProps {
   onRestore?: () => void;
@@ -21,6 +22,7 @@ export interface StateRecoveryModalProps {
 }
 
 export function StateRecoveryModal({ onRestore, onDiscard }: StateRecoveryModalProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [stateAge, setStateAge] = useState<number | null>(null);
   const clearPersistedState = useWizardStore((state) => state.clearPersistedState);
@@ -74,20 +76,20 @@ export function StateRecoveryModal({ onRestore, onDiscard }: StateRecoveryModalP
 
         {/* Title */}
         <h2 className="text-xl font-bold text-gray-900 text-center mb-2">
-          {isStale ? 'Old Draft Found' : 'Resume Your Work?'}
+          {isStale ? t('Old Draft Found') : t('Resume Your Work?')}
         </h2>
 
         {/* Description */}
         <p className="text-sm text-gray-600 text-center mb-6">
           {isStale ? (
             <>
-              We found an unfinished QR code from <span className="font-medium">{ageDisplay}</span>.
-              This draft might be outdated.
+              {t('We found an unfinished QR code from')} <span className="font-medium">{ageDisplay}</span>.
+              {t('This draft might be outdated.')}
             </>
           ) : (
             <>
-              We found an unfinished QR code from <span className="font-medium">{ageDisplay}</span>.
-              Would you like to continue where you left off?
+              {t('We found an unfinished QR code from')} <span className="font-medium">{ageDisplay}</span>.
+              {t('Would you like to continue where you left off?')}
             </>
           )}
         </p>
@@ -104,9 +106,9 @@ export function StateRecoveryModal({ onRestore, onDiscard }: StateRecoveryModalP
                 />
               </svg>
               <div className="flex-1">
-                <p className="text-xs font-medium text-yellow-900">Old Draft</p>
+                <p className="text-xs font-medium text-yellow-900">{t('Old Draft')}</p>
                 <p className="text-xs text-yellow-800 mt-1">
-                  This draft is over 24 hours old. Consider starting fresh if it's no longer relevant.
+                  {t('This draft is over 24 hours old. Consider starting fresh if it\'s no longer relevant.')}
                 </p>
               </div>
             </div>
@@ -120,20 +122,20 @@ export function StateRecoveryModal({ onRestore, onDiscard }: StateRecoveryModalP
             onClick={handleRestore}
             className="w-full px-4 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition"
           >
-            {isStale ? 'Restore Old Draft' : 'Continue Editing'}
+            {isStale ? t('Restore Old Draft') : t('Continue Editing')}
           </button>
           <button
             type="button"
             onClick={handleDiscard}
             className="w-full px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
           >
-            Start Fresh
+            {t('Start Fresh')}
           </button>
         </div>
 
         {/* Info */}
         <p className="text-xs text-gray-500 text-center mt-4">
-          Your draft is automatically saved as you work
+          {t('Your draft is automatically saved as you work')}
         </p>
       </div>
     </div>
@@ -149,6 +151,7 @@ export interface StateRecoveryBannerProps {
 }
 
 export function StateRecoveryBanner({ onRestore, onDismiss }: StateRecoveryBannerProps) {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   const clearPersistedState = useWizardStore((state) => state.clearPersistedState);
 
@@ -185,7 +188,7 @@ export function StateRecoveryBanner({ onRestore, onDismiss }: StateRecoveryBanne
           />
         </svg>
         <div className="flex-1">
-          <p className="text-sm font-medium text-primary-900">Unsaved work found</p>
+          <p className="text-sm font-medium text-primary-900">{t('Unsaved work found')}</p>
           <p className="text-sm text-primary-700 mt-1">
             You have an unfinished QR code from {ageInMinutes} minutes ago.
           </p>
@@ -195,14 +198,14 @@ export function StateRecoveryBanner({ onRestore, onDismiss }: StateRecoveryBanne
               onClick={handleRestore}
               className="text-sm font-medium text-primary-600 hover:text-primary-700"
             >
-              Resume →
+              {t('Resume')}
             </button>
             <button
               type="button"
               onClick={handleDismiss}
               className="text-sm font-medium text-gray-600 hover:text-gray-700"
             >
-              Dismiss
+              {t('Dismiss')}
             </button>
           </div>
         </div>

@@ -1,78 +1,112 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  selectClass,
+  textareaClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * PayKickstart subscription billing payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Mode (test / live)
+ * - Secret Key
+ * - New Registration Email Template (textarea)
+ * - Upsale Email Template (textarea)
+ *
+ * Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
+ * PayKickstart requires IPN URL in Product Settings > Integration.
+ */
+export function PayKickstartForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function PayKickstartForm({ settings, onChange }: Props) {
   return (
-    <PaymentProcessorFormBase slug="paykickstart" settings={settings} onChange={onChange}>
+    <PaymentProcessorFormBase
+      slug="paykickstart"
+      settings={settings}
+      onChange={onChange}
+      showWebhookUrl
+      webhookMessage={t(
+        'In PayKickstart dashboard, go to Product Settings > Integration (section 3) > Enable IPN and add the following URL for all events. This should be done for every product.'
+      )}
+    >
+      {/* Mode */}
       <div>
-        <label htmlFor="paykickstart-api-key" className="block text-sm font-medium text-gray-700">
-          API Key
+        <label htmlFor="paykickstart-mode" className={labelClass}>
+          {t('Mode')}
         </label>
-        <input
-          id="paykickstart-api-key"
-          type="password"
-          value={settings.api_key ?? ''}
-          onChange={e => onChange('api_key', e.target.value)}
-          placeholder="Enter API Key"
-          className={inputClass}
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="paykickstart-secret-key"
-          className="block text-sm font-medium text-gray-700"
+        <select
+          id="paykickstart-mode"
+          value={settings.paykickstart_mode ?? 'test'}
+          onChange={(e) => onChange('paykickstart_mode', e.target.value)}
+          className={selectClass}
         >
-          Secret Key
+          <option value="test">{t('Test')}</option>
+          <option value="live">{t('Live')}</option>
+        </select>
+      </div>
+
+      {/* Secret Key */}
+      <div>
+        <label htmlFor="paykickstart-secret-key" className={labelClass}>
+          {t('Secret Key')}
         </label>
         <input
           id="paykickstart-secret-key"
           type="password"
-          value={settings.secret_key ?? ''}
-          onChange={e => onChange('secret_key', e.target.value)}
-          placeholder="Enter Secret Key"
+          value={settings.paykickstart_secret_key ?? ''}
+          onChange={(e) => onChange('paykickstart_secret_key', e.target.value)}
+          placeholder={t('Secret key')}
           className={inputClass}
         />
+        <p className={hintClass}>
+          {t('Secret key can be found in your campaign settings.')}
+        </p>
       </div>
+
+      {/* New Registration Email Template */}
       <div>
-        <label
-          htmlFor="paykickstart-campaign-id"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Campaign ID
+        <label htmlFor="paykickstart-email-template" className={labelClass}>
+          {t('New Registration Email Template')}
         </label>
-        <input
-          id="paykickstart-campaign-id"
-          type="text"
-          value={settings.campaign_id ?? ''}
-          onChange={e => onChange('campaign_id', e.target.value)}
-          placeholder="Enter Campaign ID"
-          className={inputClass}
+        <textarea
+          id="paykickstart-email-template"
+          rows={6}
+          value={settings.paykickstart_email_template ?? ''}
+          onChange={(e) => onChange('paykickstart_email_template', e.target.value)}
+          placeholder={t('Enter email template...')}
+          className={textareaClass}
         />
+        <p className={hintClass}>
+          {t(
+            'Automatically sent after successful payment via PayKickstart checkout page. Available variables: FULL_NAME, EMAIL, PASSWORD, PLAN_NAME'
+          )}
+        </p>
       </div>
+
+      {/* Upsale Email Template */}
       <div>
-        <label
-          htmlFor="paykickstart-webhook-url"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Webhook URL
+        <label htmlFor="paykickstart-upgrade-email-template" className={labelClass}>
+          {t('Upsale Email Template')}
         </label>
-        <input
-          id="paykickstart-webhook-url"
-          type="text"
-          value={settings.webhook_url ?? ''}
-          onChange={e => onChange('webhook_url', e.target.value)}
-          placeholder="https://example.com/api/webhooks/paykickstart"
-          className={inputClass}
+        <textarea
+          id="paykickstart-upgrade-email-template"
+          rows={6}
+          value={settings.paykickstart_upgrade_email_template ?? ''}
+          onChange={(e) => onChange('paykickstart_upgrade_email_template', e.target.value)}
+          placeholder={t('Enter upsale email template...')}
+          className={textareaClass}
         />
+        <p className={hintClass}>
+          {t(
+            'Automatically sent after successful upsale. The account will be upgraded. Available variables: FULL_NAME, EMAIL, PLAN_NAME'
+          )}
+        </p>
       </div>
     </PaymentProcessorFormBase>
   )

@@ -1,5 +1,6 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { businessProfileDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 const INPUT =
@@ -16,6 +17,7 @@ interface BusinessProfileDataFormProps {
   onChange?: (data: Partial<BusinessProfileData>) => void
 }
 export function BusinessProfileDataForm({ defaultValues, onChange }: BusinessProfileDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -28,48 +30,48 @@ export function BusinessProfileDataForm({ defaultValues, onChange }: BusinessPro
     <form className="space-y-5">
       <div>
         <label htmlFor="business_type" className={LABEL}>
-          Business Type
+          {t('Business Type')}
         </label>
         <select {...register('business_type')} id="business_type" className={SELECT}>
-          <option value="bakery">Bakery</option>
-          <option value="healthcare">Healthcare</option>
-          <option value="restaurant">Restaurant</option>
-          <option value="plumber">Plumber</option>
-          <option value="barber">Barber</option>
-          <option value="electrician">Electrician</option>
-          <option value="builder">Builder</option>
-          <option value="gardener">Gardener</option>
-          <option value="cafe">Cafe</option>
-          <option value="mechanic">Mechanic</option>
-          <option value="garage">Garage</option>
-          <option value="joiner">Joiner</option>
-          <option value="car_valeter">Car Valeter</option>
-          <option value="painter">Painter</option>
-          <option value="plasterer">Plasterer</option>
-          <option value="cleaner">Cleaner</option>
-          <option value="roofer">Roofer</option>
-          <option value="accountant">Accountant</option>
-          <option value="lawyer">Lawyer</option>
-          <option value="other">Other</option>
+          <option value="bakery">{t('Bakery')}</option>
+          <option value="healthcare">{t('Healthcare')}</option>
+          <option value="restaurant">{t('Restaurant')}</option>
+          <option value="plumber">{t('Plumber')}</option>
+          <option value="barber">{t('Barber')}</option>
+          <option value="electrician">{t('Electrician')}</option>
+          <option value="builder">{t('Builder')}</option>
+          <option value="gardener">{t('Gardener')}</option>
+          <option value="cafe">{t('Cafe')}</option>
+          <option value="mechanic">{t('Mechanic')}</option>
+          <option value="garage">{t('Garage')}</option>
+          <option value="joiner">{t('Joiner')}</option>
+          <option value="car_valeter">{t('Car Valeter')}</option>
+          <option value="painter">{t('Painter')}</option>
+          <option value="plasterer">{t('Plasterer')}</option>
+          <option value="cleaner">{t('Cleaner')}</option>
+          <option value="roofer">{t('Roofer')}</option>
+          <option value="accountant">{t('Accountant')}</option>
+          <option value="lawyer">{t('Lawyer')}</option>
+          <option value="other">{t('Other')}</option>
         </select>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="business_name" className={LABEL}>
-            Business Name *
+            {t('Business Name')} *
           </label>
           <input
             {...register('business_name')}
             id="business_name"
             type="text"
-            placeholder="My Business"
+            placeholder={t('My Business')}
             className={INPUT}
           />
           {errors.business_name && <p className={ERROR}>{errors.business_name.message}</p>}
         </div>
         <div>
           <label htmlFor="phone" className={LABEL}>
-            Phone
+            {t('Phone')}
           </label>
           <input
             {...register('phone')}
@@ -83,7 +85,7 @@ export function BusinessProfileDataForm({ defaultValues, onChange }: BusinessPro
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="email" className={LABEL}>
-            Email
+            {t('Email')}
           </label>
           <input
             {...register('email')}
@@ -96,7 +98,7 @@ export function BusinessProfileDataForm({ defaultValues, onChange }: BusinessPro
         </div>
         <div>
           <label htmlFor="website" className={LABEL}>
-            Website
+            {t('Website')}
           </label>
           <input
             {...register('website')}
@@ -110,66 +112,66 @@ export function BusinessProfileDataForm({ defaultValues, onChange }: BusinessPro
       </div>
       <div>
         <label htmlFor="address" className={LABEL}>
-          Address
+          {t('Address')}
         </label>
         <input
           {...register('address')}
           id="address"
           type="text"
-          placeholder="123 Main Street, City"
+          placeholder={t('123 Main Street, City')}
           className={INPUT}
         />
       </div>
       <div>
         <label htmlFor="description" className={LABEL}>
-          Description
+          {t('Description')}
         </label>
         <textarea
           {...register('description')}
           id="description"
-          placeholder="Describe your business..."
+          placeholder={t('Describe your business...')}
           className={TEXTAREA}
         />
       </div>
       <div>
         <label htmlFor="maps_url" className={LABEL}>
-          Google Maps URL
+          {t('Google Maps URL')}
         </label>
         <input
           {...register('maps_url')}
           id="maps_url"
           type="text"
-          placeholder="Paste Google Maps share link"
+          placeholder={t('Paste Google Maps share link')}
           className={INPUT}
         />
       </div>
       <div>
         <label htmlFor="socialProfiles" className={LABEL}>
-          Social Profiles
+          {t('Social Profiles')}
         </label>
         <textarea
           {...register('socialProfiles')}
           id="socialProfiles"
-          placeholder="One URL per line"
+          placeholder={t('One URL per line')}
           className={TEXTAREA}
         />
       </div>
       <div>
         <label htmlFor="opening_hours_enabled" className={LABEL}>
-          Opening Hours
+          {t('Opening Hours')}
         </label>
         <select
           {...register('opening_hours_enabled')}
           id="opening_hours_enabled"
           className={SELECT}
         >
-          <option value="disabled">Disabled</option>
-          <option value="enabled">Enabled</option>
+          <option value="disabled">{t('Disabled')}</option>
+          <option value="enabled">{t('Enabled')}</option>
         </select>
       </div>
       <div>
         <label htmlFor="expires_at" className={LABEL}>
-          Expiry Date
+          {t('Expiry Date')}
         </label>
         <input {...register('expires_at')} id="expires_at" type="date" className={INPUT} />
       </div>

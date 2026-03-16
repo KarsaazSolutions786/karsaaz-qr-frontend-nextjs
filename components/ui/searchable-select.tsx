@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface SearchableSelectOption {
   value: string
@@ -20,6 +21,7 @@ export interface SearchableSelectProps {
 
 const SearchableSelect = React.forwardRef<HTMLDivElement, SearchableSelectProps>(
   ({ className, options, value, onChange, placeholder = 'Select...', isLoading = false, disabled = false }, ref) => {
+    const { t } = useTranslation()
     const [open, setOpen] = React.useState(false)
     const [search, setSearch] = React.useState('')
     const [highlightIndex, setHighlightIndex] = React.useState(0)
@@ -102,7 +104,7 @@ const SearchableSelect = React.forwardRef<HTMLDivElement, SearchableSelectProps>
           <input
             ref={inputRef}
             className="w-full bg-transparent outline-none placeholder:text-gray-400"
-            placeholder={open ? 'Type to search...' : (selectedLabel || placeholder)}
+            placeholder={open ? t('Type to search...') : (selectedLabel || placeholder)}
             value={open ? search : selectedLabel}
             readOnly={!open}
             disabled={disabled}
@@ -116,9 +118,9 @@ const SearchableSelect = React.forwardRef<HTMLDivElement, SearchableSelectProps>
         {open && (
           <div className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 shadow-md">
             {isLoading ? (
-              <div className="px-3 py-2 text-sm text-gray-400">Loading...</div>
+              <div className="px-3 py-2 text-sm text-gray-400">{t('Loading...')}</div>
             ) : filtered.length === 0 ? (
-              <div className="px-3 py-2 text-sm text-gray-400">No results found</div>
+              <div className="px-3 py-2 text-sm text-gray-400">{t('No results found')}</div>
             ) : (
               filtered.map((option, i) => (
                 <div

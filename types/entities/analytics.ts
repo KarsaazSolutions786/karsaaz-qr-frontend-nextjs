@@ -61,6 +61,16 @@ export interface BreakdownItem {
   percentage: number
 }
 
+// Country breakdown item (includes ISO code for flag rendering)
+export interface CountryBreakdownItem extends BreakdownItem {
+  countryCode: string
+}
+
+// City breakdown item (includes country for context)
+export interface CityBreakdownItem extends BreakdownItem {
+  country?: string
+}
+
 // QR Code statistics
 export interface QRCodeStats {
   qrcodeId: number
@@ -73,6 +83,8 @@ export interface QRCodeStats {
   browserBreakdown: BreakdownItem[]
   osBreakdown: BreakdownItem[]
   locationBreakdown: BreakdownItem[]
+  countryBreakdown: CountryBreakdownItem[]
+  cityBreakdown: CityBreakdownItem[]
   topReferrers: BreakdownItem[]
 }
 

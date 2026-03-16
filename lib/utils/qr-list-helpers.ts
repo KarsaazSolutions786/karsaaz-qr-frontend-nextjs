@@ -1,5 +1,5 @@
 import type { SortOption } from '@/components/qr/SortDropdown'
-import type { FilterState } from '@/hooks/useFilters'
+import type { FilterState } from '@/lib/hooks/useFilters'
 import type { ListQRCodesParams } from '@/lib/api/endpoints/qrcodes'
 
 /**

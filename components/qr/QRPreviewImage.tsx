@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import apiClient from '@/lib/api/client'
+import { useTranslation } from '@/lib/i18n'
 
 /**
  * QRPreviewImage — fetches QR SVG via authenticated API (avoiding ORB),
@@ -24,10 +25,12 @@ interface QRPreviewImageProps {
 export function QRPreviewImage({
   svgUrl,
   fallbackUrl,
-  alt = 'QR Code',
+  alt,
   size = 120,
   className = '',
 }: QRPreviewImageProps) {
+  const { t } = useTranslation()
+  const resolvedAlt = alt ?? t('QR Code')
   const [blobUrl, setBlobUrl] = useState<string | null>(null)
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -144,7 +147,7 @@ export function QRPreviewImage({
     return (
       <img
         src={fallbackUrl}
-        alt={alt}
+        alt={resolvedAlt}
         width={size}
         height={size}
         className={`rounded-md object-contain ${className}`}
@@ -168,7 +171,7 @@ export function QRPreviewImage({
   return (
     <img
       src={blobUrl}
-      alt={alt}
+      alt={resolvedAlt}
       width={size}
       height={size}
       className={`rounded-md object-contain ${className}`}

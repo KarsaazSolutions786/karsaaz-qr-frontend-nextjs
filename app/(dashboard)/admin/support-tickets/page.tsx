@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { supportTicketsAPI } from '@/lib/api/endpoints/support-tickets'
 import type { SupportTicket } from '@/types/entities/support-ticket'
+import { useTranslation } from '@/lib/i18n'
 
 const STATUS_BADGES: Record<SupportTicket['status'], { label: string; className: string }> = {
   OPEN: { label: 'Open', className: 'bg-blue-100 text-blue-800' },
@@ -16,6 +17,7 @@ const STATUS_BADGES: Record<SupportTicket['status'], { label: string; className:
  * T221: Admin page showing ALL tickets across users.
  */
 export default function AdminSupportTicketsPage() {
+  const { t } = useTranslation()
   const [tickets, setTickets] = useState<SupportTicket[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -30,7 +32,7 @@ export default function AdminSupportTicketsPage() {
         setTickets(Array.isArray(data) ? data : [])
       } catch (err) {
         console.error('Failed to fetch admin tickets:', err)
-        setError('Failed to load support tickets')
+        setError(t('Failed to load support tickets'))
       } finally {
         setIsLoading(false)
       }
@@ -39,30 +41,30 @@ export default function AdminSupportTicketsPage() {
     fetchAllTickets()
   }, [])
 
-  const filtered = statusFilter === 'all' ? tickets : tickets.filter(t => t.status === statusFilter)
+  const filtered = statusFilter === 'all' ? tickets : tickets.filter(tk => tk.status === statusFilter)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">All Support Tickets</h1>
-          <p className="mt-2 text-sm text-gray-600">Admin view — all tickets across users</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('All Support Tickets')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Admin view — all tickets across users')}</p>
         </div>
       </div>
 
       {/* Status Filter */}
       <div className="mt-6 flex items-center gap-2">
-        <label className="text-sm font-medium text-gray-700">Status:</label>
+        <label className="text-sm font-medium text-gray-700">{t('Status:')}</label>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
           className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         >
-          <option value="all">All</option>
-          <option value="OPEN">Open</option>
-          <option value="IN_PROGRESS">In Progress</option>
-          <option value="RESOLVED">Resolved</option>
-          <option value="CLOSED">Closed</option>
+          <option value="all">{t('All')}</option>
+          <option value="OPEN">{t('Open')}</option>
+          <option value="IN_PROGRESS">{t('In Progress')}</option>
+          <option value="RESOLVED">{t('Resolved')}</option>
+          <option value="CLOSED">{t('Closed')}</option>
         </select>
       </div>
 
@@ -70,7 +72,7 @@ export default function AdminSupportTicketsPage() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
-            <p className="mt-2 text-sm text-gray-600">Loading...</p>
+            <p className="mt-2 text-sm text-gray-600">{t('Loading...')}</p>
           </div>
         ) : error ? (
           <div className="rounded-md bg-red-50 p-4">
@@ -78,7 +80,7 @@ export default function AdminSupportTicketsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-sm text-gray-500">No tickets found.</p>
+            <p className="text-sm text-gray-500">{t('No tickets found.')}</p>
           </div>
         ) : (
           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
@@ -86,25 +88,25 @@ export default function AdminSupportTicketsPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
-                    Ticket ID
+                    {t('Ticket ID')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    User Name
+                    {t('User Name')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Subject
+                    {t('Subject')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Status
+                    {t('Status')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Created
+                    {t('Created')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Last Reply
+                    {t('Last Reply')}
                   </th>
                   <th className="relative py-3.5 pl-3 pr-4">
-                    <span className="sr-only">View</span>
+                    <span className="sr-only">{t('View')}</span>
                   </th>
                 </tr>
               </thead>
@@ -140,7 +142,7 @@ export default function AdminSupportTicketsPage() {
                           href={`/support-tickets/${ticket.id}`}
                           className="text-blue-600 hover:text-blue-900"
                         >
-                          View
+                          {t('View')}
                         </Link>
                       </td>
                     </tr>

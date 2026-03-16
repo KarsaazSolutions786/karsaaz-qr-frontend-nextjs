@@ -1,6 +1,7 @@
 'use client'
 
 import type { PaymentMethod } from '@/types/entities/transaction'
+import { useTranslation } from '@/lib/i18n'
 
 interface PaymentMethodsListProps {
   methods: PaymentMethod[]
@@ -15,10 +16,12 @@ const brandIcons: Record<string, string> = {
 }
 
 export default function PaymentMethodsList({ methods, onRemove }: PaymentMethodsListProps) {
+  const { t } = useTranslation()
+
   if (methods.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <p className="text-sm text-gray-500">No payment methods saved.</p>
+        <p className="text-sm text-gray-500">{t('No payment methods saved.')}</p>
       </div>
     )
   }
@@ -39,18 +42,18 @@ export default function PaymentMethodsList({ methods, onRemove }: PaymentMethods
                 {method.type === 'card'
                   ? `•••• •••• •••• ${method.last4 ?? '****'}`
                   : method.type === 'paypal'
-                    ? 'PayPal'
-                    : 'Bank Account'}
+                    ? t('PayPal')
+                    : t('Bank Account')}
               </p>
               {method.expiryMonth && method.expiryYear && (
                 <p className="text-xs text-gray-500">
-                  Expires {String(method.expiryMonth).padStart(2, '0')}/{method.expiryYear}
+                  {t('Expires')} {String(method.expiryMonth).padStart(2, '0')}/{method.expiryYear}
                 </p>
               )}
             </div>
             {method.isDefault && (
               <span className="rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-700">
-                Default
+                {t('Default')}
               </span>
             )}
           </div>
@@ -59,7 +62,7 @@ export default function PaymentMethodsList({ methods, onRemove }: PaymentMethods
             onClick={() => onRemove(method.id)}
             className="rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
           >
-            Remove
+            {t('Remove')}
           </button>
         </div>
       ))}

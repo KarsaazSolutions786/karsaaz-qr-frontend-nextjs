@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, FormEvent } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -13,6 +14,7 @@ interface EmailStepProps {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function EmailStep({ onSubmit, onCancel, loading }: EmailStepProps) {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)
 
@@ -20,11 +22,11 @@ export function EmailStep({ onSubmit, onCancel, loading }: EmailStepProps) {
     e.preventDefault()
     const trimmed = email.trim()
     if (!trimmed) {
-      setValidationError('Email is required')
+      setValidationError(t('Email is required'))
       return
     }
     if (!EMAIL_REGEX.test(trimmed)) {
-      setValidationError('Please enter a valid email address')
+      setValidationError(t('Please enter a valid email address'))
       return
     }
     setValidationError(null)
@@ -34,9 +36,9 @@ export function EmailStep({ onSubmit, onCancel, loading }: EmailStepProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Enter your email</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t('Enter your email')}</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          We&apos;ll send you a verification code
+          {t("We'll send you a verification code")}
         </p>
       </div>
 
@@ -63,10 +65,10 @@ export function EmailStep({ onSubmit, onCancel, loading }: EmailStepProps) {
           className="flex-1"
           disabled={loading}
         >
-          Cancel
+          {t('Cancel')}
         </Button>
         <Button type="submit" className="flex-1" disabled={loading || !email.trim()}>
-          Continue
+          {t('Continue')}
         </Button>
       </div>
     </form>

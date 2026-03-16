@@ -3,19 +3,21 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import apiClient from '@/lib/api/client'
-
-const PRO_FEATURES = [
-  '✨ Unlimited QR code designs',
-  '🎨 Custom backgrounds & colors',
-  '🖼️ Logo integration',
-  '📱 4K high-resolution downloads',
-  '📐 SVG vector format',
-  '⚙️ Advanced customization options',
-  '🎯 Priority support',
-]
+import { useTranslation } from '@/lib/i18n'
 
 export default function PaymentThankYouPage() {
+  const { t } = useTranslation()
   const [message, setMessage] = useState('')
+
+  const PRO_FEATURES = [
+    t('Unlimited QR code designs'),
+    t('Custom backgrounds & colors'),
+    t('Logo integration'),
+    t('4K high-resolution downloads'),
+    t('SVG vector format'),
+    t('Advanced customization options'),
+    t('Priority support'),
+  ]
   const [countdown, setCountdown] = useState(5)
   const [loading, setLoading] = useState(true)
 
@@ -40,6 +42,7 @@ export default function PaymentThankYouPage() {
 
       if (data?.clear_storage) {
         localStorage.removeItem('token')
+        localStorage.removeItem('logged_in')
         localStorage.removeItem('user')
       }
     } catch {
@@ -54,7 +57,7 @@ export default function PaymentThankYouPage() {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mx-auto mb-6" />
-          <h1 className="text-xl font-bold text-gray-900">Loading...</h1>
+          <h1 className="text-xl font-bold text-gray-900">{t('Loading...')}</h1>
         </div>
       </div>
     )
@@ -68,13 +71,13 @@ export default function PaymentThankYouPage() {
           <span className="text-4xl">🎉</span>
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Thank You!</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('Thank You!')}</h1>
         {message && <p className="text-gray-600 mb-6">{message}</p>}
 
         {/* PRO Features List */}
         <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 mb-6 text-left">
           <h3 className="text-sm font-semibold text-purple-700 uppercase tracking-wide mb-3">
-            Your PRO features are now active
+            {t('Your PRO features are now active')}
           </h3>
           <ul className="space-y-2">
             {PRO_FEATURES.map((feature, i) => (
@@ -84,17 +87,17 @@ export default function PaymentThankYouPage() {
         </div>
 
         <p className="text-sm text-gray-500 mb-2">
-          Please log in again to see your updated subscription status.
+          {t('Please log in again to see your updated subscription status.')}
         </p>
         <p className="text-sm text-gray-400">
-          Redirecting to login in {countdown} seconds...
+          {t('Redirecting to login in')} {countdown} {t('seconds...')}
         </p>
 
         <Link
           href="/login"
           className="mt-4 inline-block text-purple-600 hover:text-purple-700 font-medium"
         >
-          Go to Login →
+          {t('Go to Login')} →
         </Link>
       </div>
     </div>

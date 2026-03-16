@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 import {
   Link,
   FileText,
@@ -36,13 +37,14 @@ interface QrTypeNameProps {
 }
 
 export function QrTypeName({ type, showIcon = true, className }: QrTypeNameProps) {
+  const { t } = useTranslation()
   const config = typeConfig[type] ?? { label: type, icon: QrCode }
   const Icon = config.icon
 
   return (
     <span className={cn('inline-flex items-center gap-1.5 text-sm text-gray-700', className)}>
       {showIcon && <Icon className="h-4 w-4" />}
-      {config.label}
+      {t(config.label)}
     </span>
   )
 }

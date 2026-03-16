@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import GradientEditor, { GradientSettings } from '../GradientEditor';
+import { useTranslation } from '@/lib/i18n';
 
 interface GradientFieldsProps {
   gradientSettings?: GradientSettings;
@@ -49,6 +50,7 @@ export default function GradientFields({
   gradientSettings,
   onChange,
 }: GradientFieldsProps) {
+  const { t } = useTranslation();
   const [enabled, setEnabled] = useState(!!gradientSettings && gradientSettings.type !== 'none');
 
   const toggleGradient = () => {
@@ -90,7 +92,7 @@ export default function GradientFields({
       {/* Enable/Disable Toggle */}
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
-          <Label>Enable Gradient</Label>
+          <Label>{t('Enable Gradient')}</Label>
           <p className="text-xs text-muted-foreground">
             Apply gradient to QR code modules
           </p>
@@ -108,7 +110,7 @@ export default function GradientFields({
         <>
           {/* Quick Presets */}
           <div className="space-y-3">
-            <Label className="text-sm">Quick Presets</Label>
+            <Label className="text-sm">{t('Quick Presets')}</Label>
             <div className="grid grid-cols-2 gap-2">
               {quickPresets.map((preset, index) => (
                 <button
@@ -133,7 +135,7 @@ export default function GradientFields({
           {/* Application Info */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-xs text-blue-800">
-              <strong>Note:</strong> Gradients are applied to the foreground color. For best
+              <strong>{t('Note:')}</strong> Gradients are applied to the foreground color. For best
               scanning results, ensure sufficient contrast with the background.
             </p>
           </div>
@@ -143,7 +145,7 @@ export default function GradientFields({
       {!enabled && (
         <Card className="p-8 text-center">
           <div className="text-muted-foreground">
-            <p className="text-sm mb-2">Gradient is disabled</p>
+            <p className="text-sm mb-2">{t('Gradient is disabled')}</p>
             <p className="text-xs">
               Enable gradient to add beautiful color transitions to your QR code
             </p>

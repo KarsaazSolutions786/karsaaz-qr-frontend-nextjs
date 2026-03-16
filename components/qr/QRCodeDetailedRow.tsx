@@ -6,12 +6,13 @@
 
 'use client'
 
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 import { QRCode } from '@/types/entities/qrcode'
 import { RowActionsModal, QRAction } from './RowActionsModal'
 import { MoreVertical, Eye, Download, Share2, BarChart3, Calendar } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { QRPreviewImage } from '@/components/qr/QRPreviewImage'
+import { useTranslation } from '@/lib/i18n'
 
 export interface QRCodeDetailedRowProps {
   qrcode: QRCode
@@ -20,12 +21,13 @@ export interface QRCodeDetailedRowProps {
   onAction: (action: QRAction, qrcode: QRCode) => void
 }
 
-export function QRCodeDetailedRow({
+export const QRCodeDetailedRow = memo(function QRCodeDetailedRow({
   qrcode,
   isSelected,
   onToggleSelect,
   onAction,
 }: QRCodeDetailedRowProps) {
+  const { t } = useTranslation()
   const [isActionsOpen, setIsActionsOpen] = useState(false)
   const [showQuickActions, setShowQuickActions] = useState(false)
 
@@ -143,21 +145,21 @@ export function QRCodeDetailedRow({
                 <button
                   onClick={() => handleAction('preview')}
                   className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                  title="Preview"
+                  title={t('Preview')}
                 >
                   <Eye className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleAction('download')}
                   className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
-                  title="Download"
+                  title={t('Download')}
                 >
                   <Download className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => handleAction('share')}
                   className="p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded transition-colors"
-                  title="Share"
+                  title={t('Share')}
                 >
                   <Share2 className="w-4 h-4" />
                 </button>
@@ -168,7 +170,7 @@ export function QRCodeDetailedRow({
             <button
               onClick={() => setIsActionsOpen(true)}
               className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded transition-colors"
-              title="More actions"
+              title={t('More actions')}
             >
               <MoreVertical className="w-4 h-4" />
             </button>
@@ -184,4 +186,4 @@ export function QRCodeDetailedRow({
       />
     </>
   )
-}
+})

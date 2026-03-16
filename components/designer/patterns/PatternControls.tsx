@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Upload, X } from 'lucide-react'
 import type { PatternSettings } from './types'
+import { useTranslation } from '@/lib/i18n'
 
 interface PatternControlsProps {
   pattern: PatternSettings
@@ -18,11 +19,12 @@ export default function PatternControls({
   onUpdate,
   onCustomImageUpload,
 }: PatternControlsProps) {
+  const { t } = useTranslation()
   if (pattern.type === 'none') {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        <p className="text-sm">No pattern selected</p>
-        <p className="text-xs mt-1">Choose a pattern type to get started</p>
+        <p className="text-sm">{t('No pattern selected')}</p>
+        <p className="text-xs mt-1">{t('Choose a pattern type to get started')}</p>
       </div>
     )
   }
@@ -32,7 +34,7 @@ export default function PatternControls({
       {/* Pattern Color Picker */}
       {pattern.type !== 'custom' && (
         <div className="space-y-2">
-          <Label htmlFor="pattern-color">Pattern Color</Label>
+          <Label htmlFor="pattern-color">{t('Pattern Color')}</Label>
           <div className="flex gap-2">
             <Input
               id="pattern-color"
@@ -54,7 +56,7 @@ export default function PatternControls({
       {/* Pattern Density Slider */}
       <div className="space-y-2">
         <Label htmlFor="pattern-density">
-          {pattern.type === 'custom' ? 'Opacity' : 'Density'}: {pattern.density}%
+          {pattern.type === 'custom' ? t('Opacity') : t('Density')}: {pattern.density}%
         </Label>
         <Input
           id="pattern-density"
@@ -69,7 +71,7 @@ export default function PatternControls({
       {/* Rotation & Scale */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="pattern-rotation">Rotation: {pattern.rotation ?? 0}&deg;</Label>
+          <Label htmlFor="pattern-rotation">{t('Rotation:')} {pattern.rotation ?? 0}&deg;</Label>
           <Input
             id="pattern-rotation"
             type="range"
@@ -80,7 +82,7 @@ export default function PatternControls({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="pattern-scale">Scale: {pattern.scale ?? 100}%</Label>
+          <Label htmlFor="pattern-scale">{t('Scale:')} {pattern.scale ?? 100}%</Label>
           <Input
             id="pattern-scale"
             type="range"
@@ -95,13 +97,13 @@ export default function PatternControls({
       {/* Custom Pattern Upload */}
       {pattern.type === 'custom' && (
         <div className="space-y-2">
-          <Label>Upload Custom Pattern</Label>
+          <Label>{t('Upload Custom Pattern')}</Label>
           <div className="flex gap-2">
             <label htmlFor="custom-pattern-upload" className="flex-1">
               <Button variant="outline" className="w-full" asChild>
                 <span>
                   <Upload className="w-4 h-4 mr-2" />
-                  Choose Image
+                  {t('Choose Image')}
                 </span>
               </Button>
               <input
@@ -123,7 +125,7 @@ export default function PatternControls({
             )}
           </div>
           <p className="text-xs text-muted-foreground">
-            Recommended: PNG with transparency, 256x256px
+            {t('Recommended: PNG with transparency, 256x256px')}
           </p>
         </div>
       )}

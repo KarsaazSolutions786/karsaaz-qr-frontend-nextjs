@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function AuthError({
   error,
@@ -11,6 +12,8 @@ export default function AuthError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const { t } = useTranslation()
+
   useEffect(() => {
     console.error('[Auth Error]', error)
   }, [error])
@@ -22,10 +25,10 @@ export default function AuthError({
           <AlertTriangle className="w-8 h-8 text-yellow-600" />
         </div>
 
-        <h1 className="text-xl font-bold text-gray-900 mb-2">Authentication Error</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-2">{t('Authentication Error')}</h1>
 
         <p className="text-gray-600 mb-6">
-          {error.message || 'Something went wrong during authentication. Please try again.'}
+          {error.message || t('Something went wrong during authentication. Please try again.')}
         </p>
 
         <div className="flex flex-col gap-3">
@@ -34,7 +37,7 @@ export default function AuthError({
             className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
-            Try Again
+            {t('Try Again')}
           </button>
 
           <Link
@@ -42,7 +45,7 @@ export default function AuthError({
             className="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
           >
             <Home className="w-4 h-4" />
-            Back to Login
+            {t('Back to Login')}
           </Link>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import React, { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import { hasLandingPage } from '@/lib/utils/qr-preview-router'
+import { useTranslation } from '@/lib/i18n'
 
 // Dynamically import preview components
 const BusinessProfilePreview = dynamic(
@@ -14,6 +15,8 @@ const CataloguePreview = dynamic(
   () => import('@/components/public/product-catalogue/CataloguePreview')
 )
 const ReviewPreview = dynamic(() => import('@/components/public/business-review/ReviewPreview'))
+const GoogleReviewPreview = dynamic(() => import('@/components/public/google-review/GoogleReviewPreview'))
+const PayPalPreview = dynamic(() => import('@/components/public/paypal/PayPalPreview'))
 const EventPreview = dynamic(() => import('@/components/public/event/EventPreview'))
 const FormPreview = dynamic(() => import('@/components/public/lead-form/FormPreview'))
 const WebsitePreview = dynamic(() => import('@/components/public/website-builder/WebsitePreview'))
@@ -30,6 +33,7 @@ interface QRTypeRendererProps {
 }
 
 export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
+  const { t } = useTranslation()
   const normalizedType = qrType.toLowerCase().trim()
 
   // Check if type has a landing page
@@ -37,9 +41,9 @@ export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Unsupported QR Type</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Unsupported QR Type')}</h1>
           <p className="text-gray-600">
-            This QR code type ({qrType}) does not have a landing page.
+            {t('This QR code type ({{type}}) does not have a landing page.').replace('{{type}}', qrType)}
           </p>
         </div>
       </div>
@@ -76,6 +80,13 @@ export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
       case 'review':
       case 'rating':
         return <ReviewPreview review={data} />
+
+      case 'google-review':
+        return <GoogleReviewPreview data={data} />
+
+      case 'paypal':
+      case 'payment-paypal':
+        return <PayPalPreview data={data} />
 
       case 'event':
         return <EventPreview event={data} />
@@ -114,7 +125,7 @@ export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
         return (
           <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">Unknown QR Type</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Unknown QR Type')}</h1>
               <p className="text-gray-600">Type: {qrType}</p>
             </div>
           </div>
@@ -128,7 +139,7 @@ export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading QR code content...</p>
+            <p className="text-gray-600">{t('Loading QR code content...')}</p>
           </div>
         </div>
       }

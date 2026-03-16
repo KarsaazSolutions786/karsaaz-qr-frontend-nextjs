@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { resetPasswordSchema, type ResetPasswordFormData } from '@/lib/validations/auth'
 import { useResetPassword } from '@/lib/hooks/mutations/useResetPassword'
+import { useTranslation } from '@/lib/i18n'
 import { PasswordStrengthBar } from '@/lib/utils/password-strength'
 
 interface ResetPasswordFormProps {
@@ -13,6 +14,7 @@ interface ResetPasswordFormProps {
 }
 
 export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps) {
+  const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const resetPasswordMutation = useResetPassword()
 
@@ -45,7 +47,7 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
 
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email address
+          {t('Email address')}
         </label>
         <input
           {...register('email')}
@@ -62,7 +64,7 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
 
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          New password
+          {t('New password')}
         </label>
         <div className="relative mt-1">
           <input
@@ -77,7 +79,7 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-2 text-sm text-gray-600 hover:text-gray-800"
           >
-            {showPassword ? 'Hide' : 'Show'}
+            {showPassword ? t('Hide') : t('Show')}
           </button>
         </div>
         {errors.password && (
@@ -88,7 +90,7 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
 
       <div>
         <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-          Confirm new password
+          {t('Confirm new password')}
         </label>
         <input
           {...register('confirmPassword')}
@@ -106,7 +108,7 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
         <div className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
             {(resetPasswordMutation.error as Error)?.message ||
-              'Password reset failed. Please try again.'}
+              t('Password reset failed. Please try again.')}
           </p>
         </div>
       )}
@@ -117,8 +119,8 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
         className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting || resetPasswordMutation.isPending
-          ? 'Resetting password...'
-          : 'Reset password'}
+          ? t('Resetting password...')
+          : t('Reset password')}
       </button>
     </form>
   )

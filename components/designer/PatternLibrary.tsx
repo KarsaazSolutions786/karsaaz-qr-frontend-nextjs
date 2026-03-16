@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Upload, X } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface PatternSettings {
   type: 'dots' | 'squares' | 'hexagons' | 'diamonds' | 'stripes-h' | 'stripes-v' | 'triangles' | 'waves' | 'custom' | 'none';
@@ -28,6 +29,7 @@ const defaultPattern: PatternSettings = {
 };
 
 export default function PatternLibrary({ selectedPattern, onChange }: PatternLibraryProps) {
+  const { t } = useTranslation();
   const [pattern, setPattern] = useState<PatternSettings>(selectedPattern || defaultPattern);
 
   const updatePattern = (updates: Partial<PatternSettings>) => {
@@ -301,7 +303,7 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
   return (
     <div className="space-y-6">
       <div>
-        <Label className="mb-3 block">Pattern Type</Label>
+        <Label className="mb-3 block">{t('Pattern Type')}</Label>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {patternOptions.map((option) => (
             <button
@@ -327,7 +329,7 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
           {/* Pattern Color Picker */}
           {pattern.type !== 'custom' && (
             <div className="space-y-2">
-              <Label htmlFor="pattern-color">Pattern Color</Label>
+              <Label htmlFor="pattern-color">{t('Pattern Color')}</Label>
               <div className="flex gap-2">
                 <Input
                   id="pattern-color"
@@ -394,7 +396,7 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
           {/* Custom Pattern Upload */}
           {pattern.type === 'custom' && (
             <div className="space-y-2">
-              <Label>Upload Custom Pattern</Label>
+              <Label>{t('Upload Custom Pattern')}</Label>
               <div className="flex gap-2">
                 <label htmlFor="custom-pattern-upload" className="flex-1">
                   <Button variant="outline" className="w-full" asChild>
@@ -429,7 +431,7 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
 
           {/* Pattern Preview */}
           <div className="space-y-2">
-            <Label>Pattern Preview</Label>
+            <Label>{t('Pattern Preview')}</Label>
             <Card className="p-0 overflow-hidden">
               <div className="h-32 bg-white relative">{getPatternPreview()}</div>
             </Card>
@@ -439,8 +441,8 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
 
       {pattern.type === 'none' && (
         <div className="text-center py-8 text-muted-foreground">
-          <p className="text-sm">No pattern selected</p>
-          <p className="text-xs mt-1">Choose a pattern type to get started</p>
+          <p className="text-sm">{t('No pattern selected')}</p>
+          <p className="text-xs mt-1">{t('Choose a pattern type to get started')}</p>
         </div>
       )}
     </div>

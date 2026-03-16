@@ -8,7 +8,8 @@
 
 import React, { useState } from 'react';
 import { Star, Trash2, Edit2, Check, X } from 'lucide-react';
-import { FilterPreset } from '@/hooks/useFilters';
+import { useTranslation } from '@/lib/i18n';
+import { FilterPreset } from '@/lib/hooks/useFilters';
 
 export interface FilterPresetsProps {
   presets: FilterPreset[];
@@ -27,13 +28,14 @@ export function FilterPresets({
   onUpdatePreset,
   className = '',
 }: FilterPresetsProps) {
+  const { t } = useTranslation();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   
   if (presets.length === 0) {
     return (
       <div className={`p-8 text-center ${className}`}>
-        <p className="text-sm text-gray-500">No saved presets yet</p>
+        <p className="text-sm text-gray-500">{t('No saved presets yet')}</p>
         <p className="text-xs text-gray-400 mt-1">
           Save your current filters as a preset for quick access
         </p>
@@ -159,7 +161,7 @@ export function FilterPresets({
                 <button
                   onClick={() => startEdit(preset)}
                   className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded"
-                  title="Rename preset"
+                  title={t('Rename preset')}
                 >
                   <Edit2 className="w-4 h-4" />
                 </button>
@@ -167,7 +169,7 @@ export function FilterPresets({
                 <button
                   onClick={() => handleDelete(preset.id, preset.name)}
                   className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded"
-                  title="Delete preset"
+                  title={t('Delete preset')}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -241,13 +243,15 @@ export function FilterPresetsDropdown({
   className = '',
 }: Pick<FilterPresetsProps, 'presets' | 'activePresetId' | 'onLoadPreset' | 'className'>) {
   
+  const { t } = useTranslation();
+  
   return (
     <select
       value={activePresetId || ''}
       onChange={(e) => e.target.value && onLoadPreset(e.target.value)}
       className={`px-3 py-2 border border-gray-300 rounded-lg bg-white ${className}`}
     >
-      <option value="">Select a preset...</option>
+      <option value="">{t('Select a preset...')}</option>
       {presets.map(preset => (
         <option key={preset.id} value={preset.id}>
           {preset.name}

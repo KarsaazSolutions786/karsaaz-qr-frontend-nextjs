@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { X, Lock, Unlock, Eye, EyeOff, AlertCircle, Check } from 'lucide-react';
 import apiClient from '@/lib/api/client';
+import { useTranslation } from '@/lib/i18n';
 
 export interface PINProtectionModalProps {
   qrCodeId: number | string;
@@ -21,6 +22,7 @@ export function PINProtectionModal({
   onClose,
   onSuccess,
 }: PINProtectionModalProps) {
+  const { t } = useTranslation();
   const initialFlow: FlowState = hasPIN ? 'verify' : 'set';
   const [flow, setFlow] = useState<FlowState>(initialFlow);
   const [pin, setPin] = useState('');
@@ -40,11 +42,11 @@ export function PINProtectionModal({
 
   const handleSetPIN = async () => {
     if (pin.length < 4 || pin.length > 6) {
-      setError('PIN must be 4–6 digits');
+      setError(t('PIN must be 4-6 digits'));
       return;
     }
     if (pin !== confirmPin) {
-      setError('PINs do not match');
+      setError(t('PINs do not match'));
       return;
     }
 
@@ -56,7 +58,7 @@ export function PINProtectionModal({
       onSuccess();
       onClose();
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Failed to set PIN');
+      setError(err?.response?.data?.message || t('Failed to set PIN'));
     } finally {
       setIsProcessing(false);
     }
@@ -64,7 +66,7 @@ export function PINProtectionModal({
 
   const handleVerifyPIN = async () => {
     if (!pin) {
-      setError('Please enter the PIN');
+      setError(t('Please enter the PIN'));
       return;
     }
 
@@ -76,7 +78,7 @@ export function PINProtectionModal({
       onSuccess();
       onClose();
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Invalid PIN');
+      setError(err?.response?.data?.message || t('Invalid PIN'));
     } finally {
       setIsProcessing(false);
     }
@@ -91,7 +93,7 @@ export function PINProtectionModal({
       onSuccess();
       onClose();
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Failed to clear PIN');
+      setError(err?.response?.data?.message || t('Failed to clear PIN'));
     } finally {
       setIsProcessing(false);
     }
@@ -105,14 +107,14 @@ export function PINProtectionModal({
   };
 
   const title =
-    flow === 'set' ? 'Set PIN Protection' :
-    flow === 'verify' ? 'Verify PIN' :
-    'Clear PIN Protection';
+    flow === 'set' ? t('Set PIN Protection') :
+    flow === 'verify' ? t('Verify PIN') :
+    t('Clear PIN Protection');
 
   const description =
-    flow === 'set' ? 'Protect access to this QR code with a 4–6 digit PIN.' :
-    flow === 'verify' ? 'Enter the current PIN to verify.' :
-    'Are you sure you want to remove PIN protection?';
+    flow === 'set' ? t('Protect access to this QR code with a 4-6 digit PIN.') :
+    flow === 'verify' ? t('Enter the current PIN to verify.') :
+    t('Are you sure you want to remove PIN protection?');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -158,7 +160,7 @@ export function PINProtectionModal({
                       : 'border-gray-200 text-gray-600 hover:border-gray-300'
                   }`}
                 >
-                  Verify PIN
+                  {t('Verify PIN')}
                 </button>
                 <button
                   type="button"
@@ -169,7 +171,7 @@ export function PINProtectionModal({
                       : 'border-gray-200 text-gray-600 hover:border-gray-300'
                   }`}
                 >
-                  Clear PIN
+                  {t('Clear PIN')}
                 </button>
               </div>
             )}
@@ -179,7 +181,7 @@ export function PINProtectionModal({
               <>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    PIN (4–6 digits)
+                    {t('PIN (4-6 digits)')}
                   </label>
                   <div className="relative">
                     <input
@@ -187,7 +189,7 @@ export function PINProtectionModal({
                       value={pin}
                       onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       maxLength={6}
-                      placeholder="Enter PIN"
+                      placeholder={t('Enter PIN')}
                       className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       autoFocus
                     />
@@ -202,7 +204,7 @@ export function PINProtectionModal({
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Confirm PIN
+                    {t('Confirm PIN')}
                   </label>
                   <div className="relative">
                     <input
@@ -210,7 +212,7 @@ export function PINProtectionModal({
                       value={confirmPin}
                       onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       maxLength={6}
-                      placeholder="Re-enter PIN"
+                      placeholder={t('Re-enter PIN')}
                       className={`w-full px-3 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 ${
                         confirmPin && pin === confirmPin
                           ? 'border-green-300 focus:ring-green-500'
@@ -229,7 +231,7 @@ export function PINProtectionModal({
             {flow === 'verify' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Enter PIN
+                  {t('Enter PIN')}
                 </label>
                 <div className="relative">
                   <input
@@ -237,7 +239,7 @@ export function PINProtectionModal({
                     value={pin}
                     onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
                     maxLength={6}
-                    placeholder="Enter PIN"
+                    placeholder={t('Enter PIN')}
                     className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     autoFocus
                   />
@@ -257,8 +259,7 @@ export function PINProtectionModal({
               <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
                 <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-red-800">
-                  This will permanently remove PIN protection. Anyone with the link will be able
-                  to access this QR code&apos;s content.
+                  {t('This will permanently remove PIN protection. Anyone with the link will be able to access this QR code\'s content.')}
                 </p>
               </div>
             )}
@@ -279,7 +280,7 @@ export function PINProtectionModal({
               disabled={isProcessing}
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               type="submit"
@@ -291,12 +292,12 @@ export function PINProtectionModal({
               }`}
             >
               {isProcessing
-                ? 'Processing...'
+                ? t('Processing...')
                 : flow === 'set'
-                ? 'Set PIN'
+                ? t('Set PIN')
                 : flow === 'verify'
-                ? 'Verify'
-                : 'Clear PIN'}
+                ? t('Verify')
+                : t('Clear PIN')}
             </button>
           </div>
         </form>

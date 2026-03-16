@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 interface MarketplaceItem {
   id: string
@@ -37,6 +38,7 @@ const DEMO_ITEMS: MarketplaceItem[] = [
 ]
 
 export function PieceXDemo() {
+  const { t } = useTranslation()
   const [selectedCategory, setSelectedCategory] = useState<string>('All')
   const categories = ['All', ...new Set(DEMO_ITEMS.map(item => item.category))]
 
@@ -48,9 +50,9 @@ export function PieceXDemo() {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Marketplace</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('Marketplace')}</h3>
         <p className="mt-1 text-sm text-gray-500">
-          Explore add-ons and extensions to enhance your QR code experience.
+          {t('Explore add-ons and extensions to enhance your QR code experience.')}
         </p>
       </div>
 
@@ -66,7 +68,7 @@ export function PieceXDemo() {
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
-            {cat}
+            {t(cat)}
           </button>
         ))}
       </div>
@@ -79,24 +81,24 @@ export function PieceXDemo() {
             className="rounded-lg border border-gray-200 p-4 transition-shadow hover:shadow-md"
           >
             <div className="mb-2 flex items-center justify-between">
-              <h4 className="text-sm font-semibold text-gray-900">{item.name}</h4>
+              <h4 className="text-sm font-semibold text-gray-900">{t(item.name)}</h4>
               <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-                {item.category}
+                {t(item.category)}
               </span>
             </div>
-            <p className="text-sm text-gray-600">{item.description}</p>
+            <p className="text-sm text-gray-600">{t(item.description)}</p>
             <button
               type="button"
               className="mt-3 text-sm font-medium text-blue-600 hover:text-blue-700"
             >
-              Learn more →
+              {t('Learn more')} →
             </button>
           </div>
         ))}
       </div>
 
       {filtered.length === 0 && (
-        <p className="py-8 text-center text-sm text-gray-500">No items in this category yet.</p>
+        <p className="py-8 text-center text-sm text-gray-500">{t('No items in this category yet.')}</p>
       )}
     </div>
   )

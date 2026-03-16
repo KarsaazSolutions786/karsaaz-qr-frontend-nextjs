@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useCreateCurrency } from '@/lib/hooks/mutations/useCurrencyMutations'
+import { useTranslation } from '@/lib/i18n'
 
 export default function NewCurrencyPage() {
+  const { t } = useTranslation()
   const createMutation = useCreateCurrency()
 
   const [form, setForm] = useState({
@@ -37,14 +39,14 @@ export default function NewCurrencyPage() {
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex items-center gap-4">
         <Link href="/currencies" className="text-sm text-blue-600 hover:text-blue-800">
-          ← Back to Currencies
+          {t('\u2190 Back to Currencies')}
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Add Currency</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('Add Currency')}</h1>
       </div>
 
       {createMutation.error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">
-          Failed to create currency. Please try again.
+          {t('Failed to create currency. Please try again.')}
         </div>
       )}
 
@@ -52,7 +54,7 @@ export default function NewCurrencyPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
-              Name <span className="text-red-500">*</span>
+              {t('Name')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -66,7 +68,7 @@ export default function NewCurrencyPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Currency Code <span className="text-red-500">*</span>
+              {t('Currency Code')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -81,7 +83,7 @@ export default function NewCurrencyPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Symbol <span className="text-red-500">*</span>
+              {t('Symbol')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -94,7 +96,7 @@ export default function NewCurrencyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Thousands Separator</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Thousands Separator')}</label>
             <input
               type="text"
               value={form.thousandsSeparator}
@@ -106,7 +108,7 @@ export default function NewCurrencyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Decimal Separator</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Decimal Separator')}</label>
             <input
               type="text"
               value={form.decimalSeparator}
@@ -118,14 +120,14 @@ export default function NewCurrencyPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Symbol Position</label>
+            <label className="block text-sm font-medium text-gray-700">{t('Symbol Position')}</label>
             <select
               value={form.symbolPosition}
               onChange={(e) => set('symbolPosition', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
             >
-              <option value="before">Before Number</option>
-              <option value="after">After Number</option>
+              <option value="before">{t('Before Number')}</option>
+              <option value="after">{t('After Number')}</option>
             </select>
           </div>
 
@@ -137,7 +139,7 @@ export default function NewCurrencyPage() {
                 onChange={(e) => set('decimalSeparatorEnabled', e.target.checked)}
                 className="h-4 w-4 rounded border-gray-300 text-blue-600"
               />
-              Always show decimal separator (even for whole numbers)
+              {t('Always show decimal separator (even for whole numbers)')}
             </label>
           </div>
         </div>
@@ -147,14 +149,14 @@ export default function NewCurrencyPage() {
             href="/currencies"
             className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            Cancel
+            {t('Cancel')}
           </Link>
           <button
             type="submit"
             disabled={createMutation.isPending}
             className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {createMutation.isPending ? 'Creating…' : 'Add Currency'}
+            {createMutation.isPending ? t('Creating...') : t('Add Currency')}
           </button>
         </div>
       </form>

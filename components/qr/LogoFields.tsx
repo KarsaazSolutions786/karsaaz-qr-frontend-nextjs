@@ -12,6 +12,7 @@ import { LogoConfig as DesignerLogoConfig } from '@/types/entities/designer';
 import { LogoUpload } from './LogoUpload';
 import { LogoPositioning } from './LogoPositioning';
 import { validateLogoConfig, getOptimalLogoSize, getMaxLogoSize } from '@/lib/utils/logo-utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface LogoFieldsProps {
   value: DesignerLogoConfig | null;
@@ -28,6 +29,7 @@ export function LogoFields({
   qrSize: _qrSize = 512,
   className = '',
 }: LogoFieldsProps) {
+  const { t } = useTranslation();
   // Handle logo URL change
   const handleLogoUrlChange = (url: string | null) => {
     if (!url) {
@@ -91,11 +93,11 @@ export function LogoFields({
           <h4 className="text-sm font-medium text-blue-900 mb-2">💡 Size Recommendations</h4>
           <div className="space-y-1 text-sm text-blue-800">
             <p>
-              <span className="font-medium">Optimal:</span> {Math.round(sizeInfo.optimal * 100)}%
+              <span className="font-medium">{t('Optimal:')}</span> {Math.round(sizeInfo.optimal * 100)}%
               {value.size <= sizeInfo.optimal && ' ✓'}
             </p>
             <p>
-              <span className="font-medium">Maximum:</span> {Math.round(sizeInfo.max * 100)}%
+              <span className="font-medium">{t('Maximum:')}</span> {Math.round(sizeInfo.max * 100)}%
               {value.size <= sizeInfo.max && ' ✓'}
             </p>
             <p className="text-xs">
@@ -159,12 +161,12 @@ export function LogoFields({
       <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-md">
         <h4 className="text-sm font-medium text-gray-900 mb-2">📖 Logo Tips</h4>
         <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
-          <li>Use high-contrast logos for better visibility</li>
-          <li>Square logos work best for QR codes</li>
-          <li>Keep logo size under 30% for reliable scanning</li>
-          <li>Higher error correction allows larger logos</li>
-          <li>Add background if logo has transparency</li>
-          <li>Test scanning before finalizing design</li>
+          <li>{t('Use high-contrast logos for better visibility')}</li>
+          <li>{t('Square logos work best for QR codes')}</li>
+          <li>{t('Keep logo size under 30% for reliable scanning')}</li>
+          <li>{t('Higher error correction allows larger logos')}</li>
+          <li>{t('Add background if logo has transparency')}</li>
+          <li>{t('Test scanning before finalizing design')}</li>
         </ul>
       </div>
     </div>
@@ -185,6 +187,7 @@ export function LogoToggle({
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
   className?: string;
 }) {
+  const { t } = useTranslation();
   const optimalSize = useMemo(() => {
     return getOptimalLogoSize(errorCorrectionLevel);
   }, [errorCorrectionLevel]);
@@ -193,7 +196,7 @@ export function LogoToggle({
     <div className={`logo-toggle ${className}`}>
       <div className="flex items-center justify-between">
         <div>
-          <label className="text-sm font-medium text-gray-700">Add Logo</label>
+          <label className="text-sm font-medium text-gray-700">{t('Add Logo')}</label>
           <p className="text-xs text-gray-500 mt-1">
             {enabled
               ? 'Logo enabled - configure below'

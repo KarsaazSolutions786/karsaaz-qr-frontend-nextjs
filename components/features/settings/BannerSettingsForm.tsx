@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { bannerApi, type BannerSettings } from '@/lib/api/endpoints/banner'
+import { useTranslation } from '@/lib/i18n'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ColorPicker } from '@/components/ui/ColorPicker'
@@ -25,6 +26,7 @@ const DEFAULT_SETTINGS: BannerSettings = {
 }
 
 export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
+  const { t } = useTranslation()
   const [settings, setSettings] = useState<BannerSettings>({ ...DEFAULT_SETTINGS, ...initialData })
   const queryClient = useQueryClient()
 
@@ -37,10 +39,10 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['banner-settings'] })
       setSettings({ ...DEFAULT_SETTINGS, ...data })
-      toast.success('Banner settings saved')
+      toast.success(t('Banner settings saved'))
     },
     onError: () => {
-      toast.error('Failed to save banner settings')
+      toast.error(t('Failed to save banner settings'))
     },
   })
 
@@ -58,8 +60,8 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
       {/* Preview */}
       <div className="overflow-hidden rounded-lg bg-white shadow">
         <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
-          <h2 className="text-lg font-medium text-gray-900">Preview</h2>
-          <p className="mt-1 text-sm text-gray-500">Live preview of the banner</p>
+          <h2 className="text-lg font-medium text-gray-900">{t('Preview')}</h2>
+          <p className="mt-1 text-sm text-gray-500">{t('Live preview of the banner')}</p>
         </div>
         <div className="px-4 py-5 sm:px-6">
           {settings.enabled && settings.content ? (
@@ -72,7 +74,7 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
             </div>
           ) : (
             <p className="text-sm text-gray-400 italic">
-              {!settings.enabled ? 'Banner is disabled' : 'Enter banner content to see preview'}
+              {!settings.enabled ? t('Banner is disabled') : t('Enter banner content to see preview')}
             </p>
           )}
         </div>
@@ -81,14 +83,14 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
       {/* General Settings */}
       <div className="overflow-hidden rounded-lg bg-white shadow">
         <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
-          <h2 className="text-lg font-medium text-gray-900">Banner Settings</h2>
+          <h2 className="text-lg font-medium text-gray-900">{t('Banner Settings')}</h2>
         </div>
         <div className="px-4 py-5 sm:px-6 space-y-6">
           {/* Enabled toggle */}
           <div className="flex items-center justify-between">
             <div>
-              <label className="text-sm font-medium text-gray-700">Enable Banner</label>
-              <p className="text-sm text-gray-500">Show the banner on the website</p>
+              <label className="text-sm font-medium text-gray-700">{t('Enable Banner')}</label>
+              <p className="text-sm text-gray-500">{t('Show the banner on the website')}</p>
             </div>
             <Switch
               checked={settings.enabled}
@@ -98,28 +100,28 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
 
           {/* Banner type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Banner Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('Banner Type')}</label>
             <Select value={settings.type} onValueChange={(val) => handleChange('type', val as BannerSettings['type'])}>
               <SelectTrigger>
-                <SelectValue placeholder="Select type" />
+                <SelectValue placeholder={t('Select type')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="info">Info</SelectItem>
-                <SelectItem value="warning">Warning</SelectItem>
-                <SelectItem value="success">Success</SelectItem>
-                <SelectItem value="promo">Promo</SelectItem>
+                <SelectItem value="info">{t('Info')}</SelectItem>
+                <SelectItem value="warning">{t('Warning')}</SelectItem>
+                <SelectItem value="success">{t('Success')}</SelectItem>
+                <SelectItem value="promo">{t('Promo')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Content */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Banner Content</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('Banner Content')}</label>
             <textarea
               value={settings.content}
               onChange={(e) => handleChange('content', e.target.value)}
               rows={3}
-              placeholder="Enter the banner message..."
+              placeholder={t('Enter the banner message...')}
               className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
           </div>
@@ -127,8 +129,8 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
           {/* Dismissible */}
           <div className="flex items-center justify-between">
             <div>
-              <label className="text-sm font-medium text-gray-700">Dismissible</label>
-              <p className="text-sm text-gray-500">Allow users to dismiss the banner</p>
+              <label className="text-sm font-medium text-gray-700">{t('Dismissible')}</label>
+              <p className="text-sm text-gray-500">{t('Allow users to dismiss the banner')}</p>
             </div>
             <Switch
               checked={settings.dismissible}
@@ -141,12 +143,12 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
       {/* Link Settings */}
       <div className="overflow-hidden rounded-lg bg-white shadow">
         <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
-          <h2 className="text-lg font-medium text-gray-900">Link (Optional)</h2>
+          <h2 className="text-lg font-medium text-gray-900">{t('Link (Optional)')}</h2>
         </div>
         <div className="px-4 py-5 sm:px-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Link URL</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Link URL')}</label>
               <input
                 type="url"
                 value={settings.link_url ?? ''}
@@ -156,12 +158,12 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Link Text</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Link Text')}</label>
               <input
                 type="text"
                 value={settings.link_text ?? ''}
                 onChange={(e) => handleChange('link_text', e.target.value)}
-                placeholder="Learn more"
+                placeholder={t('Learn more')}
                 className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
               />
             </div>
@@ -172,18 +174,18 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
       {/* Color Settings */}
       <div className="overflow-hidden rounded-lg bg-white shadow">
         <div className="border-b border-gray-200 px-4 py-5 sm:px-6">
-          <h2 className="text-lg font-medium text-gray-900">Colors (Optional)</h2>
-          <p className="mt-1 text-sm text-gray-500">Override the default banner type colors</p>
+          <h2 className="text-lg font-medium text-gray-900">{t('Colors (Optional)')}</h2>
+          <p className="mt-1 text-sm text-gray-500">{t('Override the default banner type colors')}</p>
         </div>
         <div className="px-4 py-5 sm:px-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <ColorPicker
-              label="Background Color"
+              label={t('Background Color')}
               value={settings.background_color ?? '#3B82F6'}
               onChange={(color) => handleChange('background_color', color)}
             />
             <ColorPicker
-              label="Text Color"
+              label={t('Text Color')}
               value={settings.text_color ?? '#FFFFFF'}
               onChange={(color) => handleChange('text_color', color)}
             />
@@ -198,7 +200,7 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
           disabled={mutation.isPending}
           className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50"
         >
-          {mutation.isPending ? 'Saving...' : 'Save Settings'}
+          {mutation.isPending ? t('Saving...') : t('Save Settings')}
         </button>
       </div>
     </form>

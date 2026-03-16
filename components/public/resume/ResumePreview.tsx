@@ -1,6 +1,7 @@
 'use client';
 
 import { Download, Printer, Mail, Phone, MapPin, Globe, Linkedin, Github } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface PersonalInfo {
   name: string;
@@ -73,6 +74,7 @@ interface ResumePreviewProps {
 }
 
 export default function ResumePreview({ data }: ResumePreviewProps) {
+  const { t } = useTranslation();
   const { personalInfo, workExperience, education, skills, certifications, languages } = data;
 
   const handleDownloadPDF = () => {
@@ -122,14 +124,14 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
           className="bg-white shadow-lg rounded-lg px-4 py-2 flex items-center gap-2 hover:bg-gray-50 transition"
         >
           <Printer className="w-4 h-4" />
-          <span>Print</span>
+          <span>{t('Print')}</span>
         </button>
         <button
           onClick={handleDownloadPDF}
           className="bg-blue-600 text-white shadow-lg rounded-lg px-4 py-2 flex items-center gap-2 hover:bg-blue-700 transition"
         >
           <Download className="w-4 h-4" />
-          <span>Download PDF</span>
+          <span>{t('Download PDF')}</span>
         </button>
       </div>
 
@@ -194,7 +196,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
               <div className="flex items-center gap-2 text-gray-600">
                 <Linkedin className="w-4 h-4" />
                 <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
-                  LinkedIn
+                  {t('LinkedIn')}
                 </a>
               </div>
             )}
@@ -202,7 +204,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
               <div className="flex items-center gap-2 text-gray-600">
                 <Github className="w-4 h-4" />
                 <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">
-                  GitHub
+                  {t('GitHub')}
                 </a>
               </div>
             )}
@@ -213,7 +215,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
         {workExperience && workExperience.length > 0 && (
           <section className="mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-              Work Experience
+              {t('Work Experience')}
             </h3>
             <div className="space-y-6">
               {workExperience.map((job) => (
@@ -227,7 +229,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
                       <span>{job.location}</span>
                       <span>•</span>
                       <span>
-                        {formatDate(job.startDate)} - {job.current ? 'Present' : formatDate(job.endDate!)}
+                        {formatDate(job.startDate)} - {job.current ? t('Present') : formatDate(job.endDate!)}
                       </span>
                     </div>
                   </div>
@@ -249,7 +251,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
         {education && education.length > 0 && (
           <section className="mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-              Education
+              {t('Education')}
             </h3>
             <div className="space-y-4">
               {education.map((edu) => (
@@ -264,7 +266,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
                     <span>{edu.location}</span>
                     <span>•</span>
                     <span>
-                      {formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                      {formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : t('Present')}
                     </span>
                   </div>
                   {(edu.gpa || edu.honors) && (
@@ -284,7 +286,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
         {skills && skills.length > 0 && (
           <section className="mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-              Skills
+              {t('Skills')}
             </h3>
             <div className="space-y-4">
               {Object.entries(getSkillsByCategory()).map(([category, categorySkills]) => (
@@ -310,7 +312,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
         {certifications && certifications.length > 0 && (
           <section className="mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-              Certifications
+              {t('Certifications')}
             </h3>
             <div className="space-y-3">
               {certifications.map((cert) => (
@@ -337,7 +339,7 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
         {languages && languages.length > 0 && (
           <section className="mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">
-              Languages
+              {t('Languages')}
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {languages.map((lang, idx) => (

@@ -1,13 +1,20 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
+import { toast } from 'sonner'
 import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
+import { exportPDF } from '@/lib/utils/export-pdf'
+import { exportEPS } from '@/lib/utils/export-eps'
 import { DesignerConfig } from '@/types/entities/designer'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Download, Loader2 } from 'lucide-react'
+import { Download, FileText, Printer, Loader2, Lock } from 'lucide-react'
+import { useSubscription } from '@/lib/hooks/useSubscription'
+import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
+import SaveAsTemplateButton from '@/components/templates/SaveAsTemplateButton'
+import { useTranslation } from '@/lib/i18n'
 
-const SIZE_OPTIONS = [
+const ALL_SIZE_OPTIONS = [
   { value: '512', label: '512px' },
   { value: '1024', label: '1024px' },
   { value: '2048', label: '2048px' },
@@ -39,9 +46,30 @@ export default function Step4Download({
   onSettingsChange,
   savedQRId,
 }: Step4DownloadProps) {
+  const { t } = useTranslation()
   const previewRef = useRef<BackendQRPreviewRef>(null)
-  const [downloadSize, setDownloadSize] = useState('1024')
   const [isDownloading, setIsDownloading] = useState(false)
+
+  // Subscription-based download restrictions
+  const {
+    plan,
+    isOnTrial,
+    showUpgradeModal,
+    upgradeReason,
+    openUpgradeModal,
+    closeUpgradeModal,
+  } = useSubscription()
+  const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
+
+  const [downloadSize, setDownloadSize] = useState('512')
+
+  const handleSizeSelect = useCallback((value: string) => {
+    if (isFreePlan && value !== '512') {
+      openUpgradeModal(t('Higher resolution downloads require a paid plan. Upgrade to unlock 1024px, 2048px, and 4K.'))
+      return
+    }
+    setDownloadSize(value)
+  }, [isFreePlan, openUpgradeModal])
 
   const hasPreviewData =
     Object.keys(qrData).length > 0 &&
@@ -50,6 +78,13 @@ export default function Step4Download({
   const handleDownload = useCallback(
     async (format: string) => {
       if (!previewRef.current) return
+
+      // Enforce format restrictions for free/trial plans
+      if (isFreePlan && (format === 'svg' || format === 'pdf' || format === 'eps')) {
+        openUpgradeModal(`${format.toUpperCase()} ${t('download requires a paid plan. Upgrade to unlock all formats.')}`)
+        return
+      }
+
       setIsDownloading(true)
 
       try {
@@ -90,58 +125,98 @@ export default function Step4Download({
               }, 'image/png')
             }
           }
-          img.onerror = () => setIsDownloading(false)
+          img.onerror = () => {
+            setIsDownloading(false)
+            toast.error(t('PNG download failed. Please try again.'))
+          }
           img.src = dataURL
           return
+        } else if (format === 'pdf') {
+          await exportPDF(svgStr, {
+            filename: `${filename}.pdf`,
+            pageSize: 'a4',
+            orientation: 'portrait',
+            margin: 20,
+            centerOnPage: true,
+            metadata: {
+              title: filename,
+              creator: 'Karsaaz QR Code Generator',
+            },
+          })
+        } else if (format === 'eps') {
+          const size = Number(downloadSize)
+          await exportEPS(svgStr, {
+            filename: `${filename}.eps`,
+            width: size,
+            height: size,
+            metadata: {
+              title: filename,
+              creator: 'Karsaaz QR Code Generator',
+              creationDate: new Date().toISOString(),
+            },
+          })
         }
       } catch (error) {
         console.error('Download failed:', error)
+        toast.error(t('Download failed. Please try again.'))
       } finally {
         setIsDownloading(false)
       }
     },
-    [settings.name, qrType, downloadSize]
+    [settings.name, qrType, downloadSize, isFreePlan, openUpgradeModal]
   )
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       {/* Heading */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Your Download is</h2>
+        <h2 className="text-2xl font-bold text-gray-900">{t('Your Download is')}</h2>
         <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent mt-1">
-          Ready !
+          {t('Ready!')}
         </h2>
       </div>
 
       {/* Name input */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Give it a name</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Give it a name')}</label>
         <Input
           value={settings.name || ''}
           onChange={e => onSettingsChange({ name: e.target.value })}
-          placeholder="My QR Code"
+          placeholder={t('My QR Code')}
           className="text-sm border-gray-300 rounded-lg"
         />
       </div>
 
       {/* Size selector (for PNG) */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Select Size</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Select Size')}</label>
         <div className="flex gap-2">
-          {SIZE_OPTIONS.map(opt => (
-            <button
-              key={opt.value}
-              onClick={() => setDownloadSize(opt.value)}
-              className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg border transition-colors ${
-                downloadSize === opt.value
-                  ? 'border-purple-500 bg-purple-50 text-purple-700'
-                  : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
+          {ALL_SIZE_OPTIONS.map(opt => {
+            const isLocked = isFreePlan && opt.value !== '512'
+            return (
+              <button
+                key={opt.value}
+                onClick={() => handleSizeSelect(opt.value)}
+                className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg border transition-colors relative ${
+                  downloadSize === opt.value
+                    ? 'border-purple-500 bg-purple-50 text-purple-700'
+                    : isLocked
+                      ? 'border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed'
+                      : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                }`}
+                title={isLocked ? t('Requires paid plan') : undefined}
+              >
+                {opt.label}
+                {isLocked && <Lock className="inline-block ml-1 h-3 w-3" />}
+              </button>
+            )
+          })}
         </div>
+        {isFreePlan && (
+          <p className="mt-2 text-xs text-gray-500">
+            {t('Free plan: PNG at 512px only. Upgrade for higher resolutions and more formats.')}
+          </p>
+        )}
       </div>
 
       {/* Download buttons */}
@@ -149,11 +224,35 @@ export default function Step4Download({
         <Button
           onClick={() => handleDownload('svg')}
           disabled={!hasPreviewData || isDownloading}
-          variant="outline"
-          className="flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium"
+          variant={isFreePlan ? 'ghost' : 'outline'}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium ${isFreePlan ? 'opacity-50' : ''}`}
+          title={isFreePlan ? t('SVG download requires a paid plan') : undefined}
         >
           <Download className="w-4 h-4" />
           SVG
+          {isFreePlan && <Lock className="ml-1 h-3 w-3" />}
+        </Button>
+        <Button
+          onClick={() => handleDownload('pdf')}
+          disabled={!hasPreviewData || isDownloading}
+          variant={isFreePlan ? 'ghost' : 'outline'}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium ${isFreePlan ? 'opacity-50' : ''}`}
+          title={isFreePlan ? t('PDF download requires a paid plan') : undefined}
+        >
+          <FileText className="w-4 h-4" />
+          PDF
+          {isFreePlan && <Lock className="ml-1 h-3 w-3" />}
+        </Button>
+        <Button
+          onClick={() => handleDownload('eps')}
+          disabled={!hasPreviewData || isDownloading}
+          variant={isFreePlan ? 'ghost' : 'outline'}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium ${isFreePlan ? 'opacity-50' : ''}`}
+          title={isFreePlan ? t('EPS download requires a paid plan') : undefined}
+        >
+          <Printer className="w-4 h-4" />
+          EPS
+          {isFreePlan && <Lock className="ml-1 h-3 w-3" />}
         </Button>
         <Button
           onClick={() => handleDownload('png')}
@@ -163,7 +262,7 @@ export default function Step4Download({
           {isDownloading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              Downloading...
+              {t('Downloading...')}
             </>
           ) : (
             <>
@@ -173,6 +272,22 @@ export default function Step4Download({
           )}
         </Button>
       </div>
+
+      {/* Save as Template */}
+      {savedQRId && (
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-sm text-gray-500">
+              {t('Want to reuse this design? Save it as a template.')}
+            </p>
+            <SaveAsTemplateButton
+              qrcodeId={savedQRId}
+              qrcodeName={settings.name}
+              qrcodeType={qrType}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Hidden preview for SVG/PNG generation */}
       <div className="sr-only">
@@ -184,6 +299,14 @@ export default function Step4Download({
           qrId={savedQRId || undefined}
         />
       </div>
+
+      {/* Upgrade modal for free/trial plan restrictions */}
+      <UpgradeRequiredModal
+        open={showUpgradeModal}
+        onClose={closeUpgradeModal}
+        title={t('Upgrade Required')}
+        message={upgradeReason}
+      />
     </div>
   )
 }

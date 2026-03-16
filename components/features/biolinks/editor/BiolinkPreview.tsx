@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import type { Biolink, BlockData } from '@/types/entities/biolink'
 import LinkBlock from '../blocks/LinkBlock'
 import TextBlock from '../blocks/TextBlock'
@@ -33,6 +34,14 @@ import InformationPopupBlock from '../blocks/InformationPopupBlock'
 import ParagraphBlock from '../blocks/ParagraphBlock'
 import ShareBlock from '../blocks/ShareBlock'
 import UPIBlock from '../blocks/UPIBlock'
+import CountdownBlock from '../blocks/CountdownBlock'
+import CalendarBlock from '../blocks/CalendarBlock'
+import HeaderBannerBlock from '../blocks/HeaderBannerBlock'
+import TestimonialBlock from '../blocks/TestimonialBlock'
+import CarouselBlock from '../blocks/CarouselBlock'
+import MapBlock from '../blocks/MapBlock'
+import AppDownloadBlock from '../blocks/AppDownloadBlock'
+import PricingBlock from '../blocks/PricingBlock'
 import { blockRegistry } from '../block-registry'
 import SimplePagination from '@/components/common/SimplePagination'
 
@@ -42,6 +51,7 @@ interface BiolinkPreviewProps {
 }
 
 export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps) {
+  const { t } = useTranslation();
   const BLOCKS_PER_PAGE = 10
   const [visibleBlocksCount, setVisibleBlocksCount] = useState(BLOCKS_PER_PAGE)
 
@@ -125,6 +135,22 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
         return <ShareBlock key={block.id} block={block} />
       case 'upi':
         return <UPIBlock key={block.id} block={block} />
+      case 'countdown':
+        return <CountdownBlock key={block.id} block={block as any} />
+      case 'calendar':
+        return <CalendarBlock key={block.id} block={block as any} />
+      case 'header-banner':
+        return <HeaderBannerBlock key={block.id} block={block as any} />
+      case 'testimonial':
+        return <TestimonialBlock key={block.id} block={block as any} />
+      case 'carousel':
+        return <CarouselBlock key={block.id} block={block as any} />
+      case 'map':
+        return <MapBlock key={block.id} block={block as any} />
+      case 'app-download':
+        return <AppDownloadBlock key={block.id} block={block as any} />
+      case 'pricing':
+        return <PricingBlock key={block.id} block={block as any} />
       default: {
         // Check block registry for dynamic/custom block types
         const dynamicBlock = block as BlockData
@@ -132,7 +158,7 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
         if (definition) {
           return (
             <div key={dynamicBlock.id} className="rounded-lg border p-4 text-sm text-gray-500">
-              Unsupported block: {definition.label}
+              {t('Unsupported block:')} {definition.label}
             </div>
           )
         }
@@ -154,11 +180,11 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
         {biolink.avatar && (
           <img
             src={biolink.avatar}
-            alt={biolink.title || 'Avatar'}
+            alt={biolink.title || t('Avatar')}
             className="mx-auto mb-4 h-24 w-24 rounded-full object-cover"
           />
         )}
-        <h1 className="mb-2 text-2xl font-bold">{biolink.title || 'Untitled'}</h1>
+        <h1 className="mb-2 text-2xl font-bold">{biolink.title || t('Untitled')}</h1>
         {biolink.description && <p className="text-gray-600">{biolink.description}</p>}
       </div>
 
@@ -166,7 +192,7 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
       <div className="space-y-4">
         {blocks.length === 0 ? (
           <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
-            <p className="text-gray-500">No blocks added yet</p>
+            <p className="text-gray-500">{t('No blocks added yet')}</p>
           </div>
         ) : (
           <>
@@ -179,7 +205,7 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
                   onPageChange={handleLoadMore}
                   variant="load-more"
                   hasMore={hasMoreBlocks}
-                  loadMoreText={`Load More (${totalBlocks - visibleBlocksCount} remaining)`}
+                  loadMoreText={`${t('Load More')} (${totalBlocks - visibleBlocksCount} ${t('remaining')})`}
                   showPageIndicator={false}
                 />
               </div>

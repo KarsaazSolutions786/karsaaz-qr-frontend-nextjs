@@ -1,6 +1,7 @@
 'use client'
 
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { emailDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 
@@ -17,6 +18,7 @@ interface EmailDataFormProps {
 }
 
 export function EmailDataForm({ defaultValues, onChange }: EmailDataFormProps) {
+  const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<EmailDataFormData>({
     schema: emailDataSchema,
     defaultValues,
@@ -26,17 +28,17 @@ export function EmailDataForm({ defaultValues, onChange }: EmailDataFormProps) {
   return (
     <form className="space-y-5">
       <div>
-        <label htmlFor="email" className={LABEL}>Email Address *</label>
+        <label htmlFor="email" className={LABEL}>{t('Email Address')} *</label>
         <input {...register('email')} id="email" type="email" placeholder="user@example.com" className={INPUT} />
         {errors.email && <p className={ERROR}>{errors.email.message}</p>}
       </div>
       <div>
-        <label htmlFor="subject" className={LABEL}>Subject</label>
-        <input {...register('subject')} id="subject" type="text" placeholder="Email subject" className={INPUT} />
+        <label htmlFor="subject" className={LABEL}>{t('Subject')}</label>
+        <input {...register('subject')} id="subject" type="text" placeholder={t('Email subject')} className={INPUT} />
       </div>
       <div>
-        <label htmlFor="body" className={LABEL}>Message</label>
-        <textarea {...register('body')} id="body" rows={4} placeholder="Email body text..." className={TEXTAREA} />
+        <label htmlFor="body" className={LABEL}>{t('Message')}</label>
+        <textarea {...register('body')} id="body" rows={4} placeholder={t('Email body text...')} className={TEXTAREA} />
       </div>
     </form>
   )

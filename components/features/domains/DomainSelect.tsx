@@ -1,6 +1,7 @@
 'use client'
 
-import { useDomains } from '@/hooks/queries/useDomains'
+import { useTranslation } from '@/lib/i18n'
+import { useDomains } from '@/lib/hooks/queries/useDomains'
 import type { Domain } from '@/types/entities/domain'
 
 interface DomainSelectProps {
@@ -18,6 +19,7 @@ export function DomainSelect({
   disabled = false,
   className = '',
 }: DomainSelectProps) {
+  const { t } = useTranslation()
   const { data, isLoading } = useDomains()
   const domains = data?.data ?? []
 
@@ -33,7 +35,7 @@ export function DomainSelect({
         disabled
         className={`block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-400 shadow-sm ${className}`}
       >
-        <option>Loading…</option>
+        <option>{t('Loading...')}</option>
       </select>
     )
   }

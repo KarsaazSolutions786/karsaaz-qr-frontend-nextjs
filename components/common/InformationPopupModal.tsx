@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { InformationCircleIcon } from '@heroicons/react/24/outline'
+import { useTranslation } from '@/lib/i18n'
 
 interface InformationPopupModalProps {
   isOpen: boolean
@@ -28,6 +29,7 @@ export function InformationPopupModal({
   linkUrl,
   linkText,
 }: InformationPopupModalProps) {
+  const { t } = useTranslation()
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
@@ -45,11 +47,11 @@ export function InformationPopupModal({
           {linkUrl && (
             <Button asChild variant="outline">
               <a href={linkUrl} target="_blank" rel="noopener noreferrer">
-                {linkText || 'Learn More'}
+                {linkText || t('Learn More')}
               </a>
             </Button>
           )}
-          <Button onClick={onClose}>OK</Button>
+          <Button onClick={onClose}>{t('OK')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

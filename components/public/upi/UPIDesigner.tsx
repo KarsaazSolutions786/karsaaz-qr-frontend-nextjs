@@ -5,6 +5,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import { Building2, Shield, Copy, CheckCircle2, Smartphone } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/lib/i18n'
 
 interface UPIDesignerProps {
   merchantName: string
@@ -37,6 +38,7 @@ export default function UPIDesigner({
   description,
   theme,
 }: UPIDesignerProps) {
+  const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
   const primaryColor = theme?.primaryColor || '#5f259f'
   const bgColor = theme?.backgroundColor || '#f8f9fa'
@@ -103,7 +105,7 @@ export default function UPIDesigner({
             {/* Amount Display */}
             {amount && (
               <div className="text-center py-3 bg-gray-50 rounded-xl">
-                <p className="text-sm text-muted-foreground">Amount to Pay</p>
+                <p className="text-sm text-muted-foreground">{t('Amount to Pay')}</p>
                 <p className="text-3xl font-bold text-gray-900">₹{amount.toFixed(2)}</p>
               </div>
             )}
@@ -124,7 +126,7 @@ export default function UPIDesigner({
               </div>
             </div>
             <p className="text-center text-xs text-muted-foreground">
-              Scan with any UPI app to pay
+              {t('Scan with any UPI app to pay')}
             </p>
 
             {/* Pay Button */}
@@ -134,7 +136,7 @@ export default function UPIDesigner({
               onClick={handlePayWithApp}
             >
               <Smartphone className="w-5 h-5 mr-2" />
-              Pay with UPI App
+              {t('Pay with UPI App')}
             </Button>
 
             {/* UPI App Options */}
@@ -161,12 +163,12 @@ export default function UPIDesigner({
             {/* Security Badge */}
             <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground pt-2 border-t">
               <Shield className="w-4 h-4 text-green-600" />
-              <span>Secured by UPI – Certified by NPCI</span>
+              <span>{t('Secured by UPI – Certified by NPCI')}</span>
             </div>
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-muted-foreground">Powered by Karsaaz QR</p>
+        <p className="text-center text-xs text-muted-foreground">{t('Powered by Karsaaz QR')}</p>
       </div>
     </div>
   )

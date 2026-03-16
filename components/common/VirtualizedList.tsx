@@ -9,6 +9,7 @@
 import React, { useCallback } from 'react';
 import { FixedSizeList, VariableSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import { useTranslation } from '@/lib/i18n';
 
 export interface VirtualizedListProps<T> {
   items: T[];
@@ -29,6 +30,7 @@ export function VirtualizedList<T>({
   overscanCount = 5,
   className = '',
 }: VirtualizedListProps<T>) {
+  const { t } = useTranslation();
   const isVariableHeight = typeof itemHeight === 'function';
   
   const Row = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
@@ -45,11 +47,11 @@ export function VirtualizedList<T>({
   if (items.length === 0) {
     return (
       <div className={`flex items-center justify-center ${className}`} style={{ height }}>
-        <p className="text-gray-500">No items to display</p>
+        <p className="text-gray-500">{t('No items to display')}</p>
       </div>
     );
   }
-  
+
   if (isVariableHeight) {
     return (
       <div className={className} style={{ height, width }}>
@@ -113,6 +115,7 @@ export function VirtualizedGrid<T>({
   gap = 16,
   className = '',
 }: VirtualizedGridProps<T>) {
+  const { t: tGrid } = useTranslation();
   const rowCount = Math.ceil(items.length / columnCount);
   
   const Row = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
@@ -139,11 +142,11 @@ export function VirtualizedGrid<T>({
   if (items.length === 0) {
     return (
       <div className={`flex items-center justify-center ${className}`} style={{ height }}>
-        <p className="text-gray-500">No items to display</p>
+        <p className="text-gray-500">{tGrid('No items to display')}</p>
       </div>
     );
   }
-  
+
   return (
     <div className={className} style={{ height, width: '100%' }}>
       <AutoSizer>

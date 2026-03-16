@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useTranslation } from '@/lib/i18n'
 
 interface UPIDynamicDesignerProps {
   merchantName: string
@@ -38,6 +39,7 @@ export default function UPIDynamicDesigner({
   description,
   theme,
 }: UPIDynamicDesignerProps) {
+  const { t } = useTranslation()
   const [amount, setAmount] = useState<number>(defaultAmount)
   const [note, setNote] = useState(transactionNote || '')
   const [copied, setCopied] = useState(false)
@@ -120,7 +122,7 @@ export default function UPIDynamicDesigner({
               <>
                 {/* Amount Input */}
                 <div className="space-y-2">
-                  <Label htmlFor="amount">Enter Amount ({currency})</Label>
+                  <Label htmlFor="amount">{t('Enter Amount')} ({currency})</Label>
                   <div className="relative">
                     <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
@@ -163,10 +165,10 @@ export default function UPIDynamicDesigner({
 
                 {/* Note */}
                 <div className="space-y-2">
-                  <Label htmlFor="note">Note (optional)</Label>
+                  <Label htmlFor="note">{t('Note (optional)')}</Label>
                   <Input
                     id="note"
-                    placeholder="What is this payment for?"
+                    placeholder={t('What is this payment for?')}
                     value={note}
                     onChange={e => setNote(e.target.value)}
                   />
@@ -179,14 +181,14 @@ export default function UPIDynamicDesigner({
                   onClick={handleProceed}
                   disabled={!isValidAmount}
                 >
-                  Proceed to Pay ₹{amount > 0 ? amount.toLocaleString() : '0'}
+                  {t('Proceed to Pay')} ₹{amount > 0 ? amount.toLocaleString() : '0'}
                 </Button>
               </>
             ) : (
               <>
                 {/* Confirmation Step */}
                 <div className="text-center py-3 bg-gray-50 rounded-xl">
-                  <p className="text-sm text-muted-foreground">Paying</p>
+                  <p className="text-sm text-muted-foreground">{t('Paying')}</p>
                   <p className="text-3xl font-bold text-gray-900">₹{amount.toFixed(2)}</p>
                   <p className="text-sm text-muted-foreground mt-1">to {merchantName}</p>
                   {note && <p className="text-xs text-muted-foreground mt-1">Note: {note}</p>}
@@ -210,7 +212,7 @@ export default function UPIDynamicDesigner({
                   </div>
                 )}
                 <p className="text-center text-xs text-muted-foreground">
-                  Scan with any UPI app to pay
+                  {t('Scan with any UPI app to pay')}
                 </p>
 
                 {/* Pay with App */}
@@ -220,25 +222,25 @@ export default function UPIDynamicDesigner({
                   onClick={handlePayWithApp}
                 >
                   <Smartphone className="w-5 h-5 mr-2" />
-                  Open UPI App to Pay
+                  {t('Open UPI App to Pay')}
                 </Button>
 
                 {/* Back Button */}
                 <Button variant="outline" className="w-full" onClick={() => setStep('input')}>
-                  Change Amount
+                  {t('Change Amount')}
                 </Button>
 
                 {/* Security Badge */}
                 <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground pt-2 border-t">
                   <Shield className="w-4 h-4 text-green-600" />
-                  <span>Secured by UPI – Certified by NPCI</span>
+                  <span>{t('Secured by UPI – Certified by NPCI')}</span>
                 </div>
               </>
             )}
           </CardContent>
         </Card>
 
-        <p className="text-center text-xs text-muted-foreground">Powered by Karsaaz QR</p>
+        <p className="text-center text-xs text-muted-foreground">{t('Powered by Karsaaz QR')}</p>
       </div>
     </div>
   )

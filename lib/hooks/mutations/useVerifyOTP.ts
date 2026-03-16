@@ -23,7 +23,9 @@ export function useVerifyOTP() {
         queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
       }
       if (response.token && typeof window !== 'undefined') {
-        localStorage.setItem('token', response.token)
+        // Token is stored in httpOnly cookie by backend
+        localStorage.setItem('logged_in', 'true')
+        localStorage.removeItem('token') // Clean up legacy token
       }
 
       // Redirect based on user's role home_page

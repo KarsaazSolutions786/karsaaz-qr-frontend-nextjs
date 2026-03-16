@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { Label } from '@/components/ui/label'
 import { AlertCircle, Star } from 'lucide-react'
 
@@ -29,6 +30,7 @@ export default function RatingQuestion({
   max = 5,
   variant = 'stars',
 }: RatingQuestionProps) {
+  const { t } = useTranslation();
   const [hovered, setHovered] = useState(0)
 
   if (variant === 'stars') {
@@ -107,8 +109,8 @@ export default function RatingQuestion({
         ))}
       </div>
       <div className="flex justify-between text-xs text-gray-500">
-        <span>{min} — Low</span>
-        <span>{max} — High</span>
+        <span>{min} — {t('Low')}</span>
+        <span>{max} — {t('High')}</span>
       </div>
       {error && (
         <p className="text-sm text-red-600 flex items-center gap-1">

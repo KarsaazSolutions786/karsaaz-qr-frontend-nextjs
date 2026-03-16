@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { OpeningHoursBlockData } from '@/types/entities/biolink'
 
 interface OpeningHoursBlockProps {
@@ -10,6 +13,7 @@ const DEFAULT_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'S
 
 export default function OpeningHoursBlock({ block, isEditing, onUpdate }: OpeningHoursBlockProps) {
   const { title, hours } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     const initHours = () => {
@@ -29,7 +33,7 @@ export default function OpeningHoursBlock({ block, isEditing, onUpdate }: Openin
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Title (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Title (optional)')}</label>
           <input
             type="text"
             value={title || ''}
@@ -43,13 +47,13 @@ export default function OpeningHoursBlock({ block, isEditing, onUpdate }: Openin
             onClick={initHours}
             className="w-full rounded-md border-2 border-dashed border-gray-300 p-4 text-sm text-gray-500 hover:border-blue-500"
           >
-            + Initialize Weekly Hours
+            {t('+ Initialize Weekly Hours')}
           </button>
         ) : (
           <div className="space-y-2">
             {hours.map((h, index) => (
               <div key={index} className="flex items-center gap-2 text-sm">
-                <span className="w-24 font-medium text-gray-700">{h.day}</span>
+                <span className="w-24 font-medium text-gray-700">{t(h.day)}</span>
                 <input
                   type="time"
                   value={h.open}
@@ -72,7 +76,7 @@ export default function OpeningHoursBlock({ block, isEditing, onUpdate }: Openin
                     onChange={(e) => updateHour(index, 'closed', e.target.checked)}
                     className="rounded border-gray-300"
                   />
-                  Closed
+                  {t('Closed')}
                 </label>
               </div>
             ))}
@@ -90,9 +94,9 @@ export default function OpeningHoursBlock({ block, isEditing, onUpdate }: Openin
       <div className="space-y-2">
         {hours.map((h, index) => (
           <div key={index} className="flex items-center justify-between text-sm">
-            <span className="font-medium text-gray-700">{h.day}</span>
+            <span className="font-medium text-gray-700">{t(h.day)}</span>
             <span className={h.closed ? 'text-red-500' : 'text-gray-600'}>
-              {h.closed ? 'Closed' : `${h.open} – ${h.close}`}
+              {h.closed ? t('Closed') : `${h.open} – ${h.close}`}
             </span>
           </div>
         ))}

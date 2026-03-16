@@ -7,10 +7,12 @@ import { useQueryClient } from '@tanstack/react-query'
 import apiClient from '@/lib/api/client'
 import { authAPI } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
+import { useTranslation } from '@/lib/i18n'
 
 type PageState = 'loading' | 'success' | 'error'
 
 function PaymentSuccessContent() {
+  const { t } = useTranslation()
   const searchParams = useSearchParams()
   const queryClient = useQueryClient()
   const [state, setState] = useState<PageState>('loading')
@@ -28,8 +30,8 @@ function PaymentSuccessContent() {
     }
     if (state !== 'loading' && countdown === 0) {
       // Check if user is logged in - redirect to account page, otherwise to login
-      const token = localStorage.getItem('token')
-      if (token) {
+      const isLoggedIn = localStorage.getItem('logged_in') || localStorage.getItem('token')
+      if (isLoggedIn) {
         window.location.href = '/dashboard/qrcodes'
       } else {
         window.location.href = '/login'
@@ -49,12 +51,13 @@ function PaymentSuccessContent() {
 
       if (data?.clear_storage) {
         localStorage.removeItem('token')
+        localStorage.removeItem('logged_in')
         localStorage.removeItem('user')
       }
 
       // Always fetch fresh user data after successful payment
-      const token = localStorage.getItem('token')
-      if (token) {
+      const isLoggedIn = localStorage.getItem('logged_in') || localStorage.getItem('token')
+      if (isLoggedIn) {
         try {
           // Fetch fresh user data from /myself endpoint
           const freshUser = await authAPI.getCurrentUser()
@@ -80,10 +83,10 @@ function PaymentSuccessContent() {
         queryClient.setQueryData(queryKeys.auth.currentUser(), data.user_data)
       }
 
-      setMessage(data?.message || 'Your payment has been processed successfully.')
+      setMessage(data?.message || t('Your payment has been processed successfully.'))
       setState('success')
     } catch (err: any) {
-      setMessage(err?.response?.data?.message || 'There was an error verifying your payment.')
+      setMessage(err?.response?.data?.message || t('There was an error verifying your payment.'))
       setState('error')
     }
   }
@@ -94,8 +97,8 @@ function PaymentSuccessContent() {
         {state === 'loading' && (
           <>
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mx-auto mb-6" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Processing Payment...</h1>
-            <p className="text-gray-500">Please wait while we verify your payment.</p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Processing Payment...')}</h1>
+            <p className="text-gray-500">{t('Please wait while we verify your payment.')}</p>
           </>
         )}
 
@@ -106,11 +109,11 @@ function PaymentSuccessContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Payment Successful!')}</h1>
             <p className="text-gray-600 mb-6">{message}</p>
-            <p className="text-sm text-gray-400">Redirecting you to your dashboard in {countdown} seconds...</p>
+            <p className="text-sm text-gray-400">{t('Redirecting you to your dashboard in')} {countdown} {t('seconds...')}</p>
             <Link href="/dashboard/qrcodes" className="mt-4 inline-block text-purple-600 hover:text-purple-700 font-medium">
-              Go to Dashboard Now →
+              {t('Go to Dashboard Now')} →
             </Link>
           </>
         )}
@@ -122,11 +125,11 @@ function PaymentSuccessContent() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Error</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Payment Error')}</h1>
             <p className="text-gray-600 mb-6">{message}</p>
-            <p className="text-sm text-gray-400 mb-4">Redirecting in {countdown} seconds...</p>
+            <p className="text-sm text-gray-400 mb-4">{t('Redirecting in')} {countdown} {t('seconds...')}</p>
             <Link href="/login" className="text-purple-600 hover:text-purple-700 font-medium">
-              Go to Login →
+              {t('Go to Login')} →
             </Link>
           </>
         )}
@@ -136,12 +139,13 @@ function PaymentSuccessContent() {
 }
 
 export default function PaymentSuccessPage() {
+  const { t } = useTranslation()
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mx-auto mb-6" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Loading...</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Loading...')}</h1>
         </div>
       </div>
     }>

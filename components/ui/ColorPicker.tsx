@@ -8,6 +8,7 @@
 'use client'
 
 import React, { useState, useCallback, useMemo } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface ColorPickerProps {
   value: string
@@ -68,6 +69,7 @@ export function ColorPicker({
   presets = DEFAULT_PRESETS,
   className = '',
 }: ColorPickerProps) {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState(value)
 
@@ -143,7 +145,7 @@ export function ColorPicker({
               maxLength={7}
             />
             {!isValidHex(inputValue) && inputValue !== '' && (
-              <p className="text-xs text-red-500 mt-1">Invalid hex color</p>
+              <p className="text-xs text-red-500 mt-1">{t('Invalid hex color')}</p>
             )}
           </div>
 
@@ -154,7 +156,7 @@ export function ColorPicker({
               onClick={() => setIsOpen(!isOpen)}
               className="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition text-sm font-medium"
             >
-              Presets
+              {t('Presets')}
             </button>
           )}
         </div>
@@ -183,7 +185,7 @@ export function ColorPicker({
               onClick={() => setIsOpen(false)}
               className="mt-3 w-full px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md text-sm transition"
             >
-              Close
+              {t('Close')}
             </button>
           </div>
         )}
@@ -192,7 +194,7 @@ export function ColorPicker({
       {/* Color info */}
       <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
         <div className="px-2 py-1 rounded" style={{ backgroundColor: value, color: textColor }}>
-          Preview
+          {t('Preview')}
         </div>
         {isValidHex(value) && (
           <span>

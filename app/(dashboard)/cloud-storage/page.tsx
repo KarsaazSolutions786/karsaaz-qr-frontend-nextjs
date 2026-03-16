@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { useCloudConnections, useBackupJobs, useBackupJob, useCloudStorageMutations, useOAuthPopup } from '@/lib/hooks/queries/useCloudStorage'
 import type { CloudProvider, CloudConnection, BackupJob, BackupJobStatusLegacy } from '@/lib/api/endpoints/cloud-storage'
+import { useTranslation } from '@/lib/i18n'
 
 // ─── Helper Functions ───────────────────────────────────────────────────
 
@@ -153,6 +154,8 @@ function BackupModal({
   const [includeAnalytics, setIncludeAnalytics] = useState(true)
   const [includeImages, setIncludeImages] = useState(false) // Per docs: default false
 
+  const { t } = useTranslation()
+
   if (activeConnections.length === 0) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -160,15 +163,15 @@ function BackupModal({
           <div className="flex items-start gap-3 text-amber-700 bg-amber-50 p-4 rounded-lg mb-4">
             <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <div>
-              <p className="font-medium">No active cloud connections</p>
-              <p className="text-sm mt-1">Please connect a cloud provider first.</p>
+            <p className="font-medium">{t('No active cloud connections')}</p>
+            <p className="text-sm mt-1">{t('Please connect a cloud provider first.')}</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
           >
-            Close
+            {t('Close')}
           </button>
         </div>
       </div>
@@ -178,18 +181,18 @@ function BackupModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Start Backup</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('Start Backup')}</h3>
 
         {/* Info about what's being backed up */}
         <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
           {qrCodeCount
-            ? `Backing up ${qrCodeCount} selected QR code${qrCodeCount > 1 ? 's' : ''}`
-            : 'Backing up all QR codes'}
+            ? t('Backing up {{count}} selected QR codes').replace('{{count}}', String(qrCodeCount))
+            : t('Backing up all QR codes')}
         </div>
 
         {/* Connection selector */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Cloud Provider</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Cloud Provider')}</label>
           <select
             value={selectedConnection}
             onChange={(e) => setSelectedConnection(e.target.value)}
@@ -197,7 +200,7 @@ function BackupModal({
           >
             {activeConnections.map((c) => (
               <option key={c.id} value={c.id}>
-                {PROVIDERS.find(p => p.id === c.provider)?.name || c.provider} — {getConnectionEmail(c) || c.name || 'Connected'}
+                {PROVIDERS.find(p => p.id === c.provider)?.name || c.provider} — {getConnectionEmail(c) || c.name || t('Connected')}
               </option>
             ))}
           </select>
@@ -205,14 +208,14 @@ function BackupModal({
 
         {/* Format */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Export Format</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Export Format')}</label>
           <select
             value={format}
             onChange={(e) => setFormat(e.target.value as 'json' | 'zip')}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
-            <option value="json">JSON (data only)</option>
-            <option value="zip">ZIP Archive (bundled)</option>
+            <option value="json">{t('JSON (data only)')}</option>
+            <option value="zip">{t('ZIP Archive (bundled)')}</option>
           </select>
         </div>
 
@@ -225,7 +228,7 @@ function BackupModal({
               onChange={(e) => setIncludeDesigns(e.target.checked)}
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <span className="text-sm text-gray-700">Include QR code designs</span>
+            <span className="text-sm text-gray-700">{t('Include QR code designs')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -234,7 +237,7 @@ function BackupModal({
               onChange={(e) => setIncludeAnalytics(e.target.checked)}
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
-            <span className="text-sm text-gray-700">Include analytics data</span>
+            <span className="text-sm text-gray-700">{t('Include analytics data')}</span>
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -244,8 +247,8 @@ function BackupModal({
               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
             <div>
-              <span className="text-sm text-gray-700">Include QR code images (SVG + PNG)</span>
-              <p className="text-xs text-gray-500">Increases backup size significantly</p>
+              <span className="text-sm text-gray-700">{t('Include QR code images (SVG + PNG)')}</span>
+              <p className="text-xs text-gray-500">{t('Increases backup size significantly')}</p>
             </div>
           </label>
         </div>
@@ -256,7 +259,7 @@ function BackupModal({
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             disabled={isStarting}
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             onClick={() => onStart({
@@ -270,7 +273,7 @@ function BackupModal({
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isStarting && <Loader2 className="w-4 h-4 animate-spin" />}
-            Start Backup
+            {t('Start Backup')}
           </button>
         </div>
       </div>
@@ -292,29 +295,31 @@ function MegaConnectModal({
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+  const { t } = useTranslation()
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Connect MEGA Account</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('Connect MEGA Account')}</h3>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Email')}</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="your@email.com"
+            placeholder={t('your@email.com')}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Password')}</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your MEGA password"
+            placeholder={t('Enter your MEGA password')}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
@@ -325,7 +330,7 @@ function MegaConnectModal({
             className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             disabled={isConnecting}
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             onClick={() => onConnect(email, password)}
@@ -333,7 +338,7 @@ function MegaConnectModal({
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isConnecting && <Loader2 className="w-4 h-4 animate-spin" />}
-            Connect
+            {t('Connect')}
           </button>
         </div>
       </div>
@@ -359,6 +364,7 @@ function BackupProgress({
   onCancel: () => void
   isCancelling: boolean
 }) {
+  const { t } = useTranslation()
   // Get progress percentage from various backend field names
   const progressPercent = job.progress ?? job.progress_percentage ?? 0
   const isInProgress = isJobInProgress(job.status)
@@ -381,12 +387,12 @@ function BackupProgress({
           {job.status === 'failed' && <XCircle className="w-5 h-5 text-red-600" />}
           {job.status === 'cancelled' && <XCircle className="w-5 h-5 text-amber-600" />}
           <span className="font-medium text-gray-900">
-            {job.status === 'pending' && 'Preparing backup...'}
-            {job.status === 'processing' && 'Backing up...'}
-            {job.status === 'in_progress' && 'Backing up...'}
-            {job.status === 'completed' && 'Backup completed'}
-            {job.status === 'failed' && 'Backup failed'}
-            {job.status === 'cancelled' && 'Backup cancelled'}
+            {job.status === 'pending' && t('Preparing backup...')}
+            {job.status === 'processing' && t('Backing up...')}
+            {job.status === 'in_progress' && t('Backing up...')}
+            {job.status === 'completed' && t('Backup completed')}
+            {job.status === 'failed' && t('Backup failed')}
+            {job.status === 'cancelled' && t('Backup cancelled')}
           </span>
         </div>
         {isInProgress && (
@@ -395,7 +401,7 @@ function BackupProgress({
             disabled={isCancelling}
             className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
           >
-            {isCancelling ? 'Cancelling...' : 'Cancel'}
+            {isCancelling ? t('Cancelling...') : t('Cancel')}
           </button>
         )}
       </div>
@@ -413,7 +419,7 @@ function BackupProgress({
             {progressPercent.toFixed(0)}%
             {job.processed_qr_codes != null && job.total_qr_codes != null && (
               <span className="ml-2">
-                ({job.processed_qr_codes}/{job.total_qr_codes} QR codes)
+                ({job.processed_qr_codes}/{job.total_qr_codes} {t('QR codes')})
               </span>
             )}
           </p>
@@ -423,7 +429,7 @@ function BackupProgress({
       {/* Completed info */}
       {job.status === 'completed' && (
         <p className="text-sm text-gray-600">
-          File size: {formatSize(job.file_size || job.size_bytes)}
+          {t('File size:')} {formatSize(job.file_size || job.size_bytes)}
         </p>
       )}
 
@@ -438,6 +444,7 @@ function BackupProgress({
 // ─── Main Page ───────────────────────────────────────────────────────────
 
 export default function CloudStoragePage() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<'connections' | 'history'>('connections')
   const [showBackupModal, setShowBackupModal] = useState(false)
   const [showMegaModal, setShowMegaModal] = useState(false)
@@ -538,9 +545,9 @@ export default function CloudStoragePage() {
               <Cloud className="w-6 h-6 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Cloud Storage</h1>
+              <h1 className="text-3xl font-bold text-gray-900">{t('Cloud Storage')}</h1>
               <p className="mt-1 text-sm text-gray-600">
-                {activeTab === 'connections' ? 'Connect cloud storage providers for backups' : 'View backup history and manage backups'}
+                {activeTab === 'connections' ? t('Connect cloud storage providers for backups') : t('View backup history and manage backups')}
               </p>
             </div>
           </div>
@@ -551,7 +558,7 @@ export default function CloudStoragePage() {
             className="mt-4 sm:mt-0 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
           >
             <Upload className="w-4 h-4" />
-            Start Backup Now
+            {t('Start Backup Now')}
           </button>
         )}
       </div>
@@ -567,7 +574,7 @@ export default function CloudStoragePage() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            Connections
+            {t('Connections')}
             {connectedProviders.length > 0 && (
               <span className="ml-2 bg-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full">
                 {connectedProviders.length}
@@ -582,7 +589,7 @@ export default function CloudStoragePage() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            Backup History
+            {t('Backup History')}
             {backups.length > 0 && (
               <span className="ml-2 bg-gray-100 text-gray-700 text-xs font-medium px-2 py-0.5 rounded-full">
                 {backups.length}
@@ -643,7 +650,7 @@ export default function CloudStoragePage() {
                       <div className="flex-shrink-0">{provider.icon}</div>
                       <div>
                         <h3 className="text-base font-semibold text-gray-900">{provider.name}</h3>
-                        <p className="text-sm text-gray-500">{provider.description}</p>
+                        <p className="text-sm text-gray-500">{t(provider.description)}</p>
                         {connection && (
                           <p className="text-xs text-gray-400 mt-1">
                             {email && `${email} · `}
@@ -657,7 +664,7 @@ export default function CloudStoragePage() {
                         <>
                           <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
                             <CheckCircle className="w-3 h-3" />
-                            Connected
+                            {t('Connected')}
                           </span>
                           <button
                             onClick={() => testConnection.mutate(connection!.id)}
@@ -673,7 +680,7 @@ export default function CloudStoragePage() {
                           </button>
                           <button
                             onClick={() => {
-                              if (confirm(`Disconnect ${provider.name}?`)) {
+                              if (confirm(t('Disconnect {{name}}?').replace('{{name}}', provider.name))) {
                                 deleteConnection.mutate(connection!.id)
                               }
                             }}
@@ -688,7 +695,7 @@ export default function CloudStoragePage() {
                         <>
                           <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
                             <Clock className="w-3 h-3" />
-                            Token Expired
+                            {t('Token Expired')}
                           </span>
                           {provider.isOAuth && (
                             <button
@@ -697,12 +704,12 @@ export default function CloudStoragePage() {
                               className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 disabled:opacity-50"
                             >
                               <RefreshCw className="w-4 h-4" />
-                              Refresh
+                              {t('Refresh')}
                             </button>
                           )}
                           <button
                             onClick={() => {
-                              if (confirm(`Disconnect ${provider.name}?`)) {
+                              if (confirm(t('Disconnect {{name}}?').replace('{{name}}', provider.name))) {
                                 deleteConnection.mutate(connection!.id)
                               }
                             }}
@@ -716,11 +723,11 @@ export default function CloudStoragePage() {
                         <>
                           <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
                             <XCircle className="w-3 h-3" />
-                            Inactive
+                            {t('Inactive')}
                           </span>
                           <button
                             onClick={() => {
-                              if (confirm(`Remove ${provider.name} connection?`)) {
+                              if (confirm(t('Remove {{name}} connection?').replace('{{name}}', provider.name))) {
                                 deleteConnection.mutate(connection!.id)
                               }
                             }}
@@ -741,7 +748,7 @@ export default function CloudStoragePage() {
                           ) : (
                             <ExternalLink className="w-4 h-4" />
                           )}
-                          Connect
+                          {t('Connect')}
                         </button>
                       )}
                     </div>
@@ -758,10 +765,10 @@ export default function CloudStoragePage() {
                 <HardDrive className="w-5 h-5 text-blue-600 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-blue-900">
-                    No cloud storage connected
+                    {t('No cloud storage connected')}
                   </p>
                   <p className="text-sm text-blue-700 mt-1">
-                    Connect a cloud storage provider above to start backing up your QR codes and data.
+                    {t('Connect a cloud storage provider above to start backing up your QR codes and data.')}
                   </p>
                 </div>
               </div>
@@ -799,11 +806,11 @@ export default function CloudStoragePage() {
             ) : backups.length === 0 ? (
               <div className="p-12 text-center">
                 <Database className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600 font-medium">No backup history yet</p>
+                <p className="text-gray-600 font-medium">{t('No backup history yet')}</p>
                 <p className="text-sm text-gray-500 mt-1">
                   {connectedProviders.length > 0
-                    ? 'Click "Start Backup Now" to create your first backup'
-                    : 'Connect a cloud storage provider first, then start a backup'
+                    ? t('Click "Start Backup Now" to create your first backup')
+                    : t('Connect a cloud storage provider first, then start a backup')
                   }
                 </p>
                 {connectedProviders.length > 0 && (
@@ -812,7 +819,7 @@ export default function CloudStoragePage() {
                     className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
                   >
                     <Upload className="w-4 h-4" />
-                    Start Backup Now
+                    {t('Start Backup Now')}
                   </button>
                 )}
               </div>
@@ -864,12 +871,12 @@ export default function CloudStoragePage() {
                                     : 'bg-blue-100 text-blue-700'
                                 }`}
                               >
-                                {backup.status === 'completed' && 'Completed'}
-                                {backup.status === 'failed' && 'Failed'}
-                                {backup.status === 'cancelled' && 'Cancelled'}
-                                {backup.status === 'pending' && 'Pending'}
-                                {backup.status === 'processing' && 'Processing'}
-                                {backup.status === 'in_progress' && 'In Progress'}
+                                {backup.status === 'completed' && t('Completed')}
+                                {backup.status === 'failed' && t('Failed')}
+                                {backup.status === 'cancelled' && t('Cancelled')}
+                                {backup.status === 'pending' && t('Pending')}
+                                {backup.status === 'processing' && t('Processing')}
+                                {backup.status === 'in_progress' && t('In Progress')}
                               </span>
                               <span className="text-sm text-gray-500">
                                 {providerInfo?.name || backup.provider}
@@ -912,14 +919,14 @@ export default function CloudStoragePage() {
                         <div className="flex items-center gap-2 ml-4">
                           <button
                             onClick={() => {
-                              if (confirm('Delete this backup record?')) {
+                              if (confirm(t('Delete this backup record?'))) {
                                 deleteBackupJob.mutate(backup.id)
                               }
                             }}
                             disabled={deleteBackupJob.isPending}
                             className="px-3 py-1.5 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-md hover:bg-red-50 disabled:opacity-50"
                           >
-                            Delete
+                            {t('Delete')}
                           </button>
                         </div>
                       </div>

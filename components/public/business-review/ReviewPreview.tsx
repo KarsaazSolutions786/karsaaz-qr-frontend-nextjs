@@ -9,6 +9,7 @@ import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
 import ReviewForm from './ReviewForm';
 import SimplePagination from '@/components/common/SimplePagination';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/lib/i18n';
 
 interface Review {
   id: string;
@@ -54,6 +55,7 @@ const platformIcons: Record<string, string> = {
 };
 
 export default function ReviewPreview({ review }: ReviewPreviewProps) {
+  const { t } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 5;
@@ -121,7 +123,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
       <PreviewHeader
         logo={review.logo}
         title={review.businessName}
-        subtitle="Share Your Experience"
+        subtitle={t('Share Your Experience')}
         actions={
           <SocialShare
             url={currentUrl}
@@ -143,10 +145,10 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-green-900 mb-2">
-                    Thank You for Your Review! 🎉
+                    {t('Thank You for Your Review!')}
                   </h3>
                   <p className="text-green-700">
-                    Your feedback has been submitted successfully. We truly appreciate you taking the time to share your experience with us!
+                    {t('Your feedback has been submitted successfully. We truly appreciate you taking the time to share your experience with us!')}
                   </p>
                 </div>
               </div>
@@ -167,7 +169,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
               )}
               <div className="flex-1">
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                  How was your experience?
+                  {t('How was your experience?')}
                 </h1>
                 <p className="text-lg text-gray-600 leading-relaxed">
                   {review.reviewMessage || `We'd love to hear about your experience with ${review.businessName}. Your feedback helps us serve you better!`}
@@ -185,7 +187,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
                     <MessageSquare className="w-6 h-6 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Leave Your Review</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">{t('Leave Your Review')}</h2>
                 </div>
                 
                 <ReviewForm
@@ -200,11 +202,11 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
               {review.showExistingReviews && reviews.length > 0 && (
                 <section id="reviews-section" className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-2xl font-bold text-gray-900">What Others Are Saying</h2>
+                    <h2 className="text-2xl font-bold text-gray-900">{t('What Others Are Saying')}</h2>
                     <div className="flex items-center gap-2">
                       <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
                       <span className="text-xl font-bold text-gray-900">{getAverageRating()}</span>
-                      <span className="text-sm text-gray-500">({reviews.length} reviews)</span>
+                      <span className="text-sm text-gray-500">({reviews.length} {t('reviews')})</span>
                     </div>
                   </div>
 
@@ -215,7 +217,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
                       const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
                       return (
                         <div key={stars} className="flex items-center gap-3 mb-2 last:mb-0">
-                          <span className="text-sm font-medium text-gray-700 w-12">{stars} star</span>
+                          <span className="text-sm font-medium text-gray-700 w-12">{stars} {t('star')}</span>
                           <div className="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
                             <div 
                               className="h-full rounded-full transition-all duration-500" 
@@ -244,7 +246,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
                               <h4 className="font-semibold text-gray-900">{reviewItem.name}</h4>
                               {reviewItem.isVerified && (
                                 <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
-                                  Verified
+                                  {t('Verified')}
                                 </span>
                               )}
                             </div>
@@ -273,7 +275,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
                             <div className="flex items-center gap-4 mt-3">
                               <button className="text-sm text-gray-500 hover:text-blue-600 flex items-center gap-1 transition-colors">
                                 <ThumbsUp className="w-4 h-4" />
-                                Helpful
+                                {t('Helpful')}
                               </button>
                             </div>
                           </div>
@@ -305,7 +307,7 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sticky top-4">
                   <div className="flex items-center gap-3 mb-6">
                     <Globe className="w-6 h-6" style={{ color: primaryColor }} />
-                    <h2 className="text-xl font-bold text-gray-900">Review Us On</h2>
+                    <h2 className="text-xl font-bold text-gray-900">{t('Review Us On')}</h2>
                   </div>
                   <div className="space-y-3">
                     {review.platforms.map((platform, index) => (
@@ -329,30 +331,30 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
                     ))}
                   </div>
                   <p className="mt-4 text-xs text-gray-500 text-center">
-                    Your reviews on these platforms help others discover us!
+                    {t('Your reviews on these platforms help others discover us!')}
                   </p>
                 </section>
               )}
 
               {/* Why Review Section */}
               <section className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl border border-blue-100 p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Why Your Review Matters</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">{t('Why Your Review Matters')}</h3>
                 <ul className="space-y-3 text-sm text-gray-700">
                   <li className="flex items-start gap-2">
                     <Star className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
-                    <span>Help others make informed decisions</span>
+                    <span>{t('Help others make informed decisions')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Star className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
-                    <span>Share your valuable experience</span>
+                    <span>{t('Share your valuable experience')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Star className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
-                    <span>Help us improve our services</span>
+                    <span>{t('Help us improve our services')}</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <Star className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />
-                    <span>Support local businesses</span>
+                    <span>{t('Support local businesses')}</span>
                   </li>
                 </ul>
               </section>
@@ -360,20 +362,20 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
               {/* Stats */}
               {reviews.length > 0 && (
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Review Stats</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">{t('Review Stats')}</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-4 bg-blue-50 rounded-xl">
                       <div className="text-3xl font-bold" style={{ color: primaryColor }}>
                         {reviews.length}
                       </div>
-                      <div className="text-xs text-gray-600 mt-1">Total Reviews</div>
+                      <div className="text-xs text-gray-600 mt-1">{t('Total Reviews')}</div>
                     </div>
                     <div className="text-center p-4 bg-yellow-50 rounded-xl">
                       <div className="text-3xl font-bold text-yellow-600 flex items-center justify-center gap-1">
                         <Star className="w-6 h-6 fill-current" />
                         {getAverageRating()}
                       </div>
-                      <div className="text-xs text-gray-600 mt-1">Average Rating</div>
+                      <div className="text-xs text-gray-600 mt-1">{t('Average Rating')}</div>
                     </div>
                   </div>
                 </section>

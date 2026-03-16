@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import Link from 'next/link'
+import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import {
   Plus,
@@ -15,9 +15,9 @@ import {
 } from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
-import { useMultiSelect } from '@/hooks/useMultiSelect'
-import { useFilters } from '@/hooks/useFilters'
-import { useQRActions } from '@/hooks/useQRActions'
+import { useMultiSelect } from '@/lib/hooks/useMultiSelect'
+import { useFilters } from '@/lib/hooks/useFilters'
+import { useQRActions } from '@/lib/hooks/useQRActions'
 import { MultiSelectToolbar, type BulkAction } from '@/components/qr/MultiSelectToolbar'
 import { FilterModal } from '@/components/qr/FilterModal'
 import { QRCodeCardSkeleton } from '@/components/common/Skeleton'
@@ -36,15 +36,21 @@ import { useSubscription } from '@/lib/hooks/queries/useSubscription'
 import { useFolders } from '@/lib/hooks/queries/useFolders'
 import { useDomains } from '@/lib/hooks/queries/useDomains'
 import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
-import { Download, FolderInput, Archive, Copy, Eye, EyeOff } from 'lucide-react'
+import { Download, FolderInput, Archive, Copy, Eye, EyeOff, RefreshCw, UserCheck } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
 import { foldersAPI } from '@/lib/api/endpoints/folders'
 import { useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
 import { FolderSelectModal } from '@/components/common/FolderSelectModal'
+import { useSubscriptionLimits } from '@/lib/hooks/useSubscriptionLimits'
+import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
+import { BulkChangeTypeModal } from '@/components/qr/BulkChangeTypeModal'
+import { BulkChangeOwnerModal } from '@/components/qr/BulkChangeOwnerModal'
 
 export default function QRCodesPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -56,6 +62,8 @@ export default function QRCodesPage() {
   const [selectedDomain, setSelectedDomain] = useState<string>('')
   const [sortBy, setSortBy] = useState<SortOption>('date-desc')
   const [folderModalQRIds, setFolderModalQRIds] = useState<string[] | null>(null)
+  const [showChangeTypeModal, setShowChangeTypeModal] = useState(false)
+  const [showChangeOwnerModal, setShowChangeOwnerModal] = useState(false)
   // Load view mode from localStorage
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
     if (typeof window !== 'undefined') {
@@ -101,6 +109,16 @@ export default function QRCodesPage() {
   const { data: domainsData } = useDomains(undefined, { enabled: isAdmin })
   const domains = domainsData?.data ?? []
 
+  // Subscription quota check for "Create QR Code" button
+  const {
+    canCreateQR,
+    upgradeReason: quotaUpgradeReason,
+    usage: quotaUsage,
+    limits: quotaLimits,
+    showUpgradeModal: showQuotaModal,
+    setShowUpgradeModal: setShowQuotaModal,
+  } = useSubscriptionLimits()
+
   // Scroll to top when page changes
   const isFirstRender = useRef(true)
   useEffect(() => {
@@ -139,7 +157,7 @@ export default function QRCodesPage() {
     if (!user?.id) return
     if (
       !confirm(
-        'Are you sure you want to delete this folder? QR codes inside will be moved to root.'
+        t('Are you sure you want to delete this folder? QR codes inside will be moved to root.')
       )
     )
       return
@@ -181,13 +199,13 @@ export default function QRCodesPage() {
     () => [
       {
         id: 'download',
-        label: 'Download',
+        label: t('Download'),
         icon: <Download className="w-4 h-4" />,
         onClick: (ids: string[]) => bulkDownloadQRCodes(ids),
       },
       {
         id: 'move',
-        label: 'Move to Folder',
+        label: t('Move to Folder'),
         icon: <FolderInput className="w-4 h-4" />,
         onClick: (ids: string[]) => {
           setFolderModalQRIds(ids)
@@ -195,35 +213,51 @@ export default function QRCodesPage() {
       },
       {
         id: 'duplicate',
-        label: 'Duplicate',
+        label: t('Duplicate'),
         icon: <Copy className="w-4 h-4" />,
         onClick: (ids: string[]) => bulkDuplicateQRCodes(ids),
       },
       {
         id: 'activate',
-        label: 'Activate',
+        label: t('Activate'),
         icon: <Eye className="w-4 h-4" />,
         onClick: (ids: string[]) => bulkChangeStatus(ids, 'active'),
       },
       {
         id: 'deactivate',
-        label: 'Deactivate',
+        label: t('Deactivate'),
         icon: <EyeOff className="w-4 h-4" />,
         onClick: (ids: string[]) => bulkChangeStatus(ids, 'inactive'),
       },
       {
         id: 'archive',
-        label: 'Archive',
+        label: t('Archive'),
         icon: <Archive className="w-4 h-4" />,
-        onClick: (ids: string[]) => bulkArchiveQRCodes(ids).then(() => deselectAll()),
+        onClick: (ids: string[]) => bulkArchiveQRCodes(ids).then(() => deselectAll()).catch(() => { toast.error('Operation failed. Please try again.') }),
       },
       {
+        id: 'change-type',
+        label: t('Change Type'),
+        icon: <RefreshCw className="w-4 h-4" />,
+        onClick: () => setShowChangeTypeModal(true),
+      },
+      ...(isAdmin
+        ? [
+            {
+              id: 'change-owner',
+              label: t('Change Owner'),
+              icon: <UserCheck className="w-4 h-4" />,
+              onClick: () => setShowChangeOwnerModal(true),
+            } as BulkAction,
+          ]
+        : []),
+      {
         id: 'delete',
-        label: 'Delete',
+        label: t('Delete'),
         icon: <TrashIcon className="w-4 h-4" />,
         variant: 'danger' as const,
         requiresConfirmation: true,
-        onClick: (ids: string[]) => bulkDeleteQRCodes(ids).then(() => deselectAll()),
+        onClick: (ids: string[]) => bulkDeleteQRCodes(ids).then(() => deselectAll()).catch(() => { toast.error('Operation failed. Please try again.') }),
       },
     ],
     [
@@ -233,6 +267,7 @@ export default function QRCodesPage() {
       bulkArchiveQRCodes,
       bulkDeleteQRCodes,
       deselectAll,
+      isAdmin,
     ]
   )
 
@@ -256,7 +291,7 @@ export default function QRCodesPage() {
           navigator.clipboard
             .writeText(shareUrl)
             .then(() => {
-              alert('QR code link copied to clipboard!')
+              alert(t('QR code link copied to clipboard!'))
             })
             .catch(() => {
               window.open(shareUrl, '_blank')
@@ -279,7 +314,7 @@ export default function QRCodesPage() {
           changeStatus(qrCodeId, 'inactive')
           break
         case 'delete':
-          if (confirm('Are you sure you want to delete this QR code?')) {
+          if (confirm(t('Are you sure you want to delete this QR code?'))) {
             deleteQRCode(qrCodeId)
           }
           break
@@ -319,8 +354,8 @@ export default function QRCodesPage() {
       {/* Header */}
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">QR Codes</h1>
-          <p className="mt-2 text-sm text-gray-600">Manage all your QR codes in one place</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('QR Codes')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Manage all your QR codes in one place')}</p>
           <div className="mt-3">
             <QRCodeQuotaDisplay used={qrCodesUsed} total={qrCodesLimit} plan={plan} />
           </div>
@@ -331,27 +366,33 @@ export default function QRCodesPage() {
             className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             <FolderTreeIcon className="w-4 h-4 mr-2" />
-            Folders
+            {t('Folders')}
           </button>
           <button
             onClick={() => setShowFilters(true)}
             className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             <Filter className="w-4 h-4 mr-2" />
-            Filters
+            {t('Filters')}
           </button>
           <BulkCreateButton
             onClick={() => {
               router.push('/qrcodes/bulk-create')
             }}
           />
-          <Link
-            href="/qrcodes/new"
+          <button
+            onClick={() => {
+              if (!canCreateQR) {
+                setShowQuotaModal(true)
+              } else {
+                router.push('/qrcodes/new')
+              }
+            }}
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
             <Plus className="w-4 h-4 mr-2" />
-            Create QR Code
-          </Link>
+            {t('Create QR Code')}
+          </button>
         </div>
       </div>
 
@@ -375,7 +416,7 @@ export default function QRCodesPage() {
           <div className="w-64 flex-shrink-0">
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">Folders</h3>
+                <h3 className="font-semibold text-gray-900">{t('Folders')}</h3>
                 <button
                   onClick={() => setShowFolders(false)}
                   className="p-1 text-gray-400 hover:text-gray-600 rounded"
@@ -397,7 +438,7 @@ export default function QRCodesPage() {
                 }`}
               >
                 <Folder className="w-4 h-4" />
-                <span className="flex-1 text-left">All QR Codes</span>
+                <span className="flex-1 text-left">{t('All QR Codes')}</span>
               </button>
 
               {/* Folder list */}
@@ -432,7 +473,7 @@ export default function QRCodesPage() {
                         handleDeleteFolder(folder.id)
                       }}
                       className="p-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity"
-                      title="Delete folder"
+                      title={t('Delete folder')}
                     >
                       <TrashIcon className="w-3.5 h-3.5" />
                     </button>
@@ -450,7 +491,7 @@ export default function QRCodesPage() {
                     onKeyDown={e => {
                       if (e.key === 'Enter') handleCreateFolder()
                     }}
-                    placeholder="New folder name"
+                    placeholder={t('New folder name')}
                     disabled={folderLoading}
                     className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
                   />
@@ -473,7 +514,7 @@ export default function QRCodesPage() {
           <div className="mb-6 space-y-4">
             <DebouncedSearch
               onSearch={handleSearch}
-              placeholder="Search QR codes..."
+              placeholder={t('Search QR codes...')}
               delay={300}
               minLength={0}
             />
@@ -491,7 +532,7 @@ export default function QRCodesPage() {
                     }}
                     className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   >
-                    <option value="">All Domains</option>
+                    <option value="">{t('All Domains')}</option>
                     {domains.map(d => (
                       <option key={d.id} value={d.id}>
                         {d.domain}
@@ -612,6 +653,37 @@ export default function QRCodesPage() {
           onClose={() => setFolderModalQRIds(null)}
         />
       )}
+
+      {/* Quota upgrade modal — shown when user tries to create a QR code while over limit */}
+      <UpgradeRequiredModal
+        open={showQuotaModal}
+        onClose={() => setShowQuotaModal(false)}
+        message={quotaUpgradeReason}
+        currentUsage={quotaUsage.totalQRCodes}
+        planLimit={quotaLimits.maxQRCodes}
+      />
+
+      {/* Bulk Change Type Modal */}
+      <BulkChangeTypeModal
+        open={showChangeTypeModal}
+        onClose={() => setShowChangeTypeModal(false)}
+        selectedIds={selectedIds}
+        onComplete={() => {
+          deselectAll()
+          queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.all() })
+        }}
+      />
+
+      {/* Bulk Change Owner Modal (admin only) */}
+      <BulkChangeOwnerModal
+        open={showChangeOwnerModal}
+        onClose={() => setShowChangeOwnerModal(false)}
+        selectedIds={selectedIds}
+        onComplete={() => {
+          deselectAll()
+          queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.all() })
+        }}
+      />
     </div>
   )
 }

@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { AudioBlockData } from '@/types/entities/biolink'
 
 interface AudioBlockProps {
@@ -8,12 +11,13 @@ interface AudioBlockProps {
 
 export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockProps) {
   const { audioUrl, title, autoplay } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Audio URL</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Audio URL')}</label>
           <input
             type="url"
             value={audioUrl}
@@ -23,7 +27,7 @@ export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockPro
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Title (optional)</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Title (optional)')}</label>
           <input
             type="text"
             value={title || ''}
@@ -40,7 +44,7 @@ export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockPro
             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
           />
           <label htmlFor={`autoplay-${block.id}`} className="text-sm font-medium text-gray-700">
-            Autoplay
+            {t('Autoplay')}
           </label>
         </div>
       </div>
@@ -50,7 +54,7 @@ export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockPro
   if (!audioUrl) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
-        <p className="text-sm text-gray-500">No audio file set</p>
+        <p className="text-sm text-gray-500">{t('No audio file set')}</p>
       </div>
     )
   }
@@ -60,7 +64,7 @@ export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockPro
       {title && <h3 className="text-center text-lg font-semibold text-gray-900">🎵 {title}</h3>}
       <audio controls autoPlay={autoplay} className="w-full" preload="metadata">
         <source src={audioUrl} />
-        Your browser does not support the audio element.
+        {t('Your browser does not support the audio element.')}
       </audio>
     </div>
   )

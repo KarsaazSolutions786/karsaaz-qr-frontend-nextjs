@@ -1,7 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { referralAPI } from '@/lib/api/endpoints/referral'
+import { useTranslation } from '@/lib/i18n'
+import { useReferralStats } from '@/lib/hooks/queries/useReferrals'
+import { ReferralBadge } from './ReferralBadge'
+import { ReferralAchievements } from './ReferralAchievements'
 import type { ReferralStats } from '@/types/entities/referral'
 
 const defaultStats: ReferralStats = {
@@ -13,33 +15,53 @@ const defaultStats: ReferralStats = {
 }
 
 export function ReferralDashboard() {
-  const [stats, setStats] = useState<ReferralStats>(defaultStats)
-  const [loading, setLoading] = useState(true)
+  const { t } = useTranslation()
+  const { data: stats = defaultStats, isLoading } = useReferralStats()
 
-  useEffect(() => {
-    referralAPI
-      .getStats()
-      .then(setStats)
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
-
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white p-6">
-            <div className="h-4 w-24 rounded bg-gray-200" />
-            <div className="mt-3 h-8 w-16 rounded bg-gray-200" />
+      <div className="space-y-6">
+        {/* Badge skeleton */}
+        <div className="animate-pulse rounded-lg border border-gray-200 bg-white p-6">
+          <div className="flex items-start gap-4">
+            <div className="h-14 w-14 rounded-full bg-gray-200" />
+            <div className="flex-1 space-y-3">
+              <div className="h-5 w-28 rounded bg-gray-200" />
+              <div className="h-3 w-48 rounded bg-gray-200" />
+              <div className="h-2 w-full rounded bg-gray-200" />
+            </div>
           </div>
-        ))}
+        </div>
+
+        {/* Stat cards skeleton */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white p-6">
+              <div className="h-4 w-24 rounded bg-gray-200" />
+              <div className="mt-3 h-8 w-16 rounded bg-gray-200" />
+            </div>
+          ))}
+        </div>
+
+        {/* Achievements skeleton */}
+        <div className="animate-pulse rounded-lg border border-gray-200 bg-white p-6">
+          <div className="h-5 w-36 rounded bg-gray-200" />
+          <div className="mt-6 grid grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex flex-col items-center space-y-2">
+                <div className="h-12 w-12 rounded-full bg-gray-200" />
+                <div className="h-3 w-16 rounded bg-gray-200" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     )
   }
 
-  const cards = [
+  const statCards = [
     {
-      label: 'Total Referrals',
+      label: t('Total Referrals'),
       value: stats.total_referrals,
       icon: (
         <svg className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -49,7 +71,7 @@ export function ReferralDashboard() {
       bg: 'bg-blue-50',
     },
     {
-      label: 'Active Referrals',
+      label: t('Active Referrals'),
       value: stats.active_referrals,
       icon: (
         <svg className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -59,7 +81,7 @@ export function ReferralDashboard() {
       bg: 'bg-green-50',
     },
     {
-      label: 'Total Earnings',
+      label: t('Total Earnings'),
       value: `$${stats.total_earnings.toFixed(2)}`,
       icon: (
         <svg className="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -69,7 +91,7 @@ export function ReferralDashboard() {
       bg: 'bg-purple-50',
     },
     {
-      label: 'Available Balance',
+      label: t('Available Balance'),
       value: `$${stats.available_balance.toFixed(2)}`,
       icon: (
         <svg className="h-6 w-6 text-amber-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -81,21 +103,30 @@ export function ReferralDashboard() {
   ]
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {cards.map((card) => (
-        <div
-          key={card.label}
-          className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
-        >
-          <div className="flex items-center gap-3">
-            <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${card.bg}`}>
-              {card.icon}
+    <div className="space-y-6">
+      {/* Current tier badge with progress */}
+      <ReferralBadge totalReferrals={stats.total_referrals} />
+
+      {/* Stats cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {statCards.map((card) => (
+          <div
+            key={card.label}
+            className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${card.bg}`}>
+                {card.icon}
+              </div>
+              <p className="text-sm font-medium text-gray-600">{card.label}</p>
             </div>
-            <p className="text-sm font-medium text-gray-600">{card.label}</p>
+            <p className="mt-3 text-2xl font-bold text-gray-900">{card.value}</p>
           </div>
-          <p className="mt-3 text-2xl font-bold text-gray-900">{card.value}</p>
-        </div>
-      ))}
+        ))}
+      </div>
+
+      {/* Achievement tiers */}
+      <ReferralAchievements totalReferrals={stats.total_referrals} />
     </div>
   )
 }

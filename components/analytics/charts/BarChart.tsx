@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useTranslation } from '@/lib/i18n'
 import {
   BarChart as RechartsBar,
   Bar,
@@ -29,10 +30,12 @@ export default function BarChart({
   height = 300,
   layout = 'vertical',
 }: BarChartProps) {
+  const { t } = useTranslation()
+
   if (!data || data.length === 0) {
     return (
       <div className="flex h-64 items-center justify-center text-sm text-gray-500">
-        No data available
+        {t('No data available')}
       </div>
     )
   }

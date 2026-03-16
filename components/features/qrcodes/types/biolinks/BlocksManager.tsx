@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import {
   DndContext,
   closestCenter,
@@ -78,6 +79,7 @@ interface SortableBlockItemProps {
 }
 
 function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: SortableBlockItemProps) {
+  const { t } = useTranslation();
   const {
     attributes,
     listeners,
@@ -96,15 +98,15 @@ function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: Sort
   const getBlockLabel = () => {
     switch (block.type) {
       case BlockType.LINK:
-        return (block as any).title || 'Untitled Link';
+        return (block as any).title || t('Untitled Link');
       case BlockType.TEXT:
-        return (block as any).content?.substring(0, 30) || 'Empty Text';
+        return (block as any).content?.substring(0, 30) || t('Empty Text');
       case BlockType.HEADING:
-        return (block as any).text || 'Empty Heading';
+        return (block as any).text || t('Empty Heading');
       case BlockType.EMAIL:
-        return (block as any).email || 'Email Button';
+        return (block as any).email || t('Email Button');
       case BlockType.PHONE:
-        return (block as any).phone || 'Phone Button';
+        return (block as any).phone || t('Phone Button');
       default:
         return blockTypeLabels[block.type];
     }
@@ -149,7 +151,7 @@ function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: Sort
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-blue-50 rounded"
-          title="Edit"
+          title={t('Edit')}
         >
           <PencilIcon className="h-4 w-4 text-blue-600" />
         </button>
@@ -157,7 +159,7 @@ function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: Sort
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded"
-          title="Delete"
+          title={t('Delete')}
         >
           <TrashIcon className="h-4 w-4 text-red-600" />
         </button>
@@ -167,6 +169,7 @@ function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: Sort
 }
 
 export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
+  const { t } = useTranslation();
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [editingBlock, setEditingBlock] = useState<BiolinkBlock | null>(null);
 
@@ -201,7 +204,7 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
   };
 
   const handleDeleteBlock = (blockId: string) => {
-    if (confirm('Are you sure you want to delete this block?')) {
+    if (confirm(t('Are you sure you want to delete this block?'))) {
       onChange(blocks.filter((block) => block.id !== blockId));
     }
   };
@@ -222,14 +225,14 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Content Blocks</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('Content Blocks')}</h3>
         <div className="relative">
           <button
             onClick={() => setShowAddMenu(!showAddMenu)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <PlusIcon className="h-5 w-5" />
-            Add Block
+            {t('Add Block')}
           </button>
 
           {showAddMenu && (
@@ -260,16 +263,16 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
       {blocks.length === 0 ? (
         <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed">
           <div className="text-4xl mb-3">📱</div>
-          <h4 className="text-lg font-medium text-gray-900 mb-1">No blocks yet</h4>
+          <h4 className="text-lg font-medium text-gray-900 mb-1">{t('No blocks yet')}</h4>
           <p className="text-sm text-gray-500 mb-4">
-            Start building your biolink page by adding content blocks
+            {t('Start building your biolink page by adding content blocks')}
           </p>
           <button
             onClick={() => setShowAddMenu(true)}
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             <PlusIcon className="h-5 w-5" />
-            Add Your First Block
+            {t('Add Your First Block')}
           </button>
         </div>
       ) : (

@@ -13,11 +13,13 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth'
+import { useTranslation } from '@/lib/i18n'
 import { RegisterForm } from './RegisterForm'
 import { GoogleLoginButton } from './GoogleLoginButton'
 import Link from 'next/link'
 
 export function SignupPageContent() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { data: statusData, isLoading, isError } = usePasswordlessStatus()
   const [registrationDisabled, setRegistrationDisabled] = useState(false)
@@ -52,17 +54,16 @@ export function SignupPageContent() {
     return (
       <div className="space-y-6 text-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Registration Disabled</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t('Registration Disabled')}</h2>
           <p className="mt-4 text-sm text-gray-600">
-            New user registrations are currently disabled. Please contact the administrator
-            for more information.
+            {t('New user registrations are currently disabled. Please contact the administrator for more information.')}
           </p>
         </div>
         <Link
           href="/login"
           className="inline-block rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
         >
-          Go to Login
+          {t('Go to Login')}
         </Link>
       </div>
     )
@@ -72,12 +73,12 @@ export function SignupPageContent() {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900">
-          Welcome to{' '}
+          {t('Welcome to')}{' '}
           <span className="text-purple-600">Karsaaz</span>{' '}
           <span className="text-gray-700">QR</span>
         </h2>
         <p className="mt-2 text-sm text-gray-600">
-          Sign Up to your account and join us.
+          {t('Sign Up to your account and join us.')}
         </p>
       </div>
 
@@ -88,7 +89,7 @@ export function SignupPageContent() {
           <div className="w-full border-t border-gray-300" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-gray-50 px-2 text-gray-500">Or continue with email</span>
+          <span className="bg-gray-50 px-2 text-gray-500">{t('Or continue with email')}</span>
         </div>
       </div>
 

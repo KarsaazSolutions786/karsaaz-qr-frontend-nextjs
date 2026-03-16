@@ -232,9 +232,12 @@ export const qrcodesAPI = {
     return response.data
   },
 
-  // Get QR code statistics
-  getStats: async (id: string) => {
-    const response = await apiClient.get(`/qrcodes/${id}/stats`)
+  // Get QR code report by slug (e.g. scans-per-day, scans-per-country)
+  getReport: async (id: string, slug: string, dateRange?: { from?: string; to?: string }) => {
+    const params: Record<string, string> = {}
+    if (dateRange?.from) params.from = dateRange.from
+    if (dateRange?.to) params.to = dateRange.to
+    const response = await apiClient.get(`/qrcodes/${id}/reports/${slug}`, { params })
     return response.data
   },
 
@@ -336,10 +339,10 @@ export const qrcodesAPI = {
     return response.data
   },
 
-  // Get QR code analytics
+  // Get QR code analytics — alias for getReport('scans-per-day')
   getAnalytics: async (id: string | number) => {
-    const response = await apiClient.get(`/qrcodes/${id}/analytics`)
-    return response.data?.data ?? response.data
+    const response = await apiClient.get(`/qrcodes/${id}/reports/scans-per-day`)
+    return response.data
   },
 
   // Get QR code link settings

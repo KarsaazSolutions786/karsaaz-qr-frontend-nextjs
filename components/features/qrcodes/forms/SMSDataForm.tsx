@@ -1,6 +1,7 @@
 'use client'
 
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { smsDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 
@@ -17,6 +18,7 @@ interface SMSDataFormProps {
 }
 
 export function SMSDataForm({ defaultValues, onChange }: SMSDataFormProps) {
+  const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<SMSDataFormData>({
     schema: smsDataSchema,
     defaultValues,
@@ -26,13 +28,13 @@ export function SMSDataForm({ defaultValues, onChange }: SMSDataFormProps) {
   return (
     <form className="space-y-5">
       <div>
-        <label htmlFor="phone" className={LABEL}>Phone Number *</label>
+        <label htmlFor="phone" className={LABEL}>{t('Phone Number')} *</label>
         <input {...register('phone')} id="phone" type="tel" placeholder="+1 234 567 8900" className={INPUT} />
         {errors.phone && <p className={ERROR}>{errors.phone.message}</p>}
       </div>
       <div>
-        <label htmlFor="message" className={LABEL}>Message</label>
-        <textarea {...register('message')} id="message" rows={3} placeholder="Pre-filled message text..." className={TEXTAREA} />
+        <label htmlFor="message" className={LABEL}>{t('Message')}</label>
+        <textarea {...register('message')} id="message" rows={3} placeholder={t('Pre-filled message text...')} className={TEXTAREA} />
       </div>
     </form>
   )

@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 
 interface BulkUploadCSVProps {
   onUpload: (data: any[]) => void
 }
 
 export function BulkUploadCSV({ onUpload }: BulkUploadCSVProps) {
+  const { t } = useTranslation()
   const [isDragging, setIsDragging] = useState(false)
 
   const handleFileUpload = (file: File) => {
@@ -58,10 +60,10 @@ export function BulkUploadCSV({ onUpload }: BulkUploadCSVProps) {
         <div className="text-4xl">📄</div>
         <div>
           <p className="text-sm font-medium text-gray-900">
-            Drag and drop CSV file here, or
+            {t('Drag and drop CSV file here, or')}
           </p>
           <label className="mt-2 inline-block cursor-pointer text-sm font-semibold text-blue-600 hover:text-blue-500">
-            browse files
+            {t('browse files')}
             <input
               type="file"
               accept=".csv"
@@ -71,7 +73,7 @@ export function BulkUploadCSV({ onUpload }: BulkUploadCSVProps) {
           </label>
         </div>
         <p className="text-xs text-gray-500">
-          CSV file with columns: name, type, url
+          {t('CSV file with columns: name, type, url')}
         </p>
       </div>
     </div>

@@ -6,16 +6,20 @@ import {
   translateMessage,
 } from '@/lib/utils/error-message-mapper'
 
-// API Base URL Configuration (matches Lit frontend priority)
-// 1. NEXT_PUBLIC_API_URL environment variable
-// 2. Fallback to production URL
+// API Base URL Configuration
+// Priority: 1. window.BACKEND_URL (runtime injection)
+//           2. NEXT_PUBLIC_API_URL env var (build-time)
+//           3. Relative /api path (same-origin fallback — no hardcoded domain)
 const getApiBaseURL = () => {
   if (typeof window !== 'undefined' && (window as any).BACKEND_URL) {
     return `${(window as any).BACKEND_URL}/api`
   }
-  return process.env.NEXT_PUBLIC_API_URL
-    ? `${process.env.NEXT_PUBLIC_API_URL}/api`
-    : 'https://app.karsaazqr.com/api'
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return `${process.env.NEXT_PUBLIC_API_URL}/api`
+  }
+  // Same-origin fallback — assumes API is proxied or co-located.
+  // Set NEXT_PUBLIC_API_URL in .env for cross-origin deployments.
+  return '/api'
 }
 
 // API Timeout Configuration (T020 — per research.md R7)
@@ -48,6 +52,14 @@ const adjustForSlowConnection = (timeout: number): number => {
   return timeout
 }
 
+// Auth validation state — suppress 401 redirect/toast while initial /myself call is pending.
+// This prevents the "Please log in" flash on page load when the cookie is valid
+// but other API calls fire before /myself returns.
+let authValidationComplete = false
+export function markAuthValidationComplete() {
+  authValidationComplete = true
+}
+
 const apiClient: AxiosInstance = axios.create({
   baseURL: getApiBaseURL(),
   timeout: API_TIMEOUTS.DEFAULT,
@@ -58,10 +70,17 @@ const apiClient: AxiosInstance = axios.create({
   withCredentials: true, // Send cookies with requests
 })
 
-// Request interceptor: Attach JWT token and smart timeout
+// Request interceptor: Attach JWT token (act-as fallback) and smart timeout.
+//
+// Normal auth: The httpOnly `auth_token` cookie is sent automatically by the browser
+// because `withCredentials: true` is set. No Bearer header is needed.
+//
+// Act-as (admin impersonation): The impersonation token IS stored in localStorage
+// and sent as a Bearer header to override the admin's cookie on the backend.
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Get Sanctum token from localStorage and attach to request
+    // Only attach Bearer token if one exists in localStorage (act-as scenario).
+    // For normal auth, the httpOnly cookie handles authentication automatically.
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token')
       if (token) {
@@ -116,10 +135,18 @@ apiClient.interceptors.response.use(
       const url = originalRequest.url || ''
       const isAuthRequest =
         url.includes('/login') || url.includes('/register') || url.includes('/verify-otp')
+      const isMyselfRequest = url.includes('/myself')
+
+      // If auth validation hasn't completed yet, suppress redirect for non-/myself calls.
+      // The AuthProvider /myself call will handle cleanup if the cookie is truly invalid.
+      if (!authValidationComplete && !isMyselfRequest) {
+        return Promise.reject(error)
+      }
 
       if (!isAuthRequest && typeof window !== 'undefined') {
         localStorage.removeItem('user')
         localStorage.removeItem('token')
+        localStorage.removeItem('logged_in')
         window.location.href = '/login'
       }
 
@@ -145,7 +172,7 @@ apiClient.interceptors.response.use(
       const silentUrls = ['/config', '/subscriptions/current', '/domains']
       const isSilentUrl = silentUrls.some(u => originalRequest.url?.includes(u))
 
-      if (!isSilentUrl && status !== 401) {
+      if (!isSilentUrl && status !== 401 && (status !== 403 || authValidationComplete)) {
         let userMessage: string
 
         if (status === 422 && data?.errors) {
@@ -192,6 +219,9 @@ apiClient.interceptors.response.use(
 )
 
 export default apiClient
+
+// Re-export axios type guard for convenience
+export const isAxiosError = axios.isAxiosError
 
 // Retry with exponential backoff (T020 — 3 retries: 1s, 2s, 4s)
 const MAX_RETRIES = 3

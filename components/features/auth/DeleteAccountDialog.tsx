@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { authAPI } from '@/lib/api/endpoints/auth'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useTranslation } from '@/lib/i18n'
 
 interface DeleteAccountDialogProps {
   open: boolean
@@ -11,6 +12,7 @@ interface DeleteAccountDialogProps {
 }
 
 export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps) {
+  const { t } = useTranslation()
   const [password, setPassword] = useState('')
   const [confirmText, setConfirmText] = useState('')
   const [error, setError] = useState('')
@@ -26,7 +28,7 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
       setError(
         err?.response?.data?.message ||
         err?.message ||
-        'Failed to delete account. Please check your password and try again.'
+        t('Failed to delete account. Please check your password and try again.')
       )
     },
   })
@@ -36,12 +38,12 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
     setError('')
 
     if (confirmText !== 'DELETE') {
-      setError('Please type DELETE to confirm.')
+      setError(t('Please type DELETE to confirm.'))
       return
     }
 
     if (!password) {
-      setError('Password is required.')
+      setError(t('Password is required.'))
       return
     }
 
@@ -68,27 +70,27 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
             </svg>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Delete Account</h3>
-            <p className="text-sm text-gray-500">This action cannot be undone.</p>
+            <h3 className="text-lg font-semibold text-gray-900">{t('Delete Account')}</h3>
+            <p className="text-sm text-gray-500">{t('This action cannot be undone.')}</p>
           </div>
         </div>
 
         <div className="mb-4 rounded-md bg-red-50 p-3">
           <p className="text-sm text-red-800">
-            Deleting your account will permanently remove all your data, including:
+            {t('Deleting your account will permanently remove all your data, including:')}
           </p>
           <ul className="mt-2 list-disc pl-5 text-sm text-red-700 space-y-1">
-            <li>All QR codes and their scan data</li>
-            <li>Your subscription and billing history</li>
-            <li>All files and custom designs</li>
-            <li>Sub-user accounts (if any)</li>
+            <li>{t('All QR codes and their scan data')}</li>
+            <li>{t('Your subscription and billing history')}</li>
+            <li>{t('All files and custom designs')}</li>
+            <li>{t('Sub-user accounts (if any)')}</li>
           </ul>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="delete-confirm" className="block text-sm font-medium text-gray-700">
-              Type <span className="font-bold text-red-600">DELETE</span> to confirm
+              {t('Type')} <span className="font-bold text-red-600">DELETE</span> {t('to confirm')}
             </label>
             <input
               id="delete-confirm"
@@ -103,7 +105,7 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
 
           <div>
             <label htmlFor="delete-password" className="block text-sm font-medium text-gray-700">
-              Enter your password
+              {t('Enter your password')}
             </label>
             <input
               id="delete-password"
@@ -128,7 +130,7 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
               disabled={deleteAccountMutation.isPending}
               className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               type="submit"
@@ -139,7 +141,7 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
               }
               className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {deleteAccountMutation.isPending ? 'Deleting...' : 'Delete My Account'}
+              {deleteAccountMutation.isPending ? t('Deleting...') : t('Delete My Account')}
             </button>
           </div>
         </form>

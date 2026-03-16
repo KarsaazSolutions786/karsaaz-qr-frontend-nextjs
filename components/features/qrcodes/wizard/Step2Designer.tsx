@@ -19,7 +19,12 @@ import {
   Shapes,
   Sticker,
   Wand2,
+  Lock,
 } from 'lucide-react'
+import { toast } from 'sonner'
+import { useSubscription } from '@/lib/hooks/useSubscription'
+import { StickerEditor } from './StickerEditor'
+import { useTranslation } from '@/lib/i18n'
 
 interface Step2DesignerProps {
   design: Partial<DesignerConfig>
@@ -29,6 +34,7 @@ interface Step2DesignerProps {
 }
 
 export default function Step2Designer({ design, onChange, qrType, qrData }: Step2DesignerProps) {
+  const { t } = useTranslation()
   const {
     MODULE_SHAPES,
     FINDER_STYLES,
@@ -37,6 +43,14 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
     ADVANCED_SHAPES,
     PRESET_LOGOS,
   } = useDesignShapes()
+
+  // Subscription-based premium feature gating
+  const { plan, isOnTrial } = useSubscription()
+  const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
+  const handlePremiumBlock = () => {
+    toast.info(t('This design feature requires a paid plan. Upgrade to unlock advanced shapes and effects.'))
+  }
+
   const [activeTab, setActiveTab] = useState('shape')
   const previewRef = useRef<BackendQRPreviewRef>(null)
 
@@ -59,14 +73,11 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
     onChange({ ...DEFAULT_DESIGNER_CONFIG })
   }
 
-  // Get current sticker config for conditional controls
-  const currentSticker = ADVANCED_SHAPES.find(s => s.value === mergedConfig.advancedShape)
-
   return (
     <div className="space-y-6">
       {/* Design Presets */}
       <div>
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Quick Presets</h3>
+        <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('Quick Presets')}</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {DESIGN_PRESETS.map(preset => {
             const presetColor =
@@ -106,10 +117,10 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
         {/* Design Controls */}
         <div className="lg:col-span-3">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Customize Design</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t('Customize Design')}</h3>
             <Button onClick={resetToDefaults} variant="ghost" size="sm" className="gap-2">
               <RotateCcw className="w-4 h-4" />
-              Reset
+              {t('Reset')}
             </Button>
           </div>
 
@@ -117,27 +128,27 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
             <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="shape" className="gap-1 text-[10px] sm:text-xs">
                 <Boxes className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Shape</span>
+                <span className="hidden sm:inline">{t('Shape')}</span>
               </TabsTrigger>
               <TabsTrigger value="fill" className="gap-1 text-[10px] sm:text-xs">
                 <Palette className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Fill</span>
+                <span className="hidden sm:inline">{t('Fill')}</span>
               </TabsTrigger>
               <TabsTrigger value="corners" className="gap-1 text-[10px] sm:text-xs">
                 <CircleDot className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Eyes</span>
+                <span className="hidden sm:inline">{t('Eyes')}</span>
               </TabsTrigger>
               <TabsTrigger value="logo" className="gap-1 text-[10px] sm:text-xs">
                 <ImageIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Logo</span>
+                <span className="hidden sm:inline">{t('Logo')}</span>
               </TabsTrigger>
               <TabsTrigger value="shapes" className="gap-1 text-[10px] sm:text-xs">
                 <Shapes className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Outline</span>
+                <span className="hidden sm:inline">{t('Outline')}</span>
               </TabsTrigger>
               <TabsTrigger value="stickers" className="gap-1 text-[10px] sm:text-xs">
                 <Sticker className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">Sticker</span>
+                <span className="hidden sm:inline">{t('Sticker')}</span>
               </TabsTrigger>
               <TabsTrigger value="ai" className="gap-1 text-[10px] sm:text-xs">
                 <Wand2 className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -150,39 +161,48 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
               {/* Module Pattern */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Select module
+                  {t('Select module')}
                 </label>
                 <div className="grid grid-cols-5 sm:grid-cols-8 gap-2">
-                  {MODULE_SHAPES.map(shape => (
-                    <button
-                      key={shape.value}
-                      type="button"
-                      onClick={() => handleChange('moduleShape', shape.value)}
-                      className={`flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
-                        mergedConfig.moduleShape === shape.value
-                          ? 'border-blue-500 bg-blue-50 shadow-sm'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      title={shape.label}
-                    >
-                      {shape.image ? (
-                        <img
-                          src={shape.image}
-                          alt={shape.label}
-                          className="w-10 h-10 object-contain"
-                        />
-                      ) : (
-                        <span className="text-xs font-medium text-gray-700">{shape.label}</span>
-                      )}
-                    </button>
-                  ))}
+                  {MODULE_SHAPES.map((shape, idx) => {
+                    const isLocked = isFreePlan && idx > 0
+                    return (
+                      <button
+                        key={shape.value}
+                        type="button"
+                        onClick={() => {
+                          if (isLocked) { handlePremiumBlock(); return }
+                          handleChange('moduleShape', shape.value)
+                        }}
+                        className={`relative flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
+                          mergedConfig.moduleShape === shape.value
+                            ? 'border-blue-500 bg-blue-50 shadow-sm'
+                            : 'border-gray-200 hover:border-gray-300'
+                        } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={isLocked ? `${shape.label} (${t('requires paid plan')})` : shape.label}
+                      >
+                        {shape.image ? (
+                          <img
+                            src={shape.image}
+                            alt={shape.label}
+                            className="w-10 h-10 object-contain"
+                          />
+                        ) : (
+                          <span className="text-xs font-medium text-gray-700">{shape.label}</span>
+                        )}
+                        {isLocked && (
+                          <Lock className="absolute bottom-0.5 right-0.5 w-3 h-3 text-gray-400" />
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
               {/* Size */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Size: {mergedConfig.size}px
+                  {t('Size')}: {mergedConfig.size}px
                 </label>
                 <input
                   type="range"
@@ -198,7 +218,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
               {/* Margin */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Margin: {mergedConfig.margin} modules
+                  {t('Margin')}: {mergedConfig.margin} {t('modules')}
                 </label>
                 <input
                   type="range"
@@ -213,7 +233,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
               {/* Error Correction */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Error Correction
+                  {t('Error Correction')}
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {(['L', 'M', 'Q', 'H'] as const).map(level => (
@@ -248,54 +268,60 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
               {/* Fill Type Selector */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Select fill type
+                  {t('Select fill type')}
                 </label>
                 <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
-                  {(['solid', 'gradient', 'foreground_image'] as const).map(type => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => {
-                        if (type === 'solid') {
-                          handleChange('foregroundFill', {
-                            type: 'solid',
-                            color: (mergedConfig.foregroundFill as any)?.color || '#000000',
-                          })
-                        } else if (type === 'gradient') {
-                          handleChange('foregroundFill', {
-                            type: 'gradient',
-                            gradientType: 'linear',
-                            startColor: (mergedConfig.foregroundFill as any)?.color || '#000000',
-                            endColor: '#333333',
-                            rotation: 45,
-                          })
-                        } else {
-                          handleChange('foregroundFill', { type: 'foreground_image', imageUrl: '' })
-                        }
-                      }}
-                      className={`px-4 py-2 text-sm font-medium transition-colors ${
-                        mergedConfig.foregroundFill.type === type ||
-                        (type === 'solid' &&
-                          mergedConfig.foregroundFill.type !== 'gradient' &&
-                          (mergedConfig.foregroundFill as any).type !== 'foreground_image')
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-white text-gray-600 hover:bg-gray-50'
-                      }`}
-                    >
-                      {type === 'solid'
-                        ? 'Solid color'
-                        : type === 'gradient'
-                          ? 'Gradient'
-                          : 'Image'}
-                    </button>
-                  ))}
+                  {(['solid', 'gradient', 'foreground_image'] as const).map(type => {
+                    const isLocked = isFreePlan && type !== 'solid'
+                    return (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => {
+                          if (isLocked) { handlePremiumBlock(); return }
+                          if (type === 'solid') {
+                            handleChange('foregroundFill', {
+                              type: 'solid',
+                              color: (mergedConfig.foregroundFill as any)?.color || '#000000',
+                            })
+                          } else if (type === 'gradient') {
+                            handleChange('foregroundFill', {
+                              type: 'gradient',
+                              gradientType: 'linear',
+                              startColor: (mergedConfig.foregroundFill as any)?.color || '#000000',
+                              endColor: '#333333',
+                              rotation: 45,
+                            })
+                          } else {
+                            handleChange('foregroundFill', { type: 'foreground_image', imageUrl: '' })
+                          }
+                        }}
+                        className={`px-4 py-2 text-sm font-medium transition-colors relative ${
+                          mergedConfig.foregroundFill.type === type ||
+                          (type === 'solid' &&
+                            mergedConfig.foregroundFill.type !== 'gradient' &&
+                            (mergedConfig.foregroundFill as any).type !== 'foreground_image')
+                            ? 'bg-blue-500 text-white'
+                            : 'bg-white text-gray-600 hover:bg-gray-50'
+                        } ${isLocked ? 'opacity-60' : ''}`}
+                        title={isLocked ? t('Requires paid plan') : undefined}
+                      >
+                        {type === 'solid'
+                          ? t('Solid color')
+                          : type === 'gradient'
+                            ? t('Gradient')
+                            : t('Image')}
+                        {isLocked && <Lock className="inline-block ml-1 h-3 w-3" />}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
               {/* Foreground Color (Solid) */}
               {mergedConfig.foregroundFill.type === 'solid' && (
                 <QRColorPicker
-                  label="Fill color"
+                  label={t('Fill color')}
                   value={(mergedConfig.foregroundFill as any).color || '#000000'}
                   onChange={c => handleChange('foregroundFill', { type: 'solid', color: c })}
                 />
@@ -328,11 +354,11 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
               {(mergedConfig.foregroundFill as any).type === 'foreground_image' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Foreground Image
+                    {t('Foreground Image')}
                   </label>
                   <Input
                     type="url"
-                    placeholder="Enter image URL..."
+                    placeholder={t('Enter image URL...')}
                     value={(mergedConfig.foregroundFill as any).imageUrl || ''}
                     onChange={e =>
                       handleChange('foregroundFill', {
@@ -342,28 +368,28 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                     }
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Use an image URL for the QR code foreground pattern
+                    {t('Use an image URL for the QR code foreground pattern')}
                   </p>
                 </div>
               )}
 
               {/* Eye External Color */}
               <QRColorPicker
-                label="Eye external color"
+                label={t('Eye external color')}
                 value={mergedConfig.eyeExternalColor || '#000000'}
                 onChange={c => handleChange('eyeExternalColor', c)}
               />
 
               {/* Eye Internal Color */}
               <QRColorPicker
-                label="Eye internal color"
+                label={t('Eye internal color')}
                 value={mergedConfig.eyeInternalColor || '#000000'}
                 onChange={c => handleChange('eyeInternalColor', c)}
               />
 
               {/* Background */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Background</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">{t('Background')}</label>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <input
@@ -381,12 +407,12 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                       className="rounded border-gray-300"
                     />
                     <label htmlFor="bgEnabled" className="text-sm text-gray-700">
-                      Enabled
+                      {t('Enabled')}
                     </label>
                   </div>
                   {mergedConfig.background.type !== 'transparent' && (
                     <QRColorPicker
-                      label="Background color"
+                      label={t('Background color')}
                       value={mergedConfig.background.color || '#FFFFFF'}
                       onChange={c => handleChange('background', { type: 'solid', color: c })}
                     />
@@ -400,68 +426,86 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
               {/* Finder Frame Style */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Select finder
+                  {t('Select finder')}
                 </label>
                 <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                  {FINDER_STYLES.map(style => (
-                    <button
-                      key={style.value}
-                      type="button"
-                      onClick={() => handleChange('finder', style.value)}
-                      className={`flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
-                        mergedConfig.finder === style.value
-                          ? 'border-blue-500 bg-blue-50 shadow-sm'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      title={style.label}
-                    >
-                      {style.image ? (
-                        <img
-                          src={style.image}
-                          alt={style.label}
-                          className="w-10 h-10 object-contain"
-                        />
-                      ) : (
-                        <span className="text-xs font-medium text-gray-700">{style.label}</span>
-                      )}
-                    </button>
-                  ))}
+                  {FINDER_STYLES.map((style, idx) => {
+                    const isLocked = isFreePlan && idx > 0
+                    return (
+                      <button
+                        key={style.value}
+                        type="button"
+                        onClick={() => {
+                          if (isLocked) { handlePremiumBlock(); return }
+                          handleChange('finder', style.value)
+                        }}
+                        className={`relative flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
+                          mergedConfig.finder === style.value
+                            ? 'border-blue-500 bg-blue-50 shadow-sm'
+                            : 'border-gray-200 hover:border-gray-300'
+                        } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={isLocked ? `${style.label} (${t('requires paid plan')})` : style.label}
+                      >
+                        {style.image ? (
+                          <img
+                            src={style.image}
+                            alt={style.label}
+                            className="w-10 h-10 object-contain"
+                          />
+                        ) : (
+                          <span className="text-xs font-medium text-gray-700">{style.label}</span>
+                        )}
+                        {isLocked && (
+                          <Lock className="absolute bottom-0.5 right-0.5 w-3 h-3 text-gray-400" />
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
               {/* Finder Dot Style */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Select finder dot
+                  {t('Select finder dot')}
                 </label>
                 <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                  {FINDER_DOT_STYLES.map(style => (
-                    <button
-                      key={style.value}
-                      type="button"
-                      onClick={() => handleChange('finderDot', style.value)}
-                      className={`flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
-                        mergedConfig.finderDot === style.value
-                          ? 'border-blue-500 bg-blue-50 shadow-sm'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      title={style.label}
-                    >
-                      <div
-                        className={`w-6 h-6 ${
-                          style.value === 'default'
-                            ? 'bg-black'
-                            : style.value === 'circle' || style.value === 'water-drop'
-                              ? 'bg-black rounded-full'
-                              : style.value === 'rounded-corners'
-                                ? 'bg-black rounded-md'
-                                : style.value === 'octagon'
-                                  ? 'bg-black rounded-sm'
-                                  : 'bg-black'
-                        }`}
-                      />
-                    </button>
-                  ))}
+                  {FINDER_DOT_STYLES.map((style, idx) => {
+                    const isLocked = isFreePlan && idx > 0
+                    return (
+                      <button
+                        key={style.value}
+                        type="button"
+                        onClick={() => {
+                          if (isLocked) { handlePremiumBlock(); return }
+                          handleChange('finderDot', style.value)
+                        }}
+                        className={`relative flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
+                          mergedConfig.finderDot === style.value
+                            ? 'border-blue-500 bg-blue-50 shadow-sm'
+                            : 'border-gray-200 hover:border-gray-300'
+                        } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={isLocked ? `${style.label} (${t('requires paid plan')})` : style.label}
+                      >
+                        <div
+                          className={`w-6 h-6 ${
+                            style.value === 'default'
+                              ? 'bg-black'
+                              : style.value === 'circle' || style.value === 'water-drop'
+                                ? 'bg-black rounded-full'
+                                : style.value === 'rounded-corners'
+                                  ? 'bg-black rounded-md'
+                                  : style.value === 'octagon'
+                                    ? 'bg-black rounded-sm'
+                                    : 'bg-black'
+                          }`}
+                        />
+                        {isLocked && (
+                          <Lock className="absolute bottom-0.5 right-0.5 w-3 h-3 text-gray-400" />
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             </TabsContent>
@@ -470,7 +514,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
             <TabsContent value="logo" className="space-y-6 mt-6">
               {/* Logo Type Toggle */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Logo Source</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Source')}</label>
                 <div className="grid grid-cols-2 gap-2">
                   {(['preset', 'custom'] as const).map(type => (
                     <button
@@ -493,7 +537,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                           : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
                     >
-                      {type === 'preset' ? 'Preset Logo' : 'Your Logo'}
+                      {type === 'preset' ? t('Preset Logo') : t('Your Logo')}
                     </button>
                   ))}
                 </div>
@@ -503,7 +547,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
               {(mergedConfig.logo?.logoType || 'preset') === 'preset' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select logo
+                    {t('Select logo')}
                   </label>
                   <div className="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-[300px] overflow-y-auto p-1">
                     {/* None option */}
@@ -516,14 +560,14 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      NONE
+                      {t('NONE')}
                     </button>
                     {PRESET_LOGOS.map(logo => (
                       <button
                         key={logo.value}
                         type="button"
                         onClick={() => {
-                          const logoUrl = `/images/logos/${logo.value}.png`
+                          const logoUrl = logo.image || `/images/logos/${logo.value}.png`
                           handleChange('logo', {
                             url: logoUrl,
                             logoType: 'preset' as const,
@@ -550,7 +594,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                         }`}
                       >
                         <img
-                          src={`/images/logos/${logo.value}.png`}
+                          src={logo.image || `/images/logos/${logo.value}.png`}
                           alt={logo.label}
                           className="w-full h-full object-contain rounded-full"
                           onError={e => {
@@ -569,7 +613,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
               {mergedConfig.logo?.logoType === 'custom' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Upload Logo
+                    {t('Upload Logo')}
                   </label>
                   <LogoUpload
                     value={mergedConfig.logo?.url ?? null}
@@ -605,7 +649,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                   {/* Logo Size */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Logo Size: {Math.round((mergedConfig.logo.size || 0.2) * 100)}%
+                      {t('Logo Size')}: {Math.round((mergedConfig.logo.size || 0.2) * 100)}%
                     </label>
                     <input
                       type="range"
@@ -626,7 +670,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                   {/* Logo Position X */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Horizontal Position: {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
+                      {t('Horizontal Position')}: {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
                     </label>
                     <input
                       type="range"
@@ -647,7 +691,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                   {/* Logo Position Y */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Vertical Position: {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
+                      {t('Vertical Position')}: {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
                     </label>
                     <input
                       type="range"
@@ -668,7 +712,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                   {/* Logo Rotation */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Rotation: {mergedConfig.logo.rotate ?? 0}°
+                      {t('Rotation')}: {mergedConfig.logo.rotate ?? 0}°
                     </label>
                     <input
                       type="range"
@@ -704,7 +748,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                       htmlFor="logoBackgroundEnabled"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Show Logo Background
+                      {t('Show Logo Background')}
                     </label>
                   </div>
 
@@ -713,7 +757,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                       {/* Logo Background Shape */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Background Shape
+                          {t('Background Shape')}
                         </label>
                         <div className="grid grid-cols-2 gap-2">
                           {(['circle', 'square'] as const).map(shape => (
@@ -732,7 +776,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                                   : 'border-gray-200 text-gray-600 hover:border-gray-300'
                               }`}
                             >
-                              {shape}
+                              {t(shape)}
                             </button>
                           ))}
                         </div>
@@ -741,7 +785,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                       {/* Logo Background Color */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Background Color
+                          {t('Background Color')}
                         </label>
                         <input
                           type="color"
@@ -759,7 +803,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                       {/* Logo Background Scale */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Background Size: {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
+                          {t('Background Size')}: {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
                         </label>
                         <input
                           type="range"
@@ -785,39 +829,48 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
             {/* ======================= OUTLINED SHAPES TAB ======================= */}
             <TabsContent value="shapes" className="space-y-6 mt-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Select shape</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">{t('Select shape')}</label>
                 <div className="grid grid-cols-5 sm:grid-cols-8 gap-2 max-h-[400px] overflow-y-auto pr-1">
-                  {OUTLINED_SHAPES.map(shape => (
-                    <button
-                      key={shape.value}
-                      type="button"
-                      onClick={() => handleChange('shape', shape.value)}
-                      className={`flex flex-col items-center gap-1 p-1 rounded-lg border-2 transition-all ${
-                        mergedConfig.shape === shape.value
-                          ? 'border-blue-500 bg-blue-50 shadow-sm'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      title={shape.label}
-                    >
-                      {shape.image ? (
-                        <img
-                          src={shape.image}
-                          alt={shape.label}
-                          className="w-12 h-12 object-contain"
-                        />
-                      ) : (
-                        <span className="text-[10px] font-medium text-gray-700">{shape.label}</span>
-                      )}
-                    </button>
-                  ))}
+                  {OUTLINED_SHAPES.map((shape, idx) => {
+                    const isLocked = isFreePlan && idx > 0
+                    return (
+                      <button
+                        key={shape.value}
+                        type="button"
+                        onClick={() => {
+                          if (isLocked) { handlePremiumBlock(); return }
+                          handleChange('shape', shape.value)
+                        }}
+                        className={`relative flex flex-col items-center gap-1 p-1 rounded-lg border-2 transition-all ${
+                          mergedConfig.shape === shape.value
+                            ? 'border-blue-500 bg-blue-50 shadow-sm'
+                            : 'border-gray-200 hover:border-gray-300'
+                        } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={isLocked ? `${shape.label} (${t('requires paid plan')})` : shape.label}
+                      >
+                        {shape.image ? (
+                          <img
+                            src={shape.image}
+                            alt={shape.label}
+                            className="w-12 h-12 object-contain"
+                          />
+                        ) : (
+                          <span className="text-[10px] font-medium text-gray-700">{shape.label}</span>
+                        )}
+                        {isLocked && (
+                          <Lock className="absolute bottom-0.5 right-0.5 w-3 h-3 text-gray-400" />
+                        )}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
-              {/* Frame Color — shown when a shape is selected */}
+              {/* Frame Color -- shown when a shape is selected */}
               {mergedConfig.shape && mergedConfig.shape !== 'none' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Frame Color
+                    {t('Frame Color')}
                   </label>
                   <div className="flex items-center gap-3">
                     <input
@@ -839,222 +892,14 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
 
             {/* ======================= STICKERS TAB ======================= */}
             <TabsContent value="stickers" className="space-y-6 mt-6">
-              {/* Sticker Selection */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">Sticker</label>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                  {ADVANCED_SHAPES.map(shape => (
-                    <button
-                      key={shape.value}
-                      type="button"
-                      onClick={() => handleChange('advancedShape', shape.value)}
-                      className={`flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
-                        mergedConfig.advancedShape === shape.value
-                          ? 'border-blue-500 bg-blue-50 shadow-sm'
-                          : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      title={shape.label}
-                    >
-                      {shape.image ? (
-                        <img
-                          src={shape.image}
-                          alt={shape.label}
-                          className="w-14 h-14 object-contain"
-                        />
-                      ) : (
-                        <span className="text-xs font-medium text-gray-700">{shape.label}</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sticker-specific controls */}
-              {mergedConfig.advancedShape && mergedConfig.advancedShape !== 'none' && (
-                <>
-                  {/* Healthcare-specific */}
-                  {mergedConfig.advancedShape === 'healthcare' && (
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Frame Color
-                        </label>
-                        <input
-                          type="color"
-                          value={mergedConfig.healthcareFrameColor || '#000000'}
-                          onChange={e => handleChange('healthcareFrameColor', e.target.value)}
-                          className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Heart Color
-                        </label>
-                        <input
-                          type="color"
-                          value={mergedConfig.healthcareHeartColor || '#ff0000'}
-                          onChange={e => handleChange('healthcareHeartColor', e.target.value)}
-                          className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Review Collector specific */}
-                  {mergedConfig.advancedShape === 'review-collector' && (
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Circle Color
-                        </label>
-                        <input
-                          type="color"
-                          value={mergedConfig.reviewCollectorCircleColor || '#000000'}
-                          onChange={e => handleChange('reviewCollectorCircleColor', e.target.value)}
-                          className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Stars Color
-                        </label>
-                        <input
-                          type="color"
-                          value={mergedConfig.reviewCollectorStarsColor || '#FFD700'}
-                          onChange={e => handleChange('reviewCollectorStarsColor', e.target.value)}
-                          className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Coupon specific */}
-                  {mergedConfig.advancedShape === 'coupon' && (
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Left Color
-                          </label>
-                          <input
-                            type="color"
-                            value={mergedConfig.couponLeftColor || '#1c57cb'}
-                            onChange={e => handleChange('couponLeftColor', e.target.value)}
-                            className="h-10 w-full rounded border border-gray-300 cursor-pointer"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Right Color
-                          </label>
-                          <input
-                            type="color"
-                            value={mergedConfig.couponRightColor || '#1c57cb'}
-                            onChange={e => handleChange('couponRightColor', e.target.value)}
-                            className="h-10 w-full rounded border border-gray-300 cursor-pointer"
-                          />
-                        </div>
-                      </div>
-                      <Input
-                        placeholder="Coupon Line 1"
-                        value={mergedConfig.couponTextLine1 || ''}
-                        onChange={e => handleChange('couponTextLine1', e.target.value)}
-                      />
-                      <Input
-                        placeholder="Coupon Line 2"
-                        value={mergedConfig.couponTextLine2 || ''}
-                        onChange={e => handleChange('couponTextLine2', e.target.value)}
-                      />
-                      <Input
-                        placeholder="Coupon Line 3"
-                        value={mergedConfig.couponTextLine3 || ''}
-                        onChange={e => handleChange('couponTextLine3', e.target.value)}
-                      />
-                    </div>
-                  )}
-
-                  {/* Rect-frame / Four-corners specific */}
-                  {(mergedConfig.advancedShape?.startsWith('rect-frame') ||
-                    mergedConfig.advancedShape?.startsWith('four-corners')) && (
-                    <div>
-                      {mergedConfig.advancedShape?.startsWith('rect-frame') ? (
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="checkbox"
-                            id="dropShadow"
-                            checked={mergedConfig.advancedShapeDropShadow}
-                            onChange={e =>
-                              handleChange('advancedShapeDropShadow', e.target.checked)
-                            }
-                            className="rounded border-gray-300"
-                          />
-                          <label htmlFor="dropShadow" className="text-sm text-gray-700">
-                            Drop Shadow
-                          </label>
-                        </div>
-                      ) : (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Frame Color
-                          </label>
-                          <input
-                            type="color"
-                            value={mergedConfig.advancedShapeFrameColor || '#000000'}
-                            onChange={e => handleChange('advancedShapeFrameColor', e.target.value)}
-                            className="h-10 w-20 rounded border border-gray-300 cursor-pointer"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Text controls (for stickers that have text, except coupon which has its own) */}
-                  {currentSticker?.hasText && mergedConfig.advancedShape !== 'coupon' && (
-                    <div className="space-y-3 border-t border-gray-200 pt-4">
-                      <h4 className="text-sm font-semibold text-gray-900">Sticker Text</h4>
-                      <Input
-                        placeholder="Text (e.g., SCAN ME)"
-                        value={mergedConfig.text || 'SCAN ME'}
-                        onChange={e => handleChange('text', e.target.value)}
-                      />
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-xs text-gray-500 mb-1">Text Color</label>
-                          <input
-                            type="color"
-                            value={mergedConfig.textColor || '#ffffff'}
-                            onChange={e => handleChange('textColor', e.target.value)}
-                            className="h-8 w-full rounded border border-gray-300 cursor-pointer"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs text-gray-500 mb-1">Background</label>
-                          <input
-                            type="color"
-                            value={mergedConfig.textBackgroundColor || '#1c57cb'}
-                            onChange={e => handleChange('textBackgroundColor', e.target.value)}
-                            className="h-8 w-full rounded border border-gray-300 cursor-pointer"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs text-gray-500 mb-1">
-                          Text Size: {mergedConfig.textSize || 1}x
-                        </label>
-                        <input
-                          type="range"
-                          min="0.5"
-                          max="3"
-                          step="0.1"
-                          value={mergedConfig.textSize || 1}
-                          onChange={e => handleChange('textSize', parseFloat(e.target.value))}
-                          className="w-full accent-blue-500"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
+              <StickerEditor
+                config={mergedConfig}
+                advancedShapes={ADVANCED_SHAPES}
+                onChange={handleChange}
+                variant="full"
+                isPremiumLocked={isFreePlan}
+                onPremiumBlock={handlePremiumBlock}
+              />
             </TabsContent>
 
             {/* ======================= AI TAB ======================= */}
@@ -1070,7 +915,7 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                 />
                 <label htmlFor="aiEnabled" className="text-sm font-medium text-purple-800">
                   <Wand2 className="w-4 h-4 inline mr-1" />
-                  Enable AI-Enhanced QR Design
+                  {t('Enable AI-Enhanced QR Design')}
                 </label>
               </div>
 
@@ -1079,12 +924,12 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                   {/* AI Prompt */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      AI Image Prompt
+                      {t('AI Image Prompt')}
                     </label>
                     <textarea
                       value={mergedConfig.aiPrompt || ''}
                       onChange={e => handleChange('aiPrompt', e.target.value)}
-                      placeholder="Describe the image you want (e.g., 'a beautiful sunset over mountains')"
+                      placeholder={t("Describe the image you want (e.g., 'a beautiful sunset over mountains')")}
                       rows={4}
                       className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
@@ -1093,10 +938,10 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                   {/* AI Strength */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      QR Strength: {(mergedConfig.aiStrength ?? 1.8).toFixed(1)}
+                      {t('QR Strength')}: {(mergedConfig.aiStrength ?? 1.8).toFixed(1)}
                     </label>
                     <p className="text-xs text-gray-500 mb-2">
-                      Lower = more artistic, Higher = better scanability
+                      {t('Lower = more artistic, Higher = better scanability')}
                     </p>
                     <input
                       type="range"
@@ -1108,18 +953,18 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                       className="w-full accent-purple-500"
                     />
                     <div className="flex justify-between text-xs text-gray-400 mt-1">
-                      <span>Artistic</span>
-                      <span>Scannable</span>
+                      <span>{t('Artistic')}</span>
+                      <span>{t('Scannable')}</span>
                     </div>
                   </div>
 
                   {/* AI Steps */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Generation Steps: {mergedConfig.aiSteps ?? 18}
+                      {t('Generation Steps')}: {mergedConfig.aiSteps ?? 18}
                     </label>
                     <p className="text-xs text-gray-500 mb-2">
-                      More steps = higher quality but slower
+                      {t('More steps = higher quality but slower')}
                     </p>
                     <input
                       type="range"
@@ -1131,15 +976,14 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                       className="w-full accent-purple-500"
                     />
                     <div className="flex justify-between text-xs text-gray-400 mt-1">
-                      <span>10 (Fast)</span>
-                      <span>20 (Quality)</span>
+                      <span>10 ({t('Fast')})</span>
+                      <span>20 ({t('Quality')})</span>
                     </div>
                   </div>
 
                   <div className="p-3 rounded-lg bg-yellow-50 border border-yellow-200">
                     <p className="text-xs text-yellow-700">
-                      💡 AI generation will run when you save/download. The QR code will be
-                      processed server-side.
+                      {t('AI generation will run when you save/download. The QR code will be processed server-side.')}
                     </p>
                   </div>
                 </>
@@ -1149,9 +993,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
         </div>
 
         {/* Live Preview (sticky sidebar) */}
-        <div className="lg:col-span-2">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Live Preview</h3>
-          <div className="bg-white rounded-lg border-2 border-gray-200 p-6 sticky top-6">
+        <div className="lg:col-span-2 lg:self-start">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('Live Preview')}</h3>
+          <div className="bg-white rounded-lg border-2 border-gray-200 p-6 sticky top-4">
             <div className="flex flex-col items-center gap-4">
               {hasPreviewData ? (
                 <BackendQRPreview
@@ -1165,11 +1009,11 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                 <div className="w-[280px] h-[280px] bg-gray-100 rounded-lg flex items-center justify-center">
                   <div className="text-center text-gray-400">
                     <div className="text-5xl mb-2">⊞</div>
-                    <p className="text-sm">No data to preview</p>
+                    <p className="text-sm">{t('No data to preview')}</p>
                   </div>
                 </div>
               )}
-              <p className="text-xs text-gray-500 text-center">Scan with your phone to test</p>
+              <p className="text-xs text-gray-500 text-center">{t('Scan with your phone to test')}</p>
             </div>
           </div>
         </div>

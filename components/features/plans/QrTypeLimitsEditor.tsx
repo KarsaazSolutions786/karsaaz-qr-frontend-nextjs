@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { QR_TYPES, type QRCodeTypeDefinition } from '@/lib/constants/qr-types'
+import { useTranslation } from '@/lib/i18n'
 
 export interface QrTypeLimit {
   typeId: string
@@ -16,6 +17,7 @@ interface QrTypeLimitsEditorProps {
 const dynamicTypes = QR_TYPES.filter((t) => t.cat === 'dynamic')
 
 export function QrTypeLimitsEditor({ limits, onChange }: QrTypeLimitsEditorProps) {
+  const { t } = useTranslation()
   const [selectedType, setSelectedType] = useState('')
 
   const usedTypeIds = new Set(limits.map((l) => l.typeId))
@@ -49,7 +51,7 @@ export function QrTypeLimitsEditor({ limits, onChange }: QrTypeLimitsEditorProps
   return (
     <div className="space-y-3">
       <p className="text-sm text-gray-500">
-        Override the default QR code limit per type. Use -1 for unlimited. If not set, the global &ldquo;Dynamic QR Codes&rdquo; limit applies.
+        {t('Override the default QR code limit per type. Use -1 for unlimited. If not set, the global "Dynamic QR Codes" limit applies.')}
       </p>
 
       {/* Existing limits */}
@@ -88,7 +90,7 @@ export function QrTypeLimitsEditor({ limits, onChange }: QrTypeLimitsEditorProps
             onChange={(e) => setSelectedType(e.target.value)}
             className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none"
           >
-            <option value="">Select QR type…</option>
+            <option value="">{t('Select QR type...')}</option>
             {availableTypes.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
@@ -101,14 +103,14 @@ export function QrTypeLimitsEditor({ limits, onChange }: QrTypeLimitsEditorProps
             disabled={!selectedType}
             className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Add
+            {t('Add')}
           </button>
         </div>
       )}
 
       {limits.length === 0 && availableTypes.length > 0 && (
         <p className="text-xs text-gray-400">
-          No per-type limits set. Add limits to restrict specific QR code types independently.
+          {t('No per-type limits set. Add limits to restrict specific QR code types independently.')}
         </p>
       )}
     </div>

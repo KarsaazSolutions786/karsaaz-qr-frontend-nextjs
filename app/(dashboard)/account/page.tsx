@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { ProfileCard } from '@/components/features/account/ProfileCard'
 import { SubscriptionCard } from '@/components/features/account/SubscriptionCard'
@@ -13,6 +14,7 @@ import { LoginPreferenceToggle } from '@/components/features/auth/LoginPreferenc
 import { DeleteAccountDialog } from '@/components/features/auth/DeleteAccountDialog'
 
 export default function AccountPage() {
+  const { t } = useTranslation()
   const { user, isLoading } = useAuth()
   const [showEditProfile, setShowEditProfile] = useState(false)
   const [showResetPassword, setShowResetPassword] = useState(false)
@@ -22,7 +24,7 @@ export default function AccountPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+        <div className="text-gray-600">{t('Loading...')}</div>
       </div>
     )
   }
@@ -30,7 +32,7 @@ export default function AccountPage() {
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-gray-600">Please sign in to view this page</div>
+        <div className="text-gray-600">{t('Please sign in to view this page')}</div>
       </div>
     )
   }
@@ -41,8 +43,8 @@ export default function AccountPage() {
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
-          <p className="mt-2 text-sm text-gray-600">Manage your profile and subscription</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('My Account')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Manage your profile and subscription')}</p>
         </div>
 
         {/* Profile Card */}
@@ -60,9 +62,9 @@ export default function AccountPage() {
 
         {/* Login Preferences */}
         <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Login Preferences</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('Login Preferences')}</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Choose how you want to sign in to your account.
+            {t('Choose how you want to sign in to your account.')}
           </p>
           <LoginPreferenceToggle />
         </div>
@@ -75,17 +77,16 @@ export default function AccountPage() {
 
         {/* Danger Zone */}
         <div className="rounded-xl border border-red-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold text-red-600">Danger Zone</h2>
+          <h2 className="mb-2 text-lg font-semibold text-red-600">{t('Danger Zone')}</h2>
           <p className="mb-4 text-sm text-gray-600">
-            All of your QR codes will be deleted immediately, you will have no longer access to the
-            platform.
+            {t('All of your QR codes will be deleted immediately, you will have no longer access to the platform.')}
           </p>
           <button
             type="button"
             onClick={() => setShowDeleteDialog(true)}
             className="rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
           >
-            Delete Account
+            {t('Delete Account')}
           </button>
         </div>
       </div>

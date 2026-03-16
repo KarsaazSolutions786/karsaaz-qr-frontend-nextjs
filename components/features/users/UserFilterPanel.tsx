@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Filter, X } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface UserFilters {
   role_id?: string
@@ -28,6 +29,7 @@ const STATUS_OPTIONS = [
 ]
 
 export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [filters, setFilters] = useState<UserFilters>({})
 
@@ -75,7 +77,7 @@ export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
         }`}
       >
         <Filter className="w-4 h-4" />
-        Advanced Filters
+        {t('Advanced Filters')}
         {activeCount > 0 && (
           <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-xs">
             {activeCount}
@@ -90,7 +92,7 @@ export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
           <Filter className="w-4 h-4" />
-          Advanced Filters
+          {t('Advanced Filters')}
         </h3>
         <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600">
           <X className="w-4 h-4" />
@@ -100,13 +102,13 @@ export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Role */}
         <div>
-          <Label className="mb-1.5 block">Role</Label>
+          <Label className="mb-1.5 block">{t('Role')}</Label>
           <select
             value={filters.role_id || ''}
             onChange={(e) => update('role_id', e.target.value)}
             className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
-            <option value="">All Roles</option>
+            <option value="">{t('All Roles')}</option>
             {roles.map((role) => (
               <option key={role.id} value={role.id}>
                 {role.name}
@@ -117,7 +119,7 @@ export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
 
         {/* Status */}
         <div>
-          <Label className="mb-1.5 block">Status</Label>
+          <Label className="mb-1.5 block">{t('Status')}</Label>
           <select
             value={filters.status || ''}
             onChange={(e) => update('status', e.target.value)}
@@ -133,13 +135,13 @@ export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
 
         {/* Subscription Plan */}
         <div>
-          <Label className="mb-1.5 block">Subscription Plan</Label>
+          <Label className="mb-1.5 block">{t('Subscription Plan')}</Label>
           <select
             value={filters.plan_id || ''}
             onChange={(e) => update('plan_id', e.target.value)}
             className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
-            <option value="">All Plans</option>
+            <option value="">{t('All Plans')}</option>
             {plans.map((plan) => (
               <option key={plan.id} value={plan.id}>
                 {plan.name}
@@ -150,7 +152,7 @@ export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
 
         {/* Date Joined Range */}
         <div>
-          <Label className="mb-1.5 block">Date Joined</Label>
+          <Label className="mb-1.5 block">{t('Date Joined')}</Label>
           <div className="grid grid-cols-2 gap-2">
             <Input
               type="date"
@@ -171,10 +173,10 @@ export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
       {/* Actions */}
       <div className="mt-4 flex items-center justify-end gap-3">
         <Button variant="outline" size="sm" onClick={handleClear}>
-          Clear
+          {t('Clear')}
         </Button>
         <Button size="sm" onClick={handleApply}>
-          Apply Filters
+          {t('Apply Filters')}
         </Button>
       </div>
     </div>

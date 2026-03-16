@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { X, CreditCard, Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import { useUpdatePaymentMethod } from '@/lib/hooks/mutations/useUpdatePaymentMethod'
 
 interface UpdatePaymentMethodDialogProps {
@@ -24,6 +25,7 @@ export function UpdatePaymentMethodDialog({
   onClose,
   onSuccess,
 }: UpdatePaymentMethodDialogProps) {
+  const { t } = useTranslation()
   const [cardNumber, setCardNumber] = useState('')
   const [expiry, setExpiry] = useState('')
   const [cvc, setCvc] = useState('')
@@ -39,7 +41,7 @@ export function UpdatePaymentMethodDialog({
     setError(null)
 
     if (!cardNumber || !expiry || !cvc || !cardholderName) {
-      setError('Please fill in all fields.')
+      setError(t('Please fill in all fields.'))
       return
     }
 
@@ -50,7 +52,7 @@ export function UpdatePaymentMethodDialog({
       onSuccess?.()
       onClose()
     } catch {
-      setError('Failed to update payment method. Please try again.')
+      setError(t('Failed to update payment method. Please try again.'))
     }
   }
 
@@ -62,7 +64,7 @@ export function UpdatePaymentMethodDialog({
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <CreditCard className="h-5 w-5 text-blue-600" />
-            <h2 className="text-lg font-semibold text-gray-900">Update Payment Method</h2>
+            <h2 className="text-lg font-semibold text-gray-900">{t('Update Payment Method')}</h2>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="h-5 w-5" />
@@ -71,7 +73,7 @@ export function UpdatePaymentMethodDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cardholder Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('Cardholder Name')}</label>
             <input
               type="text"
               value={cardholderName}
@@ -82,7 +84,7 @@ export function UpdatePaymentMethodDialog({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('Card Number')}</label>
             <input
               type="text"
               value={cardNumber}
@@ -95,7 +97,7 @@ export function UpdatePaymentMethodDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Expiry (MM/YY)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('Expiry (MM/YY)')}</label>
               <input
                 type="text"
                 value={expiry}
@@ -133,10 +135,10 @@ export function UpdatePaymentMethodDialog({
               {updateMutation.isPending ? (
                 <span className="inline-flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Updating...
+                  {t('Updating...')}
                 </span>
               ) : (
-                'Update Payment Method'
+                t('Update Payment Method')
               )}
             </button>
             <button
@@ -144,7 +146,7 @@ export function UpdatePaymentMethodDialog({
               onClick={onClose}
               className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
-              Cancel
+              {t('Cancel')}
             </button>
           </div>
         </form>

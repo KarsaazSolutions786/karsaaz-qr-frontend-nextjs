@@ -16,6 +16,7 @@ import {
   getOptimalOutlineWidth,
   isOutlineTooThick,
 } from '@/lib/utils/outline-renderer';
+import { useTranslation } from '@/lib/i18n';
 
 export interface OutlineFieldsProps {
   value: OutlineConfig;
@@ -32,6 +33,7 @@ export function OutlineFields({
   label = 'Outline',
   className = '',
 }: OutlineFieldsProps) {
+  const { t } = useTranslation();
   const isEnabled = value.enabled;
   const outlineColor = value.color || '#000000';
   const outlineWidth = value.width || 4;
@@ -126,7 +128,7 @@ export function OutlineFields({
           {tooThick && (
             <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
               <p className="text-sm text-yellow-800">
-                ⚠️ <span className="font-medium">Warning:</span> Outline is very thick relative to QR
+                ⚠️ <span className="font-medium">{t('Warning:')}</span> Outline is very thick relative to QR
                 size. This may affect scannability.
               </p>
             </div>
@@ -134,7 +136,7 @@ export function OutlineFields({
 
           {/* Preview */}
           <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Preview</label>
+            <label className="block text-sm font-medium text-gray-700 mb-3">{t('Preview')}</label>
             <div className="flex items-center justify-center">
               <div className="relative">
                 {/* QR placeholder */}
@@ -192,12 +194,12 @@ export function OutlineFields({
       <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-md">
         <h4 className="text-sm font-medium text-gray-900 mb-2">💡 Outline Tips</h4>
         <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
-          <li>Outlines add visual emphasis to QR codes</li>
-          <li>Use high-contrast colors for better visibility</li>
-          <li>Keep outline width under 5% of QR size</li>
-          <li>Match outline color to your brand</li>
-          <li>Test scannability with outline enabled</li>
-          <li>Outlines work best on solid backgrounds</li>
+          <li>{t('Outlines add visual emphasis to QR codes')}</li>
+          <li>{t('Use high-contrast colors for better visibility')}</li>
+          <li>{t('Keep outline width under 5% of QR size')}</li>
+          <li>{t('Match outline color to your brand')}</li>
+          <li>{t('Test scannability with outline enabled')}</li>
+          <li>{t('Outlines work best on solid backgrounds')}</li>
         </ul>
       </div>
     </div>
@@ -228,9 +230,10 @@ export function OutlinePresetPicker({
   onChange: (outline: OutlineConfig) => void;
   className?: string;
 }) {
+  const { t } = useTranslation();
   return (
     <div className={`outline-preset-picker ${className}`}>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Quick Outline Presets</label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">{t('Quick Outline Presets')}</label>
 
       <div className="grid grid-cols-4 gap-2">
         {OUTLINE_COLOR_PRESETS.map(preset => (

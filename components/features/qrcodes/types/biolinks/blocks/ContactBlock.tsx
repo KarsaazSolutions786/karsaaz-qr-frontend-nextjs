@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react';
 import { User, Mail, Phone, MapPin, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { ContactBlock as ContactBlockType } from '@/types/entities/biolinks';
+import { useTranslation } from '@/lib/i18n';
 
 interface ContactBlockProps {
   block: ContactBlockType;
@@ -17,6 +20,7 @@ export const ContactBlock: React.FC<ContactBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   return (
     <div
       className={`group relative bg-white border rounded-lg p-4 transition-all ${
@@ -33,7 +37,7 @@ export const ContactBlock: React.FC<ContactBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -44,14 +48,14 @@ export const ContactBlock: React.FC<ContactBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -63,7 +67,7 @@ export const ContactBlock: React.FC<ContactBlockProps> = ({
           <User className="w-5 h-5 text-cyan-600" />
         </div>
         <div className="flex-1 min-w-0 space-y-2">
-          <div className="font-medium text-gray-900">{block.name || 'Contact Card'}</div>
+          <div className="font-medium text-gray-900">{block.name || t('Contact Card')}</div>
           {block.email && (
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Mail className="w-4 h-4 flex-shrink-0" />

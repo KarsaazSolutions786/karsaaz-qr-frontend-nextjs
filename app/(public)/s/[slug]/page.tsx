@@ -113,6 +113,8 @@ export default async function UniversalQRPage({
     download: `/app/${actualSlug}`,
     'file-upload': `/file-upload/${actualSlug}`,
     file: `/file-upload/${actualSlug}`,
+    paypal: `/paypal/${actualSlug}`,
+    'payment-paypal': `/paypal/${actualSlug}`,
   };
 
   // Get the redirect path for this QR type

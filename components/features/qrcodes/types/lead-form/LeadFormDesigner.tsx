@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface LeadFormDesignSettings extends DesignSettings {
   // Lead Form-specific settings
@@ -44,22 +45,23 @@ const tabs: DesignerTab[] = [
 ]
 
 export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<LeadFormDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderFormDesignContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Form Design</h4>
+      <h4 className="font-medium text-gray-900">{t('Form Design')}</h4>
 
       {/* Form Layout */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Form Layout</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Form Layout')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'single-column', label: 'Single Column' },
-            { value: 'two-column', label: 'Two Column' },
-            { value: 'compact', label: 'Compact' },
+            { value: 'single-column', label: t('Single Column') },
+            { value: 'two-column', label: t('Two Column') },
+            { value: 'compact', label: t('Compact') },
           ].map(option => (
             <button
               key={option.value}
@@ -81,13 +83,13 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
 
       {/* Form Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Form Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Form Style')}</label>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { value: 'card', label: 'Card' },
-            { value: 'minimal', label: 'Minimal' },
-            { value: 'bordered', label: 'Bordered' },
-            { value: 'floating', label: 'Floating' },
+            { value: 'card', label: t('Card') },
+            { value: 'minimal', label: t('Minimal') },
+            { value: 'bordered', label: t('Bordered') },
+            { value: 'floating', label: t('Floating') },
           ].map(option => (
             <button
               key={option.value}
@@ -109,12 +111,12 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
 
       {/* Input Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Input Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Input Style')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'underline', label: 'Underline' },
-            { value: 'bordered', label: 'Bordered' },
-            { value: 'filled', label: 'Filled' },
+            { value: 'underline', label: t('Underline') },
+            { value: 'bordered', label: t('Bordered') },
+            { value: 'filled', label: t('Filled') },
           ].map(option => (
             <button
               key={option.value}
@@ -145,18 +147,18 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showLabels" className="text-sm text-gray-700">
-            Show Labels
+            {t('Show Labels')}
           </label>
         </div>
 
         {design.showLabels && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Label Position</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Label Position')}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'above', label: 'Above Input' },
-                { value: 'inside', label: 'Inside Input' },
-                { value: 'floating', label: 'Floating' },
+                { value: 'above', label: t('Above Input') },
+                { value: 'inside', label: t('Inside Input') },
+                { value: 'floating', label: t('Floating') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -191,18 +193,18 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showRequiredIndicator" className="text-sm text-gray-700">
-            Show Required Indicator
+            {t('Show Required Indicator')}
           </label>
         </div>
 
         {design.showRequiredIndicator && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Indicator Style</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Indicator Style')}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'asterisk', label: '* Asterisk' },
-                { value: 'text', label: '(Required)' },
-                { value: 'color', label: 'Red Border' },
+                { value: 'asterisk', label: t('* Asterisk') },
+                { value: 'text', label: t('(Required)') },
+                { value: 'color', label: t('Red Border') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -229,21 +231,21 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
 
       {/* Submit Button */}
       <div className="space-y-3">
-        <h5 className="text-sm font-medium text-gray-700">Submit Button</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Submit Button')}</h5>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text')}</label>
           <input
             type="text"
-            value={design.submitButtonText || 'Submit'}
+            value={design.submitButtonText || t('Submit')}
             onChange={e => updateDesign({ submitButtonText: e.target.value })}
-            placeholder="Submit"
+            placeholder={t('Submit')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -261,7 +263,7 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Button Text Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -281,10 +283,10 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
 
       {/* Form Colors */}
       <div className="space-y-3">
-        <h5 className="text-sm font-medium text-gray-700">Form Colors</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Form Colors')}</h5>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Form Background</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Form Background')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -302,7 +304,7 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Input Background</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Input Background')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -320,7 +322,7 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Input Border Color</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Input Border Color')}</label>
           <div className="flex gap-2">
             <input
               type="color"
@@ -342,7 +344,7 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
 
   const renderBehaviorContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Form Behavior</h4>
+      <h4 className="font-medium text-gray-900">{t('Form Behavior')}</h4>
 
       {/* Success Settings */}
       <div className="space-y-3">
@@ -355,18 +357,18 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showSuccessMessage" className="text-sm text-gray-700">
-            Show Success Message
+            {t('Show Success Message')}
           </label>
         </div>
 
         {design.showSuccessMessage && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Success Message</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('Success Message')}</label>
             <input
               type="text"
-              value={design.successMessage || 'Thank you for your submission!'}
+              value={design.successMessage || t('Thank you for your submission!')}
               onChange={e => updateDesign({ successMessage: e.target.value })}
-              placeholder="Thank you for your submission!"
+              placeholder={t('Thank you for your submission!')}
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
@@ -374,7 +376,7 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Success Redirect URL (Optional)
+            {t('Success Redirect URL (Optional)')}
           </label>
           <input
             type="url"
@@ -383,7 +385,7 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
             placeholder="https://example.com/thank-you"
             className="w-full px-3 py-2 border rounded-lg"
           />
-          <p className="text-xs text-gray-500 mt-1">Leave empty to show success message instead</p>
+          <p className="text-xs text-gray-500 mt-1">{t('Leave empty to show success message instead')}</p>
         </div>
       </div>
 
@@ -397,7 +399,7 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
           className="rounded border-gray-300"
         />
         <label htmlFor="enableCaptcha" className="text-sm text-gray-700">
-          Enable CAPTCHA
+          {t('Enable CAPTCHA')}
         </label>
       </div>
 
@@ -412,14 +414,14 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showPrivacyPolicy" className="text-sm text-gray-700">
-            Show Privacy Policy Link
+            {t('Show Privacy Policy Link')}
           </label>
         </div>
 
         {design.showPrivacyPolicy && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Privacy Policy URL
+              {t('Privacy Policy URL')}
             </label>
             <input
               type="url"

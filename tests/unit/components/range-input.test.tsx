@@ -196,7 +196,7 @@ describe('DualRangeInput', () => {
     render(<DualRangeInput minValue={20} maxValue={80} onChange={handleChange} />)
 
     const sliders = screen.getAllByRole('slider')
-    fireEvent.change(sliders[0], { target: { value: '30' } })
+    fireEvent.change(sliders[0]!, { target: { value: '30' } })
 
     expect(handleChange).toHaveBeenCalledWith(30, 80)
   })
@@ -206,7 +206,7 @@ describe('DualRangeInput', () => {
     render(<DualRangeInput minValue={20} maxValue={80} onChange={handleChange} />)
 
     const sliders = screen.getAllByRole('slider')
-    fireEvent.change(sliders[1], { target: { value: '90' } })
+    fireEvent.change(sliders[1]!, { target: { value: '90' } })
 
     expect(handleChange).toHaveBeenCalledWith(20, 90)
   })
@@ -217,7 +217,7 @@ describe('DualRangeInput', () => {
 
     const sliders = screen.getAllByRole('slider')
     // Try to set min higher than max
-    fireEvent.change(sliders[0], { target: { value: '70' } })
+    fireEvent.change(sliders[0]!, { target: { value: '70' } })
 
     // Should be clamped to maxValue - step
     expect(handleChange).toHaveBeenCalledWith(59, 60)
@@ -229,7 +229,7 @@ describe('DualRangeInput', () => {
 
     const sliders = screen.getAllByRole('slider')
     // Try to set max lower than min
-    fireEvent.change(sliders[1], { target: { value: '30' } })
+    fireEvent.change(sliders[1]!, { target: { value: '30' } })
 
     // Should be clamped to minValue + step
     expect(handleChange).toHaveBeenCalledWith(40, 41)

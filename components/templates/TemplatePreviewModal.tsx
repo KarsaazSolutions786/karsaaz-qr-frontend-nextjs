@@ -9,6 +9,7 @@
 import React, { useEffect } from 'react'
 import { QRCodeTemplate } from '@/types/entities/template'
 import { X, Tag, Palette, Lock, Globe } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 import Image from 'next/image'
 
 export interface TemplatePreviewModalProps {
@@ -24,6 +25,8 @@ export default function TemplatePreviewModal({
   template,
   onUseTemplate,
 }: TemplatePreviewModalProps) {
+  const { t } = useTranslation()
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'
@@ -77,7 +80,7 @@ export default function TemplatePreviewModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 id="preview-modal-title" className="text-lg font-semibold text-gray-900">
-            Template Preview
+            {t('Template Preview')}
           </h2>
           <button
             onClick={onClose}
@@ -124,12 +127,12 @@ export default function TemplatePreviewModal({
                   {isPrivate ? (
                     <>
                       <Lock className="w-3.5 h-3.5" />
-                      Private
+                      {t('Private')}
                     </>
                   ) : (
                     <>
                       <Globe className="w-3.5 h-3.5" />
-                      Public
+                      {t('Public')}
                     </>
                   )}
                 </span>
@@ -149,7 +152,7 @@ export default function TemplatePreviewModal({
               {/* Category */}
               {template.category && (
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">Category</h4>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">{t('Category')}</h4>
                   <div className="flex items-center gap-2">
                     {template.category.icon && (
                       <span className="text-lg">{template.category.icon}</span>
@@ -163,14 +166,14 @@ export default function TemplatePreviewModal({
               <div>
                 <h4 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                   <Palette className="w-4 h-4" />
-                  Design Specifications
+                  {t('Design Specifications')}
                 </h4>
                 <div className="space-y-3">
                   {/* Colors */}
                   {(design.foreground_color || design.background_color) && (
                     <div className="flex items-start gap-3">
                       <span className="text-xs text-gray-500 w-24 flex-shrink-0 pt-1">
-                        Colors
+                        {t('Colors')}
                       </span>
                       <div className="flex items-center gap-2">
                         {design.foreground_color && (
@@ -205,7 +208,7 @@ export default function TemplatePreviewModal({
                   {design.module_shape && (
                     <div className="flex items-start gap-3">
                       <span className="text-xs text-gray-500 w-24 flex-shrink-0">
-                        Module Shape
+                        {t('Module Shape')}
                       </span>
                       <span className="text-sm text-gray-900 capitalize">
                         {design.module_shape}
@@ -216,7 +219,7 @@ export default function TemplatePreviewModal({
                   {/* Eye Shape */}
                   {design.eye_shape && (
                     <div className="flex items-start gap-3">
-                      <span className="text-xs text-gray-500 w-24 flex-shrink-0">Eye Shape</span>
+                      <span className="text-xs text-gray-500 w-24 flex-shrink-0">{t('Eye Shape')}</span>
                       <span className="text-sm text-gray-900 capitalize">{design.eye_shape}</span>
                     </div>
                   )}
@@ -225,7 +228,7 @@ export default function TemplatePreviewModal({
                   {design.error_correction && (
                     <div className="flex items-start gap-3">
                       <span className="text-xs text-gray-500 w-24 flex-shrink-0">
-                        Error Correction
+                        {t('Error Correction')}
                       </span>
                       <span className="text-sm text-gray-900">{design.error_correction}</span>
                     </div>
@@ -234,7 +237,7 @@ export default function TemplatePreviewModal({
                   {/* Pattern */}
                   {design.pattern_type && design.pattern_type !== 'none' && (
                     <div className="flex items-start gap-3">
-                      <span className="text-xs text-gray-500 w-24 flex-shrink-0">Pattern</span>
+                      <span className="text-xs text-gray-500 w-24 flex-shrink-0">{t('Pattern')}</span>
                       <span className="text-sm text-gray-900 capitalize">
                         {design.pattern_type}
                       </span>
@@ -244,7 +247,7 @@ export default function TemplatePreviewModal({
                   {/* Gradient */}
                   {design.gradient_type && design.gradient_type !== 'none' && (
                     <div className="flex items-start gap-3">
-                      <span className="text-xs text-gray-500 w-24 flex-shrink-0">Gradient</span>
+                      <span className="text-xs text-gray-500 w-24 flex-shrink-0">{t('Gradient')}</span>
                       <span className="text-sm text-gray-900 capitalize">
                         {design.gradient_type}
                       </span>
@@ -255,7 +258,7 @@ export default function TemplatePreviewModal({
                   {design.ai_generated && (
                     <div className="flex items-start gap-3">
                       <span className="text-xs text-gray-500 w-24 flex-shrink-0">
-                        AI Generated
+                        {t('AI Generated')}
                       </span>
                       <span className="text-sm text-purple-600 font-medium">Yes</span>
                     </div>
@@ -266,8 +269,8 @@ export default function TemplatePreviewModal({
               {/* Timestamps */}
               <div className="pt-4 border-t border-gray-200">
                 <div className="flex items-center justify-between text-xs text-gray-500">
-                  <span>Created: {new Date(template.created_at).toLocaleDateString()}</span>
-                  <span>Updated: {new Date(template.updated_at).toLocaleDateString()}</span>
+                  <span>{t('Created')}: {new Date(template.created_at).toLocaleDateString()}</span>
+                  <span>{t('Updated')}: {new Date(template.updated_at).toLocaleDateString()}</span>
                 </div>
               </div>
             </div>
@@ -280,14 +283,14 @@ export default function TemplatePreviewModal({
             onClick={onClose}
             className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
           >
-            Close
+            {t('Close')}
           </button>
           {onUseTemplate && (
             <button
               onClick={handleUseTemplate}
               className="px-6 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
-              Use This Template
+              {t('Use This Template')}
             </button>
           )}
         </div>

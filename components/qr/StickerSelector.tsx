@@ -11,7 +11,8 @@ import { Sticker, StickerCategory } from '@/types/entities/sticker';
 import { StickerGallery } from './StickerGallery';
 import { StickerCategoryTabs } from './StickerCategoryFilter';
 import { StickerUpload } from './StickerUpload';
-import { useStickerGallery, useStickerSearch } from '@/hooks/useStickerGallery';
+import { useStickerGallery, useStickerSearch } from '@/lib/hooks/useStickerGallery';
+import { useTranslation } from '@/lib/i18n';
 
 export interface StickerSelectorProps {
   selectedStickerId?: string;
@@ -36,6 +37,7 @@ export function StickerSelector({
   columns = 4,
   className = '',
 }: StickerSelectorProps) {
+  const { t } = useTranslation();
   const [showUploadModal, setShowUploadModal] = useState(false);
   const { query, setQuery, debouncedQuery } = useStickerSearch();
 
@@ -68,7 +70,7 @@ export function StickerSelector({
     <div className={`sticker-selector ${className}`}>
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Select Sticker</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('Select Sticker')}</h3>
         <div className="flex items-center gap-2">
           {/* Sort selector */}
           <select
@@ -76,9 +78,9 @@ export function StickerSelector({
             onChange={(e) => setSortBy(e.target.value as any)}
             className="text-sm border border-gray-300 rounded-md px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
-            <option value="name">Sort by Name</option>
-            <option value="category">Sort by Category</option>
-            <option value="recent">Sort by Recent</option>
+            <option value="name">{t('Sort by Name')}</option>
+            <option value="category">{t('Sort by Category')}</option>
+            <option value="recent">{t('Sort by Recent')}</option>
           </select>
 
           {/* Upload button */}
@@ -96,7 +98,7 @@ export function StickerSelector({
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              Upload
+              {t('Upload')}
             </button>
           )}
         </div>
@@ -110,7 +112,7 @@ export function StickerSelector({
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search stickers..."
+              placeholder={t('Search stickers...')}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
             <svg
@@ -150,7 +152,7 @@ export function StickerSelector({
       {isLoading && (
         <div className="py-12 text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-          <p className="mt-2 text-sm text-gray-600">Loading stickers...</p>
+          <p className="mt-2 text-sm text-gray-600">{t('Loading stickers...')}</p>
         </div>
       )}
 
@@ -171,7 +173,7 @@ export function StickerSelector({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Upload Custom Sticker</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t('Upload Custom Sticker')}</h3>
               <button
                 type="button"
                 onClick={() => setShowUploadModal(false)}
@@ -215,6 +217,7 @@ export function StickerSelectorCompact({
   placeholder = 'Select a sticker...',
   className = '',
 }: StickerSelectorCompactProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const selectedSticker = stickers.find((s) => s.id === selectedStickerId);
 
@@ -240,7 +243,7 @@ export function StickerSelectorCompact({
             <span className="text-sm font-medium text-gray-900">{selectedSticker.name}</span>
           </div>
         ) : (
-          <span className="text-sm text-gray-500">{placeholder}</span>
+          <span className="text-sm text-gray-500">{t(placeholder)}</span>
         )}
         <svg
           className={`w-5 h-5 text-gray-400 transition ${isOpen ? 'rotate-180' : ''}`}

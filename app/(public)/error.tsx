@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function PublicError({
   error,
@@ -11,6 +12,8 @@ export default function PublicError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const { t } = useTranslation()
+
   useEffect(() => {
     console.error('[Public Page Error]', error)
   }, [error])
@@ -22,11 +25,11 @@ export default function PublicError({
           <AlertTriangle className="w-8 h-8 text-red-600" />
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Page Unavailable</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Page Unavailable')}</h1>
 
         <p className="text-gray-600 mb-6">
           {error.message ||
-            'This page could not be loaded. It may have been removed or the link may be incorrect.'}
+            t('This page could not be loaded. It may have been removed or the link may be incorrect.')}
         </p>
 
         <div className="flex gap-3 justify-center">
@@ -35,7 +38,7 @@ export default function PublicError({
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
-            Reload
+            {t('Reload')}
           </button>
 
           <Link
@@ -43,7 +46,7 @@ export default function PublicError({
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors flex items-center gap-2"
           >
             <Home className="w-4 h-4" />
-            Home
+            {t('Home')}
           </Link>
         </div>
       </div>

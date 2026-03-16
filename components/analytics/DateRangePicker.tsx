@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { getPresetDateRange, formatDateRange } from '@/lib/utils/date-range'
+import { useTranslation } from '@/lib/i18n'
 import type { DateRange, DateRangePreset } from '@/types/entities/analytics'
 
 interface DateRangePickerProps {
@@ -19,6 +20,8 @@ const PRESETS: { value: DateRangePreset; label: string }[] = [
 ]
 
 export default function DateRangePicker({ value, onChange }: DateRangePickerProps) {
+  const { t } = useTranslation()
+
   const handlePresetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const preset = e.target.value as DateRangePreset
     if (preset === 'custom') {
@@ -38,10 +41,10 @@ export default function DateRangePicker({ value, onChange }: DateRangePickerProp
       >
         {PRESETS.map((preset) => (
           <option key={preset.value} value={preset.value}>
-            {preset.label}
+            {t(preset.label)}
           </option>
         ))}
-        <option value="custom">Custom range</option>
+        <option value="custom">{t('Custom range')}</option>
       </select>
 
       <div className="text-sm text-gray-600">

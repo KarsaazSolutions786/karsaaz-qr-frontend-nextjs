@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react';
 import { Video, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { VideoBlock as VideoBlockType } from '@/types/entities/biolinks';
+import { useTranslation } from '@/lib/i18n';
 
 interface VideoBlockProps {
   block: VideoBlockType;
@@ -17,6 +20,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   const getEmbedUrl = (url: string, platform?: string) => {
     if (platform === 'youtube') {
       const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/)?.[1];
@@ -45,7 +49,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors bg-white"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -56,14 +60,14 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors bg-white"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors bg-white"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -95,7 +99,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
               )}
             </div>
             <div className="text-xs text-gray-500 capitalize">
-              {block.platform || 'custom'} video
+              {block.platform || 'custom'} {t('video')}
             </div>
           </div>
         ) : (
@@ -103,7 +107,7 @@ export const VideoBlock: React.FC<VideoBlockProps> = ({
             <div className="flex-shrink-0 w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
               <Video className="w-5 h-5 text-red-600" />
             </div>
-            <div className="text-gray-500">No video set</div>
+            <div className="text-gray-500">{t('No video set')}</div>
           </div>
         )}
       </div>

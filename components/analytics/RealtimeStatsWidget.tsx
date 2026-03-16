@@ -8,7 +8,8 @@
 
 import React from 'react';
 import { Activity, TrendingUp, Globe, Smartphone, Clock, RefreshCw } from 'lucide-react';
-import { useRealtimeAnalytics } from '@/hooks/useRealtimeAnalytics';
+import { useTranslation } from '@/lib/i18n';
+import { useRealtimeAnalytics } from '@/lib/hooks/useRealtimeAnalytics';
 
 export interface RealtimeStatsWidgetProps {
   qrCodeId?: string;
@@ -21,6 +22,7 @@ export function RealtimeStatsWidget({
   showRecentScans = true,
   compact = false,
 }: RealtimeStatsWidgetProps) {
+  const { t } = useTranslation();
   const { stats, recentScans, isConnected, error, refresh } = useRealtimeAnalytics({
     qrCodeId,
     enabled: true,
@@ -32,24 +34,24 @@ export function RealtimeStatsWidget({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Activity className="w-5 h-5 text-purple-600" />
-            <h3 className="font-semibold text-gray-900">Live Stats</h3>
+            <h3 className="font-semibold text-gray-900">{t('Live Stats')}</h3>
           </div>
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-gray-300'}`} />
             <span className="text-xs text-gray-500">
-              {isConnected ? 'Live' : 'Offline'}
+              {isConnected ? t('Live') : t('Offline')}
             </span>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-3">
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-900">{stats.todayScans}</div>
-            <div className="text-xs text-gray-500">Today</div>
+            <div className="text-xs text-gray-500">{t('Today')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-600">{stats.liveScans}</div>
-            <div className="text-xs text-gray-500">Live Now</div>
+            <div className="text-xs text-gray-500">{t('Live Now')}</div>
           </div>
         </div>
       </div>
@@ -65,8 +67,8 @@ export function RealtimeStatsWidget({
             <Activity className="w-5 h-5 text-purple-600" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">Real-Time Analytics</h3>
-            <p className="text-sm text-gray-500">Live scan tracking and statistics</p>
+            <h3 className="text-lg font-bold text-gray-900">{t('Real-Time Analytics')}</h3>
+            <p className="text-sm text-gray-500">{t('Live scan tracking and statistics')}</p>
           </div>
         </div>
         
@@ -77,7 +79,7 @@ export function RealtimeStatsWidget({
               isConnected ? 'bg-green-500 animate-pulse' : 'bg-gray-300'
             }`} />
             <span className="text-sm font-medium text-gray-700">
-              {isConnected ? 'Live' : 'Offline'}
+              {isConnected ? t('Live') : t('Offline')}
             </span>
           </div>
           
@@ -85,7 +87,7 @@ export function RealtimeStatsWidget({
           <button
             onClick={refresh}
             className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            title="Refresh stats"
+            title={t('Refresh stats')}
           >
             <RefreshCw className="w-4 h-4 text-gray-600" />
           </button>
@@ -106,7 +108,7 @@ export function RealtimeStatsWidget({
           <div>
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-4 h-4 text-gray-400" />
-              <span className="text-sm text-gray-600">Total Scans</span>
+              <span className="text-sm text-gray-600">{t('Total Scans')}</span>
             </div>
             <div className="text-3xl font-bold text-gray-900">
               {stats.totalScans.toLocaleString()}
@@ -117,29 +119,29 @@ export function RealtimeStatsWidget({
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Clock className="w-4 h-4 text-gray-400" />
-              <span className="text-sm text-gray-600">Today</span>
+              <span className="text-sm text-gray-600">{t('Today')}</span>
             </div>
             <div className="text-3xl font-bold text-blue-600">
               {stats.todayScans.toLocaleString()}
             </div>
           </div>
-          
+
           {/* This Week */}
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Activity className="w-4 h-4 text-gray-400" />
-              <span className="text-sm text-gray-600">This Week</span>
+              <span className="text-sm text-gray-600">{t('This Week')}</span>
             </div>
             <div className="text-3xl font-bold text-green-600">
               {stats.weekScans.toLocaleString()}
             </div>
           </div>
-          
+
           {/* Live Now */}
           <div>
             <div className="flex items-center gap-2 mb-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-              <span className="text-sm text-gray-600">Live Now</span>
+              <span className="text-sm text-gray-600">{t('Live Now')}</span>
             </div>
             <div className="text-3xl font-bold text-purple-600">
               {stats.liveScans}
@@ -150,21 +152,21 @@ export function RealtimeStatsWidget({
         {/* Additional Stats */}
         <div className="grid grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-200">
           <div>
-            <div className="text-sm text-gray-600 mb-1">Avg. Scans/Day</div>
+            <div className="text-sm text-gray-600 mb-1">{t('Avg. Scans/Day')}</div>
             <div className="text-xl font-semibold text-gray-900">
               {stats.averageScansPerDay}
             </div>
           </div>
           
           <div>
-            <div className="text-sm text-gray-600 mb-1">Peak Hour</div>
+            <div className="text-sm text-gray-600 mb-1">{t('Peak Hour')}</div>
             <div className="text-xl font-semibold text-gray-900">
               {stats.peakHour}:00
             </div>
           </div>
           
           <div>
-            <div className="text-sm text-gray-600 mb-1">Top Location</div>
+            <div className="text-sm text-gray-600 mb-1">{t('Top Location')}</div>
             <div className="text-xl font-semibold text-gray-900 flex items-center gap-2">
               <Globe className="w-4 h-4 text-gray-400" />
               {stats.topCountry || 'N/A'}
@@ -178,7 +180,7 @@ export function RealtimeStatsWidget({
         <div className="border-t border-gray-200">
           <div className="p-6">
             <h4 className="text-sm font-semibold text-gray-900 mb-4">
-              Recent Scans ({recentScans.length})
+              {t('Recent Scans')} ({recentScans.length})
             </h4>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {recentScans.slice(0, 10).map((scan) => (

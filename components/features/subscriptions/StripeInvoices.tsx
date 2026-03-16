@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { getInvoices, type StripeInvoice } from '@/lib/api/endpoints/stripe'
 import { FileText, Download, ExternalLink } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 const STATUS_STYLES: Record<string, string> = {
   paid: 'bg-green-100 text-green-700',
@@ -15,6 +16,7 @@ const STATUS_STYLES: Record<string, string> = {
 const LIMIT_OPTIONS = [5, 10, 25, 50]
 
 export function StripeInvoices() {
+  const { t } = useTranslation()
   const [invoices, setInvoices] = useState<StripeInvoice[]>([])
   const [loading, setLoading] = useState(true)
   const [limit, setLimit] = useState(10)
@@ -52,9 +54,9 @@ export function StripeInvoices() {
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900">Invoices</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{t('Invoices')}</h3>
         <div className="flex items-center gap-2">
-          <label className="text-xs text-gray-500">Show:</label>
+          <label className="text-xs text-gray-500">{t('Show:')}</label>
           <select
             value={limit}
             onChange={(e) => setLimit(Number(e.target.value))}
@@ -72,12 +74,12 @@ export function StripeInvoices() {
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-gray-400">
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-200 border-t-purple-600" />
-            Loading invoices...
+            {t('Loading invoices...')}
           </div>
         ) : invoices.length === 0 ? (
           <div className="text-center py-6">
             <FileText className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-            <p className="text-sm text-gray-500">No invoices found.</p>
+            <p className="text-sm text-gray-500">{t('No invoices found.')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -110,7 +112,7 @@ export function StripeInvoices() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1.5 text-gray-400 hover:text-purple-600"
-                        title="Download PDF"
+                        title={t('Download PDF')}
                       >
                         <Download className="w-4 h-4" />
                       </a>
@@ -121,7 +123,7 @@ export function StripeInvoices() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-1.5 text-gray-400 hover:text-blue-600"
-                        title="View"
+                        title={t('View')}
                       >
                         <ExternalLink className="w-4 h-4" />
                       </a>

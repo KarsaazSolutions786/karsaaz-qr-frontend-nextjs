@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslation } from '@/lib/i18n'
 import type { SocialLinksBlockData } from '@/types/entities/biolink'
 
 interface SocialLinksBlockProps {
@@ -19,6 +22,7 @@ const socialPlatforms = [
 
 export default function SocialLinksBlock({ block, isEditing, onUpdate }: SocialLinksBlockProps) {
   const { links } = block.data
+  const { t } = useTranslation()
 
   if (isEditing) {
     const addLink = () => {
@@ -49,17 +53,17 @@ export default function SocialLinksBlock({ block, isEditing, onUpdate }: SocialL
     return (
       <div className="space-y-3 rounded-lg border border-gray-200 bg-white p-4">
         <div className="flex items-center justify-between">
-          <label className="block text-sm font-medium text-gray-700">Social Links</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Social Links')}</label>
           <button
             type="button"
             onClick={addLink}
             className="text-sm text-blue-600 hover:text-blue-700"
           >
-            + Add Link
+            {t('+ Add Link')}
           </button>
         </div>
         {links.length === 0 ? (
-          <p className="text-sm text-gray-500">No social links added</p>
+          <p className="text-sm text-gray-500">{t('No social links added')}</p>
         ) : (
           <div className="space-y-2">
             {links.map((link, index) => (

@@ -8,6 +8,7 @@ import { LogoUpload } from '@/components/qr/LogoUpload'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Palette, Image as ImageIcon, Sparkles, RotateCcw } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface Step3DesignerProps {
   design: any
@@ -61,6 +62,7 @@ export default function Step3Designer({
   qrData,
   qrType,
 }: Step3DesignerProps) {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('basic')
 
   const handleChange = (field: string, value: any) => {
@@ -85,17 +87,17 @@ export default function Step3Designer({
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Design Your QR Code
+          {t('Design Your QR Code')}
         </h2>
         <p className="text-gray-600">
-          Customize colors, patterns, and add your logo
+          {t('Customize colors, patterns, and add your logo')}
         </p>
       </div>
 
       {/* Design Presets */}
       <div>
         <h3 className="text-sm font-semibold text-gray-900 mb-3">
-          Quick Presets
+          {t('Quick Presets')}
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {DESIGN_PRESETS.map((preset) => (
@@ -123,7 +125,7 @@ export default function Step3Designer({
         <div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">
-              Customize Design
+              {t('Customize Design')}
             </h3>
             <Button
               onClick={resetToDefaults}
@@ -132,7 +134,7 @@ export default function Step3Designer({
               className="gap-2"
             >
               <RotateCcw className="w-4 h-4" />
-              Reset
+              {t('Reset')}
             </Button>
           </div>
 
@@ -140,15 +142,15 @@ export default function Step3Designer({
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="basic" className="gap-2">
                 <Palette className="w-4 h-4" />
-                Basic
+                {t('Basic')}
               </TabsTrigger>
               <TabsTrigger value="advanced" className="gap-2">
                 <Sparkles className="w-4 h-4" />
-                Advanced
+                {t('Advanced')}
               </TabsTrigger>
               <TabsTrigger value="logo" className="gap-2">
                 <ImageIcon className="w-4 h-4" />
-                Logo
+                {t('Logo')}
               </TabsTrigger>
             </TabsList>
 
@@ -161,7 +163,7 @@ export default function Step3Designer({
               {/* Gradient Builder */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Foreground Gradient
+                  {t('Foreground Gradient')}
                 </label>
                 <GradientBuilder
                   value={design.foregroundGradient}
@@ -172,7 +174,7 @@ export default function Step3Designer({
               {/* Background Options */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Background
+                  {t('Background')}
                 </label>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
@@ -186,7 +188,7 @@ export default function Step3Designer({
                       className="rounded border-gray-300"
                     />
                     <label htmlFor="transparentBg" className="text-sm text-gray-700">
-                      Transparent background
+                      {t('Transparent background')}
                     </label>
                   </div>
                 </div>
@@ -195,16 +197,16 @@ export default function Step3Designer({
               {/* Corner Style */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Corner Style
+                  {t('Corner Style')}
                 </label>
                 <select
                   value={design.cornerStyle || 'square'}
                   onChange={(e) => handleChange('cornerStyle', e.target.value)}
                   className="w-full rounded-md border border-gray-300 px-3 py-2"
                 >
-                  <option value="square">Square</option>
-                  <option value="extra-rounded">Extra Rounded</option>
-                  <option value="dot">Dot</option>
+                  <option value="square">{t('Square')}</option>
+                  <option value="extra-rounded">{t('Extra Rounded')}</option>
+                  <option value="dot">{t('Dot')}</option>
                 </select>
               </div>
             </TabsContent>
@@ -213,7 +215,7 @@ export default function Step3Designer({
               {/* Logo Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Upload Logo
+                  {t('Upload Logo')}
                 </label>
                 <LogoUpload
                   value={design.logoUrl ?? null}
@@ -226,7 +228,7 @@ export default function Step3Designer({
                   {/* Logo Size */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Logo Size: {design.logoSize || 20}%
+                      {t('Logo Size')}: {design.logoSize || 20}%
                     </label>
                     <input
                       type="range"
@@ -243,7 +245,7 @@ export default function Step3Designer({
                   {/* Logo Padding */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Logo Padding
+                      {t('Logo Padding')}
                     </label>
                     <input
                       type="checkbox"
@@ -255,7 +257,7 @@ export default function Step3Designer({
                       className="rounded border-gray-300"
                     />
                     <label htmlFor="logoPadding" className="ml-2 text-sm text-gray-700">
-                      Add white padding around logo
+                      {t('Add white padding around logo')}
                     </label>
                   </div>
                 </>
@@ -267,7 +269,7 @@ export default function Step3Designer({
         {/* Live Preview */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Live Preview
+            {t('Live Preview')}
           </h3>
           <div className="bg-white rounded-lg border-2 border-gray-200 p-8 sticky top-6">
             <div className="flex flex-col items-center gap-6">
@@ -287,7 +289,7 @@ export default function Step3Designer({
               />
               <div className="text-center">
                 <p className="text-sm text-gray-600">
-                  Scan this QR code with your phone to test it
+                  {t('Scan this QR code with your phone to test it')}
                 </p>
               </div>
             </div>

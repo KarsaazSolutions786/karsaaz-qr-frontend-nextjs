@@ -1,6 +1,7 @@
 'use client'
 
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { urlDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 
@@ -17,6 +18,7 @@ interface URLDataFormProps {
 }
 
 export function URLDataForm({ defaultValues, onChange }: URLDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -30,7 +32,7 @@ export function URLDataForm({ defaultValues, onChange }: URLDataFormProps) {
     <form className="space-y-5">
       <div>
         <label htmlFor="url" className={LABEL}>
-          Website URL *
+          {t('Website URL')} *
         </label>
         <input
           {...register('url')}
@@ -43,7 +45,7 @@ export function URLDataForm({ defaultValues, onChange }: URLDataFormProps) {
       </div>
       <div>
         <label htmlFor="expires_at" className={LABEL}>
-          Expiry Date <span className="text-gray-400 font-normal">(optional)</span>
+          {t('Expiry Date')} <span className="text-gray-400 font-normal">({t('optional')})</span>
         </label>
         <input {...register('expires_at')} id="expires_at" type="date" className={INPUT} />
       </div>

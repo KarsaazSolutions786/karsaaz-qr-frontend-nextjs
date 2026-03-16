@@ -6,6 +6,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import { BiolinksForm } from './BiolinksForm';
 import { biolinksAPI } from '@/lib/api/endpoints/biolinks';
 import { BiolinksFormData } from '@/types/entities/biolinks';
@@ -29,6 +30,7 @@ export function BiolinksPage({
   onSuccess,
   onCancel,
 }: BiolinksPageProps) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [initialData, setInitialData] = useState<BiolinksFormData | undefined>();
 
@@ -45,7 +47,7 @@ export function BiolinksPage({
           });
         })
         .catch((error) => {
-          toast.error('Failed to load biolinks data');
+          toast.error(t('Failed to load biolinks data'));
           console.error(error);
         });
     }
@@ -65,7 +67,7 @@ export function BiolinksPage({
           blocks: data.blocks as any,
           theme: data.theme as any,
         });
-        toast.success('Biolinks page created successfully!');
+        toast.success(t('Biolinks page created successfully!'));
       } else {
         // Update existing biolinks
         result = await biolinksAPI.update({
@@ -74,12 +76,12 @@ export function BiolinksPage({
           blocks: data.blocks as any,
           theme: data.theme as any,
         });
-        toast.success('Biolinks page updated successfully!');
+        toast.success(t('Biolinks page updated successfully!'));
       }
 
       onSuccess?.(result);
     } catch (error: any) {
-      toast.error(error.message || 'Failed to save biolinks');
+      toast.error(error.message || t('Failed to save biolinks'));
       console.error('Save error:', error);
     } finally {
       setIsLoading(false);
@@ -102,6 +104,7 @@ export function BiolinksPage({
  * Example: Create biolinks with default data
  */
 export function QuickBiolinksExample() {
+  const { t } = useTranslation();
   const handleCreate = async () => {
     try {
       const biolinks = await biolinksAPI.create({
@@ -157,7 +160,7 @@ export function QuickBiolinksExample() {
 
   return (
     <button onClick={handleCreate} className="px-4 py-2 bg-blue-600 text-white rounded">
-      Create Quick Biolinks
+      {t('Create Quick Biolinks')}
     </button>
   );
 }
@@ -166,20 +169,21 @@ export function QuickBiolinksExample() {
  * Example: Clone existing biolinks
  */
 export function CloneBiolinksExample({ sourceId }: { sourceId: number }) {
+  const { t } = useTranslation();
   const handleClone = async () => {
     try {
       const cloned = await biolinksAPI.clone(sourceId);
-      toast.success('Biolinks cloned successfully!');
+      toast.success(t('Biolinks cloned successfully!'));
       console.log('Cloned biolinks:', cloned);
     } catch (error) {
-      toast.error('Failed to clone biolinks');
+      toast.error(t('Failed to clone biolinks'));
       console.error(error);
     }
   };
 
   return (
     <button onClick={handleClone} className="px-4 py-2 bg-green-600 text-white rounded">
-      Clone Biolinks
+      {t('Clone Biolinks')}
     </button>
   );
 }
@@ -188,6 +192,7 @@ export function CloneBiolinksExample({ sourceId }: { sourceId: number }) {
  * Example: Analytics Dashboard
  */
 export function BiolinksAnalyticsExample({ biolinksId }: { biolinksId: number }) {
+  const { t } = useTranslation();
   const [analytics, setAnalytics] = useState<any>(null);
 
   const loadAnalytics = async () => {
@@ -207,21 +212,21 @@ export function BiolinksAnalyticsExample({ biolinksId }: { biolinksId: number })
     loadAnalytics();
   });
 
-  if (!analytics) return <div>Loading analytics...</div>;
+  if (!analytics) return <div>{t('Loading analytics...')}</div>;
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-lg shadow">
-          <div className="text-sm text-gray-600">Total Views</div>
+          <div className="text-sm text-gray-600">{t('Total Views')}</div>
           <div className="text-2xl font-bold">{analytics.totalViews}</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
-          <div className="text-sm text-gray-600">Total Clicks</div>
+          <div className="text-sm text-gray-600">{t('Total Clicks')}</div>
           <div className="text-2xl font-bold">{analytics.totalClicks}</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
-          <div className="text-sm text-gray-600">Click Rate</div>
+          <div className="text-sm text-gray-600">{t('Click Rate')}</div>
           <div className="text-2xl font-bold">
             {((analytics.totalClicks / analytics.totalViews) * 100).toFixed(1)}%
           </div>
@@ -229,12 +234,12 @@ export function BiolinksAnalyticsExample({ biolinksId }: { biolinksId: number })
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="font-semibold mb-2">Top Performing Blocks</h3>
+        <h3 className="font-semibold mb-2">{t('Top Performing Blocks')}</h3>
         <div className="space-y-2">
           {analytics.topBlocks.map((block: any) => (
             <div key={block.blockId} className="flex justify-between">
               <span>{block.title || block.blockType}</span>
-              <span className="font-semibold">{block.clicks} clicks</span>
+              <span className="font-semibold">{block.clicks} {t('clicks')}</span>
             </div>
           ))}
         </div>
@@ -247,6 +252,7 @@ export function BiolinksAnalyticsExample({ biolinksId }: { biolinksId: number })
  * Example: Public Biolinks Viewer
  */
 export function PublicBiolinksViewer({ slug }: { slug: string }) {
+  const { t } = useTranslation();
   const [biolinks, setBiolinks] = useState<any>(null);
 
   useState(() => {
@@ -265,7 +271,7 @@ export function PublicBiolinksViewer({ slug }: { slug: string }) {
       });
   });
 
-  if (!biolinks) return <div>Loading...</div>;
+  if (!biolinks) return <div>{t('Loading...')}</div>;
 
   const handleBlockClick = (blockId: string) => {
     biolinksAPI.trackBlockClick(biolinks.id, blockId, {

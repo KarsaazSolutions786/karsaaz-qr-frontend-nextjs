@@ -8,6 +8,7 @@
 
 import React, { useMemo } from 'react';
 import { Smartphone, Monitor, Tablet, Globe } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface DeviceData {
   type: 'mobile' | 'tablet' | 'desktop';
@@ -40,6 +41,8 @@ export function DeviceBrowserCharts({
   operatingSystems,
   totalScans,
 }: DeviceBrowserChartsProps) {
+  const { t } = useTranslation()
+
   // Calculate percentages
   const devicesWithPercentage = useMemo(() => {
     return devices.map(d => ({
@@ -71,8 +74,8 @@ export function DeviceBrowserCharts({
             <Smartphone className="w-5 h-5 text-purple-600" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">Device Types</h3>
-            <p className="text-sm text-gray-500">Scan breakdown by device</p>
+            <h3 className="text-lg font-bold text-gray-900">{t('Device Types')}</h3>
+            <p className="text-sm text-gray-500">{t('Scan breakdown by device')}</p>
           </div>
         </div>
         
@@ -105,7 +108,7 @@ export function DeviceBrowserCharts({
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <div className="text-2xl font-bold text-gray-900">{totalScans}</div>
-              <div className="text-xs text-gray-500">Total</div>
+              <div className="text-xs text-gray-500">{t('Total')}</div>
             </div>
           </div>
         </div>
@@ -143,8 +146,8 @@ export function DeviceBrowserCharts({
             <Globe className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">Browsers</h3>
-            <p className="text-sm text-gray-500">Top browsers used</p>
+            <h3 className="text-lg font-bold text-gray-900">{t('Browsers')}</h3>
+            <p className="text-sm text-gray-500">{t('Top browsers used')}</p>
           </div>
         </div>
         
@@ -201,8 +204,8 @@ export function DeviceBrowserCharts({
             <Monitor className="w-5 h-5 text-green-600" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">Operating Systems</h3>
-            <p className="text-sm text-gray-500">Platform distribution</p>
+            <h3 className="text-lg font-bold text-gray-900">{t('Operating Systems')}</h3>
+            <p className="text-sm text-gray-500">{t('Platform distribution')}</p>
           </div>
         </div>
         

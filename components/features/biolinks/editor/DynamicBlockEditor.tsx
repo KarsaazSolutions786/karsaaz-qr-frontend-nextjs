@@ -1,6 +1,7 @@
 'use client';
 
 import { Settings2 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { DynamicBiolinkBlock, BiolinkBlockField } from '@/types/entities/dynamic-biolink-block';
@@ -16,6 +17,7 @@ export default function DynamicBlockEditor({
   onChange,
   onConfigureFields,
 }: DynamicBlockEditorProps) {
+  const { t } = useTranslation();
   const handleNameChange = (name: string) => {
     onChange({ ...block, name });
   };
@@ -39,7 +41,7 @@ export default function DynamicBlockEditor({
           <textarea
             value={field.placeholder || ''}
             onChange={(e) => handleFieldValueChange(index, e.target.value)}
-            placeholder={`Enter ${field.name}...`}
+            placeholder={`${t('Enter')} ${field.name}...`}
             rows={field.type === 'custom_code' ? 6 : 3}
             className={`w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 ${
               field.type === 'custom_code' ? 'font-mono' : ''
@@ -52,7 +54,7 @@ export default function DynamicBlockEditor({
             type="url"
             value={field.placeholder || ''}
             onChange={(e) => handleFieldValueChange(index, e.target.value)}
-            placeholder="Image URL"
+            placeholder={t('Image URL')}
             className="h-9 text-sm"
           />
         );
@@ -61,7 +63,7 @@ export default function DynamicBlockEditor({
           <Input
             value={field.placeholder || ''}
             onChange={(e) => handleFieldValueChange(index, e.target.value)}
-            placeholder={`Enter ${field.name}...`}
+            placeholder={`${t('Enter')} ${field.name}...`}
             className="h-9 text-sm"
           />
         );
@@ -73,11 +75,11 @@ export default function DynamicBlockEditor({
       {/* Block Header */}
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <label className="mb-1 block text-xs font-medium text-gray-500">Block Name</label>
+          <label className="mb-1 block text-xs font-medium text-gray-500">{t('Block Name')}</label>
           <Input
             value={block.name}
             onChange={(e) => handleNameChange(e.target.value)}
-            placeholder="Block name"
+            placeholder={t('Block name')}
             className="h-9 text-sm font-medium"
           />
         </div>
@@ -89,14 +91,14 @@ export default function DynamicBlockEditor({
           className="ml-3 mt-5"
         >
           <Settings2 className="mr-1 h-4 w-4" />
-          Fields
+          {t('Fields')}
         </Button>
       </div>
 
       {/* Block Preview */}
       {block.fields && block.fields.length > 0 && (
         <div className="space-y-3 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4">
-          <p className="text-xs font-medium text-gray-500">Content Fields</p>
+          <p className="text-xs font-medium text-gray-500">{t('Content Fields')}</p>
           {block.fields.map((field, index) => (
             <div key={field.id || index}>
               <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -111,11 +113,11 @@ export default function DynamicBlockEditor({
       {/* Custom Code Area */}
       {block.customCode !== undefined && (
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-500">Custom Code</label>
+          <label className="mb-1 block text-xs font-medium text-gray-500">{t('Custom Code')}</label>
           <textarea
             value={block.customCode || ''}
             onChange={(e) => handleCustomCodeChange(e.target.value)}
-            placeholder="Enter custom HTML/CSS..."
+            placeholder={t('Enter custom HTML/CSS...')}
             rows={4}
             className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 font-mono text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
           />
@@ -125,7 +127,7 @@ export default function DynamicBlockEditor({
       {/* Empty State */}
       {(!block.fields || block.fields.length === 0) && !block.customCode && (
         <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 py-8 text-center">
-          <p className="text-sm text-gray-500">No fields configured.</p>
+          <p className="text-sm text-gray-500">{t('No fields configured.')}</p>
           <Button
             type="button"
             variant="ghost"
@@ -133,7 +135,7 @@ export default function DynamicBlockEditor({
             onClick={onConfigureFields}
             className="mt-1 text-blue-600 hover:text-blue-700"
           >
-            Add fields to get started
+            {t('Add fields to get started')}
           </Button>
         </div>
       )}

@@ -4,6 +4,30 @@
 
 import apiClient from '@/lib/api/client'
 
+/** Generate a cryptographically random OAuth state parameter for CSRF protection */
+function generateOAuthState(): string {
+  const state = crypto.randomUUID()
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem('oauth_state', state)
+  }
+  return state
+}
+
+/** Generate OAuth state and store it — exported for use by auth API redirect helpers */
+export function generateOAuthStateForRedirect(): string {
+  return generateOAuthState()
+}
+
+/** Validate OAuth state parameter against stored value. Returns true if valid. */
+export function validateOAuthState(stateParam: string | null): boolean {
+  if (typeof window === 'undefined') return true
+  const storedState = sessionStorage.getItem('oauth_state')
+  if (!storedState) return true // No state stored means flow didn't originate here (e.g., code exchange)
+  if (!stateParam || stateParam !== storedState) return false
+  sessionStorage.removeItem('oauth_state')
+  return true
+}
+
 export interface OAuthProviderConfig {
   clientId: string
   clientSecret?: string
@@ -57,12 +81,13 @@ class AuthWorkflowEngine {
   /** Initiate OAuth flow by redirecting to the provider's authorize URL */
   initiateOAuth(provider: OAuthProviderName): void {
     const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+    const state = generateOAuthState()
 
     const urlMap: Record<OAuthProviderName, string> = {
-      google: `${apiBase}/auth-workflow/google/redirect`,
-      facebook: `${apiBase}/auth-workflow/facebook/redirect`,
-      twitter: `${apiBase}/auth-workflow/twitter/redirect`,
-      auth0: `${apiBase}/auth0/login`,
+      google: `${apiBase}/auth-workflow/google/redirect?state=${state}`,
+      facebook: `${apiBase}/auth-workflow/facebook/redirect?state=${state}`,
+      twitter: `${apiBase}/auth-workflow/twitter/redirect?state=${state}`,
+      auth0: `${apiBase}/auth0/login?state=${state}`,
     }
 
     const url = urlMap[provider]

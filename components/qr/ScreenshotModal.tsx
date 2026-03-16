@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { X, Download, Camera } from 'lucide-react';
 import { sanitizeSvg } from '@/lib/utils/dom-safety';
+import { useTranslation } from '@/lib/i18n';
 
 export type ExportFormat = 'PNG' | 'SVG' | 'PDF';
 export type SizePreset = 'S' | 'M' | 'L' | 'XL';
@@ -27,6 +28,7 @@ export function ScreenshotModal({
   open,
   onClose,
 }: ScreenshotModalProps) {
+  const { t } = useTranslation();
   const [format, setFormat] = useState<ExportFormat>('PNG');
   const [size, setSize] = useState<SizePreset>('M');
   const [isExporting, setIsExporting] = useState(false);
@@ -95,7 +97,7 @@ export function ScreenshotModal({
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Camera className="w-5 h-5 text-primary-600" />
-            <h2 className="text-lg font-bold text-gray-900">Download QR Code</h2>
+            <h2 className="text-lg font-bold text-gray-900">{t('Download QR Code')}</h2>
           </div>
           <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600 transition">
             <X className="w-5 h-5" />
@@ -115,7 +117,7 @@ export function ScreenshotModal({
 
           {/* Format */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Format</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Format')}</label>
             <div className="grid grid-cols-3 gap-2">
               {(['PNG', 'SVG', 'PDF'] as ExportFormat[]).map((fmt) => (
                 <button
@@ -136,7 +138,7 @@ export function ScreenshotModal({
 
           {/* Size */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Size')}</label>
             <div className="grid grid-cols-4 gap-2">
               {(Object.keys(SIZE_MAP) as SizePreset[]).map((s) => (
                 <button
@@ -164,7 +166,7 @@ export function ScreenshotModal({
             onClick={onClose}
             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
           >
-            Cancel
+            {t('Cancel')}
           </button>
           <button
             type="button"
@@ -175,12 +177,12 @@ export function ScreenshotModal({
             {isExporting ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                Exporting…
+                {t('Exporting...')}
               </>
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                Download {format}
+                {t('Download')} {format}
               </>
             )}
           </button>

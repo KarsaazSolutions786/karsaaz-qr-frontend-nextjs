@@ -1,9 +1,9 @@
 'use client'
 
-import React, { createContext, ReactNode, useState, useEffect, useCallback, useRef } from 'react'
+import React, { createContext, ReactNode, useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import apiClient from '@/lib/api/client'
+import apiClient, { markAuthValidationComplete } from '@/lib/api/client'
 import { queryKeys } from '@/lib/query/keys'
 import { User } from '@/types/entities/user'
 import { userHomePage as resolveHomePage } from '@/lib/utils/permissions'
@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
   const hasValidated = useRef(false)
 
-  // Initialize user from localStorage
+  // Initialize user from localStorage (for instant hydration before /myself call)
   const [user, setUser] = useState<User | null>(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -51,15 +51,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return null
   })
 
-  // isLoading = true until initial token validation completes
+  // isLoading = true until initial validation completes.
+  // Use `logged_in` flag OR legacy `token` (for backwards compatibility during migration).
   const [isLoading, setIsLoading] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
-      return !!localStorage.getItem('token')
+      return !!(localStorage.getItem('logged_in') || localStorage.getItem('token'))
     }
     return false
   })
 
-  // ── isActingAs (derived from mainUser in localStorage) ──
+  // ---- isActingAs (derived from mainUser in localStorage) ----
   const [isActingAs, setIsActingAs] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       return !!localStorage.getItem('mainUser')
@@ -69,15 +70,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const actingAsUser = isActingAs ? user : null
 
-  // Validate token on mount by calling GET /myself
-  // Matches original: validateCurrentToken() on DOMContentLoaded
+  // Validate session on mount by calling GET /myself.
+  // The httpOnly auth_token cookie is sent automatically via withCredentials: true.
+  // For act-as scenarios, the Bearer token from localStorage takes precedence.
   useEffect(() => {
     if (hasValidated.current) return
     hasValidated.current = true
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
-    if (!token) {
-      // isLoading already initialized to false when no token exists
+    const isLoggedIn = typeof window !== 'undefined'
+      ? !!(localStorage.getItem('logged_in') || localStorage.getItem('token'))
+      : false
+
+    if (!isLoggedIn) {
+      // isLoading already initialized to false when no session exists
+      markAuthValidationComplete()
       return
     }
 
@@ -88,26 +94,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(freshUser as User)
         if (typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(freshUser))
+          // Ensure logged_in flag is set (migration from legacy token-only storage)
+          localStorage.setItem('logged_in', 'true')
         }
         queryClient.setQueryData(queryKeys.auth.currentUser(), freshUser)
-        // Subscription data is now managed by TanStack Query via useSubscription hook
       })
       .catch(() => {
-        // Token is invalid — clear everything, matches auth:invalid-token handler
+        // Token/cookie is invalid -- clear everything
         setUser(null)
         if (typeof window !== 'undefined') {
           localStorage.removeItem('user')
           localStorage.removeItem('token')
+          localStorage.removeItem('logged_in')
         }
       })
       .finally(() => {
+        markAuthValidationComplete()
         setIsLoading(false)
       })
   }, [queryClient])
 
   /**
    * Refresh user data from backend and update all caches.
-   * Matches original: refreshUserData() — called after subscription/plan changes.
+   * Matches original: refreshUserData() -- called after subscription/plan changes.
    */
   const refreshUserData = useCallback(async (): Promise<User | null> => {
     try {
@@ -118,7 +127,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('user', JSON.stringify(freshUser))
       }
       queryClient.setQueryData(queryKeys.auth.currentUser(), freshUser)
-      // Subscription data is automatically updated via TanStack Query when user data changes
       return freshUser
     } catch {
       return null
@@ -135,25 +143,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(data.user)
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(data.user))
-        localStorage.setItem('token', data.token)
+        // Store a flag instead of the raw token.
+        // The actual token is stored in an httpOnly cookie by the backend.
+        localStorage.setItem('logged_in', 'true')
+        // Remove legacy token if present (migration cleanup)
+        localStorage.removeItem('token')
       }
       queryClient.setQueryData(queryKeys.auth.currentUser(), data.user)
-      // Subscription data is automatically loaded via TanStack Query when user data is set
     },
     [queryClient]
   )
 
   /**
-   * Logout — clear credentials and redirect.
-   * Matches original session lifecycle including after_logout_action config and Auth0.
+   * Logout -- call backend to revoke token + clear cookie, then clear local state.
    *
    * After logout:
-   *   - If Auth0 enabled → /auth0/logout
-   *   - If app.after_logout_action === 'redirect_to_home_page' → /
-   *   - Default → /login (matches redirect_to_login_page)
+   *   - If Auth0 enabled -> /auth0/logout
+   *   - If app.after_logout_action === 'redirect_to_home_page' -> /
+   *   - Default -> /login (matches redirect_to_login_page)
    */
   const logout = useCallback(async () => {
-    // Check if Auth0 is enabled — redirect to Auth0 logout endpoint
+    // Check if Auth0 is enabled -- redirect to Auth0 logout endpoint
     const auth0Enabled =
       typeof window !== 'undefined' ? localStorage.getItem('auth0_enabled') : null
     if (auth0Enabled === 'true') {
@@ -162,12 +172,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    // No backend /api/logout route exists — just clear local state (matches LitElement)
+    // Call backend logout to revoke the Sanctum token and clear the httpOnly cookie.
+    // Fire-and-forget: don't block the UI if the call fails (e.g., token already expired).
+    try {
+      await apiClient.post('/logout')
+    } catch {
+      // Ignore errors -- the user is logging out regardless
+    }
+
+    // Clear local state
     setUser(null)
     setIsActingAs(false)
     if (typeof window !== 'undefined') {
       localStorage.removeItem('user')
       localStorage.removeItem('token')
+      localStorage.removeItem('logged_in')
       localStorage.removeItem('mainUser')
     }
     queryClient.setQueryData(queryKeys.auth.currentUser(), null)
@@ -185,19 +204,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [queryClient, router])
 
-  // ── ActAs (Admin Impersonation) ──
-  // Matches original: actAs stores mainUser, swaps credentials, navigates + reloads
+  // ---- ActAs (Admin Impersonation) ----
+  // Act-as requires storing the impersonation token in localStorage because
+  // the browser can only hold one httpOnly cookie at a time (the admin's).
+  // The token in localStorage is set as a Bearer header, which takes precedence
+  // over the cookie in the backend middleware.
 
   const actAs = useCallback(
     (targetUser: User, targetToken: string) => {
       if (typeof window === 'undefined') return
-      // Save current admin user before switching
+      // Save current admin user before switching.
+      // For act-as, we need the admin's token to restore later.
+      // The admin's cookie-based session is preserved in the browser automatically.
       const mainUser = {
         user: JSON.parse(localStorage.getItem('user') || 'null'),
-        token: localStorage.getItem('token'),
+        // No token to save -- admin uses cookie auth. We store a marker instead.
+        token: null,
       }
       localStorage.setItem('mainUser', JSON.stringify(mainUser))
-      // Switch to target user
+      // Switch to target user -- store their token so Bearer header overrides cookie
       localStorage.setItem('user', JSON.stringify(targetUser))
       localStorage.setItem('token', targetToken)
       setUser(targetUser)
@@ -218,7 +243,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const mainUser = JSON.parse(mainUserStr)
       localStorage.setItem('user', JSON.stringify(mainUser.user))
-      localStorage.setItem('token', mainUser.token)
+      // Remove the impersonation token -- admin auth falls back to cookie
+      localStorage.removeItem('token')
       localStorage.removeItem('mainUser')
       setUser(mainUser.user)
       setIsActingAs(false)
@@ -229,11 +255,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTimeout(() => window.location.reload(), 100)
     } catch {
       localStorage.removeItem('mainUser')
+      localStorage.removeItem('token')
       setIsActingAs(false)
     }
   }, [queryClient, router])
 
-  const contextValue: AuthContextType = {
+  const contextValue = useMemo<AuthContextType>(() => ({
     user,
     isLoading,
     isAuthenticated: !!user,
@@ -245,7 +272,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     removeActAs,
     isActingAs,
     actingAsUser,
-  }
+  }), [user, isLoading, login, logout, refreshUserData, actAs, removeActAs, isActingAs, actingAsUser])
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 }

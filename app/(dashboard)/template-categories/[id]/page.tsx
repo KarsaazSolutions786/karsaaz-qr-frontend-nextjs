@@ -7,12 +7,14 @@ import {
   useCreateTemplateCategory,
   useUpdateTemplateCategory,
 } from '@/lib/hooks/queries/useTemplates'
+import { useTranslation } from '@/lib/i18n'
 
 const inputClass = 'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
 
 export default function TemplateCategoryEditPage() {
   const router = useRouter()
   const params = useParams()
+  const { t } = useTranslation()
   const id = params.id as string
   const isNew = id === 'new'
 
@@ -72,17 +74,17 @@ export default function TemplateCategoryEditPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold text-gray-900">
-        {isNew ? 'New Template Category' : 'Edit Template Category'}
+        {isNew ? t('New Template Category') : t('Edit Template Category')}
       </h1>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">{t('Name')}</label>
           <input id="name" required value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
         </div>
 
         <div>
-          <label htmlFor="textColor" className="block text-sm font-medium text-gray-700">Color</label>
+          <label htmlFor="textColor" className="block text-sm font-medium text-gray-700">{t('Color')}</label>
           <div className="mt-1 flex items-center gap-3">
             <input
               type="color"
@@ -101,7 +103,7 @@ export default function TemplateCategoryEditPage() {
         </div>
 
         <div>
-          <label htmlFor="sortOrder" className="block text-sm font-medium text-gray-700">Sort Order</label>
+          <label htmlFor="sortOrder" className="block text-sm font-medium text-gray-700">{t('Sort Order')}</label>
           <input
             id="sortOrder"
             type="number"
@@ -118,14 +120,14 @@ export default function TemplateCategoryEditPage() {
             disabled={saving}
             className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
           >
-            {saving ? 'Saving...' : isNew ? 'Create' : 'Save'}
+            {saving ? t('Saving...') : isNew ? t('Create') : t('Save')}
           </button>
           <button
             type="button"
             onClick={() => router.push('/template-categories')}
             className="rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
           >
-            Cancel
+            {t('Cancel')}
           </button>
         </div>
       </form>

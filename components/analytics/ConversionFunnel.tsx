@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 import type { FunnelData } from '@/lib/api/endpoints/analytics'
 
 interface ConversionFunnelProps {
@@ -19,6 +20,7 @@ const stepColors = [
 ]
 
 export default function ConversionFunnel({ data, className }: ConversionFunnelProps) {
+  const { t } = useTranslation()
   const { steps, conversion_rate, total_entered, total_converted } = data
 
   return (
@@ -30,14 +32,14 @@ export default function ConversionFunnel({ data, className }: ConversionFunnelPr
             {data.name}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {total_entered.toLocaleString()} entered · {total_converted.toLocaleString()} converted
+            {total_entered.toLocaleString()} {t('entered')} · {total_converted.toLocaleString()} {t('converted')}
           </p>
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">
             {conversion_rate.toFixed(1)}%
           </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Overall conversion</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t('Overall conversion')}</p>
         </div>
       </div>
 

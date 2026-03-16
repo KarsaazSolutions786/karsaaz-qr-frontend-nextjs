@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface StickerText {
   text: string
@@ -19,6 +20,7 @@ interface StickerTextInputProps {
 }
 
 export function StickerTextInput({ value, onChange, className }: StickerTextInputProps) {
+  const { t } = useTranslation()
   const current = value || DEFAULT_VALUE
   const [modalOpen, setModalOpen] = React.useState(false)
   const [draft, setDraft] = React.useState<StickerText>(current)
@@ -57,7 +59,7 @@ export function StickerTextInput({ value, onChange, className }: StickerTextInpu
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
-          Style
+          {t('Style')}
         </button>
       </div>
 
@@ -65,10 +67,10 @@ export function StickerTextInput({ value, onChange, className }: StickerTextInpu
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setModalOpen(false)}>
           <div className="w-full max-w-md rounded-lg border border-gray-300 bg-white p-5 shadow-lg" onClick={(e) => e.stopPropagation()}>
-            <h3 className="mb-4 text-sm font-semibold">Sticker Text Style</h3>
+            <h3 className="mb-4 text-sm font-semibold">{t('Sticker Text Style')}</h3>
             <div className="space-y-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-700">Text</label>
+                <label className="mb-1 block text-xs font-medium text-gray-700">{t('Text')}</label>
                 <input
                   type="text"
                   value={draft.text}
@@ -81,7 +83,7 @@ export function StickerTextInput({ value, onChange, className }: StickerTextInpu
               </div>
               <div className="flex gap-3">
                 <div className="flex-1">
-                  <label className="mb-1 block text-xs font-medium text-gray-700">Font Size</label>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">{t('Font Size')}</label>
                   <input
                     type="number"
                     min={8}
@@ -95,7 +97,7 @@ export function StickerTextInput({ value, onChange, className }: StickerTextInpu
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-700">Color</label>
+                  <label className="mb-1 block text-xs font-medium text-gray-700">{t('Color')}</label>
                   <input
                     type="color"
                     value={draft.color}
@@ -105,7 +107,7 @@ export function StickerTextInput({ value, onChange, className }: StickerTextInpu
                 </div>
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-700">Alignment</label>
+                <label className="mb-1 block text-xs font-medium text-gray-700">{t('Alignment')}</label>
                 <div className="flex gap-1">
                   {(['left', 'center', 'right'] as const).map((a) => (
                     <button
@@ -119,7 +121,7 @@ export function StickerTextInput({ value, onChange, className }: StickerTextInpu
                           : 'border-gray-300 text-gray-600 hover:bg-gray-50'
                       )}
                     >
-                      {a.charAt(0).toUpperCase() + a.slice(1)}
+                      {t(a.charAt(0).toUpperCase() + a.slice(1))}
                     </button>
                   ))}
                 </div>
@@ -130,7 +132,7 @@ export function StickerTextInput({ value, onChange, className }: StickerTextInpu
                   style={{ fontSize: draft.fontSize, color: draft.color, textAlign: draft.alignment }}
                   className="min-h-[2rem] break-words"
                 >
-                  {draft.text || 'Preview'}
+                  {draft.text || t('Preview')}
                 </p>
               </div>
             </div>
@@ -140,14 +142,14 @@ export function StickerTextInput({ value, onChange, className }: StickerTextInpu
                 onClick={() => setModalOpen(false)}
                 className="h-9 rounded-md border border-gray-300 px-4 text-sm hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
-                Cancel
+                {t('Cancel')}
               </button>
               <button
                 type="button"
                 onClick={apply}
                 className="h-9 rounded-md bg-blue-600 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                Apply
+                {t('Apply')}
               </button>
             </div>
           </div>

@@ -4,6 +4,7 @@ import React from 'react'
 import { Star, MapPin, ExternalLink, MessageSquare } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/lib/i18n'
 
 interface GoogleReviewDesignerProps {
   businessName: string
@@ -28,6 +29,7 @@ export default function GoogleReviewDesigner({
   logoUrl,
   theme,
 }: GoogleReviewDesignerProps) {
+  const { t } = useTranslation()
   const primaryColor = theme?.primaryColor || '#4285f4'
   const bgColor = theme?.backgroundColor || '#f8f9fa'
 
@@ -106,9 +108,9 @@ export default function GoogleReviewDesigner({
             {/* Review Prompt */}
             <div className="bg-blue-50 rounded-xl p-5 text-center">
               <MessageSquare className="w-8 h-8 mx-auto mb-3 text-blue-600" />
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">How was your experience?</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('How was your experience?')}</h2>
               <p className="text-sm text-gray-600 mb-4">
-                Your feedback helps us improve. Please take a moment to leave a review on Google.
+                {t('Your feedback helps us improve. Please take a moment to leave a review on Google.')}
               </p>
               <a href={googleReviewUrl} target="_blank" rel="noopener noreferrer">
                 <Button
@@ -116,7 +118,7 @@ export default function GoogleReviewDesigner({
                   style={{ backgroundColor: primaryColor }}
                 >
                   <Star className="w-4 h-4 mr-2" />
-                  Leave a Google Review
+                  {t('Leave a Google Review')}
                 </Button>
               </a>
             </div>
@@ -131,14 +133,14 @@ export default function GoogleReviewDesigner({
                 style={{ color: primaryColor }}
               >
                 <ExternalLink className="w-4 h-4" />
-                View on Google Maps
+                {t('View on Google Maps')}
               </a>
             )}
           </CardContent>
         </Card>
 
         {/* Footer */}
-        <p className="text-center text-xs text-muted-foreground mt-4">Powered by Karsaaz QR</p>
+        <p className="text-center text-xs text-muted-foreground mt-4">{t('Powered by Karsaaz QR')}</p>
       </div>
     </div>
   )

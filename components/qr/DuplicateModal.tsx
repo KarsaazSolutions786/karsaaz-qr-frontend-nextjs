@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import { X, Copy, AlertCircle } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface DuplicateModalProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export function DuplicateModal({
   qrCodeName,
   onDuplicate,
 }: DuplicateModalProps) {
+  const { t } = useTranslation();
   const [count, setCount] = useState(1);
   const [includeDesign, setIncludeDesign] = useState(true);
   const [includeSettings, setIncludeSettings] = useState(true);
@@ -49,7 +51,7 @@ export function DuplicateModal({
       });
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Duplication failed');
+      setError(err instanceof Error ? err.message : t('Duplication failed'));
     } finally {
       setIsDuplicating(false);
     }
@@ -65,8 +67,8 @@ export function DuplicateModal({
               <Copy className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Duplicate QR Code</h2>
-              <p className="text-sm text-gray-500">Create a copy of "{qrCodeName}"</p>
+              <h2 className="text-xl font-bold text-gray-900">{t('Duplicate QR Code')}</h2>
+              <p className="text-sm text-gray-500">{t('Create a copy of')} "{qrCodeName}"</p>
             </div>
           </div>
           <button
@@ -84,7 +86,7 @@ export function DuplicateModal({
             {/* Number of Copies */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Number of Copies
+                {t('Number of Copies')}
               </label>
               <input
                 type="number"
@@ -94,19 +96,19 @@ export function DuplicateModal({
                 onChange={(e) => setCount(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <p className="text-xs text-gray-500 mt-1">Maximum 100 copies at once</p>
+              <p className="text-xs text-gray-500 mt-1">{t('Maximum 100 copies at once')}</p>
             </div>
             
             {/* Name Prefix */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Name Prefix
+                {t('Name Prefix')}
               </label>
               <input
                 type="text"
                 value={prefix}
                 onChange={(e) => setPrefix(e.target.value)}
-                placeholder="Copy of"
+                placeholder={t('Copy of')}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <p className="text-xs text-gray-500 mt-1">
@@ -117,7 +119,7 @@ export function DuplicateModal({
             {/* Options */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                What to Include
+                {t('What to Include')}
               </label>
               <div className="space-y-3">
                 <label className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
@@ -128,9 +130,9 @@ export function DuplicateModal({
                     className="mt-0.5"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">Design Settings</div>
+                    <div className="text-sm font-medium text-gray-900">{t('Design Settings')}</div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      Colors, logos, patterns, and styling
+                      {t('Colors, logos, patterns, and styling')}
                     </div>
                   </div>
                 </label>
@@ -143,9 +145,9 @@ export function DuplicateModal({
                     className="mt-0.5"
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">QR Code Settings</div>
+                    <div className="text-sm font-medium text-gray-900">{t('QR Code Settings')}</div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      Error correction, size, and format preferences
+                      {t('Error correction, size, and format preferences')}
                     </div>
                   </div>
                 </label>
@@ -157,8 +159,8 @@ export function DuplicateModal({
               <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
                 <p className="text-sm text-yellow-800">
-                  Each duplicate will have a new unique ID and will start with 0 scans.
-                  {count > 1 && ` Creating ${count} copies will use ${count} QR code credits.`}
+                  {t('Each duplicate will have a new unique ID and will start with 0 scans.')}
+                  {count > 1 && ` ${t('Creating')} ${count} ${t('copies will use')} ${count} ${t('QR code credits.')}`}
                 </p>
               </div>
             </div>
@@ -178,7 +180,7 @@ export function DuplicateModal({
               disabled={isDuplicating}
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               onClick={handleDuplicate}
@@ -188,12 +190,12 @@ export function DuplicateModal({
               {isDuplicating ? (
                 <>
                   <Copy className="w-4 h-4 animate-pulse" />
-                  <span>Duplicating...</span>
+                  <span>{t('Duplicating...')}</span>
                 </>
               ) : (
                 <>
                   <Copy className="w-4 h-4" />
-                  <span>Duplicate {count > 1 ? `(${count})` : ''}</span>
+                  <span>{t('Duplicate')} {count > 1 ? `(${count})` : ''}</span>
                 </>
               )}
             </button>

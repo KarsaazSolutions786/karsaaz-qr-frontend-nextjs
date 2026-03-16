@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -41,6 +42,7 @@ export default function BlogPostForm({
   isSubmitting = false,
   submitLabel = 'Save',
 }: BlogPostFormProps) {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -82,7 +84,7 @@ export default function BlogPostForm({
       {/* Title */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Title <span className="text-red-500">*</span>
+          {t('Title')} <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
@@ -94,44 +96,44 @@ export default function BlogPostForm({
 
       {/* Slug */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">Slug</label>
+        <label className="block text-sm font-medium text-gray-700">{t('Slug')}</label>
         <input
           type="text"
           {...register('slug')}
           className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-600 shadow-sm focus:border-blue-500 focus:outline-none"
         />
-        <p className="mt-1 text-xs text-gray-500">Auto-generated from title. Edit if needed.</p>
+        <p className="mt-1 text-xs text-gray-500">{t('Auto-generated from title. Edit if needed.')}</p>
       </div>
 
       {/* Content (Markdown) */}
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Content <span className="text-red-500">*</span>
+          {t('Content')} <span className="text-red-500">*</span>
         </label>
         <textarea
           {...register('content')}
           rows={12}
-          placeholder="Write your content in Markdown..."
+          placeholder={t('Write your content in Markdown...')}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm shadow-sm focus:border-blue-500 focus:outline-none"
         />
         {errors.content && <p className="mt-1 text-xs text-red-600">{errors.content.message}</p>}
-        <p className="mt-1 text-xs text-gray-500">Supports Markdown formatting</p>
+        <p className="mt-1 text-xs text-gray-500">{t('Supports Markdown formatting')}</p>
       </div>
 
       {/* Excerpt */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">Excerpt</label>
+        <label className="block text-sm font-medium text-gray-700">{t('Excerpt')}</label>
         <textarea
           {...register('excerpt')}
           rows={3}
-          placeholder="Short summary for listing pages"
+          placeholder={t('Short summary for listing pages')}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
         />
       </div>
 
       {/* Featured Image */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">Featured Image</label>
+        <label className="block text-sm font-medium text-gray-700">{t('Featured Image')}</label>
         {onImageUpload ? (
           <input
             type="file"
@@ -141,27 +143,27 @@ export default function BlogPostForm({
           />
         ) : (
           <div className="mt-1 rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500">
-            Image upload available after saving the post.
+            {t('Image upload available after saving the post.')}
           </div>
         )}
       </div>
 
       {/* Status */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">Status</label>
+        <label className="block text-sm font-medium text-gray-700">{t('Status')}</label>
         <select
           {...register('status')}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:max-w-xs sm:text-sm"
         >
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-          <option value="archived">Archived</option>
+          <option value="draft">{t('Draft')}</option>
+          <option value="published">{t('Published')}</option>
+          <option value="archived">{t('Archived')}</option>
         </select>
       </div>
 
       {/* Published At */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">Published At</label>
+        <label className="block text-sm font-medium text-gray-700">{t('Published At')}</label>
         <input
           type="datetime-local"
           {...register('publishedAt')}
@@ -171,10 +173,10 @@ export default function BlogPostForm({
 
       {/* SEO Fields */}
       <fieldset className="rounded-md border border-gray-200 p-4">
-        <legend className="text-sm font-medium text-gray-700 px-1">SEO</legend>
+        <legend className="text-sm font-medium text-gray-700 px-1">{t('SEO')}</legend>
 
         <div className="mt-2">
-          <label className="block text-sm font-medium text-gray-700">Meta Title</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Meta Title')}</label>
           <input
             type="text"
             {...register('meta_title')}
@@ -183,7 +185,7 @@ export default function BlogPostForm({
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700">Meta Description</label>
+          <label className="block text-sm font-medium text-gray-700">{t('Meta Description')}</label>
           <textarea
             {...register('meta_description')}
             rows={2}
@@ -202,7 +204,7 @@ export default function BlogPostForm({
           disabled={isSubmitting}
           className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
         >
-          {isSubmitting ? 'Saving…' : submitLabel}
+          {isSubmitting ? t('Saving...') : submitLabel}
         </button>
       </div>
     </form>

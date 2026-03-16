@@ -5,8 +5,10 @@ import { useContacts } from '@/lib/hooks/queries/useContacts'
 import { useDeleteContact } from '@/lib/hooks/mutations/useContactMutations'
 import type { Contact } from '@/types/entities/contact'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 
 export default function ContactsPage() {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const { data, isLoading } = useContacts({ page, search: search || undefined })
@@ -15,7 +17,7 @@ export default function ContactsPage() {
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null)
 
   const handleDelete = async (contact: Contact) => {
-    if (!confirm(`Delete contact from "${contact.name}"? This action cannot be undone.`)) return
+    if (!confirm(t('Delete contact from "{{name}}"? This action cannot be undone.').replace('{{name}}', contact.name))) return
     setDeleteTarget(contact.id)
     try {
       await deleteMutation.mutateAsync(contact.id)
@@ -30,15 +32,15 @@ export default function ContactsPage() {
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Contacts</h1>
-        <p className="mt-2 text-sm text-gray-600">Contact form submissions from your public website</p>
+        <h1 className="text-3xl font-bold text-gray-900">{t('Contacts')}</h1>
+        <p className="mt-2 text-sm text-gray-600">{t('Contact form submissions from your public website')}</p>
       </div>
 
       {/* Search */}
       <div className="mb-4">
         <input
           type="search"
-          placeholder="Search by anything…"
+          placeholder={t('Search by anything...')}
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:max-w-sm"
@@ -52,17 +54,17 @@ export default function ContactsPage() {
           </div>
         ) : contacts.length === 0 ? (
           <div className="flex h-48 flex-col items-center justify-center gap-2 text-gray-500">
-            <p className="text-lg font-medium">No contacts yet</p>
-            <p className="text-sm">Submissions from your public contact form will appear here</p>
+            <p className="text-lg font-medium">{t('No contacts yet')}</p>
+            <p className="text-sm">{t('Submissions from your public contact form will appear here')}</p>
           </div>
         ) : (
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Subject</th>
-                <th className="w-28 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Name')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Email')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Subject')}</th>
+                <th className="w-28 px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">{t('Actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
@@ -76,12 +78,12 @@ export default function ContactsPage() {
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
                     <div className="flex items-center justify-end gap-2">
                       <Link href={`/contacts/${contact.id}`}
-                        className="rounded px-2 py-1 text-blue-600 hover:bg-blue-50">View</Link>
+                        className="rounded px-2 py-1 text-blue-600 hover:bg-blue-50">{t('View')}</Link>
                       <button
                         onClick={() => handleDelete(contact)}
                         disabled={deleteTarget === contact.id}
                         className="rounded px-2 py-1 text-red-600 hover:bg-red-50 disabled:opacity-50">
-                        {deleteTarget === contact.id ? '…' : 'Delete'}
+                        {deleteTarget === contact.id ? '\u2026' : t('Delete')}
                       </button>
                     </div>
                   </td>
@@ -94,14 +96,14 @@ export default function ContactsPage() {
 
       {pagination && pagination.lastPage > 1 && (
         <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
-          <span>Page {pagination.currentPage} of {pagination.lastPage} ({pagination.total} total)</span>
+          <span>{t('Page')} {pagination.currentPage} {t('of')} {pagination.lastPage} ({pagination.total} {t('total')})</span>
           <div className="flex gap-2">
             <button onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={pagination.currentPage === 1}
-              className="rounded border px-3 py-1 disabled:opacity-40">← Prev</button>
+              className="rounded border px-3 py-1 disabled:opacity-40">{t('\u2190 Prev')}</button>
             <button onClick={() => setPage((p) => Math.min(pagination.lastPage, p + 1))}
               disabled={pagination.currentPage === pagination.lastPage}
-              className="rounded border px-3 py-1 disabled:opacity-40">Next →</button>
+              className="rounded border px-3 py-1 disabled:opacity-40">{t('Next \u2192')}</button>
           </div>
         </div>
       )}

@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ArrowLeftRight } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface ColorFieldsProps {
   foregroundColor: string;
@@ -40,6 +41,7 @@ export default function ColorFields({
   backgroundColor,
   onChange,
 }: ColorFieldsProps) {
+  const { t } = useTranslation();
   const [localForeground, setLocalForeground] = useState(foregroundColor);
   const [localBackground, setLocalBackground] = useState(backgroundColor);
   const [foregroundOpacity, setForegroundOpacity] = useState(100);
@@ -87,7 +89,7 @@ export default function ColorFields({
     <div className="space-y-6">
       {/* Foreground Color */}
       <div className="space-y-3">
-        <Label>Foreground Color (QR Modules)</Label>
+        <Label>{t('Foreground Color (QR Modules)')}</Label>
         <Card className="p-4 space-y-3">
           <div className="flex gap-3 items-center">
             {/* Color Picker */}
@@ -121,7 +123,7 @@ export default function ColorFields({
                 maxLength={7}
               />
               {!validateHex(localForeground) && (
-                <p className="text-xs text-red-500">Invalid hex format</p>
+                <p className="text-xs text-red-500">{t('Invalid hex format')}</p>
               )}
             </div>
           </div>
@@ -144,14 +146,14 @@ export default function ColorFields({
           {/* Color Preview */}
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
-              <div className="text-muted-foreground mb-1">Solid</div>
+              <div className="text-muted-foreground mb-1">{t('Solid')}</div>
               <div
                 className="h-12 rounded border-2 border-gray-300"
                 style={{ backgroundColor: localForeground }}
               />
             </div>
             <div>
-              <div className="text-muted-foreground mb-1">With Opacity</div>
+              <div className="text-muted-foreground mb-1">{t('With Opacity')}</div>
               <div
                 className="h-12 rounded border-2 border-gray-300"
                 style={{ backgroundColor: hexToRgba(localForeground, foregroundOpacity) }}
@@ -176,7 +178,7 @@ export default function ColorFields({
 
       {/* Background Color */}
       <div className="space-y-3">
-        <Label>Background Color</Label>
+        <Label>{t('Background Color')}</Label>
         <Card className="p-4 space-y-3">
           <div className="flex gap-3 items-center">
             {/* Color Picker */}
@@ -210,7 +212,7 @@ export default function ColorFields({
                 maxLength={7}
               />
               {!validateHex(localBackground) && (
-                <p className="text-xs text-red-500">Invalid hex format</p>
+                <p className="text-xs text-red-500">{t('Invalid hex format')}</p>
               )}
             </div>
           </div>
@@ -233,14 +235,14 @@ export default function ColorFields({
           {/* Color Preview */}
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div>
-              <div className="text-muted-foreground mb-1">Solid</div>
+              <div className="text-muted-foreground mb-1">{t('Solid')}</div>
               <div
                 className="h-12 rounded border-2 border-gray-300"
                 style={{ backgroundColor: localBackground }}
               />
             </div>
             <div>
-              <div className="text-muted-foreground mb-1">With Opacity</div>
+              <div className="text-muted-foreground mb-1">{t('With Opacity')}</div>
               <div
                 className="h-12 rounded border-2 border-gray-300"
                 style={{ backgroundColor: hexToRgba(localBackground, backgroundOpacity) }}
@@ -252,7 +254,7 @@ export default function ColorFields({
 
       {/* Recent Colors */}
       <div className="space-y-2">
-        <Label className="text-sm">Recent Colors</Label>
+        <Label className="text-sm">{t('Recent Colors')}</Label>
         <div className="grid grid-cols-8 gap-2">
           {recentColors.map((color, index) => (
             <button
@@ -268,7 +270,7 @@ export default function ColorFields({
 
       {/* Favorite/Preset Colors */}
       <div className="space-y-2">
-        <Label className="text-sm">Favorite Colors</Label>
+        <Label className="text-sm">{t('Favorite Colors')}</Label>
         <div className="grid grid-cols-8 gap-2">
           {favoriteGradients.map((color, index) => (
             <button
@@ -284,7 +286,7 @@ export default function ColorFields({
 
       {/* Color Contrast Preview */}
       <div className="space-y-2">
-        <Label className="text-sm">Contrast Preview</Label>
+        <Label className="text-sm">{t('Contrast Preview')}</Label>
         <Card className="p-6">
           <div
             className="h-32 rounded-lg flex items-center justify-center relative overflow-hidden"

@@ -6,6 +6,7 @@ import {
   usePasswordlessGetPreference,
   usePasswordlessSetPreference,
 } from '@/lib/hooks/mutations/usePasswordlessAuth'
+import { useTranslation } from '@/lib/i18n'
 import { CreatePasswordModal } from './CreatePasswordModal'
 
 /**
@@ -18,6 +19,7 @@ import { CreatePasswordModal } from './CreatePasswordModal'
  *   - Switching to passwordless sends PUT with preference='enabled'
  */
 export function LoginPreferenceToggle() {
+  const { t } = useTranslation()
   const [showCreatePasswordModal, setShowCreatePasswordModal] = useState(false)
 
   // 1. Check if passwordless is globally enabled
@@ -72,11 +74,11 @@ export function LoginPreferenceToggle() {
     <>
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="text-sm font-medium text-gray-900">Login Method</h4>
+          <h4 className="text-sm font-medium text-gray-900">{t('Login Method')}</h4>
           <p className="text-sm text-gray-500">
             {isPasswordless
-              ? 'You sign in with a one-time code sent to your email.'
-              : 'You sign in with your email and password.'}
+              ? t('You sign in with a one-time code sent to your email.')
+              : t('You sign in with your email and password.')}
           </p>
         </div>
 
@@ -107,17 +109,17 @@ export function LoginPreferenceToggle() {
               : 'bg-gray-100 text-gray-800'
           }`}
         >
-          {isPasswordless ? '🔐 Passwordless (Email OTP)' : '🔑 Password Login'}
+          {isPasswordless ? t('Passwordless (Email OTP)') : t('Password Login')}
         </span>
         {setPreferenceMutation.isPending && (
-          <span className="text-xs text-gray-500">Updating…</span>
+          <span className="text-xs text-gray-500">{t('Updating...')}</span>
         )}
       </div>
 
       {setPreferenceMutation.isError && (
         <p className="mt-2 text-sm text-red-600">
           {(setPreferenceMutation.error as any)?.response?.data?.message ||
-            'Failed to update login preference. Please try again.'}
+            t('Failed to update login preference. Please try again.')}
         </p>
       )}
 

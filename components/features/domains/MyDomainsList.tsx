@@ -1,7 +1,8 @@
 'use client'
 
-import { useDomains } from '@/hooks/queries/useDomains'
-import { useDeleteDomain, useTestDomainConnection } from '@/hooks/mutations/useDomainMutations'
+import { useTranslation } from '@/lib/i18n'
+import { useDomains } from '@/lib/hooks/queries/useDomains'
+import { useDeleteDomain, useTestDomainConnection } from '@/lib/hooks/mutations/useDomainMutations'
 import { Badge } from '@/components/ui/badge'
 import type { Domain, DomainStatus } from '@/types/entities/domain'
 
@@ -17,13 +18,14 @@ const statusConfig: Record<DomainStatus, { label: string; variant: 'default' | '
 }
 
 export function MyDomainsList({ onEdit, compact = true }: MyDomainsListProps) {
+  const { t } = useTranslation()
   const { data, isLoading } = useDomains()
   const deleteMutation = useDeleteDomain()
   const testMutation = useTestDomainConnection()
   const domains = data?.data ?? []
 
   const handleDelete = async (domain: Domain) => {
-    if (!confirm(`Delete domain "${domain.domain}"? This cannot be undone.`)) return
+    if (!confirm(t('Delete domain "{{domain}}"? This cannot be undone.').replace('{{domain}}', domain.domain))) return
     await deleteMutation.mutateAsync(domain.id)
   }
 
@@ -42,14 +44,14 @@ export function MyDomainsList({ onEdit, compact = true }: MyDomainsListProps) {
   if (domains.length === 0) {
     return (
       <p className="py-4 text-center text-sm text-gray-500">
-        You do not have any domains.
+        {t('You do not have any domains.')}
       </p>
     )
   }
 
   return (
     <div className="space-y-2">
-      <h3 className="text-sm font-semibold text-gray-700">Your Domains</h3>
+      <h3 className="text-sm font-semibold text-gray-700">{t('Your Domains')}</h3>
       <ul className="divide-y divide-gray-100 rounded-lg border border-gray-200 bg-white">
         {domains.map((domain) => {
           const cfg = statusConfig[domain.status] ?? statusConfig.pending
@@ -62,9 +64,9 @@ export function MyDomainsList({ onEdit, compact = true }: MyDomainsListProps) {
                 <span className="truncate text-sm font-medium text-gray-900">
                   {domain.domain}
                 </span>
-                <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                <Badge variant={cfg.variant}>{t(cfg.label)}</Badge>
                 {domain.isDefault && (
-                  <Badge variant="outline">Default</Badge>
+                  <Badge variant="outline">{t('Default')}</Badge>
                 )}
               </div>
 
@@ -76,7 +78,7 @@ export function MyDomainsList({ onEdit, compact = true }: MyDomainsListProps) {
                       onClick={() => onEdit(domain)}
                       className="text-xs font-medium text-purple-600 hover:text-purple-800"
                     >
-                      Edit
+                      {t('Edit')}
                     </button>
                   )}
                   <button
@@ -85,7 +87,7 @@ export function MyDomainsList({ onEdit, compact = true }: MyDomainsListProps) {
                     disabled={testMutation.isPending}
                     className="text-xs font-medium text-blue-600 hover:text-blue-800 disabled:opacity-50"
                   >
-                    Test
+                    {t('Test')}
                   </button>
                   <button
                     type="button"
@@ -93,7 +95,7 @@ export function MyDomainsList({ onEdit, compact = true }: MyDomainsListProps) {
                     disabled={deleteMutation.isPending}
                     className="text-xs font-medium text-red-600 hover:text-red-800 disabled:opacity-50"
                   >
-                    Delete
+                    {t('Delete')}
                   </button>
                 </div>
               )}

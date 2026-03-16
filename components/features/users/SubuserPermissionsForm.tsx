@@ -4,6 +4,7 @@ import { useMemo, useCallback } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { useTranslation } from '@/lib/i18n'
 
 interface PermissionGroup {
   name: string
@@ -40,6 +41,7 @@ interface SubuserPermissionsFormProps {
 }
 
 export function SubuserPermissionsForm({ userId: _userId, permissions, onChange }: SubuserPermissionsFormProps) {
+  const { t } = useTranslation()
   const allPermissions = useMemo(
     () => PERMISSION_GROUPS.flatMap((g) => g.permissions),
     []
@@ -87,8 +89,8 @@ export function SubuserPermissionsForm({ userId: _userId, permissions, onChange 
       {/* Master Toggle */}
       <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
         <div>
-          <p className="text-sm font-semibold text-gray-900">Full Access</p>
-          <p className="text-xs text-gray-500">Grant all permissions to this sub-user</p>
+          <p className="text-sm font-semibold text-gray-900">{t('Full Access')}</p>
+          <p className="text-xs text-gray-500">{t('Grant all permissions to this sub-user')}</p>
         </div>
         <Switch checked={isFullAccess} onCheckedChange={toggleFullAccess} />
       </div>

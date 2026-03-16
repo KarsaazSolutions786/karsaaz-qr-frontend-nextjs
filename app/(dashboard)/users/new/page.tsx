@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { useRoles } from '@/lib/hooks/queries/useRoles'
 import { useCreateUser } from '@/lib/hooks/mutations/useUserMutations'
+import { useTranslation } from '@/lib/i18n'
 
 interface FormState {
   name: string
@@ -25,6 +26,7 @@ const defaultForm: FormState = {
 }
 
 export default function NewUserPage() {
+  const { t } = useTranslation()
   const [form, setForm] = useState<FormState>(defaultForm)
   const [error, setError] = useState<string | null>(null)
 
@@ -39,7 +41,7 @@ export default function NewUserPage() {
     setError(null)
 
     if (form.password && form.password !== form.password_confirmation) {
-      setError('Passwords do not match.')
+      setError(t('Passwords do not match.'))
       return
     }
 
@@ -56,7 +58,7 @@ export default function NewUserPage() {
       const msg =
         err?.response?.data?.message ||
         Object.values(err?.response?.data?.errors || {}).flat().join(' ') ||
-        'Failed to create user.'
+        t('Failed to create user.')
       setError(msg as string)
     }
   }
@@ -69,13 +71,13 @@ export default function NewUserPage() {
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Users
+        {t('Back to Users')}
       </Link>
 
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
         <div className="px-6 py-6 border-b border-gray-200">
-          <h1 className="text-xl font-semibold text-gray-900">Create User</h1>
-          <p className="mt-1 text-sm text-gray-600">Add a new user to the platform.</p>
+          <h1 className="text-xl font-semibold text-gray-900">{t('Create User')}</h1>
+          <p className="mt-1 text-sm text-gray-600">{t('Add a new user to the platform.')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-6 space-y-5">
@@ -88,7 +90,7 @@ export default function NewUserPage() {
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Full Name
+              {t('Full Name')}
             </label>
             <input
               type="text"
@@ -102,7 +104,7 @@ export default function NewUserPage() {
           {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Email Address <span className="text-red-500">*</span>
+              {t('Email Address')} <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -117,7 +119,7 @@ export default function NewUserPage() {
           {/* Mobile */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Mobile Number
+              {t('Mobile Number')}
             </label>
             <input
               type="tel"
@@ -131,7 +133,7 @@ export default function NewUserPage() {
           {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Password <span className="text-red-500">*</span>
+              {t('Password')} <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
@@ -146,7 +148,7 @@ export default function NewUserPage() {
           {/* Password Confirmation */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Confirm Password <span className="text-red-500">*</span>
+              {t('Confirm Password')} <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
@@ -161,7 +163,7 @@ export default function NewUserPage() {
           {/* Role */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Role
+              {t('Role')}
             </label>
             <select
               value={form.role_id}
@@ -183,7 +185,7 @@ export default function NewUserPage() {
               href="/users"
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              Cancel
+              {t('Cancel')}
             </Link>
             <button
               type="submit"
@@ -191,7 +193,7 @@ export default function NewUserPage() {
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              Create User
+              {t('Create User')}
             </button>
           </div>
         </form>

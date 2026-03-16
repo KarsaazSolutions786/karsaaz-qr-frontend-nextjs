@@ -3,12 +3,14 @@
 import { useState, useRef } from 'react'
 import { ProfileEditor } from '@/components/features/auth/ProfileEditor'
 import { User } from '@/types/entities/user'
+import { useTranslation } from '@/lib/i18n'
 
 interface AvatarUploadProps {
   user: User
 }
 
 export function AvatarUpload({ user }: AvatarUploadProps) {
+  const { t } = useTranslation()
   const [preview, setPreview] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -47,9 +49,9 @@ export function AvatarUpload({ user }: AvatarUploadProps) {
           onClick={() => fileRef.current?.click()}
           className="text-sm font-medium text-blue-600 hover:text-blue-700"
         >
-          Change avatar
+          {t('Change avatar')}
         </button>
-        <p className="text-xs text-gray-500 mt-1">JPG, PNG or GIF. Max 2MB.</p>
+        <p className="text-xs text-gray-500 mt-1">{t('JPG, PNG or GIF. Max 2MB.')}</p>
       </div>
       <input
         ref={fileRef}
@@ -67,6 +69,7 @@ interface ProfileTabProps {
 }
 
 export function ProfileTab({ user }: ProfileTabProps) {
+  const { t } = useTranslation()
   return (
     <div className="space-y-6">
       {/* Profile Card */}
@@ -90,14 +93,14 @@ export function ProfileTab({ user }: ProfileTabProps) {
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                Verified
+                {t('Verified')}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 text-yellow-600">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                 </svg>
-                Unverified
+                {t('Unverified')}
               </span>
             )}
           </div>
@@ -106,7 +109,7 @@ export function ProfileTab({ user }: ProfileTabProps) {
 
       {/* Avatar + Edit Profile */}
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Edit Profile</h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Edit Profile')}</h2>
         <AvatarUpload user={user} />
         <ProfileEditor user={user} />
       </div>

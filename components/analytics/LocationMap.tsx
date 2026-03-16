@@ -8,6 +8,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { MapPin, Globe } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface LocationData {
   country: string;
@@ -32,6 +33,7 @@ export function LocationMap({
   height = 400,
   showList = true,
 }: LocationMapProps) {
+  const { t } = useTranslation();
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   
@@ -58,7 +60,7 @@ export function LocationMap({
             <Globe className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">Scan Locations</h3>
+            <h3 className="text-lg font-bold text-gray-900">{t('Scan Locations')}</h3>
             <p className="text-sm text-gray-500">
               {locations.length} countries · {totalScans.toLocaleString()} total scans
             </p>
@@ -75,7 +77,7 @@ export function LocationMap({
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            Map
+            {t('Map')}
           </button>
           <button
             onClick={() => setViewMode('list')}
@@ -85,7 +87,7 @@ export function LocationMap({
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            List
+            {t('List')}
           </button>
         </div>
       </div>
@@ -101,9 +103,9 @@ export function LocationMap({
             >
               <div className="text-center">
                 <Globe className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 font-medium">Interactive Map</p>
+                <p className="text-gray-500 font-medium">{t('Interactive Map')}</p>
                 <p className="text-sm text-gray-400 mt-1">
-                  Integrate with Mapbox, Google Maps, or Leaflet
+                  {t('Integrate with Mapbox, Google Maps, or Leaflet')}
                 </p>
               </div>
             </div>
@@ -113,20 +115,20 @@ export function LocationMap({
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-blue-600 rounded-full" />
-                  <span className="text-sm text-gray-600">High Activity</span>
+                  <span className="text-sm text-gray-600">{t('High Activity')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-blue-300 rounded-full" />
-                  <span className="text-sm text-gray-600">Medium Activity</span>
+                  <span className="text-sm text-gray-600">{t('Medium Activity')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-blue-100 rounded-full" />
-                  <span className="text-sm text-gray-600">Low Activity</span>
+                  <span className="text-sm text-gray-600">{t('Low Activity')}</span>
                 </div>
               </div>
               
               <div className="text-sm text-gray-500">
-                Click markers for details
+                {t('Click markers for details')}
               </div>
             </div>
           </div>
@@ -183,7 +185,7 @@ export function LocationMap({
             {locations.length > 10 && (
               <div className="text-center pt-2">
                 <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                  View all {locations.length} locations →
+                  {t('View all')} {locations.length} {t('locations')} →
                 </button>
               </div>
             )}
@@ -195,7 +197,7 @@ export function LocationMap({
       {showList && viewMode === 'map' && (
         <div className="border-t border-gray-200 p-6 bg-gray-50">
           <h4 className="text-sm font-semibold text-gray-900 mb-4">
-            Top 5 Countries
+            {t('Top 5 Countries')}
           </h4>
           <div className="grid grid-cols-5 gap-4">
             {topLocations.slice(0, 5).map((location) => (

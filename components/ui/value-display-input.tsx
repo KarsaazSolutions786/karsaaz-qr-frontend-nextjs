@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Copy, Check } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface ValueDisplayInputProps {
   value: string
@@ -11,6 +12,7 @@ interface ValueDisplayInputProps {
 }
 
 export function ValueDisplayInput({ value, label, className }: ValueDisplayInputProps) {
+  const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -37,12 +39,12 @@ export function ValueDisplayInput({ value, label, className }: ValueDisplayInput
           {copied ? (
             <>
               <Check className="h-4 w-4 text-green-500" />
-              Copied!
+              {t('Copied!')}
             </>
           ) : (
             <>
               <Copy className="h-4 w-4" />
-              Copy
+              {t('Copy')}
             </>
           )}
         </button>

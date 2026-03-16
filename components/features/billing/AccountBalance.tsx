@@ -9,6 +9,7 @@ import {
   ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
 interface AccountBalanceData {
@@ -44,6 +45,7 @@ export function AccountBalance({
   compact = false,
   onAddBalance,
 }: AccountBalanceProps) {
+  const { t } = useTranslation()
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const {
@@ -76,9 +78,9 @@ export function AccountBalance({
       <div className={cn('flex items-center gap-2', className)}>
         <CurrencyDollarIcon className="h-5 w-5 text-gray-500" />
         {isLoading ? (
-          <span className="text-sm text-gray-400">Loading...</span>
+          <span className="text-sm text-gray-400">{t('Loading...')}</span>
         ) : isError ? (
-          <span className="text-sm text-red-500">Error</span>
+          <span className="text-sm text-red-500">{t('Error')}</span>
         ) : (
           <span
             className={cn(
@@ -97,7 +99,7 @@ export function AccountBalance({
   return (
     <div className={cn('rounded-lg border border-gray-200 bg-white p-4', className)}>
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-gray-700">Account Balance</h3>
+        <h3 className="text-sm font-medium text-gray-700">{t('Account Balance')}</h3>
         <button
           type="button"
           onClick={handleRefresh}
@@ -117,7 +119,7 @@ export function AccountBalance({
       ) : isError ? (
         <div className="flex items-center gap-2 text-red-600">
           <ExclamationTriangleIcon className="h-5 w-5" />
-          <span className="text-sm">Failed to load balance</span>
+          <span className="text-sm">{t('Failed to load balance')}</span>
         </div>
       ) : (
         <>
@@ -132,7 +134,7 @@ export function AccountBalance({
           {isLowBalance && (
             <div className="mt-2 flex items-center gap-1.5 text-orange-600">
               <ExclamationTriangleIcon className="h-4 w-4" />
-              <span className="text-xs">Low balance</span>
+              <span className="text-xs">{t('Low balance')}</span>
             </div>
           )}
 
@@ -153,7 +155,7 @@ export function AccountBalance({
               className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
             >
               <PlusIcon className="h-4 w-4" />
-              Add Balance
+              {t('Add Balance')}
             </button>
           ) : (
             <Link
@@ -161,7 +163,7 @@ export function AccountBalance({
               className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
             >
               <PlusIcon className="h-4 w-4" />
-              Add Balance
+              {t('Add Balance')}
             </Link>
           )}
         </div>

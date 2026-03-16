@@ -2,6 +2,7 @@
 
 import { Calendar, Clock, MapPin, Users, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from '@/lib/i18n';
 
 interface EventDetailsProps {
   event: {
@@ -20,6 +21,7 @@ interface EventDetailsProps {
 }
 
 export default function EventDetails({ event }: EventDetailsProps) {
+  const { t } = useTranslation();
   const eventDate = new Date(event.date);
   const formattedDate = eventDate.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -38,7 +40,7 @@ export default function EventDetails({ event }: EventDetailsProps) {
       animate={{ opacity: 1, y: 0 }}
       className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
     >
-      <h3 className="text-2xl font-bold mb-6 text-gray-900">Event Details</h3>
+      <h3 className="text-2xl font-bold mb-6 text-gray-900">{t('Event Details')}</h3>
       
       <div className="space-y-4">
         {/* Date */}
@@ -52,7 +54,7 @@ export default function EventDetails({ event }: EventDetailsProps) {
           <div className="flex-1">
             <div className="flex items-center gap-2 text-gray-600 text-sm mb-1">
               <Calendar className="w-4 h-4" />
-              <span className="font-medium">Date</span>
+              <span className="font-medium">{t('Date')}</span>
             </div>
             <p className="text-gray-900 font-semibold">{formattedDate}</p>
           </div>
@@ -65,7 +67,7 @@ export default function EventDetails({ event }: EventDetailsProps) {
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 text-gray-600 text-sm mb-1">
-              <span className="font-medium">Time</span>
+              <span className="font-medium">{t('Time')}</span>
             </div>
             <p className="text-gray-900 font-semibold">
               {event.time}
@@ -82,7 +84,7 @@ export default function EventDetails({ event }: EventDetailsProps) {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 text-gray-600 text-sm mb-1">
-                <span className="font-medium">Location</span>
+                <span className="font-medium">{t('Location')}</span>
               </div>
               {event.venue && <p className="text-gray-900 font-semibold">{event.venue}</p>}
               {event.location && !event.venue && <p className="text-gray-900 font-semibold">{event.location}</p>}
@@ -99,7 +101,7 @@ export default function EventDetails({ event }: EventDetailsProps) {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 text-gray-600 text-sm mb-1">
-                <span className="font-medium">Category</span>
+                <span className="font-medium">{t('Category')}</span>
               </div>
               <p className="text-gray-900 font-semibold">{event.category}</p>
             </div>
@@ -114,19 +116,19 @@ export default function EventDetails({ event }: EventDetailsProps) {
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 text-gray-600 text-sm mb-1">
-                <span className="font-medium">Availability</span>
+                <span className="font-medium">{t('Availability')}</span>
               </div>
               <p className="text-gray-900 font-semibold">
                 {spotsLeft > 0 ? (
                   <>
-                    <span className="text-green-600">{spotsLeft}</span> spots left
+                    <span className="text-green-600">{spotsLeft}</span> {t('spots left')}
                   </>
                 ) : (
-                  <span className="text-red-600">Event Full</span>
+                  <span className="text-red-600">{t('Event Full')}</span>
                 )}
               </p>
               <p className="text-gray-600 text-sm mt-1">
-                {event.registeredCount} / {event.capacity} registered
+                {event.registeredCount} / {event.capacity} {t('registered')}
               </p>
             </div>
           </div>
@@ -138,14 +140,14 @@ export default function EventDetails({ event }: EventDetailsProps) {
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-3 rounded-lg bg-gradient-to-br from-indigo-50 to-purple-50">
             <div className="text-2xl font-bold text-indigo-600">
-              {eventDate > new Date() ? 'Upcoming' : 'Live'}
+              {eventDate > new Date() ? t('Upcoming') : t('Live')}
             </div>
-            <div className="text-xs text-gray-600 mt-1">Status</div>
+            <div className="text-xs text-gray-600 mt-1">{t('Status')}</div>
           </div>
           {event.registeredCount !== undefined && (
             <div className="text-center p-3 rounded-lg bg-gradient-to-br from-green-50 to-emerald-50">
               <div className="text-2xl font-bold text-green-600">{event.registeredCount}</div>
-              <div className="text-xs text-gray-600 mt-1">Registered</div>
+              <div className="text-xs text-gray-600 mt-1">{t('Registered')}</div>
             </div>
           )}
         </div>

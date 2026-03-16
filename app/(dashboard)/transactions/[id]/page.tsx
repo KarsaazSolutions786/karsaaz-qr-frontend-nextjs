@@ -2,6 +2,7 @@
 
 import { use } from 'react'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n'
 import { useTransaction } from '@/lib/hooks/queries/useTransactions'
 import type { Transaction } from '@/types/entities/transaction'
 
@@ -38,6 +39,7 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
 }
 
 export default function TransactionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { t } = useTranslation()
   const { id } = use(params)
   const { data: transaction, isLoading } = useTransaction(Number(id))
 
@@ -52,8 +54,8 @@ export default function TransactionDetailPage({ params }: { params: Promise<{ id
   if (!transaction) {
     return (
       <div className="py-16 text-center">
-        <h2 className="text-lg font-medium text-gray-900">Transaction not found</h2>
-        <Link href="/transactions" className="mt-2 text-sm text-blue-600 hover:text-blue-900">← Back to transactions</Link>
+        <h2 className="text-lg font-medium text-gray-900">{t('Transaction not found')}</h2>
+        <Link href="/transactions" className="mt-2 text-sm text-blue-600 hover:text-blue-900">{t('← Back to transactions')}</Link>
       </div>
     )
   }
@@ -65,10 +67,10 @@ export default function TransactionDetailPage({ params }: { params: Promise<{ id
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Transaction Detail</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Transaction Detail')}</h1>
           <p className="mt-1 text-sm text-gray-500">ID: {transaction.id}</p>
         </div>
-        <Link href="/transactions" className="text-sm text-blue-600 hover:text-blue-900">← Back</Link>
+        <Link href="/transactions" className="text-sm text-blue-600 hover:text-blue-900">{t('← Back')}</Link>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -76,7 +78,7 @@ export default function TransactionDetailPage({ params }: { params: Promise<{ id
         <div className="border-b border-gray-200 px-6 py-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Amount</p>
+              <p className="text-sm text-gray-500">{t('Amount')}</p>
               <p className="text-3xl font-bold text-gray-900">{formatAmount(transaction)}</p>
             </div>
             <StatusBadge status={transaction.status} />
@@ -85,53 +87,53 @@ export default function TransactionDetailPage({ params }: { params: Promise<{ id
 
         {/* Details */}
         <dl className="px-6 py-2">
-          <InfoRow label="Type">
+          <InfoRow label={t('Type')}>
             <span className="inline-flex rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
               {transaction.type?.replace('_', ' ') || '—'}
             </span>
           </InfoRow>
 
-          <InfoRow label="Source">
+          <InfoRow label={t('Source')}>
             {transaction.source || '—'}
           </InfoRow>
 
-          <InfoRow label="User">
+          <InfoRow label={t('User')}>
             {transaction.user_name || (transaction.userId ? `User #${transaction.userId}` : '—')}
           </InfoRow>
 
-          <InfoRow label="Subscription Plan">
+          <InfoRow label={t('Subscription Plan')}>
             {transaction.subscription_plan_name || (transaction.subscriptionId ? `#${transaction.subscriptionId}` : '—')}
           </InfoRow>
 
-          <InfoRow label="Gateway / Stripe ID">
+          <InfoRow label={t('Gateway / Stripe ID')}>
             {stripeId ? (
               <span className="font-mono text-xs text-gray-500" title={stripeId}>{stripeId}</span>
             ) : '—'}
           </InfoRow>
 
-          <InfoRow label="Description">
+          <InfoRow label={t('Description')}>
             {transaction.description || '—'}
           </InfoRow>
 
-          <InfoRow label="Created">
+          <InfoRow label={t('Created')}>
             {date ? new Date(date).toLocaleString() : '—'}
           </InfoRow>
 
           {transaction.updatedAt && (
-            <InfoRow label="Updated">
+            <InfoRow label={t('Updated')}>
               {new Date(transaction.updatedAt).toLocaleString()}
             </InfoRow>
           )}
 
           {transaction.payment_proof && (
-            <InfoRow label="Payment Proof">
+            <InfoRow label={t('Payment Proof')}>
               <a
                 href={transaction.payment_proof}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-900"
               >
-                View Proof
+                {t('View Proof')}
               </a>
             </InfoRow>
           )}

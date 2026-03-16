@@ -10,6 +10,7 @@ import {
   StripePaymentMethod,
   StripeInvoice,
 } from '@/lib/api/endpoints/stripe'
+import { useTranslation } from '@/lib/i18n'
 
 function formatAmount(amount: number, currency?: string): string {
   return new Intl.NumberFormat('en-US', {
@@ -38,6 +39,7 @@ const statusColors: Record<string, string> = {
 }
 
 export function BillingManagementCard() {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
 
@@ -62,10 +64,10 @@ export function BillingManagementCard() {
       if (url) {
         window.open(url, '_blank')
       } else {
-        setError('Failed to open billing portal')
+        setError(t('Failed to open billing portal'))
       }
     } catch {
-      setError('Failed to open billing portal')
+      setError(t('Failed to open billing portal'))
     } finally {
       setPortalLoading(false)
     }
@@ -86,7 +88,7 @@ export function BillingManagementCard() {
       setPaymentMethods(Array.isArray(methods) ? methods : [])
       setShowPaymentMethods(true)
     } catch {
-      setError('Failed to load payment methods')
+      setError(t('Failed to load payment methods'))
     } finally {
       setPmLoading(false)
     }
@@ -107,7 +109,7 @@ export function BillingManagementCard() {
       setInvoices(Array.isArray(invList) ? invList : [])
       setShowInvoices(true)
     } catch {
-      setError('Failed to load invoices')
+      setError(t('Failed to load invoices'))
     } finally {
       setInvLoading(false)
     }
@@ -120,7 +122,7 @@ export function BillingManagementCard() {
       await setDefaultPaymentMethod(pmId)
       await handleLoadPaymentMethods()
     } catch {
-      setError('Failed to update default payment method')
+      setError(t('Failed to update default payment method'))
     } finally {
       setLoading(false)
     }
@@ -128,13 +130,13 @@ export function BillingManagementCard() {
 
   // Remove payment method
   const handleRemove = useCallback(async (pmId: string) => {
-    if (!confirm('Are you sure you want to remove this payment method?')) return
+    if (!confirm(t('Are you sure you want to remove this payment method?'))) return
     setLoading(true)
     try {
       await removePaymentMethod(pmId)
       setPaymentMethods((prev) => prev.filter((pm) => pm.id !== pmId))
     } catch {
-      setError('Failed to remove payment method')
+      setError(t('Failed to remove payment method'))
     } finally {
       setLoading(false)
     }
@@ -144,7 +146,7 @@ export function BillingManagementCard() {
     <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Stripe Billing Management</h2>
+        <h2 className="text-xl font-semibold text-gray-900">{t('Stripe Billing Management')}</h2>
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -159,7 +161,7 @@ export function BillingManagementCard() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
               </svg>
             )}
-            Open Billing Portal
+            {t('Open Billing Portal')}
           </button>
           <button
             type="button"
@@ -172,7 +174,7 @@ export function BillingManagementCard() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
               </svg>
             )}
-            Payment Methods
+            {t('Payment Methods')}
           </button>
           <button
             type="button"
@@ -185,7 +187,7 @@ export function BillingManagementCard() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
               </svg>
             )}
-            Invoices
+            {t('Invoices')}
           </button>
         </div>
       </div>
@@ -207,9 +209,9 @@ export function BillingManagementCard() {
       {/* Payment Methods Section */}
       {showPaymentMethods && (
         <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Payment Methods</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('Payment Methods')}</h3>
           {paymentMethods.length === 0 ? (
-            <p className="text-center text-sm text-gray-500 py-4">No payment methods found</p>
+            <p className="text-center text-sm text-gray-500 py-4">{t('No payment methods found')}</p>
           ) : (
             <div className="space-y-2">
               {paymentMethods.map((pm) => {
@@ -236,7 +238,7 @@ export function BillingManagementCard() {
                       )}
                       {isDefault && (
                         <span className="inline-flex items-center rounded-full bg-blue-600 px-2 py-0.5 text-xs font-medium text-white">
-                          Default
+                          {t('Default')}
                         </span>
                       )}
                     </div>
@@ -248,7 +250,7 @@ export function BillingManagementCard() {
                           disabled={loading}
                           className="rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50"
                         >
-                          Set Default
+                          {t('Set Default')}
                         </button>
                       )}
                       <button
@@ -257,7 +259,7 @@ export function BillingManagementCard() {
                         disabled={loading}
                         className="rounded-md border border-red-300 bg-white px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
                       >
-                        Remove
+                        {t('Remove')}
                       </button>
                     </div>
                   </div>
@@ -271,9 +273,9 @@ export function BillingManagementCard() {
       {/* Invoices Section */}
       {showInvoices && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Recent Invoices</h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('Recent Invoices')}</h3>
           {invoices.length === 0 ? (
-            <p className="text-center text-sm text-gray-500 py-4">No invoices found</p>
+            <p className="text-center text-sm text-gray-500 py-4">{t('No invoices found')}</p>
           ) : (
             <div className="space-y-2">
               {invoices.map((inv) => {
@@ -308,7 +310,7 @@ export function BillingManagementCard() {
                           rel="noopener noreferrer"
                           className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50"
                         >
-                          View
+                          {t('View')}
                         </a>
                       )}
                     </div>

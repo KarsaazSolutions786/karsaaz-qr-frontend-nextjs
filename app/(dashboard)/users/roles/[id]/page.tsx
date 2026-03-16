@@ -7,8 +7,10 @@ import { ArrowLeft, Loader2 } from 'lucide-react'
 import { useRole } from '@/lib/hooks/queries/useRoles'
 import { useUpdateRole } from '@/lib/hooks/mutations/useRoleMutations'
 import { PermissionsInput } from '@/components/features/roles/PermissionsInput'
+import { useTranslation } from '@/lib/i18n'
 
 export default function EditRolePage() {
+  const { t } = useTranslation()
   const params = useParams()
   const roleId = Number(params.id)
 
@@ -71,9 +73,9 @@ export default function EditRolePage() {
   if (!role) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-12 text-center">
-        <p className="text-gray-600">Role not found.</p>
+        <p className="text-gray-600">{t('Role not found.')}</p>
         <Link href="/users/roles" className="mt-4 inline-block text-blue-600 text-sm hover:underline">
-          Back to roles
+          {t('Back to roles')}
         </Link>
       </div>
     )
@@ -87,19 +89,19 @@ export default function EditRolePage() {
         className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Roles
+        {t('Back to Roles')}
       </Link>
 
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
         <div className="px-6 py-6 border-b border-gray-200 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-gray-900">Edit Role</h1>
+            <h1 className="text-xl font-semibold text-gray-900">{t('Edit Role')}</h1>
             <p className="mt-1 text-sm text-gray-500">ID: {role.id}</p>
           </div>
           <div className="flex items-center gap-2">
             {role.read_only && (
               <span className="inline-flex rounded-full bg-yellow-100 px-2.5 py-1 text-xs font-semibold text-yellow-800">
-                Read Only
+                {t('Read Only')}
               </span>
             )}
             {role.name?.toLowerCase() === 'super admin' && (
@@ -118,14 +120,14 @@ export default function EditRolePage() {
           )}
           {saved && (
             <div className="rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-700">
-              Changes saved successfully.
+              {t('Changes saved successfully.')}
             </div>
           )}
 
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Role Name <span className="text-red-500">*</span>
+              {t('Role Name')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -139,7 +141,7 @@ export default function EditRolePage() {
 
           {/* Home Page */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Home Page</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Home Page')}</label>
             <input
               type="text"
               value={homePage}
@@ -148,14 +150,14 @@ export default function EditRolePage() {
               className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
             <p className="mt-1 text-xs text-gray-500">
-              The page users with this role are redirected to after login.
+              {t('The page users with this role are redirected to after login.')}
             </p>
           </div>
 
           {/* Permissions */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              Permissions
+              {t('Permissions')}
               <span className="ml-2 text-xs font-normal text-gray-400">
                 ({permissionIds.length} selected)
               </span>
@@ -169,7 +171,7 @@ export default function EditRolePage() {
               href="/users/roles"
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              Cancel
+              {t('Cancel')}
             </Link>
             <button
               type="submit"
@@ -177,7 +179,7 @@ export default function EditRolePage() {
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {updateMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              Save Changes
+              {t('Save Changes')}
             </button>
           </div>
         </form>

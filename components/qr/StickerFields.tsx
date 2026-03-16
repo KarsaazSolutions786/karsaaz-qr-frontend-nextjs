@@ -12,6 +12,7 @@ import { StickerSelector } from './StickerSelector';
 import { StickerPositioning } from './StickerPositioning';
 import { StickerSizeControl } from './StickerSizeControl';
 import { createDefaultStickerConfig, validateStickerConfig, checkStickerOverlap } from '@/lib/utils/sticker-utils';
+import { useTranslation } from '@/lib/i18n';
 
 export interface StickerFieldsProps {
   value: StickerConfig | null;
@@ -34,6 +35,7 @@ export function StickerFields({
   label = 'Sticker',
   className = '',
 }: StickerFieldsProps) {
+  const { t } = useTranslation();
   const [showSelector, setShowSelector] = useState(!value);
 
   // Handle sticker selection
@@ -196,19 +198,19 @@ export function StickerFields({
 
           {/* Summary */}
           <div className="p-3 bg-gray-100 rounded-lg">
-            <p className="text-xs font-medium text-gray-700 mb-2">Configuration Summary</p>
+            <p className="text-xs font-medium text-gray-700 mb-2">{t('Configuration Summary')}</p>
             <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
               <div>
-                <span className="font-medium">Size:</span> {Math.round(value.size * 100)}%
+                <span className="font-medium">{t('Size:')}</span> {Math.round(value.size * 100)}%
               </div>
               <div>
-                <span className="font-medium">Position:</span> {value.position.preset}
+                <span className="font-medium">{t('Position:')}</span> {value.position.preset}
               </div>
               <div>
-                <span className="font-medium">Rotation:</span> {value.rotation ?? 0}°
+                <span className="font-medium">{t('Rotation:')}</span> {value.rotation ?? 0}°
               </div>
               <div>
-                <span className="font-medium">Opacity:</span> {Math.round((value.opacity ?? 1.0) * 100)}%
+                <span className="font-medium">{t('Opacity:')}</span> {Math.round((value.opacity ?? 1.0) * 100)}%
               </div>
             </div>
           </div>
@@ -231,8 +233,8 @@ export function StickerFields({
               d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No sticker added</h3>
-          <p className="mt-1 text-xs text-gray-500">Add a sticker to decorate your QR code</p>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No sticker added')}</h3>
+          <p className="mt-1 text-xs text-gray-500">{t('Add a sticker to decorate your QR code')}</p>
           <button
             type="button"
             onClick={() => setShowSelector(true)}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import {
   Dialog,
   DialogContent,
@@ -53,6 +54,7 @@ export default function QuestionModal({
   question,
   onSave,
 }: QuestionModalProps) {
+  const { t } = useTranslation();
   const isEditing = !!question?.label
   const [label, setLabel] = useState(question?.label ?? '')
   const [type, setType] = useState<LeadFormField['type']>(question?.type ?? 'text')
@@ -135,25 +137,25 @@ export default function QuestionModal({
       <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {isEditing ? 'Edit Question' : 'Add Question'}
+            {isEditing ? t('Edit Question') : t('Add Question')}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           {/* Label */}
           <div className="space-y-1.5">
-            <Label>Label</Label>
+            <Label>{t('Label')}</Label>
             <Input
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="e.g. What is your name?"
+              placeholder={t('e.g. What is your name?')}
               autoFocus
             />
           </div>
 
           {/* Type */}
           <div className="space-y-1.5">
-            <Label>Type</Label>
+            <Label>{t('Type')}</Label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value as LeadFormField['type'])}
@@ -169,13 +171,13 @@ export default function QuestionModal({
 
           {/* Required toggle */}
           <div className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
-            <Label className="cursor-pointer">Required</Label>
+            <Label className="cursor-pointer">{t('Required')}</Label>
             <Switch checked={required} onCheckedChange={setRequired} />
           </div>
 
           {/* Placeholder */}
           <div className="space-y-1.5">
-            <Label>Placeholder</Label>
+            <Label>{t('Placeholder')}</Label>
             <Input
               value={placeholder}
               onChange={(e) => setPlaceholder(e.target.value)}
@@ -186,7 +188,7 @@ export default function QuestionModal({
           {/* Options (for select/checkbox/radio/choices) */}
           {hasOptions && (
             <div className="space-y-2">
-              <Label>Options</Label>
+              <Label>{t('Options')}</Label>
               {options.length > 0 && (
                 <div className="space-y-1 rounded-md border border-gray-200 p-2">
                   {options.map((opt, i) => (
@@ -252,12 +254,12 @@ export default function QuestionModal({
           {/* Validation Rules */}
           <details className="rounded-lg border border-gray-200">
             <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-gray-700">
-              Validation Rules
+              {t('Validation Rules')}
             </summary>
             <div className="space-y-3 px-4 pb-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Min Length</Label>
+                  <Label className="text-xs">{t('Min Length')}</Label>
                   <Input
                     type="number"
                     value={minLength}
@@ -267,7 +269,7 @@ export default function QuestionModal({
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Max Length</Label>
+                  <Label className="text-xs">{t('Max Length')}</Label>
                   <Input
                     type="number"
                     value={maxLength}
@@ -278,7 +280,7 @@ export default function QuestionModal({
                 </div>
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Pattern (regex)</Label>
+                <Label className="text-xs">{t('Pattern (regex)')}</Label>
                 <Textarea
                   value={pattern}
                   onChange={(e) => setPattern(e.target.value)}
@@ -292,10 +294,10 @@ export default function QuestionModal({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t('Cancel')}
           </Button>
           <Button onClick={handleSave} disabled={!label.trim()}>
-            {isEditing ? 'Save Changes' : 'Add Question'}
+            {isEditing ? t('Save Changes') : t('Add Question')}
           </Button>
         </DialogFooter>
       </DialogContent>

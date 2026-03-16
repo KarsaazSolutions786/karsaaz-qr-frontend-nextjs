@@ -1,54 +1,104 @@
 'use client'
 
-import PaymentProcessorFormBase from '../payment-gateway/PaymentProcessorFormBase'
+import { useTranslation } from '@/lib/i18n'
+import PaymentProcessorFormBase, {
+  inputClass,
+  selectClass,
+  labelClass,
+  hintClass,
+  type ProcessorFormProps,
+} from '../payment-gateway/PaymentProcessorFormBase'
 
-interface Props {
-  settings: Record<string, string>
-  onChange: (key: string, value: string) => void
-}
+/**
+ * PayU International payment processor configuration form.
+ *
+ * Fields (matching P1 + PROCESSORS definition):
+ * - Mode (sandbox / production)
+ * - POS ID
+ * - Second Key (MD5)
+ * - OAuth Client ID
+ * - OAuth Client Secret
+ */
+export function PayUInternationalForm({ settings, onChange }: ProcessorFormProps) {
+  const { t } = useTranslation()
 
-const inputClass =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
-
-export function PayUInternationalForm({ settings, onChange }: Props) {
   return (
     <PaymentProcessorFormBase slug="payu-international" settings={settings} onChange={onChange}>
+      {/* Mode */}
       <div>
-        <label htmlFor="payu-intl-merchant-key" className="block text-sm font-medium text-gray-700">
-          Merchant Key
+        <label htmlFor="payu-intl-mode" className={labelClass}>
+          {t('Mode')}
+        </label>
+        <select
+          id="payu-intl-mode"
+          value={settings['payu-international_mode'] ?? 'sandbox'}
+          onChange={(e) => onChange('payu-international_mode', e.target.value)}
+          className={selectClass}
+        >
+          <option value="sandbox">{t('Sandbox')}</option>
+          <option value="production">{t('Production')}</option>
+        </select>
+      </div>
+
+      {/* POS ID */}
+      <div>
+        <label htmlFor="payu-intl-pos-id" className={labelClass}>
+          {t('POS ID')}
         </label>
         <input
-          id="payu-intl-merchant-key"
+          id="payu-intl-pos-id"
           type="text"
-          value={settings.merchant_key ?? ''}
-          onChange={(e) => onChange('merchant_key', e.target.value)}
-          placeholder="Enter Merchant Key"
+          value={settings['payu-international_pos_id'] ?? ''}
+          onChange={(e) => onChange('payu-international_pos_id', e.target.value)}
+          placeholder="458***"
           className={inputClass}
         />
       </div>
+
+      {/* Second Key (MD5) */}
       <div>
-        <label htmlFor="payu-intl-merchant-salt" className="block text-sm font-medium text-gray-700">
-          Merchant Salt
+        <label htmlFor="payu-intl-second-key" className={labelClass}>
+          {t('Second Key (MD5)')}
         </label>
         <input
-          id="payu-intl-merchant-salt"
+          id="payu-intl-second-key"
           type="password"
-          value={settings.merchant_salt ?? ''}
-          onChange={(e) => onChange('merchant_salt', e.target.value)}
-          placeholder="Enter Merchant Salt"
+          value={settings['payu-international_second_key'] ?? ''}
+          onChange={(e) => onChange('payu-international_second_key', e.target.value)}
+          placeholder="05dbc4a507c0e256..."
+          className={inputClass}
+        />
+        <p className={hintClass}>
+          {t('The second key (MD5 hash) from your PayU dashboard')}
+        </p>
+      </div>
+
+      {/* OAuth Client ID */}
+      <div>
+        <label htmlFor="payu-intl-client-id" className={labelClass}>
+          {t('OAuth Client ID')}
+        </label>
+        <input
+          id="payu-intl-client-id"
+          type="text"
+          value={settings['payu-international_client_id'] ?? ''}
+          onChange={(e) => onChange('payu-international_client_id', e.target.value)}
+          placeholder="4568***"
           className={inputClass}
         />
       </div>
+
+      {/* OAuth Client Secret */}
       <div>
-        <label htmlFor="payu-intl-auth-header" className="block text-sm font-medium text-gray-700">
-          Auth Header
+        <label htmlFor="payu-intl-client-secret" className={labelClass}>
+          {t('OAuth Client Secret')}
         </label>
         <input
-          id="payu-intl-auth-header"
+          id="payu-intl-client-secret"
           type="password"
-          value={settings.auth_header ?? ''}
-          onChange={(e) => onChange('auth_header', e.target.value)}
-          placeholder="Enter Auth Header"
+          value={settings['payu-international_client_secret'] ?? ''}
+          onChange={(e) => onChange('payu-international_client_secret', e.target.value)}
+          placeholder="59d1531b96c237c4af617**********"
           className={inputClass}
         />
       </div>

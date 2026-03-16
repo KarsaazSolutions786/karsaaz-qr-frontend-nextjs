@@ -9,6 +9,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Lock } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface ColorCustomizationDisabledMessageProps {
   upgradeUrl?: string
@@ -17,16 +18,17 @@ export interface ColorCustomizationDisabledMessageProps {
 export function ColorCustomizationDisabledMessage({
   upgradeUrl = '/plans',
 }: ColorCustomizationDisabledMessageProps) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
       <Lock className="w-4 h-4 shrink-0" />
       <span>
-        Color customization is not available on your current plan.{' '}
+        {t('Color customization is not available on your current plan.')}{' '}
         <Link
           href={upgradeUrl}
           className="font-medium underline underline-offset-2 hover:text-amber-900"
         >
-          Upgrade to unlock
+          {t('Upgrade to unlock')}
         </Link>
       </span>
     </div>

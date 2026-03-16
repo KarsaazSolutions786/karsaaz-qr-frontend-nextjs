@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
 import type { CustomCodeBlockData } from '@/types/entities/biolink'
 
 interface CustomCodeBlockProps {
@@ -9,6 +10,7 @@ interface CustomCodeBlockProps {
 }
 
 export default function CustomCodeBlock({ block, isEditing, onUpdate }: CustomCodeBlockProps) {
+  const { t } = useTranslation();
   const { htmlCode = '', cssCode = '', jsCode = '' } = block.data
 
   if (isEditing) {
@@ -51,7 +53,7 @@ export default function CustomCodeBlock({ block, isEditing, onUpdate }: CustomCo
   if (!htmlCode && !cssCode && !jsCode) {
     return (
       <div className="rounded-lg border-2 border-dashed border-gray-300 p-8 text-center">
-        <p className="text-sm text-gray-500">No custom code set</p>
+        <p className="text-sm text-gray-500">{t('No custom code set')}</p>
       </div>
     )
   }
@@ -69,7 +71,7 @@ export default function CustomCodeBlock({ block, isEditing, onUpdate }: CustomCo
         sandbox="allow-scripts"
         className="w-full border-0"
         style={{ minHeight: '100px' }}
-        title="Custom code block"
+        title={t('Custom code block')}
       />
     </div>
   )

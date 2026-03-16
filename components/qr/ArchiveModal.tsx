@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import { X, Archive, ArchiveRestore, AlertCircle } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface ArchiveModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export function ArchiveModal({
   onArchive,
   onUnarchive,
 }: ArchiveModalProps) {
+  const { t } = useTranslation();
   const [reason, setReason] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState('');
@@ -46,7 +48,7 @@ export function ArchiveModal({
       }
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Operation failed');
+      setError(err instanceof Error ? err.message : t('Operation failed'));
     } finally {
       setIsProcessing(false);
     }
@@ -69,10 +71,10 @@ export function ArchiveModal({
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">
-                {mode === 'archive' ? 'Archive' : 'Unarchive'} QR Code{isBulk ? 's' : ''}
+                {mode === 'archive' ? t('Archive') : t('Unarchive')} {t('QR Code')}{isBulk ? 's' : ''}
               </h2>
               <p className="text-sm text-gray-500">
-                {isBulk ? `${qrCodeNames.length} QR codes selected` : qrCodeNames[0]}
+                {isBulk ? `${qrCodeNames.length} ${t('QR codes selected')}` : qrCodeNames[0]}
               </p>
             </div>
           </div>
@@ -103,12 +105,12 @@ export function ArchiveModal({
                 }`}>
                   {mode === 'archive' ? (
                     <>
-                      Archived QR codes will be hidden from your main list but can be restored at any time.
-                      The QR code will continue to work and scans will still be tracked.
+                      {t('Archived QR codes will be hidden from your main list but can be restored at any time.')}
+                      {' '}{t('The QR code will continue to work and scans will still be tracked.')}
                     </>
                   ) : (
                     <>
-                      Unarchiving will restore the QR code{isBulk ? 's' : ''} to your active list.
+                      {t('Unarchiving will restore the QR code to your active list.')}
                     </>
                   )}
                 </p>
@@ -119,7 +121,7 @@ export function ArchiveModal({
             {isBulk && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Selected QR Codes ({qrCodeNames.length})
+                  {t('Selected QR Codes')} ({qrCodeNames.length})
                 </label>
                 <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg">
                   <div className="divide-y divide-gray-100">
@@ -130,7 +132,7 @@ export function ArchiveModal({
                     ))}
                     {qrCodeNames.length > 10 && (
                       <div className="px-3 py-2 text-sm text-gray-500 italic">
-                        ... and {qrCodeNames.length - 10} more
+                        ... {t('and')} {qrCodeNames.length - 10} {t('more')}
                       </div>
                     )}
                   </div>
@@ -142,17 +144,17 @@ export function ArchiveModal({
             {mode === 'archive' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Reason (Optional)
+                  {t('Reason (Optional)')}
                 </label>
                 <textarea
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  placeholder="Why are you archiving this QR code?"
+                  placeholder={t('Why are you archiving this QR code?')}
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  This note will help you remember why you archived this item
+                  {t('This note will help you remember why you archived this item')}
                 </p>
               </div>
             )}
@@ -172,7 +174,7 @@ export function ArchiveModal({
               disabled={isProcessing}
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
             >
-              Cancel
+              {t('Cancel')}
             </button>
             <button
               onClick={handleSubmit}
@@ -192,19 +194,19 @@ export function ArchiveModal({
                   ) : (
                     <ArchiveRestore className="w-4 h-4 animate-pulse" />
                   )}
-                  <span>Processing...</span>
+                  <span>{t('Processing...')}</span>
                 </>
               ) : (
                 <>
                   {mode === 'archive' ? (
                     <>
                       <Archive className="w-4 h-4" />
-                      <span>Archive {isBulk ? `(${qrCodeNames.length})` : ''}</span>
+                      <span>{t('Archive')} {isBulk ? `(${qrCodeNames.length})` : ''}</span>
                     </>
                   ) : (
                     <>
                       <ArchiveRestore className="w-4 h-4" />
-                      <span>Unarchive {isBulk ? `(${qrCodeNames.length})` : ''}</span>
+                      <span>{t('Unarchive')} {isBulk ? `(${qrCodeNames.length})` : ''}</span>
                     </>
                   )}
                 </>
@@ -229,12 +231,13 @@ export function ArchiveButton({
   onClick: () => void;
   variant?: 'icon' | 'button';
 }) {
+  const { t } = useTranslation();
   if (variant === 'icon') {
     return (
       <button
         onClick={onClick}
         className="p-2 rounded hover:bg-gray-100 transition-colors"
-        title={isArchived ? 'Unarchive' : 'Archive'}
+        title={isArchived ? t('Unarchive') : t('Archive')}
       >
         {isArchived ? (
           <ArchiveRestore className="w-4 h-4 text-green-600" />
@@ -259,12 +262,12 @@ export function ArchiveButton({
       {isArchived ? (
         <>
           <ArchiveRestore className="w-4 h-4" />
-          <span>Unarchive</span>
+          <span>{t('Unarchive')}</span>
         </>
       ) : (
         <>
           <Archive className="w-4 h-4" />
-          <span>Archive</span>
+          <span>{t('Archive')}</span>
         </>
       )}
     </button>

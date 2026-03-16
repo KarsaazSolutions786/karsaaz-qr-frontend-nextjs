@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import { ThemeSettings } from '@/types/entities/biolinks';
 
 interface BiolinksDesignerProps {
@@ -29,6 +30,7 @@ const gradientPresets = [
 ];
 
 export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'background' | 'typography' | 'buttons' | 'layout'>(
     'background'
   );
@@ -50,15 +52,15 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Design & Styling</h3>
+      <h3 className="text-lg font-semibold text-gray-900">{t('Design & Styling')}</h3>
 
       {/* Tab Navigation */}
       <div className="flex gap-2 border-b">
         {[
-          { id: 'background', label: '🎨 Background' },
-          { id: 'typography', label: '📝 Typography' },
-          { id: 'buttons', label: '🔘 Buttons' },
-          { id: 'layout', label: '📐 Layout' },
+          { id: 'background', label: t('Background') },
+          { id: 'typography', label: t('Typography') },
+          { id: 'buttons', label: t('Buttons') },
+          { id: 'layout', label: t('Layout') },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -85,7 +87,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
                   backgroundMode === 'color' ? 'bg-blue-600 text-white' : 'bg-gray-200'
                 }`}
               >
-                Solid Color
+                {t('Solid Color')}
               </button>
               <button
                 onClick={() => setBackgroundMode('gradient')}
@@ -93,7 +95,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
                   backgroundMode === 'gradient' ? 'bg-blue-600 text-white' : 'bg-gray-200'
                 }`}
               >
-                Gradient
+                {t('Gradient')}
               </button>
               <button
                 onClick={() => setBackgroundMode('image')}
@@ -101,14 +103,14 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
                   backgroundMode === 'image' ? 'bg-blue-600 text-white' : 'bg-gray-200'
                 }`}
               >
-                Image
+                {t('Image')}
               </button>
             </div>
 
             {backgroundMode === 'color' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Background Color
+                  {t('Background Color')}
                 </label>
                 <div className="flex gap-2">
                   <input
@@ -145,7 +147,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
                 </div>
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    Custom Gradient
+                    {t('Custom Gradient')}
                   </label>
                   <div className="flex gap-2">
                     <input
@@ -188,7 +190,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
                         })
                       }
                       className="w-24 px-3 py-2 border rounded-lg"
-                      placeholder="Angle"
+                      placeholder={t('Angle')}
                       min="0"
                       max="360"
                     />
@@ -201,7 +203,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Image URL
+                    {t('Image URL')}
                   </label>
                   <input
                     type="url"
@@ -213,7 +215,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Blur Amount: {theme.backgroundBlur || 0}px
+                    {t('Blur Amount')}: {theme.backgroundBlur || 0}px
                   </label>
                   <input
                     type="range"
@@ -232,7 +234,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
         {activeTab === 'typography' && (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Font Family</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('Font Family')}</label>
               <select
                 value={theme.fontFamily || fontOptions[0]?.value || 'Inter'}
                 onChange={(e) => updateTheme({ fontFamily: e.target.value })}
@@ -248,7 +250,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Primary Color
+                {t('Primary Color')}
               </label>
               <div className="flex gap-2">
                 <input
@@ -267,7 +269,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Text Color</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('Text Color')}</label>
               <div className="flex gap-2">
                 <input
                   type="color"
@@ -289,7 +291,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
         {activeTab === 'buttons' && (
           <>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Button Style</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('Button Style')}</label>
               <div className="grid grid-cols-3 gap-2">
                 {['rounded', 'square', 'pill'].map((style) => (
                   <button
@@ -315,7 +317,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Button Color
+                {t('Button Color')}
               </label>
               <div className="flex gap-2">
                 <input
@@ -335,7 +337,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Button Text Color
+                {t('Button Text Color')}
               </label>
               <div className="flex gap-2">
                 <input
@@ -362,7 +364,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
                 className="mr-2"
               />
               <label htmlFor="buttonShadow" className="text-sm text-gray-700">
-                Enable button shadow
+                {t('Enable button shadow')}
               </label>
             </div>
           </>
@@ -372,7 +374,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Max Width: {theme.maxWidth || 680}px
+                {t('Max Width')}: {theme.maxWidth || 680}px
               </label>
               <input
                 type="range"
@@ -387,7 +389,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Padding: {theme.padding || 24}px
+                {t('Padding')}: {theme.padding || 24}px
               </label>
               <input
                 type="range"
@@ -402,7 +404,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Block Spacing: {theme.spacing || 16}px
+                {t('Block Spacing')}: {theme.spacing || 16}px
               </label>
               <input
                 type="range"
@@ -417,7 +419,7 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Border Radius: {theme.borderRadius || 12}px
+                {t('Border Radius')}: {theme.borderRadius || 12}px
               </label>
               <input
                 type="range"
@@ -439,12 +441,12 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
                 className="mr-2"
               />
               <label htmlFor="enableAnimations" className="text-sm text-gray-700">
-                Enable animations
+                {t('Enable animations')}
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Custom CSS</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('Custom CSS')}</label>
               <textarea
                 value={theme.customCss || ''}
                 onChange={(e) => updateTheme({ customCss: e.target.value })}

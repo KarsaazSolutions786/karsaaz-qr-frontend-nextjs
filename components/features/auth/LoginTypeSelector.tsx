@@ -17,6 +17,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Poppins } from 'next/font/google'
+import { useTranslation } from '@/lib/i18n'
 import { useSearchParams } from 'next/navigation'
 import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth'
 import { EmailOtpLoginForm } from './EmailOtpLoginForm'
@@ -68,6 +69,8 @@ export function LoginTypeSelector() {
  *       shadow 0px 3px 12px 0px rgba(54,54,54,0.3)
  */
 function TraditionalLoginView() {
+  const { t } = useTranslation()
+
   return (
     <div
       className="flex w-full flex-col rounded-[23px] bg-white/30 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)]"
@@ -81,7 +84,7 @@ function TraditionalLoginView() {
             className="whitespace-nowrap text-[28px] font-semibold leading-normal text-white"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Welcome to
+            {t('Welcome to')}
           </h2>
           <Image
             src="/images/auth/karsaaz-logo.svg"
@@ -96,7 +99,7 @@ function TraditionalLoginView() {
         <p
           className={`${poppins.className} mt-2 text-[18px] font-normal leading-normal text-white`}
         >
-          Sign in to your account and join us.
+          {t('Sign in to your account and join us.')}
         </p>
       </div>
 
@@ -115,7 +118,7 @@ function TraditionalLoginView() {
           className="whitespace-nowrap text-[12px] font-medium text-white"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
-          or continue with
+          {t('or continue with')}
         </span>
         <img
           src="/images/auth/divider-line.svg"
@@ -142,12 +145,12 @@ function TraditionalLoginView() {
         className="mt-5 text-left text-[12px] font-medium text-white"
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-        Don&apos;t have an account?{' '}
+        {t("Don't have an account?")}{' '}
         <Link
           href="/signup"
           className="font-semibold text-white underline decoration-solid hover:text-white/80"
         >
-          Signup
+          {t('Signup')}
         </Link>
       </p>
     </div>

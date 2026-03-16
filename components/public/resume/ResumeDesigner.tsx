@@ -12,6 +12,7 @@ import {
   GraduationCap,
   Award,
 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface ResumeDesignerProps {
   name: string
@@ -59,6 +60,7 @@ export default function ResumeDesigner({
   skills = [],
   education = [],
 }: ResumeDesignerProps) {
+  const { t } = useTranslation()
   const formatDate = (date: string) =>
     new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 
@@ -116,7 +118,7 @@ export default function ResumeDesigner({
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 hover:text-white"
               >
-                <Globe className="w-4 h-4" /> Portfolio
+                <Globe className="w-4 h-4" /> {t('Portfolio')}
               </a>
             )}
             {linkedin && (
@@ -126,7 +128,7 @@ export default function ResumeDesigner({
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 hover:text-white"
               >
-                <Linkedin className="w-4 h-4" /> LinkedIn
+                <Linkedin className="w-4 h-4" /> {t('LinkedIn')}
               </a>
             )}
             {github && (
@@ -136,7 +138,7 @@ export default function ResumeDesigner({
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 hover:text-white"
               >
-                <Github className="w-4 h-4" /> GitHub
+                <Github className="w-4 h-4" /> {t('GitHub')}
               </a>
             )}
           </div>
@@ -154,7 +156,7 @@ export default function ResumeDesigner({
           {experience.length > 0 && (
             <section>
               <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900 mb-4 pb-2 border-b">
-                <Briefcase className="w-5 h-5 text-indigo-600" /> Experience
+                <Briefcase className="w-5 h-5 text-indigo-600" /> {t('Experience')}
               </h2>
               <div className="space-y-5">
                 {experience.map(job => (
@@ -163,7 +165,7 @@ export default function ResumeDesigner({
                     <h3 className="font-semibold text-gray-900">{job.position}</h3>
                     <p className="text-sm text-gray-600">
                       {job.company} · {formatDate(job.startDate)} –{' '}
-                      {job.current ? 'Present' : job.endDate ? formatDate(job.endDate) : ''}
+                      {job.current ? t('Present') : job.endDate ? formatDate(job.endDate) : ''}
                     </p>
                     {job.description && (
                       <p className="text-sm text-gray-700 mt-1">{job.description}</p>
@@ -178,7 +180,7 @@ export default function ResumeDesigner({
           {skills.length > 0 && (
             <section>
               <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900 mb-4 pb-2 border-b">
-                <Award className="w-5 h-5 text-indigo-600" /> Skills
+                <Award className="w-5 h-5 text-indigo-600" /> {t('Skills')}
               </h2>
               <div className="grid grid-cols-2 gap-3">
                 {skills.map((skill, idx) => (
@@ -195,7 +197,7 @@ export default function ResumeDesigner({
           {education.length > 0 && (
             <section>
               <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900 mb-4 pb-2 border-b">
-                <GraduationCap className="w-5 h-5 text-indigo-600" /> Education
+                <GraduationCap className="w-5 h-5 text-indigo-600" /> {t('Education')}
               </h2>
               <div className="space-y-4">
                 {education.map(edu => (
@@ -206,7 +208,7 @@ export default function ResumeDesigner({
                     </h3>
                     <p className="text-sm text-gray-600">
                       {edu.institution} · {formatDate(edu.startDate)} –{' '}
-                      {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                      {edu.endDate ? formatDate(edu.endDate) : t('Present')}
                     </p>
                   </div>
                 ))}

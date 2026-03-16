@@ -5,15 +5,17 @@ import Link from 'next/link'
 import { useContacts } from '@/lib/hooks/queries/useContacts'
 import { useDeleteContact } from '@/lib/hooks/mutations/useContactMutations'
 import type { Contact } from '@/types/entities/contact'
+import { useTranslation } from '@/lib/i18n'
 
 export default function ContactFormPage() {
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const { data, isLoading } = useContacts({ page, search: search || undefined })
   const deleteMutation = useDeleteContact()
 
   const handleDelete = async (id: number, name: string) => {
-    if (confirm(`Are you sure you want to delete the submission from "${name}"?`)) {
+    if (confirm(t('Are you sure you want to delete the submission from "{{name}}"?').replace('{{name}}', name))) {
       await deleteMutation.mutateAsync(id)
     }
   }
@@ -39,9 +41,9 @@ export default function ContactFormPage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Contact Form Submissions</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Contact Form Submissions')}</h1>
           <p className="mt-2 text-sm text-gray-600">
-            View messages from your contact form
+            {t('View messages from your contact form')}
           </p>
         </div>
       </div>
@@ -50,7 +52,7 @@ export default function ContactFormPage() {
         <div className="mb-6">
           <input
             type="search"
-            placeholder="Search submissions..."
+            placeholder={t('Search submissions...')}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)
@@ -63,7 +65,7 @@ export default function ContactFormPage() {
         {isLoading ? (
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
-            <p className="mt-2 text-sm text-gray-600">Loading...</p>
+            <p className="mt-2 text-sm text-gray-600">{t('Loading...')}</p>
           </div>
         ) : data && data.data.length > 0 ? (
           <>
@@ -71,13 +73,13 @@ export default function ContactFormPage() {
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Name</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Email</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Subject</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Message</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Date</th>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{t('Name')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Email')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Subject')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Message')}</th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Date')}</th>
                     <th className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                      <span className="sr-only">Actions</span>
+                      <span className="sr-only">{t('Actions')}</span>
                     </th>
                   </tr>
                 </thead>
@@ -104,14 +106,14 @@ export default function ContactFormPage() {
                           href={`/contact-form/${contact.id}`}
                           className="text-blue-600 hover:text-blue-900 mr-4"
                         >
-                          View
+                          {t('View')}
                         </Link>
                         <button
                           onClick={() => handleDelete(contact.id, contact.name)}
                           disabled={deleteMutation.isPending}
                           className="text-red-600 hover:text-red-900 disabled:cursor-not-allowed disabled:opacity-50"
                         >
-                          Delete
+                          {t('Delete')}
                         </button>
                       </td>
                     </tr>
@@ -127,17 +129,17 @@ export default function ContactFormPage() {
                   disabled={page === 1}
                   className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Previous
+                  {t('Previous')}
                 </button>
                 <span className="text-sm text-gray-600">
-                  Page {page} of {data.pagination.lastPage}
+                  {t('Page')} {page} {t('of')} {data.pagination.lastPage}
                 </span>
                 <button
                   onClick={() => setPage((p) => p + 1)}
                   disabled={page >= data.pagination.lastPage}
                   className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Next
+                  {t('Next')}
                 </button>
               </div>
             )}
@@ -147,9 +149,9 @@ export default function ContactFormPage() {
             <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No submissions found</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No submissions found')}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              Contact form submissions will appear here.
+              {t('Contact form submissions will appear here.')}
             </p>
           </div>
         )}

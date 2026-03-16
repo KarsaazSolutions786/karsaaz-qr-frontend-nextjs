@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import apiClient from '@/lib/api/client'
+import { useTranslation } from '@/lib/i18n'
 
 export default function PaymentCanceledPage() {
+  const { t } = useTranslation()
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [countdown, setCountdown] = useState(10)
@@ -27,9 +29,9 @@ export default function PaymentCanceledPage() {
   async function loadMessage() {
     try {
       const { data } = await apiClient.get('/payment/canceled')
-      setMessage(data?.message || 'Your payment was canceled.')
+      setMessage(data?.message || t('Your payment was canceled.'))
     } catch {
-      setMessage('Your payment was canceled.')
+      setMessage(t('Your payment was canceled.'))
     } finally {
       setLoading(false)
     }
@@ -40,7 +42,7 @@ export default function PaymentCanceledPage() {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mx-auto mb-6" />
-          <h1 className="text-xl font-bold text-gray-900">Loading...</h1>
+          <h1 className="text-xl font-bold text-gray-900">{t('Loading...')}</h1>
         </div>
       </div>
     )
@@ -56,17 +58,17 @@ export default function PaymentCanceledPage() {
           </svg>
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Canceled</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Payment Canceled')}</h1>
         <p className="text-gray-600 mb-6">{message}</p>
 
         {/* Info Box */}
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6 text-left">
-          <h3 className="text-sm font-semibold text-blue-800 mb-2">What happened?</h3>
+          <h3 className="text-sm font-semibold text-blue-800 mb-2">{t('What happened?')}</h3>
           <ul className="text-sm text-blue-700 space-y-1.5">
-            <li>• You chose to cancel the payment process</li>
-            <li>• No charges were made to your account</li>
-            <li>• Your subscription status remains unchanged</li>
-            <li>• You can try again at any time</li>
+            <li>• {t('You chose to cancel the payment process')}</li>
+            <li>• {t('No charges were made to your account')}</li>
+            <li>• {t('Your subscription status remains unchanged')}</li>
+            <li>• {t('You can try again at any time')}</li>
           </ul>
         </div>
 
@@ -76,20 +78,20 @@ export default function PaymentCanceledPage() {
             href="/pricing"
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium text-sm transition-colors"
           >
-            🔄 Try Again
+            {t('Try Again')}
           </Link>
           <Link
             href="/login"
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-sm transition-colors"
           >
-            🏠 Back to Account
+            {t('Back to Account')}
           </Link>
           <button
             onClick={() => setAutoRedirect(true)}
             disabled={autoRedirect}
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-50 text-gray-500 rounded-lg hover:bg-gray-100 font-medium text-sm transition-colors disabled:opacity-50"
           >
-            {autoRedirect ? `⏰ Redirecting (${countdown}s)` : '⏰ Auto Redirect'}
+            {autoRedirect ? `${t('Redirecting')} (${countdown}s)` : t('Auto Redirect')}
           </button>
         </div>
       </div>

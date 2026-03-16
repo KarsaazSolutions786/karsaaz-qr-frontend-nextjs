@@ -3,6 +3,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
+import { useTranslation } from '@/lib/i18n'
 import type { ABTestData } from '@/lib/api/endpoints/analytics'
 
 interface ABTestResultsProps {
@@ -17,6 +18,7 @@ const statusConfig: Record<ABTestData['status'], { label: string; variant: 'defa
 }
 
 export default function ABTestResults({ data, className }: ABTestResultsProps) {
+  const { t } = useTranslation()
   const { name, status, start_date, end_date, variants, winner } = data
   const { label, variant } = statusConfig[status]
 
@@ -32,10 +34,10 @@ export default function ABTestResults({ data, className }: ABTestResultsProps) {
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {new Date(start_date).toLocaleDateString()}
-            {end_date ? ` – ${new Date(end_date).toLocaleDateString()}` : ' – ongoing'}
+            {end_date ? ` – ${new Date(end_date).toLocaleDateString()}` : ` – ${t('ongoing')}`}
           </p>
         </div>
-        <Badge variant={variant}>{label}</Badge>
+        <Badge variant={variant}>{t(label)}</Badge>
       </div>
 
       {/* Variants table */}
@@ -43,12 +45,12 @@ export default function ABTestResults({ data, className }: ABTestResultsProps) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 dark:border-gray-700">
-              <th className="py-2 text-left font-medium text-gray-500 dark:text-gray-400">Variant</th>
-              <th className="py-2 text-right font-medium text-gray-500 dark:text-gray-400">Visitors</th>
-              <th className="py-2 text-right font-medium text-gray-500 dark:text-gray-400">Conversions</th>
-              <th className="py-2 text-right font-medium text-gray-500 dark:text-gray-400">Rate</th>
-              <th className="py-2 text-right font-medium text-gray-500 dark:text-gray-400">Confidence</th>
-              <th className="py-2 pl-4 font-medium text-gray-500 dark:text-gray-400">Progress</th>
+              <th className="py-2 text-left font-medium text-gray-500 dark:text-gray-400">{t('Variant')}</th>
+              <th className="py-2 text-right font-medium text-gray-500 dark:text-gray-400">{t('Visitors')}</th>
+              <th className="py-2 text-right font-medium text-gray-500 dark:text-gray-400">{t('Conversions')}</th>
+              <th className="py-2 text-right font-medium text-gray-500 dark:text-gray-400">{t('Rate')}</th>
+              <th className="py-2 text-right font-medium text-gray-500 dark:text-gray-400">{t('Confidence')}</th>
+              <th className="py-2 pl-4 font-medium text-gray-500 dark:text-gray-400">{t('Progress')}</th>
             </tr>
           </thead>
           <tbody>
@@ -66,11 +68,11 @@ export default function ABTestResults({ data, className }: ABTestResultsProps) {
                     <span className="flex items-center gap-2">
                       {v.name}
                       {v.is_control && (
-                        <span className="text-xs text-gray-400 dark:text-gray-500">(control)</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500">({t('control')})</span>
                       )}
                       {isWinner && (
                         <span className="text-xs font-semibold text-green-600 dark:text-green-400">
-                          ✓ Winner
+                          ✓ {t('Winner')}
                         </span>
                       )}
                     </span>

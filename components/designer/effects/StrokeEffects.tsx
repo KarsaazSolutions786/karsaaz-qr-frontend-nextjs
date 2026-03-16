@@ -3,6 +3,7 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/lib/i18n';
 
 interface StrokeSettings {
   enabled: boolean;
@@ -24,6 +25,7 @@ const defaultStroke: StrokeSettings = {
 };
 
 export default function StrokeEffects({ stroke, onChange }: StrokeEffectsProps) {
+  const { t } = useTranslation();
   const s = stroke ?? defaultStroke;
 
   const update = (partial: Partial<StrokeSettings>) => {
@@ -40,7 +42,7 @@ export default function StrokeEffects({ stroke, onChange }: StrokeEffectsProps) 
           onChange={(e) => update({ enabled: e.target.checked })}
           className="h-4 w-4"
         />
-        <Label htmlFor="stroke-enabled" className="font-semibold">Outline / Stroke</Label>
+        <Label htmlFor="stroke-enabled" className="font-semibold">{t('Outline / Stroke')}</Label>
       </div>
 
       {s.enabled && (
@@ -58,7 +60,7 @@ export default function StrokeEffects({ stroke, onChange }: StrokeEffectsProps) 
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label className="text-xs">Color</Label>
+              <Label className="text-xs">{t('Color')}</Label>
               <div className="flex gap-2">
                 <Input
                   type="color"

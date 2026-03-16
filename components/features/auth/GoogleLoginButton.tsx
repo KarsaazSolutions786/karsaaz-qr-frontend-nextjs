@@ -4,6 +4,7 @@ import { useEffect, useRef, useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useTranslation } from '@/lib/i18n'
 import { authAPI } from '@/lib/api/endpoints/auth'
 import type { LoginRequires2FAResponse } from '@/lib/api/endpoints/auth'
 import { useTwoFactorLoginVerify } from '@/lib/hooks/mutations/useLogin'
@@ -29,6 +30,7 @@ export function GoogleLoginButton() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const { setUser } = useAuth()
+  const { t } = useTranslation()
   const twoFactorVerify = useTwoFactorLoginVerify()
 
   const [show2fa, setShow2fa] = useState(false)
@@ -58,7 +60,7 @@ export function GoogleLoginButton() {
         code: twoFactorCode,
       })
     } catch {
-      setTwoFactorError('Invalid authentication code. Please try again.')
+      setTwoFactorError(t('Invalid authentication code. Please try again.'))
     }
   }
 
@@ -82,7 +84,9 @@ export function GoogleLoginButton() {
         setUser(loginResult.user)
         if (typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(loginResult.user))
-          localStorage.setItem('token', loginResult.token)
+          // Token is stored in httpOnly cookie by backend
+          localStorage.setItem('logged_in', 'true')
+          localStorage.removeItem('token') // Clean up legacy token
         }
         queryClient.setQueryData(queryKeys.auth.currentUser(), loginResult.user)
 
@@ -150,7 +154,7 @@ export function GoogleLoginButton() {
     return (
       <div className="w-full space-y-3">
         <div className="rounded-lg bg-white/10 px-4 py-2.5 text-center text-sm text-white/80">
-          Two-factor authentication required
+          {t('Two-factor authentication required')}
         </div>
 
         <div>
@@ -159,13 +163,13 @@ export function GoogleLoginButton() {
             className="mb-1 block text-[12px] font-bold text-white"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Authentication Code
+            {t('Authentication Code')}
           </label>
           <p
             className="mb-2 text-[11px] text-white/60"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Enter the 6-digit code from your authenticator app
+            {t('Enter the 6-digit code from your authenticator app')}
           </p>
           <input
             ref={twoFactorInputRef}
@@ -205,7 +209,7 @@ export function GoogleLoginButton() {
             fontFamily: "'Inter', sans-serif",
           }}
         >
-          {twoFactorVerify.isPending ? 'Verifying...' : 'Verify & Sign In'}
+          {twoFactorVerify.isPending ? t('Verifying...') : t('Verify & Sign In')}
         </button>
 
         <button
@@ -218,7 +222,7 @@ export function GoogleLoginButton() {
           }}
           className="text-sm text-white/80 hover:text-white hover:underline flex items-center gap-1"
         >
-          ← Back
+          {t('Back')}
         </button>
       </div>
     )
@@ -248,7 +252,7 @@ export function GoogleLoginButton() {
           style={{ boxShadow: 'inset 0px 0px 4px 0px rgba(0,0,0,0.29)' }}
         />
         <img src="/images/auth/google-icon.svg" alt="" style={{ width: 16, height: 16 }} />
-        Google
+        {t('Google')}
       </button>
     )
   }

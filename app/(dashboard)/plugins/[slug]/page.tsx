@@ -6,9 +6,11 @@ import Link from 'next/link'
 import { pluginsAPI, type PluginInfo } from '@/lib/api/endpoints/plugins'
 import { PluginSettingsForm } from '@/components/features/plugins/PluginSettingsForm'
 import { ArrowLeft, Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export default function PluginDetailPage() {
   const params = useParams()
+  const { t } = useTranslation()
   const slug = params.slug as string
   const [plugin, setPlugin] = useState<PluginInfo | null>(null)
   const [loading, setLoading] = useState(true)
@@ -19,7 +21,7 @@ export default function PluginDetailPage() {
     pluginsAPI
       .getDetails(slug)
       .then((data) => setPlugin(data))
-      .catch(() => setError('Failed to load plugin details'))
+      .catch(() => setError(t('Failed to load plugin details')))
       .finally(() => setLoading(false))
   }
 
@@ -39,10 +41,10 @@ export default function PluginDetailPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-8">
         <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-          {error || 'Plugin not found'}
+          {error || t('Plugin not found')}
         </div>
         <Link href="/plugins/installed" className="mt-4 inline-flex items-center text-sm text-blue-600 hover:text-blue-500">
-          <ArrowLeft className="mr-1 h-4 w-4" /> Back to Installed Plugins
+          <ArrowLeft className="mr-1 h-4 w-4" /> {t('Back to Installed Plugins')}
         </Link>
       </div>
     )
@@ -54,7 +56,7 @@ export default function PluginDetailPage() {
         href="/plugins/installed"
         className="mb-6 inline-flex items-center text-sm text-gray-500 hover:text-gray-700"
       >
-        <ArrowLeft className="mr-1 h-4 w-4" /> Back to Installed Plugins
+        <ArrowLeft className="mr-1 h-4 w-4" /> {t('Back to Installed Plugins')}
       </Link>
 
       <div className="mb-6">
@@ -72,7 +74,7 @@ export default function PluginDetailPage() {
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Plugin Settings</h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Plugin Settings')}</h2>
         <PluginSettingsForm configs={plugin.configs ?? []} onSaved={loadPlugin} />
       </div>
     </div>

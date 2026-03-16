@@ -7,12 +7,14 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { registerSchema, type RegisterFormData } from '@/lib/validations/auth'
 import { useRegister } from '@/lib/hooks/mutations/useRegister'
+import { useTranslation } from '@/lib/i18n'
 import { PasswordStrengthBar } from '@/lib/utils/password-strength'
 import { extractReferralCode, storeReferralCode } from '@/lib/utils/referral-tracking'
 
 export function RegisterForm({
   onRegistrationDisabled,
 }: { onRegistrationDisabled?: () => void } = {}) {
+  const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const registerMutation = useRegister()
   const searchParams = useSearchParams()
@@ -60,7 +62,7 @@ export function RegisterForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          Full name
+          {t('Full name')}
         </label>
         <input
           {...register('name')}
@@ -81,7 +83,7 @@ export function RegisterForm({
 
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          Email address
+          {t('Email address')}
         </label>
         <input
           {...register('email')}
@@ -102,7 +104,7 @@ export function RegisterForm({
 
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-          Password
+          {t('Password')}
         </label>
         <div className="relative mt-1">
           <input
@@ -120,7 +122,7 @@ export function RegisterForm({
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-2 text-sm text-gray-600 hover:text-gray-800"
           >
-            {showPassword ? 'Hide' : 'Show'}
+            {showPassword ? t('Hide') : t('Show')}
           </button>
         </div>
         {errors.password && (
@@ -135,7 +137,7 @@ export function RegisterForm({
 
       <div>
         <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-          Confirm password
+          {t('Confirm password')}
         </label>
         <input
           {...register('confirmPassword')}
@@ -166,21 +168,21 @@ export function RegisterForm({
         </div>
         <div className="ml-3 text-sm">
           <label htmlFor="termsConsent" className="text-gray-600">
-            I agree to the{' '}
+            {t('I agree to the')}{' '}
             <a
               href="/terms"
               target="_blank"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
-              Terms of Service
+              {t('Terms of Service')}
             </a>{' '}
-            and{' '}
+            {t('and')}{' '}
             <a
               href="/privacy"
               target="_blank"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
-              Privacy Policy
+              {t('Privacy Policy')}
             </a>
           </label>
           {errors.termsConsent && (
@@ -192,7 +194,7 @@ export function RegisterForm({
       {registerMutation.isError && (
         <div role="alert" className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
-            {(registerMutation.error as any)?.response?.data?.message || 'Registration failed. Please try again.'}
+            {(registerMutation.error as any)?.response?.data?.message || t('Registration failed. Please try again.')}
           </p>
         </div>
       )}
@@ -202,13 +204,13 @@ export function RegisterForm({
         disabled={isSubmitting || registerMutation.isPending}
         className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isSubmitting || registerMutation.isPending ? 'Creating account...' : 'Create account'}
+        {isSubmitting || registerMutation.isPending ? t('Creating account...') : t('Create account')}
       </button>
 
       <p className="text-center text-sm text-gray-600">
-        Already have an account?{' '}
+        {t('Already have an account?')}{' '}
         <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-          Sign in
+          {t('Sign in')}
         </Link>
       </p>
     </form>

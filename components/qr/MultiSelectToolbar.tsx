@@ -19,6 +19,7 @@ import {
   MoreHorizontal,
   FileDown,
 } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 export interface BulkAction {
   id: string;
@@ -97,6 +98,7 @@ export function MultiSelectToolbar({
   maxHeight = true,
   className = '',
 }: MultiSelectToolbarProps) {
+  const { t } = useTranslation();
   const [showMoreActions, setShowMoreActions] = useState(false);
   
   if (selectedCount === 0) return null;
@@ -121,13 +123,13 @@ export function MultiSelectToolbar({
             <button
               onClick={onClearSelection}
               className="p-1 rounded hover:bg-blue-700 transition-colors"
-              title="Clear selection"
+              title={t('Clear selection')}
             >
               <X className="w-5 h-5" />
             </button>
             
             <span className="font-medium">
-              {selectedCount} {selectedCount === 1 ? 'item' : 'items'} selected
+              {selectedCount} {selectedCount === 1 ? t('item') : t('items')} {t('selected')}
             </span>
           </div>
           
@@ -157,7 +159,7 @@ export function MultiSelectToolbar({
                   `}
                 >
                   <MoreHorizontal className="w-4 h-4" />
-                  <span>More</span>
+                  <span>{t('More')}</span>
                 </button>
                 
                 {showMoreActions && (
@@ -214,13 +216,14 @@ function ActionButton({
   action: BulkAction;
   selectedCount: number;
 }) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   
   const handleClick = async () => {
     if (action.requiresConfirmation) {
       const confirmed = confirm(
-        `Are you sure you want to ${action.label.toLowerCase()} ${selectedCount} ${
-          selectedCount === 1 ? 'item' : 'items'
+        `${t('Are you sure you want to')} ${action.label.toLowerCase()} ${selectedCount} ${
+          selectedCount === 1 ? t('item') : t('items')
         }?`
       );
       if (!confirmed) return;
@@ -270,8 +273,9 @@ export function MultiSelectToolbarCompact({
   onDeleteAll: () => void;
   className?: string;
 }) {
+  const { t } = useTranslation();
   if (selectedCount === 0) return null;
-  
+
   return (
     <div
       className={`
@@ -288,7 +292,7 @@ export function MultiSelectToolbarCompact({
           <X className="w-4 h-4" />
         </button>
         <span className="text-sm font-medium">
-          {selectedCount} selected
+          {selectedCount} {t('selected')}
         </span>
       </div>
       
@@ -296,14 +300,14 @@ export function MultiSelectToolbarCompact({
         <button
           onClick={onDownloadAll}
           className="p-2 rounded hover:bg-blue-700"
-          title="Download all"
+          title={t('Download all')}
         >
           <Download className="w-4 h-4" />
         </button>
         <button
           onClick={onDeleteAll}
           className="p-2 rounded hover:bg-red-700"
-          title="Delete all"
+          title={t('Delete all')}
         >
           <Trash2 className="w-4 h-4" />
         </button>

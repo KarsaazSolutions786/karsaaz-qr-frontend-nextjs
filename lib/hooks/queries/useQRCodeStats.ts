@@ -16,11 +16,30 @@ export interface QRCodeStats {
   scan_trend: { date: string; count: number }[]
 }
 
+/**
+ * Fetches QR code stats using scans-per-day report.
+ * The backend does not have a /stats endpoint — uses /reports/scans-per-day instead.
+ */
 export function useQRCodeStats(id: string) {
   return useQuery<QRCodeStats>({
     queryKey: queryKeys.qrcodes.stats(id),
-    queryFn: () => qrcodesAPI.getStats(id),
+    queryFn: async () => {
+      const data = await qrcodesAPI.getReport(id, 'scans-per-day')
+      const days = Array.isArray(data) ? data : []
+      const totalScans = days.reduce((sum: number, d: any) => sum + (d.count || d.value || 0), 0)
+      return {
+        total_scans: totalScans,
+        scans_this_month: 0,
+        scans_today: 0,
+        unique_scans: totalScans,
+        unique_scans_this_month: 0,
+        unique_scans_today: 0,
+        top_countries: [],
+        top_cities: [],
+        scan_trend: days.map((d: any) => ({ date: d.date || d.label || '', count: d.count || d.value || 0 })),
+      }
+    },
     enabled: !!id,
-    staleTime: 60 * 1000, // 1 minute
+    staleTime: 60 * 1000,
   })
 }

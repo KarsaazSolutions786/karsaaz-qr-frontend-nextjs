@@ -15,6 +15,7 @@ import {
   validateAIPrompt,
   estimateGenerationTime,
 } from '@/lib/api/ai-design';
+import { useTranslation } from '@/lib/i18n';
 
 export interface AIDesignFieldsProps {
   value: AIDesignConfig;
@@ -33,6 +34,7 @@ export function AIDesignFields({
   label = 'AI Design Assistant',
   className = '',
 }: AIDesignFieldsProps) {
+  const { t } = useTranslation();
   const [prompt, setPrompt] = useState(value.prompt || '');
   const [selectedStyle, setSelectedStyle] = useState<string>(value.style || 'modern');
   const [showExamples, setShowExamples] = useState(false);
@@ -85,20 +87,20 @@ export function AIDesignFields({
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
         <p className="text-xs text-gray-500">
-          Describe the design you want and our AI will generate it for you
+          {t('Describe the design you want and our AI will generate it for you')}
         </p>
       </div>
 
       {/* Prompt input */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Design Prompt
+          {t('Design Prompt')}
           <span className="text-xs text-gray-500 ml-2">({prompt.length}/500)</span>
         </label>
         <textarea
           value={prompt}
           onChange={handlePromptChange}
-          placeholder="E.g., Professional design with blue colors and rounded corners for a tech company"
+          placeholder={t('E.g., Professional design with blue colors and rounded corners for a tech company')}
           rows={4}
           maxLength={500}
           disabled={isGenerating}
@@ -122,14 +124,14 @@ export function AIDesignFields({
           disabled={isGenerating}
           className="mt-2 text-sm text-primary-600 hover:text-primary-700 disabled:text-gray-400"
         >
-          {showExamples ? '✕ Hide Examples' : '💡 Show Example Prompts'}
+          {showExamples ? t('Hide Examples') : t('Show Example Prompts')}
         </button>
       </div>
 
       {/* Example prompts */}
       {showExamples && (
         <div className="mb-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-          <h4 className="text-sm font-medium text-gray-900 mb-3">Example Prompts</h4>
+          <h4 className="text-sm font-medium text-gray-900 mb-3">{t('Example Prompts')}</h4>
           <div className="space-y-3">
             {AI_PROMPT_EXAMPLES.map(category => (
               <div key={category.category}>
@@ -154,7 +156,7 @@ export function AIDesignFields({
 
       {/* Style selector */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Design Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Design Style')}</label>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
           {Object.entries(AI_STYLE_RECOMMENDATIONS).map(([key, style]) => (
             <button
@@ -186,7 +188,7 @@ export function AIDesignFields({
           {isGenerating ? (
             <>
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-              <span>Generating Design...</span>
+              <span>{t('Generating Design...')}</span>
             </>
           ) : (
             <>
@@ -198,27 +200,27 @@ export function AIDesignFields({
                   d="M13 10V3L4 14h7v7l9-11h-7z"
                 />
               </svg>
-              <span>Generate AI Design</span>
+              <span>{t('Generate AI Design')}</span>
             </>
           )}
         </button>
 
         {validation.valid && !isGenerating && (
           <p className="text-xs text-gray-500 text-center mt-2">
-            Estimated time: ~{Math.round(estimatedTime / 1000)} seconds
+            {t('Estimated time:')} ~{Math.round(estimatedTime / 1000)} {t('seconds')}
           </p>
         )}
       </div>
 
       {/* AI info */}
       <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="text-sm font-medium text-blue-900 mb-2">✨ AI Design Assistant</h4>
+        <h4 className="text-sm font-medium text-blue-900 mb-2">{t('AI Design Assistant')}</h4>
         <ul className="list-disc list-inside space-y-1 text-xs text-blue-800">
-          <li>Powered by advanced AI to create unique designs</li>
-          <li>Describe your vision in natural language</li>
-          <li>Get instant design suggestions and variations</li>
-          <li>Refine and customize the generated design</li>
-          <li>Save your favorite AI designs for later use</li>
+          <li>{t('Powered by advanced AI to create unique designs')}</li>
+          <li>{t('Describe your vision in natural language')}</li>
+          <li>{t('Get instant design suggestions and variations')}</li>
+          <li>{t('Refine and customize the generated design')}</li>
+          <li>{t('Save your favorite AI designs for later use')}</li>
         </ul>
       </div>
 
@@ -234,9 +236,9 @@ export function AIDesignFields({
               />
             </svg>
             <div className="flex-1">
-              <p className="text-sm font-medium text-green-900">AI Design Active</p>
+              <p className="text-sm font-medium text-green-900">{t('AI Design Active')}</p>
               <p className="text-xs text-green-700 mt-1">
-                This QR code is using an AI-generated design. You can regenerate or customize it further.
+                {t('This QR code is using an AI-generated design. You can regenerate or customize it further.')}
               </p>
               <p className="text-xs text-green-600 mt-1">Design ID: {value.designId}</p>
             </div>

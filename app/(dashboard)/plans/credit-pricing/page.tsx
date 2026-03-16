@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
+import { useTranslation } from '@/lib/i18n'
 
 const KEYS = [
   'account_credit.dynamic_qrcode_price',
@@ -9,6 +10,7 @@ const KEYS = [
 ]
 
 export default function CreditPricingPage() {
+  const { t } = useTranslation()
   const [dynamicPrice, setDynamicPrice] = useState('')
   const [staticPrice, setStaticPrice] = useState('')
   const [loading, setLoading] = useState(true)
@@ -49,15 +51,15 @@ export default function CreditPricingPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold text-gray-900">Credit Pricing</h1>
+      <h1 className="text-3xl font-bold text-gray-900">{t('Credit Pricing')}</h1>
       <p className="mt-2 text-sm text-gray-600">
-        Configure pricing for account-credit based QR code generation.
+        {t('Configure pricing for account-credit based QR code generation.')}
       </p>
 
       <div className="mt-8 space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <div>
           <label htmlFor="dynamic-price" className="block text-sm font-medium text-gray-700">
-            Dynamic QR Code Price
+            {t('Dynamic QR Code Price')}
           </label>
           <input
             id="dynamic-price"
@@ -68,12 +70,12 @@ export default function CreditPricingPage() {
             onChange={(e) => setDynamicPrice(e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-          <p className="mt-1 text-xs text-gray-500">Credits deducted per dynamic QR code generated.</p>
+          <p className="mt-1 text-xs text-gray-500">{t('Credits deducted per dynamic QR code generated.')}</p>
         </div>
 
         <div>
           <label htmlFor="static-price" className="block text-sm font-medium text-gray-700">
-            Static QR Code Price
+            {t('Static QR Code Price')}
           </label>
           <input
             id="static-price"
@@ -84,7 +86,7 @@ export default function CreditPricingPage() {
             onChange={(e) => setStaticPrice(e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
-          <p className="mt-1 text-xs text-gray-500">Credits deducted per static QR code generated.</p>
+          <p className="mt-1 text-xs text-gray-500">{t('Credits deducted per static QR code generated.')}</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -93,9 +95,9 @@ export default function CreditPricingPage() {
             disabled={saving}
             className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
           >
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? t('Saving...') : t('Save')}
           </button>
-          {saved && <span className="text-sm text-green-600">✓ Saved successfully</span>}
+          {saved && <span className="text-sm text-green-600">{t('Saved successfully')}</span>}
         </div>
       </div>
     </div>

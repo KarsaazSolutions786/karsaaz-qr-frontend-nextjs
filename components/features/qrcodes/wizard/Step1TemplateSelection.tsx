@@ -6,6 +6,7 @@ import TemplateGrid from '@/components/templates/TemplateGrid'
 import { Search, Sparkles } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from '@/lib/i18n'
 
 interface Step1TemplateSelectionProps {
   templates: QRCodeTemplate[]
@@ -22,6 +23,7 @@ export default function Step1TemplateSelection({
   onSkip,
   isLoading = false,
 }: Step1TemplateSelectionProps) {
+  const { t } = useTranslation()
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
 
@@ -58,10 +60,10 @@ export default function Step1TemplateSelection({
       {/* Header */}
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Choose a Template or Start from Scratch
+          {t('Choose a Template or Start from Scratch')}
         </h2>
         <p className="text-gray-600">
-          Select a pre-designed template to speed up your QR code creation
+          {t('Select a pre-designed template to speed up your QR code creation')}
         </p>
       </div>
 
@@ -74,7 +76,7 @@ export default function Step1TemplateSelection({
           className="gap-2"
         >
           <Sparkles className="w-5 h-5" />
-          Start from Scratch
+          {t('Start from Scratch')}
         </Button>
       </div>
 
@@ -84,7 +86,7 @@ export default function Step1TemplateSelection({
           <div className="w-full border-t border-gray-300"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-white text-gray-500">or choose a template</span>
+          <span className="px-2 bg-white text-gray-500">{t('or choose a template')}</span>
         </div>
       </div>
 
@@ -94,7 +96,7 @@ export default function Step1TemplateSelection({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
             type="text"
-            placeholder="Search templates..."
+            placeholder={t('Search templates...')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -107,7 +109,7 @@ export default function Step1TemplateSelection({
         >
           {categories.map((cat) => (
             <option key={cat} value={cat}>
-              {cat === 'all' ? 'All Categories' : cat}
+              {cat === 'all' ? t('All Categories') : cat}
             </option>
           ))}
         </select>
@@ -119,14 +121,14 @@ export default function Step1TemplateSelection({
           templates={filteredTemplates}
           onUseTemplate={handleTemplateSelect}
           isLoading={isLoading}
-          emptyMessage="No templates found matching your criteria"
+          emptyMessage={t('No templates found matching your criteria')}
         />
       </div>
 
       {/* Help Text */}
       <div className="text-center text-sm text-gray-500">
         <p>
-          Templates include pre-configured designs and settings. You can customize them in the next steps.
+          {t('Templates include pre-configured designs and settings. You can customize them in the next steps.')}
         </p>
       </div>
     </div>

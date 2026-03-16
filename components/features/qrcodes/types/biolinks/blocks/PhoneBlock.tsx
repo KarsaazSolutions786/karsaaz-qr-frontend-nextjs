@@ -1,6 +1,9 @@
+'use client'
+
 import React from 'react';
 import { Phone, MessageCircle, GripVertical, Eye, EyeOff, Settings, Trash2 } from 'lucide-react';
 import { PhoneBlock as PhoneBlockType } from '@/types/entities/biolinks';
+import { useTranslation } from '@/lib/i18n';
 
 interface PhoneBlockProps {
   block: PhoneBlockType;
@@ -17,6 +20,7 @@ export const PhoneBlock: React.FC<PhoneBlockProps> = ({
   onToggleVisibility,
   isDragging,
 }) => {
+  const { t } = useTranslation()
   return (
     <div
       className={`group relative bg-white border rounded-lg p-4 transition-all ${
@@ -33,7 +37,7 @@ export const PhoneBlock: React.FC<PhoneBlockProps> = ({
         <button
           onClick={() => onToggleVisibility(block.id)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title={block.visible ? 'Hide' : 'Show'}
+          title={block.visible ? t('Hide') : t('Show')}
         >
           {block.visible ? (
             <Eye className="w-4 h-4 text-gray-600" />
@@ -44,14 +48,14 @@ export const PhoneBlock: React.FC<PhoneBlockProps> = ({
         <button
           onClick={() => onEdit(block)}
           className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-          title="Edit"
+          title={t('Edit')}
         >
           <Settings className="w-4 h-4 text-gray-600" />
         </button>
         <button
           onClick={() => onDelete(block.id)}
           className="p-1.5 hover:bg-red-50 rounded transition-colors"
-          title="Delete"
+          title={t('Delete')}
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
@@ -64,13 +68,13 @@ export const PhoneBlock: React.FC<PhoneBlockProps> = ({
         </div>
         <div className="flex-1 min-w-0">
           <div className="font-medium text-gray-900 truncate">
-            {block.buttonText || 'Call Now'}
+            {block.buttonText || t('Call Now')}
           </div>
-          <div className="text-sm text-gray-500 truncate">{block.phone || 'No phone set'}</div>
+          <div className="text-sm text-gray-500 truncate">{block.phone || t('No phone set')}</div>
           {block.showWhatsApp && (
             <div className="flex items-center gap-1 mt-1 text-xs text-green-600">
               <MessageCircle className="w-3 h-3" />
-              <span>WhatsApp enabled</span>
+              <span>{t('WhatsApp enabled')}</span>
             </div>
           )}
         </div>

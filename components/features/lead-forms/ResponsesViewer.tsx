@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import { useLeadFormResponses } from '@/lib/hooks/queries/useLeadForms'
 import { useDeleteLeadFormResponse } from '@/lib/hooks/mutations/useLeadFormMutations'
 import type { LeadFormResponse, LeadFormResponseField } from '@/types/entities/lead-form'
@@ -41,6 +42,7 @@ function getFields(response: LeadFormResponse): LeadFormResponseField[] {
 }
 
 export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
+  const { t } = useTranslation();
   const [keyword, setKeyword] = useState('')
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const [dateFrom, setDateFrom] = useState('')
@@ -103,7 +105,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
     return (
       <div className="flex items-center gap-2 py-4 text-sm text-gray-500">
         <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" />
-        Loading responses…
+        {t('Loading responses...')}
       </div>
     )
   }
@@ -116,7 +118,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="search"
-            placeholder="Search responses…"
+            placeholder={t('Search responses...')}
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             className="block w-full rounded-md border border-gray-300 pl-9 pr-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
@@ -146,7 +148,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
             className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
             <Download className="h-4 w-4" />
-            Export CSV
+            {t('Export CSV')}
           </button>
         )}
       </div>
@@ -155,8 +157,8 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
       {filtered.length === 0 ? (
         <p className="py-4 text-sm text-gray-400 italic">
           {responses.length === 0
-            ? 'No responses yet.'
-            : 'No responses match your filters.'}
+            ? t('No responses yet.')
+            : t('No responses match your filters.')}
         </p>
       ) : (
         <div className="overflow-x-auto rounded-md border border-gray-200">
@@ -168,13 +170,13 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
                   #
                 </th>
                 <th className="px-3 py-2 text-left font-medium text-gray-600">
-                  Date
+                  {t('Date')}
                 </th>
                 <th className="px-3 py-2 text-left font-medium text-gray-600">
-                  Summary
+                  {t('Summary')}
                 </th>
                 <th className="px-3 py-2 text-right font-medium text-gray-600">
-                  Actions
+                  {t('Actions')}
                 </th>
               </tr>
             </thead>

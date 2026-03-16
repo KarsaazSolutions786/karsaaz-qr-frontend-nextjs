@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useVerifyOTP, useResendOTP } from '@/lib/hooks/mutations/useVerifyOTP'
+import { useTranslation } from '@/lib/i18n'
 
 const OTP_LENGTH = 6
 
@@ -10,6 +11,7 @@ interface OTPVerificationFormProps {
 }
 
 export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
+  const { t } = useTranslation()
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''))
   const [showResendSuccess, setShowResendSuccess] = useState(false)
   const [countdown, setCountdown] = useState(0)
@@ -119,14 +121,14 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
     <div className="space-y-6">
       <div className="text-center">
         <p className="text-sm text-gray-600">
-          We sent a {OTP_LENGTH}-digit verification code to <strong>{email}</strong>
+          {t('We sent a')} {OTP_LENGTH}{t('-digit verification code to')} <strong>{email}</strong>
         </p>
       </div>
 
       <form onSubmit={handleManualSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 text-center mb-3">
-            Verification Code
+            {t('Verification Code')}
           </label>
           <div className="flex justify-center gap-3" onPaste={handlePaste}>
             {otp.map((digit, index) => (
@@ -154,14 +156,14 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
           <div className="rounded-md bg-red-50 p-4">
             <p className="text-sm text-red-800">
               {(verifyMutation.error as Error)?.message ||
-                'Verification failed. Please check your code and try again.'}
+                t('Verification failed. Please check your code and try again.')}
             </p>
           </div>
         )}
 
         {showResendSuccess && (
           <div className="rounded-md bg-green-50 p-4">
-            <p className="text-sm text-green-800">New verification code sent!</p>
+            <p className="text-sm text-green-800">{t('New verification code sent!')}</p>
           </div>
         )}
 
@@ -172,7 +174,7 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
             disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {verifyMutation.isPending ? 'Verifying...' : 'Verify Email'}
+          {verifyMutation.isPending ? t('Verifying...') : t('Verify Email')}
         </button>
       </form>
 
@@ -184,10 +186,10 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
           className="text-sm font-medium text-blue-600 hover:text-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {resendMutation.isPending
-            ? 'Sending...'
+            ? t('Sending...')
             : countdown > 0
-              ? `Resend code in ${countdown}s`
-              : "Didn't receive code? Resend"}
+              ? `${t('Resend code in')} ${countdown}s`
+              : t("Didn't receive code? Resend")}
         </button>
       </div>
     </div>

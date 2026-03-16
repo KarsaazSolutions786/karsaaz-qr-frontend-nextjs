@@ -13,12 +13,13 @@ import {
   ADVANCED_SHAPES as FALLBACK_ADVANCED_SHAPES,
   PRESET_LOGOS as FALLBACK_PRESET_LOGOS,
 } from '@/lib/constants/qr-shapes'
+import { resolveBackendUrl } from '@/lib/utils/resolve-backend-url'
 
 function toShapeOption(asset: DesignAsset): ShapeOption {
   return {
     value: asset.slug,
     label: asset.label,
-    image: asset.thumbnail_url || undefined,
+    image: resolveBackendUrl(asset.thumbnail_url) || undefined,
   }
 }
 
@@ -26,7 +27,7 @@ function toOutlinedShape(asset: DesignAsset): OutlinedShape {
   return {
     value: asset.slug,
     label: asset.label,
-    image: asset.thumbnail_url || undefined,
+    image: resolveBackendUrl(asset.thumbnail_url) || undefined,
   }
 }
 
@@ -37,7 +38,7 @@ function toAdvancedShape(asset: DesignAsset): AdvancedShape {
     label: asset.label,
     hasText: (meta?.hasText as boolean) ?? false,
     textLines: (meta?.textLines as number) ?? 0,
-    image: asset.thumbnail_url || undefined,
+    image: resolveBackendUrl(asset.thumbnail_url) || undefined,
   }
 }
 

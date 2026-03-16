@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface MenuItem {
   id: string
@@ -117,6 +118,7 @@ function MenuItemRow({
 
 const MenuInput = React.forwardRef<HTMLDivElement, MenuInputProps>(
   ({ className, items: controlledItems, onChange, disabled = false, maxDepth = 3 }, ref) => {
+    const { t } = useTranslation()
     const [internalItems, setInternalItems] = React.useState<MenuItem[]>(controlledItems || [])
     const items = controlledItems !== undefined ? controlledItems : internalItems
 
@@ -170,7 +172,7 @@ const MenuInput = React.forwardRef<HTMLDivElement, MenuInputProps>(
     return (
       <div ref={ref} className={cn('space-y-1 rounded-md border border-gray-300 bg-white p-3 shadow-sm', className)}>
         {items.length === 0 && (
-          <p className="py-2 text-center text-sm text-gray-400">No menu items. Click + to add one.</p>
+          <p className="py-2 text-center text-sm text-gray-400">{t('No menu items. Click + to add one.')}</p>
         )}
         {items.map((item, i) => (
           <MenuItemRow
@@ -199,7 +201,7 @@ const MenuInput = React.forwardRef<HTMLDivElement, MenuInputProps>(
           onClick={() => emit([...items, { id: generateId(), label: '', children: [] }])}
         >
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-          Add item
+          {t('Add item')}
         </button>
       </div>
     )

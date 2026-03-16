@@ -1,23 +1,26 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
+
 interface QRCodeCustomizerProps {
   customization: any
   onChange: (customization: any) => void
 }
 
 export function QRCodeCustomizer({ customization, onChange }: QRCodeCustomizerProps) {
+  const { t } = useTranslation()
   const handleChange = (field: string, value: any) => {
     onChange({ ...customization, [field]: value })
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Customize QR Code</h3>
+      <h3 className="text-lg font-semibold text-gray-900">{t('Customize QR Code')}</h3>
       
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="foregroundColor" className="block text-sm font-medium text-gray-700">
-            Foreground Color
+            {t('Foreground Color')}
           </label>
           <input
             type="color"
@@ -30,7 +33,7 @@ export function QRCodeCustomizer({ customization, onChange }: QRCodeCustomizerPr
 
         <div>
           <label htmlFor="backgroundColor" className="block text-sm font-medium text-gray-700">
-            Background Color
+            {t('Background Color')}
           </label>
           <input
             type="color"
@@ -44,7 +47,7 @@ export function QRCodeCustomizer({ customization, onChange }: QRCodeCustomizerPr
 
       <div>
         <label htmlFor="style" className="block text-sm font-medium text-gray-700">
-          Style
+          {t('Style')}
         </label>
         <select
           id="style"
@@ -52,15 +55,15 @@ export function QRCodeCustomizer({ customization, onChange }: QRCodeCustomizerPr
           onChange={(e) => handleChange('style', e.target.value)}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         >
-          <option value="squares">Squares</option>
-          <option value="dots">Dots</option>
-          <option value="rounded">Rounded</option>
+          <option value="squares">{t('Squares')}</option>
+          <option value="dots">{t('Dots')}</option>
+          <option value="rounded">{t('Rounded')}</option>
         </select>
       </div>
 
       <div>
         <label htmlFor="size" className="block text-sm font-medium text-gray-700">
-          Size: {customization?.size || 500}px
+          {t('Size')}: {customization?.size || 500}px
         </label>
         <input
           type="range"
@@ -75,7 +78,7 @@ export function QRCodeCustomizer({ customization, onChange }: QRCodeCustomizerPr
 
       <div>
         <label htmlFor="logoUrl" className="block text-sm font-medium text-gray-700">
-          Logo URL (Optional)
+          {t('Logo URL (Optional)')}
         </label>
         <input
           type="url"

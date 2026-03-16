@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslation } from '@/lib/i18n'
+
 interface AccountCreditCheckoutProps {
   balance: number
   onConfirm: (amount: number) => void
@@ -11,6 +13,7 @@ export default function AccountCreditCheckout({
   onConfirm,
   isLoading = false,
 }: AccountCreditCheckoutProps) {
+  const { t } = useTranslation()
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
@@ -22,10 +25,10 @@ export default function AccountCreditCheckout({
 
   return (
     <div className="mx-auto max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-4 text-lg font-semibold text-gray-900">Pay with Account Credit</h2>
+      <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Pay with Account Credit')}</h2>
 
       <div className="mb-6 rounded-md bg-gray-50 p-4">
-        <p className="text-sm text-gray-600">Available Balance</p>
+        <p className="text-sm text-gray-600">{t('Available Balance')}</p>
         <p className="text-2xl font-bold text-gray-900">
           ${balance.toFixed(2)}
         </p>
@@ -34,7 +37,7 @@ export default function AccountCreditCheckout({
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="credit-amount" className="block text-sm font-medium text-gray-700">
-            Amount to Charge
+            {t('Amount to Charge')}
           </label>
           <input
             id="credit-amount"
@@ -54,7 +57,7 @@ export default function AccountCreditCheckout({
           disabled={isLoading || balance <= 0}
           className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {isLoading ? 'Processing...' : 'Confirm Payment'}
+          {isLoading ? t('Processing...') : t('Confirm Payment')}
         </button>
       </form>
     </div>

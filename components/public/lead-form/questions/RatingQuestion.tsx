@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18n';
+
 interface RatingQuestionProps {
   value: number;
   onChange: (value: number) => void;
@@ -15,6 +17,7 @@ export default function RatingQuestion({
   min = 1,
   max = 10,
 }: RatingQuestionProps) {
+  const { t } = useTranslation();
   const range = Array.from({ length: max - min + 1 }, (_, i) => min + i);
 
   return (
@@ -37,8 +40,8 @@ export default function RatingQuestion({
         ))}
       </div>
       <div className="flex justify-between text-xs text-gray-500">
-        <span>{min} — Low</span>
-        <span>{max} — High</span>
+        <span>{min} — {t('Low')}</span>
+        <span>{max} — {t('High')}</span>
       </div>
     </div>
   );

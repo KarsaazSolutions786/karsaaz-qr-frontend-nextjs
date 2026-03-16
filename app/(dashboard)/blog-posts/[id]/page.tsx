@@ -7,8 +7,10 @@ import { useBlogPost } from '@/lib/hooks/queries/useBlogPosts'
 import { useUpdateBlogPost } from '@/lib/hooks/mutations/useBlogPostMutations'
 import { blogPostsAPI } from '@/lib/api/endpoints/blog-posts'
 import BlogPostForm, { type BlogPostFormData } from '@/components/features/blog/BlogPostForm'
+import { useTranslation } from '@/lib/i18n'
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
+  const { t } = useTranslation()
   const { id } = use(params)
   const router = useRouter()
   const { data: post, isLoading } = useBlogPost(Number(id))
@@ -49,7 +51,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   }
 
   if (!post) {
-    return <div className="text-center py-12">Blog post not found</div>
+    return <div className="text-center py-12">{t('Blog post not found')}</div>
   }
 
   const slug = post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
@@ -58,8 +60,8 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Edit Blog Post</h1>
-          <p className="mt-2 text-sm text-gray-600">Update blog post content and settings</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('Edit Blog Post')}</h1>
+          <p className="mt-2 text-sm text-gray-600">{t('Update blog post content and settings')}</p>
         </div>
         <div className="flex items-center gap-3">
           {slug && (
@@ -71,7 +73,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
               }}
               className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
-              Preview
+              {t('Preview')}
             </button>
           )}
           <Link href="/blog-posts" className="text-sm text-blue-600 hover:text-blue-900">← Back</Link>

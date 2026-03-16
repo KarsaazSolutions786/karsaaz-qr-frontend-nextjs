@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface EventDesignSettings extends DesignSettings {
   // Event-specific settings
@@ -36,22 +37,23 @@ const tabs: DesignerTab[] = [
 ]
 
 export function EventDesigner({ design, onChange }: EventDesignerProps) {
+  const { t } = useTranslation()
   const updateDesign = (updates: Partial<EventDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderEventOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Event Display Options</h4>
+      <h4 className="font-medium text-gray-900">{t('Event Display Options')}</h4>
 
       {/* Header Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Header Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Header Style')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'banner', label: 'Full Banner' },
-            { value: 'minimal', label: 'Minimal' },
-            { value: 'centered', label: 'Centered' },
+            { value: 'banner', label: t('Full Banner') },
+            { value: 'minimal', label: t('Minimal') },
+            { value: 'centered', label: t('Centered') },
           ].map(option => (
             <button
               key={option.value}
@@ -84,18 +86,18 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showCountdown" className="text-sm text-gray-700">
-            Show Countdown Timer
+            {t('Show Countdown Timer')}
           </label>
         </div>
 
         {design.showCountdown && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Countdown Style</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Countdown Style')}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'digital', label: 'Digital' },
-                { value: 'flip', label: 'Flip Cards' },
-                { value: 'minimal', label: 'Minimal' },
+                { value: 'digital', label: t('Digital') },
+                { value: 'flip', label: t('Flip Cards') },
+                { value: 'minimal', label: t('Minimal') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -121,12 +123,12 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
 
       {/* Map Style */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Map Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Map Style')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'standard', label: 'Standard' },
-            { value: 'satellite', label: 'Satellite' },
-            { value: 'dark', label: 'Dark Mode' },
+            { value: 'standard', label: t('Standard') },
+            { value: 'satellite', label: t('Satellite') },
+            { value: 'dark', label: t('Dark Mode') },
           ].map(option => (
             <button
               key={option.value}
@@ -157,7 +159,7 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showAddToCalendar" className="text-sm text-gray-700">
-            Show Add to Calendar Button
+            {t('Show Add to Calendar Button')}
           </label>
         </div>
 
@@ -165,13 +167,13 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Calendar Button Style
+                {t('Calendar Button Style')}
               </label>
               <div className="flex flex-wrap gap-2">
                 {[
-                  { value: 'filled', label: 'Filled' },
-                  { value: 'outline', label: 'Outline' },
-                  { value: 'link', label: 'Link' },
+                  { value: 'filled', label: t('Filled') },
+                  { value: 'outline', label: t('Outline') },
+                  { value: 'link', label: t('Link') },
                 ].map(option => (
                   <button
                     key={option.value}
@@ -196,7 +198,7 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Calendar Button Color
+                {t('Calendar Button Color')}
               </label>
               <div className="flex gap-2">
                 <input
@@ -220,19 +222,19 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
       {/* Ticket Button */}
       <div className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Ticket Button Text</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Ticket Button Text')}</label>
           <input
             type="text"
-            value={design.ticketButtonText || 'Get Tickets'}
+            value={design.ticketButtonText || t('Get Tickets')}
             onChange={e => updateDesign({ ticketButtonText: e.target.value })}
-            placeholder="Get Tickets"
+            placeholder={t('Get Tickets')}
             className="w-full px-3 py-2 border rounded-lg"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ticket Button Color
+            {t('Ticket Button Color')}
           </label>
           <div className="flex gap-2">
             <input
@@ -253,7 +255,7 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
 
       {/* Display Options */}
       <div className="space-y-2">
-        <h5 className="text-sm font-medium text-gray-700">Display Options</h5>
+        <h5 className="text-sm font-medium text-gray-700">{t('Display Options')}</h5>
 
         <div className="flex items-center gap-2">
           <input
@@ -264,7 +266,7 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showOrganizer" className="text-sm text-gray-700">
-            Show Organizer Info
+            {t('Show Organizer Info')}
           </label>
         </div>
 
@@ -277,7 +279,7 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showVenue" className="text-sm text-gray-700">
-            Show Venue Details
+            {t('Show Venue Details')}
           </label>
         </div>
 
@@ -290,7 +292,7 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showSchedule" className="text-sm text-gray-700">
-            Show Event Schedule
+            {t('Show Event Schedule')}
           </label>
         </div>
 
@@ -303,7 +305,7 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
             className="rounded border-gray-300"
           />
           <label htmlFor="showShareButtons" className="text-sm text-gray-700">
-            Show Share Buttons
+            {t('Show Share Buttons')}
           </label>
         </div>
       </div>
@@ -311,12 +313,12 @@ export function EventDesigner({ design, onChange }: EventDesignerProps) {
       {/* Schedule Style */}
       {design.showSchedule && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Schedule Style</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Schedule Style')}</label>
           <div className="flex flex-wrap gap-2">
             {[
-              { value: 'timeline', label: 'Timeline' },
-              { value: 'list', label: 'List' },
-              { value: 'cards', label: 'Cards' },
+              { value: 'timeline', label: t('Timeline') },
+              { value: 'list', label: t('List') },
+              { value: 'cards', label: t('Cards') },
             ].map(option => (
               <button
                 key={option.value}

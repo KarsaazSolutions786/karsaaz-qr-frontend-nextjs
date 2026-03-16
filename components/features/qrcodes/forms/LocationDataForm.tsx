@@ -1,5 +1,6 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
+import { useTranslation } from '@/lib/i18n'
 import { locationDataSchema } from '@/lib/validations/qrcode'
 import { z } from 'zod'
 
@@ -17,6 +18,7 @@ interface LocationDataFormProps {
 }
 
 export function LocationDataForm({ defaultValues, onChange }: LocationDataFormProps) {
+  const { t } = useTranslation()
   const {
     register,
     formState: { errors },
@@ -26,7 +28,7 @@ export function LocationDataForm({ defaultValues, onChange }: LocationDataFormPr
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
           <label htmlFor="latitude" className={LABEL}>
-            Latitude
+            {t('Latitude')}
           </label>
           <input
             {...register('latitude', { valueAsNumber: true })}
@@ -40,7 +42,7 @@ export function LocationDataForm({ defaultValues, onChange }: LocationDataFormPr
         </div>
         <div>
           <label htmlFor="longitude" className={LABEL}>
-            Longitude
+            {t('Longitude')}
           </label>
           <input
             {...register('longitude', { valueAsNumber: true })}
@@ -55,10 +57,10 @@ export function LocationDataForm({ defaultValues, onChange }: LocationDataFormPr
       </div>
       <div>
         <label htmlFor="application" className={LABEL}>
-          Map Application
+          {t('Map Application')}
         </label>
         <select {...register('application')} id="application" className={SELECT}>
-          <option value="default">Default</option>
+          <option value="default">{t('Default')}</option>
           <option value="googlemaps">Google Maps</option>
           <option value="waze">Waze</option>
         </select>

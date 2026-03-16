@@ -6,16 +6,18 @@
 
 'use client'
 
-import React from 'react'
+import React, { memo } from 'react'
 import { QRCode } from '@/types/entities/qrcode'
 import { QRPreviewImage } from '@/components/qr/QRPreviewImage'
+import { useTranslation } from '@/lib/i18n'
 
 export interface QRCodeMinimalCardProps {
   qrcode: QRCode
   onSelect: (qrcode: QRCode) => void
 }
 
-export function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) {
+export const QRCodeMinimalCard = memo(function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) {
+  const { t } = useTranslation()
   const scanCount = qrcode.scans || 0
 
   return (
@@ -37,7 +39,7 @@ export function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) 
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-medium text-gray-700">
-              View Details
+              {t('View Details')}
             </div>
           </div>
         </div>
@@ -48,15 +50,15 @@ export function QRCodeMinimalCard({ qrcode, onSelect }: QRCodeMinimalCardProps) 
 
       {/* Scan Count */}
       <div className="flex items-center justify-center">
-        <span className="text-xs font-medium text-gray-600">{`${scanCount} scans`}</span>
+        <span className="text-xs font-medium text-gray-600">{`${scanCount} ${t('scans')}`}</span>
       </div>
 
       {/* Status Indicator */}
       {qrcode.status === 'archived' && (
         <div className="absolute top-2 right-2 bg-gray-900/80 backdrop-blur-sm px-2 py-0.5 rounded text-xs font-medium text-white">
-          Archived
+          {t('Archived')}
         </div>
       )}
     </button>
   )
-}
+})

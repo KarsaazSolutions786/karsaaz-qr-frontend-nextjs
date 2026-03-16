@@ -3,6 +3,7 @@
 import React from 'react'
 import { BaseDesigner, DesignSettings, DesignerTab } from '../base/BaseDesigner'
 import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface VCardPlusDesignSettings extends DesignSettings {
   // VCard-specific settings
@@ -37,41 +38,43 @@ const tabs: DesignerTab[] = [
   { id: 'portfolio', label: 'Portfolio', icon: '🖼️' },
 ]
 
-const businessTypes = [
-  { value: 'bakery', label: 'Bakery' },
-  { value: 'healthcare', label: 'Healthcare' },
-  { value: 'restaurant', label: 'Restaurant' },
-  { value: 'plumber', label: 'Plumber' },
-  { value: 'barber', label: 'Barber' },
-  { value: 'electrician', label: 'Electrician' },
-  { value: 'builder', label: 'Builder' },
-  { value: 'gardener', label: 'Gardener / Landscaper' },
-  { value: 'cafe', label: 'Cafe' },
-  { value: 'mechanic', label: 'Mechanic' },
-  { value: 'garage', label: 'Garage' },
-  { value: 'joiner', label: 'Joiner / Carpenter' },
-  { value: 'car-valeter', label: 'Car Valeter / Detailer' },
-  { value: 'painter', label: 'Painter / Decorator' },
-  { value: 'plasterer', label: 'Plasterer' },
-  { value: 'cleaner', label: 'Cleaner' },
-  { value: 'roofer', label: 'Roofer' },
-  { value: 'accountant', label: 'Accountant' },
-  { value: 'solicitor', label: 'Lawyer / Solicitors' },
-  { value: 'other', label: 'Other' },
+const getBusinessTypes = (t: (key: string) => string) => [
+  { value: 'bakery', label: t('Bakery') },
+  { value: 'healthcare', label: t('Healthcare') },
+  { value: 'restaurant', label: t('Restaurant') },
+  { value: 'plumber', label: t('Plumber') },
+  { value: 'barber', label: t('Barber') },
+  { value: 'electrician', label: t('Electrician') },
+  { value: 'builder', label: t('Builder') },
+  { value: 'gardener', label: t('Gardener / Landscaper') },
+  { value: 'cafe', label: t('Cafe') },
+  { value: 'mechanic', label: t('Mechanic') },
+  { value: 'garage', label: t('Garage') },
+  { value: 'joiner', label: t('Joiner / Carpenter') },
+  { value: 'car-valeter', label: t('Car Valeter / Detailer') },
+  { value: 'painter', label: t('Painter / Decorator') },
+  { value: 'plasterer', label: t('Plasterer') },
+  { value: 'cleaner', label: t('Cleaner') },
+  { value: 'roofer', label: t('Roofer') },
+  { value: 'accountant', label: t('Accountant') },
+  { value: 'solicitor', label: t('Lawyer / Solicitors') },
+  { value: 'other', label: t('Other') },
 ]
 
 export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) {
+  const { t } = useTranslation()
+  const businessTypes = getBusinessTypes(t)
   const updateDesign = (updates: Partial<VCardPlusDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
   const renderPageSettingsContent = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Page Settings</h4>
+      <h4 className="font-medium text-gray-900">{t('Page Settings')}</h4>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Business Type</label>
-        <p className="text-xs text-gray-500 mb-2">Allows us to pick some colors for you</p>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Business Type')}</label>
+        <p className="text-xs text-gray-500 mb-2">{t('Allows us to pick some colors for you')}</p>
         <select
           value={design.businessType || 'other'}
           onChange={e => updateDesign({ businessType: e.target.value })}
@@ -86,12 +89,12 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Show QR Code</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Show QR Code')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'show', label: 'Show QR Code' },
-            { value: 'logo', label: 'Show Logo' },
-            { value: 'none', label: 'None' },
+            { value: 'show', label: t('Show QR Code') },
+            { value: 'logo', label: t('Show Logo') },
+            { value: 'none', label: t('None') },
           ].map(option => (
             <button
               key={option.value}
@@ -115,12 +118,12 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
 
       {design.qrcodePreference === 'logo' && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Logo Background</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Background')}</label>
           <div className="flex flex-wrap gap-2">
             {[
-              { value: 'round', label: 'Round' },
-              { value: 'square', label: 'Square' },
-              { value: 'none', label: 'None' },
+              { value: 'round', label: t('Round') },
+              { value: 'square', label: t('Square') },
+              { value: 'none', label: t('None') },
             ].map(option => (
               <button
                 key={option.value}
@@ -144,12 +147,12 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Contacts Settings</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Contacts Settings')}</label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'details', label: 'Show Details' },
-            { value: 'icons', label: 'Show Icons' },
-            { value: 'both', label: 'Show Both' },
+            { value: 'details', label: t('Show Details') },
+            { value: 'icons', label: t('Show Icons') },
+            { value: 'both', label: t('Show Both') },
           ].map(option => (
             <button
               key={option.value}
@@ -172,11 +175,11 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Share on WhatsApp</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Share on WhatsApp')}</label>
         <div className="flex gap-2">
           {[
-            { value: 'enabled', label: 'Enabled' },
-            { value: 'disabled', label: 'Disabled' },
+            { value: 'enabled', label: t('Enabled') },
+            { value: 'disabled', label: t('Disabled') },
           ].map(option => (
             <button
               key={option.value}
@@ -199,11 +202,11 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Gradient Effect</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Gradient Effect')}</label>
         <div className="flex gap-2">
           {[
-            { value: 'enabled', label: 'Enabled' },
-            { value: 'disabled', label: 'Disabled' },
+            { value: 'enabled', label: t('Enabled') },
+            { value: 'disabled', label: t('Disabled') },
           ].map(option => (
             <button
               key={option.value}
@@ -229,14 +232,14 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
 
   const renderAddContactButtonContent = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Add to Contact Button</h4>
+      <h4 className="font-medium text-gray-900">{t('Add to Contact Button')}</h4>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Button Style</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Button Style')}</label>
         <div className="flex gap-2">
           {[
-            { value: 'floating', label: 'Floating' },
-            { value: 'classic', label: 'Classic (with text)' },
+            { value: 'floating', label: t('Floating') },
+            { value: 'classic', label: t('Classic (with text)') },
           ].map(option => (
             <button
               key={option.value}
@@ -262,23 +265,23 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
       {design.addContactButtonStyle === 'classic' && (
         <>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Button Text</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Text')}</label>
             <input
               type="text"
-              value={design.addContactButtonText || 'Add to Contacts'}
+              value={design.addContactButtonText || t('Add to Contacts')}
               onChange={e => updateDesign({ addContactButtonText: e.target.value })}
-              placeholder="Add to Contacts"
+              placeholder={t('Add to Contacts')}
               className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Button Position</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Button Position')}</label>
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'top-section', label: 'Top Section' },
-                { value: 'bottom-section', label: 'Bottom Section' },
-                { value: 'both', label: 'Both' },
+                { value: 'top-section', label: t('Top Section') },
+                { value: 'bottom-section', label: t('Bottom Section') },
+                { value: 'both', label: t('Both') },
               ].map(option => (
                 <button
                   key={option.value}
@@ -304,7 +307,7 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
       )}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Button Color</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Button Color')}</label>
         <div className="flex gap-2">
           <input
             type="color"
@@ -323,7 +326,7 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          {design.addContactButtonStyle === 'classic' ? 'Text Color' : 'Icon Color'}
+          {design.addContactButtonStyle === 'classic' ? t('Text Color') : t('Icon Color')}
         </label>
         <div className="flex gap-2">
           <input
@@ -345,21 +348,21 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
 
   const renderPortfolioContent = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Portfolio & Products</h4>
+      <h4 className="font-medium text-gray-900">{t('Portfolio & Products')}</h4>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Section Title</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Section Title')}</label>
         <input
           type="text"
           value={design.portfolioSectionTitle || ''}
           onChange={e => updateDesign({ portfolioSectionTitle: e.target.value })}
-          placeholder="Portfolio"
+          placeholder={t('Portfolio')}
           className="w-full px-3 py-2 border rounded-lg"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Title Color</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">{t('Title Color')}</label>
         <div className="flex gap-2">
           <input
             type="color"
@@ -378,12 +381,12 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Social Icons Position
+          {t('Social Icons Position')}
         </label>
         <div className="flex flex-wrap gap-2">
           {[
-            { value: 'below_contact_icons', label: 'Below contact icons' },
-            { value: 'above_portfolio', label: 'Between portfolio and contact cards' },
+            { value: 'below_contact_icons', label: t('Below contact icons') },
+            { value: 'above_portfolio', label: t('Between portfolio and contact cards') },
           ].map(option => (
             <button
               key={option.value}
@@ -410,11 +413,11 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
 
   const renderAdditionalColors = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
-      <h4 className="font-medium text-gray-900">Additional Colors</h4>
+      <h4 className="font-medium text-gray-900">{t('Additional Colors')}</h4>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Second Background Color
+          {t('Second Background Color')}
         </label>
         <div className="flex gap-2">
           <input

@@ -3,6 +3,7 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select'
+import { useTranslation } from '@/lib/i18n'
 
 export interface BillingAddress {
   full_name: string
@@ -38,16 +39,17 @@ interface BillingAddressFormProps {
 }
 
 export function BillingAddressForm({ value, onChange }: BillingAddressFormProps) {
+  const { t } = useTranslation()
   const update = (field: keyof BillingAddress, val: string) => {
     onChange({ ...value, [field]: val })
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-base font-semibold text-gray-900">Billing Address</h3>
+      <h3 className="text-base font-semibold text-gray-900">{t('Billing Address')}</h3>
 
       <div>
-        <Label htmlFor="billing-name">Full Name</Label>
+        <Label htmlFor="billing-name">{t('Full Name')}</Label>
         <Input
           id="billing-name"
           value={value.full_name}
@@ -57,7 +59,7 @@ export function BillingAddressForm({ value, onChange }: BillingAddressFormProps)
       </div>
 
       <div>
-        <Label htmlFor="billing-line1">Address Line 1</Label>
+        <Label htmlFor="billing-line1">{t('Address Line 1')}</Label>
         <Input
           id="billing-line1"
           value={value.address_line_1}
@@ -67,7 +69,7 @@ export function BillingAddressForm({ value, onChange }: BillingAddressFormProps)
       </div>
 
       <div>
-        <Label htmlFor="billing-line2">Address Line 2</Label>
+        <Label htmlFor="billing-line2">{t('Address Line 2')}</Label>
         <Input
           id="billing-line2"
           value={value.address_line_2}
@@ -78,7 +80,7 @@ export function BillingAddressForm({ value, onChange }: BillingAddressFormProps)
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="billing-city">City</Label>
+          <Label htmlFor="billing-city">{t('City')}</Label>
           <Input
             id="billing-city"
             value={value.city}
@@ -87,7 +89,7 @@ export function BillingAddressForm({ value, onChange }: BillingAddressFormProps)
           />
         </div>
         <div>
-          <Label htmlFor="billing-state">State / Province</Label>
+          <Label htmlFor="billing-state">{t('State / Province')}</Label>
           <Input
             id="billing-state"
             value={value.state}
@@ -99,7 +101,7 @@ export function BillingAddressForm({ value, onChange }: BillingAddressFormProps)
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="billing-postal">Postal Code</Label>
+          <Label htmlFor="billing-postal">{t('Postal Code')}</Label>
           <Input
             id="billing-postal"
             value={value.postal_code}
@@ -108,10 +110,10 @@ export function BillingAddressForm({ value, onChange }: BillingAddressFormProps)
           />
         </div>
         <div>
-          <Label>Country</Label>
+          <Label>{t('Country')}</Label>
           <Select value={value.country} onValueChange={(val) => update('country', val)}>
             <SelectTrigger>
-              <SelectValue placeholder="Select country" />
+              <SelectValue placeholder={t('Select country')} />
             </SelectTrigger>
             <SelectContent>
               {COUNTRIES.map((c) => (
