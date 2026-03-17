@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
 import { designAssetsAPI } from '@/lib/api/endpoints/design-assets'
@@ -14,6 +15,8 @@ import {
   PRESET_LOGOS as FALLBACK_PRESET_LOGOS,
 } from '@/lib/constants/qr-shapes'
 import { resolveBackendUrl } from '@/lib/utils/resolve-backend-url'
+
+const DESIGN_ASSETS_STORAGE_KEY = 'karsaaz_design_assets'
 
 function toShapeOption(asset: DesignAsset): ShapeOption {
   return {
@@ -42,43 +45,74 @@ function toAdvancedShape(asset: DesignAsset): AdvancedShape {
   }
 }
 
+/** Read cached design assets from localStorage (if available). */
+function getCachedAssets(): DesignAsset[] | null {
+  try {
+    const raw = localStorage.getItem(DESIGN_ASSETS_STORAGE_KEY)
+    if (!raw) return null
+    return JSON.parse(raw) as DesignAsset[]
+  } catch {
+    return null
+  }
+}
+
+/** Persist design assets to localStorage for instant hydration next visit. */
+function setCachedAssets(assets: DesignAsset[]) {
+  try {
+    localStorage.setItem(DESIGN_ASSETS_STORAGE_KEY, JSON.stringify(assets))
+  } catch {
+    // localStorage full — ignore
+  }
+}
+
 /**
  * Fetches all active design assets from the DB API and maps them
  * to the same ShapeOption/OutlinedShape/AdvancedShape format used
  * by the QR designer. Falls back to hardcoded constants on error.
+ *
+ * Uses localStorage for instant hydration and a 30-minute staleTime
+ * to match the backend's Redis cache TTL, minimizing network calls.
  */
 export function useDesignShapes() {
   const { data: allAssets, isLoading } = useQuery({
     queryKey: queryKeys.designAssets.all(),
-    queryFn: () => designAssetsAPI.getAll(),
-    staleTime: 5 * 60_000,
-    retry: false, // Admin-only endpoint — don't retry 403 for regular users
+    queryFn: async () => {
+      const assets = await designAssetsAPI.getAll()
+      setCachedAssets(assets)
+      return assets
+    },
+    staleTime: 30 * 60_000, // 30 min — matches backend Redis cache TTL
+    gcTime: 60 * 60_000, // 1 hr garbage collection
+    initialData: getCachedAssets() ?? undefined,
+    retry: 1,
   })
 
-  if (!allAssets || allAssets.length === 0) {
+  return useMemo(() => {
+    if (!allAssets || allAssets.length === 0) {
+      return {
+        isLoading,
+        MODULE_SHAPES: FALLBACK_MODULE_SHAPES,
+        FINDER_STYLES: FALLBACK_FINDER_STYLES,
+        FINDER_DOT_STYLES: FALLBACK_FINDER_DOT_STYLES,
+        OUTLINED_SHAPES: FALLBACK_OUTLINED_SHAPES,
+        ADVANCED_SHAPES: FALLBACK_ADVANCED_SHAPES,
+        PRESET_LOGOS: FALLBACK_PRESET_LOGOS,
+      }
+    }
+
+    const byType = (type: string) =>
+      allAssets
+        .filter(a => a.type === type && a.is_active)
+        .sort((a, b) => a.sort_order - b.sort_order)
+
     return {
       isLoading,
-      MODULE_SHAPES: FALLBACK_MODULE_SHAPES,
-      FINDER_STYLES: FALLBACK_FINDER_STYLES,
-      FINDER_DOT_STYLES: FALLBACK_FINDER_DOT_STYLES,
-      OUTLINED_SHAPES: FALLBACK_OUTLINED_SHAPES,
-      ADVANCED_SHAPES: FALLBACK_ADVANCED_SHAPES,
-      PRESET_LOGOS: FALLBACK_PRESET_LOGOS,
+      MODULE_SHAPES: byType('module_style').map(toShapeOption) as ShapeOption[],
+      FINDER_STYLES: byType('finder_outer_style').map(toShapeOption) as ShapeOption[],
+      FINDER_DOT_STYLES: byType('finder_dot_style').map(toShapeOption) as ShapeOption[],
+      OUTLINED_SHAPES: byType('outline_style').map(toOutlinedShape),
+      ADVANCED_SHAPES: byType('advanced_shape').map(toAdvancedShape),
+      PRESET_LOGOS: byType('preset_logo').map(toShapeOption),
     }
-  }
-
-  const byType = (type: string) =>
-    allAssets
-      .filter(a => a.type === type && a.is_active)
-      .sort((a, b) => a.sort_order - b.sort_order)
-
-  return {
-    isLoading,
-    MODULE_SHAPES: byType('module_style').map(toShapeOption) as ShapeOption[],
-    FINDER_STYLES: byType('finder_outer_style').map(toShapeOption) as ShapeOption[],
-    FINDER_DOT_STYLES: byType('finder_dot_style').map(toShapeOption) as ShapeOption[],
-    OUTLINED_SHAPES: byType('outline_style').map(toOutlinedShape),
-    ADVANCED_SHAPES: byType('advanced_shape').map(toAdvancedShape),
-    PRESET_LOGOS: byType('preset_logo').map(toShapeOption),
-  }
+  }, [allAssets, isLoading])
 }
