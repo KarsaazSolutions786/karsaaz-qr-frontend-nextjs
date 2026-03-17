@@ -82,7 +82,7 @@ export function WithdrawalHistory({ refreshKey }: WithdrawalHistoryProps) {
                 {withdrawals.map((w) => (
                   <tr key={w.id} className="hover:bg-gray-50">
                     <td className="px-6 py-3 font-medium text-gray-900">
-                      ${w.amount.toFixed(2)}
+                      ${(Number(w.amount) || 0).toFixed(2)}
                     </td>
                     <td className="px-6 py-3 text-gray-700">
                       {METHOD_LABELS[w.payment_method] || w.payment_method}

@@ -6,10 +6,17 @@ import type {
 } from '@/types/entities/custom-code'
 
 export const customCodesAPI = {
-  // Get all custom codes
-  getAll: async (params?: { page?: number; search?: string }) => {
-    const response = await apiClient.get<CustomCodeListResponse>('/custom-codes', { params })
-    return response.data
+  // Get all custom codes — admin-only; returns empty for non-admin users (403)
+  getAll: async (params?: { page?: number; search?: string }): Promise<CustomCodeListResponse> => {
+    try {
+      const response = await apiClient.get<CustomCodeListResponse>('/custom-codes', {
+        params,
+        _silent: true,
+      } as any)
+      return response.data
+    } catch {
+      return { data: [], pagination: { total: 0, perPage: 15, currentPage: 1, lastPage: 1 } } as any
+    }
   },
 
   // Get single custom code

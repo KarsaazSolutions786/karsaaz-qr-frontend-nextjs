@@ -57,23 +57,39 @@ export interface ABTestData {
 
 export const advancedAnalyticsAPI = {
   getFunnels: async (params?: { period?: string }): Promise<FunnelData[]> => {
-    const response = await apiClient.get<{ data: FunnelData[] }>('/analytics/funnels', { params })
-    return response.data?.data ?? null
+    try {
+      const response = await apiClient.get<{ data: FunnelData[] }>('/analytics/funnels', { params, _silent: true } as any)
+      return response.data?.data ?? []
+    } catch {
+      return []
+    }
   },
 
-  getFunnelById: async (id: string): Promise<FunnelData> => {
-    const response = await apiClient.get<{ data: FunnelData }>(`/analytics/funnels/${id}`)
-    return response.data?.data ?? null
+  getFunnelById: async (id: string): Promise<FunnelData | null> => {
+    try {
+      const response = await apiClient.get<{ data: FunnelData }>(`/analytics/funnels/${id}`, { _silent: true } as any)
+      return response.data?.data ?? null
+    } catch {
+      return null
+    }
   },
 
   getABTests: async (params?: { status?: string }): Promise<ABTestData[]> => {
-    const response = await apiClient.get<{ data: ABTestData[] }>('/analytics/ab-tests', { params })
-    return response.data?.data ?? null
+    try {
+      const response = await apiClient.get<{ data: ABTestData[] }>('/analytics/ab-tests', { params, _silent: true } as any)
+      return response.data?.data ?? []
+    } catch {
+      return []
+    }
   },
 
-  getABTestById: async (id: string): Promise<ABTestData> => {
-    const response = await apiClient.get<{ data: ABTestData }>(`/analytics/ab-tests/${id}`)
-    return response.data?.data ?? null
+  getABTestById: async (id: string): Promise<ABTestData | null> => {
+    try {
+      const response = await apiClient.get<{ data: ABTestData }>(`/analytics/ab-tests/${id}`, { _silent: true } as any)
+      return response.data?.data ?? null
+    } catch {
+      return null
+    }
   },
 }
 
@@ -90,13 +106,18 @@ async function fetchReport(qrcodeId: number, slug: string, dateRange?: DateRange
 }
 
 export const analyticsAPI = {
-  // Get analytics overview
-  getOverview: async (dateRange: DateRange): Promise<AnalyticsOverview> => {
-    const params = dateRangeToQueryParams(dateRange)
-    const response = await apiClient.get<{ data: AnalyticsOverview }>('/analytics/overview', {
-      params,
-    })
-    return response.data?.data ?? null
+  // Get analytics overview — endpoint may not exist yet; return empty on 404
+  getOverview: async (dateRange: DateRange): Promise<AnalyticsOverview | null> => {
+    try {
+      const params = dateRangeToQueryParams(dateRange)
+      const response = await apiClient.get<{ data: AnalyticsOverview }>('/analytics/overview', {
+        params,
+        _silent: true,
+      } as any)
+      return response.data?.data ?? null
+    } catch {
+      return null
+    }
   },
 
   // Get QR code specific stats — aggregated from backend report endpoints
@@ -240,20 +261,24 @@ export const analyticsAPI = {
     }
   },
 
-  // Get top performing QR codes
+  // Get top performing QR codes — endpoint may not exist yet; return empty on 404
   getTopQRCodes: async (
     dateRange: DateRange,
     limit: number = 10
   ): Promise<TopQRCode[]> => {
-    const params = {
-      ...dateRangeToQueryParams(dateRange),
-      limit,
+    try {
+      const params = {
+        ...dateRangeToQueryParams(dateRange),
+        limit,
+      }
+      const response = await apiClient.get<{ data: TopQRCode[] }>(
+        '/analytics/top-qrcodes',
+        { params, _silent: true } as any
+      )
+      return response.data?.data ?? []
+    } catch {
+      return []
     }
-    const response = await apiClient.get<{ data: TopQRCode[] }>(
-      '/analytics/top-qrcodes',
-      { params }
-    )
-    return response.data?.data ?? null
   },
 
   // Compare multiple QR codes

@@ -70,7 +70,21 @@ export function QRPreviewImage({
     setError(false)
 
     try {
-      const response = await apiClient.get(url)
+      // Convert absolute URLs to relative paths so requests go through apiClient's baseURL
+      // and aren't blocked by CSP. The backend may return full URLs like
+      // "https://localhost:8000/api/qrcodes/123/serve_svg_file" — strip the origin + /api prefix.
+      let fetchUrl = url
+      if (fetchUrl.startsWith('http')) {
+        try {
+          const parsed = new URL(fetchUrl)
+          // Strip /api prefix if present so apiClient's baseURL (/api) doesn't double it
+          fetchUrl = parsed.pathname.replace(/^\/api/, '') + parsed.search
+        } catch {
+          // Invalid URL — use as-is
+        }
+      }
+
+      const response = await apiClient.get(fetchUrl, { _silent: true } as any)
       const data = response.data
       const contentType = response.headers?.['content-type'] || ''
 

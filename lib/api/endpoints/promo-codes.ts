@@ -31,9 +31,16 @@ export interface CreatePromoCodeRequest {
 }
 
 export const promoCodesAPI = {
-  list: async (params?: { page?: number; search?: string }) => {
-    const response = await apiClient.get<PromoCodeListResponse>('/promo-codes', { params })
-    return response.data
+  list: async (params?: { page?: number; search?: string }): Promise<PromoCodeListResponse> => {
+    try {
+      const response = await apiClient.get<PromoCodeListResponse>('/promo-codes', {
+        params,
+        _silent: true,
+      } as any)
+      return response.data
+    } catch {
+      return { data: [], pagination: { total: 0, perPage: 15, currentPage: 1, lastPage: 1 } }
+    }
   },
 
   getById: async (id: number) => {

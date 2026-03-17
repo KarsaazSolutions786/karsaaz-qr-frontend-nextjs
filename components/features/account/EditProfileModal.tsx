@@ -84,6 +84,12 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
       }
 
       await authAPI.updateUser(user.id, payload)
+      // Optimistically update local state so the UI reflects changes immediately,
+      // even if GET /myself returns stale data due to server-side caching.
+      const updatedUser = { ...user, name, email }
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('user', JSON.stringify(updatedUser))
+      }
       await refreshUserData()
       onClose()
     } catch (err: any) {

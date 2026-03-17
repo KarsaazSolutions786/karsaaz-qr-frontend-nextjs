@@ -56,8 +56,8 @@ function CreateQRCodeInner() {
     if (typeParam) return 'blank'
     // If ?template_id= is present, go to applying mode
     if (templateIdParam) return 'applying'
-    // Default: show gateway
-    return 'gateway'
+    // Default: show QR type selector directly (skip template gateway)
+    return 'blank'
   })
 
   // Local state tracks user selection (survives soft navigation)

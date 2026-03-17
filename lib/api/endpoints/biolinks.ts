@@ -23,14 +23,21 @@ export interface BiolinksAnalyticsResponse {
 }
 
 export const biolinksAPI = {
-  // Get all biolinks for the authenticated user
+  // Get all biolinks for the authenticated user — endpoint may not exist yet
   getAll: async (params?: {
     page?: number
     perPage?: number
     search?: string
   }): Promise<BiolinksResponse> => {
-    const response = await apiClient.get('/biolinks', { params })
-    return response.data
+    try {
+      const response = await apiClient.get('/biolinks', {
+        params,
+        _silent: true,
+      } as any)
+      return response.data
+    } catch {
+      return { data: [], pagination: { total: 0, perPage: 15, currentPage: 1, lastPage: 1 } } as any
+    }
   },
 
   // Get a single biolink by ID

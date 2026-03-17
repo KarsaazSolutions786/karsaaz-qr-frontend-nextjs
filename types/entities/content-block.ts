@@ -12,6 +12,9 @@ export interface ContentBlock {
   }
   createdAt: string
   updatedAt: string
+  // Backend returns snake_case; these are fallback accessors
+  created_at?: string
+  updated_at?: string
 }
 
 export interface CreateContentBlockRequest {

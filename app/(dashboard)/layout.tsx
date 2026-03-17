@@ -31,7 +31,6 @@ import {
   HomeIcon,
   UserCircleIcon,
   WalletIcon,
-  GiftIcon,
   RectangleStackIcon,
   LinkIcon,
 } from '@heroicons/react/24/outline'
@@ -93,8 +92,6 @@ const figmaPrimaryNav: FigmaNavItem[] = [
   { key: 'existing-qr', label: 'Existing QR', href: '/qrcodes', icon: QrCodeIcon },
   { key: 'archived', label: 'Archived', href: '/archived', icon: ArchiveBoxIcon },
   { key: 'qr-templates', label: 'Templates', href: '/qrcode-templates', icon: RectangleStackIcon },
-  { key: 'plans', label: 'Plans', href: '/pricing', icon: BanknotesIcon },
-  { key: 'my-account', label: 'My Account', href: '/account', icon: UserCircleIcon },
   {
     key: 'storage-connections',
     label: 'Storage Connections',
@@ -104,18 +101,7 @@ const figmaPrimaryNav: FigmaNavItem[] = [
 ]
 
 // User-facing sections (visible to all authenticated users)
-const figmaUserSectionNav: FigmaNavSection[] = [
-  {
-    key: 'referrals',
-    label: 'Referrals',
-    href: '/referral',
-    icon: GiftIcon,
-    items: [
-      { name: 'Commission', href: '/referral', icon: GiftIcon },
-      { name: 'Withdrawals', href: '/referral/withdrawals', icon: GiftIcon },
-    ],
-  },
-]
+const figmaUserSectionNav: FigmaNavSection[] = []
 
 const figmaSectionNav: FigmaNavSection[] = [
   {
@@ -431,6 +417,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
             alt=""
             width={188}
             height={188}
+            priority
             className="rotate-[23.5deg] opacity-100"
           />
         </div>
@@ -438,30 +425,30 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         <div className="relative shrink-0" style={{ height: sidebarCollapsed ? '120px' : '154px' }}>
           <Link
             href="/qrcodes/new"
-            className={`absolute flex items-center ${sidebarCollapsed ? 'left-1/2 top-[71px] -translate-x-1/2' : 'left-5 top-[72px]'}`}
+            className={`absolute flex items-center ${sidebarCollapsed ? 'left-1/2 top-[40px] -translate-x-1/2' : 'left-5 top-[72px]'}`}
             onClick={() => setSidebarOpen(false)}
           >
             {sidebarCollapsed ? (
               <Image
                 src="/sidebar-assets/qr-bracket-icon.svg"
                 alt="Karsaaz QR"
-                width={36}
-                height={36}
+                width={40}
+                height={40}
               />
             ) : (
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-0.5">
                 <Image
                   src="/sidebar-assets/sidebar-logo.svg"
                   alt="Karsaaz"
-                  width={120}
+                  width={160}
                   height={32}
                   priority
                 />
                 <Image
                   src="/sidebar-assets/qr-bracket-icon.svg"
                   alt="QR"
-                  width={28}
-                  height={28}
+                  width={30}
+                  height={30}
                 />
               </span>
             )}
@@ -472,7 +459,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
             onClick={() => setSidebarCollapsed(prev => !prev)}
             className={`hidden lg:flex absolute items-center justify-center transition-colors ${
               sidebarCollapsed
-                ? 'left-[69px] top-[74px] h-[30px] w-[26px] rounded-[5px]'
+                ? 'left-1/2 -translate-x-1/2 top-[88px] h-[30px] w-[26px] rounded-[5px]'
                 : 'right-5 top-[77px] h-[30px] w-[26px] rounded-[5px]'
             }`}
             aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -684,6 +671,13 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
           {isAccountCreditMode && <AccountBalanceWidget />}
           <ThemeToggle />
           <LanguagePicker />
+          <Link
+            href="/account"
+            className="flex items-center gap-1.5 rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 transition-colors"
+            title={t('My Account')}
+          >
+            <UserCircleIcon className="h-6 w-6" />
+          </Link>
         </div>
 
         {/* Desktop header bar */}
@@ -694,6 +688,13 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
           {isAccountCreditMode && <AccountBalanceWidget />}
           <ThemeToggle />
           <LanguagePicker />
+          <Link
+            href="/account"
+            className="flex items-center gap-1.5 rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 transition-colors"
+            title={t('My Account')}
+          >
+            <UserCircleIcon className="h-6 w-6" />
+          </Link>
         </div>
 
         {/* Page content */}

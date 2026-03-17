@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { StepperWizard, Step } from '@/components/wizard/StepperWizard'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
@@ -90,6 +90,8 @@ export default function QRWizardContainer({
 
   // Saved state tracking
   const [savedQRId, setSavedQRId] = useState<string | null>(qrcodeId || null)
+  const savedQRIdRef = useRef<string | null>(qrcodeId || null) // sync ref to avoid stale closures
+  const isCreatingRef = useRef(false) // guard against concurrent create calls
   const [isSaved, setIsSaved] = useState(mode === 'edit')
   const [isSaving, setIsSaving] = useState(false)
 
@@ -216,29 +218,54 @@ export default function QRWizardContainer({
         webpage_design: webpageDesign, // Landing page design for dynamic types
       }
 
-      if (savedQRId) {
+      // Use ref for synchronous ID check (avoids stale closure from setState)
+      const currentId = savedQRIdRef.current
+
+      if (currentId) {
         // Already exists — update
-        const result = await qrcodesAPI.update(savedQRId, payload)
+        const result = await qrcodesAPI.update(currentId, payload)
         return result
       } else {
-        // First save — create
-        const result = await qrcodesAPI.create(payload)
-        const newId = result.id
-        setSavedQRId(newId)
-
-        // Update browser URL without triggering a navigation/re-render
-        if (mode === 'create' && typeof window !== 'undefined') {
-          window.history.replaceState(null, '', `/qrcodes/${newId}/edit`)
+        // Guard: prevent concurrent create calls (double-click, fast step transitions)
+        if (isCreatingRef.current) {
+          // A create is already in flight — wait for it by returning a pending promise
+          // that resolves once the ref is set
+          return new Promise<any>((resolve) => {
+            const check = setInterval(() => {
+              if (savedQRIdRef.current) {
+                clearInterval(check)
+                resolve({ id: savedQRIdRef.current })
+              }
+            }, 100)
+            // Safety timeout after 10s
+            setTimeout(() => { clearInterval(check); resolve({ id: savedQRIdRef.current }) }, 10000)
+          })
         }
 
-        // Full redirect only when explicitly requested (e.g. from handleSubmit)
-        if (shouldRedirect && mode === 'create') {
-          router.replace(`/qrcodes/${newId}/edit`)
+        isCreatingRef.current = true
+        try {
+          // First save — create
+          const result = await qrcodesAPI.create(payload)
+          const newId = result.id
+          savedQRIdRef.current = newId // update ref synchronously
+          setSavedQRId(newId)
+
+          // Update browser URL without triggering a navigation/re-render
+          if (mode === 'create' && typeof window !== 'undefined') {
+            window.history.replaceState(null, '', `/qrcodes/${newId}/edit`)
+          }
+
+          // Full redirect only when explicitly requested (e.g. from handleSubmit)
+          if (shouldRedirect && mode === 'create') {
+            router.replace(`/qrcodes/${newId}/edit`)
+          }
+          return result
+        } finally {
+          isCreatingRef.current = false
         }
-        return result
       }
     },
-    [qrType, formData, design, settings, webpageDesign, savedQRId, mode, router]
+    [qrType, formData, design, settings, webpageDesign, mode, router]
   )
 
   // ------------------------------------------------------------------
@@ -281,12 +308,15 @@ export default function QRWizardContainer({
     setIsSaving(false)
 
     wizard.nextStep()
-  }, [wizard, saveQRCode, savedQRId, WIZARD_STEPS])
+  }, [wizard, saveQRCode, WIZARD_STEPS])
 
   /** "Done" / Submit handler — finishes and navigates away */
   const handleSubmit = useCallback(async () => {
+    // Use ref for current saved ID (avoids stale closure)
+    const currentId = savedQRIdRef.current
+
     // Ensure QR is saved before finishing
-    if (!isSaved) {
+    if (!currentId) {
       setIsSaving(true)
       try {
         // Don't redirect on submit - we'll navigate to detail page instead
@@ -296,7 +326,7 @@ export default function QRWizardContainer({
         if (onSuccess) {
           onSuccess(result)
         } else {
-          router.push(`/qrcodes/${result.id || savedQRId}`)
+          router.push(`/qrcodes/${result.id || savedQRIdRef.current}`)
         }
       } catch (error: any) {
         toast.error(t('Save Failed'), {
@@ -311,11 +341,11 @@ export default function QRWizardContainer({
     // Already saved — just navigate
     wizard.reset()
     if (onSuccess) {
-      onSuccess({ id: savedQRId })
+      onSuccess({ id: currentId })
     } else {
-      router.push(`/qrcodes/${savedQRId}`)
+      router.push(`/qrcodes/${currentId}`)
     }
-  }, [isSaved, savedQRId, saveQRCode, wizard, router, onSuccess])
+  }, [saveQRCode, wizard, router, onSuccess])
 
   // ------------------------------------------------------------------
   // Data-change handlers (mark unsaved on any change)

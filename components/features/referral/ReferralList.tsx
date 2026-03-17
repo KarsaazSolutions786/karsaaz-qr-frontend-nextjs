@@ -77,7 +77,7 @@ export function ReferralList() {
                         {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
                       </span>
                     </td>
-                    <td className="px-6 py-3 text-gray-900">${r.commission_amount.toFixed(2)}</td>
+                    <td className="px-6 py-3 text-gray-900">${(Number(r.commission_amount) || 0).toFixed(2)}</td>
                     <td className="px-6 py-3 text-gray-500">
                       {new Date(r.created_at).toLocaleDateString()}
                     </td>

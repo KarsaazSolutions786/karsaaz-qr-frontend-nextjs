@@ -37,8 +37,8 @@ export function EmailDataForm({ defaultValues, onChange }: EmailDataFormProps) {
         <input {...register('subject')} id="subject" type="text" placeholder={t('Email subject')} className={INPUT} />
       </div>
       <div>
-        <label htmlFor="body" className={LABEL}>{t('Message')}</label>
-        <textarea {...register('body')} id="body" rows={4} placeholder={t('Email body text...')} className={TEXTAREA} />
+        <label htmlFor="message" className={LABEL}>{t('Message')}</label>
+        <textarea {...register('message')} id="message" rows={4} placeholder={t('Email body text...')} className={TEXTAREA} />
       </div>
     </form>
   )

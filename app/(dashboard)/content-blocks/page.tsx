@@ -228,7 +228,9 @@ function ContentBlocksPageInner() {
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{block.sortOrder}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {new Date(block.createdAt).toLocaleDateString()}
+                        {(block.createdAt || block.created_at)
+                          ? new Date(block.createdAt || block.created_at!).toLocaleDateString()
+                          : '—'}
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                         <Link href={`/content-blocks/${block.id}`} className="text-blue-600 hover:text-blue-900 mr-4">{t('Edit')}</Link>

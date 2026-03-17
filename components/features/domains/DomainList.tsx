@@ -92,7 +92,7 @@ export function DomainList({ domains, onEdit, onDelete }: DomainListProps) {
                     </span>
                   </span>
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
+                <td className="w-28 whitespace-nowrap px-6 py-4 text-right text-sm">
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => onEdit(domain)}

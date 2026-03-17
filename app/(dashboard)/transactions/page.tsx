@@ -33,10 +33,14 @@ function formatAmount(transaction: Transaction): string {
 }
 
 function getUserDisplay(transaction: Transaction): string {
+  // Backend returns user via nested subscription.user — check nested paths first.
+  // Fallback chain: user_name > nested subscription user > userId > dash
+  const nested = (transaction as any).subscription?.user
   return (
     transaction.user_name ||
-    transaction.description ||
-    (transaction.userId ? String(transaction.userId) : '') ||
+    nested?.name ||
+    nested?.email ||
+    (transaction.userId ? `User #${transaction.userId}` : '') ||
     '—'
   )
 }

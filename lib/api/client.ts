@@ -113,7 +113,10 @@ apiClient.interceptors.request.use(
 // Response interceptor: Handle errors and token refresh
 apiClient.interceptors.response.use(
   response => {
-    // Successful response - return data
+    // Successful response — dismiss any stale network-error toasts since the connection is fine.
+    toast.dismiss('api-network-error')
+    toast.dismiss('api-timeout')
+
     if (process.env.NODE_ENV === 'development') {
       console.log(
         `[API Response] ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`
@@ -122,12 +125,18 @@ apiClient.interceptors.response.use(
     return response
   },
   async (error: AxiosError) => {
+    // Ignore canceled requests — React Query cancels stale/duplicate requests via
+    // AbortController as normal behaviour. These are NOT errors.
+    if (axios.isCancel(error) || error.code === 'ERR_CANCELED' || error.message === 'canceled') {
+      return Promise.reject(error)
+    }
+
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean
       _silent?: boolean
     }
 
-    // Handle 401 Unauthorized — clear auth and redirect to login
+    // Handle 401 Unauthorized — verify session is truly dead before redirecting
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
@@ -144,6 +153,18 @@ apiClient.interceptors.response.use(
       }
 
       if (!isAuthRequest && typeof window !== 'undefined') {
+        // For non-/myself 401s, verify the session is truly dead by calling /myself.
+        // This prevents transient 401s from specific endpoints from triggering logout.
+        if (!isMyselfRequest) {
+          try {
+            await apiClient.get('/myself')
+            // Session is still valid — the 401 was endpoint-specific, not session-related
+            return Promise.reject(error)
+          } catch {
+            // /myself also failed — session is truly dead, proceed with logout
+          }
+        }
+
         localStorage.removeItem('user')
         localStorage.removeItem('token')
         localStorage.removeItem('logged_in')
@@ -197,11 +218,16 @@ apiClient.interceptors.response.use(
         toast.error(userMessage)
       }
     } else if (!originalRequest._silent && !error.response) {
-      // Network error — no response received
+      // Network error — no response received.
+      // Use toast IDs to deduplicate when multiple requests fail at once (e.g., page load race).
       if (error.code === 'ECONNABORTED') {
-        toast.error('Request timed out. Please check your connection and try again.')
+        toast.error('Request timed out. Please check your connection and try again.', {
+          id: 'api-timeout',
+        })
       } else if (error.code === 'ERR_NETWORK') {
-        toast.error('Unable to connect to the server. Please check your internet connection.')
+        toast.error('Unable to connect to the server. Please check your internet connection.', {
+          id: 'api-network-error',
+        })
       }
     }
 

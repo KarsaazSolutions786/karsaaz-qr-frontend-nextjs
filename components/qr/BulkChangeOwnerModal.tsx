@@ -12,7 +12,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n'
 import { UserCheck, Search, Loader2, AlertTriangle } from 'lucide-react'
-import { useUsers } from '@/lib/hooks/queries/useUsers'
+import { useQuery } from '@tanstack/react-query'
+import { usersAPI } from '@/lib/api/endpoints/users'
 import apiClient from '@/lib/api/client'
 import { toast } from 'sonner'
 
@@ -35,9 +36,11 @@ export function BulkChangeOwnerModal({
   const [isProcessing, setIsProcessing] = useState(false)
   const [processedCount, setProcessedCount] = useState(0)
 
-  const { data: usersData, isLoading: usersLoading } = useUsers({
-    search: searchQuery || undefined,
-    per_page: 20,
+  const { data: usersData, isLoading: usersLoading } = useQuery({
+    queryKey: ['users', { search: searchQuery || undefined, per_page: 20 }],
+    queryFn: () => usersAPI.getAll({ search: searchQuery || undefined, per_page: 20 }),
+    enabled: open, // Only fetch when dialog is open — avoids 403 for non-admin users
+    staleTime: 30000,
   })
 
   const users = usersData?.data ?? []

@@ -44,7 +44,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://app.karsaazqr.com https://crmapp.karsaazebs.com https://accounts.google.com https://www.google.com http://localhost:8000 http://127.0.0.1:8000",
+              `connect-src 'self' https://app.karsaazqr.com https://crmapp.karsaazebs.com https://accounts.google.com https://www.google.com http://localhost:8000 https://localhost:8000 http://127.0.0.1:8000 https://127.0.0.1:8000 ${process.env.NODE_ENV === 'development' ? 'ws://localhost:3000 ws://127.0.0.1:3000' : ''}`,
               "frame-src 'self' blob: https://accounts.google.com https://www.google.com https://www.paypal.com",
               "worker-src 'self' blob:",
               "manifest-src 'self'",

@@ -144,7 +144,7 @@ export function SubscriptionCard({ user }: SubscriptionCardProps) {
           )}
           <button
             type="button"
-            onClick={() => router.push('/plans')}
+            onClick={() => router.push('/pricing')}
             className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
           >
             {t('Change Plan')}

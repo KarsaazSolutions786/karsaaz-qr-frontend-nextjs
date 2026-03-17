@@ -11,10 +11,16 @@ export const systemConfigsAPI = {
    * GET /api/system/configs?keys=key1,key2,...
    */
   get: async (keys: string[]): Promise<SystemConfig[]> => {
-    const response = await apiClient.get<SystemConfig[]>('/system/configs', {
-      params: { keys: keys.join(',') },
-    })
-    return Array.isArray(response.data) ? response.data : []
+    try {
+      const response = await apiClient.get<SystemConfig[]>('/system/configs', {
+        params: { keys: keys.join(',') },
+        _silent: true, // Suppress toast — non-admin users may lack system.settings permission
+      } as any)
+      return Array.isArray(response.data) ? response.data : []
+    } catch {
+      // Gracefully return empty on 403/500 (non-admin user or missing config)
+      return []
+    }
   },
 
   /**

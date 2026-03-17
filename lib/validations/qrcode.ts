@@ -85,7 +85,7 @@ export const createTextQRCodeSchema = qrCodeBaseSchema.extend({
 export const emailDataSchema = z.object({
   email: z.string().email('Invalid email address'),
   subject: z.string().optional(),
-  body: z.string().optional(),
+  message: z.string().optional(),
 })
 
 export const createEmailQRCodeSchema = qrCodeBaseSchema.extend({
