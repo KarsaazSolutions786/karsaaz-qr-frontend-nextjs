@@ -1,243 +1,243 @@
 /**
  * useDownloadOptions Hook
- * 
+ *
  * Hook for managing download format-specific options.
  */
 
-'use client';
+'use client'
 
-import { useState, useCallback } from 'react';
-import { PNG_SIZE_PRESETS } from '@/lib/utils/export-png';
-import { PDFPageSize, PDFOrientation } from '@/lib/utils/export-pdf';
+import { useState, useCallback } from 'react'
+import { PNG_SIZE_PRESETS } from '@/lib/utils/export-png'
+import type { PDFPageSize, PDFOrientation } from '@/lib/utils/export-pdf'
 
-export type DownloadFormat = 'svg' | 'pdf' | 'eps' | 'png';
+export type DownloadFormat = 'svg' | 'pdf' | 'eps' | 'png'
 
 export interface DownloadOptions {
-  format: DownloadFormat;
-  filename: string;
-  
+  format: DownloadFormat
+  filename: string
+
   // PNG options
-  pngSize: keyof typeof PNG_SIZE_PRESETS;
-  pngBackground: string;
-  pngSmoothing: boolean;
-  pngScale: number;
-  
+  pngSize: keyof typeof PNG_SIZE_PRESETS
+  pngBackground: string
+  pngSmoothing: boolean
+  pngScale: number
+
   // SVG options
-  svgOptimized: boolean;
-  svgBackground: boolean;
-  svgBackgroundColor: string;
-  svgIncludeMetadata: boolean;
-  
+  svgOptimized: boolean
+  svgBackground: boolean
+  svgBackgroundColor: string
+  svgIncludeMetadata: boolean
+
   // PDF options
-  pdfPageSize: PDFPageSize;
-  pdfOrientation: PDFOrientation;
-  pdfMargin: number;
-  pdfCenterOnPage: boolean;
-  
+  pdfPageSize: PDFPageSize
+  pdfOrientation: PDFOrientation
+  pdfMargin: number
+  pdfCenterOnPage: boolean
+
   // EPS options
-  epsWidth: number;
-  epsHeight: number;
-  epsBoundingBox: boolean;
-  
+  epsWidth: number
+  epsHeight: number
+  epsBoundingBox: boolean
+
   // Common options
-  dpi?: number;
-  quality?: number;
+  dpi?: number
+  quality?: number
 }
 
 const DEFAULT_OPTIONS: DownloadOptions = {
   format: 'png',
   filename: 'qr-code',
-  
+
   // PNG defaults
   pngSize: 'medium',
   pngBackground: '',
   pngSmoothing: false,
   pngScale: 1,
-  
+
   // SVG defaults
   svgOptimized: false,
   svgBackground: false,
   svgBackgroundColor: '#ffffff',
   svgIncludeMetadata: true,
-  
+
   // PDF defaults
   pdfPageSize: 'a4',
   pdfOrientation: 'portrait',
   pdfMargin: 10,
   pdfCenterOnPage: true,
-  
+
   // EPS defaults
   epsWidth: 300,
   epsHeight: 300,
   epsBoundingBox: true,
-  
+
   // Common defaults
   quality: 1.0,
-};
+}
 
 export function useDownloadOptions(initialOptions?: Partial<DownloadOptions>) {
   const [options, setOptions] = useState<DownloadOptions>({
     ...DEFAULT_OPTIONS,
     ...initialOptions,
-  });
+  })
 
   const setFormat = useCallback((format: DownloadFormat) => {
-    setOptions((prev) => ({ ...prev, format }));
-  }, []);
+    setOptions(prev => ({ ...prev, format }))
+  }, [])
 
   const setFilename = useCallback((filename: string) => {
-    setOptions((prev) => ({ ...prev, filename }));
-  }, []);
+    setOptions(prev => ({ ...prev, filename }))
+  }, [])
 
   // PNG setters
   const setPNGSize = useCallback((size: keyof typeof PNG_SIZE_PRESETS) => {
-    setOptions((prev) => ({ ...prev, pngSize: size }));
-  }, []);
+    setOptions(prev => ({ ...prev, pngSize: size }))
+  }, [])
 
   const setPNGBackground = useCallback((color: string) => {
-    setOptions((prev) => ({ ...prev, pngBackground: color }));
-  }, []);
+    setOptions(prev => ({ ...prev, pngBackground: color }))
+  }, [])
 
   const setPNGSmoothing = useCallback((smoothing: boolean) => {
-    setOptions((prev) => ({ ...prev, pngSmoothing: smoothing }));
-  }, []);
+    setOptions(prev => ({ ...prev, pngSmoothing: smoothing }))
+  }, [])
 
   const setPNGScale = useCallback((scale: number) => {
-    setOptions((prev) => ({ ...prev, pngScale: scale }));
-  }, []);
+    setOptions(prev => ({ ...prev, pngScale: scale }))
+  }, [])
 
   // SVG setters
   const setSVGOptimized = useCallback((optimized: boolean) => {
-    setOptions((prev) => ({ ...prev, svgOptimized: optimized }));
-  }, []);
+    setOptions(prev => ({ ...prev, svgOptimized: optimized }))
+  }, [])
 
   const setSVGBackground = useCallback((background: boolean) => {
-    setOptions((prev) => ({ ...prev, svgBackground: background }));
-  }, []);
+    setOptions(prev => ({ ...prev, svgBackground: background }))
+  }, [])
 
   const setSVGBackgroundColor = useCallback((color: string) => {
-    setOptions((prev) => ({ ...prev, svgBackgroundColor: color }));
-  }, []);
+    setOptions(prev => ({ ...prev, svgBackgroundColor: color }))
+  }, [])
 
   const setSVGIncludeMetadata = useCallback((include: boolean) => {
-    setOptions((prev) => ({ ...prev, svgIncludeMetadata: include }));
-  }, []);
+    setOptions(prev => ({ ...prev, svgIncludeMetadata: include }))
+  }, [])
 
   // PDF setters
   const setPDFPageSize = useCallback((pageSize: PDFPageSize) => {
-    setOptions((prev) => ({ ...prev, pdfPageSize: pageSize }));
-  }, []);
+    setOptions(prev => ({ ...prev, pdfPageSize: pageSize }))
+  }, [])
 
   const setPDFOrientation = useCallback((orientation: PDFOrientation) => {
-    setOptions((prev) => ({ ...prev, pdfOrientation: orientation }));
-  }, []);
+    setOptions(prev => ({ ...prev, pdfOrientation: orientation }))
+  }, [])
 
   const setPDFMargin = useCallback((margin: number) => {
-    setOptions((prev) => ({ ...prev, pdfMargin: margin }));
-  }, []);
+    setOptions(prev => ({ ...prev, pdfMargin: margin }))
+  }, [])
 
   const setPDFCenterOnPage = useCallback((center: boolean) => {
-    setOptions((prev) => ({ ...prev, pdfCenterOnPage: center }));
-  }, []);
+    setOptions(prev => ({ ...prev, pdfCenterOnPage: center }))
+  }, [])
 
   // EPS setters
   const setEPSWidth = useCallback((width: number) => {
-    setOptions((prev) => ({ ...prev, epsWidth: width }));
-  }, []);
+    setOptions(prev => ({ ...prev, epsWidth: width }))
+  }, [])
 
   const setEPSHeight = useCallback((height: number) => {
-    setOptions((prev) => ({ ...prev, epsHeight: height }));
-  }, []);
+    setOptions(prev => ({ ...prev, epsHeight: height }))
+  }, [])
 
   const setEPSBoundingBox = useCallback((boundingBox: boolean) => {
-    setOptions((prev) => ({ ...prev, epsBoundingBox: boundingBox }));
-  }, []);
+    setOptions(prev => ({ ...prev, epsBoundingBox: boundingBox }))
+  }, [])
 
   // Common setters
   const setDPI = useCallback((dpi: number) => {
-    setOptions((prev) => ({ ...prev, dpi }));
-  }, []);
+    setOptions(prev => ({ ...prev, dpi }))
+  }, [])
 
   const setQuality = useCallback((quality: number) => {
-    setOptions((prev) => ({ ...prev, quality }));
-  }, []);
+    setOptions(prev => ({ ...prev, quality }))
+  }, [])
 
   // Reset to defaults
   const reset = useCallback(() => {
-    setOptions(DEFAULT_OPTIONS);
-  }, []);
+    setOptions(DEFAULT_OPTIONS)
+  }, [])
 
   // Bulk update
   const updateOptions = useCallback((updates: Partial<DownloadOptions>) => {
-    setOptions((prev) => ({ ...prev, ...updates }));
-  }, []);
+    setOptions(prev => ({ ...prev, ...updates }))
+  }, [])
 
   return {
     options,
     setFormat,
     setFilename,
-    
+
     // PNG
     setPNGSize,
     setPNGBackground,
     setPNGSmoothing,
     setPNGScale,
-    
+
     // SVG
     setSVGOptimized,
     setSVGBackground,
     setSVGBackgroundColor,
     setSVGIncludeMetadata,
-    
+
     // PDF
     setPDFPageSize,
     setPDFOrientation,
     setPDFMargin,
     setPDFCenterOnPage,
-    
+
     // EPS
     setEPSWidth,
     setEPSHeight,
     setEPSBoundingBox,
-    
+
     // Common
     setDPI,
     setQuality,
-    
+
     // Utilities
     reset,
     updateOptions,
-  };
+  }
 }
 
 /**
  * Get format recommendations
  */
 export function getFormatRecommendation(useCase: 'web' | 'print' | 'vector' | 'document'): {
-  format: DownloadFormat;
-  reason: string;
+  format: DownloadFormat
+  reason: string
 } {
   switch (useCase) {
     case 'web':
       return {
         format: 'png',
         reason: 'PNG offers best compatibility and quality for web use with transparency support',
-      };
+      }
     case 'print':
       return {
         format: 'eps',
         reason: 'EPS is the professional print standard with perfect scalability',
-      };
+      }
     case 'vector':
       return {
         format: 'svg',
         reason: 'SVG provides infinite scalability and smallest file size for vector graphics',
-      };
+      }
     case 'document':
       return {
         format: 'pdf',
         reason: 'PDF is universally supported for documents and maintains quality',
-      };
+      }
   }
 }
 
@@ -297,13 +297,13 @@ export const FORMAT_CAPABILITIES = {
     pros: ['Professional print standard', 'Perfect scalability', 'Adobe compatible'],
     cons: ['Not web compatible', 'Larger file size', 'Limited viewer support'],
   },
-};
+}
 
 /**
  * Get file extension for format
  */
 export function getFileExtension(format: DownloadFormat): string {
-  return format;
+  return format
 }
 
 /**
@@ -315,6 +315,6 @@ export function getMIMEType(format: DownloadFormat): string {
     png: 'image/png',
     pdf: 'application/pdf',
     eps: 'application/postscript',
-  };
-  return mimeTypes[format];
+  }
+  return mimeTypes[format]
 }

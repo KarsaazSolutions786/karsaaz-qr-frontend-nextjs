@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { useTranslation } from '@/lib/i18n'
+import { sanitizeSvg } from '@/lib/utils/dom-safety'
 
 interface TwoFactorTabProps {
   userId: number | string
@@ -137,7 +138,7 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
             </p>
             <div
               className="flex justify-center bg-white rounded-md p-4"
-              dangerouslySetInnerHTML={{ __html: setup.qr_code_svg }}
+              dangerouslySetInnerHTML={{ __html: sanitizeSvg(setup.qr_code_svg) }}
             />
             <div>
               <p className="text-xs text-gray-500 mb-1">{t('Or enter this secret manually:')}</p>
@@ -182,7 +183,9 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
               <div className="rounded-md border border-gray-200 p-4">
                 <h3 className="text-sm font-medium text-gray-900 mb-2">{t('Recovery Codes')}</h3>
                 <p className="text-xs text-gray-500 mb-3">
-                  {t('Store these codes securely. Each can be used once if you lose access to your authenticator.')}
+                  {t(
+                    'Store these codes securely. Each can be used once if you lose access to your authenticator.'
+                  )}
                 </p>
                 <div className="grid grid-cols-2 gap-2">
                   {recoveryCodes.map(code => (

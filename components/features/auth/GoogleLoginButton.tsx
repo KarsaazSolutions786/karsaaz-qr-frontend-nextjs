@@ -9,6 +9,7 @@ import { authAPI } from '@/lib/api/endpoints/auth'
 import type { LoginRequires2FAResponse } from '@/lib/api/endpoints/auth'
 import { useTwoFactorLoginVerify } from '@/lib/hooks/mutations/useLogin'
 import { queryKeys } from '@/lib/query/keys'
+import { envConfig } from '@/lib/config/env-config'
 
 declare global {
   interface Window {
@@ -101,7 +102,7 @@ export function GoogleLoginButton() {
   )
 
   useEffect(() => {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+    const clientId = envConfig.GOOGLE_CLIENT_ID
     if (!clientId) return
 
     const existingScript = document.querySelector(
@@ -229,7 +230,7 @@ export function GoogleLoginButton() {
   }
 
   // Fallback: if NEXT_PUBLIC_GOOGLE_CLIENT_ID is not set, use redirect flow
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+  const clientId = envConfig.GOOGLE_CLIENT_ID
   if (!clientId) {
     return (
       <button

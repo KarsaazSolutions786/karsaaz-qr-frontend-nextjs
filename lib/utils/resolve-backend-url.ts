@@ -1,3 +1,5 @@
+import { envConfig } from '@/lib/config/env-config'
+
 /**
  * Resolves a backend-relative URL (e.g. `/api/design-assets/thumbnail/...`)
  * to a full URL pointing at the Laravel backend.
@@ -29,11 +31,6 @@ function getBackendHost(): string {
     return (window as any).BACKEND_URL
   }
 
-  // Priority 2: NEXT_PUBLIC_API_URL env var
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL
-  }
-
-  // Priority 3: production fallback
-  return 'https://app.karsaazqr.com'
+  // Priority 2: envConfig.API_URL (centralized single source of truth)
+  return envConfig.API_URL
 }

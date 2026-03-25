@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { cn } from '@/lib/utils'
+import { sanitizeSvg } from '@/lib/utils/dom-safety'
 import { useTranslation } from '@/lib/i18n'
 import { Lock, Search } from 'lucide-react'
 import type { ReactNode } from 'react'
@@ -67,7 +68,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
   const filteredOptions = useMemo(() => {
     if (!keyword.trim()) return options
     const lowerKeyword = keyword.toLowerCase()
-    return options.filter((opt) => opt.label.toLowerCase().includes(lowerKeyword))
+    return options.filter(opt => opt.label.toLowerCase().includes(lowerKeyword))
   }, [options, keyword])
 
   const isSelected = useCallback(
@@ -91,9 +92,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
       if (props.multiple) {
         const current = Array.isArray(props.value) ? props.value : []
         const exists = current.includes(opt.value)
-        const next = exists
-          ? current.filter((v) => v !== opt.value)
-          : [...current, opt.value]
+        const next = exists ? current.filter(v => v !== opt.value) : [...current, opt.value]
         props.onChange(next)
       } else {
         ;(props as BalloonSelectorSingleProps).onChange(opt.value)
@@ -104,7 +103,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
 
   const handleSelectAll = useCallback(() => {
     if (!props.multiple) return
-    const allValues = options.filter((o) => !o.disabled && !o.locked).map((o) => o.value)
+    const allValues = options.filter(o => !o.disabled && !o.locked).map(o => o.value)
     props.onChange(allValues)
   }, [props, options])
 
@@ -113,9 +112,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
     props.onChange([])
   }, [props])
 
-  const gridClass = columns
-    ? `grid gap-2`
-    : 'flex flex-wrap gap-2'
+  const gridClass = columns ? `grid gap-2` : 'flex flex-wrap gap-2'
 
   const gridStyle = columns
     ? { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }
@@ -132,10 +129,9 @@ export function BalloonSelector(props: BalloonSelectorProps) {
               <input
                 type="text"
                 value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
+                onChange={e => setKeyword(e.target.value)}
                 placeholder={
-                  searchPlaceholder ||
-                  `${t('Search in')} ${options.length} ${t('options')}`
+                  searchPlaceholder || `${t('Search in')} ${options.length} ${t('options')}`
                 }
                 className="w-full rounded-md border border-gray-300 bg-white py-1.5 pl-8 pr-3 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
@@ -149,7 +145,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
                 className="text-blue-600 hover:underline disabled:text-gray-400 disabled:no-underline"
                 disabled={
                   Array.isArray(props.value) &&
-                  props.value.length === options.filter((o) => !o.disabled && !o.locked).length
+                  props.value.length === options.filter(o => !o.disabled && !o.locked).length
                 }
               >
                 {t('Select all')}
@@ -169,7 +165,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
 
       {/* Options grid */}
       <div className={gridClass} style={gridStyle}>
-        {filteredOptions.map((opt) => {
+        {filteredOptions.map(opt => {
           const selected = isSelected(opt.value)
           return (
             <button
@@ -188,9 +184,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
                 opt.locked && !opt.disabled && 'opacity-70 cursor-pointer'
               )}
             >
-              {opt.locked && (
-                <Lock className="h-3.5 w-3.5 shrink-0 text-gray-400" />
-              )}
+              {opt.locked && <Lock className="h-3.5 w-3.5 shrink-0 text-gray-400" />}
               {opt.icon && <span className="shrink-0">{opt.icon}</span>}
               {opt.image && (
                 <img
@@ -202,7 +196,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
               {opt.svg && (
                 <span
                   className="h-6 w-6 shrink-0 [&>svg]:h-full [&>svg]:w-full"
-                  dangerouslySetInnerHTML={{ __html: opt.svg }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeSvg(opt.svg) }}
                 />
               )}
               {opt.label && <span className="truncate">{opt.label}</span>}
@@ -239,7 +233,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
             {hoveredOption.svg && (
               <span
                 className="h-16 w-16 [&>svg]:h-full [&>svg]:w-full"
-                dangerouslySetInnerHTML={{ __html: hoveredOption.svg }}
+                dangerouslySetInnerHTML={{ __html: sanitizeSvg(hoveredOption.svg) }}
               />
             )}
             <div>
@@ -252,9 +246,7 @@ export function BalloonSelector(props: BalloonSelectorProps) {
 
       {/* Empty state */}
       {filteredOptions.length === 0 && (
-        <p className="py-4 text-center text-sm text-gray-400">
-          {t('No matching options')}
-        </p>
+        <p className="py-4 text-center text-sm text-gray-400">{t('No matching options')}</p>
       )}
     </div>
   )

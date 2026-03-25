@@ -6,9 +6,10 @@
 'use client'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { queryKeys } from '@/lib/query/keys'
-import { authAPI } from '@/lib/api/endpoints/auth'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { getUserStats, type UserStats } from '@/lib/api/sidebar'
 import type { FeatureFlags, SubscriptionStatus } from '@/types/entities/feature-flags'
 import type { User } from '@/types/entities/user'
 
@@ -117,17 +118,13 @@ function selectSubscription(subscriptions: Subscription[]): Subscription | null 
   })
 
   // First, try to find the most recent "active" non-trial subscription
-  let activeSub = sortedSubs.find(
-    (s) => getLatestStatus(s) === 'active' && !isTrialPlan(s)
-  )
+  let activeSub = sortedSubs.find(s => getLatestStatus(s) === 'active' && !isTrialPlan(s))
 
   if (activeSub) return activeSub
 
   // If no active non-trial, check if there's a more recent subscription attempt
   const mostRecent = sortedSubs[0]
-  const activeTrial = sortedSubs.find(
-    (s) => getLatestStatus(s) === 'active' && isTrialPlan(s)
-  )
+  const activeTrial = sortedSubs.find(s => getLatestStatus(s) === 'active' && isTrialPlan(s))
 
   if (mostRecent && activeTrial) {
     const mostRecentDate = new Date(mostRecent.created_at).getTime()
@@ -163,7 +160,18 @@ const adminPlan: SubscriptionPlan = {
   number_of_users: -1,
   number_of_custom_domains: -1,
   qr_types: [],
-  features: ['api_access', 'white_label', 'advanced_analytics', 'bulk_operations', 'templates', 'ai_design', 'custom_domain', 'svg_download', 'pdf_download', 'eps_download'],
+  features: [
+    'api_access',
+    'white_label',
+    'advanced_analytics',
+    'bulk_operations',
+    'templates',
+    'ai_design',
+    'custom_domain',
+    'svg_download',
+    'pdf_download',
+    'eps_download',
+  ],
   file_size_limit: -1,
   number_of_bulk_created_qrcodes: -1,
 }
@@ -224,7 +232,10 @@ function processSubscriptionData(user: User | null): SubscriptionData {
     const expiresAt = activeSub.expires_at || activeSub.end_date || activeSub.currentPeriodEnd
     if (expiresAt) {
       const endDate = new Date(expiresAt)
-      remainingDays = Math.max(0, Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+      remainingDays = Math.max(
+        0,
+        Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+      )
     }
   }
 
@@ -265,7 +276,10 @@ function processSubscriptionData(user: User | null): SubscriptionData {
     allow_api_access: plan?.features?.includes('api_access') || false,
     allow_white_label: plan?.features?.includes('white_label') || false,
     allow_advanced_analytics: plan?.features?.includes('advanced_analytics') || false,
-    allow_bulk_operations: plan?.features?.includes('bulk_operations') || plan?.features?.includes('bulk-qrcode-creation') || false,
+    allow_bulk_operations:
+      plan?.features?.includes('bulk_operations') ||
+      plan?.features?.includes('bulk-qrcode-creation') ||
+      false,
     allow_templates: plan?.features?.includes('templates') || false,
     allow_ai_design: plan?.features?.includes('ai_design') || false,
   }
@@ -286,34 +300,41 @@ function processSubscriptionData(user: User | null): SubscriptionData {
  */
 export function useSubscription() {
   const queryClient = useQueryClient()
+  const { user, isLoading, refreshUserData } = useAuth()
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [upgradeReason, setUpgradeReason] = useState('')
-
-  // Get current user data from query cache or fetch it
-  const { data: user, isLoading, error, refetch } = useQuery({
-    queryKey: queryKeys.auth.currentUser(),
-    queryFn: async () => {
-      const response = await authAPI.getCurrentUser()
-      const userData = (response as any)?.data ?? response
-      // Also update localStorage for backwards compatibility
-      if (typeof window !== 'undefined' && userData) {
-        localStorage.setItem('user', JSON.stringify(userData))
-      }
-      return userData as User
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 30, // 30 minutes
-    retry: 1,
-    enabled: typeof window !== 'undefined' && !!(localStorage.getItem('logged_in') || localStorage.getItem('token')),
-  })
 
   // Process subscription data from user
   const subscriptionData = processSubscriptionData(user || null)
 
+  // Fetch real usage stats from backend (same pattern as useSubscriptionLimits)
+  const { data: usageStats } = useQuery<UserStats>({
+    queryKey: [...queryKeys.qrcodes.all(), 'usage-stats'],
+    queryFn: getUserStats,
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    retry: 1,
+    enabled: typeof window !== 'undefined' && !!user,
+  })
+
+  const usage = useMemo(
+    () => ({
+      dynamicQrcodes: usageStats?.dynamic_qrcodes_count ?? 0,
+      scansThisMonth: usageStats?.total_scans ?? 0,
+      invitedUsers: 0, // No backend endpoint for invited user count yet
+    }),
+    [usageStats]
+  )
+
   // Helper functions
   const isUserSubscribed = useCallback(() => {
     const { status } = subscriptionData
-    return status === 'active' || status === 'trial' || status === 'expiring_soon' || status === 'trial_expiring_soon'
+    return (
+      status === 'active' ||
+      status === 'trial' ||
+      status === 'expiring_soon' ||
+      status === 'trial_expiring_soon'
+    )
   }, [subscriptionData])
 
   const onTrial = useCallback(() => {
@@ -324,29 +345,44 @@ export function useSubscription() {
     return subscriptionData.remainingDays
   }, [subscriptionData.remainingDays])
 
-  const featureAllowed = useCallback((feature: string) => {
-    const key = `allow_${feature}` as keyof FeatureFlags
-    return !!subscriptionData.features[key]
-  }, [subscriptionData.features])
+  const featureAllowed = useCallback(
+    (feature: string) => {
+      const key = `allow_${feature}` as keyof FeatureFlags
+      return !!subscriptionData.features[key]
+    },
+    [subscriptionData.features]
+  )
 
-  const currentPlanHasQrCodeType = useCallback((type: string) => {
-    const { qr_code_types } = subscriptionData.features
-    if (qr_code_types.length === 0) return true
-    return qr_code_types.includes(type)
-  }, [subscriptionData.features])
+  const currentPlanHasQrCodeType = useCallback(
+    (type: string) => {
+      const { qr_code_types } = subscriptionData.features
+      if (qr_code_types.length === 0) return true
+      return qr_code_types.includes(type)
+    },
+    [subscriptionData.features]
+  )
 
   const userInvitedUsersLimitReached = useCallback(() => {
-    // TODO: Get actual usage from API
-    return false
-  }, [])
+    const maxInvited = subscriptionData.features.max_invited_users
+    // -1 or 0 means unlimited
+    if (maxInvited <= 0) return false
+    return usage.invitedUsers >= maxInvited
+  }, [subscriptionData.features.max_invited_users, usage.invitedUsers])
 
   const canCreateQRCode = useCallback(() => {
     if (!isUserSubscribed()) {
       return { allowed: false, reason: 'Subscription expired. Please renew to create QR codes.' }
     }
-    // TODO: Check actual usage from API
+    const maxQR = subscriptionData.features.max_dynamic_qrcodes
+    // -1 or 0 means unlimited
+    if (maxQR > 0 && usage.dynamicQrcodes >= maxQR) {
+      return {
+        allowed: false,
+        reason: `You have reached your limit of ${maxQR} dynamic QR codes. Upgrade your plan to create more.`,
+      }
+    }
     return { allowed: true }
-  }, [isUserSubscribed])
+  }, [isUserSubscribed, subscriptionData.features.max_dynamic_qrcodes, usage.dynamicQrcodes])
 
   const canEditQRCode = useCallback(() => {
     if (!isUserSubscribed()) {
@@ -357,8 +393,8 @@ export function useSubscription() {
 
   // Actions
   const loadSubscription = useCallback(async () => {
-    await refetch()
-  }, [refetch])
+    await refreshUserData()
+  }, [refreshUserData])
 
   const openUpgradeModal = useCallback((reason: string) => {
     setUpgradeReason(reason)
@@ -382,10 +418,10 @@ export function useSubscription() {
     remainingDays: subscriptionData.remainingDays,
     isOnTrial: subscriptionData.isOnTrial,
     features: subscriptionData.features,
-    usage: { dynamicQrcodes: 0, scansThisMonth: 0, invitedUsers: 0 }, // TODO: Get from API
+    usage,
     loaded: !isLoading,
     isLoading,
-    error,
+    error: null,
     showUpgradeModal,
     upgradeReason,
 
@@ -408,6 +444,6 @@ export function useSubscription() {
     openUpgradeModal,
     closeUpgradeModal,
     invalidateSubscription,
-    refetch,
+    refetch: loadSubscription,
   }
 }

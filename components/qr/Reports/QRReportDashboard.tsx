@@ -1,25 +1,41 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { useQRCodeAnalytics } from '@/lib/hooks/queries/useQRCodes';
-import { LineChartWrapper } from '@/components/ui/charts';
-import { DoughnutChartWrapper } from '@/components/ui/charts';
-import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage';
-import { ScansPerHour } from '@/components/analytics/ScansPerHour';
-import { useTranslation } from '@/lib/i18n';
+import React from 'react'
+import dynamic from 'next/dynamic'
+import { useQRCodeAnalytics } from '@/lib/hooks/queries/useQRCodes'
+import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage'
+import { useTranslation } from '@/lib/i18n'
+
+// Lazy-load recharts-based chart components to reduce main bundle size
+const ChartSkeleton = () => <div className="animate-pulse h-64 bg-muted rounded" />
+
+const LineChartWrapper = dynamic(
+  () => import('@/components/ui/charts').then(mod => ({ default: mod.LineChartWrapper })),
+  { loading: ChartSkeleton, ssr: false }
+)
+
+const DoughnutChartWrapper = dynamic(
+  () => import('@/components/ui/charts').then(mod => ({ default: mod.DoughnutChartWrapper })),
+  { loading: ChartSkeleton, ssr: false }
+)
+
+const ScansPerHour = dynamic(
+  () => import('@/components/analytics/ScansPerHour').then(mod => ({ default: mod.ScansPerHour })),
+  { loading: ChartSkeleton, ssr: false }
+)
 
 interface AnalyticsData {
-  totalScans: number;
-  uniqueVisitors: number;
-  topCountries: { name: string; count: number }[];
-  scanTimeline: { date: string; scans: number }[];
-  deviceBreakdown: { name: string; value: number }[];
-  topReferrers: { source: string; count: number }[];
-  locations: { country: string; city: string; count: number }[];
+  totalScans: number
+  uniqueVisitors: number
+  topCountries: { name: string; count: number }[]
+  scanTimeline: { date: string; scans: number }[]
+  deviceBreakdown: { name: string; value: number }[]
+  topReferrers: { source: string; count: number }[]
+  locations: { country: string; city: string; count: number }[]
 }
 
 export interface QRReportDashboardProps {
-  qrCodeId: number;
+  qrCodeId: number
 }
 
 const EMPTY_DATA: AnalyticsData = {
@@ -30,20 +46,22 @@ const EMPTY_DATA: AnalyticsData = {
   deviceBreakdown: [],
   topReferrers: [],
   locations: [],
-};
+}
 
 export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
-  const { t } = useTranslation();
-  const { data: rawData, isLoading: loading, error: queryError } = useQRCodeAnalytics(qrCodeId);
-  const data: AnalyticsData = rawData ?? EMPTY_DATA;
-  const error = queryError ? (queryError as any)?.response?.data?.message || 'Failed to load analytics' : '';
+  const { t } = useTranslation()
+  const { data: rawData, isLoading: loading, error: queryError } = useQRCodeAnalytics(qrCodeId)
+  const data: AnalyticsData = rawData ?? EMPTY_DATA
+  const error = queryError
+    ? (queryError as any)?.response?.data?.message || 'Failed to load analytics'
+    : ''
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -51,7 +69,7 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
       <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-center">
         <p className="text-sm text-red-700">{error}</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -92,14 +110,8 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
 
       {/* Language & Hourly Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ScansPerLanguage
-          data={(data as any).scansByLanguage ?? []}
-          loading={loading}
-        />
-        <ScansPerHour
-          data={(data as any).scansByHour ?? []}
-          loading={loading}
-        />
+        <ScansPerLanguage data={(data as any).scansByLanguage ?? []} loading={loading} />
+        <ScansPerHour data={(data as any).scansByHour ?? []} loading={loading} />
       </div>
 
       {/* Bottom Row */}
@@ -111,7 +123,7 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
             <p className="text-sm text-gray-400">{t('No referrer data yet')}</p>
           ) : (
             <ul className="divide-y divide-gray-100">
-              {data.topReferrers.map((r) => (
+              {data.topReferrers.map(r => (
                 <li key={r.source} className="flex items-center justify-between py-2">
                   <span className="text-sm text-gray-700 truncate">{r.source}</span>
                   <span className="text-sm font-semibold text-gray-900">{r.count}</span>
@@ -151,7 +163,7 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 /* ------------------------------------------------------------------ */
@@ -163,9 +175,9 @@ function SummaryCard({
   value,
   sub,
 }: {
-  label: string;
-  value: string | number;
-  sub?: string;
+  label: string
+  value: string | number
+  sub?: string
 }) {
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-5">
@@ -173,5 +185,5 @@ function SummaryCard({
       <p className="mt-1 text-2xl font-bold text-gray-900">{value}</p>
       {sub && <p className="mt-0.5 text-xs text-gray-400">{sub}</p>}
     </div>
-  );
+  )
 }

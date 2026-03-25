@@ -1,6 +1,7 @@
 import type { BlogPost } from '@/types/entities/blog-post'
+import { envConfig } from '@/lib/config/env-config'
 
-const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.karsaazqr.com'
+const SITE_URL = envConfig.APP_URL
 
 /**
  * Generate Article (BlogPosting) JSON-LD schema for a blog post.

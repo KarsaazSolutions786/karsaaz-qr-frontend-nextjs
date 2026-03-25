@@ -1,9 +1,18 @@
 'use client'
 
-import React, { createContext, ReactNode, useState, useEffect, useCallback, useRef, useMemo } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import apiClient, { markAuthValidationComplete } from '@/lib/api/client'
+import { envConfig } from '@/lib/config/env-config'
 import { queryKeys } from '@/lib/query/keys'
 import { User } from '@/types/entities/user'
 import { userHomePage as resolveHomePage } from '@/lib/utils/permissions'
@@ -77,9 +86,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (hasValidated.current) return
     hasValidated.current = true
 
-    const isLoggedIn = typeof window !== 'undefined'
-      ? !!(localStorage.getItem('logged_in') || localStorage.getItem('token'))
-      : false
+    const isLoggedIn =
+      typeof window !== 'undefined'
+        ? !!(localStorage.getItem('logged_in') || localStorage.getItem('token'))
+        : false
 
     if (!isLoggedIn) {
       // isLoading already initialized to false when no session exists
@@ -167,7 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const auth0Enabled =
       typeof window !== 'undefined' ? localStorage.getItem('auth0_enabled') : null
     if (auth0Enabled === 'true') {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://app.karsaazqr.com'
+      const apiUrl = envConfig.API_URL
       window.location.href = `${apiUrl}/auth0/logout`
       return
     }
@@ -260,19 +270,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [queryClient, router])
 
-  const contextValue = useMemo<AuthContextType>(() => ({
-    user,
-    isLoading,
-    isAuthenticated: !!user,
-    login,
-    logout,
-    setUser,
-    refreshUserData,
-    actAs,
-    removeActAs,
-    isActingAs,
-    actingAsUser,
-  }), [user, isLoading, login, logout, refreshUserData, actAs, removeActAs, isActingAs, actingAsUser])
+  const contextValue = useMemo<AuthContextType>(
+    () => ({
+      user,
+      isLoading,
+      isAuthenticated: !!user,
+      login,
+      logout,
+      setUser,
+      refreshUserData,
+      actAs,
+      removeActAs,
+      isActingAs,
+      actingAsUser,
+    }),
+    [user, isLoading, login, logout, refreshUserData, actAs, removeActAs, isActingAs, actingAsUser]
+  )
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 }

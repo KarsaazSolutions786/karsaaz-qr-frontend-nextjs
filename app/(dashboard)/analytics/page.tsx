@@ -1,13 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { getPresetDateRange } from '@/lib/utils/date-range'
 import { useAnalyticsOverview, useTopQRCodes } from '@/lib/hooks/queries/useAnalytics'
 import MetricCard from '@/components/analytics/MetricCard'
 import ChartContainer from '@/components/analytics/charts/ChartContainer'
-import LineChart from '@/components/analytics/charts/LineChart'
-import BarChart from '@/components/analytics/charts/BarChart'
-import PieChart from '@/components/analytics/charts/PieChart'
 import ActivityFeed from '@/components/analytics/ActivityFeed'
 import DateRangePicker from '@/components/analytics/DateRangePicker'
 import { RealtimeStatsWidget } from '@/components/analytics/RealtimeStatsWidget'
@@ -15,15 +13,35 @@ import { LocationMap } from '@/components/analytics/LocationMap'
 import { DeviceBrowserCharts } from '@/components/analytics/DeviceBrowserCharts'
 import { ReferrerTracker } from '@/components/analytics/ReferrerTracker'
 import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage'
-import { ScansPerHour } from '@/components/analytics/ScansPerHour'
 import type { DateRange } from '@/types/entities/analytics'
 import { useTranslation } from '@/lib/i18n'
 
+// Lazy-load recharts-based chart components to reduce main bundle size
+const ChartSkeleton = () => <div className="animate-pulse h-64 bg-muted rounded" />
+
+const LineChart = dynamic(() => import('@/components/analytics/charts/LineChart'), {
+  loading: ChartSkeleton,
+  ssr: false,
+})
+
+const BarChart = dynamic(() => import('@/components/analytics/charts/BarChart'), {
+  loading: ChartSkeleton,
+  ssr: false,
+})
+
+const PieChart = dynamic(() => import('@/components/analytics/charts/PieChart'), {
+  loading: ChartSkeleton,
+  ssr: false,
+})
+
+const ScansPerHour = dynamic(
+  () => import('@/components/analytics/ScansPerHour').then(mod => ({ default: mod.ScansPerHour })),
+  { loading: ChartSkeleton, ssr: false }
+)
+
 export default function AnalyticsPage() {
   const { t } = useTranslation()
-  const [dateRange, setDateRange] = useState<DateRange>(
-    getPresetDateRange('last30days')
-  )
+  const [dateRange, setDateRange] = useState<DateRange>(getPresetDateRange('last30days'))
 
   const {
     data: overview,
@@ -31,19 +49,50 @@ export default function AnalyticsPage() {
     error: overviewError,
   } = useAnalyticsOverview(dateRange)
 
-  const {
-    data: topQRCodes,
-    isLoading: topLoading,
-    error: topError,
-  } = useTopQRCodes(dateRange, 5)
+  const { data: topQRCodes, isLoading: topLoading, error: topError } = useTopQRCodes(dateRange, 5)
 
   // Mock data for new analytics components
   const mockLocationData = [
-    { country: 'United States', countryCode: 'US', scans: 1245, city: 'New York', latitude: 40.7128, longitude: -74.0060 },
-    { country: 'Canada', countryCode: 'CA', scans: 856, city: 'Toronto', latitude: 43.6532, longitude: -79.3832 },
-    { country: 'United Kingdom', countryCode: 'GB', scans: 734, city: 'London', latitude: 51.5074, longitude: -0.1278 },
-    { country: 'Germany', countryCode: 'DE', scans: 621, city: 'Berlin', latitude: 52.5200, longitude: 13.4050 },
-    { country: 'Japan', countryCode: 'JP', scans: 489, city: 'Tokyo', latitude: 35.6762, longitude: 139.6503 },
+    {
+      country: 'United States',
+      countryCode: 'US',
+      scans: 1245,
+      city: 'New York',
+      latitude: 40.7128,
+      longitude: -74.006,
+    },
+    {
+      country: 'Canada',
+      countryCode: 'CA',
+      scans: 856,
+      city: 'Toronto',
+      latitude: 43.6532,
+      longitude: -79.3832,
+    },
+    {
+      country: 'United Kingdom',
+      countryCode: 'GB',
+      scans: 734,
+      city: 'London',
+      latitude: 51.5074,
+      longitude: -0.1278,
+    },
+    {
+      country: 'Germany',
+      countryCode: 'DE',
+      scans: 621,
+      city: 'Berlin',
+      latitude: 52.52,
+      longitude: 13.405,
+    },
+    {
+      country: 'Japan',
+      countryCode: 'JP',
+      scans: 489,
+      city: 'Tokyo',
+      latitude: 35.6762,
+      longitude: 139.6503,
+    },
   ]
 
   const mockDeviceData = [
@@ -85,7 +134,9 @@ export default function AnalyticsPage() {
 
   const mockHourlyData = Array.from({ length: 24 }, (_, i) => ({
     hour: i,
-    count: Math.round(50 + 200 * Math.sin((i - 6) * Math.PI / 12) ** 2 + (i >= 9 && i <= 17 ? 80 : 0)),
+    count: Math.round(
+      50 + 200 * Math.sin(((i - 6) * Math.PI) / 12) ** 2 + (i >= 9 && i <= 17 ? 80 : 0)
+    ),
   }))
 
   const totalScans = overview?.totalScans || 5000
@@ -109,24 +160,24 @@ export default function AnalyticsPage() {
       {/* Metrics Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
-          title={t("Total Scans")}
+          title={t('Total Scans')}
           value={overview?.totalScans.toLocaleString() ?? '0'}
           change={overview?.scanGrowth}
           isLoading={overviewLoading}
         />
         <MetricCard
-          title={t("Unique Users")}
+          title={t('Unique Users')}
           value={overview?.uniqueUsers.toLocaleString() ?? '0'}
           isLoading={overviewLoading}
         />
         <MetricCard
-          title={t("Active QR Codes")}
+          title={t('Active QR Codes')}
           value={overview?.activeQRCodes ?? '0'}
           change={overview?.activeGrowth}
           isLoading={overviewLoading}
         />
         <MetricCard
-          title={t("Total QR Codes")}
+          title={t('Total QR Codes')}
           value={overview?.totalQRCodes ?? '0'}
           isLoading={overviewLoading}
         />
@@ -135,8 +186,8 @@ export default function AnalyticsPage() {
       {/* Charts Row */}
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartContainer
-          title={t("Scans Over Time")}
-          description={t("Daily scan activity")}
+          title={t('Scans Over Time')}
+          description={t('Daily scan activity')}
           isLoading={overviewLoading}
           error={overviewError}
         >
@@ -149,14 +200,14 @@ export default function AnalyticsPage() {
         </ChartContainer>
 
         <ChartContainer
-          title={t("Top Performing QR Codes")}
-          description={t("Most scanned QR codes")}
+          title={t('Top Performing QR Codes')}
+          description={t('Most scanned QR codes')}
           isLoading={topLoading}
           error={topError}
         >
           <BarChart
             data={
-              topQRCodes?.map((qr) => ({
+              topQRCodes?.map(qr => ({
                 label: qr.name,
                 value: qr.totalScans,
               })) ?? []
@@ -170,11 +221,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Location Map */}
-      <LocationMap
-        locations={mockLocationData}
-        totalScans={totalScans}
-        showList={true}
-      />
+      <LocationMap locations={mockLocationData} totalScans={totalScans} showList={true} />
 
       {/* Device & Browser Analytics */}
       <DeviceBrowserCharts
@@ -201,7 +248,7 @@ export default function AnalyticsPage() {
       {/* Breakdown Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
         <ChartContainer
-          title={t("Scans by Device")}
+          title={t('Scans by Device')}
           isLoading={overviewLoading}
           error={overviewError}
         >
@@ -209,7 +256,7 @@ export default function AnalyticsPage() {
         </ChartContainer>
 
         <ChartContainer
-          title={t("Scans by Location")}
+          title={t('Scans by Location')}
           isLoading={overviewLoading}
           error={overviewError}
         >
@@ -219,8 +266,8 @@ export default function AnalyticsPage() {
 
       {/* Recent Activity */}
       <ChartContainer
-        title={t("Recent Scans")}
-        description={t("Latest QR code scans")}
+        title={t('Recent Scans')}
+        description={t('Latest QR code scans')}
         isLoading={overviewLoading}
         error={overviewError}
       >

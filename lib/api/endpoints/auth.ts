@@ -1,4 +1,5 @@
 import apiClient from '@/lib/api/client'
+import { envConfig } from '@/lib/config/env-config'
 import { User } from '@/types/entities/user'
 import { generateOAuthStateForRedirect } from '@/lib/services/auth-workflow'
 
@@ -294,21 +295,21 @@ export const authAPI = {
 
   // Google OAuth — returns the redirect URL for server-side flow (fallback)
   getGoogleRedirectUrl: () => {
-    const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+    const rootUrl = envConfig.API_URL
     const state = generateOAuthStateForRedirect()
     return `${rootUrl}/auth-workflow/google/redirect?state=${state}`
   },
 
   // Twitter/X OAuth
   getTwitterRedirectUrl: () => {
-    const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+    const rootUrl = envConfig.API_URL
     const state = generateOAuthStateForRedirect()
     return `${rootUrl}/auth-workflow/twitter/redirect?state=${state}`
   },
 
   // Facebook OAuth
   getFacebookRedirectUrl: () => {
-    const rootUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+    const rootUrl = envConfig.API_URL
     const state = generateOAuthStateForRedirect()
     return `${rootUrl}/auth-workflow/facebook/redirect?state=${state}`
   },

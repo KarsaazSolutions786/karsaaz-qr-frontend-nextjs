@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
+import { envConfig } from '@/lib/config/env-config'
 
-const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.karsaazqr.com'
+const SITE_URL = envConfig.APP_URL
 const SITE_NAME = 'Karsaaz QR'
 
 /**

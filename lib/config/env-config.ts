@@ -16,6 +16,8 @@ interface EnvConfig {
   ENABLE_PASSWORDLESS_AUTH: boolean
   /** Enable referral system */
   ENABLE_REFERRAL_SYSTEM: boolean
+  /** Google Maps embed API key */
+  GOOGLE_MAPS_API_KEY: string
   /** Current Node environment */
   NODE_ENV: string
 }
@@ -33,6 +35,7 @@ function buildEnvConfig(): EnvConfig {
     STRIPE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
     ENABLE_PASSWORDLESS_AUTH: parseBool(process.env.NEXT_PUBLIC_ENABLE_PASSWORDLESS_AUTH, false),
     ENABLE_REFERRAL_SYSTEM: parseBool(process.env.NEXT_PUBLIC_ENABLE_REFERRAL_SYSTEM, false),
+    GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
     NODE_ENV: process.env.NODE_ENV || 'development',
   }
 }

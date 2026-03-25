@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next'
+import { envConfig } from '@/lib/config/env-config'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://karsaaz.com'
+  const baseUrl = envConfig.APP_URL
 
   return {
     rules: [

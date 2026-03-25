@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
+import { envConfig } from '@/lib/config/env-config'
 import { useTranslation } from '@/lib/i18n'
 
 export default function SystemLogsPage() {
@@ -38,13 +39,16 @@ export default function SystemLogsPage() {
 
   useEffect(() => {
     fetchLogs()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleDownload = async () => {
     try {
       const url = await systemConfigsAPI.downloadLogFile()
       // Backend returns a relative signed URL — resolve against API origin
-      const baseOrigin = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' && (window as any).BACKEND_URL) || ''
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const baseOrigin =
+        (typeof window !== 'undefined' && (window as any).BACKEND_URL) || envConfig.API_URL
       const fullUrl = url.startsWith('http') ? url : `${baseOrigin}${url}`
       window.open(fullUrl, '_blank')
     } catch {

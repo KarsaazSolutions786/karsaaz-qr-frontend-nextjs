@@ -1,28 +1,29 @@
 /**
  * DownloadModal Component
- * 
+ *
  * Modal for downloading QR codes in multiple formats with options.
  */
 
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import { toast } from 'sonner';
-import { useTranslation } from '@/lib/i18n';
-import { exportSVG } from '@/lib/utils/export-svg';
-import { exportPDF, PDFPageSize, PDFOrientation } from '@/lib/utils/export-pdf';
-import { exportEPS } from '@/lib/utils/export-eps';
-import { exportPNG, PNG_SIZE_PRESETS } from '@/lib/utils/export-png';
-import { useSubscription } from '@/lib/hooks/useSubscription';
+import React, { useState } from 'react'
+import { toast } from 'sonner'
+import { useTranslation } from '@/lib/i18n'
+import { exportSVG } from '@/lib/utils/export-svg'
+import { exportPDF } from '@/lib/utils/export-pdf'
+import type { PDFPageSize, PDFOrientation } from '@/lib/utils/export-pdf'
+import { exportEPS } from '@/lib/utils/export-eps'
+import { exportPNG, PNG_SIZE_PRESETS } from '@/lib/utils/export-png'
+import { useSubscription } from '@/lib/hooks/useSubscription'
 
-export type DownloadFormat = 'svg' | 'pdf' | 'eps' | 'png';
+export type DownloadFormat = 'svg' | 'pdf' | 'eps' | 'png'
 
 export interface DownloadModalProps {
-  svg: string;
-  defaultFilename?: string;
-  isOpen: boolean;
-  onClose: () => void;
-  onDownloadComplete?: (format: DownloadFormat) => void;
+  svg: string
+  defaultFilename?: string
+  isOpen: boolean
+  onClose: () => void
+  onDownloadComplete?: (format: DownloadFormat) => void
 }
 
 export function DownloadModal({
@@ -32,75 +33,81 @@ export function DownloadModal({
   onClose,
   onDownloadComplete,
 }: DownloadModalProps) {
-  const { t } = useTranslation();
-  const [selectedFormat, setSelectedFormat] = useState<DownloadFormat>('png');
-  const [filename, setFilename] = useState(defaultFilename);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const { t } = useTranslation()
+  const [selectedFormat, setSelectedFormat] = useState<DownloadFormat>('png')
+  const [filename, setFilename] = useState(defaultFilename)
+  const [isDownloading, setIsDownloading] = useState(false)
 
   // Subscription-based download restrictions
-  const { plan, isOnTrial } = useSubscription();
-  const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0;
+  const { plan, isOnTrial } = useSubscription()
+  const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
 
   /** Formats that require a paid plan */
   const isPremiumFormat = (format: DownloadFormat): boolean => {
-    return format === 'svg' || format === 'pdf' || format === 'eps';
-  };
+    return format === 'svg' || format === 'pdf' || format === 'eps'
+  }
 
   const handleFormatSelect = (format: DownloadFormat) => {
     if (isFreePlan && isPremiumFormat(format)) {
-      toast.info(`${format.toUpperCase()} ${t('download requires a paid plan. Upgrade to unlock all formats.')}`);
-      return;
+      toast.info(
+        `${format.toUpperCase()} ${t('download requires a paid plan. Upgrade to unlock all formats.')}`
+      )
+      return
     }
-    setSelectedFormat(format);
-  };
+    setSelectedFormat(format)
+  }
 
   // PNG options — free plans restricted to 'small' size
-  const [pngSize, setPNGSize] = useState<keyof typeof PNG_SIZE_PRESETS>(isFreePlan ? 'small' : 'medium');
-  const [pngBackground, setPNGBackground] = useState<string>('');
+  const [pngSize, setPNGSize] = useState<keyof typeof PNG_SIZE_PRESETS>(
+    isFreePlan ? 'small' : 'medium'
+  )
+  const [pngBackground, setPNGBackground] = useState<string>('')
 
   // PDF options
-  const [pdfPageSize, setPDFPageSize] = useState<PDFPageSize>('a4');
-  const [pdfOrientation, setPDFOrientation] = useState<PDFOrientation>('portrait');
-  const [pdfMargin, setPDFMargin] = useState(10);
+  const [pdfPageSize, setPDFPageSize] = useState<PDFPageSize>('a4')
+  const [pdfOrientation, setPDFOrientation] = useState<PDFOrientation>('portrait')
+  const [pdfMargin, setPDFMargin] = useState(10)
 
   // SVG options
-  const [svgOptimized, setSVGOptimized] = useState(false);
-  const [svgBackground, setSVGBackground] = useState(false);
+  const [svgOptimized, setSVGOptimized] = useState(false)
+  const [svgBackground, setSVGBackground] = useState(false)
 
   // EPS options
-  const [epsWidth, setEPSWidth] = useState(300);
-  const [epsHeight, setEPSHeight] = useState(300);
+  const [epsWidth, setEPSWidth] = useState(300)
+  const [epsHeight, setEPSHeight] = useState(300)
 
   /** Free plans are restricted to small/thumbnail PNG sizes only */
-  const FREE_ALLOWED_PNG_SIZES: Set<string> = new Set(['thumbnail', 'small']);
+  const FREE_ALLOWED_PNG_SIZES: Set<string> = new Set(['thumbnail', 'small'])
 
   const handlePNGSizeChange = (size: keyof typeof PNG_SIZE_PRESETS) => {
     if (isFreePlan && !FREE_ALLOWED_PNG_SIZES.has(size)) {
-      toast.info(t('Higher resolution downloads require a paid plan. Upgrade to unlock all sizes.'));
-      return;
+      toast.info(t('Higher resolution downloads require a paid plan. Upgrade to unlock all sizes.'))
+      return
     }
-    setPNGSize(size);
-  };
+    setPNGSize(size)
+  }
 
   const handleDownload = async () => {
     // Enforce format restrictions for free/trial plans
     if (isFreePlan && isPremiumFormat(selectedFormat)) {
-      toast.info(`${selectedFormat.toUpperCase()} ${t('download requires a paid plan. Upgrade to unlock all formats.')}`);
-      return;
+      toast.info(
+        `${selectedFormat.toUpperCase()} ${t('download requires a paid plan. Upgrade to unlock all formats.')}`
+      )
+      return
     }
 
     // Enforce PNG size restriction for free/trial plans
     if (isFreePlan && selectedFormat === 'png' && !FREE_ALLOWED_PNG_SIZES.has(pngSize)) {
-      toast.info(t('This PNG size requires a paid plan. Resetting to 512px.'));
-      setPNGSize('small');
-      return;
+      toast.info(t('This PNG size requires a paid plan. Resetting to 512px.'))
+      setPNGSize('small')
+      return
     }
 
-    setIsDownloading(true);
+    setIsDownloading(true)
 
     try {
-      const fileExt = selectedFormat;
-      const fullFilename = `${filename}.${fileExt}`;
+      const fileExt = selectedFormat
+      const fullFilename = `${filename}.${fileExt}`
 
       switch (selectedFormat) {
         case 'svg':
@@ -109,8 +116,8 @@ export function DownloadModal({
             optimized: svgOptimized,
             addBackgroundRect: svgBackground,
             backgroundColor: '#ffffff',
-          });
-          break;
+          })
+          break
 
         case 'pdf':
           await exportPDF(svg, {
@@ -119,39 +126,39 @@ export function DownloadModal({
             orientation: pdfOrientation,
             margin: pdfMargin,
             centerOnPage: true,
-          });
-          break;
+          })
+          break
 
         case 'eps':
           await exportEPS(svg, {
             filename: fullFilename,
             width: epsWidth,
             height: epsHeight,
-          });
-          break;
+          })
+          break
 
         case 'png':
-          const preset = PNG_SIZE_PRESETS[pngSize];
+          const preset = PNG_SIZE_PRESETS[pngSize]
           await exportPNG(svg, {
             filename: fullFilename,
             width: preset.width,
             height: preset.height,
             backgroundColor: pngBackground || undefined,
-          });
-          break;
+          })
+          break
       }
 
-      onDownloadComplete?.(selectedFormat);
-      onClose();
+      onDownloadComplete?.(selectedFormat)
+      onClose()
     } catch (error) {
-      console.error('Download failed:', error);
-      toast.error(t('Download failed. Please try again.'));
+      console.error('Download failed:', error)
+      toast.error(t('Download failed. Please try again.'))
     } finally {
-      setIsDownloading(false);
+      setIsDownloading(false)
     }
-  };
+  }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -159,11 +166,7 @@ export function DownloadModal({
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900">{t('Download QR Code')}</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
-          >
+          <button type="button" onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"
@@ -182,7 +185,7 @@ export function DownloadModal({
             <input
               type="text"
               value={filename}
-              onChange={(e) => setFilename(e.target.value)}
+              onChange={e => setFilename(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
               placeholder="qr-code"
             />
@@ -231,7 +234,9 @@ export function DownloadModal({
             </div>
             {isFreePlan && (
               <p className="mt-2 text-xs text-gray-500">
-                {t('Free plan: PNG only (up to 512px). Upgrade for SVG, PDF, EPS and higher resolutions.')}
+                {t(
+                  'Free plan: PNG only (up to 512px). Upgrade for SVG, PDF, EPS and higher resolutions.'
+                )}
               </p>
             )}
           </div>
@@ -308,29 +313,38 @@ export function DownloadModal({
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                   />
                 </svg>
-                <span>{t('Download')} {selectedFormat.toUpperCase()}</span>
+                <span>
+                  {t('Download')} {selectedFormat.toUpperCase()}
+                </span>
               </>
             )}
           </button>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 // Format button component
 interface FormatButtonProps {
-  format: DownloadFormat;
-  label: string;
-  description: string;
-  icon: string;
-  isSelected: boolean;
-  onClick: () => void;
-  isLocked?: boolean;
+  format: DownloadFormat
+  label: string
+  description: string
+  icon: string
+  isSelected: boolean
+  onClick: () => void
+  isLocked?: boolean
 }
 
-function FormatButton({ label, description, icon, isSelected, onClick, isLocked = false }: FormatButtonProps) {
-  const { t } = useTranslation();
+function FormatButton({
+  label,
+  description,
+  icon,
+  isSelected,
+  onClick,
+  isLocked = false,
+}: FormatButtonProps) {
+  const { t } = useTranslation()
   return (
     <button
       type="button"
@@ -348,49 +362,61 @@ function FormatButton({ label, description, icon, isSelected, onClick, isLocked 
       <div className="font-medium text-sm">{label}</div>
       <div className="text-xs text-gray-500">{description}</div>
     </button>
-  );
+  )
 }
 
 // PNG Options
 interface PNGOptionsProps {
-  size: keyof typeof PNG_SIZE_PRESETS;
-  onSizeChange: (size: keyof typeof PNG_SIZE_PRESETS) => void;
-  background: string;
-  onBackgroundChange: (color: string) => void;
-  isFreePlan?: boolean;
-  freeAllowedSizes?: Set<string>;
+  size: keyof typeof PNG_SIZE_PRESETS
+  onSizeChange: (size: keyof typeof PNG_SIZE_PRESETS) => void
+  background: string
+  onBackgroundChange: (color: string) => void
+  isFreePlan?: boolean
+  freeAllowedSizes?: Set<string>
 }
 
-function PNGOptions({ size, onSizeChange, background, onBackgroundChange, isFreePlan = false, freeAllowedSizes }: PNGOptionsProps) {
-  const { t } = useTranslation();
+function PNGOptions({
+  size,
+  onSizeChange,
+  background,
+  onBackgroundChange,
+  isFreePlan = false,
+  freeAllowedSizes,
+}: PNGOptionsProps) {
+  const { t } = useTranslation()
   return (
     <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">{t('Size')}</label>
         <select
           value={size}
-          onChange={(e) => onSizeChange(e.target.value as any)}
+          onChange={e => onSizeChange(e.target.value as any)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           {Object.entries(PNG_SIZE_PRESETS).map(([key, preset]) => {
-            const locked = isFreePlan && freeAllowedSizes && !freeAllowedSizes.has(key);
+            const locked = isFreePlan && freeAllowedSizes && !freeAllowedSizes.has(key)
             return (
               <option key={key} value={key} disabled={locked}>
-                {preset.label}{locked ? ' (paid plan)' : ''}
+                {preset.label}
+                {locked ? ' (paid plan)' : ''}
               </option>
-            );
+            )
           })}
         </select>
         {isFreePlan && (
-          <p className="mt-1 text-xs text-gray-500">{t('Free plan: up to 512x512. Upgrade for larger sizes.')}</p>
+          <p className="mt-1 text-xs text-gray-500">
+            {t('Free plan: up to 512x512. Upgrade for larger sizes.')}
+          </p>
         )}
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Background Color (optional)')}</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Background Color (optional)')}
+        </label>
         <input
           type="color"
           value={background || '#ffffff'}
-          onChange={(e) => onBackgroundChange(e.target.value)}
+          onChange={e => onBackgroundChange(e.target.value)}
           className="w-full h-10 border border-gray-300 rounded-md cursor-pointer"
         />
         <button
@@ -402,26 +428,31 @@ function PNGOptions({ size, onSizeChange, background, onBackgroundChange, isFree
         </button>
       </div>
     </div>
-  );
+  )
 }
 
 // SVG Options
 interface SVGOptionsProps {
-  optimized: boolean;
-  onOptimizedChange: (optimized: boolean) => void;
-  background: boolean;
-  onBackgroundChange: (background: boolean) => void;
+  optimized: boolean
+  onOptimizedChange: (optimized: boolean) => void
+  background: boolean
+  onBackgroundChange: (background: boolean) => void
 }
 
-function SVGOptions({ optimized, onOptimizedChange, background, onBackgroundChange }: SVGOptionsProps) {
-  const { t } = useTranslation();
+function SVGOptions({
+  optimized,
+  onOptimizedChange,
+  background,
+  onBackgroundChange,
+}: SVGOptionsProps) {
+  const { t } = useTranslation()
   return (
     <div className="space-y-3 p-4 bg-gray-50 rounded-lg">
       <label className="flex items-center gap-2">
         <input
           type="checkbox"
           checked={optimized}
-          onChange={(e) => onOptimizedChange(e.target.checked)}
+          onChange={e => onOptimizedChange(e.target.checked)}
           className="rounded"
         />
         <span className="text-sm text-gray-700">{t('Optimize SVG (smaller file size)')}</span>
@@ -430,23 +461,23 @@ function SVGOptions({ optimized, onOptimizedChange, background, onBackgroundChan
         <input
           type="checkbox"
           checked={background}
-          onChange={(e) => onBackgroundChange(e.target.checked)}
+          onChange={e => onBackgroundChange(e.target.checked)}
           className="rounded"
         />
         <span className="text-sm text-gray-700">{t('Add white background')}</span>
       </label>
     </div>
-  );
+  )
 }
 
 // PDF Options
 interface PDFOptionsProps {
-  pageSize: PDFPageSize;
-  onPageSizeChange: (size: PDFPageSize) => void;
-  orientation: PDFOrientation;
-  onOrientationChange: (orientation: PDFOrientation) => void;
-  margin: number;
-  onMarginChange: (margin: number) => void;
+  pageSize: PDFPageSize
+  onPageSizeChange: (size: PDFPageSize) => void
+  orientation: PDFOrientation
+  onOrientationChange: (orientation: PDFOrientation) => void
+  margin: number
+  onMarginChange: (margin: number) => void
 }
 
 function PDFOptions({
@@ -457,14 +488,14 @@ function PDFOptions({
   margin,
   onMarginChange,
 }: PDFOptionsProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">{t('Page Size')}</label>
         <select
           value={pageSize}
-          onChange={(e) => onPageSizeChange(e.target.value as PDFPageSize)}
+          onChange={e => onPageSizeChange(e.target.value as PDFPageSize)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
         >
           <option value="a4">{t('A4')}</option>
@@ -502,39 +533,43 @@ function PDFOptions({
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Margin:')} {margin}mm</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Margin:')} {margin}mm
+        </label>
         <input
           type="range"
           min="0"
           max="50"
           step="5"
           value={margin}
-          onChange={(e) => onMarginChange(parseInt(e.target.value))}
+          onChange={e => onMarginChange(parseInt(e.target.value))}
           className="w-full"
         />
       </div>
     </div>
-  );
+  )
 }
 
 // EPS Options
 interface EPSOptionsProps {
-  width: number;
-  onWidthChange: (width: number) => void;
-  height: number;
-  onHeightChange: (height: number) => void;
+  width: number
+  onWidthChange: (width: number) => void
+  height: number
+  onHeightChange: (height: number) => void
 }
 
 function EPSOptions({ width, onWidthChange, height, onHeightChange }: EPSOptionsProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Width (points)')}</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Width (points)')}
+        </label>
         <input
           type="number"
           value={width}
-          onChange={(e) => onWidthChange(parseInt(e.target.value))}
+          onChange={e => onWidthChange(parseInt(e.target.value))}
           min="72"
           max="1440"
           step="72"
@@ -542,11 +577,13 @@ function EPSOptions({ width, onWidthChange, height, onHeightChange }: EPSOptions
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Height (points)')}</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Height (points)')}
+        </label>
         <input
           type="number"
           value={height}
-          onChange={(e) => onHeightChange(parseInt(e.target.value))}
+          onChange={e => onHeightChange(parseInt(e.target.value))}
           min="72"
           max="1440"
           step="72"
@@ -555,5 +592,5 @@ function EPSOptions({ width, onWidthChange, height, onHeightChange }: EPSOptions
       </div>
       <p className="text-xs text-gray-500">{t('1 point = 1/72 inch')}</p>
     </div>
-  );
+  )
 }

@@ -1,111 +1,110 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
-import { Calendar, Clock, MapPin, Share2, Download, Users, CheckCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
-import EventDetails from './EventDetails';
-import { SimplePagination } from '@/components/common/SimplePagination';
-import { useTranslation } from '@/lib/i18n';
+import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
+import { Calendar, Clock, MapPin, Share2, Download, Users, CheckCircle } from 'lucide-react'
+import { motion } from 'framer-motion'
+import EventDetails from './EventDetails'
+import { SimplePagination } from '@/components/common/SimplePagination'
+import { useTranslation } from '@/lib/i18n'
+import { envConfig } from '@/lib/config/env-config'
 
 interface Speaker {
-  id: string;
-  name: string;
-  title: string;
-  bio?: string;
-  image?: string;
+  id: string
+  name: string
+  title: string
+  bio?: string
+  image?: string
 }
 
 interface AgendaItem {
-  id: string;
-  time: string;
-  title: string;
-  description?: string;
-  speaker?: string;
+  id: string
+  time: string
+  title: string
+  description?: string
+  speaker?: string
 }
 
 interface EventData {
-  id: string;
-  title: string;
-  slug: string;
-  description?: string;
-  banner?: string;
-  date: string;
-  time: string;
-  endTime?: string;
-  location?: string;
-  venue?: string;
-  address?: string;
+  id: string
+  title: string
+  slug: string
+  description?: string
+  banner?: string
+  date: string
+  time: string
+  endTime?: string
+  location?: string
+  venue?: string
+  address?: string
   coordinates?: {
-    lat: number;
-    lng: number;
-  };
-  agenda?: AgendaItem[];
-  speakers?: Speaker[];
-  registrationEnabled?: boolean;
-  capacity?: number;
-  registeredCount?: number;
-  organizer?: string;
-  category?: string;
+    lat: number
+    lng: number
+  }
+  agenda?: AgendaItem[]
+  speakers?: Speaker[]
+  registrationEnabled?: boolean
+  capacity?: number
+  registeredCount?: number
+  organizer?: string
+  category?: string
 }
 
 interface EventPreviewProps {
-  event: EventData;
+  event: EventData
 }
 
 export default function EventPreview({ event }: EventPreviewProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   const [timeLeft, setTimeLeft] = useState<{
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-  } | null>(null);
-  const [isRegistered, setIsRegistered] = useState(false);
+    days: number
+    hours: number
+    minutes: number
+    seconds: number
+  } | null>(null)
+  const [isRegistered, setIsRegistered] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [agendaPage, setAgendaPage] = useState(1);
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [agendaPage, setAgendaPage] = useState(1)
 
-  const AGENDA_ITEMS_PER_PAGE = 10;
+  const AGENDA_ITEMS_PER_PAGE = 10
 
   useEffect(() => {
-    const eventDate = new Date(`${event.date} ${event.time}`);
-    
+    const eventDate = new Date(`${event.date} ${event.time}`)
+
     const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = eventDate.getTime() - now;
+      const now = new Date().getTime()
+      const distance = eventDate.getTime() - now
 
       if (distance < 0) {
-        setTimeLeft(null);
-        clearInterval(timer);
+        setTimeLeft(null)
+        clearInterval(timer)
       } else {
         setTimeLeft({
           days: Math.floor(distance / (1000 * 60 * 60 * 24)),
           hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
           minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((distance % (1000 * 60)) / 1000),
-        });
+        })
       }
-    }, 1000);
+    }, 1000)
 
-    return () => clearInterval(timer);
-  }, [event.date, event.time]);
+    return () => clearInterval(timer)
+  }, [event.date, event.time])
 
   // Calculate paginated agenda items
-  const totalAgendaPages = event.agenda 
-    ? Math.ceil(event.agenda.length / AGENDA_ITEMS_PER_PAGE) 
-    : 0;
-  const paginatedAgenda = event.agenda 
+  const totalAgendaPages = event.agenda ? Math.ceil(event.agenda.length / AGENDA_ITEMS_PER_PAGE) : 0
+  const paginatedAgenda = event.agenda
     ? event.agenda.slice(
         (agendaPage - 1) * AGENDA_ITEMS_PER_PAGE,
         agendaPage * AGENDA_ITEMS_PER_PAGE
       )
-    : [];
-  const shouldShowAgendaPagination = event.agenda && event.agenda.length > AGENDA_ITEMS_PER_PAGE;
+    : []
+  const shouldShowAgendaPagination = event.agenda && event.agenda.length > AGENDA_ITEMS_PER_PAGE
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -114,29 +113,29 @@ export default function EventPreview({ event }: EventPreviewProps) {
           title: event.title,
           text: event.description,
           url: window.location.href,
-        });
-      } catch (err) {
+        })
+      } catch {
         // Share dialog was dismissed or failed — not an error worth reporting
       }
     } else {
-      navigator.clipboard.writeText(window.location.href);
-      toast.success(t('Link copied to clipboard!'));
+      navigator.clipboard.writeText(window.location.href)
+      toast.success(t('Link copied to clipboard!'))
     }
-  };
+  }
 
   const addToCalendar = (type: 'google' | 'apple' | 'outlook') => {
-    const eventDate = new Date(`${event.date} ${event.time}`);
-    const endDate = event.endTime 
+    const eventDate = new Date(`${event.date} ${event.time}`)
+    const endDate = event.endTime
       ? new Date(`${event.date} ${event.endTime}`)
-      : new Date(eventDate.getTime() + 2 * 60 * 60 * 1000);
+      : new Date(eventDate.getTime() + 2 * 60 * 60 * 1000)
 
     const formatDate = (date: Date) => {
-      return (date.toISOString().replace(/[-:]/g, '').split('.')[0] ?? '') + 'Z';
-    };
+      return (date.toISOString().replace(/[-:]/g, '').split('.')[0] ?? '') + 'Z'
+    }
 
     if (type === 'google') {
-      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatDate(eventDate)}/${formatDate(endDate)}&details=${encodeURIComponent(event.description || '')}&location=${encodeURIComponent(event.address || event.location || '')}`;
-      window.open(url, '_blank');
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatDate(eventDate)}/${formatDate(endDate)}&details=${encodeURIComponent(event.description || '')}&location=${encodeURIComponent(event.address || event.location || '')}`
+      window.open(url, '_blank')
     } else if (type === 'apple' || type === 'outlook') {
       const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
@@ -147,54 +146,50 @@ SUMMARY:${event.title}
 DESCRIPTION:${event.description || ''}
 LOCATION:${event.address || event.location || ''}
 END:VEVENT
-END:VCALENDAR`;
+END:VCALENDAR`
 
-      const blob = new Blob([icsContent], { type: 'text/calendar' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${event.slug}.ics`;
-      a.click();
+      const blob = new Blob([icsContent], { type: 'text/calendar' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${event.slug}.ics`
+      a.click()
     }
-  };
+  }
 
   const handleRegistration = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+    e.preventDefault()
+    setIsSubmitting(true)
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/events/${event.id}/register`, {
+      const response = await fetch(`${envConfig.API_URL}/api/events/${event.id}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
-      });
+      })
 
       if (response.ok) {
-        setIsRegistered(true);
-        setFormData({ name: '', email: '', phone: '' });
+        setIsRegistered(true)
+        setFormData({ name: '', email: '', phone: '' })
       } else {
-        toast.error(t('Registration failed. Please try again.'));
+        toast.error(t('Registration failed. Please try again.'))
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      toast.error(t('Registration failed. Please try again.'));
+      console.error('Registration error:', error)
+      toast.error(t('Registration failed. Please try again.'))
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       {/* Banner Section */}
       {event.banner && (
         <div className="relative h-[400px] md:h-[500px] w-full overflow-hidden">
-          <img
-            src={event.banner}
-            alt={event.title}
-            className="w-full h-full object-cover"
-          />
+          <img src={event.banner} alt={event.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
             <motion.div
@@ -211,11 +206,20 @@ END:VCALENDAR`;
               <div className="flex flex-wrap gap-6 text-lg">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5" />
-                  <span>{new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  <span>
+                    {new Date(event.date).toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-5 h-5" />
-                  <span>{event.time} {event.endTime && `- ${event.endTime}`}</span>
+                  <span>
+                    {event.time} {event.endTime && `- ${event.endTime}`}
+                  </span>
                 </div>
                 {event.location && (
                   <div className="flex items-center gap-2">
@@ -247,8 +251,11 @@ END:VCALENDAR`;
                     { label: t('Hours'), value: timeLeft.hours },
                     { label: t('Minutes'), value: timeLeft.minutes },
                     { label: t('Seconds'), value: timeLeft.seconds },
-                  ].map((item) => (
-                    <div key={item.label} className="bg-white/20 backdrop-blur rounded-xl p-4 text-center">
+                  ].map(item => (
+                    <div
+                      key={item.label}
+                      className="bg-white/20 backdrop-blur rounded-xl p-4 text-center"
+                    >
                       <div className="text-4xl md:text-5xl font-bold">{item.value}</div>
                       <div className="text-sm md:text-base mt-2 opacity-90">{item.label}</div>
                     </div>
@@ -261,7 +268,9 @@ END:VCALENDAR`;
             {event.description && (
               <div className="bg-white rounded-2xl p-8 shadow-lg">
                 <h2 className="text-3xl font-bold mb-4 text-gray-900">{t('About This Event')}</h2>
-                <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">{event.description}</p>
+                <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">
+                  {event.description}
+                </p>
               </div>
             )}
 
@@ -287,7 +296,11 @@ END:VCALENDAR`;
                         <div className="text-indigo-600 font-semibold mb-1">{item.time}</div>
                         <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
                         {item.description && <p className="text-gray-600">{item.description}</p>}
-                        {item.speaker && <p className="text-sm text-indigo-600 mt-2">{t('Speaker:')} {item.speaker}</p>}
+                        {item.speaker && (
+                          <p className="text-sm text-indigo-600 mt-2">
+                            {t('Speaker:')} {item.speaker}
+                          </p>
+                        )}
                       </div>
                     </motion.div>
                   ))}
@@ -332,7 +345,9 @@ END:VCALENDAR`;
                       <div className="flex-1">
                         <h3 className="text-xl font-bold text-gray-900">{speaker.name}</h3>
                         <p className="text-indigo-600 mb-2">{speaker.title}</p>
-                        {speaker.bio && <p className="text-sm text-gray-600 line-clamp-2">{speaker.bio}</p>}
+                        {speaker.bio && (
+                          <p className="text-sm text-gray-600 line-clamp-2">{speaker.bio}</p>
+                        )}
                       </div>
                     </motion.div>
                   ))}
@@ -344,11 +359,13 @@ END:VCALENDAR`;
             {event.coordinates && (
               <div className="bg-white rounded-2xl p-8 shadow-lg">
                 <h2 className="text-3xl font-bold mb-6 text-gray-900">{t('Venue Location')}</h2>
-                {event.venue && <p className="text-lg font-semibold text-gray-900 mb-2">{event.venue}</p>}
+                {event.venue && (
+                  <p className="text-lg font-semibold text-gray-900 mb-2">{event.venue}</p>
+                )}
                 {event.address && <p className="text-gray-600 mb-4">{event.address}</p>}
                 <div className="rounded-xl overflow-hidden h-[400px] border border-gray-200">
                   <iframe
-                    src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&q=${event.coordinates.lat},${event.coordinates.lng}&zoom=15`}
+                    src={`https://www.google.com/maps/embed/v1/place?key=${envConfig.GOOGLE_MAPS_API_KEY}&q=${event.coordinates.lat},${event.coordinates.lng}&zoom=15`}
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -391,33 +408,39 @@ END:VCALENDAR`;
                 )}
                 <form onSubmit={handleRegistration} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('Full Name')}</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('Full Name')}
+                    </label>
                     <input
                       type="text"
                       required
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={e => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       placeholder="John Doe"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('Email')}</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('Email')}
+                    </label>
                     <input
                       type="email"
                       required
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={e => setFormData({ ...formData, email: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       placeholder="john@example.com"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('Phone')}</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('Phone')}
+                    </label>
                     <input
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       placeholder="+1 (555) 000-0000"
                     />
@@ -440,7 +463,9 @@ END:VCALENDAR`;
                 className="bg-green-50 border-2 border-green-500 rounded-2xl p-6 text-center"
               >
                 <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-green-900 mb-2">{t("You're Registered!")}</h3>
+                <h3 className="text-2xl font-bold text-green-900 mb-2">
+                  {t("You're Registered!")}
+                </h3>
                 <p className="text-green-700">{t('Check your email for confirmation details.')}</p>
               </motion.div>
             )}
@@ -501,5 +526,5 @@ END:VCALENDAR`;
         </div>
       </div>
     </div>
-  );
+  )
 }

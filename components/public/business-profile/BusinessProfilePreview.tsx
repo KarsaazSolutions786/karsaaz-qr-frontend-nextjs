@@ -1,86 +1,98 @@
-'use client';
+'use client'
 
-import React from 'react';
-import { MapPin, Phone, Mail, Globe, Clock, Users, Briefcase, Image as ImageIcon, Facebook, Twitter, Instagram, Linkedin, Youtube } from 'lucide-react';
-import PreviewHeader from '@/components/public/shared/PreviewHeader';
-import PreviewFooter from '@/components/public/shared/PreviewFooter';
-import SocialShare from '@/components/public/shared/SocialShare';
-import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
-import BusinessCard from './BusinessCard';
-import { useTranslation } from '@/lib/i18n';
+import React from 'react'
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Clock,
+  Users,
+  Briefcase,
+  Image as ImageIcon,
+  Facebook,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Youtube,
+} from 'lucide-react'
+import PreviewHeader from '@/components/public/shared/PreviewHeader'
+import PreviewFooter from '@/components/public/shared/PreviewFooter'
+import SocialShare from '@/components/public/shared/SocialShare'
+import QRCodeBadge from '@/components/public/shared/QRCodeBadge'
+import BusinessCard from './BusinessCard'
+import { useTranslation } from '@/lib/i18n'
+import { envConfig } from '@/lib/config/env-config'
 
 interface TeamMember {
-  name: string;
-  role: string;
-  photo?: string;
-  bio?: string;
+  name: string
+  role: string
+  photo?: string
+  bio?: string
 }
 
 interface OpeningHours {
-  day: string;
-  hours: string;
-  isClosed?: boolean;
+  day: string
+  hours: string
+  isClosed?: boolean
 }
 
 interface Service {
-  name: string;
-  description?: string;
-  price?: string;
+  name: string
+  description?: string
+  price?: string
 }
 
 interface BusinessProfileData {
-  businessName: string;
-  tagline?: string;
-  logo?: string;
-  description?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-  country?: string;
-  latitude?: number;
-  longitude?: number;
-  openingHours?: OpeningHours[];
-  services?: Service[];
-  teamMembers?: TeamMember[];
-  gallery?: string[];
+  businessName: string
+  tagline?: string
+  logo?: string
+  description?: string
+  phone?: string
+  email?: string
+  website?: string
+  address?: string
+  city?: string
+  state?: string
+  zip?: string
+  country?: string
+  latitude?: number
+  longitude?: number
+  openingHours?: OpeningHours[]
+  services?: Service[]
+  teamMembers?: TeamMember[]
+  gallery?: string[]
   socialMedia?: {
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-    youtube?: string;
-  };
+    facebook?: string
+    twitter?: string
+    instagram?: string
+    linkedin?: string
+    youtube?: string
+  }
   theme?: {
-    primaryColor?: string;
-    accentColor?: string;
-  };
+    primaryColor?: string
+    accentColor?: string
+  }
 }
 
 interface BusinessProfilePreviewProps {
-  profile: BusinessProfileData;
+  profile: BusinessProfileData
 }
 
 export default function BusinessProfilePreview({ profile }: BusinessProfilePreviewProps) {
-  const { t } = useTranslation();
-  const primaryColor = profile.theme?.primaryColor || '#2563eb';
-  
-  const fullAddress = [
-    profile.address,
-    profile.city,
-    profile.state,
-    profile.zip,
-    profile.country,
-  ].filter(Boolean).join(', ');
+  const { t } = useTranslation()
+  const primaryColor = profile.theme?.primaryColor || '#2563eb'
 
-  const mapUrl = profile.latitude && profile.longitude
-    ? `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}&q=${profile.latitude},${profile.longitude}`
-    : fullAddress
-      ? `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}&q=${encodeURIComponent(fullAddress)}`
-      : null;
+  const fullAddress = [profile.address, profile.city, profile.state, profile.zip, profile.country]
+    .filter(Boolean)
+    .join(', ')
+
+  const mapUrl =
+    profile.latitude && profile.longitude
+      ? `https://www.google.com/maps/embed/v1/place?key=${envConfig.GOOGLE_MAPS_API_KEY}&q=${profile.latitude},${profile.longitude}`
+      : fullAddress
+        ? `https://www.google.com/maps/embed/v1/place?key=${envConfig.GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(fullAddress)}`
+        : null
 
   const socialIcons = {
     facebook: Facebook,
@@ -88,9 +100,9 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
     instagram: Instagram,
     linkedin: Linkedin,
     youtube: Youtube,
-  };
+  }
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -124,12 +136,8 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                 </div>
               )}
               <div className="flex-1">
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                  {profile.businessName}
-                </h1>
-                {profile.tagline && (
-                  <p className="text-xl text-gray-600 mb-4">{profile.tagline}</p>
-                )}
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">{profile.businessName}</h1>
+                {profile.tagline && <p className="text-xl text-gray-600 mb-4">{profile.tagline}</p>}
                 {profile.description && (
                   <p className="text-gray-700 leading-relaxed">{profile.description}</p>
                 )}
@@ -149,16 +157,26 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
               {profile.openingHours && profile.openingHours.length > 0 && (
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: primaryColor }}
+                    >
                       <Clock className="w-6 h-6 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900">{t('Opening Hours')}</h2>
                   </div>
                   <div className="space-y-3">
                     {profile.openingHours.map((schedule, index) => (
-                      <div key={index} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
+                      <div
+                        key={index}
+                        className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0"
+                      >
                         <span className="font-medium text-gray-900">{schedule.day}</span>
-                        <span className={schedule.isClosed ? 'text-red-600 font-medium' : 'text-gray-600'}>
+                        <span
+                          className={
+                            schedule.isClosed ? 'text-red-600 font-medium' : 'text-gray-600'
+                          }
+                        >
                           {schedule.isClosed ? t('Closed') : schedule.hours}
                         </span>
                       </div>
@@ -171,14 +189,20 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
               {profile.services && profile.services.length > 0 && (
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: primaryColor }}
+                    >
                       <Briefcase className="w-6 h-6 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900">{t('Services')}</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {profile.services.map((service, index) => (
-                      <div key={index} className="p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition-colors">
+                      <div
+                        key={index}
+                        className="p-4 rounded-xl border border-gray-200 hover:border-blue-300 transition-colors"
+                      >
                         <div className="flex justify-between items-start mb-2">
                           <h3 className="font-semibold text-gray-900">{service.name}</h3>
                           {service.price && (
@@ -200,7 +224,10 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
               {profile.teamMembers && profile.teamMembers.length > 0 && (
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: primaryColor }}
+                    >
                       <Users className="w-6 h-6 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900">{t('Meet Our Team')}</h2>
@@ -223,9 +250,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                         </div>
                         <h3 className="font-semibold text-gray-900 mb-1">{member.name}</h3>
                         <p className="text-sm text-gray-600 mb-2">{member.role}</p>
-                        {member.bio && (
-                          <p className="text-xs text-gray-500">{member.bio}</p>
-                        )}
+                        {member.bio && <p className="text-xs text-gray-500">{member.bio}</p>}
                       </div>
                     ))}
                   </div>
@@ -236,14 +261,20 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
               {profile.gallery && profile.gallery.length > 0 && (
                 <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: primaryColor }}
+                    >
                       <ImageIcon className="w-6 h-6 text-white" />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900">{t('Gallery')}</h2>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {profile.gallery.map((image, index) => (
-                      <div key={index} className="aspect-square rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
+                      <div
+                        key={index}
+                        className="aspect-square rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow"
+                      >
                         <img
                           src={image}
                           alt={`Gallery ${index + 1}`}
@@ -263,7 +294,10 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                 <h2 className="text-xl font-bold text-gray-900 mb-6">{t('Contact Information')}</h2>
                 <div className="space-y-4">
                   {profile.phone && (
-                    <a href={`tel:${profile.phone}`} className="flex items-start gap-3 text-gray-700 hover:text-blue-600 transition-colors group">
+                    <a
+                      href={`tel:${profile.phone}`}
+                      className="flex items-start gap-3 text-gray-700 hover:text-blue-600 transition-colors group"
+                    >
                       <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100 transition-colors">
                         <Phone className="w-5 h-5 text-blue-600" />
                       </div>
@@ -275,7 +309,10 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                   )}
 
                   {profile.email && (
-                    <a href={`mailto:${profile.email}`} className="flex items-start gap-3 text-gray-700 hover:text-blue-600 transition-colors group">
+                    <a
+                      href={`mailto:${profile.email}`}
+                      className="flex items-start gap-3 text-gray-700 hover:text-blue-600 transition-colors group"
+                    >
                       <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center flex-shrink-0 group-hover:bg-green-100 transition-colors">
                         <Mail className="w-5 h-5 text-green-600" />
                       </div>
@@ -287,7 +324,12 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                   )}
 
                   {profile.website && (
-                    <a href={profile.website} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 text-gray-700 hover:text-blue-600 transition-colors group">
+                    <a
+                      href={profile.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-3 text-gray-700 hover:text-blue-600 transition-colors group"
+                    >
                       <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 transition-colors">
                         <Globe className="w-5 h-5 text-purple-600" />
                       </div>
@@ -299,10 +341,11 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                   )}
 
                   {fullAddress && (
-                    <a 
-                      href={profile.latitude && profile.longitude 
-                        ? `https://www.google.com/maps/search/?api=1&query=${profile.latitude},${profile.longitude}`
-                        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`
+                    <a
+                      href={
+                        profile.latitude && profile.longitude
+                          ? `https://www.google.com/maps/search/?api=1&query=${profile.latitude},${profile.longitude}`
+                          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`
                       }
                       target="_blank"
                       rel="noopener noreferrer"
@@ -325,8 +368,8 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                     <h3 className="text-sm font-semibold text-gray-900 mb-4">{t('Follow Us')}</h3>
                     <div className="flex gap-2 flex-wrap">
                       {Object.entries(profile.socialMedia).map(([platform, url]) => {
-                        if (!url) return null;
-                        const Icon = socialIcons[platform as keyof typeof socialIcons];
+                        if (!url) return null
+                        const Icon = socialIcons[platform as keyof typeof socialIcons]
                         return (
                           <a
                             key={platform}
@@ -338,7 +381,7 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
                           >
                             <Icon className="w-5 h-5" />
                           </a>
-                        );
+                        )
                       })}
                     </div>
                   </div>
@@ -370,5 +413,5 @@ export default function BusinessProfilePreview({ profile }: BusinessProfilePrevi
       <PreviewFooter />
       <QRCodeBadge variant="branded" position="bottom-right" />
     </div>
-  );
+  )
 }

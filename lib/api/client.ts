@@ -5,21 +5,16 @@ import {
   getHttpStatusMessage,
   translateMessage,
 } from '@/lib/utils/error-message-mapper'
+import { envConfig } from '@/lib/config/env-config'
 
 // API Base URL Configuration
 // Priority: 1. window.BACKEND_URL (runtime injection)
-//           2. NEXT_PUBLIC_API_URL env var (build-time)
-//           3. Relative /api path (same-origin fallback — no hardcoded domain)
+//           2. envConfig.API_URL (centralized env config — single source of truth)
 const getApiBaseURL = () => {
   if (typeof window !== 'undefined' && (window as any).BACKEND_URL) {
     return `${(window as any).BACKEND_URL}/api`
   }
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return `${process.env.NEXT_PUBLIC_API_URL}/api`
-  }
-  // Same-origin fallback — assumes API is proxied or co-located.
-  // Set NEXT_PUBLIC_API_URL in .env for cross-origin deployments.
-  return '/api'
+  return `${envConfig.API_URL}/api`
 }
 
 // API Timeout Configuration (T020 — per research.md R7)
@@ -79,12 +74,15 @@ const apiClient: AxiosInstance = axios.create({
 // and sent as a Bearer header to override the admin's cookie on the backend.
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Only attach Bearer token if one exists in localStorage (act-as scenario).
+    // Only attach Bearer token during admin act-as (impersonation) sessions.
     // For normal auth, the httpOnly cookie handles authentication automatically.
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token')
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+      const mainUser = localStorage.getItem('mainUser')
+      if (mainUser) {
+        const token = localStorage.getItem('token')
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
       }
     }
 

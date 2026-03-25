@@ -8,6 +8,7 @@ import { useUpdateBlogPost } from '@/lib/hooks/mutations/useBlogPostMutations'
 import { blogPostsAPI } from '@/lib/api/endpoints/blog-posts'
 import BlogPostForm, { type BlogPostFormData } from '@/components/features/blog/BlogPostForm'
 import { useTranslation } from '@/lib/i18n'
+import { envConfig } from '@/lib/config/env-config'
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
@@ -54,7 +55,10 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
     return <div className="text-center py-12">{t('Blog post not found')}</div>
   }
 
-  const slug = post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+  const slug = post.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
@@ -68,7 +72,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
             <button
               type="button"
               onClick={() => {
-                const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
+                const appUrl = envConfig.APP_URL || window.location.origin
                 window.open(`${appUrl}/blog/post/${slug}`, '_blank')
               }}
               className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -76,7 +80,9 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
               {t('Preview')}
             </button>
           )}
-          <Link href="/blog-posts" className="text-sm text-blue-600 hover:text-blue-900">← Back</Link>
+          <Link href="/blog-posts" className="text-sm text-blue-600 hover:text-blue-900">
+            ← Back
+          </Link>
         </div>
       </div>
 

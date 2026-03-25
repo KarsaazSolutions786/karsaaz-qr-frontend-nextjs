@@ -3,6 +3,7 @@
 // Singleton pattern per project conventions
 
 import apiClient from '@/lib/api/client'
+import { envConfig } from '@/lib/config/env-config'
 
 /** Generate a cryptographically random OAuth state parameter for CSRF protection */
 function generateOAuthState(): string {
@@ -80,7 +81,7 @@ class AuthWorkflowEngine {
 
   /** Initiate OAuth flow by redirecting to the provider's authorize URL */
   initiateOAuth(provider: OAuthProviderName): void {
-    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+    const apiBase = envConfig.API_URL
     const state = generateOAuthState()
 
     const urlMap: Record<OAuthProviderName, string> = {
@@ -97,10 +98,7 @@ class AuthWorkflowEngine {
   }
 
   /** Handle OAuth callback — exchange authorization code for user/token */
-  async handleCallback(
-    provider: OAuthProviderName,
-    code: string
-  ): Promise<OAuthCallbackResponse> {
+  async handleCallback(provider: OAuthProviderName, code: string): Promise<OAuthCallbackResponse> {
     const response = await apiClient.post<OAuthCallbackResponse>(
       `/auth-workflow/${provider}/callback`,
       { code }
