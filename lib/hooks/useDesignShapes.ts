@@ -70,8 +70,8 @@ function setCachedAssets(assets: DesignAsset[]) {
  * to the same ShapeOption/OutlinedShape/AdvancedShape format used
  * by the QR designer. Falls back to hardcoded constants on error.
  *
- * Uses localStorage for instant hydration and a 30-minute staleTime
- * to match the backend's Redis cache TTL, minimizing network calls.
+ * Uses localStorage for instant hydration and `initialDataUpdatedAt: 0` so
+ * a background refetch always fires, ensuring fresh data after admin edits.
  */
 export function useDesignShapes() {
   const { data: allAssets, isLoading } = useQuery({
@@ -81,9 +81,10 @@ export function useDesignShapes() {
       setCachedAssets(assets)
       return assets
     },
-    staleTime: 30 * 60_000, // 30 min — matches backend Redis cache TTL
+    staleTime: 5 * 60_000, // 5 min — short enough to pick up admin changes quickly
     gcTime: 60 * 60_000, // 1 hr garbage collection
     initialData: getCachedAssets() ?? undefined,
+    initialDataUpdatedAt: 0, // Treat localStorage data as stale — always refetch in background
     retry: 1,
   })
 

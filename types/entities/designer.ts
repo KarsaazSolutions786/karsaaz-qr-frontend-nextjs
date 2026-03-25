@@ -1,15 +1,15 @@
 /**
  * QR Code Designer Configuration Types
- * 
+ *
  * Defines all visual customization options for QR codes including
  * module shapes, corner styles, fills, logos, backgrounds, and AI designs.
- * 
+ *
  * IMPORTANT: Shape values must match the legacy Lit frontend exactly
  * for backend compatibility.
  */
 
-// Module/Pattern Shapes — matches legacy module-fields.js (15 options)
-export type ModuleShape = 
+// Module/Pattern Shapes — known values + extensible for dynamic shapes
+export type ModuleShape =
   | 'square'
   | 'dots'
   | 'triangle'
@@ -24,9 +24,10 @@ export type ModuleShape =
   | 'tree'
   | 'twoTrianglesWithCircle'
   | 'fourTriangles'
-  | 'triangle-end';
+  | 'triangle-end'
+  | (string & {})
 
-// Finder (eye frame) Styles — matches legacy module-fields.js (9 options)
+// Finder (eye frame) Styles — known values + extensible for dynamic shapes
 export type FinderStyle =
   | 'default'
   | 'eye-shaped'
@@ -36,9 +37,10 @@ export type FinderStyle =
   | 'water-drop'
   | 'circle'
   | 'zigzag'
-  | 'circle-dots';
+  | 'circle-dots'
+  | (string & {})
 
-// Finder Dot Styles — matches legacy module-fields.js (8 options)
+// Finder Dot Styles — known values + extensible for dynamic shapes
 export type FinderDotStyle =
   | 'default'
   | 'eye-shaped'
@@ -47,183 +49,175 @@ export type FinderDotStyle =
   | 'whirlpool'
   | 'water-drop'
   | 'circle'
-  | 'zigzag';
+  | 'zigzag'
+  | (string & {})
 
 // Keep old types as aliases for backward compat
-export type CornerFrameStyle = FinderStyle;
-export type CornerDotStyle = FinderDotStyle;
+export type CornerFrameStyle = FinderStyle
+export type CornerDotStyle = FinderDotStyle
 
 // Fill Types
-export type FillType =
-  | 'solid'
-  | 'gradient'
-  | 'image';
+export type FillType = 'solid' | 'gradient' | 'image'
 
-export type GradientType =
-  | 'linear'
-  | 'radial';
+export type GradientType = 'linear' | 'radial'
 
 export interface SolidFill {
-  type: 'solid';
-  color: string; // Hex color
+  type: 'solid'
+  color: string // Hex color
 }
 
 export interface GradientFill {
-  type: 'gradient';
-  gradientType: GradientType;
-  startColor: string; // Hex color
-  endColor: string; // Hex color
-  rotation?: number; // 0-360 degrees (for linear)
+  type: 'gradient'
+  gradientType: GradientType
+  startColor: string // Hex color
+  endColor: string // Hex color
+  rotation?: number // 0-360 degrees (for linear)
 }
 
 export interface ImageFill {
-  type: 'image';
-  imageUrl: string;
-  opacity?: number; // 0-1
+  type: 'image'
+  imageUrl: string
+  opacity?: number // 0-1
 }
 
-export type FillConfig = SolidFill | GradientFill | ImageFill;
+export type FillConfig = SolidFill | GradientFill | ImageFill
 
 // Logo Configuration
-export type LogoShape = 'square' | 'circle';
-export type LogoType = 'preset' | 'custom';
+export type LogoShape = 'square' | 'circle'
+export type LogoType = 'preset' | 'custom'
 
 export interface LogoConfig {
-  url: string;
-  logoType?: LogoType; // preset or custom upload (default: 'preset')
-  size: number; // 0-1 (percentage of QR code size) — maps to logoScale
-  margin: number; // Margin around logo in modules
-  shape: LogoShape;
-  borderWidth?: number;
-  borderColor?: string;
-  backgroundColor?: string;
+  url: string
+  logoType?: LogoType // preset or custom upload (default: 'preset')
+  size: number // 0-1 (percentage of QR code size) — maps to logoScale
+  margin: number // Margin around logo in modules
+  shape: LogoShape
+  borderWidth?: number
+  borderColor?: string
+  backgroundColor?: string
   // Position controls (defaults: centered, no rotation)
-  positionX?: number; // 0-1 horizontal (0.5 = center)
-  positionY?: number; // 0-1 vertical (0.5 = center)
-  rotate?: number; // 0-360 degrees
+  positionX?: number // 0-1 horizontal (0.5 = center)
+  positionY?: number // 0-1 vertical (0.5 = center)
+  rotate?: number // 0-360 degrees
   // Background controls (defaults: enabled, white circle, 1.3x)
-  backgroundEnabled?: boolean;
-  backgroundFill?: string; // hex color for background behind logo
-  backgroundScale?: number; // 0.3-2 (multiplier of logo area)
-  backgroundShape?: LogoShape; // circle or square
+  backgroundEnabled?: boolean
+  backgroundFill?: string // hex color for background behind logo
+  backgroundScale?: number // 0.3-2 (multiplier of logo area)
+  backgroundShape?: LogoShape // circle or square
 }
 
 // Background Configuration
-export type BackgroundType =
-  | 'solid'
-  | 'gradient'
-  | 'image'
-  | 'transparent';
+export type BackgroundType = 'solid' | 'gradient' | 'image' | 'transparent'
 
 export interface BackgroundConfig {
-  type: BackgroundType;
-  color?: string; // For solid
-  gradientStart?: string; // For gradient
-  gradientEnd?: string; // For gradient
-  gradientType?: GradientType; // For gradient
-  imageUrl?: string; // For image
-  imageOpacity?: number; // 0-1 for image
+  type: BackgroundType
+  color?: string // For solid
+  gradientStart?: string // For gradient
+  gradientEnd?: string // For gradient
+  gradientType?: GradientType // For gradient
+  imageUrl?: string // For image
+  imageOpacity?: number // 0-1 for image
 }
 
 // Outline Configuration
 export interface OutlineConfig {
-  enabled: boolean;
-  color?: string; // Hex color
-  width?: number; // Width in pixels
+  enabled: boolean
+  color?: string // Hex color
+  width?: number // Width in pixels
 }
 
 // AI Design Configuration
 export interface AIDesignConfig {
-  prompt?: string;
-  style?: 'modern' | 'classic' | 'playful' | 'professional' | 'artistic';
-  generated?: boolean;
-  designId?: string; // Reference to generated design
+  prompt?: string
+  style?: 'modern' | 'classic' | 'playful' | 'professional' | 'artistic'
+  generated?: boolean
+  designId?: string // Reference to generated design
 }
 
 // Gradient Fill Configuration (backend format with multi-stop support)
 export interface GradientFillConfig {
-  type: string; // LINEAR, RADIAL
+  type: string // LINEAR, RADIAL
   colors: Array<{
-    color: string;
-    stop: number; // 0-100
-    opacity: number; // 0-1
-    id?: string;
-  }>;
-  angle?: number; // 0-360 for LINEAR
+    color: string
+    stop: number // 0-100
+    opacity: number // 0-1
+    id?: string
+  }>
+  angle?: number // 0-360 for LINEAR
 }
 
 // Complete Designer Configuration
 export interface DesignerConfig {
   // Module customization
-  moduleShape: ModuleShape;
-  
+  moduleShape: ModuleShape
+
   // Finder (eye) customization — uses legacy naming
-  finder: FinderStyle;
-  finderDot: FinderDotStyle;
+  finder: FinderStyle
+  finderDot: FinderDotStyle
   // Keep old aliases working
-  cornerFrameStyle?: FinderStyle;
-  cornerDotStyle?: FinderDotStyle;
-  
+  cornerFrameStyle?: FinderStyle
+  cornerDotStyle?: FinderDotStyle
+
   // Eye colors (separate from foreground)
-  eyeExternalColor: string;
-  eyeInternalColor: string;
-  
+  eyeExternalColor: string
+  eyeInternalColor: string
+
   // Fill customization
-  foregroundFill: FillConfig;
-  
+  foregroundFill: FillConfig
+
   // Logo (optional)
-  logo?: LogoConfig;
-  
+  logo?: LogoConfig
+
   // Background
-  background: BackgroundConfig;
-  
+  background: BackgroundConfig
+
   // Outlined shape
-  shape: string; // 60+ shapes or 'none'
-  frameColor: string;
-  
+  shape: string // 60+ shapes or 'none'
+  frameColor: string
+
   // Advanced shape / sticker
-  advancedShape: string; // 12 options or 'none'
-  advancedShapeDropShadow: boolean;
-  advancedShapeFrameColor: string;
-  
+  advancedShape: string // 12 options or 'none'
+  advancedShapeDropShadow: boolean
+  advancedShapeFrameColor: string
+
   // Sticker text
-  text: string;
-  textColor: string;
-  textBackgroundColor: string;
-  fontFamily: string;
-  textSize: number;
-  
+  text: string
+  textColor: string
+  textBackgroundColor: string
+  fontFamily: string
+  textSize: number
+
   // Sticker-specific fields
-  healthcareFrameColor?: string;
-  healthcareHeartColor?: string;
-  reviewCollectorCircleColor?: string;
-  reviewCollectorStarsColor?: string;
-  reviewCollectorLogoSrc?: string;
-  couponLeftColor?: string;
-  couponRightColor?: string;
-  couponTextLine1?: string;
-  couponTextLine2?: string;
-  couponTextLine3?: string;
-  
+  healthcareFrameColor?: string
+  healthcareHeartColor?: string
+  reviewCollectorCircleColor?: string
+  reviewCollectorStarsColor?: string
+  reviewCollectorLogoSrc?: string
+  couponLeftColor?: string
+  couponRightColor?: string
+  couponTextLine1?: string
+  couponTextLine2?: string
+  couponTextLine3?: string
+
   // Outline (optional)
-  outline?: OutlineConfig;
-  
+  outline?: OutlineConfig
+
   // AI Design (optional)
-  aiDesign?: AIDesignConfig;
-  isAi: boolean;
-  aiPrompt?: string;
-  aiStrength: number;
-  aiSteps: number;
-  
+  aiDesign?: AIDesignConfig
+  isAi: boolean
+  aiPrompt?: string
+  aiStrength: number
+  aiSteps: number
+
   // Size settings
-  size: number; // Base size in pixels (default: 600)
-  margin: number; // Quiet zone margin in modules (default: 4)
-  
+  size: number // Base size in pixels (default: 600)
+  margin: number // Quiet zone margin in modules (default: 4)
+
   // Error correction level
-  errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
-  
+  errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'
+
   // Gradient (backend format — used in transformer)
-  gradientFill?: GradientFillConfig;
+  gradientFill?: GradientFillConfig
 }
 
 // Default designer configuration — matches legacy state.js defaults
@@ -257,15 +251,15 @@ export const DEFAULT_DESIGNER_CONFIG: DesignerConfig = {
   size: 600,
   margin: 4,
   errorCorrectionLevel: 'M',
-};
+}
 
 // Preset designs for quick selection
 export interface DesignPreset {
-  id: string;
-  name: string;
-  description: string;
-  thumbnail?: string;
-  config: Partial<DesignerConfig>;
+  id: string
+  name: string
+  description: string
+  thumbnail?: string
+  config: Partial<DesignerConfig>
 }
 
 export const DESIGN_PRESETS: DesignPreset[] = [
@@ -320,4 +314,4 @@ export const DESIGN_PRESETS: DesignPreset[] = [
       },
     },
   },
-];
+]

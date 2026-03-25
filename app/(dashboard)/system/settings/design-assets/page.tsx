@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import {
   ChevronRightIcon,
   ArrowUpIcon,
@@ -13,6 +14,7 @@ import {
   PhotoIcon,
   DocumentArrowUpIcon,
   InformationCircleIcon,
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
@@ -25,56 +27,15 @@ import {
   useReorderDesignAssets,
   useToggleDesignAsset,
 } from '@/lib/hooks/mutations/useDesignAssetMutations'
+import { useQueryClient } from '@tanstack/react-query'
 import type { DesignAsset, DesignAssetType } from '@/types/entities/design-asset'
+import { queryKeys } from '@/lib/query/keys'
 import { resolveBackendUrl } from '@/lib/utils/resolve-backend-url'
 import { useTranslation } from '@/lib/i18n'
-
-/**
- * Backend-supported slugs per renderable type.
- * For these types, the Add form shows a dropdown of supported slugs.
- * Other types allow free-text slug entry.
- */
-const RENDERABLE_SLUGS: Partial<Record<DesignAssetType, { slug: string; label: string }[]>> = {
-  module_style: [
-    { slug: 'square', label: 'Square' },
-    { slug: 'dots', label: 'Dots' },
-    { slug: 'triangle', label: 'Triangle' },
-    { slug: 'rhombus', label: 'Rhombus' },
-    { slug: 'star-5', label: 'Star 5' },
-    { slug: 'star-7', label: 'Star 7' },
-    { slug: 'roundness', label: 'Rounded' },
-    { slug: 'vertical-lines', label: 'V-Lines' },
-    { slug: 'horizontal-lines', label: 'H-Lines' },
-    { slug: 'diamond', label: 'Diamond' },
-    { slug: 'fish', label: 'Fish' },
-    { slug: 'tree', label: 'Tree' },
-    { slug: 'twoTrianglesWithCircle', label: '2-Tri Circle' },
-    { slug: 'fourTriangles', label: '4-Triangles' },
-    { slug: 'triangle-end', label: 'Tri-End' },
-  ],
-  finder_outer_style: [
-    { slug: 'default', label: 'Default' },
-    { slug: 'eye-shaped', label: 'Eye Shaped' },
-    { slug: 'octagon', label: 'Octagon' },
-    { slug: 'rounded-corners', label: 'Rounded' },
-    { slug: 'whirlpool', label: 'Whirlpool' },
-    { slug: 'water-drop', label: 'Water Drop' },
-    { slug: 'circle', label: 'Circle' },
-    { slug: 'zigzag', label: 'Zigzag' },
-    { slug: 'circle-dots', label: 'Circle Dots' },
-  ],
-  // finder_inner_style removed — no backend renderer exists
-  finder_dot_style: [
-    { slug: 'default', label: 'Default' },
-    { slug: 'eye-shaped', label: 'Eye Shaped' },
-    { slug: 'octagon', label: 'Octagon' },
-    { slug: 'rounded-corners', label: 'Rounded' },
-    { slug: 'whirlpool', label: 'Whirlpool' },
-    { slug: 'water-drop', label: 'Water Drop' },
-    { slug: 'circle', label: 'Circle' },
-    { slug: 'zigzag', label: 'Zigzag' },
-  ],
-}
+import { usePermissions } from '@/lib/hooks/usePermissions'
+import { showSuccessToast, showErrorToast } from '@/lib/hooks/useToast'
+import { RenderConfigEditor } from '@/components/admin/RenderConfigEditor'
+import type { RenderConfig } from '@/components/admin/RenderConfigEditor'
 
 const ASSET_TABS: { value: DesignAssetType; label: string }[] = [
   { value: 'module_style', label: 'Module Shapes' },
@@ -95,6 +56,8 @@ function AssetRow({
   onMoveUp,
   onMoveDown,
   onLabelSave,
+  onCategorySave,
+  onMetadataSave,
   onDelete,
   onThumbnailReplace,
   onSvgUpload,
@@ -107,6 +70,8 @@ function AssetRow({
   onMoveUp: (index: number) => void
   onMoveDown: (index: number) => void
   onLabelSave: (id: number, label: string) => void
+  onCategorySave: (id: number, category: string) => void
+  onMetadataSave: (id: number, metadata: Record<string, unknown>) => void
   onDelete: (id: number, label: string) => void
   onThumbnailReplace: (id: number, file: File) => void
   onSvgUpload?: (id: number, file: File) => void
@@ -114,6 +79,14 @@ function AssetRow({
   const { t } = useTranslation()
   const [editing, setEditing] = useState(false)
   const [label, setLabel] = useState(asset.label)
+  const [editingCategory, setEditingCategory] = useState(false)
+  const [categoryVal, setCategoryVal] = useState(asset.category || '')
+  const [showMetaEditor, setShowMetaEditor] = useState(false)
+  const [showRenderConfig, setShowRenderConfig] = useState(false)
+  const meta = asset.metadata as Record<string, unknown> | null
+  const currentRenderConfig = (meta?.render as RenderConfig | undefined) ?? null
+  const [hasText, setHasText] = useState(!!meta?.hasText)
+  const [textLines, setTextLines] = useState(Number(meta?.textLines) || 1)
 
   const handleSave = useCallback(() => {
     if (label.trim() && label !== asset.label) {
@@ -121,6 +94,19 @@ function AssetRow({
     }
     setEditing(false)
   }, [label, asset.id, asset.label, onLabelSave])
+
+  const handleCategorySave = useCallback(() => {
+    const trimmed = categoryVal.trim()
+    if (trimmed !== (asset.category || '')) {
+      onCategorySave(asset.id, trimmed)
+    }
+    setEditingCategory(false)
+  }, [categoryVal, asset.id, asset.category, onCategorySave])
+
+  const handleMetadataSave = useCallback(() => {
+    onMetadataSave(asset.id, { hasText, textLines: hasText ? textLines : 0 })
+    setShowMetaEditor(false)
+  }, [asset.id, hasText, textLines, onMetadataSave])
 
   const handleThumbnailClick = useCallback(() => {
     const input = document.createElement('input')
@@ -199,8 +185,34 @@ function AssetRow({
         </code>
       </td>
 
-      {/* Category */}
-      <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">{asset.category || '—'}</td>
+      {/* Category (editable) */}
+      <td className="px-4 py-3 whitespace-nowrap">
+        {editingCategory ? (
+          <input
+            type="text"
+            value={categoryVal}
+            onChange={e => setCategoryVal(e.target.value)}
+            onBlur={handleCategorySave}
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleCategorySave()
+              if (e.key === 'Escape') {
+                setCategoryVal(asset.category || '')
+                setEditingCategory(false)
+              }
+            }}
+            autoFocus
+            className="w-24 rounded border border-blue-400 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        ) : (
+          <button
+            onClick={() => setEditingCategory(true)}
+            className="text-sm text-gray-500 hover:text-blue-600 cursor-pointer text-left"
+            title={t('Click to edit category')}
+          >
+            {asset.category || '—'}
+          </button>
+        )}
+      </td>
 
       {/* Active toggle */}
       <td className="px-4 py-3 whitespace-nowrap">
@@ -232,7 +244,74 @@ function AssetRow({
       {/* Actions */}
       <td className="px-4 py-3 whitespace-nowrap">
         <div className="flex items-center gap-1">
-          {assetType === 'outline_style' && onSvgUpload && (
+          <div className="relative">
+            <button
+              onClick={() => {
+                if (assetType === 'advanced_shape') {
+                  setShowMetaEditor(!showMetaEditor)
+                } else {
+                  setShowRenderConfig(true)
+                }
+              }}
+              className="rounded p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+              title={assetType === 'advanced_shape' ? t('Text config') : t('Render config')}
+            >
+              <Cog6ToothIcon className="h-4 w-4" />
+            </button>
+            {showMetaEditor && assetType === 'advanced_shape' && (
+              <div className="absolute right-0 top-full z-20 mt-1 w-52 rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
+                <div className="text-xs font-medium text-gray-700 mb-2">
+                  {t('Sticker Text Config')}
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-gray-600">{t('Has text input')}</span>
+                  <Switch checked={hasText} onCheckedChange={setHasText} />
+                </div>
+                {hasText && (
+                  <div className="mb-2">
+                    <label className="text-xs text-gray-600">{t('Text lines (1-3)')}</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={3}
+                      value={textLines}
+                      onChange={e => setTextLines(Math.min(3, Math.max(1, Number(e.target.value))))}
+                      className="mt-1 w-full rounded border border-gray-300 px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                )}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={handleMetadataSave}
+                    className="rounded bg-indigo-600 px-2 py-1 text-xs font-medium text-white hover:bg-indigo-700"
+                  >
+                    {t('Save')}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setHasText(!!meta?.hasText)
+                      setTextLines(Number(meta?.textLines) || 1)
+                      setShowMetaEditor(false)
+                    }}
+                    className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50"
+                  >
+                    {t('Cancel')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          {showRenderConfig && (
+            <RenderConfigEditor
+              config={currentRenderConfig}
+              onSave={renderConfig => {
+                onMetadataSave(asset.id, { ...meta, render: renderConfig })
+                setShowRenderConfig(false)
+              }}
+              onClose={() => setShowRenderConfig(false)}
+            />
+          )}
+          {onSvgUpload && (
             <button
               onClick={() => {
                 const input = document.createElement('input')
@@ -245,12 +324,12 @@ function AssetRow({
                 input.click()
               }}
               className={`rounded p-1 transition-colors ${
-                (asset.metadata as Record<string, unknown> | null)?.svg_path
+                meta?.svg_path
                   ? 'text-green-500 hover:text-green-700 hover:bg-green-50'
                   : 'text-amber-400 hover:text-amber-600 hover:bg-amber-50'
               }`}
               title={
-                (asset.metadata as Record<string, unknown> | null)?.svg_path
+                meta?.svg_path
                   ? t('Replace shape SVG')
                   : t('Upload shape SVG (required for rendering)')
               }
@@ -273,15 +352,21 @@ function AssetRow({
 
 function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () => void }) {
   const { t } = useTranslation()
+  const queryClient = useQueryClient()
   const createMutation = useCreateDesignAsset()
-  const allowedSlugs = RENDERABLE_SLUGS[type] ?? null
   const [slug, setSlug] = useState('')
   const [label, setLabel] = useState('')
   const [category, setCategory] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [filePreview, setFilePreview] = useState<string | null>(null)
+  const [svgFile, setSvgFile] = useState<File | null>(null)
+  const [hasText, setHasText] = useState(false)
+  const [textLines, setTextLines] = useState(1)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const needsSvg = type === 'outline_style' || type === 'advanced_shape'
+  const isAdvanced = type === 'advanced_shape'
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0]
@@ -320,6 +405,10 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
       }
     }
 
+    const metadata: Record<string, unknown> | undefined = isAdvanced
+      ? { hasText, textLines: hasText ? textLines : 0 }
+      : undefined
+
     createMutation.mutate(
       {
         type,
@@ -328,9 +417,26 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
         thumbnail_url: thumbnailUrl,
         category: category.trim() || undefined,
         is_active: true,
+        metadata,
       },
       {
-        onSuccess: () => onClose(),
+        onSuccess: async newAsset => {
+          // Auto-upload SVG if one was selected
+          if (svgFile && newAsset?.id) {
+            try {
+              await designAssetsAPI.uploadShapeSvg(newAsset.id, svgFile)
+              showSuccessToast(t('Asset created with SVG template.'))
+              queryClient.invalidateQueries({ queryKey: queryKeys.designAssets.all() })
+            } catch (err: unknown) {
+              const msg = (err as { response?: { data?: { message?: string } } })?.response?.data
+                ?.message
+              showErrorToast(msg || t('Asset created but SVG upload failed.'))
+            }
+          } else {
+            showSuccessToast(t('Asset created.'))
+          }
+          onClose()
+        },
         onError: () => setError(t('Failed to create asset. Check slug is unique.')),
       }
     )
@@ -352,38 +458,14 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
           <label className="block text-xs font-medium text-gray-700 mb-1">
             {t('Slug')} <span className="text-red-500">*</span>
           </label>
-          {allowedSlugs ? (
-            <select
-              value={slug}
-              onChange={e => {
-                const selected = e.target.value
-                setSlug(selected)
-                // Auto-fill label from the allowed list if label is empty or was auto-filled
-                const match = allowedSlugs.find(s => s.slug === selected)
-                if (match && (!label || allowedSlugs.some(s => s.label === label))) {
-                  setLabel(match.label)
-                }
-              }}
-              required
-              className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-            >
-              <option value="">{t('Select a shape...')}</option>
-              {allowedSlugs.map(s => (
-                <option key={s.slug} value={s.slug}>
-                  {s.label} ({s.slug})
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="text"
-              value={slug}
-              onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
-              placeholder="e.g. heart-shape"
-              required
-              className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          )}
+          <input
+            type="text"
+            value={slug}
+            onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))}
+            placeholder="e.g. heart-shape"
+            required
+            className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          />
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -436,6 +518,68 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
             className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
+
+        {/* SVG Template upload for outline/advanced types */}
+        {needsSvg && (
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              {t('SVG Template')}
+            </label>
+            {svgFile ? (
+              <div className="flex items-center gap-2">
+                <DocumentArrowUpIcon className="h-5 w-5 text-green-500" />
+                <span className="text-xs text-gray-600 truncate max-w-[200px]">{svgFile.name}</span>
+                <button
+                  type="button"
+                  onClick={() => setSvgFile(null)}
+                  className="text-xs text-red-500 hover:text-red-700"
+                >
+                  {t('Remove')}
+                </button>
+              </div>
+            ) : (
+              <input
+                type="file"
+                accept=".svg,image/svg+xml"
+                onChange={e => {
+                  const selected = e.target.files?.[0]
+                  if (selected) setSvgFile(selected)
+                }}
+                className="w-full text-sm text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+              />
+            )}
+            {type === 'outline_style' && (
+              <p className="mt-1 text-xs text-gray-400">
+                {t('SVG must contain <path id="dummy-data-area"> and <rect id="qrcode-rect">')}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Metadata fields for advanced_shape */}
+        {isAdvanced && (
+          <>
+            <div className="flex items-center gap-3">
+              <label className="text-xs font-medium text-gray-700">{t('Has text input')}</label>
+              <Switch checked={hasText} onCheckedChange={setHasText} />
+            </div>
+            {hasText && (
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  {t('Text lines (1-3)')}
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={3}
+                  value={textLines}
+                  onChange={e => setTextLines(Math.min(3, Math.max(1, Number(e.target.value))))}
+                  className="w-full rounded border border-gray-300 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       <div className="mt-3 flex items-center gap-2">
@@ -444,7 +588,11 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
           disabled={isSubmitting || !slug.trim() || !label.trim()}
           className="rounded bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {uploading ? t('Uploading...') : createMutation.isPending ? t('Adding...') : t('Add Asset')}
+          {uploading
+            ? t('Uploading...')
+            : createMutation.isPending
+              ? t('Adding...')
+              : t('Add Asset')}
         </button>
         <button
           type="button"
@@ -469,47 +617,98 @@ function AssetTable({ type }: { type: DesignAssetType }) {
   const reorderMutation = useReorderDesignAssets()
   const [showAddForm, setShowAddForm] = useState(false)
 
-  const isRenderable = !!RENDERABLE_SLUGS[type]
-
-  const handleToggle = useCallback((id: number) => toggleMutation.mutate(id), [toggleMutation])
+  const handleToggle = useCallback(
+    (id: number) =>
+      toggleMutation.mutate(id, {
+        onSuccess: data => {
+          const active = (data as DesignAsset)?.is_active
+          showSuccessToast(active ? t('Asset activated') : t('Asset deactivated'))
+        },
+        onError: () => showErrorToast(t('Failed to toggle asset.')),
+      }),
+    [toggleMutation, t]
+  )
 
   const handleLabelSave = useCallback(
-    (id: number, label: string) => updateMutation.mutate({ id, label }),
-    [updateMutation]
+    (id: number, label: string) =>
+      updateMutation.mutate(
+        { id, label },
+        {
+          onSuccess: () => showSuccessToast(t('Label updated')),
+          onError: () => showErrorToast(t('Failed to update label.')),
+        }
+      ),
+    [updateMutation, t]
+  )
+
+  const handleCategorySave = useCallback(
+    (id: number, category: string) =>
+      updateMutation.mutate(
+        { id, category: category || undefined },
+        {
+          onSuccess: () => showSuccessToast(t('Category updated')),
+          onError: () => showErrorToast(t('Failed to update category.')),
+        }
+      ),
+    [updateMutation, t]
+  )
+
+  const handleMetadataSave = useCallback(
+    (id: number, metadata: Record<string, unknown>) =>
+      updateMutation.mutate(
+        { id, metadata },
+        {
+          onSuccess: () => showSuccessToast(t('Metadata updated')),
+          onError: () => showErrorToast(t('Failed to update metadata.')),
+        }
+      ),
+    [updateMutation, t]
   )
 
   const handleDelete = useCallback(
     (id: number, label: string) => {
       if (window.confirm(`Delete "${label}"? This cannot be undone.`)) {
-        deleteMutation.mutate(id)
+        deleteMutation.mutate(id, {
+          onSuccess: () => showSuccessToast(t('Asset deleted')),
+          onError: () => showErrorToast(t('Failed to delete asset.')),
+        })
       }
     },
-    [deleteMutation]
+    [deleteMutation, t]
   )
 
   const handleThumbnailReplace = useCallback(
     async (id: number, file: File) => {
       try {
         const result = await designAssetsAPI.uploadThumbnail(file)
-        updateMutation.mutate({ id, thumbnail_url: result.url })
+        updateMutation.mutate(
+          { id, thumbnail_url: result.url },
+          {
+            onSuccess: () => showSuccessToast(t('Thumbnail updated')),
+            onError: () => showErrorToast(t('Failed to update thumbnail.')),
+          }
+        )
       } catch {
-        alert(t('Failed to upload thumbnail. Max 2MB, allowed: png, jpg, svg, webp, gif.'))
+        showErrorToast(t('Failed to upload thumbnail. Max 2MB, allowed: png, jpg, svg, webp, gif.'))
       }
     },
-    [updateMutation]
+    [updateMutation, t]
   )
+
+  const queryClient = useQueryClient()
 
   const handleSvgUpload = useCallback(
     async (id: number, file: File) => {
       try {
         await designAssetsAPI.uploadShapeSvg(id, file)
-        alert(t('Shape SVG uploaded successfully.'))
+        showSuccessToast(t('Shape SVG uploaded successfully.'))
+        queryClient.invalidateQueries({ queryKey: queryKeys.designAssets.all() })
       } catch (err: unknown) {
         const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-        alert(msg || t('Failed to upload SVG. Must be a valid SVG (max 1MB) with dummy-data-area and qrcode-rect elements.'))
+        showErrorToast(msg || t('Failed to upload SVG.'))
       }
     },
-    []
+    [queryClient, type, t]
   )
 
   const handleMove = useCallback(
@@ -523,9 +722,12 @@ function AssetTable({ type }: { type: DesignAssetType }) {
       reordered.splice(toIndex, 0, moved)
 
       const order = reordered.map((a, i) => ({ id: a.id, sort_order: i }))
-      reorderMutation.mutate(order)
+      reorderMutation.mutate(order, {
+        onSuccess: () => showSuccessToast(t('Order updated')),
+        onError: () => showErrorToast(t('Failed to reorder.')),
+      })
     },
-    [assets, reorderMutation]
+    [assets, reorderMutation, t]
   )
 
   if (isLoading) {
@@ -544,27 +746,21 @@ function AssetTable({ type }: { type: DesignAssetType }) {
     )
   }
 
-  // Only outline shapes (SVG upload) and preset logos (image upload) are extensible.
-  // Module/finder/finder-dot/advanced all require backend PHP code per slug.
-  const canAddNew = type === 'outline_style' || type === 'preset_logo'
+  // All types are now extensible — new shapes are rendered via dynamic render config
+  const canAddNew = true
 
   return (
     <div>
       {/* Extensibility info banners */}
-      {isRenderable && (
-        <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-          <InformationCircleIcon className="h-5 w-5 mt-0.5 shrink-0" />
-          <div>
-            <strong>{t('Visibility & order only.')}</strong> {t('Each style maps to a backend PHP renderer. New styles require backend code changes.')}
-          </div>
-        </div>
-      )}
       {type === 'outline_style' && (
         <div className="mb-4 flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
           <InformationCircleIcon className="h-5 w-5 mt-0.5 shrink-0" />
           <div>
-            <strong>{t('Extensible via SVG upload.')}</strong> {t('Add new outline shapes by uploading SVG templates. Each SVG must contain a')}{' '}
-            <code className="bg-green-100 px-1 rounded text-xs">{'<path id="dummy-data-area">'}</code>{' '}
+            <strong>{t('Extensible via SVG upload.')}</strong>{' '}
+            {t('Add new outline shapes by uploading SVG templates. Each SVG must contain a')}{' '}
+            <code className="bg-green-100 px-1 rounded text-xs">
+              {'<path id="dummy-data-area">'}
+            </code>{' '}
             {t('and a')}{' '}
             <code className="bg-green-100 px-1 rounded text-xs">{'<rect id="qrcode-rect">'}</code>.
             {t('Use the upload icon per row to attach the SVG.')}
@@ -575,15 +771,21 @@ function AssetTable({ type }: { type: DesignAssetType }) {
         <div className="mb-4 flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
           <InformationCircleIcon className="h-5 w-5 mt-0.5 shrink-0" />
           <div>
-            <strong>{t('Extensible via image upload.')}</strong> {t('Upload logo images to add new presets. Images are embedded directly in generated QR codes.')}
+            <strong>{t('Extensible via image upload.')}</strong>{' '}
+            {t(
+              'Upload logo images to add new presets. Images are embedded directly in generated QR codes.'
+            )}
           </div>
         </div>
       )}
       {type === 'advanced_shape' && (
-        <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+        <div className="mb-4 flex items-start gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
           <InformationCircleIcon className="h-5 w-5 mt-0.5 shrink-0" />
           <div>
-            <strong>{t('Visibility & order only.')}</strong> {t('Advanced shapes require backend PHP processor classes and SVG templates. New styles need code changes.')}
+            <strong>{t('Extensible via SVG upload.')}</strong>{' '}
+            {t(
+              'Add new sticker shapes by uploading SVG templates. Use the upload icon per row to attach the SVG.'
+            )}
           </div>
         </div>
       )}
@@ -605,9 +807,7 @@ function AssetTable({ type }: { type: DesignAssetType }) {
       </div>
 
       {/* Add form */}
-      {showAddForm && (
-        <AddAssetForm type={type} onClose={() => setShowAddForm(false)} />
-      )}
+      {showAddForm && <AddAssetForm type={type} onClose={() => setShowAddForm(false)} />}
 
       {/* Table */}
       {!assets || assets.length === 0 ? (
@@ -652,9 +852,15 @@ function AssetTable({ type }: { type: DesignAssetType }) {
                   onMoveUp={i => handleMove(i, 'up')}
                   onMoveDown={i => handleMove(i, 'down')}
                   onLabelSave={handleLabelSave}
+                  onCategorySave={handleCategorySave}
+                  onMetadataSave={handleMetadataSave}
                   onDelete={handleDelete}
                   onThumbnailReplace={handleThumbnailReplace}
-                  onSvgUpload={type === 'outline_style' ? handleSvgUpload : undefined}
+                  onSvgUpload={
+                    type === 'outline_style' || type === 'advanced_shape'
+                      ? handleSvgUpload
+                      : undefined
+                  }
                 />
               ))}
             </tbody>
@@ -667,7 +873,19 @@ function AssetTable({ type }: { type: DesignAssetType }) {
 
 export default function DesignAssetsPage() {
   const { t } = useTranslation()
+  const router = useRouter()
+  const { isAdmin } = usePermissions()
   const [activeTab, setActiveTab] = useState<string>('module_style')
+
+  useEffect(() => {
+    if (!isAdmin()) {
+      router.replace('/qrcodes/new')
+    }
+  }, [isAdmin, router])
+
+  if (!isAdmin()) {
+    return null
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -684,7 +902,9 @@ export default function DesignAssetsPage() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">{t('Design Assets')}</h1>
         <p className="mt-2 text-sm text-gray-600">
-          {t('Manage QR code design elements — control visibility, ordering, and labels for module shapes, finder patterns, outlined shapes, advanced stickers, and preset logos.')}
+          {t(
+            'Manage QR code design elements — control visibility, ordering, and labels for module shapes, finder patterns, outlined shapes, advanced stickers, and preset logos.'
+          )}
         </p>
       </div>
 
