@@ -20,17 +20,20 @@ export default function NewSubscriptionPage() {
     expires_at: '',
   })
 
-  const set = (field: string, value: string) =>
-    setForm((prev) => ({ ...prev, [field]: value }))
+  const set = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await createMutation.mutateAsync({
-      user_id: Number(form.user_id),
-      subscription_plan_id: Number(form.subscription_plan_id),
-      subscription_status: form.subscription_status,
-      expires_at: form.expires_at || null,
-    })
+    try {
+      await createMutation.mutateAsync({
+        user_id: Number(form.user_id),
+        subscription_plan_id: Number(form.subscription_plan_id),
+        subscription_status: form.subscription_status,
+        expires_at: form.expires_at || null,
+      })
+    } catch {
+      // Error shown by mutation state
+    }
   }
 
   return (
@@ -48,7 +51,10 @@ export default function NewSubscriptionPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+      >
         <div className="grid grid-cols-1 gap-4">
           {/* User ID */}
           <div>
@@ -60,13 +66,16 @@ export default function NewSubscriptionPage() {
               required
               min={1}
               value={form.user_id}
-              onChange={(e) => set('user_id', e.target.value)}
+              onChange={e => set('user_id', e.target.value)}
               placeholder={t('Enter user ID')}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
             />
             <p className="mt-1 text-xs text-gray-500">
               {t('You can find user IDs in the')}{' '}
-              <Link href="/users" className="text-blue-600 hover:underline">{t('Users')}</Link> {t('section.')}
+              <Link href="/users" className="text-blue-600 hover:underline">
+                {t('Users')}
+              </Link>{' '}
+              {t('section.')}
             </p>
           </div>
 
@@ -78,11 +87,11 @@ export default function NewSubscriptionPage() {
             <select
               required
               value={form.subscription_plan_id}
-              onChange={(e) => set('subscription_plan_id', e.target.value)}
+              onChange={e => set('subscription_plan_id', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
             >
               <option value="">{t('Select a plan…')}</option>
-              {plansData?.data.map((plan) => (
+              {plansData?.data.map(plan => (
                 <option key={plan.id} value={String(plan.id)}>
                   {plan.name} — {plan.frequency} {plan.price > 0 ? `($${plan.price})` : t('(free)')}
                 </option>
@@ -98,12 +107,14 @@ export default function NewSubscriptionPage() {
             <select
               required
               value={form.subscription_status}
-              onChange={(e) => set('subscription_status', e.target.value)}
+              onChange={e => set('subscription_status', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
             >
               <option value="">{t('Select a status…')}</option>
-              {statuses?.map((s) => (
-                <option key={s} value={s}>{s}</option>
+              {statuses?.map(s => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
               {/* Fallback statuses if API has none */}
               {(!statuses || statuses.length === 0) && (
@@ -124,7 +135,7 @@ export default function NewSubscriptionPage() {
             <input
               type="date"
               value={form.expires_at}
-              onChange={(e) => set('expires_at', e.target.value)}
+              onChange={e => set('expires_at', e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm sm:max-w-xs"
             />
           </div>

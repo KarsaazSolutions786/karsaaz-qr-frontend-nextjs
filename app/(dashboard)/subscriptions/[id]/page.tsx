@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
-import { useAdminSubscription, useSubscriptionStatuses } from '@/lib/hooks/queries/useAdminSubscriptions'
+import {
+  useAdminSubscription,
+  useSubscriptionStatuses,
+} from '@/lib/hooks/queries/useAdminSubscriptions'
 import { useUpdateAdminSubscription } from '@/lib/hooks/mutations/useAdminSubscriptionMutations'
 import { usePlans } from '@/lib/hooks/queries/usePlans'
 
@@ -26,6 +29,7 @@ export default function EditSubscriptionPage() {
 
   useEffect(() => {
     if (sub) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- sync form state from async query
       setForm({
         subscription_plan_id: String(sub.subscription_plan_id ?? ''),
         subscription_status: sub.statuses?.[0]?.status ?? '',
@@ -34,21 +38,24 @@ export default function EditSubscriptionPage() {
     }
   }, [sub])
 
-  const set = (field: string, value: string) =>
-    setForm((prev) => ({ ...prev, [field]: value }))
+  const set = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await updateMutation.mutateAsync({
-      id: subId,
-      data: {
-        subscription_plan_id: Number(form.subscription_plan_id),
-        subscription_status: form.subscription_status,
-        expires_at: form.expires_at || null,
-      },
-    })
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
+    try {
+      await updateMutation.mutateAsync({
+        id: subId,
+        data: {
+          subscription_plan_id: Number(form.subscription_plan_id),
+          subscription_status: form.subscription_status,
+          expires_at: form.expires_at || null,
+        },
+      })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } catch {
+      // Error shown by mutation state
+    }
   }
 
   if (isLoading) {
@@ -63,7 +70,9 @@ export default function EditSubscriptionPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-8">
         <p className="text-red-600">{t('Subscription not found.')}</p>
-        <Link href="/subscriptions" className="text-sm text-blue-600">{t('← Back to Subscriptions')}</Link>
+        <Link href="/subscriptions" className="text-sm text-blue-600">
+          {t('← Back to Subscriptions')}
+        </Link>
       </div>
     )
   }
@@ -74,7 +83,9 @@ export default function EditSubscriptionPage() {
         <Link href="/subscriptions" className="text-sm text-blue-600 hover:text-blue-800">
           {t('← Back to Subscriptions')}
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">{t('Edit Subscription')} #{sub.id}</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {t('Edit Subscription')} #{sub.id}
+        </h1>
       </div>
 
       {/* User info (read-only) */}
@@ -94,13 +105,20 @@ export default function EditSubscriptionPage() {
       </div>
 
       {updateMutation.error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">{t('Failed to update subscription.')}</div>
+        <div className="mb-4 rounded-md bg-red-50 p-4 text-sm text-red-700">
+          {t('Failed to update subscription.')}
+        </div>
       )}
       {saved && (
-        <div className="mb-4 rounded-md bg-green-50 p-4 text-sm text-green-700">{t('Subscription saved successfully.')}</div>
+        <div className="mb-4 rounded-md bg-green-50 p-4 text-sm text-green-700">
+          {t('Subscription saved successfully.')}
+        </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+      >
         {/* Plan */}
         <div>
           <label className="block text-sm font-medium text-gray-700">
@@ -109,11 +127,11 @@ export default function EditSubscriptionPage() {
           <select
             required
             value={form.subscription_plan_id}
-            onChange={(e) => set('subscription_plan_id', e.target.value)}
+            onChange={e => set('subscription_plan_id', e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
           >
             <option value="">{t('Select a plan…')}</option>
-            {plansData?.data.map((plan) => (
+            {plansData?.data.map(plan => (
               <option key={plan.id} value={String(plan.id)}>
                 {plan.name} — {plan.frequency} {plan.price > 0 ? `($${plan.price})` : t('(free)')}
               </option>
@@ -129,12 +147,14 @@ export default function EditSubscriptionPage() {
           <select
             required
             value={form.subscription_status}
-            onChange={(e) => set('subscription_status', e.target.value)}
+            onChange={e => set('subscription_status', e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
           >
             <option value="">{t('Select a status…')}</option>
-            {statuses?.map((s) => (
-              <option key={s} value={s}>{s}</option>
+            {statuses?.map(s => (
+              <option key={s} value={s}>
+                {s}
+              </option>
             ))}
             {(!statuses || statuses.length === 0) && (
               <>
@@ -154,13 +174,16 @@ export default function EditSubscriptionPage() {
           <input
             type="date"
             value={form.expires_at}
-            onChange={(e) => set('expires_at', e.target.value)}
+            onChange={e => set('expires_at', e.target.value)}
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm sm:max-w-xs"
           />
         </div>
 
         <div className="flex items-center justify-end gap-4 pt-2">
-          <Link href="/subscriptions" className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          <Link
+            href="/subscriptions"
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
             {t('Cancel')}
           </Link>
           <button

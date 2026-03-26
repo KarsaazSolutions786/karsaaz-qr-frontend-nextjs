@@ -14,9 +14,15 @@ export interface SubscriptionPlan {
   numberOfCustomDomains: number
   fileSizeLimit?: number
   numberOfUsers?: number
+  numberOfRestaurantMenuItems?: number
+  numberOfProductCatalogueItems?: number
+  numberOfAiGenerations?: number
+  numberOfBulkCreatedQrcodes?: number
   showAds: boolean
   adsTimeout?: number
+  adsCode?: string
   qrTypes: string[]
+  unavailableTypesBehaviour?: string
   features: string[]
   checkpoints?: { id: string; text: string; available: boolean }[]
   qrTypeLimits?: { typeId: string; limit: number }[]
@@ -36,7 +42,16 @@ export interface CreateSubscriptionPlanRequest {
   numberOfScans?: number
   numberOfCustomDomains?: number
   fileSizeLimit?: number
+  numberOfUsers?: number
+  numberOfRestaurantMenuItems?: number
+  numberOfProductCatalogueItems?: number
+  numberOfAiGenerations?: number
+  numberOfBulkCreatedQrcodes?: number
   showAds?: boolean
+  adsTimeout?: number
+  adsCode?: string
+  qrTypes?: string[]
+  unavailableTypesBehaviour?: 'hidden' | 'show_upgrade_message'
   features?: string[]
   checkpoints?: { id: string; text: string; available: boolean }[]
   qrTypeLimits?: { typeId: string; limit: number }[]
