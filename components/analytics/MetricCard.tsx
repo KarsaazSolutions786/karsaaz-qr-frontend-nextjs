@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { memo } from 'react'
 import { useTranslation } from '@/lib/i18n'
 
 interface MetricCardProps {
@@ -11,7 +11,7 @@ interface MetricCardProps {
   isLoading?: boolean
 }
 
-export default function MetricCard({
+const MetricCard = memo(function MetricCard({
   title,
   value,
   change,
@@ -26,11 +26,7 @@ export default function MetricCard({
   }
 
   const changeColor =
-    change !== undefined
-      ? change >= 0
-        ? 'text-green-600'
-        : 'text-red-600'
-      : 'text-gray-500'
+    change !== undefined ? (change >= 0 ? 'text-green-600' : 'text-red-600') : 'text-gray-500'
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
@@ -56,4 +52,6 @@ export default function MetricCard({
       </div>
     </div>
   )
-}
+})
+
+export default MetricCard

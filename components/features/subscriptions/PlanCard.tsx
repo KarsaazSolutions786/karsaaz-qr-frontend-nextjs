@@ -1,5 +1,6 @@
 'use client'
 
+import React, { memo } from 'react'
 import { Plan } from '@/types/entities/subscription'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
@@ -11,9 +12,12 @@ interface PlanCardProps {
 
 function formatFrequency(freq: string | undefined, t: (key: string) => string) {
   switch (freq) {
-    case 'yearly': return `/${t('year')}`
-    case 'life-time': return ` ${t('one-time')}`
-    default: return `/${t('month')}`
+    case 'yearly':
+      return `/${t('year')}`
+    case 'life-time':
+      return ` ${t('one-time')}`
+    default:
+      return `/${t('month')}`
   }
 }
 
@@ -23,15 +27,17 @@ function formatLimit(value: number | null | undefined, label: string, t: (key: s
   return `${value.toLocaleString()} ${label}`
 }
 
-export function PlanCard({ plan, current = false }: PlanCardProps) {
+export const PlanCard = memo(function PlanCard({ plan, current = false }: PlanCardProps) {
   const { t } = useTranslation()
   const price = Number(plan.price).toFixed(2)
   const isPopular = plan.name.toLowerCase() === 'pro'
 
   return (
-    <div className={`relative rounded-lg border-2 bg-white p-8 shadow-sm ${
-      isPopular ? 'border-blue-500' : 'border-gray-200'
-    }`}>
+    <div
+      className={`relative rounded-lg border-2 bg-white p-8 shadow-sm ${
+        isPopular ? 'border-blue-500' : 'border-gray-200'
+      }`}
+    >
       {isPopular && (
         <div className="absolute -top-4 left-0 right-0 flex justify-center">
           <span className="rounded-full bg-blue-500 px-4 py-1 text-xs font-semibold text-white">
@@ -67,18 +73,26 @@ export function PlanCard({ plan, current = false }: PlanCardProps) {
       <ul className="mt-8 space-y-3">
         <li className="flex items-start">
           <span className="text-green-500 mr-3">✓</span>
-          <span className="text-sm text-gray-700">{formatLimit(plan.limits.maxQRCodes, t('QR codes'), t)}</span>
+          <span className="text-sm text-gray-700">
+            {formatLimit(plan.limits.maxQRCodes, t('QR codes'), t)}
+          </span>
         </li>
         <li className="flex items-start">
           <span className="text-green-500 mr-3">✓</span>
-          <span className="text-sm text-gray-700">{formatLimit(plan.limits.maxScans, t('scans'), t)}</span>
+          <span className="text-sm text-gray-700">
+            {formatLimit(plan.limits.maxScans, t('scans'), t)}
+          </span>
         </li>
-        {plan.limits.maxDomains !== undefined && plan.limits.maxDomains !== null && plan.limits.maxDomains > 0 && (
-          <li className="flex items-start">
-            <span className="text-green-500 mr-3">✓</span>
-            <span className="text-sm text-gray-700">{formatLimit(plan.limits.maxDomains, t('custom domains'), t)}</span>
-          </li>
-        )}
+        {plan.limits.maxDomains !== undefined &&
+          plan.limits.maxDomains !== null &&
+          plan.limits.maxDomains > 0 && (
+            <li className="flex items-start">
+              <span className="text-green-500 mr-3">✓</span>
+              <span className="text-sm text-gray-700">
+                {formatLimit(plan.limits.maxDomains, t('custom domains'), t)}
+              </span>
+            </li>
+          )}
         {plan.features.map((feature, index) => (
           <li key={index} className="flex items-start">
             <span className="text-green-500 mr-3">✓</span>
@@ -107,4 +121,4 @@ export function PlanCard({ plan, current = false }: PlanCardProps) {
       </div>
     </div>
   )
-}
+})

@@ -36,7 +36,16 @@ import { useSubscription } from '@/lib/hooks/queries/useSubscription'
 import { useFolders } from '@/lib/hooks/queries/useFolders'
 import { useDomains } from '@/lib/hooks/queries/useDomains'
 import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
-import { Download, FolderInput, Archive, Copy, Eye, EyeOff, RefreshCw, UserCheck } from 'lucide-react'
+import {
+  Download,
+  FolderInput,
+  Archive,
+  Copy,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  UserCheck,
+} from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
@@ -48,6 +57,7 @@ import { useSubscriptionLimits } from '@/lib/hooks/useSubscriptionLimits'
 import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
 import { BulkChangeTypeModal } from '@/components/qr/BulkChangeTypeModal'
 import { BulkChangeOwnerModal } from '@/components/qr/BulkChangeOwnerModal'
+import { VirtualizedList, VirtualizedGrid } from '@/components/common/VirtualizedList'
 
 export default function QRCodesPage() {
   const { t } = useTranslation()
@@ -233,7 +243,12 @@ export default function QRCodesPage() {
         id: 'archive',
         label: t('Archive'),
         icon: <Archive className="w-4 h-4" />,
-        onClick: (ids: string[]) => bulkArchiveQRCodes(ids).then(() => deselectAll()).catch(() => { toast.error('Operation failed. Please try again.') }),
+        onClick: (ids: string[]) =>
+          bulkArchiveQRCodes(ids)
+            .then(() => deselectAll())
+            .catch(() => {
+              toast.error('Operation failed. Please try again.')
+            }),
       },
       {
         id: 'change-type',
@@ -257,7 +272,12 @@ export default function QRCodesPage() {
         icon: <TrashIcon className="w-4 h-4" />,
         variant: 'danger' as const,
         requiresConfirmation: true,
-        onClick: (ids: string[]) => bulkDeleteQRCodes(ids).then(() => deselectAll()).catch(() => { toast.error('Operation failed. Please try again.') }),
+        onClick: (ids: string[]) =>
+          bulkDeleteQRCodes(ids)
+            .then(() => deselectAll())
+            .catch(() => {
+              toast.error('Operation failed. Please try again.')
+            }),
       },
     ],
     [
@@ -566,23 +586,31 @@ export default function QRCodesPage() {
             <div
               className={`transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
             >
-              {/* Grid View */}
+              {/* Grid View (Virtualized) */}
               {viewMode === 'grid' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {qrcodes.map(qrcode => (
+                <VirtualizedGrid
+                  items={qrcodes}
+                  columnCount={3}
+                  rowHeight={320}
+                  gap={24}
+                  height={Math.min(800, Math.ceil(qrcodes.length / 3) * 344)}
+                  renderItem={qrcode => (
                     <QRCodeCard
                       key={qrcode.id}
                       qrcode={qrcode}
                       onAction={action => handleRowAction(action, qrcode.id)}
                     />
-                  ))}
-                </div>
+                  )}
+                />
               )}
 
-              {/* List View */}
+              {/* List View (Virtualized) */}
               {viewMode === 'list' && (
-                <div className="space-y-3">
-                  {qrcodes.map(qrcode => (
+                <VirtualizedList
+                  items={qrcodes}
+                  itemHeight={80}
+                  height={Math.min(600, qrcodes.length * 80)}
+                  renderItem={qrcode => (
                     <QRCodeDetailedRow
                       key={qrcode.id}
                       qrcode={qrcode}
@@ -590,14 +618,19 @@ export default function QRCodesPage() {
                       onToggleSelect={() => toggleItem(qrcode.id)}
                       onAction={action => handleRowAction(action, qrcode.id)}
                     />
-                  ))}
-                </div>
+                  )}
+                />
               )}
 
-              {/* Minimal View */}
+              {/* Minimal View (Virtualized) */}
               {viewMode === 'minimal' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {qrcodes.map(qrcode => (
+                <VirtualizedGrid
+                  items={qrcodes}
+                  columnCount={4}
+                  rowHeight={200}
+                  gap={16}
+                  height={Math.min(600, Math.ceil(qrcodes.length / 4) * 216)}
+                  renderItem={qrcode => (
                     <QRCodeMinimalCard
                       key={qrcode.id}
                       qrcode={qrcode}
@@ -605,8 +638,8 @@ export default function QRCodesPage() {
                         router.push(`/qrcodes/${qrcode.id}`)
                       }}
                     />
-                  ))}
-                </div>
+                  )}
+                />
               )}
             </div>
           )}

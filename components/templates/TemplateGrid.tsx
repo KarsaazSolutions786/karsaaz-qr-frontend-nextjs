@@ -4,6 +4,7 @@ import { QRCodeTemplate } from '@/types/entities/template'
 import TemplateCard from './TemplateCard'
 import { FileQuestion } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import { VirtualizedGrid } from '@/components/common/VirtualizedList'
 
 interface TemplateGridProps {
   templates: QRCodeTemplate[]
@@ -39,7 +40,7 @@ export default function TemplateGrid({
           >
             {/* Thumbnail skeleton */}
             <div className="aspect-square bg-gray-200" />
-            
+
             {/* Content skeleton */}
             <div className="p-4 space-y-3">
               <div className="h-4 bg-gray-200 rounded w-3/4" />
@@ -60,20 +61,21 @@ export default function TemplateGrid({
         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
           <FileQuestion className="w-8 h-8 text-gray-400" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          {t('No templates available')}
-        </h3>
-        <p className="text-sm text-gray-600 text-center max-w-md">
-          {emptyMessage}
-        </p>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('No templates available')}</h3>
+        <p className="text-sm text-gray-600 text-center max-w-md">{emptyMessage}</p>
       </div>
     )
   }
 
-  // Template Grid
+  // Template Grid (Virtualized)
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {templates.map((template) => (
+    <VirtualizedGrid
+      items={templates}
+      columnCount={4}
+      rowHeight={380}
+      gap={24}
+      height={Math.min(800, Math.ceil(templates.length / 4) * 404)}
+      renderItem={template => (
         <TemplateCard
           key={template.id}
           template={template}
@@ -83,7 +85,7 @@ export default function TemplateGrid({
           onDelete={onDelete}
           showActions={showActions}
         />
-      ))}
-    </div>
+      )}
+    />
   )
 }

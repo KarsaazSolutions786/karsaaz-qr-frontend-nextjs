@@ -1,5 +1,6 @@
 'use client'
 
+import React, { memo } from 'react'
 import { QRCodeTemplate } from '@/types/entities/template'
 import Image from 'next/image'
 import { MoreVertical, Eye, Edit, Trash2 } from 'lucide-react'
@@ -15,7 +16,7 @@ interface TemplateCardProps {
   showActions?: boolean
 }
 
-export default function TemplateCard({
+const TemplateCard = memo(function TemplateCard({
   template,
   onUseTemplate,
   onView,
@@ -43,7 +44,7 @@ export default function TemplateCard({
             <div className="w-24 h-24 bg-primary-200 rounded-lg" />
           </div>
         )}
-        
+
         {/* Type Badge */}
         <div className="absolute top-2 left-2">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 border border-primary-200">
@@ -67,7 +68,7 @@ export default function TemplateCard({
           <h3 className="text-base font-semibold text-gray-900 line-clamp-1 flex-1">
             {template.name}
           </h3>
-          
+
           {/* Options Menu for Private Templates */}
           {isPrivate && showActions && (
             <div className="relative ml-2">
@@ -78,13 +79,10 @@ export default function TemplateCard({
               >
                 <MoreVertical className="w-4 h-4 text-gray-500" />
               </button>
-              
+
               {showMenu && (
                 <>
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setShowMenu(false)}
-                  />
+                  <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
                   <div className="absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-20">
                     <div className="py-1">
                       {onView && (
@@ -132,9 +130,7 @@ export default function TemplateCard({
         </div>
 
         {template.description && (
-          <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-            {template.description}
-          </p>
+          <p className="text-sm text-gray-600 line-clamp-2 mb-3">{template.description}</p>
         )}
 
         {/* Use Template Button */}
@@ -147,4 +143,6 @@ export default function TemplateCard({
       </div>
     </div>
   )
-}
+})
+
+export default TemplateCard
