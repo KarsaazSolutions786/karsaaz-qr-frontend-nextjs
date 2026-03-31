@@ -22,8 +22,11 @@ import {
   figmaSectionNav,
   WalletIcon,
   LinkIcon,
+  type FigmaNavSection,
 } from '@/lib/config/nav-config'
-import type { FigmaNavSection } from '@/lib/config/nav-config'
+import { useGuest } from '@/lib/hooks/useGuest'
+import { GuestSignupPrompt } from '@/components/guest/GuestSignupPrompt'
+import { GuestLimitsBanner } from '@/components/guest/GuestLimitsBanner'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -46,6 +49,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { user, isLoading, logout } = useAuth()
+  const { isGuest, isGuestLoading, sessionLimits } = useGuest()
   const { isAccountCreditMode } = useAccountCredit()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -58,7 +62,9 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const filteredSectionNav = figmaSectionNav.filter(item => !item.adminOnly || isAdmin)
 
   // Custom client menu from admin config (for non-admin users)
-  const { data: menuConfig } = useSystemConfigs(isAdmin ? [] : ['app.dashboard-client-menu'])
+  // Disabled for guests and during guest loading — they don't need custom admin menus and the API requires auth
+  const shouldSkipSystemConfigs = isAdmin || isGuest || (!user && isGuestLoading)
+  const { data: menuConfig } = useSystemConfigs(shouldSkipSystemConfigs ? [] : ['app.dashboard-client-menu'])
   const customMenuItems: FigmaNavSection[] = React.useMemo(() => {
     if (isAdmin || !menuConfig?.['app.dashboard-client-menu']) return []
     try {
@@ -85,10 +91,15 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   // Combine all sections: user sections + admin sections + custom menu
   const allSectionNav = [...figmaUserSectionNav, ...filteredSectionNav, ...customMenuItems]
 
-  // Build primary nav -- add Account Credits item when credit billing is active
-  const effectivePrimaryNav = isAccountCreditMode
+  // Build primary nav -- filter for guests, add Account Credits in credit mode
+  const guestAllowedNavKeys = ['home', 'existing-qr']
+  const basePrimaryNav = isGuest
+    ? figmaPrimaryNav.filter(item => guestAllowedNavKeys.includes(item.key))
+    : figmaPrimaryNav
+
+  const effectivePrimaryNav = isAccountCreditMode && !isGuest
     ? [
-        ...figmaPrimaryNav,
+        ...basePrimaryNav,
         {
           key: 'account-credits',
           label: 'Account Credits',
@@ -96,7 +107,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
           icon: WalletIcon,
         },
       ]
-    : figmaPrimaryNav
+    : basePrimaryNav
 
   const collapsedNavItems = [
     ...effectivePrimaryNav.map(item => ({ name: item.label, href: item.href, icon: item.icon })),
@@ -159,23 +170,22 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      const currentPath = window.location.pathname
-      router.push(`/login?from=${encodeURIComponent(currentPath)}`)
+    if (!isLoading && !isGuestLoading && !user && !isGuest) {
+      router.push('/login')
     }
-  }, [user, isLoading, router])
+  }, [user, isLoading, isGuest, isGuestLoading, router])
 
-  // Admin route guard: redirect non-admin users away from admin-only pages
+  // Admin route guard: redirect non-admin users and guests away from admin-only pages
   useEffect(() => {
-    if (isLoading || !user || !pathname) return
-    if (isSuperAdmin(user)) return
+    if (isLoading || !pathname) return
     const isAdminRoute = ADMIN_ROUTE_PREFIXES.some(
       prefix => pathname === prefix || pathname.startsWith(`${prefix}/`)
     )
-    if (isAdminRoute) router.replace('/qrcodes')
-  }, [user, isLoading, pathname, router])
+    if (!isAdminRoute) return
+    if (isGuest || !user || !isSuperAdmin(user)) router.replace('/qrcodes/new')
+  }, [user, isLoading, isGuest, pathname, router])
 
-  if (!mounted || isLoading) {
+  if (!mounted || isLoading || isGuestLoading) {
     return (
       <div className="flex h-screen karsaaz-bg dark:bg-gray-900">
         <div className="flex-1 flex items-center justify-center">
@@ -185,7 +195,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (!user) return null
+  if (!user && !isGuest) return null
 
   return (
     <div className="flex h-screen karsaaz-bg dark:bg-gray-900">
@@ -205,19 +215,24 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         expandedSections={expandedSections}
         toggleSection={toggleSection}
         effectivePrimaryNav={effectivePrimaryNav}
-        allSectionNav={allSectionNav}
+        allSectionNav={isGuest ? [] : allSectionNav}
         collapsedNavItems={collapsedNavItems}
         isItemActive={isItemActive}
         isLoggingOut={isLoggingOut}
         handleLogout={handleLogout}
+        isGuest={isGuest}
       />
 
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <ActAsBanner />
-        <SubscriptionBanner />
-        <IncompleteCheckoutBanner />
-        <DashboardBanner />
+        {!isGuest && (
+          <>
+            <ActAsBanner />
+            <SubscriptionBanner />
+            <IncompleteCheckoutBanner />
+            <DashboardBanner />
+          </>
+        )}
 
         <DashboardHeader
           sidebarOpen={sidebarOpen}
@@ -230,12 +245,23 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
           role="main"
           className="flex-1 overflow-y-auto dark:bg-gray-900 dark:text-gray-100 relative z-[1]"
         >
+          {isGuest && sessionLimits && (
+            <div className="px-4 pt-4 sm:px-6 lg:px-8">
+              <GuestLimitsBanner limits={sessionLimits} />
+            </div>
+          )}
           {children}
         </main>
 
-        <QuickActions />
-        <CartWidget />
-        <SubscriptionAlertProvider />
+        {isGuest && <GuestSignupPrompt />}
+
+        {!isGuest && (
+          <>
+            <QuickActions />
+            <CartWidget />
+            <SubscriptionAlertProvider />
+          </>
+        )}
       </div>
     </div>
   )

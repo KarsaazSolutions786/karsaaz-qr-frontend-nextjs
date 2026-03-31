@@ -23,6 +23,7 @@ export function useAccountCredit() {
   const store = useAccountCreditStore()
 
   // ── Fetch billing config from system configs API (cached 5 min) ──
+  // Disabled when no user is authenticated (guest mode) — requires auth
   const { data: billingConfigs } = useQuery({
     queryKey: queryKeys.systemConfigs.byKeys(BILLING_CONFIG_KEYS),
     queryFn: async () => {
@@ -33,6 +34,7 @@ export function useAccountCredit() {
       }
       return map
     },
+    enabled: !!user,
     staleTime: 5 * 60_000, // 5 minutes -- billing config rarely changes
     gcTime: 10 * 60_000,
     retry: 1,

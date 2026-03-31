@@ -46,7 +46,7 @@ export function LoginPreferenceToggle() {
     return null
   }
 
-  const isPasswordless = prefData?.preference === 'passwordless'
+  const isPasswordless = prefData?.preference === 'enabled'
 
   const handleToggle = () => {
     if (isPasswordless) {

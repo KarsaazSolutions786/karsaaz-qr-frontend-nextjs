@@ -2,16 +2,45 @@
 
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { qrcodesAPI, ListQRCodesParams } from '@/lib/api/endpoints/qrcodes'
+import { guestAPI } from '@/lib/api/endpoints/guest'
 import { queryKeys } from '@/lib/query/keys'
+import { useGuest } from '@/lib/hooks/useGuest'
 
 export function useQRCodes(params: ListQRCodesParams = {}) {
+  const { isGuest } = useGuest()
+
   return useQuery({
-    queryKey: queryKeys.qrcodes.list(params as Record<string, unknown>),
-    queryFn: ({ signal }) => qrcodesAPI.list(params, signal),
-    staleTime: 30 * 1000, // 30 seconds
+    queryKey: isGuest ? ['guest-qrcodes', 'list'] : queryKeys.qrcodes.list(params as Record<string, unknown>),
+    queryFn: async ({ signal }): Promise<{ data: any[]; pagination: { currentPage: number; lastPage: number; perPage: number; total: number } }> => {
+      if (isGuest) {
+        const qrcodes = await guestAPI.listQrcodes()
+        return {
+          data: qrcodes.map(gqr => ({
+            id: String(gqr.id),
+            name: gqr.name,
+            type: gqr.type,
+            data: gqr.data,
+            design: gqr.design,
+            customization: gqr.design,
+            designerConfig: gqr.design,
+            status: 'active' as const,
+            scans: 0,
+            filePath: gqr.file_path,
+            isStatic: gqr.is_static,
+            downloadCount: gqr.download_count,
+            createdAt: gqr.created_at,
+            updatedAt: gqr.updated_at,
+            tags: [],
+            _isGuestQr: true,
+          })),
+          pagination: { currentPage: 1, lastPage: 1, perPage: 50, total: qrcodes.length },
+        }
+      }
+      return qrcodesAPI.list(params, signal) as any
+    },
+    staleTime: 30 * 1000,
     placeholderData: keepPreviousData,
     retry: (failureCount, error: any) => {
-      // Don't retry on rate limit (429) or client errors (4xx)
       const status = error?.response?.status
       if (status === 429 || (status >= 400 && status < 500)) return false
       return failureCount < 2

@@ -4,6 +4,8 @@ import { useState, useCallback, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { StepperWizard, Step } from '@/components/wizard/StepperWizard'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
+import { guestAPI } from '@/lib/api/endpoints/guest'
+import { useGuest } from '@/lib/hooks/useGuest'
 import { DEFAULT_DESIGNER_CONFIG, DesignerConfig } from '@/types/entities/designer'
 import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
 import Step1DataEntry from './Step1DataEntry'
@@ -31,6 +33,7 @@ export default function QRWizardContainer({
 }: QRWizardContainerProps) {
   const { t } = useTranslation()
   const router = useRouter()
+  const { isGuest, incrementActionCount, refreshSession } = useGuest()
 
   // Determine wizard steps based on mode
   const WIZARD_STEPS = useMemo(() => {
@@ -222,7 +225,8 @@ export default function QRWizardContainer({
       const currentId = savedQRIdRef.current
 
       if (currentId) {
-        // Already exists — update
+        // Already exists — update (guests can't update, only authenticated users)
+        if (isGuest) return { id: currentId }
         const result = await qrcodesAPI.update(currentId, payload)
         return result
       } else {
@@ -244,19 +248,36 @@ export default function QRWizardContainer({
 
         isCreatingRef.current = true
         try {
-          // First save — create
-          const result = await qrcodesAPI.create(payload)
+          let result: any
+
+          if (isGuest) {
+            // Guest mode — use guest API endpoint
+            result = await guestAPI.createQrcode({
+              name: payload.name,
+              type: payload.type,
+              data: payload.data,
+              design: payload.design,
+              is_static: true,
+            })
+            // Track guest action for signup prompt
+            incrementActionCount()
+            // Refresh session limits
+            refreshSession()
+          } else {
+            // Authenticated mode — use regular API endpoint
+            result = await qrcodesAPI.create(payload)
+          }
           const newId = result.id
           savedQRIdRef.current = newId // update ref synchronously
           setSavedQRId(newId)
 
-          // Update browser URL without triggering a navigation/re-render
-          if (mode === 'create' && typeof window !== 'undefined') {
+          // Update browser URL without triggering a navigation/re-render (skip for guests)
+          if (mode === 'create' && typeof window !== 'undefined' && !isGuest) {
             window.history.replaceState(null, '', `/qrcodes/${newId}/edit`)
           }
 
           // Full redirect only when explicitly requested (e.g. from handleSubmit)
-          if (shouldRedirect && mode === 'create') {
+          if (shouldRedirect && mode === 'create' && !isGuest) {
             router.replace(`/qrcodes/${newId}/edit`)
           }
           return result
@@ -265,7 +286,7 @@ export default function QRWizardContainer({
         }
       }
     },
-    [qrType, formData, design, settings, webpageDesign, mode, router]
+    [qrType, formData, design, settings, webpageDesign, mode, router, isGuest, incrementActionCount, refreshSession]
   )
 
   // ------------------------------------------------------------------
@@ -325,6 +346,13 @@ export default function QRWizardContainer({
         wizard.reset()
         if (onSuccess) {
           onSuccess(result)
+        } else if (isGuest) {
+          // Guests stay on creation page — reset wizard for new QR
+          toast.success(t('QR Code Created!'), {
+            description: t('Your QR code is ready. Create another or sign up to save permanently.'),
+            icon: <CheckCircle2 className="w-5 h-5 text-green-600" />,
+          })
+          router.push('/qrcodes/new')
         } else {
           router.push(`/qrcodes/${result.id || savedQRIdRef.current}`)
         }
@@ -342,10 +370,16 @@ export default function QRWizardContainer({
     wizard.reset()
     if (onSuccess) {
       onSuccess({ id: currentId })
+    } else if (isGuest) {
+      toast.success(t('QR Code Created!'), {
+        description: t('Your QR code is ready. Create another or sign up to save permanently.'),
+        icon: <CheckCircle2 className="w-5 h-5 text-green-600" />,
+      })
+      router.push('/qrcodes/new')
     } else {
       router.push(`/qrcodes/${currentId}`)
     }
-  }, [saveQRCode, wizard, router, onSuccess])
+  }, [saveQRCode, wizard, router, onSuccess, isGuest, t])
 
   // ------------------------------------------------------------------
   // Data-change handlers (mark unsaved on any change)

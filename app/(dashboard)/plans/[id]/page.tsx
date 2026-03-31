@@ -65,6 +65,7 @@ export default function EditPlanPage() {
     numberOfScans: -1,
     numberOfCustomDomains: -1,
     fileSizeLimit: -1,
+    storageQuotaMb: 500,
     numberOfUsers: -1,
     numberOfRestaurantMenuItems: -1,
     numberOfProductCatalogueItems: -1,
@@ -95,6 +96,7 @@ export default function EditPlanPage() {
         numberOfScans: plan.numberOfScans ?? -1,
         numberOfCustomDomains: plan.numberOfCustomDomains ?? -1,
         fileSizeLimit: plan.fileSizeLimit ?? -1,
+        storageQuotaMb: plan.storageQuotaBytes ? Math.round(plan.storageQuotaBytes / (1024 * 1024)) : 500,
         numberOfUsers: plan.numberOfUsers ?? -1,
         numberOfRestaurantMenuItems: plan.numberOfRestaurantMenuItems ?? -1,
         numberOfProductCatalogueItems: plan.numberOfProductCatalogueItems ?? -1,
@@ -131,6 +133,7 @@ export default function EditPlanPage() {
           numberOfScans: Number(form.numberOfScans),
           numberOfCustomDomains: Number(form.numberOfCustomDomains),
           fileSizeLimit: Number(form.fileSizeLimit),
+          storageQuotaBytes: Number(form.storageQuotaMb) === -1 ? -1 : Number(form.storageQuotaMb) * 1024 * 1024,
           numberOfUsers: Number(form.numberOfUsers),
           numberOfRestaurantMenuItems: Number(form.numberOfRestaurantMenuItems),
           numberOfProductCatalogueItems: Number(form.numberOfProductCatalogueItems),
@@ -344,6 +347,20 @@ export default function EditPlanPage() {
                 onChange={e => set('fileSizeLimit', e.target.value)}
                 className={inputClass}
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                {t('Storage Quota (MB)')}
+              </label>
+              <input
+                type="number"
+                min={-1}
+                step={50}
+                value={form.storageQuotaMb}
+                onChange={e => set('storageQuotaMb', e.target.value)}
+                className={inputClass}
+              />
+              <p className="mt-1 text-xs text-gray-500">{t('-1 for unlimited. Total storage per user.')}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">

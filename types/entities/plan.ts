@@ -13,6 +13,7 @@ export interface SubscriptionPlan {
   numberOfScans: number
   numberOfCustomDomains: number
   fileSizeLimit?: number
+  storageQuotaBytes?: number
   numberOfUsers?: number
   numberOfRestaurantMenuItems?: number
   numberOfProductCatalogueItems?: number
@@ -42,6 +43,7 @@ export interface CreateSubscriptionPlanRequest {
   numberOfScans?: number
   numberOfCustomDomains?: number
   fileSizeLimit?: number
+  storageQuotaBytes?: number
   numberOfUsers?: number
   numberOfRestaurantMenuItems?: number
   numberOfProductCatalogueItems?: number

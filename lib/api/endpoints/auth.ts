@@ -8,11 +8,16 @@ import { generateOAuthStateForRedirect } from '@/lib/services/auth-workflow'
 export interface LoginRequest {
   email: string
   password: string
+  guest_session_token?: string
 }
 
 export interface LoginResponse {
   user: User
   token: string
+  guest_migration?: {
+    migrated_qrcodes: number
+    session_converted: boolean
+  } | null
 }
 
 export interface LoginRequires2FAResponse {
@@ -41,11 +46,16 @@ export interface RegisterRequest {
   password_confirmation: string
   terms_consent: boolean
   referral_code?: string
+  guest_session_token?: string
 }
 
 export interface RegisterResponse {
   user: User
   token: string
+  guest_migration?: {
+    migrated_qrcodes: number
+    session_converted: boolean
+  } | null
 }
 
 export interface VerifyOTPRequest {
@@ -131,8 +141,11 @@ export interface PasswordlessResendResponse {
 }
 
 // Passwordless Auth — per-user preference (authenticated)
+// Backend returns 'enabled' | 'disabled' (stored in user meta)
 export interface PasswordlessPreferenceResponse {
-  preference: 'passwordless' | 'traditional'
+  success: boolean
+  global_enabled: boolean
+  preference: 'enabled' | 'disabled'
 }
 
 export interface PasswordlessSetPreferenceRequest {

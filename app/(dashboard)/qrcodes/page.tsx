@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   Plus,
   Filter,
@@ -16,7 +16,6 @@ import {
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { useMultiSelect } from '@/lib/hooks/useMultiSelect'
-import { useFilters } from '@/lib/hooks/useFilters'
 import { useQRActions } from '@/lib/hooks/useQRActions'
 import { MultiSelectToolbar, type BulkAction } from '@/components/qr/MultiSelectToolbar'
 import { FilterModal } from '@/components/qr/FilterModal'
@@ -58,22 +57,85 @@ import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredM
 import { BulkChangeTypeModal } from '@/components/qr/BulkChangeTypeModal'
 import { BulkChangeOwnerModal } from '@/components/qr/BulkChangeOwnerModal'
 import { VirtualizedList, VirtualizedGrid } from '@/components/common/VirtualizedList'
+import { useGuest } from '@/lib/hooks/useGuest'
 
 export default function QRCodesPage() {
   const { t } = useTranslation()
   const router = useRouter()
-  const [search, setSearch] = useState('')
-  const [page, setPage] = useState(1)
+  const searchParams = useSearchParams()
+  const { isGuest } = useGuest()
+
+  // ─── URL-driven state ──────────────────────────────────────────────────────
+  // All filter/sort/page/search state lives in the URL so that:
+  // • filters survive page reload
+  // • back/forward navigation restores state
+  // • users can share filtered URLs
+
+  /** Read a URL param with a fallback */
+  const sp = useCallback(
+    (key: string, fallback = '') => searchParams.get(key) ?? fallback,
+    [searchParams]
+  )
+
+  /** Push updated params to the URL without a full navigation */
+  const updateUrl = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams.toString())
+      Object.entries(updates).forEach(([k, v]) => {
+        if (v === null || v === '' || v === 'all' || v === 'date-desc') {
+          params.delete(k)
+        } else {
+          params.set(k, v)
+        }
+      })
+      // Use replace so each keystroke doesn't push a new history entry
+      router.replace(`?${params.toString()}`, { scroll: false })
+    },
+    [router, searchParams]
+  )
+
+  // Derive state directly from URL params
+  const search        = sp('q')
+  const page          = parseInt(sp('page', '1'), 10) || 1
+  const sortBy        = (sp('sort', 'date-desc') as SortOption)
+  const selectedFolder = searchParams.get('folder')   // null = all folders
+  const selectedDomain = sp('domain')
+
+  // ─── Filter state (also URL-backed) ────────────────────────────────────────
+  const filters = useMemo(() => ({
+    search:       sp('q'),
+    type:         (sp('type', 'all') as any),
+    status:       (sp('status', 'all') as any),
+    dateRange:    (sp('dateRange', 'all') as any),
+    dateFrom:     searchParams.get('dateFrom') ? new Date(sp('dateFrom')) : undefined,
+    dateTo:       searchParams.get('dateTo')   ? new Date(sp('dateTo'))   : undefined,
+    scanCountMin: searchParams.get('scansMin') ? parseInt(sp('scansMin'), 10) : undefined,
+    scanCountMax: searchParams.get('scansMax') ? parseInt(sp('scansMax'), 10) : undefined,
+    hasLogo:      searchParams.get('hasLogo')    ? true : undefined,
+    hasSticker:   searchParams.get('hasSticker') ? true : undefined,
+  }), [searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const activeFilterCount = useMemo(() => {
+    let n = 0
+    if (filters.search)                         n++
+    if (filters.type     !== 'all')             n++
+    if (filters.status   !== 'all')             n++
+    if (filters.dateRange !== 'all')            n++
+    if (filters.scanCountMin != null || filters.scanCountMax != null) n++
+    if (filters.hasLogo)                        n++
+    if (filters.hasSticker)                     n++
+    return n
+  }, [filters])
+
+  // ─── UI-only state (not persisted in URL) ──────────────────────────────────
   const [showFilters, setShowFilters] = useState(false)
   const [showFolders, setShowFolders] = useState(false)
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [newFolderName, setNewFolderName] = useState('')
   const [folderLoading, setFolderLoading] = useState(false)
-  const [selectedDomain, setSelectedDomain] = useState<string>('')
-  const [sortBy, setSortBy] = useState<SortOption>('date-desc')
   const [folderModalQRIds, setFolderModalQRIds] = useState<string[] | null>(null)
   const [showChangeTypeModal, setShowChangeTypeModal] = useState(false)
   const [showChangeOwnerModal, setShowChangeOwnerModal] = useState(false)
+
   // Load view mode from localStorage
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
     if (typeof window !== 'undefined') {
@@ -90,12 +152,48 @@ export default function QRCodesPage() {
     }
   }
 
-  const { filters, updateFilters, resetFilters } = useFilters()
+  // ─── Handlers that write to URL ────────────────────────────────────────────
 
-  // Parse sort option into API params
+  const setPage = useCallback(
+    (p: number) => updateUrl({ page: p === 1 ? null : String(p) }),
+    [updateUrl]
+  )
+
+  const handleSearch = useCallback(
+    (query: string) => updateUrl({ q: query || null, page: null }),
+    [updateUrl]
+  )
+
+  const handleSortChange = useCallback(
+    (newSort: SortOption) => updateUrl({ sort: newSort === 'date-desc' ? null : newSort, page: null }),
+    [updateUrl]
+  )
+
+  const handleFiltersChange = useCallback(
+    (newFilters: Partial<typeof filters>) => {
+      updateUrl({
+        q:           newFilters.search   !== undefined ? (newFilters.search || null)                              : null,
+        type:        newFilters.type     !== undefined ? (newFilters.type === 'all' ? null : newFilters.type)     : searchParams.get('type'),
+        status:      newFilters.status   !== undefined ? (newFilters.status === 'all' ? null : newFilters.status) : searchParams.get('status'),
+        dateRange:   newFilters.dateRange !== undefined ? (newFilters.dateRange === 'all' ? null : newFilters.dateRange as string) : searchParams.get('dateRange'),
+        dateFrom:    (newFilters.dateFrom  !== undefined ? (newFilters.dateFrom  ? newFilters.dateFrom.toISOString().split('T')[0]  : null) : searchParams.get('dateFrom') ?? null) as string | null,
+        dateTo:      (newFilters.dateTo    !== undefined ? (newFilters.dateTo    ? newFilters.dateTo.toISOString().split('T')[0]    : null) : searchParams.get('dateTo') ?? null) as string | null,
+        scansMin:    (newFilters.scanCountMin != null ? String(newFilters.scanCountMin) : (newFilters.scanCountMin === undefined ? searchParams.get('scansMin') : null)) as string | null,
+        scansMax:    (newFilters.scanCountMax != null ? String(newFilters.scanCountMax) : (newFilters.scanCountMax === undefined ? searchParams.get('scansMax') : null)) as string | null,
+        hasLogo:     (newFilters.hasLogo    ? 'true' : (newFilters.hasLogo    === undefined ? searchParams.get('hasLogo')    : null)) as string | null,
+        hasSticker:  (newFilters.hasSticker ? 'true' : (newFilters.hasSticker === undefined ? searchParams.get('hasSticker') : null)) as string | null,
+        page:        null, // always reset to page 1 when filters change
+      })
+    },
+    [updateUrl, searchParams]
+  )
+
+  const handleResetFilters = useCallback(() => {
+    router.replace('?', { scroll: false })
+  }, [router])
+
+  // ─── API params ────────────────────────────────────────────────────────────
   const { sortBy: sortField, sortOrder } = useMemo(() => parseSortOption(sortBy), [sortBy])
-
-  // Build filter params for API
   const filterParams = useMemo(() => buildApiFilters(filters), [filters])
 
   const { data, isLoading, isFetching, error } = useQRCodes({
@@ -175,7 +273,7 @@ export default function QRCodesPage() {
     try {
       await foldersAPI.delete(user.id, folderId)
       if (selectedFolder === String(folderId)) {
-        setSelectedFolder(null)
+        updateUrl({ folder: null, page: null })
       }
       queryClient.invalidateQueries({ queryKey: queryKeys.folders.all() })
       queryClient.invalidateQueries({
@@ -348,11 +446,6 @@ export default function QRCodesPage() {
     [router, archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode, downloadQRCode]
   )
 
-  const handleSearch = useCallback((query: string) => {
-    setSearch(query)
-    setPage(1)
-  }, [])
-
   if (error) {
     console.error('QR Codes fetch error:', error)
   }
@@ -375,31 +468,42 @@ export default function QRCodesPage() {
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('QR Codes')}</h1>
-          <p className="mt-2 text-sm text-gray-600">{t('Manage all your QR codes in one place')}</p>
-          <div className="mt-3">
-            <QRCodeQuotaDisplay used={qrCodesUsed} total={qrCodesLimit} plan={plan} />
-          </div>
+          <p className="mt-2 text-sm text-gray-600">{isGuest ? t('Your guest QR codes') : t('Manage all your QR codes in one place')}</p>
+          {!isGuest && (
+            <div className="mt-3">
+              <QRCodeQuotaDisplay used={qrCodesUsed} total={qrCodesLimit} plan={plan} />
+            </div>
+          )}
         </div>
         <div className="mt-4 sm:mt-0 flex items-center gap-3">
-          <button
-            onClick={() => setShowFolders(!showFolders)}
-            className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            <FolderTreeIcon className="w-4 h-4 mr-2" />
-            {t('Folders')}
-          </button>
-          <button
-            onClick={() => setShowFilters(true)}
-            className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            <Filter className="w-4 h-4 mr-2" />
-            {t('Filters')}
-          </button>
-          <BulkCreateButton
-            onClick={() => {
-              router.push('/qrcodes/bulk-create')
-            }}
-          />
+          {!isGuest && (
+            <>
+              <button
+                onClick={() => setShowFolders(!showFolders)}
+                className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <FolderTreeIcon className="w-4 h-4 mr-2" />
+                {t('Folders')}
+              </button>
+              <button
+                onClick={() => setShowFilters(true)}
+                className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <Filter className="w-4 h-4 mr-2" />
+                {t('Filters')}
+                {activeFilterCount > 0 && (
+                  <span className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+              <BulkCreateButton
+                onClick={() => {
+                  router.push('/qrcodes/bulk-create')
+                }}
+              />
+            </>
+          )}
           <button
             onClick={() => {
               if (!canCreateQR) {
@@ -448,8 +552,7 @@ export default function QRCodesPage() {
               {/* "All QR Codes" option */}
               <button
                 onClick={() => {
-                  setSelectedFolder(null)
-                  setPage(1)
+                  updateUrl({ folder: null, page: null })
                 }}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors mb-1 ${
                   selectedFolder === null
@@ -475,8 +578,7 @@ export default function QRCodesPage() {
                     <Folder className="w-4 h-4 flex-shrink-0" />
                     <button
                       onClick={() => {
-                        setSelectedFolder(String(folder.id))
-                        setPage(1)
+                        updateUrl({ folder: String(folder.id), page: null })
                       }}
                       className="flex-1 text-left font-medium truncate"
                     >
@@ -537,18 +639,18 @@ export default function QRCodesPage() {
               placeholder={t('Search QR codes...')}
               delay={300}
               minLength={0}
+              initialValue={search}
             />
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <SortDropdown currentSort={sortBy} onSortChange={setSortBy} />
+                <SortDropdown currentSort={sortBy} onSortChange={handleSortChange} />
                 {/* T184: Domain filter */}
                 {domains.length > 0 && (
                   <select
                     value={selectedDomain}
                     onChange={e => {
-                      setSelectedDomain(e.target.value)
-                      setPage(1)
+                      updateUrl({ domain: e.target.value || null, page: null })
                     }}
                     className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                   >
@@ -666,8 +768,8 @@ export default function QRCodesPage() {
         isOpen={showFilters}
         onClose={() => setShowFilters(false)}
         filters={filters}
-        onFiltersChange={updateFilters}
-        onReset={resetFilters}
+        onFiltersChange={handleFiltersChange}
+        onReset={handleResetFilters}
       />
 
       {/* Folder Select Modal */}

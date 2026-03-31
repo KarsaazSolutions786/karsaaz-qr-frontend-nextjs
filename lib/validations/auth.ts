@@ -80,9 +80,9 @@ export const passwordlessEmailSchema = z.object({
 
 export type PasswordlessEmailFormData = z.infer<typeof passwordlessEmailSchema>
 
-// Passwordless auth — OTP verification step (5-digit code)
+// Passwordless auth — OTP verification step (6-digit code, matches backend size:6)
 export const passwordlessOtpSchema = z.object({
-  otp: z.string().length(5, 'Code must be 5 digits').regex(/^[0-9]{5}$/, 'Code must be 5 digits'),
+  otp: z.string().length(6, 'Code must be 6 digits').regex(/^[0-9]{6}$/, 'Code must be 6 digits'),
 })
 
 export type PasswordlessOtpFormData = z.infer<typeof passwordlessOtpSchema>

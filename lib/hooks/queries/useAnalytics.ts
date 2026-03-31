@@ -17,7 +17,7 @@ export function useAnalyticsOverview(
 ) {
   return useQuery({
     queryKey: ['analytics', 'overview', dateRange],
-    queryFn: () => analyticsAPI.getOverview(dateRange),
+    queryFn: () => analyticsAPI.getOverview(dateRange) as Promise<AnalyticsOverview>,
     staleTime: 60 * 1000, // 1 minute
     ...options,
   })

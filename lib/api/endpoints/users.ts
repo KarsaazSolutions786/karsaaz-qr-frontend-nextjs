@@ -141,4 +141,18 @@ export const usersAPI = {
   deleteSubUser: async (parentId: number, subUserId: number) => {
     await apiClient.delete(`/users/${parentId}/sub-users/${subUserId}`)
   },
+
+  /**
+   * Admin: set per-user passwordless login preference.
+   * Endpoint: PUT /users/:userId/passwordless-preference
+   */
+  setPasswordlessPreference: async (
+    userId: number,
+    preference: 'enabled' | 'disabled'
+  ): Promise<{ success: boolean; preference: string; message: string }> => {
+    const response = await apiClient.put(`/users/${userId}/passwordless-preference`, {
+      preference,
+    })
+    return response.data
+  },
 }

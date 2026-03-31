@@ -7,6 +7,8 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/lib/i18n'
 import type { NavItem, FigmaNavItem, FigmaNavSection } from '@/lib/config/nav-config'
 import { ChevronRightIcon, ArrowRightOnRectangleIcon } from '@/lib/config/nav-config'
+import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
+import StorageWidget from './StorageWidget'
 
 interface DashboardSidebarProps {
   sidebarOpen: boolean
@@ -21,6 +23,7 @@ interface DashboardSidebarProps {
   isItemActive: (href: string) => boolean
   isLoggingOut: boolean
   handleLogout: () => void
+  isGuest?: boolean
 }
 
 export function DashboardSidebar({
@@ -36,6 +39,7 @@ export function DashboardSidebar({
   isItemActive,
   isLoggingOut,
   handleLogout,
+  isGuest = false,
 }: DashboardSidebarProps) {
   const { t } = useTranslation()
 
@@ -268,11 +272,13 @@ export function DashboardSidebar({
         )}
       </div>
 
+      <StorageWidget collapsed={sidebarCollapsed} />
+
       <div className="relative z-10 px-3 pb-4">
         <button
           type="button"
-          onClick={handleLogout}
-          disabled={isLoggingOut}
+          onClick={isGuest ? () => { window.location.href = '/login' } : handleLogout}
+          disabled={!isGuest && isLoggingOut}
           className={`
             flex h-[50px] w-full items-center rounded-[12px] border border-[#bd6bff52]
             backdrop-blur-[1.6px] bg-white text-[#6d6d6d]
@@ -280,10 +286,14 @@ export function DashboardSidebar({
             ${sidebarCollapsed ? 'justify-center px-0' : 'justify-start gap-3 px-4'}
           `}
         >
-          <ArrowRightOnRectangleIcon className="h-5 w-5 text-[#e04f6b]" />
+          {isGuest ? (
+            <ArrowLeftOnRectangleIcon className="h-5 w-5 text-[#6366f1]" />
+          ) : (
+            <ArrowRightOnRectangleIcon className="h-5 w-5 text-[#e04f6b]" />
+          )}
           {!sidebarCollapsed && (
             <span className="text-[16px] font-medium">
-              {isLoggingOut ? t('Logging out...') : t('Logout')}
+              {isGuest ? t('Sign In') : isLoggingOut ? t('Logging out...') : t('Logout')}
             </span>
           )}
         </button>

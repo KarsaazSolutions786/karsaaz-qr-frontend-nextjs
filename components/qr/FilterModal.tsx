@@ -6,7 +6,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Filter, Save, RotateCcw, Search } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
 import { FilterState, QRCodeType, QRCodeStatus, DateRangeType } from '@/lib/hooks/useFilters';
@@ -60,7 +60,15 @@ export function FilterModal({
   const [localFilters, setLocalFilters] = useState<FilterState>(filters);
   const [presetName, setPresetName] = useState('');
   const [showSavePreset, setShowSavePreset] = useState(false);
-  
+
+  // Re-sync local state whenever the modal is opened so it always reflects
+  // the currently-applied filters (not the state from the first mount).
+  useEffect(() => {
+    if (isOpen) {
+      setLocalFilters(filters);
+    }
+  }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!isOpen) return null;
   
   const handleApply = () => {

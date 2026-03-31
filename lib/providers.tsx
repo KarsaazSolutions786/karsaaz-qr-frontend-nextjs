@@ -5,6 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from '@/lib/query/client'
 import { AuthProvider } from '@/lib/context/AuthContext'
+import { GuestProvider } from '@/lib/context/GuestContext'
 import { TranslationProvider } from '@/lib/i18n'
 import { PluginProvider } from '@/lib/plugins'
 import { ThemeProvider } from '@/lib/providers/theme-provider'
@@ -33,16 +34,18 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <TranslationProvider>
-            <PluginProvider>
-              <ProtectionInitializer />
-              <WebVitalsReporter />
-              <OfflineIndicator />
-              <SessionTimeout />
-              <Toaster position="top-right" richColors closeButton duration={4000} />
-              {children}
-            </PluginProvider>
-          </TranslationProvider>
+          <GuestProvider>
+            <TranslationProvider>
+              <PluginProvider>
+                <ProtectionInitializer />
+                <WebVitalsReporter />
+                <OfflineIndicator />
+                <SessionTimeout />
+                <Toaster position="top-right" richColors closeButton duration={4000} />
+                {children}
+              </PluginProvider>
+            </TranslationProvider>
+          </GuestProvider>
           {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
         </AuthProvider>
       </QueryClientProvider>

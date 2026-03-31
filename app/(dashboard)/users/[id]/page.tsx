@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, CheckCircle, XCircle, Loader2, UserPlus } from 'lucide-react'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import { ArrowLeft, CheckCircle, XCircle, Loader2, UserPlus, ShieldCheck } from 'lucide-react'
 import { useUser } from '@/lib/hooks/queries/useUsers'
 import { useRoles } from '@/lib/hooks/queries/useRoles'
 import { useUpdateUser, useVerifyUserEmail } from '@/lib/hooks/mutations/useUserMutations'
@@ -12,6 +12,7 @@ import { usersAPI } from '@/lib/api/endpoints/users'
 import { queryKeys } from '@/lib/query/keys'
 import { SubuserInviteModal } from '@/components/features/users/SubuserInviteModal'
 import { SubuserPermissionsForm } from '@/components/features/users/SubuserPermissionsForm'
+import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth'
 import { useTranslation } from '@/lib/i18n'
 
 interface FormState {
@@ -32,6 +33,21 @@ export default function EditUserPage() {
   const { data: rolesData } = useRoles()
   const updateMutation = useUpdateUser()
   const verifyEmailMutation = useVerifyUserEmail()
+
+  // Global passwordless feature flag
+  const { data: passwordlessStatus } = usePasswordlessStatus()
+  const isPasswordlessGloballyEnabled = !!passwordlessStatus?.enabled
+
+  // Per-user passwordless preference mutation
+  const [passwordlessPref, setPasswordlessPref] = useState<'enabled' | 'disabled' | null>(null)
+  const [passwordlessSaving, setPasswordlessSaving] = useState(false)
+  const [passwordlessError, setPasswordlessError] = useState<string | null>(null)
+  const [passwordlessSaved, setPasswordlessSaved] = useState(false)
+
+  const setPasswordlessPrefMutation = useMutation({
+    mutationFn: ({ pref }: { pref: 'enabled' | 'disabled' }) =>
+      usersAPI.setPasswordlessPreference(Number(userId), pref),
+  })
 
   // Sub-users (only for non-sub users that have sub accounts)
   const { data: subUsers } = useQuery({
@@ -64,6 +80,15 @@ export default function EditUserPage() {
         password_confirmation: '',
         role_id: user.roles?.[0]?.id ? String(user.roles[0].id) : '',
       })
+      // Seed passwordless preference: null password means passwordless user
+      const meta = (user as any).meta
+      const metaPref = meta?.passwordless_login_preference
+      if (metaPref === 'enabled' || metaPref === 'disabled') {
+        setPasswordlessPref(metaPref)
+      } else {
+        // Infer from password: null = passwordless, non-null = traditional
+        setPasswordlessPref((user as any).password === null ? 'enabled' : 'disabled')
+      }
     }
   }, [user])
 
@@ -106,6 +131,34 @@ export default function EditUserPage() {
   const handleVerifyEmail = async () => {
     if (confirm('Mark this user\'s email as verified?')) {
       await verifyEmailMutation.mutateAsync(Number(userId))
+    }
+  }
+
+  const handlePasswordlessToggle = async () => {
+    const newPref = passwordlessPref === 'enabled' ? 'disabled' : 'enabled'
+    if (
+      newPref === 'disabled' &&
+      !confirm(
+        'Disable passwordless login for this user? They will need to use "Forgot Password" to set a password before they can log in traditionally.'
+      )
+    ) {
+      return
+    }
+    setPasswordlessError(null)
+    setPasswordlessSaving(true)
+    try {
+      const result = await setPasswordlessPrefMutation.mutateAsync({ pref: newPref })
+      if (result.success) {
+        setPasswordlessPref(newPref)
+        setPasswordlessSaved(true)
+        setTimeout(() => setPasswordlessSaved(false), 3000)
+      }
+    } catch (err: any) {
+      setPasswordlessError(
+        err?.response?.data?.message || 'Failed to update passwordless preference.'
+      )
+    } finally {
+      setPasswordlessSaving(false)
     }
   }
 
@@ -295,6 +348,72 @@ export default function EditUserPage() {
         </form>
       </div>
 
+      {/* Storage Usage */}
+      <StorageSection userId={userId} />
+
+      {/* Passwordless Login — only shown when feature is globally enabled */}
+      {isPasswordlessGloballyEnabled && (
+        <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-blue-600" />
+              <h2 className="text-base font-semibold text-gray-900">{t('Login Method')}</h2>
+            </div>
+            <p className="mt-0.5 text-sm text-gray-500">
+              {t('Control whether this user signs in with a one-time email code or a password.')}
+            </p>
+          </div>
+          <div className="px-6 py-5">
+            {passwordlessSaved && (
+              <div className="mb-4 rounded-md bg-green-50 border border-green-200 p-3 text-sm text-green-700">
+                {t('Login preference updated.')}
+              </div>
+            )}
+            {passwordlessError && (
+              <div className="mb-4 rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+                {passwordlessError}
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-900">
+                  {passwordlessPref === 'enabled'
+                    ? t('Passwordless (Email OTP)')
+                    : t('Password Login')}
+                </p>
+                <p className="mt-0.5 text-xs text-gray-500">
+                  {passwordlessPref === 'enabled'
+                    ? t('User receives a 6-digit code by email to log in — no password needed.')
+                    : t('User logs in with their email and password.')}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handlePasswordlessToggle}
+                disabled={passwordlessSaving || passwordlessPref === null}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 ${
+                  passwordlessPref === 'enabled' ? 'bg-blue-600' : 'bg-gray-200'
+                }`}
+                role="switch"
+                aria-checked={passwordlessPref === 'enabled'}
+              >
+                {passwordlessSaving ? (
+                  <span className="pointer-events-none inline-block h-5 w-5 flex items-center justify-center">
+                    <Loader2 className="h-3 w-3 animate-spin text-gray-500" />
+                  </span>
+                ) : (
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      passwordlessPref === 'enabled' ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sub-users section (only for non-sub users) */}
       {!user.is_sub && (
         <>
@@ -359,6 +478,71 @@ export default function EditUserPage() {
         />
       </>
       )}
+    </div>
+  )
+}
+
+function StorageSection({ userId }: { userId: string }) {
+  const { t } = useTranslation()
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['admin', 'user-storage', userId],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/admin/users/${userId}/storage`, {
+        credentials: 'include',
+      })
+      if (!res.ok) return null
+      return (await res.json()).data
+    },
+    enabled: !!userId,
+  })
+
+  const [isRecalculating, setIsRecalculating] = useState(false)
+
+  const handleRecalculate = async () => {
+    setIsRecalculating(true)
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/admin/users/${userId}/storage/recalculate`, {
+        method: 'POST',
+        credentials: 'include',
+      })
+      refetch()
+    } finally {
+      setIsRecalculating(false)
+    }
+  }
+
+  if (isLoading) return null
+  if (!data) return null
+
+  const barColor = data.percentage >= 95 ? 'bg-red-500' : data.percentage >= 80 ? 'bg-yellow-500' : 'bg-blue-500'
+
+  return (
+    <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+      <div className="px-6 py-4 border-b border-gray-200">
+        <h2 className="text-base font-semibold text-gray-900">{t('Storage Usage')}</h2>
+      </div>
+      <div className="px-6 py-4 space-y-3">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-gray-600">{data.used_formatted} / {data.quota_formatted}</span>
+          <span className="text-gray-500">{Math.round(data.percentage)}%</span>
+        </div>
+        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all ${barColor}`}
+            style={{ width: `${Math.min(data.percentage, 100)}%` }}
+          />
+        </div>
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <span>{data.files_count ?? 0} {t('files')}</span>
+          <button
+            onClick={handleRecalculate}
+            disabled={isRecalculating}
+            className="text-blue-600 hover:text-blue-800 disabled:opacity-50"
+          >
+            {isRecalculating ? t('Recalculating...') : t('Recalculate')}
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

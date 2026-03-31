@@ -14,13 +14,8 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!isLoading) {
-      if (user) {
-        // User is authenticated, redirect to dashboard
-        router.push('/qrcodes/new')
-      } else {
-        // User is not authenticated, redirect to login
-        router.push('/login')
-      }
+      // Both logged-in users and guests go to the same QR creation page
+      router.push('/qrcodes/new')
     }
   }, [user, isLoading, router])
 

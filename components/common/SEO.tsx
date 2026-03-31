@@ -133,7 +133,7 @@ export function generateOrganizationStructuredData() {
     name: 'Karsaaz QR',
     url: 'https://karsaaz-qr.com',
     logo: 'https://karsaaz-qr.com/logo.png',
-    description: t('QR Code generation and management platform'),
+    description: 'QR Code generation and management platform',
     sameAs: [
       // Social media links
     ],

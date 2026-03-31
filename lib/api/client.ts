@@ -151,6 +151,17 @@ apiClient.interceptors.response.use(
       }
 
       if (!isAuthRequest && typeof window !== 'undefined') {
+        // If a guest session is active (or being initialized), do NOT redirect to /login.
+        // Guest users are unauthenticated by design — 401s from authenticated
+        // endpoints are expected and should simply be rejected.
+        const hasGuestSession = !!localStorage.getItem('guest_session_token')
+        // If the user was never logged in (no token/logged_in flag), they're likely
+        // a first-time visitor whose guest session hasn't been created yet. Don't redirect.
+        const wasNeverLoggedIn = !localStorage.getItem('logged_in') && !localStorage.getItem('token')
+        if (hasGuestSession || wasNeverLoggedIn) {
+          return Promise.reject(error)
+        }
+
         // For non-/myself 401s, verify the session is truly dead by calling /myself.
         // This prevents transient 401s from specific endpoints from triggering logout.
         if (!isMyselfRequest) {

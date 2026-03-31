@@ -330,12 +330,21 @@ function AssetRow({
               }`}
               title={
                 meta?.svg_path
-                  ? t('Replace shape SVG')
-                  : t('Upload shape SVG (required for rendering)')
+                  ? t('Replace shape SVG (auto-analyzed)')
+                  : t('Upload shape SVG — auto-analyzed & aligned')
               }
             >
               <DocumentArrowUpIcon className="h-4 w-4" />
             </button>
+          )}
+          {/* Show analysis badge if SVG has been analyzed */}
+          {meta?.analysis && (
+            <span
+              className="inline-flex items-center rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700"
+              title={`ViewBox: ${(meta.analysis as Record<string, unknown>)?.viewBox ?? 'N/A'}, Paths: ${(meta.analysis as Record<string, unknown>)?.pathCount ?? '?'}`}
+            >
+              ✓ analyzed
+            </span>
           )}
           <button
             onClick={() => onDelete(asset.id, asset.label)}
@@ -421,11 +430,19 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
       },
       {
         onSuccess: async newAsset => {
-          // Auto-upload SVG if one was selected
+          // Auto-upload SVG if one was selected — analyzer runs on backend
           if (svgFile && newAsset?.id) {
             try {
-              await designAssetsAPI.uploadShapeSvg(newAsset.id, svgFile)
-              showSuccessToast(t('Asset created with SVG template.'))
+              const result = await designAssetsAPI.uploadShapeSvg(newAsset.id, svgFile)
+              const warnings = result.analysis?.warnings ?? []
+              let msg = t('Asset created with SVG template.')
+              if (result.analysis) {
+                msg += ` (${result.analysis.pathCount} paths, viewBox: ${result.analysis.viewBox ?? 'auto'})`
+              }
+              if (warnings.length > 0) {
+                msg += ` ⚠ ${warnings.join('; ')}`
+              }
+              showSuccessToast(msg)
               queryClient.invalidateQueries({ queryKey: queryKeys.designAssets.all() })
             } catch (err: unknown) {
               const msg = (err as { response?: { data?: { message?: string } } })?.response?.data
@@ -550,7 +567,17 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
             )}
             {type === 'outline_style' && (
               <p className="mt-1 text-xs text-gray-400">
-                {t('SVG must contain <path id="dummy-data-area"> and <rect id="qrcode-rect">')}
+                {t('Placeholders (dummy-data-area, qrcode-rect) will be auto-injected if missing.')}
+              </p>
+            )}
+            {type === 'advanced_shape' && (
+              <p className="mt-1 text-xs text-gray-400">
+                {t('QR code placeholder will be auto-detected and injected if needed.')}
+              </p>
+            )}
+            {['module_style', 'finder_outer_style', 'finder_dot_style'].includes(type) && (
+              <p className="mt-1 text-xs text-gray-400">
+                {t('SVG paths will be auto-normalized to the correct viewBox.')}
               </p>
             )}
           </div>
@@ -700,8 +727,20 @@ function AssetTable({ type }: { type: DesignAssetType }) {
   const handleSvgUpload = useCallback(
     async (id: number, file: File) => {
       try {
-        await designAssetsAPI.uploadShapeSvg(id, file)
-        showSuccessToast(t('Shape SVG uploaded successfully.'))
+        const result = await designAssetsAPI.uploadShapeSvg(id, file)
+        const analysis = result.analysis
+        const warnings = analysis?.warnings ?? []
+
+        let msg = t('SVG analyzed and uploaded successfully.')
+        if (analysis) {
+          msg += ` ViewBox: ${analysis.viewBox ?? 'auto'}, Paths: ${analysis.pathCount}`
+          if (analysis.autoInjected) msg += ` (placeholders auto-injected)`
+        }
+        if (warnings.length > 0) {
+          msg += ` ⚠ ${warnings.join('; ')}`
+        }
+
+        showSuccessToast(msg)
         queryClient.invalidateQueries({ queryKey: queryKeys.designAssets.all() })
       } catch (err: unknown) {
         const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message

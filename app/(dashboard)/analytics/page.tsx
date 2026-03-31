@@ -1,150 +1,77 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { BarChart3, QrCode, TrendingUp, Zap, ExternalLink, ArrowRight } from 'lucide-react'
 import { getPresetDateRange } from '@/lib/utils/date-range'
-import { useAnalyticsOverview, useTopQRCodes } from '@/lib/hooks/queries/useAnalytics'
+import { useQRCodeStats } from '@/lib/hooks/queries/useAnalytics'
+import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
 import MetricCard from '@/components/analytics/MetricCard'
-import ChartContainer from '@/components/analytics/charts/ChartContainer'
-import ActivityFeed from '@/components/analytics/ActivityFeed'
 import DateRangePicker from '@/components/analytics/DateRangePicker'
-import { RealtimeStatsWidget } from '@/components/analytics/RealtimeStatsWidget'
-import { LocationMap } from '@/components/analytics/LocationMap'
-import { DeviceBrowserCharts } from '@/components/analytics/DeviceBrowserCharts'
-import { ReferrerTracker } from '@/components/analytics/ReferrerTracker'
-import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage'
+import { ScansPerCountryChart } from '@/components/analytics/ScansPerCountryChart'
 import type { DateRange } from '@/types/entities/analytics'
+import type { ChartDatePreset } from '@/lib/hooks/useAnalyticsCharts'
+import { chartPresetToDateRange } from '@/lib/hooks/useAnalyticsCharts'
 import { useTranslation } from '@/lib/i18n'
 
-// Lazy-load recharts-based chart components to reduce main bundle size
-const ChartSkeleton = () => <div className="animate-pulse h-64 bg-muted rounded" />
+const ChartSkeleton = () => <div className="animate-pulse h-64 bg-gray-100 rounded-lg" />
 
-const LineChart = dynamic(() => import('@/components/analytics/charts/LineChart'), {
-  loading: ChartSkeleton,
-  ssr: false,
-})
-
-const BarChart = dynamic(() => import('@/components/analytics/charts/BarChart'), {
-  loading: ChartSkeleton,
-  ssr: false,
-})
+const ScansPerDayChart = dynamic(
+  () => import('@/components/analytics/ScansPerDayChart').then(mod => ({ default: mod.ScansPerDayChart })),
+  { loading: ChartSkeleton, ssr: false }
+)
 
 const PieChart = dynamic(() => import('@/components/analytics/charts/PieChart'), {
   loading: ChartSkeleton,
   ssr: false,
 })
 
-const ScansPerHour = dynamic(
-  () => import('@/components/analytics/ScansPerHour').then(mod => ({ default: mod.ScansPerHour })),
-  { loading: ChartSkeleton, ssr: false }
-)
-
 export default function AnalyticsPage() {
   const { t } = useTranslation()
+  const router = useRouter()
   const [dateRange, setDateRange] = useState<DateRange>(getPresetDateRange('last30days'))
+  const [dayChartPreset, setDayChartPreset] = useState<ChartDatePreset>('30d')
+  const dayChartDateRange = useMemo(() => chartPresetToDateRange(dayChartPreset), [dayChartPreset])
 
-  const {
-    data: overview,
-    isLoading: overviewLoading,
-    error: overviewError,
-  } = useAnalyticsOverview(dateRange)
+  // Fetch all QR codes sorted by scans (up to 100) to compute aggregates
+  const { data: allQRData, isLoading: qrLoading } = useQRCodes({
+    page: 1,
+    perPage: 100,
+    sortBy: 'scans',
+    sortOrder: 'desc',
+  })
 
-  const { data: topQRCodes, isLoading: topLoading, error: topError } = useTopQRCodes(dateRange, 5)
+  const qrcodes = allQRData?.data ?? []
 
-  // Mock data for new analytics components
-  const mockLocationData = [
-    {
-      country: 'United States',
-      countryCode: 'US',
-      scans: 1245,
-      city: 'New York',
-      latitude: 40.7128,
-      longitude: -74.006,
-    },
-    {
-      country: 'Canada',
-      countryCode: 'CA',
-      scans: 856,
-      city: 'Toronto',
-      latitude: 43.6532,
-      longitude: -79.3832,
-    },
-    {
-      country: 'United Kingdom',
-      countryCode: 'GB',
-      scans: 734,
-      city: 'London',
-      latitude: 51.5074,
-      longitude: -0.1278,
-    },
-    {
-      country: 'Germany',
-      countryCode: 'DE',
-      scans: 621,
-      city: 'Berlin',
-      latitude: 52.52,
-      longitude: 13.405,
-    },
-    {
-      country: 'Japan',
-      countryCode: 'JP',
-      scans: 489,
-      city: 'Tokyo',
-      latitude: 35.6762,
-      longitude: 139.6503,
-    },
-  ]
+  // Compute aggregate metrics
+  const totalScans = useMemo(() => qrcodes.reduce((sum, qr) => sum + (qr.scans ?? 0), 0), [qrcodes])
+  const activeCount = useMemo(() => qrcodes.filter(qr => qr.status === 'active').length, [qrcodes])
+  const totalCount = allQRData?.pagination?.total ?? qrcodes.length
+  const topQR = qrcodes[0] ?? null
+  const topQRId = topQR ? parseInt(topQR.id, 10) : 0
 
-  const mockDeviceData = [
-    { type: 'mobile' as const, count: 3250 },
-    { type: 'desktop' as const, count: 1420 },
-    { type: 'tablet' as const, count: 330 },
-  ]
+  // Fetch detailed stats for the top QR code to power charts
+  const { data: topStats, isLoading: topStatsLoading } = useQRCodeStats(
+    topQRId,
+    dateRange,
+    { enabled: !!topQRId }
+  )
+  const { data: dayStats, isLoading: dayStatsLoading } = useQRCodeStats(
+    topQRId,
+    dayChartDateRange,
+    { enabled: !!topQRId }
+  )
 
-  const mockBrowserData = [
-    { name: 'Chrome', count: 2450 },
-    { name: 'Safari', count: 1560 },
-    { name: 'Firefox', count: 720 },
-    { name: 'Edge', count: 270 },
-  ]
-
-  const mockOSData = [
-    { name: 'iOS', count: 1890 },
-    { name: 'Android', count: 1650 },
-    { name: 'Windows', count: 980 },
-    { name: 'macOS', count: 480 },
-  ]
-
-  const mockReferrers = [
-    { url: 'https://google.com/search', domain: 'google.com', scans: 856, lastSeen: new Date() },
-    { url: 'https://facebook.com', domain: 'facebook.com', scans: 634, lastSeen: new Date() },
-    { url: 'https://twitter.com', domain: 'twitter.com', scans: 421, lastSeen: new Date() },
-    { url: 'https://instagram.com', domain: 'instagram.com', scans: 312, lastSeen: new Date() },
-  ]
-
-  const mockLanguageData = [
-    { language: 'English', count: 2340, percentage: 46.8 },
-    { language: 'Spanish', count: 890, percentage: 17.8 },
-    { language: 'French', count: 520, percentage: 10.4 },
-    { language: 'German', count: 410, percentage: 8.2 },
-    { language: 'Japanese', count: 340, percentage: 6.8 },
-    { language: 'Chinese', count: 280, percentage: 5.6 },
-    { language: 'Arabic', count: 220, percentage: 4.4 },
-  ]
-
-  const mockHourlyData = Array.from({ length: 24 }, (_, i) => ({
-    hour: i,
-    count: Math.round(
-      50 + 200 * Math.sin(((i - 6) * Math.PI) / 12) ** 2 + (i >= 9 && i <= 17 ? 80 : 0)
-    ),
-  }))
-
-  const totalScans = overview?.totalScans || 5000
+  // Top 10 QR codes for the leaderboard
+  const topTen = qrcodes.slice(0, 10)
+  const maxScans = topTen[0]?.scans ?? 1
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{t('Analytics')}</h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -154,125 +81,183 @@ export default function AnalyticsPage() {
         <DateRangePicker value={dateRange} onChange={setDateRange} />
       </div>
 
-      {/* Real-time Stats Widget */}
-      <RealtimeStatsWidget showRecentScans={true} />
-
-      {/* Metrics Grid */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Metric Cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title={t('Total Scans')}
-          value={overview?.totalScans.toLocaleString() ?? '0'}
-          change={overview?.scanGrowth}
-          isLoading={overviewLoading}
-        />
-        <MetricCard
-          title={t('Unique Users')}
-          value={overview?.uniqueUsers.toLocaleString() ?? '0'}
-          isLoading={overviewLoading}
+          value={totalScans.toLocaleString()}
+          isLoading={qrLoading}
+          icon={<TrendingUp className="h-5 w-5" />}
         />
         <MetricCard
           title={t('Active QR Codes')}
-          value={overview?.activeQRCodes ?? '0'}
-          change={overview?.activeGrowth}
-          isLoading={overviewLoading}
+          value={activeCount.toLocaleString()}
+          isLoading={qrLoading}
+          icon={<Zap className="h-5 w-5" />}
         />
         <MetricCard
           title={t('Total QR Codes')}
-          value={overview?.totalQRCodes ?? '0'}
-          isLoading={overviewLoading}
+          value={totalCount.toLocaleString()}
+          isLoading={qrLoading}
+          icon={<QrCode className="h-5 w-5" />}
+        />
+        <MetricCard
+          title={t('Most Scanned')}
+          value={topQR ? `${(topQR.scans ?? 0).toLocaleString()} scans` : '—'}
+          isLoading={qrLoading}
+          icon={<BarChart3 className="h-5 w-5" />}
         />
       </div>
 
-      {/* Charts Row */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <ChartContainer
-          title={t('Scans Over Time')}
-          description={t('Daily scan activity')}
-          isLoading={overviewLoading}
-          error={overviewError}
-        >
-          <LineChart
-            data={overview?.scansOverTime ?? []}
-            dataKey="count"
-            xAxisKey="date"
-            color="#3b82f6"
-          />
-        </ChartContainer>
+      {/* Top QR Code Charts */}
+      {topQR && (
+        <>
+          {/* Scans Per Day for the top QR code */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm text-gray-500">
+                {t('Showing stats for most-scanned QR code:')}
+                <span className="ml-1 font-semibold text-gray-800">{topQR.name}</span>
+              </p>
+              <Link
+                href={`/qrcodes/${topQR.id}/analytics`}
+                className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
+              >
+                {t('View full analytics')} <ExternalLink className="h-3 w-3" />
+              </Link>
+            </div>
+            <ScansPerDayChart
+              data={dayStats?.scansByDay ?? []}
+              isLoading={dayStatsLoading}
+              preset={dayChartPreset}
+              onPresetChange={setDayChartPreset}
+            />
+          </div>
 
-        <ChartContainer
-          title={t('Top Performing QR Codes')}
-          description={t('Most scanned QR codes')}
-          isLoading={topLoading}
-          error={topError}
-        >
-          <BarChart
-            data={
-              topQRCodes?.map(qr => ({
-                label: qr.name,
-                value: qr.totalScans,
-              })) ?? []
-            }
-            dataKey="value"
-            xAxisKey="label"
-            color="#8b5cf6"
-            layout="vertical"
-          />
-        </ChartContainer>
+          {/* Country + Device breakdown */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <ScansPerCountryChart
+              data={topStats?.countryBreakdown ?? []}
+              totalScans={topStats?.totalScans ?? 0}
+              isLoading={topStatsLoading}
+            />
+            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <h3 className="mb-4 text-lg font-semibold text-gray-900">{t('Devices')}</h3>
+              {topStatsLoading ? (
+                <ChartSkeleton />
+              ) : (
+                <PieChart data={topStats?.deviceBreakdown ?? []} height={250} />
+              )}
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <h3 className="mb-4 text-lg font-semibold text-gray-900">{t('Browsers')}</h3>
+              {topStatsLoading ? (
+                <ChartSkeleton />
+              ) : (
+                <PieChart data={topStats?.browserBreakdown ?? []} height={250} />
+              )}
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <h3 className="mb-4 text-lg font-semibold text-gray-900">{t('Operating Systems')}</h3>
+              {topStatsLoading ? (
+                <ChartSkeleton />
+              ) : (
+                <PieChart data={topStats?.osBreakdown ?? []} height={250} />
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Top QR Codes Leaderboard */}
+      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+          <h2 className="text-lg font-semibold text-gray-900">{t('Top Performing QR Codes')}</h2>
+          <Link
+            href="/qrcodes"
+            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
+          >
+            {t('View all')} <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        {qrLoading ? (
+          <div className="divide-y divide-gray-100">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-6 py-4">
+                <div className="h-4 w-4 animate-pulse rounded bg-gray-200" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 w-48 animate-pulse rounded bg-gray-200" />
+                  <div className="h-2 w-full animate-pulse rounded bg-gray-100" />
+                </div>
+                <div className="h-4 w-16 animate-pulse rounded bg-gray-200" />
+              </div>
+            ))}
+          </div>
+        ) : topTen.length === 0 ? (
+          <div className="px-6 py-12 text-center text-sm text-gray-500">
+            <QrCode className="mx-auto mb-3 h-10 w-10 text-gray-300" />
+            {t('No QR codes yet')}
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-100">
+            {topTen.map((qr, index) => {
+              const pct = maxScans > 0 ? Math.round(((qr.scans ?? 0) / maxScans) * 100) : 0
+              return (
+                <div
+                  key={qr.id}
+                  className="group flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                  onClick={() => router.push(`/qrcodes/${qr.id}/analytics`)}
+                >
+                  {/* Rank */}
+                  <span className="w-6 text-center text-sm font-bold text-gray-400">
+                    {index + 1}
+                  </span>
+
+                  {/* QR image */}
+                  {qr.screenshotUrl ? (
+                    <img
+                      src={qr.screenshotUrl}
+                      alt={qr.name}
+                      className="h-10 w-10 rounded-md object-contain border border-gray-100 flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="h-10 w-10 rounded-md bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <QrCode className="h-5 w-5 text-gray-400" />
+                    </div>
+                  )}
+
+                  {/* Name + bar */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{qr.name}</p>
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-blue-500 transition-all"
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <span className="text-xs text-gray-400 capitalize">{qr.type}</span>
+                    </div>
+                  </div>
+
+                  {/* Scans + link */}
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <span className="text-sm font-semibold text-gray-900">
+                      {(qr.scans ?? 0).toLocaleString()} {t('scans')}
+                    </span>
+                    <ExternalLink className="h-4 w-4 text-gray-300 group-hover:text-blue-500 transition-colors" />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
-
-      {/* Location Map */}
-      <LocationMap locations={mockLocationData} totalScans={totalScans} showList={true} />
-
-      {/* Device & Browser Analytics */}
-      <DeviceBrowserCharts
-        devices={mockDeviceData}
-        browsers={mockBrowserData}
-        operatingSystems={mockOSData}
-        totalScans={totalScans}
-      />
-
-      {/* Referrer Tracking */}
-      <ReferrerTracker
-        referrers={mockReferrers}
-        totalScans={totalScans}
-        directScans={1234}
-        unknownScans={543}
-      />
-
-      {/* Language & Hourly Distribution */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <ScansPerLanguage data={mockLanguageData} />
-        <ScansPerHour data={mockHourlyData} />
-      </div>
-
-      {/* Breakdown Charts */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <ChartContainer
-          title={t('Scans by Device')}
-          isLoading={overviewLoading}
-          error={overviewError}
-        >
-          <PieChart data={overview?.deviceBreakdown ?? []} />
-        </ChartContainer>
-
-        <ChartContainer
-          title={t('Scans by Location')}
-          isLoading={overviewLoading}
-          error={overviewError}
-        >
-          <PieChart data={overview?.locationBreakdown ?? []} />
-        </ChartContainer>
-      </div>
-
-      {/* Recent Activity */}
-      <ChartContainer
-        title={t('Recent Scans')}
-        description={t('Latest QR code scans')}
-        isLoading={overviewLoading}
-        error={overviewError}
-      >
-        <ActivityFeed scans={overview?.recentActivity ?? []} />
-      </ChartContainer>
     </div>
   )
 }
+

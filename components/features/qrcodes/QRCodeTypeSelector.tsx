@@ -97,6 +97,7 @@ interface QRCodeTypeSelectorProps {
   value: string
   onChange: (type: string) => void
   disabledTypes?: string[]
+  allowedTypes?: string[]
   showSearch?: boolean
 }
 
@@ -108,6 +109,7 @@ export function QRCodeTypeSelector({
   value,
   onChange,
   disabledTypes = [],
+  allowedTypes,
   showSearch = true,
 }: QRCodeTypeSelectorProps) {
   const { t } = useTranslation()
@@ -115,7 +117,11 @@ export function QRCodeTypeSelector({
   const [showMore, setShowMore] = useState(false)
 
   const filteredTypes = useMemo(() => {
-    const types = filterQrTypes(QR_TYPES, 'all', keyword)
+    let types = filterQrTypes(QR_TYPES, 'all', keyword)
+    // Filter to only allowed types (guest mode)
+    if (allowedTypes && allowedTypes.length > 0) {
+      types = types.filter(t => allowedTypes.includes(t.id))
+    }
     if (keyword.trim()) return types
     const orderMap = new Map(FIGMA_DISPLAY_ORDER.map((id, i) => [id, i]))
     return [...types].sort((a, b) => {
@@ -123,7 +129,7 @@ export function QRCodeTypeSelector({
       const bi = orderMap.get(b.id) ?? 999
       return ai - bi
     })
-  }, [keyword])
+  }, [keyword, allowedTypes])
 
   const visibleTypes = useMemo(
     () => (keyword.trim() || showMore ? filteredTypes : filteredTypes.slice(0, INITIAL_VISIBLE)),

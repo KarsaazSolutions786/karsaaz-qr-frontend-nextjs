@@ -19,6 +19,7 @@ export interface DebouncedSearchProps {
   showClearButton?: boolean;
   className?: string;
   autoFocus?: boolean;
+  initialValue?: string;
 }
 
 export function DebouncedSearch({
@@ -29,10 +30,11 @@ export function DebouncedSearch({
   showClearButton = true,
   className = '',
   autoFocus = false,
+  initialValue = '',
 }: DebouncedSearchProps) {
   const { t } = useTranslation();
   const resolvedPlaceholder = placeholder ?? t('Search...');
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialValue);
   const [isSearching, setIsSearching] = useState(false);
   const debouncedQuery = useDebounce(query, delay);
   

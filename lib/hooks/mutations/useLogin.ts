@@ -6,6 +6,7 @@ import { authAPI, LoginResponse } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LoginFormData } from '@/lib/validations/auth'
+import { toast } from 'sonner'
 
 /** Determine where to send the user after login */
 function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): string {
@@ -35,10 +36,12 @@ export function useLogin() {
 
   return useMutation({
     mutationFn: (data: LoginFormData) => {
-      // Only send fields the backend expects (email + password)
+      // Include guest session token if present (for guest→user data migration)
+      const guestToken = typeof window !== 'undefined' ? localStorage.getItem('guest_session_token') : null
       return authAPI.login({
         email: data.email,
         password: data.password,
+        ...(guestToken ? { guest_session_token: guestToken } : {}),
       })
     },
     onSuccess: response => {
@@ -57,6 +60,15 @@ export function useLogin() {
         // Store only a flag for client-side session detection.
         localStorage.setItem('logged_in', 'true')
         localStorage.removeItem('token') // Clean up legacy token
+        localStorage.removeItem('guest_session_token') // Clear guest session after login
+        localStorage.removeItem('guest_action_count')
+      }
+
+      // Show toast if guest QR codes were migrated to the new account
+      if (loginResponse.guest_migration?.migrated_qrcodes) {
+        toast.success(
+          `${loginResponse.guest_migration.migrated_qrcodes} QR code(s) migrated to your account!`
+        )
       }
 
       queryClient.setQueryData(queryKeys.auth.currentUser(), loginResponse.user)
@@ -88,6 +100,8 @@ export function useTwoFactorLoginVerify() {
         // Token is stored in httpOnly cookie by backend
         localStorage.setItem('logged_in', 'true')
         localStorage.removeItem('token')
+        localStorage.removeItem('guest_session_token')
+        localStorage.removeItem('guest_action_count')
       }
       queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
 

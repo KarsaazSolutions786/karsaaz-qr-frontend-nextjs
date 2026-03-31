@@ -1,12 +1,13 @@
 'use client'
 
-import { Suspense, useState, useCallback, useEffect } from 'react'
+import { Suspense, useState, useCallback, useEffect, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
 import { QRWizardContainer } from '@/components/features/qrcodes/wizard'
 import { TemplateSelectionAdapter } from '@/components/features/qrcodes/TemplateSelectionAdapter'
 import { useSubscriptionLimits } from '@/lib/hooks/useSubscriptionLimits'
 import { useAccountCredit } from '@/lib/hooks/useAccountCredit'
+import { useGuest } from '@/lib/hooks/useGuest'
 import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
 import { InsufficientCreditsModal } from '@/components/features/payment/InsufficientCreditsModal'
 import { useUseTemplate } from '@/lib/hooks/queries/useTemplates'
@@ -44,6 +45,21 @@ function CreateQRCodeInner() {
   const searchParams = useSearchParams()
   const typeParam = searchParams?.get('type') || ''
   const templateIdParam = searchParams?.get('template_id') || ''
+  const { isGuest, guestConfig } = useGuest()
+
+  // Filter allowed QR types for guests based on admin config
+  const allowedQrTypes = useMemo(() => {
+    if (!isGuest || !guestConfig) return undefined // undefined = show all
+    let types: string[] = guestConfig.allowed_qr_types ?? []
+    // If dynamic QR codes are disabled, filter out dynamic types
+    if (!guestConfig.allow_dynamic_qrcodes) {
+      types = types.filter(id => {
+        const qrType = QR_TYPES.find(t => t.id === id)
+        return !qrType || qrType.cat !== 'dynamic'
+      })
+    }
+    return types
+  }, [isGuest, guestConfig])
 
   /**
    * Page mode:
@@ -244,29 +260,33 @@ function CreateQRCodeInner() {
             {shouldShowWizard ? (
               <QRWizardContainer mode="create" initialData={{ type: selectedType, data: {} }} />
             ) : (
-              <QRCodeTypeSelector value={selectedType} onChange={handleTypeSelect} />
+              <QRCodeTypeSelector value={selectedType} onChange={handleTypeSelect} allowedTypes={allowedQrTypes} />
             )}
           </>
         )}
       </div>
 
-      {/* Upgrade modal -- shown when user tries to create a QR code while over subscription quota */}
-      <UpgradeRequiredModal
-        open={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-        message={upgradeReason}
-        currentUsage={usage.totalQRCodes}
-        planLimit={limits.maxQRCodes}
-      />
+      {/* Upgrade modal -- shown when user tries to create a QR code while over subscription quota (not for guests) */}
+      {!isGuest && (
+        <UpgradeRequiredModal
+          open={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+          message={upgradeReason}
+          currentUsage={usage.totalQRCodes}
+          planLimit={limits.maxQRCodes}
+        />
+      )}
 
-      {/* Insufficient credits modal -- shown when user in credit mode cannot afford the QR type */}
-      <InsufficientCreditsModal
-        open={showCreditsModal}
-        onClose={() => setShowCreditsModal(false)}
-        balance={creditBalance}
-        requiredAmount={creditsModalType.requiredAmount}
-        isDynamic={creditsModalType.isDynamic}
-      />
+      {/* Insufficient credits modal -- shown when user in credit mode cannot afford the QR type (not for guests) */}
+      {!isGuest && (
+        <InsufficientCreditsModal
+          open={showCreditsModal}
+          onClose={() => setShowCreditsModal(false)}
+          balance={creditBalance}
+          requiredAmount={creditsModalType.requiredAmount}
+          isDynamic={creditsModalType.isDynamic}
+        />
+      )}
     </div>
   )
 }

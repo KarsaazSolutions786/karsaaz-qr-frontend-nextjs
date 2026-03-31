@@ -45,6 +45,7 @@ interface SubscriptionPlan {
   qr_types: string[]
   features: string[]
   file_size_limit: number
+  storage_quota_bytes?: number
   number_of_bulk_created_qrcodes: number
   dynamic_type_limits?: Record<string, string>
 }

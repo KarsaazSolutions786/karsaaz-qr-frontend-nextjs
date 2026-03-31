@@ -3,6 +3,8 @@
 import { useQRCode } from '@/lib/hooks/queries/useQRCode'
 import { useDeleteQRCode } from '@/lib/hooks/mutations/useDeleteQRCode'
 import { useQRActions } from '@/lib/hooks/useQRActions'
+import { useGuest } from '@/lib/hooks/useGuest'
+import { guestAPI } from '@/lib/api/endpoints/guest'
 import { QRCodePreview } from '@/components/features/qrcodes/QRCodePreview'
 import { DeleteQRCodeDialog } from '@/components/features/qrcodes/DeleteQRCodeDialog'
 import { TypeConversionModal } from '@/components/qr/TypeConversionModal'
@@ -27,6 +29,7 @@ import {
 
 export default function QRCodeDetailPage({ params }: { params: { id: string } }) {
   const { t } = useTranslation()
+  const { isGuest } = useGuest()
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showTypeConversion, setShowTypeConversion] = useState(false)
   const [showDuplicate, setShowDuplicate] = useState(false)
@@ -112,7 +115,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
         </div>
         <div className="flex gap-2">
           {/* Show Responses link for lead-form type QR codes */}
-          {(qrcode.type as string) === 'lead-form' && (
+          {!isGuest && (qrcode.type as string) === 'lead-form' && (
             <Link
               href={`/qrcodes/${qrcode.id}/responses`}
               className="inline-flex items-center gap-2 rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
@@ -121,25 +124,31 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
               {t('Responses')}
             </Link>
           )}
-          <Link
-            href={`/qrcodes/${qrcode.id}/analytics`}
-            className="inline-flex items-center gap-2 rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-          >
-            <ChartBarIcon className="h-4 w-4" />
-            {t('Analytics')}
-          </Link>
-          <Link
-            href={`/qrcodes/${qrcode.id}/edit`}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
-          >
-            {t('Edit')}
-          </Link>
-          <button
-            onClick={() => setShowDeleteConfirm(true)}
-            className="rounded-md border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
-          >
-            {t('Delete')}
-          </button>
+          {!isGuest && (
+            <Link
+              href={`/qrcodes/${qrcode.id}/analytics`}
+              className="inline-flex items-center gap-2 rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+            >
+              <ChartBarIcon className="h-4 w-4" />
+              {t('Analytics')}
+            </Link>
+          )}
+          {!isGuest && (
+            <Link
+              href={`/qrcodes/${qrcode.id}/edit`}
+              className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
+            >
+              {t('Edit')}
+            </Link>
+          )}
+          {!isGuest && (
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="rounded-md border border-red-300 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+            >
+              {t('Delete')}
+            </button>
+          )}
         </div>
       </div>
 
@@ -156,69 +165,90 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
             <div className="space-y-2">
               <button
                 className="w-full inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90"
-                onClick={() => qrcode && downloadQRCode(qrcode.id, 'png', qrcode.name)}
+                onClick={async () => {
+                  if (!qrcode) return
+                  if (isGuest) {
+                    try {
+                      const blob = await guestAPI.downloadQrcode(Number(qrcode.id), 'png')
+                      const url = window.URL.createObjectURL(blob)
+                      const a = document.createElement('a')
+                      a.href = url
+                      a.download = `${qrcode.name || 'qrcode'}.png`
+                      a.click()
+                      window.URL.revokeObjectURL(url)
+                    } catch { /* ignore */ }
+                  } else {
+                    downloadQRCode(qrcode.id, 'png', qrcode.name)
+                  }
+                }}
               >
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 {t('Download QR Code')}
               </button>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
-                  onClick={() => setShowDuplicate(true)}
-                >
-                  <DocumentDuplicateIcon className="h-4 w-4" />
-                  {t('Duplicate')}
-                </button>
-                <button
-                  className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
-                  onClick={() => setShowTypeConversion(true)}
-                >
-                  <ArrowPathIcon className="h-4 w-4" />
-                  {t('Convert')}
-                </button>
-                <button
-                  className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
-                  onClick={() => setShowPINProtection(true)}
-                >
-                  <LockClosedIcon className="h-4 w-4" />
-                  PIN
-                </button>
-                <button
-                  className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
-                  onClick={() => setShowTransfer(true)}
-                >
-                  <UserGroupIcon className="h-4 w-4" />
-                  {t('Transfer')}
-                </button>
-              </div>
-              <button
-                className="w-full inline-flex items-center justify-center gap-2 rounded-md border border-orange-300 px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-50"
-                onClick={() => setShowArchive(true)}
-              >
-                <ArchiveBoxIcon className="h-4 w-4" />
-                {t('Archive')}
-              </button>
+              {!isGuest && (
+                <>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                      onClick={() => setShowDuplicate(true)}
+                    >
+                      <DocumentDuplicateIcon className="h-4 w-4" />
+                      {t('Duplicate')}
+                    </button>
+                    <button
+                      className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                      onClick={() => setShowTypeConversion(true)}
+                    >
+                      <ArrowPathIcon className="h-4 w-4" />
+                      {t('Convert')}
+                    </button>
+                    <button
+                      className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                      onClick={() => setShowPINProtection(true)}
+                    >
+                      <LockClosedIcon className="h-4 w-4" />
+                      PIN
+                    </button>
+                    <button
+                      className="inline-flex items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                      onClick={() => setShowTransfer(true)}
+                    >
+                      <UserGroupIcon className="h-4 w-4" />
+                      {t('Transfer')}
+                    </button>
+                  </div>
+                  <button
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-md border border-orange-300 px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-50"
+                    onClick={() => setShowArchive(true)}
+                  >
+                    <ArchiveBoxIcon className="h-4 w-4" />
+                    {t('Archive')}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
 
         {/* Details and Stats */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <p className="text-sm font-medium text-gray-500">{t('Total Scans')}</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">{qrcode.scans ?? 0}</p>
+          {/* Stats Grid — only for authenticated users */}
+          {!isGuest && (
+            <div className="grid grid-cols-3 gap-4">
+              <div className="rounded-lg border border-gray-200 bg-white p-4">
+                <p className="text-sm font-medium text-gray-500">{t('Total Scans')}</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900">{qrcode.scans ?? 0}</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-white p-4">
+                <p className="text-sm font-medium text-gray-500">{t('This Month')}</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900">{'—'}</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-white p-4">
+                <p className="text-sm font-medium text-gray-500">{t('Today')}</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900">{'—'}</p>
+              </div>
             </div>
-            <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <p className="text-sm font-medium text-gray-500">{t('This Month')}</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">{'—'}</p>
-            </div>
-            <div className="rounded-lg border border-gray-200 bg-white p-4">
-              <p className="text-sm font-medium text-gray-500">{t('Today')}</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">{'—'}</p>
-            </div>
-          </div>
+          )}
 
           {/* Details */}
           <div className="rounded-lg border border-gray-200 bg-white p-6">
@@ -265,55 +295,59 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
         </div>
       </div>
 
-      {/* Modals */}
-      <DeleteQRCodeDialog
-        qrcode={qrcode}
-        isOpen={showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(false)}
-        onConfirm={handleDelete}
-        isDeleting={deleteMutation.isPending}
-      />
-      
-      {qrcode && (
+      {/* Modals — only for authenticated users */}
+      {!isGuest && (
         <>
-          <TypeConversionModal
-            qrCodeId={qrcode.id}
-            currentType={qrcode.type || 'url'}
-            open={showTypeConversion}
-            onClose={() => setShowTypeConversion(false)}
-            onConvert={handleConvertType}
+          <DeleteQRCodeDialog
+            qrcode={qrcode}
+            isOpen={showDeleteConfirm}
+            onClose={() => setShowDeleteConfirm(false)}
+            onConfirm={handleDelete}
+            isDeleting={deleteMutation.isPending}
           />
           
-          <DuplicateModal
-            isOpen={showDuplicate}
-            onClose={() => setShowDuplicate(false)}
-            qrCodeName={qrcode.name || 'QR Code'}
-            onDuplicate={handleDuplicate}
-          />
-          
-          <TransferOwnershipModal
-            isOpen={showTransfer}
-            onClose={() => setShowTransfer(false)}
-            qrCodeName={qrcode.name || 'QR Code'}
-            currentOwner={qrcode.userId?.toString() || ''}
-            onTransfer={handleTransfer}
-          />
-          
-          <ArchiveModal
-            isOpen={showArchive}
-            onClose={() => setShowArchive(false)}
-            mode="archive"
-            qrCodeNames={[qrcode.name || 'QR Code']}
-            onArchive={handleArchive}
-          />
-          
-          <PINProtectionModal
-            qrCodeId={qrcode.id}
-            hasPIN={false}
-            open={showPINProtection}
-            onClose={() => setShowPINProtection(false)}
-            onSuccess={() => setShowPINProtection(false)}
-          />
+          {qrcode && (
+            <>
+              <TypeConversionModal
+                qrCodeId={qrcode.id}
+                currentType={qrcode.type || 'url'}
+                open={showTypeConversion}
+                onClose={() => setShowTypeConversion(false)}
+                onConvert={handleConvertType}
+              />
+              
+              <DuplicateModal
+                isOpen={showDuplicate}
+                onClose={() => setShowDuplicate(false)}
+                qrCodeName={qrcode.name || 'QR Code'}
+                onDuplicate={handleDuplicate}
+              />
+              
+              <TransferOwnershipModal
+                isOpen={showTransfer}
+                onClose={() => setShowTransfer(false)}
+                qrCodeName={qrcode.name || 'QR Code'}
+                currentOwner={qrcode.userId?.toString() || ''}
+                onTransfer={handleTransfer}
+              />
+              
+              <ArchiveModal
+                isOpen={showArchive}
+                onClose={() => setShowArchive(false)}
+                mode="archive"
+                qrCodeNames={[qrcode.name || 'QR Code']}
+                onArchive={handleArchive}
+              />
+              
+              <PINProtectionModal
+                qrCodeId={qrcode.id}
+                hasPIN={false}
+                open={showPINProtection}
+                onClose={() => setShowPINProtection(false)}
+                onSuccess={() => setShowPINProtection(false)}
+              />
+            </>
+          )}
         </>
       )}
     </div>

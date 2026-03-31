@@ -20,6 +20,7 @@ import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useSubscription } from '@/lib/hooks/useSubscription'
 import { useAccountCredit } from '@/lib/hooks/useAccountCredit'
+import { useGuest } from '@/lib/hooks/useGuest'
 import { getUserStats } from '@/lib/api/sidebar'
 import { queryKeys } from '@/lib/query/keys'
 
@@ -59,6 +60,8 @@ interface SubscriptionLimitsResult {
 export function useSubscriptionLimits(): SubscriptionLimitsResult {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
+  const { isGuest, sessionLimits } = useGuest()
+
   const {
     plan,
     isLoading: isSubLoading,
@@ -72,14 +75,14 @@ export function useSubscriptionLimits(): SubscriptionLimitsResult {
     staticQRPrice,
   } = useAccountCredit()
 
-  // Fetch real usage stats from backend
+  // Fetch real usage stats from backend (disabled for guests)
   const { data: stats, isLoading: isStatsLoading } = useQuery({
     queryKey: [...queryKeys.qrcodes.all(), 'usage-stats'],
     queryFn: getUserStats,
-    staleTime: 30_000, // 30 seconds -- balance freshness vs. API load
-    gcTime: 5 * 60_000, // 5 minutes
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
     retry: 1,
-    enabled: typeof window !== 'undefined' && !!(localStorage.getItem('logged_in') || localStorage.getItem('token')),
+    enabled: !isGuest && typeof window !== 'undefined' && !!(localStorage.getItem('logged_in') || localStorage.getItem('token')),
   })
 
   const totalQRCodes = stats?.dynamic_qrcodes_count ?? 0
@@ -94,6 +97,18 @@ export function useSubscriptionLimits(): SubscriptionLimitsResult {
   const { canCreateQR, upgradeReason } = useMemo(() => {
     // If still loading, assume they can (don't block the UI)
     if (isLoading) return { canCreateQR: true, upgradeReason: '' }
+
+    // ── Guest mode ──
+    // Guests use session-based limits from admin config, not subscriptions
+    if (isGuest) {
+      if (sessionLimits && sessionLimits.qrcodes.remaining <= 0) {
+        return {
+          canCreateQR: false,
+          upgradeReason: 'You have reached the guest QR code limit. Sign up for a free account to create more.',
+        }
+      }
+      return { canCreateQR: true, upgradeReason: '' }
+    }
 
     // ── Account credit billing mode ──
     // In credit mode, there are no subscription-based limits. The user pays
@@ -136,18 +151,22 @@ export function useSubscriptionLimits(): SubscriptionLimitsResult {
     }
 
     return { canCreateQR: true, upgradeReason: '' }
-  }, [isLoading, isAccountCreditMode, balance, dynamicQRPrice, staticQRPrice, isUserSubscribed, maxQRCodes, totalQRCodes])
+  }, [isLoading, isGuest, sessionLimits, isAccountCreditMode, balance, dynamicQRPrice, staticQRPrice, isUserSubscribed, maxQRCodes, totalQRCodes])
 
   // Determine if user has scan capacity
   const canScan = useMemo(() => {
     if (isLoading) return true
+    if (isGuest) {
+      if (sessionLimits && sessionLimits.scans.remaining <= 0) return false
+      return true
+    }
     // In credit mode, scans are not limited by subscription
     if (isAccountCreditMode) return true
     if (!isUserSubscribed()) return false
     // -1 or 0 means unlimited
     if (maxScans <= 0) return true
     return totalScans < maxScans
-  }, [isLoading, isAccountCreditMode, isUserSubscribed, maxScans, totalScans])
+  }, [isLoading, isGuest, sessionLimits, isAccountCreditMode, isUserSubscribed, maxScans, totalScans])
 
   return {
     isLoading,

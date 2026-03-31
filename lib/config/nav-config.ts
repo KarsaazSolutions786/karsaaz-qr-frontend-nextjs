@@ -160,6 +160,7 @@ export const figmaSectionNav: FigmaNavSection[] = [
       { name: 'Notifications', href: '/system/notifications', icon: ServerIcon },
       { name: 'Sms Portals', href: '/system/sms-portals', icon: ServerIcon },
       { name: 'Auth Workflow', href: '/system/auth-workflow', icon: ServerIcon },
+      { name: 'Guest Settings', href: '/admin/guest-settings', icon: ServerIcon },
       { name: 'Abuse Reports', href: '/system/abuse-reports', icon: ServerIcon },
       { name: 'Domains', href: '/system/domains', icon: ServerIcon },
       { name: 'Template Categories', href: '/template-categories', icon: ServerIcon },

@@ -12,6 +12,31 @@ export interface CreateDesignAssetData {
   metadata?: Record<string, unknown>
 }
 
+export interface SvgAnalysisResult {
+  valid: boolean
+  detectedType: string | null
+  viewBox: string | null
+  pathCount: number
+  hasPlaceholders: Record<string, boolean>
+  renderConfig: Record<string, unknown> | null
+  warnings: string[]
+  errors: string[]
+}
+
+export interface UploadSvgResponse {
+  message: string
+  svg_path: string
+  render?: Record<string, unknown>
+  analysis?: {
+    viewBox: string | null
+    pathCount: number
+    warnings: string[]
+    analyzedAt: string
+    hasPlaceholders?: Record<string, boolean>
+    autoInjected?: boolean
+  }
+}
+
 export const designAssetsAPI = {
   getAll: async (type?: DesignAssetType): Promise<DesignAsset[]> => {
     const params = type ? { type } : {}
@@ -51,12 +76,27 @@ export const designAssetsAPI = {
     return data
   },
 
-  uploadShapeSvg: async (assetId: number, file: File): Promise<{ message: string; svg_path: string }> => {
+  uploadShapeSvg: async (assetId: number, file: File): Promise<UploadSvgResponse> => {
     const formData = new FormData()
     formData.append('file', file)
     const { data } = await apiClient.post(`/design-assets/${assetId}/upload-shape-svg`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
+    return data
+  },
+
+  analyzeSvg: async (file: File, type?: DesignAssetType): Promise<SvgAnalysisResult> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    if (type) formData.append('type', type)
+    const { data } = await apiClient.post('/design-assets/analyze-svg', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return data
+  },
+
+  previewAsset: async (assetId: number): Promise<{ content: string }> => {
+    const { data } = await apiClient.get(`/design-assets/${assetId}/preview`)
     return data
   },
 }
