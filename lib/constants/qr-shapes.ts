@@ -56,14 +56,18 @@ export const FINDER_STYLES: ShapeOption<FinderStyle>[] = [
 // Finder Dot Styles (8) — matches legacy module-fields.js
 // ============================================================
 export const FINDER_DOT_STYLES: ShapeOption<FinderDotStyle>[] = [
-  { value: 'default', label: 'Default' },
-  { value: 'eye-shaped', label: 'Eye Shaped' },
-  { value: 'octagon', label: 'Octagon' },
-  { value: 'rounded-corners', label: 'Rounded' },
-  { value: 'whirlpool', label: 'Whirlpool' },
-  { value: 'water-drop', label: 'Water Drop' },
-  { value: 'circle', label: 'Circle' },
-  { value: 'zigzag', label: 'Zigzag' },
+  { value: 'default', label: 'Default', image: '/images/qr/finders/dots/default.png' },
+  { value: 'eye-shaped', label: 'Eye Shaped', image: '/images/qr/finders/dots/eye-shaped.png' },
+  { value: 'octagon', label: 'Octagon', image: '/images/qr/finders/dots/octagon.png' },
+  {
+    value: 'rounded-corners',
+    label: 'Rounded',
+    image: '/images/qr/finders/dots/rounded-corners.png',
+  },
+  { value: 'whirlpool', label: 'Whirlpool', image: '/images/qr/finders/dots/whirlpool.png' },
+  { value: 'water-drop', label: 'Water Drop', image: '/images/qr/finders/dots/water-drop.png' },
+  { value: 'circle', label: 'Circle', image: '/images/qr/finders/dots/circle.png' },
+  { value: 'zigzag', label: 'Zigzag', image: '/images/qr/finders/dots/zigzag.png' },
 ]
 
 // ============================================================

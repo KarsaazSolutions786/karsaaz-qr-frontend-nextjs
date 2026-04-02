@@ -48,7 +48,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
   const { plan, isOnTrial } = useSubscription()
   const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
   const handlePremiumBlock = () => {
-    toast.info(t('This design feature requires a paid plan. Upgrade to unlock advanced shapes and effects.'))
+    toast.info(
+      t('This design feature requires a paid plan. Upgrade to unlock advanced shapes and effects.')
+    )
   }
 
   const [activeTab, setActiveTab] = useState('shape')
@@ -171,7 +173,10 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                         key={shape.value}
                         type="button"
                         onClick={() => {
-                          if (isLocked) { handlePremiumBlock(); return }
+                          if (isLocked) {
+                            handlePremiumBlock()
+                            return
+                          }
                           handleChange('moduleShape', shape.value)
                         }}
                         className={`relative flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
@@ -179,7 +184,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                             ? 'border-blue-500 bg-blue-50 shadow-sm'
                             : 'border-gray-200 hover:border-gray-300'
                         } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        title={isLocked ? `${shape.label} (${t('requires paid plan')})` : shape.label}
+                        title={
+                          isLocked ? `${shape.label} (${t('requires paid plan')})` : shape.label
+                        }
                       >
                         {shape.image ? (
                           <img
@@ -278,7 +285,10 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                         key={type}
                         type="button"
                         onClick={() => {
-                          if (isLocked) { handlePremiumBlock(); return }
+                          if (isLocked) {
+                            handlePremiumBlock()
+                            return
+                          }
                           if (type === 'solid') {
                             handleChange('foregroundFill', {
                               type: 'solid',
@@ -293,7 +303,10 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                               rotation: 45,
                             })
                           } else {
-                            handleChange('foregroundFill', { type: 'foreground_image', imageUrl: '' })
+                            handleChange('foregroundFill', {
+                              type: 'foreground_image',
+                              imageUrl: '',
+                            })
                           }
                         }}
                         className={`px-4 py-2 text-sm font-medium transition-colors relative ${
@@ -389,7 +402,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
 
               {/* Background */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">{t('Background')}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  {t('Background')}
+                </label>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <input
@@ -436,7 +451,10 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                         key={style.value}
                         type="button"
                         onClick={() => {
-                          if (isLocked) { handlePremiumBlock(); return }
+                          if (isLocked) {
+                            handlePremiumBlock()
+                            return
+                          }
                           handleChange('finder', style.value)
                         }}
                         className={`relative flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
@@ -444,7 +462,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                             ? 'border-blue-500 bg-blue-50 shadow-sm'
                             : 'border-gray-200 hover:border-gray-300'
                         } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        title={isLocked ? `${style.label} (${t('requires paid plan')})` : style.label}
+                        title={
+                          isLocked ? `${style.label} (${t('requires paid plan')})` : style.label
+                        }
                       >
                         {style.image ? (
                           <img
@@ -477,7 +497,10 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                         key={style.value}
                         type="button"
                         onClick={() => {
-                          if (isLocked) { handlePremiumBlock(); return }
+                          if (isLocked) {
+                            handlePremiumBlock()
+                            return
+                          }
                           handleChange('finderDot', style.value)
                         }}
                         className={`relative flex flex-col items-center gap-1 p-1.5 rounded-lg border-2 transition-all ${
@@ -485,21 +508,31 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                             ? 'border-blue-500 bg-blue-50 shadow-sm'
                             : 'border-gray-200 hover:border-gray-300'
                         } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        title={isLocked ? `${style.label} (${t('requires paid plan')})` : style.label}
+                        title={
+                          isLocked ? `${style.label} (${t('requires paid plan')})` : style.label
+                        }
                       >
-                        <div
-                          className={`w-6 h-6 ${
-                            style.value === 'default'
-                              ? 'bg-black'
-                              : style.value === 'circle' || style.value === 'water-drop'
-                                ? 'bg-black rounded-full'
-                                : style.value === 'rounded-corners'
-                                  ? 'bg-black rounded-md'
-                                  : style.value === 'octagon'
-                                    ? 'bg-black rounded-sm'
-                                    : 'bg-black'
-                          }`}
-                        />
+                        {style.image ? (
+                          <img
+                            src={style.image}
+                            alt={style.label}
+                            className="w-6 h-6 object-contain"
+                          />
+                        ) : (
+                          <div
+                            className={`w-6 h-6 ${
+                              style.value === 'default'
+                                ? 'bg-black'
+                                : style.value === 'circle' || style.value === 'water-drop'
+                                  ? 'bg-black rounded-full'
+                                  : style.value === 'rounded-corners'
+                                    ? 'bg-black rounded-md'
+                                    : style.value === 'octagon'
+                                      ? 'bg-black rounded-sm'
+                                      : 'bg-black'
+                            }`}
+                          />
+                        )}
                         {isLocked && (
                           <Lock className="absolute bottom-0.5 right-0.5 w-3 h-3 text-gray-400" />
                         )}
@@ -514,7 +547,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
             <TabsContent value="logo" className="space-y-6 mt-6">
               {/* Logo Type Toggle */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Source')}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('Logo Source')}
+                </label>
                 <div className="grid grid-cols-2 gap-2">
                   {(['preset', 'custom'] as const).map(type => (
                     <button
@@ -670,7 +705,8 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                   {/* Logo Position X */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('Horizontal Position')}: {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
+                      {t('Horizontal Position')}:{' '}
+                      {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
                     </label>
                     <input
                       type="range"
@@ -691,7 +727,8 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                   {/* Logo Position Y */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('Vertical Position')}: {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
+                      {t('Vertical Position')}:{' '}
+                      {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
                     </label>
                     <input
                       type="range"
@@ -803,7 +840,8 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                       {/* Logo Background Scale */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          {t('Background Size')}: {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
+                          {t('Background Size')}:{' '}
+                          {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
                         </label>
                         <input
                           type="range"
@@ -829,7 +867,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
             {/* ======================= OUTLINED SHAPES TAB ======================= */}
             <TabsContent value="shapes" className="space-y-6 mt-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">{t('Select shape')}</label>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  {t('Select shape')}
+                </label>
                 <div className="grid grid-cols-5 sm:grid-cols-8 gap-2 max-h-[400px] overflow-y-auto pr-1">
                   {OUTLINED_SHAPES.map((shape, idx) => {
                     const isLocked = isFreePlan && idx > 0
@@ -838,7 +878,10 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                         key={shape.value}
                         type="button"
                         onClick={() => {
-                          if (isLocked) { handlePremiumBlock(); return }
+                          if (isLocked) {
+                            handlePremiumBlock()
+                            return
+                          }
                           handleChange('shape', shape.value)
                         }}
                         className={`relative flex flex-col items-center gap-1 p-1 rounded-lg border-2 transition-all ${
@@ -846,7 +889,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                             ? 'border-blue-500 bg-blue-50 shadow-sm'
                             : 'border-gray-200 hover:border-gray-300'
                         } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        title={isLocked ? `${shape.label} (${t('requires paid plan')})` : shape.label}
+                        title={
+                          isLocked ? `${shape.label} (${t('requires paid plan')})` : shape.label
+                        }
                       >
                         {shape.image ? (
                           <img
@@ -855,7 +900,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                             className="w-12 h-12 object-contain"
                           />
                         ) : (
-                          <span className="text-[10px] font-medium text-gray-700">{shape.label}</span>
+                          <span className="text-[10px] font-medium text-gray-700">
+                            {shape.label}
+                          </span>
                         )}
                         {isLocked && (
                           <Lock className="absolute bottom-0.5 right-0.5 w-3 h-3 text-gray-400" />
@@ -929,7 +976,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                     <textarea
                       value={mergedConfig.aiPrompt || ''}
                       onChange={e => handleChange('aiPrompt', e.target.value)}
-                      placeholder={t("Describe the image you want (e.g., 'a beautiful sunset over mountains')")}
+                      placeholder={t(
+                        "Describe the image you want (e.g., 'a beautiful sunset over mountains')"
+                      )}
                       rows={4}
                       className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
@@ -983,7 +1032,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
 
                   <div className="p-3 rounded-lg bg-yellow-50 border border-yellow-200">
                     <p className="text-xs text-yellow-700">
-                      {t('AI generation will run when you save/download. The QR code will be processed server-side.')}
+                      {t(
+                        'AI generation will run when you save/download. The QR code will be processed server-side.'
+                      )}
                     </p>
                   </div>
                 </>
@@ -1013,7 +1064,9 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                   </div>
                 </div>
               )}
-              <p className="text-xs text-gray-500 text-center">{t('Scan with your phone to test')}</p>
+              <p className="text-xs text-gray-500 text-center">
+                {t('Scan with your phone to test')}
+              </p>
             </div>
           </div>
         </div>
