@@ -6,6 +6,7 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline'
 import { bannerApi, type BannerSettings } from '@/lib/api/endpoints/banner'
 import { BannerSettingsForm } from '@/components/features/settings/BannerSettingsForm'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const DEFAULT_BANNER: BannerSettings = {
   enabled: false,
@@ -49,7 +50,7 @@ export default function BannerSettingsPage() {
       <div className="mt-8">
         {isLoading && (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+            <LottieLoader size={80} />
           </div>
         )}
         {isError && (

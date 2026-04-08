@@ -9,6 +9,7 @@ import { DomainList } from '@/components/features/domains/DomainList'
 import { DomainStatusModal } from '@/components/features/domains/DomainStatusModal'
 import type { Domain } from '@/types/entities/domain'
 import Link from 'next/link'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function DomainsPage() {
   const { t } = useTranslation()
@@ -56,7 +57,7 @@ export default function DomainsPage() {
 
       {isLoading ? (
         <div className="flex h-48 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+          <LottieLoader size={80} />
         </div>
       ) : (
         <DomainList domains={domains} onEdit={handleEdit} onDelete={handleDelete} />

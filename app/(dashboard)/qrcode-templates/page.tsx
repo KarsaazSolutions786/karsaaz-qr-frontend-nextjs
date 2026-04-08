@@ -12,6 +12,7 @@ import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { Pagination } from '@/components/common/Pagination'
 import type { TemplateFilters } from '@/types/entities/template'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function QRCodeTemplatesPage() {
   const { t } = useTranslation()
@@ -141,7 +142,7 @@ export default function QRCodeTemplatesPage() {
         <div className="flex-1">
           {isLoading && (
             <div className="text-center py-12">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+              <LottieLoader size={80} />
               <p className="mt-4 text-gray-600">{t('Loading templates...')}</p>
             </div>
           )}

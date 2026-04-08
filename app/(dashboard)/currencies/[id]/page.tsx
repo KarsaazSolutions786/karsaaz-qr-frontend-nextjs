@@ -7,6 +7,7 @@ import { useCurrency } from '@/lib/hooks/queries/useCurrencies'
 import { useUpdateCurrency } from '@/lib/hooks/mutations/useCurrencyMutations'
 import { BalloonSelector } from '@/components/ui/balloon-selector'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const SYMBOL_POSITION_OPTIONS = [
   { value: 'before', label: 'Before Number' },
@@ -76,7 +77,7 @@ export default function EditCurrencyPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

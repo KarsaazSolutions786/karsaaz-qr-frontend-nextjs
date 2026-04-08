@@ -14,6 +14,7 @@ import {
 } from '@/lib/hooks/mutations/useContentBlockMutations'
 import type { ContentBlock } from '@/types/entities/content-block'
 import type { Translation } from '@/types/entities/translation'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // ─── Copy Modal ───────────────────────────────────────────────────────────────
 
@@ -200,7 +201,7 @@ function ContentBlocksPageInner() {
       <div className="mt-6">
         {isLoading ? (
           <div className="flex justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+            <LottieLoader size={80} />
           </div>
         ) : data && data.data.length > 0 ? (
           <>
@@ -275,7 +276,7 @@ export default function ContentBlocksPage() {
   return (
     <Suspense fallback={
       <div className="flex min-h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     }>
       <ContentBlocksPageInner />

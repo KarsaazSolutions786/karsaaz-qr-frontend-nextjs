@@ -4,7 +4,6 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/hooks/useAuth'
-import { GuestProvider } from '@/lib/context/GuestContext'
 import { AppLogo } from '@/components/ui/app-logo'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n'
@@ -26,8 +25,7 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <GuestProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Top navigation bar */}
         <header className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -56,6 +54,5 @@ export default function GuestLayout({ children }: { children: React.ReactNode })
           {children}
         </main>
       </div>
-    </GuestProvider>
   )
 }

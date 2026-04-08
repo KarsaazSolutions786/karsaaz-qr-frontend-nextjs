@@ -8,6 +8,7 @@ import { useUpdatePage } from '@/lib/hooks/mutations/usePageMutations'
 import type { CreatePageRequest } from '@/types/entities/page'
 import { useTranslation } from '@/lib/i18n'
 import { envConfig } from '@/lib/config/env-config'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 function slugify(text: string): string {
   return text
@@ -64,7 +65,7 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
   if (isLoading)
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   if (!page) return <div className="text-center py-12">{t('Page not found')}</div>

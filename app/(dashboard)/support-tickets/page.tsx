@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/context/AuthContext'
 import { supportTicketsAPI } from '@/lib/api/endpoints/support-tickets'
 import SupportTicketList from '@/components/features/support/SupportTicketList'
 import type { SupportTicket } from '@/types/entities/support-ticket'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function SupportTicketsPage() {
   const { t } = useTranslation()
@@ -74,7 +75,7 @@ export default function SupportTicketsPage() {
       <div className="mt-8">
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+            <LottieLoader size={80} />
             <p className="mt-2 text-sm text-gray-600">{t('Loading...')}</p>
           </div>
         ) : error ? (

@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useRef, useMemo, memo } from 'react'
+import { useState, useEffect, useRef, useMemo, memo } from 'react'
 import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
+import { WebpagePreview, WebpagePreviewRef } from '@/components/qr/WebpagePreview'
 import { LogoUpload } from '@/components/qr/LogoUpload'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
 import { Switch } from '@/components/ui/switch'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer'
 import { useDesignShapes } from '@/lib/hooks/useDesignShapes'
-import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Loader2, Upload, Lock } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Upload, Lock } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import PageDesignPanel, { TYPES_WITH_WEBPAGE_DESIGN, DEFAULT_WEBPAGE_DESIGN } from './PageDesignPanel'
 import type { WebpageDesignData } from './PageDesignPanel'
 import { cn } from '@/lib/utils'
@@ -215,7 +217,7 @@ export default function QRDesignStudio({
   onSettingsChange: _onSettingsChange,
   onBack,
   isSaving: _isSaving,
-  isSaved: _isSaved,
+  isSaved,
   savedQRId,
   webpageDesign,
   onWebpageDesignChange,
@@ -255,6 +257,16 @@ export default function QRDesignStudio({
   }
 
   const previewRef = useRef<BackendQRPreviewRef>(null)
+  const webpagePreviewRef = useRef<WebpagePreviewRef>(null)
+
+  // Refresh the webpage iframe whenever a save completes (isSaved flips to true)
+  const prevIsSavedRef = useRef(isSaved)
+  useEffect(() => {
+    if (isSaved && !prevIsSavedRef.current && designMode === 'page') {
+      webpagePreviewRef.current?.refresh()
+    }
+    prevIsSavedRef.current = isSaved
+  }, [isSaved, designMode])
   const [activeTab, setActiveTab] = useState<TabId>('color')
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     qrColor: true,
@@ -569,7 +581,7 @@ export default function QRDesignStudio({
                           {(mergedConfig.foregroundFill as any).imageUrl ? (
                             <div className="flex items-center justify-center gap-3">
                               {isUploadingImage ? (
-                                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+                                <LottieLoader size={80} />
                               ) : (
                                 <img
                                   src={(mergedConfig.foregroundFill as any).imageUrl}
@@ -1026,81 +1038,91 @@ export default function QRDesignStudio({
 
           {/* ==================== RIGHT PANEL - PREVIEW ==================== */}
           <div className="lg:col-span-2 lg:self-start">
-            <div className="bg-white rounded-xl border border-purple-100 p-6 sticky top-44 shadow-sm">
-              {/* QR Preview */}
-              <div className="flex justify-center mb-4">
-                {hasPreviewData ? (
-                  <BackendQRPreview
-                    ref={previewRef}
-                    data={qrData}
-                    qrType={qrType}
-                    config={previewDesign}
-                    qrId={savedQRId || undefined}
-                    className="w-full max-w-[280px]"
-                  />
-                ) : (
-                  <div className="w-[280px] h-[280px] bg-gray-100 rounded-lg flex items-center justify-center">
-                    <div className="text-center text-gray-400">
-                      <div className="text-5xl mb-2">⊞</div>
-                      <p className="text-sm">{t('No data to preview')}</p>
+            {designMode === 'page' && hasWebpageDesign ? (
+              /* Screen / landing-page preview (mirrors Lit's qrcg-webpage-preview) */
+              <div className="sticky top-44">
+                <WebpagePreview
+                  ref={webpagePreviewRef}
+                  qrcodeId={savedQRId ?? null}
+                />
+              </div>
+            ) : (
+              <div className="bg-white rounded-xl border border-purple-100 p-6 sticky top-44 shadow-sm">
+                {/* QR Preview */}
+                <div className="flex justify-center mb-4">
+                  {hasPreviewData ? (
+                    <BackendQRPreview
+                      ref={previewRef}
+                      data={qrData}
+                      qrType={qrType}
+                      config={previewDesign}
+                      qrId={savedQRId || undefined}
+                      className="w-full max-w-[280px]"
+                    />
+                  ) : (
+                    <div className="w-[280px] h-[280px] bg-gray-100 rounded-lg flex items-center justify-center">
+                      <div className="text-center text-gray-400">
+                        <div className="text-5xl mb-2">⊞</div>
+                        <p className="text-sm">{t('No data to preview')}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Create With AI Button */}
+                <button
+                  type="button"
+                  onClick={() => handleChange('isAi', !mergedConfig.isAi)}
+                  className={cn(
+                    'w-full flex items-center justify-center gap-2 py-2.5 px-4 border rounded-lg text-sm font-medium transition-colors mb-4',
+                    mergedConfig.isAi
+                      ? 'border-purple-500 bg-purple-50 text-purple-700'
+                      : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                  )}
+                >
+                  {t('Create With AI')}
+                </button>
+
+                {/* AI Options */}
+                {mergedConfig.isAi && (
+                  <div className="space-y-3 mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                    <div>
+                      <label className="block text-xs text-purple-700 mb-1">{t('AI Prompt')}</label>
+                      <textarea
+                        value={mergedConfig.aiPrompt || ''}
+                        onChange={e => handleChange('aiPrompt', e.target.value)}
+                        placeholder={t('Describe your desired design...')}
+                        rows={2}
+                        className="w-full text-sm border border-purple-200 rounded-lg px-3 py-2"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-purple-700 mb-1">
+                        {t('Strength')}: {(mergedConfig.aiStrength ?? 1.8).toFixed(1)}
+                      </label>
+                      <input
+                        type="range"
+                        min="0.1"
+                        max="3"
+                        step="0.1"
+                        value={mergedConfig.aiStrength ?? 1.8}
+                        onChange={e => handleChange('aiStrength', parseFloat(e.target.value))}
+                        className="w-full accent-purple-500"
+                      />
                     </div>
                   </div>
                 )}
+
+                {/* Reset Settings */}
+                <button
+                  type="button"
+                  onClick={resetToDefaults}
+                  className="w-full text-sm text-gray-500 hover:text-gray-700 mt-3 underline"
+                >
+                  {t('Reset Settings')}
+                </button>
               </div>
-
-              {/* Create With AI Button */}
-              <button
-                type="button"
-                onClick={() => handleChange('isAi', !mergedConfig.isAi)}
-                className={cn(
-                  'w-full flex items-center justify-center gap-2 py-2.5 px-4 border rounded-lg text-sm font-medium transition-colors mb-4',
-                  mergedConfig.isAi
-                    ? 'border-purple-500 bg-purple-50 text-purple-700'
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                )}
-              >
-                {t('Create With AI')}
-              </button>
-
-              {/* AI Options */}
-              {mergedConfig.isAi && (
-                <div className="space-y-3 mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                  <div>
-                    <label className="block text-xs text-purple-700 mb-1">{t('AI Prompt')}</label>
-                    <textarea
-                      value={mergedConfig.aiPrompt || ''}
-                      onChange={e => handleChange('aiPrompt', e.target.value)}
-                      placeholder={t('Describe your desired design...')}
-                      rows={2}
-                      className="w-full text-sm border border-purple-200 rounded-lg px-3 py-2"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-purple-700 mb-1">
-                      {t('Strength')}: {(mergedConfig.aiStrength ?? 1.8).toFixed(1)}
-                    </label>
-                    <input
-                      type="range"
-                      min="0.1"
-                      max="3"
-                      step="0.1"
-                      value={mergedConfig.aiStrength ?? 1.8}
-                      onChange={e => handleChange('aiStrength', parseFloat(e.target.value))}
-                      className="w-full accent-purple-500"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Reset Settings */}
-              <button
-                type="button"
-                onClick={resetToDefaults}
-                className="w-full text-sm text-gray-500 hover:text-gray-700 mt-3 underline"
-              >
-                {t('Reset Settings')}
-              </button>
-            </div>
+            )}
           </div>
         </div>
 

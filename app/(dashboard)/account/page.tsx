@@ -1,8 +1,11 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '@/lib/i18n'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useRpcComposite } from '@/lib/hooks/useRpc'
 import { ProfileCard } from '@/components/features/account/ProfileCard'
 import { SubscriptionCard } from '@/components/features/account/SubscriptionCard'
 import { BillingManagementCard } from '@/components/features/account/BillingManagementCard'
@@ -12,14 +15,31 @@ import { SubUserManagement } from '@/components/features/account/SubUserManageme
 import { TwoFactorTab } from '@/components/features/account/TwoFactorTab'
 import { LoginPreferenceToggle } from '@/components/features/auth/LoginPreferenceToggle'
 import { DeleteAccountDialog } from '@/components/features/auth/DeleteAccountDialog'
+import { queryKeys } from '@/lib/query/keys'
+import type { User } from '@/types/entities/user'
 
 export default function AccountPage() {
   const { t } = useTranslation()
   const { user, isLoading } = useAuth()
+  const queryClient = useQueryClient()
   const [showEditProfile, setShowEditProfile] = useState(false)
   const [showResetPassword, setShowResetPassword] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  // Subscription data is now managed by TanStack Query via useSubscription hook in SubscriptionCard
+
+  // Pre-fetch user + subscription + usage in a single RPC call to avoid waterfalling.
+  // useSubscription (in SubscriptionCard) will hit the pre-seeded cache instead of fetching.
+  const { data: profileData } = useRpcComposite<{
+    user: User
+    subscription: { subscription: Record<string, unknown> | null; plan: Record<string, unknown> | null }
+    usage: Record<string, unknown>
+  }>('profile', {}, { enabled: !!user, staleTime: 2 * 60 * 1000 })
+
+  // Seed the subscription cache so useSubscription doesn't make a redundant request
+  useEffect(() => {
+    if (profileData?.subscription != null) {
+      queryClient.setQueryData(queryKeys.subscriptions.current(), profileData.subscription.subscription ?? null)
+    }
+  }, [profileData, queryClient])
 
   if (isLoading) {
     return (

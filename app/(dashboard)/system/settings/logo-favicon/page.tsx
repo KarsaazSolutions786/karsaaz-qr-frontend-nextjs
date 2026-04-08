@@ -15,6 +15,7 @@ import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 import { queryKeys } from '@/lib/query/keys'
 import { resolveBackendUrl } from '@/lib/utils/resolve-backend-url'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const CONFIG_KEYS = ['app.logo', 'app.favicon']
 const DEFAULT_LOGO = '/sidebar-assets/sidebar-logo.svg'
@@ -122,7 +123,7 @@ function FileUploadZone({
         >
           {isUploading ? (
             <div className="flex flex-col items-center gap-2">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+              <LottieLoader size={80} />
               <p className="text-sm text-gray-500">{t('Uploading...')}</p>
             </div>
           ) : (
@@ -259,7 +260,7 @@ export default function LogoFaviconSettingsPage() {
       <div className="mt-8 space-y-8">
         {isLoading && (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+            <LottieLoader size={80} />
           </div>
         )}
 

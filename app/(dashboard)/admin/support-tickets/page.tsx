@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { supportTicketsAPI } from '@/lib/api/endpoints/support-tickets'
 import type { SupportTicket } from '@/types/entities/support-ticket'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const STATUS_BADGES: Record<SupportTicket['status'], { label: string; className: string }> = {
   OPEN: { label: 'Open', className: 'bg-blue-100 text-blue-800' },
@@ -71,7 +72,7 @@ export default function AdminSupportTicketsPage() {
       <div className="mt-6">
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+            <LottieLoader size={80} />
             <p className="mt-2 text-sm text-gray-600">{t('Loading...')}</p>
           </div>
         ) : error ? (

@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { rpc, rpcBatch } from '@/lib/api/rpc'
 import { referralAPI } from '@/lib/api/endpoints/referral'
 import { queryKeys } from '@/lib/query/keys'
+import type { ReferralStats } from '@/types/entities/referral'
 
-// List referred users with pagination
+// List referred users with pagination (keep REST — paginated results don't fit RPC batch well)
 export function useReferrals(params?: { page?: number; search?: string }) {
   return useQuery({
     queryKey: queryKeys.referrals.list(params),
@@ -11,20 +13,43 @@ export function useReferrals(params?: { page?: number; search?: string }) {
   })
 }
 
-// Get referral statistics
+// Get referral statistics — uses a batch of referral.stats + referral.commissionSummary
+// to get all fields (including available_balance) in a single HTTP request.
 export function useReferralStats() {
-  return useQuery({
+  return useQuery<ReferralStats>({
     queryKey: queryKeys.referrals.stats(),
-    queryFn: () => referralAPI.getStats(),
+    queryFn: async ({ signal }) => {
+      const results = await rpcBatch(
+        [{ method: 'referral.stats' }, { method: 'referral.commissionSummary' }],
+        { signal }
+      )
+      const stats = results.get('referral.stats')?.result as Record<string, number> | null
+      const commission = results.get('referral.commissionSummary')?.result as Record<string, number> | null
+
+      return {
+        total_referrals: stats?.total_referrals ?? 0,
+        active_referrals: stats?.active_referrals ?? 0,
+        total_earnings: stats?.total_earnings ?? 0,
+        pending_earnings: stats?.pending_earnings ?? 0,
+        available_balance: commission?.available_balance ?? 0,
+      }
+    },
     staleTime: 30000,
   })
 }
 
-// Get user's referral code
+// Get user's referral code — piggybacks on referral.stats (which already includes referral_code)
 export function useReferralCode() {
-  return useQuery({
+  return useQuery<{ referral_code: string }>({
     queryKey: queryKeys.referrals.code(),
-    queryFn: () => referralAPI.getCode(),
-    staleTime: 5 * 60 * 1000, // Referral code rarely changes
+    queryFn: async ({ signal }) => {
+      const result = await rpc<{ referral_code: string }>(
+        'referral.stats',
+        {},
+        { signal }
+      )
+      return { referral_code: result.referral_code ?? '' }
+    },
+    staleTime: 5 * 60 * 1000,
   })
 }

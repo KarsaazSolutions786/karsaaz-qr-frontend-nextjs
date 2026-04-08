@@ -16,6 +16,7 @@ import {
   SelectItem,
 } from '@/components/ui/select'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const CONFIG_KEYS = [
   'security.password_min_length',
@@ -63,7 +64,7 @@ export default function AdvancedSettingsPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

@@ -36,6 +36,7 @@ import { usePermissions } from '@/lib/hooks/usePermissions'
 import { showSuccessToast, showErrorToast } from '@/lib/hooks/useToast'
 import { RenderConfigEditor } from '@/components/admin/RenderConfigEditor'
 import type { RenderConfig } from '@/components/admin/RenderConfigEditor'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const ASSET_TABS: { value: DesignAssetType; label: string }[] = [
   { value: 'module_style', label: 'Module Shapes' },
@@ -338,7 +339,7 @@ function AssetRow({
             </button>
           )}
           {/* Show analysis badge if SVG has been analyzed */}
-          {meta?.analysis && (
+          {!!meta?.analysis && (
             <span
               className="inline-flex items-center rounded-full bg-emerald-50 px-1.5 py-0.5 text-[10px] font-medium text-emerald-700"
               title={`ViewBox: ${(meta.analysis as Record<string, unknown>)?.viewBox ?? 'N/A'}, Paths: ${(meta.analysis as Record<string, unknown>)?.pathCount ?? '?'}`}
@@ -772,7 +773,7 @@ function AssetTable({ type }: { type: DesignAssetType }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+        <LottieLoader size={80} />
       </div>
     )
   }

@@ -9,6 +9,7 @@ import { useTranslation as useI18n } from '@/lib/i18n'
 import { translationsAPI } from '@/lib/api/endpoints/translations'
 import apiClient from '@/lib/api/client'
 import type { CreateTranslationRequest } from '@/types/entities/translation'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function EditTranslationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -91,7 +92,7 @@ export default function EditTranslationPage({ params }: { params: Promise<{ id: 
 
   if (isLoading) return (
     <div className="flex min-h-96 items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+      <LottieLoader size={80} />
     </div>
   )
   if (!translation) return <div className="text-center py-12">{t('Translation not found')}</div>

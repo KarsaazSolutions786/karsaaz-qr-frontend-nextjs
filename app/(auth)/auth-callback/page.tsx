@@ -8,6 +8,7 @@ import { Suspense } from 'react'
 import { User } from '@/types/entities/user'
 import { authWorkflowEngine, validateOAuthState, type OAuthProviderName } from '@/lib/services/auth-workflow'
 import Link from 'next/link'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 /**
  * OAuth callback page — handles redirect from server-side OAuth flow.
@@ -96,7 +97,7 @@ function AuthCallbackContent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="text-center space-y-4">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
+        <LottieLoader size={100} className="mx-auto" />
         <p className="text-gray-600">{t('Completing login...')}</p>
       </div>
     </div>

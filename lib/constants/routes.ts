@@ -31,7 +31,7 @@ export const ROUTES = {
     STATS: (id: string) => `/qrcodes/${id}/stats`,
     BULK_CREATE: '/qrcodes/bulk-create',
     TEMPLATES: '/qrcode-templates',
-    ARCHIVED: '/qrcodes?archived=true',
+    ARCHIVED: '/archived',
   },
 
   // Cloud Storage
@@ -68,7 +68,7 @@ export const ROUTES = {
     BLOG_POSTS: '/blog-posts',
     CONTENT_BLOCKS: '/content-blocks',
     TRANSLATIONS: '/translations',
-    CUSTOM_CODE: '/custom-code',
+    CUSTOM_CODES: '/custom-codes',
     PAGES: '/pages',
     BIOLINKS: '/biolinks',
   },

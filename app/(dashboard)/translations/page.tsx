@@ -14,6 +14,7 @@ import {
 import { translationsAPI } from '@/lib/api/endpoints/translations'
 import type { Translation } from '@/types/entities/translation'
 import { useTranslation as useI18n } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function TranslationsPage() {
   const router = useRouter()
@@ -78,7 +79,7 @@ export default function TranslationsPage() {
 
         {isLoading ? (
           <div className="flex justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+            <LottieLoader size={80} />
           </div>
         ) : data && data.data.length > 0 ? (
           <>

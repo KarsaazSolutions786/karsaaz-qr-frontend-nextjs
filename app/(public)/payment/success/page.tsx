@@ -8,6 +8,7 @@ import apiClient from '@/lib/api/client'
 import { authAPI } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 type PageState = 'loading' | 'success' | 'error'
 
@@ -96,7 +97,7 @@ function PaymentSuccessContent() {
       <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
         {state === 'loading' && (
           <>
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mx-auto mb-6" />
+            <LottieLoader size={120} className="mx-auto mb-6" />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Processing Payment...')}</h1>
             <p className="text-gray-500">{t('Please wait while we verify your payment.')}</p>
           </>
@@ -144,7 +145,7 @@ export default function PaymentSuccessPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mx-auto mb-6" />
+          <LottieLoader size={120} className="mx-auto mb-6" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Loading...')}</h1>
         </div>
       </div>

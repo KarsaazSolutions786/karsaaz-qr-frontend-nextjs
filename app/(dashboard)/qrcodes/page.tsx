@@ -691,6 +691,7 @@ export default function QRCodesPage() {
               {/* Grid View (Virtualized) */}
               {viewMode === 'grid' && (
                 <VirtualizedGrid
+                  scrollResetKey={page}
                   items={qrcodes}
                   columnCount={3}
                   rowHeight={320}
@@ -709,6 +710,7 @@ export default function QRCodesPage() {
               {/* List View (Virtualized) */}
               {viewMode === 'list' && (
                 <VirtualizedList
+                  scrollResetKey={page}
                   items={qrcodes}
                   itemHeight={80}
                   height={Math.min(600, qrcodes.length * 80)}
@@ -727,6 +729,7 @@ export default function QRCodesPage() {
               {/* Minimal View (Virtualized) */}
               {viewMode === 'minimal' && (
                 <VirtualizedGrid
+                  scrollResetKey={page}
                   items={qrcodes}
                   columnCount={4}
                   rowHeight={200}

@@ -3,7 +3,8 @@
 import { useQRCode } from '@/lib/hooks/queries/useQRCode'
 import { QRWizardContainer } from '@/components/features/qrcodes/wizard'
 import { useTranslation } from '@/lib/i18n'
-import { Loader2, BarChart3, ArrowLeft } from 'lucide-react'
+import { BarChart3, ArrowLeft } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import Link from 'next/link'
 
 /**
@@ -24,7 +25,7 @@ export default function EditQRCodePage({ params }: { params: { id: string } }) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" />
+          <LottieLoader size={80} className="mx-auto" />
           <p className="mt-4 text-gray-600">{t('Loading QR Code...')}</p>
         </div>
       </div>

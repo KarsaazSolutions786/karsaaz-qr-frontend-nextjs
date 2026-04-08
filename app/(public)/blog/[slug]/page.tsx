@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { blogPostsAPI } from '@/lib/api/endpoints/blog-posts'
 import type { BlogPost } from '@/types/entities/blog-post'
-import { Loader2, ArrowLeft, Calendar } from 'lucide-react'
+import { ArrowLeft, Calendar } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import { sanitizeHTML } from '@/lib/utils/dom-safety'
 import { useTranslation } from '@/lib/i18n'
 
@@ -30,7 +31,7 @@ export default function BlogPostPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+        <LottieLoader size={80} />
       </div>
     )
   }

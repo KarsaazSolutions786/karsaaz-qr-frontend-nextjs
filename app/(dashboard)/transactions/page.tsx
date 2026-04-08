@@ -6,6 +6,7 @@ import { useTranslation } from '@/lib/i18n'
 import { useTransactions } from '@/lib/hooks/queries/useTransactions'
 import { useApproveTransaction, useRejectTransaction } from '@/lib/hooks/mutations/useTransactionMutations'
 import type { Transaction } from '@/types/entities/transaction'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 function StatusBadge({ status }: { status?: string }) {
   const s = status?.toLowerCase() ?? ''
@@ -103,7 +104,7 @@ export default function TransactionsPage() {
 
       {isLoading ? (
         <div className="flex justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+          <LottieLoader size={80} />
         </div>
       ) : data && data.data.length > 0 ? (
         <>

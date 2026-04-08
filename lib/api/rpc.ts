@@ -126,7 +126,7 @@ export async function rpcBatch(
   // Build id → method lookup
   const idToCall = new Map<number, string>()
   requests.forEach((req, i) => {
-    idToCall.set(req.id, calls[i].method)
+    idToCall.set(req.id, calls[i]!.method)
   })
 
   const raw = await _rpcFetch(requests, options.public, options.signal)
@@ -197,8 +197,8 @@ export function rpcClearCache(): void {
 // ─── Transport ───────────────────────────────────────────────────────────────
 
 function _getBaseUrl(): string {
-  if (typeof window !== 'undefined' && (window as Record<string, unknown>).BACKEND_URL) {
-    return `${(window as Record<string, unknown>).BACKEND_URL}`
+  if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).BACKEND_URL) {
+    return `${(window as unknown as Record<string, unknown>).BACKEND_URL}`
   }
   return envConfig.API_URL
 }

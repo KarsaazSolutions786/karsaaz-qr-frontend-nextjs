@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
 import { useTransaction } from '@/lib/hooks/queries/useTransactions'
 import type { Transaction } from '@/types/entities/transaction'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 function StatusBadge({ status }: { status?: string }) {
   const s = status?.toLowerCase() ?? ''
@@ -46,7 +47,7 @@ export default function TransactionDetailPage({ params }: { params: Promise<{ id
   if (isLoading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

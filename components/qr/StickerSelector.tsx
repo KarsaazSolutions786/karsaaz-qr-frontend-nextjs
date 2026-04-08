@@ -13,6 +13,7 @@ import { StickerCategoryTabs } from './StickerCategoryFilter';
 import { StickerUpload } from './StickerUpload';
 import { useStickerGallery, useStickerSearch } from '@/lib/hooks/useStickerGallery';
 import { useTranslation } from '@/lib/i18n';
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export interface StickerSelectorProps {
   selectedStickerId?: string;
@@ -151,7 +152,7 @@ export function StickerSelector({
       {/* Loading state */}
       {isLoading && (
         <div className="py-12 text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+          <LottieLoader size={80} />
           <p className="mt-2 text-sm text-gray-600">{t('Loading stickers...')}</p>
         </div>
       )}

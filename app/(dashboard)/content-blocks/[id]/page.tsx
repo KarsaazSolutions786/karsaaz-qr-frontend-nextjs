@@ -8,6 +8,7 @@ import { useUpdateContentBlock } from '@/lib/hooks/mutations/useContentBlockMuta
 import { useTranslations } from '@/lib/hooks/queries/useTranslations'
 import { useTranslation } from '@/lib/i18n'
 import type { CreateContentBlockRequest } from '@/types/entities/content-block'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function EditContentBlockPage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
@@ -53,7 +54,7 @@ export default function EditContentBlockPage({ params }: { params: Promise<{ id:
 
   if (isLoading) return (
     <div className="flex min-h-96 items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+      <LottieLoader size={80} />
     </div>
   )
   if (!block) return <div className="text-center py-12">{t('Content block not found')}</div>

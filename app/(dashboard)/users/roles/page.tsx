@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Plus, Loader2 } from 'lucide-react'
+import { Plus } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useRoles } from '@/lib/hooks/queries/useRoles'
 import { useDeleteRole } from '@/lib/hooks/mutations/useRoleMutations'
 import type { RoleEntity } from '@/lib/api/endpoints/roles'
@@ -77,7 +78,7 @@ export default function RolesPage() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <Loader2 className="inline-block h-8 w-8 animate-spin text-gray-400" />
+            <LottieLoader size={80} />
             <p className="mt-2 text-sm text-gray-600">{t('Loading...')}</p>
           </div>
         ) : data && data.data.length > 0 ? (

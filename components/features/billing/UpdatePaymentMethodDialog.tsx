@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, CreditCard, Loader2 } from 'lucide-react'
+import { X, CreditCard, Loader2, AlertTriangle } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 import { useUpdatePaymentMethod } from '@/lib/hooks/mutations/useUpdatePaymentMethod'
 
@@ -69,6 +69,14 @@ export function UpdatePaymentMethodDialog({
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="h-5 w-5" />
           </button>
+        </div>
+
+        {/* Warning: Stripe Elements not yet integrated */}
+        <div className="mb-4 flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 p-3">
+          <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+          <p className="text-sm text-amber-700">
+            {t('Secure card processing requires Stripe Elements. Install')} <code className="font-mono text-xs">@stripe/stripe-js</code> {t('to enable real payment method updates.')}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

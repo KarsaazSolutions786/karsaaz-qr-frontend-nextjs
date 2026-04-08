@@ -1,24 +1,15 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import { useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
-import { referralAPI } from '@/lib/api/endpoints/referral'
+import { useReferralCode } from '@/lib/hooks/queries/useReferrals'
 
 export function ReferralCodeShare() {
   const { t } = useTranslation()
-  const [code, setCode] = useState('')
-  const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const { data, isLoading } = useReferralCode()
 
-  useEffect(() => {
-    referralAPI
-      .getCode()
-      .then((res) => setCode(res.referral_code))
-      .catch(() => { toast.error('Failed to load referral code') })
-      .finally(() => setLoading(false))
-  }, [])
-
+  const code = data?.referral_code ?? ''
   const referralLink =
     typeof window !== 'undefined' && code
       ? `${window.location.origin}/register?ref=${code}`
@@ -43,7 +34,7 @@ export function ReferralCodeShare() {
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="animate-pulse rounded-lg border border-gray-200 bg-white p-6">
         <div className="h-4 w-32 rounded bg-gray-200" />

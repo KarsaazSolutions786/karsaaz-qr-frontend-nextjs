@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 import { envConfig } from '@/lib/config/env-config'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function SystemLogsPage() {
   const { t } = useTranslation()
@@ -116,7 +117,7 @@ export default function SystemLogsPage() {
       <div className="mt-6 overflow-hidden rounded-lg bg-white shadow">
         {isLoading ? (
           <div className="flex min-h-96 items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+            <LottieLoader size={80} />
           </div>
         ) : (
           <textarea

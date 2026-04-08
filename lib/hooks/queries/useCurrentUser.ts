@@ -1,17 +1,18 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { authAPI } from '@/lib/api/endpoints/auth'
+import { rpc, RpcError } from '@/lib/api/rpc'
 import { queryKeys } from '@/lib/query/keys'
+import type { User } from '@/types/entities/user'
 
 export function useCurrentUser() {
-  return useQuery({
+  return useQuery<User | null>({
     queryKey: queryKeys.auth.currentUser(),
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       try {
-        return await authAPI.getCurrentUser()
+        return await rpc<User>('user.profile', {}, { skipDedup: true, signal })
       } catch (error) {
-        if ((error as any).response?.status === 401) {
+        if (error instanceof RpcError && error.isAuthError) {
           return null
         }
         throw error

@@ -5,7 +5,8 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { pluginsAPI, type PluginInfo } from '@/lib/api/endpoints/plugins'
 import { PluginSettingsForm } from '@/components/features/plugins/PluginSettingsForm'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useTranslation } from '@/lib/i18n'
 
 export default function PluginDetailPage() {
@@ -32,7 +33,7 @@ export default function PluginDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <LottieLoader size={80} />
       </div>
     )
   }

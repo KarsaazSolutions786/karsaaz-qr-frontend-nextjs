@@ -8,6 +8,7 @@ import { useDeleteBlogPost } from '@/lib/hooks/mutations/useBlogPostMutations'
 import BlogPostList from '@/components/features/blog/BlogPostList'
 import type { BlogPost } from '@/types/entities/blog-post'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function BlogPostsPage() {
   const { t } = useTranslation()
@@ -57,7 +58,7 @@ export default function BlogPostsPage() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+            <LottieLoader size={80} />
             <p className="mt-2 text-sm text-gray-600">{t('Loading...')}</p>
           </div>
         ) : data && data.data.length > 0 ? (

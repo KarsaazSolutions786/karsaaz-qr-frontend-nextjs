@@ -6,6 +6,7 @@ import { useCurrencies } from '@/lib/hooks/queries/useCurrencies'
 import { useDeleteCurrency, useToggleCurrencyEnabled } from '@/lib/hooks/mutations/useCurrencyMutations'
 import type { Currency } from '@/types/entities/currency'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function CurrenciesPage() {
   const { t } = useTranslation()
@@ -57,7 +58,7 @@ export default function CurrenciesPage() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+            <LottieLoader size={80} />
             <p className="mt-2 text-sm text-gray-600">{t('Loading currencies...')}</p>
           </div>
         ) : data && data.data.length > 0 ? (

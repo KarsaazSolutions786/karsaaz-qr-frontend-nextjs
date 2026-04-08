@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Download, Printer, X } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 function PreviewContent() {
   const { t } = useTranslation();
@@ -180,7 +181,7 @@ export default function PreviewPage() {
       fallback={
         <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
           <div className="text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+            <LottieLoader size={80} />
             <p className="mt-4 text-gray-600 dark:text-gray-400">Loading preview...</p>
           </div>
         </div>

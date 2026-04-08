@@ -9,6 +9,7 @@ import { leadFormsAPI } from '@/lib/api/endpoints/lead-forms'
 import { queryKeys } from '@/lib/query/keys'
 import type { LeadFormResponse, LeadFormResponseField } from '@/types/entities/lead-form'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import {
   ChevronLeftIcon,
   ArrowDownTrayIcon,
@@ -221,7 +222,7 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
       {/* Loading state */}
       {isLoading && (
         <div className="flex items-center justify-center py-16">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600" />
+          <LottieLoader size={80} />
         </div>
       )}
 

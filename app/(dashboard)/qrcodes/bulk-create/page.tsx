@@ -19,6 +19,7 @@ import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
 import { useTranslation } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // ---------------------------------------------------------------------------
 // CSV parsing (handles quoted fields with commas and newlines within quotes)
@@ -849,25 +850,7 @@ export default function BulkCreatePage() {
           >
             {isCreating ? (
               <>
-                <svg
-                  className="mr-2 h-4 w-4 animate-spin"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
+                <LottieLoader size={80} />
                 {t('Creating...')}
               </>
             ) : (
@@ -908,10 +891,7 @@ function RowStatus({ row }: { row: ParsedRow }) {
     case 'creating':
       return (
         <span className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400">
-          <svg className="h-3.5 w-3.5 animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-          </svg>
+          <LottieLoader size={80} />
           {t('Creating...')}
         </span>
       )

@@ -47,14 +47,6 @@ const adjustForSlowConnection = (timeout: number): number => {
   return timeout
 }
 
-// Auth validation state — suppress 401 redirect/toast while initial /myself call is pending.
-// This prevents the "Please log in" flash on page load when the cookie is valid
-// but other API calls fire before /myself returns.
-let authValidationComplete = false
-export function markAuthValidationComplete() {
-  authValidationComplete = true
-}
-
 const apiClient: AxiosInstance = axios.create({
   baseURL: getApiBaseURL(),
   timeout: API_TIMEOUTS.DEFAULT,
@@ -134,55 +126,6 @@ apiClient.interceptors.response.use(
       _silent?: boolean
     }
 
-    // Handle 401 Unauthorized — verify session is truly dead before redirecting
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-
-      // Don't redirect if this was the login or register request itself
-      const url = originalRequest.url || ''
-      const isAuthRequest =
-        url.includes('/login') || url.includes('/register') || url.includes('/verify-otp')
-      const isMyselfRequest = url.includes('/myself')
-
-      // If auth validation hasn't completed yet, suppress redirect for non-/myself calls.
-      // The AuthProvider /myself call will handle cleanup if the cookie is truly invalid.
-      if (!authValidationComplete && !isMyselfRequest) {
-        return Promise.reject(error)
-      }
-
-      if (!isAuthRequest && typeof window !== 'undefined') {
-        // If a guest session is active (or being initialized), do NOT redirect to /login.
-        // Guest users are unauthenticated by design — 401s from authenticated
-        // endpoints are expected and should simply be rejected.
-        const hasGuestSession = !!localStorage.getItem('guest_session_token')
-        // If the user was never logged in (no token/logged_in flag), they're likely
-        // a first-time visitor whose guest session hasn't been created yet. Don't redirect.
-        const wasNeverLoggedIn = !localStorage.getItem('logged_in') && !localStorage.getItem('token')
-        if (hasGuestSession || wasNeverLoggedIn) {
-          return Promise.reject(error)
-        }
-
-        // For non-/myself 401s, verify the session is truly dead by calling /myself.
-        // This prevents transient 401s from specific endpoints from triggering logout.
-        if (!isMyselfRequest) {
-          try {
-            await apiClient.get('/myself')
-            // Session is still valid — the 401 was endpoint-specific, not session-related
-            return Promise.reject(error)
-          } catch {
-            // /myself also failed — session is truly dead, proceed with logout
-          }
-        }
-
-        localStorage.removeItem('user')
-        localStorage.removeItem('token')
-        localStorage.removeItem('logged_in')
-        window.location.href = '/login'
-      }
-
-      return Promise.reject(error)
-    }
-
     // Handle 429 Too Many Requests — show rate-limit toast
     if (error.response?.status === 429) {
       const retryAfter = error.response.headers?.['retry-after']
@@ -202,7 +145,7 @@ apiClient.interceptors.response.use(
       const silentUrls = ['/config', '/subscriptions/current', '/domains']
       const isSilentUrl = silentUrls.some(u => originalRequest.url?.includes(u))
 
-      if (!isSilentUrl && status !== 401 && (status !== 403 || authValidationComplete)) {
+      if (!isSilentUrl && status !== 401) {
         let userMessage: string
 
         if (status === 422 && data?.errors) {

@@ -1,17 +1,21 @@
 import { useQuery } from '@tanstack/react-query'
-import { getSubscription } from '@/lib/api/endpoints/subscriptions'
+import { rpc, RpcError } from '@/lib/api/rpc'
 import { queryKeys } from '@/lib/query/keys'
+import type { Subscription } from '@/types/entities/subscription'
 
 export function useSubscription() {
-  return useQuery({
+  return useQuery<Subscription | null>({
     queryKey: queryKeys.subscriptions.current(),
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       try {
-        const response = await getSubscription()
-        return response.data
+        const result = await rpc<{ subscription: Subscription | null; plan: Record<string, unknown> | null }>(
+          'billing.subscription',
+          {},
+          { skipDedup: true, signal }
+        )
+        return result.subscription
       } catch (error) {
-        // If user has no subscription, return null instead of error
-        if ((error as any).response?.status === 404) {
+        if (error instanceof RpcError && (error.isAuthError || error.isNotFound)) {
           return null
         }
         throw error
@@ -19,8 +23,7 @@ export function useSubscription() {
     },
     staleTime: 2 * 60 * 1000,
     retry: (failureCount, error) => {
-      // Don't retry 404s
-      if ((error as any).response?.status === 404) return false
+      if (error instanceof RpcError && error.isNotFound) return false
       return failureCount < 2
     },
   })

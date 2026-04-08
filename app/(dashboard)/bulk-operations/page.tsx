@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import apiClient from '@/lib/api/client'
 import { useBulkImportInstances, useBulkOperationsMutations } from '@/lib/hooks/queries/useBulkOperations'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 interface BulkInstance {
   id: number
@@ -108,7 +109,7 @@ export default function BulkOperationsPage() {
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
+            <LottieLoader size={80} />
           </div>
         ) : instances.length === 0 ? (
           <div className="mt-4 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">

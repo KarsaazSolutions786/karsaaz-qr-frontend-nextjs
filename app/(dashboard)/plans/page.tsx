@@ -6,6 +6,7 @@ import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { useDeletePlan, useDuplicatePlan } from '@/lib/hooks/mutations/usePlanMutations'
 import type { SubscriptionPlan } from '@/types/entities/plan'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function PlansPage() {
   const { t } = useTranslation()
@@ -75,7 +76,7 @@ export default function PlansPage() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+            <LottieLoader size={80} />
             <p className="mt-2 text-sm text-gray-600">{t('Loading plans...')}</p>
           </div>
         ) : data && data.data.length > 0 ? (

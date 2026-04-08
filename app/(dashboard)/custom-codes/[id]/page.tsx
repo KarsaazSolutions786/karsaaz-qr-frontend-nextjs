@@ -7,6 +7,7 @@ import { useCustomCode, useCustomCodePositions } from '@/lib/hooks/queries/useCu
 import { useUpdateCustomCode } from '@/lib/hooks/mutations/useCustomCodeMutations'
 import type { CreateCustomCodeRequest } from '@/types/entities/custom-code'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const LANGUAGES = [
   { value: 'javascript', label: 'JavaScript' },
@@ -55,7 +56,7 @@ export default function EditCustomCodePage({ params }: { params: Promise<{ id: s
 
   if (isLoading) return (
     <div className="flex min-h-96 items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+      <LottieLoader size={80} />
     </div>
   )
   if (!code) return <div className="text-center py-12">{t('Custom code not found')}</div>

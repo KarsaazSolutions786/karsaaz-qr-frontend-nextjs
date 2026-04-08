@@ -1,7 +1,7 @@
 'use client'
 
 import { QRCode } from '@/types/entities/qrcode'
-import { useTranslation } from '@/lib/i18n'
+import { BackendQRPreview } from '@/components/qr/BackendQRPreview'
 
 interface QRCodePreviewProps {
   qrcode: QRCode
@@ -9,34 +9,23 @@ interface QRCodePreviewProps {
 }
 
 export function QRCodePreview({ qrcode, size = 256 }: QRCodePreviewProps) {
-  const { t } = useTranslation()
-  // In a real implementation, this would use qrcode.react or similar library
-  // For now, it's a placeholder showing the pattern
-
   return (
     <div className="flex flex-col items-center gap-4">
       <div
-        className="rounded-lg border-4 border-white bg-white shadow-lg"
-        style={{
-          width: size,
-          height: size,
-        }}
+        className="relative rounded-lg border-4 border-white bg-white shadow-lg overflow-hidden"
+        style={{ width: size, height: size }}
       >
-        {/* Placeholder for actual QR code */}
-        <div className="flex h-full w-full items-center justify-center bg-gray-100">
-          <div className="text-center">
-            <div className="text-6xl">⊞</div>
-            <div className="mt-2 text-xs text-gray-500">{t('QR Code')}</div>
-          </div>
-        </div>
+        <BackendQRPreview
+          data={qrcode.data as Record<string, any>}
+          qrType={qrcode.type}
+          config={qrcode.designerConfig}
+          qrId={qrcode.id}
+          className="w-full h-full"
+        />
       </div>
 
-      {qrcode.customization?.logoUrl && (
-        <div className="text-xs text-gray-500">{t('Logo')}: {qrcode.customization.logoUrl}</div>
-      )}
-
       <div className="text-sm text-gray-600">
-        {t('Style')}: {qrcode.customization?.style || 'squares'}
+        Style: {qrcode.customization?.style || qrcode.designerConfig?.moduleShape || 'squares'}
       </div>
     </div>
   )

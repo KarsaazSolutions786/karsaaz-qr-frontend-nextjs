@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/context/AuthContext'
 import { supportTicketsAPI } from '@/lib/api/endpoints/support-tickets'
 import TicketConversation from '@/components/features/support/TicketConversation'
 import type { SupportTicket, TicketMessage } from '@/types/entities/support-ticket'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const STATUS_BADGES: Record<SupportTicket['status'], { label: string; className: string }> = {
   OPEN: { label: 'Open', className: 'bg-blue-100 text-blue-800' },
@@ -88,7 +89,7 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+        <LottieLoader size={80} />
       </div>
     )
   }

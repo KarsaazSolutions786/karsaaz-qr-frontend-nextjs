@@ -3,7 +3,8 @@
 import { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Loader2, FileCode2, ChevronLeft } from 'lucide-react'
+import { FileCode2, ChevronLeft } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import { Button } from '@/components/ui/button'
 import { useTemplates, useTemplateCategories } from '@/lib/hooks/queries/useTemplates'
 import type { QRCodeTemplate } from '@/types/entities/template'
@@ -62,7 +63,7 @@ export function TemplateSelectionAdapter({
   if (isLoading || autoFallthrough) {
     return (
       <div className="flex items-center justify-center min-h-[300px]">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+        <LottieLoader size={80} />
       </div>
     )
   }

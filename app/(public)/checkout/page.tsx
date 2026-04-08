@@ -9,6 +9,7 @@ import { useCheckout } from '@/lib/hooks/mutations/useSubscribe'
 import Link from 'next/link'
 import { CreditCard, Building2, Wallet, RefreshCcw, Shield, ArrowLeft } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // Development fallback processors (used when API fails or returns empty)
 const DEV_FALLBACK_PROCESSORS: PaymentProcessor[] = [
@@ -127,7 +128,7 @@ function CheckoutContent() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+          <LottieLoader size={100} className="mx-auto" />
           <p className="mt-4 text-gray-600">{t('Loading checkout...')}</p>
         </div>
       </div>
@@ -346,22 +347,7 @@ function CheckoutContent() {
             >
               {checkout.isPending ? (
                 <span className="flex items-center justify-center gap-3">
-                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                      fill="none"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
-                  </svg>
+                  <LottieLoader size={80} />
                   {t('Processing Payment...')}
                 </span>
               ) : (
@@ -430,7 +416,7 @@ export default function CheckoutPage() {
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+            <LottieLoader size={100} className="mx-auto" />
             <p className="mt-4 text-gray-600">{t('Loading checkout...')}</p>
           </div>
         </div>

@@ -6,6 +6,7 @@ import { usePages } from '@/lib/hooks/queries/usePages'
 import { useDeletePage } from '@/lib/hooks/mutations/usePageMutations'
 import type { Page } from '@/types/entities/page'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function PagesPage() {
   const { t } = useTranslation()
@@ -50,7 +51,7 @@ export default function PagesPage() {
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+            <LottieLoader size={80} />
             <p className="mt-2 text-sm text-gray-600">{t('Loading...')}</p>
           </div>
         ) : data && data.data.length > 0 ? (

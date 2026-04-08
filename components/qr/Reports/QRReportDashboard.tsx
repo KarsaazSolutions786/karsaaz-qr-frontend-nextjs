@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { useQRCodeAnalytics } from '@/lib/hooks/queries/useQRCodes'
 import { ScansPerLanguage } from '@/components/analytics/ScansPerLanguage'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // Lazy-load recharts-based chart components to reduce main bundle size
 const ChartSkeleton = () => <div className="animate-pulse h-64 bg-muted rounded" />
@@ -59,7 +60,7 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+        <LottieLoader size={80} />
       </div>
     )
   }

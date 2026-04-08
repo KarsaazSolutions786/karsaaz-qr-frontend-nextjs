@@ -16,6 +16,7 @@ import { generateQRCodeSVG } from '@/lib/utils/svg-renderer';
 import { downloadPNG, downloadSVG, downloadPDF, downloadEPS } from '@/lib/utils/download-utils';
 import { sanitizeSvg } from '@/lib/utils/dom-safety';
 import { useTranslation } from '@/lib/i18n';
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export interface QRCodePreviewProps {
   data: string;
@@ -151,7 +152,7 @@ export const QRCodePreview = React.forwardRef<QRCodePreviewRef, QRCodePreviewPro
       return (
         <div className={`qr-preview-loading ${className}`}>
           <div className="flex items-center justify-center p-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <LottieLoader size={100} />
           </div>
         </div>
       );

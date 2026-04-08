@@ -26,6 +26,7 @@ import { GoogleLoginButton } from './GoogleLoginButton'
 import { TwitterLoginButton } from './TwitterLoginButton'
 import { FacebookLoginButton } from './FacebookLoginButton'
 import { Auth0LoginButton } from './Auth0LoginButton'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -40,7 +41,7 @@ export function LoginTypeSelector() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center rounded-[23px] bg-white/30 p-12 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/30 border-t-white" />
+        <LottieLoader size={80} />
       </div>
     )
   }

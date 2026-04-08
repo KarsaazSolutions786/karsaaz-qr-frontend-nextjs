@@ -27,6 +27,7 @@ import {
 import { useGuest } from '@/lib/hooks/useGuest'
 import { GuestSignupPrompt } from '@/components/guest/GuestSignupPrompt'
 import { GuestLimitsBanner } from '@/components/guest/GuestLimitsBanner'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -34,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       fallback={
         <div className="flex h-screen karsaaz-bg dark:bg-gray-900">
           <div className="flex-1 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            <LottieLoader size={80} />
           </div>
         </div>
       }
@@ -189,7 +190,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex h-screen karsaaz-bg dark:bg-gray-900">
         <div className="flex-1 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+          <LottieLoader size={80} />
         </div>
       </div>
     )

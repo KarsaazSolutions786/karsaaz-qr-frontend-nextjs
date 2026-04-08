@@ -6,8 +6,7 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import { MapPin, Globe } from 'lucide-react';
+import React, { useState, useMemo } from 'react';import { MapPin, Globe } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
 
 export interface LocationData {
@@ -23,19 +22,16 @@ export interface LocationData {
 export interface LocationMapProps {
   locations: LocationData[];
   totalScans: number;
-  height?: number;
   showList?: boolean;
 }
 
 export function LocationMap({
   locations,
   totalScans,
-  height = 400,
   showList = true,
 }: LocationMapProps) {
   const { t } = useTranslation();
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
   
   // Calculate percentages
   const locationsWithPercentage = useMemo(() => {
@@ -66,135 +62,71 @@ export function LocationMap({
             </p>
           </div>
         </div>
-        
-        {/* View Toggle */}
-        <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
-          <button
-            onClick={() => setViewMode('map')}
-            className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-              viewMode === 'map'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {t('Map')}
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`px-3 py-1.5 rounded text-sm font-medium transition-colors ${
-              viewMode === 'list'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {t('List')}
-          </button>
-        </div>
       </div>
       
-      {/* Content */}
+      {/* Location List */}
       <div className="p-6">
-        {viewMode === 'map' ? (
-          <div>
-            {/* Map Placeholder */}
+        <div className="space-y-3">
+          {topLocations.map((location, index) => (
             <div
-              className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-200"
-              style={{ height }}
+              key={`${location.countryCode}-${location.city || 'all'}`}
+              className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+              onClick={() => setSelectedCountry(
+                selectedCountry === location.country ? null : location.country
+              )}
             >
-              <div className="text-center">
-                <Globe className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 font-medium">{t('Interactive Map')}</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  {t('Integrate with Mapbox, Google Maps, or Leaflet')}
-                </p>
+              {/* Rank */}
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-sm">{index + 1}</span>
               </div>
-            </div>
-            
-            {/* Legend */}
-            <div className="mt-4 flex items-center justify-between">
-              <div className="flex items-center gap-4">
+              
+              {/* Location Info */}
+              <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-blue-600 rounded-full" />
-                  <span className="text-sm text-gray-600">{t('High Activity')}</span>
+                  <MapPin className="w-4 h-4 text-gray-400" />
+                  <span className="font-medium text-gray-900">
+                    {location.city ? `${location.city}, ` : ''}{location.country}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-blue-300 rounded-full" />
-                  <span className="text-sm text-gray-600">{t('Medium Activity')}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-blue-100 rounded-full" />
-                  <span className="text-sm text-gray-600">{t('Low Activity')}</span>
+                <div className="text-sm text-gray-500 mt-0.5">
+                  {location.countryCode}
                 </div>
               </div>
               
-              <div className="text-sm text-gray-500">
-                {t('Click markers for details')}
+              {/* Stats */}
+              <div className="text-right">
+                <div className="text-lg font-bold text-gray-900">
+                  {location.scans.toLocaleString()}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {location.percentage?.toFixed(1)}%
+                </div>
+              </div>
+              
+              {/* Bar */}
+              <div className="w-32">
+                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-blue-600 rounded-full transition-all"
+                    style={{ width: `${(location.scans / maxScans) * 100}%` }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {topLocations.map((location, index) => (
-              <div
-                key={`${location.countryCode}-${location.city || 'all'}`}
-                className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                onClick={() => setSelectedCountry(
-                  selectedCountry === location.country ? null : location.country
-                )}
-              >
-                {/* Rank */}
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-white font-bold text-sm">{index + 1}</span>
-                </div>
-                
-                {/* Location Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-gray-400" />
-                    <span className="font-medium text-gray-900">
-                      {location.city ? `${location.city}, ` : ''}{location.country}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-500 mt-0.5">
-                    {location.countryCode}
-                  </div>
-                </div>
-                
-                {/* Stats */}
-                <div className="text-right">
-                  <div className="text-lg font-bold text-gray-900">
-                    {location.scans.toLocaleString()}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {location.percentage?.toFixed(1)}%
-                  </div>
-                </div>
-                
-                {/* Bar */}
-                <div className="w-32">
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-blue-600 rounded-full transition-all"
-                      style={{ width: `${(location.scans / maxScans) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            
-            {locations.length > 10 && (
-              <div className="text-center pt-2">
-                <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                  {t('View all')} {locations.length} {t('locations')} →
-                </button>
-              </div>
-            )}
-          </div>
-        )}
+          ))}
+          
+          {locations.length > 10 && (
+            <div className="text-center pt-2">
+              <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                {t('View all')} {locations.length} {t('locations')} →
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       
       {/* Top Countries Summary */}
-      {showList && viewMode === 'map' && (
+      {showList && (
         <div className="border-t border-gray-200 p-6 bg-gray-50">
           <h4 className="text-sm font-semibold text-gray-900 mb-4">
             {t('Top 5 Countries')}

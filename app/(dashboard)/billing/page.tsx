@@ -6,6 +6,7 @@ import { useTranslation } from '@/lib/i18n'
 import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
 import { BalloonSelector } from '@/components/ui/balloon-selector'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const BILLING_KEYS = ['billing_collection_enabled', 'billing_private_form', 'billing_company_form']
 
@@ -55,7 +56,7 @@ export default function BillingPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

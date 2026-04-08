@@ -9,6 +9,7 @@ import { blogPostsAPI } from '@/lib/api/endpoints/blog-posts'
 import BlogPostForm, { type BlogPostFormData } from '@/components/features/blog/BlogPostForm'
 import { useTranslation } from '@/lib/i18n'
 import { envConfig } from '@/lib/config/env-config'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
@@ -46,7 +47,7 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
+        <LottieLoader size={80} />
       </div>
     )
   }

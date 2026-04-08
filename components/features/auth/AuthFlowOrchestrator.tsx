@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, createContext, useContext, type React
 import { useTranslation } from '@/lib/i18n'
 import { LoginForm } from './LoginForm'
 import { OTPVerificationForm } from './OTPVerificationForm'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 type AuthStep = 'login' | 'twoFactor' | 'redirect'
 
@@ -92,7 +93,7 @@ export function AuthFlowOrchestrator({
 
         {state.step === 'redirect' && (
           <div className="flex flex-col items-center gap-3 py-8">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-purple-200 border-t-purple-600" />
+            <LottieLoader size={80} />
             <p className="text-sm text-gray-600">{t('Redirecting...')}</p>
           </div>
         )}

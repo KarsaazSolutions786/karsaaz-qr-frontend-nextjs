@@ -101,11 +101,6 @@ export function useToast() {
   // API Error handler - compatible with Project 1's showApiError
   const showApiError = useCallback(
     (apiError: { message?: string; response?: { status?: number } }) => {
-      // Handle 401 Unauthorized
-      if (apiError.response?.status === 401) {
-        window.dispatchEvent(new CustomEvent('auth:invalid-token'))
-      }
-
       const message = apiError.message || 'An unexpected error occurred'
       return sonnerToast.error(message, {
         duration: DEFAULT_DURATION.error,

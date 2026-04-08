@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/context/AuthContext'
 import { useTranslation } from '@/lib/i18n'
 import { permitted, verified } from '@/lib/utils/permissions'
-import { Loader2 } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 interface ProtectedRouteProps {
   /** Permission slug required to access this route (empty string = any authenticated user) */
@@ -89,8 +89,8 @@ export function ProtectedRoute({
   if (accessState === 'checking' || accessState === 'denied') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] p-8">
-        <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
-        <p className="text-muted-foreground text-center">
+        <LottieLoader size={100} />
+        <p className="text-muted-foreground text-center mt-2">
           {accessState === 'checking'
             ? t('Verifying access...')
             : t('Access denied. Redirecting...')}

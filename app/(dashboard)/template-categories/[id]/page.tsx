@@ -8,6 +8,7 @@ import {
   useUpdateTemplateCategory,
 } from '@/lib/hooks/queries/useTemplates'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const inputClass = 'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
 
@@ -66,7 +67,7 @@ export default function TemplateCategoryEditPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
+        <LottieLoader size={80} />
       </div>
     )
   }

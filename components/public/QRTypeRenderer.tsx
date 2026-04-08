@@ -4,6 +4,7 @@ import React, { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import { hasLandingPage } from '@/lib/utils/qr-preview-router'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // Dynamically import preview components
 const BusinessProfilePreview = dynamic(
@@ -138,7 +139,7 @@ export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="text-center">
-            <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <LottieLoader size={120} className="mx-auto mb-4" />
             <p className="text-gray-600">{t('Loading QR code content...')}</p>
           </div>
         </div>

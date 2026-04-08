@@ -5,6 +5,7 @@ import { useLeadForms, useLeadFormResponses } from '@/lib/hooks/queries/useLeadF
 import { useDeleteLeadFormResponse } from '@/lib/hooks/mutations/useLeadFormMutations'
 import type { LeadForm, LeadFormResponse, LeadFormResponseField } from '@/types/entities/lead-form'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // ─── CSV helpers ─────────────────────────────────────────────────────────────
 
@@ -225,7 +226,7 @@ export default function LeadFormsPage() {
 
       {isLoading ? (
         <div className="text-center py-16">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+          <LottieLoader size={80} />
           <p className="mt-3 text-sm text-gray-500">{t('Loading lead forms…')}</p>
         </div>
       ) : data && data.data.length > 0 ? (

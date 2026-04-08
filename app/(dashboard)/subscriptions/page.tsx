@@ -7,6 +7,7 @@ import { useTranslation } from '@/lib/i18n'
 import { useAdminSubscriptions } from '@/lib/hooks/queries/useAdminSubscriptions'
 import { useDeletePendingSubscriptions } from '@/lib/hooks/mutations/useAdminSubscriptionMutations'
 import type { AdminSubscription } from '@/lib/api/endpoints/admin-subscriptions'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 function StatusBadge({ status }: { status?: string }) {
   const s = status?.toLowerCase() ?? ''
@@ -76,7 +77,7 @@ export default function SubscriptionsPage() {
       {/* Table */}
       {isLoading ? (
         <div className="flex justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+          <LottieLoader size={80} />
         </div>
       ) : data && data.data.length > 0 ? (
         <>

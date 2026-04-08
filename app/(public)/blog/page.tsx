@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { blogPostsAPI } from '@/lib/api/endpoints/blog-posts'
 import type { BlogPost } from '@/types/entities/blog-post'
-import { Loader2, Calendar } from 'lucide-react'
+import { Calendar } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useTranslation } from '@/lib/i18n'
 
 export default function BlogListingPage() {
@@ -30,7 +31,7 @@ export default function BlogListingPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+        <LottieLoader size={80} />
       </div>
     )
   }

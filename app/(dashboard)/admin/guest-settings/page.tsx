@@ -8,6 +8,7 @@ import {
 } from '@/lib/api/endpoints/guest'
 import { useTranslation } from '@/lib/i18n'
 import { QR_TYPES } from '@/lib/constants/qr-types'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const ALL_QR_TYPES = QR_TYPES.map(t => ({ id: t.id, name: t.name, cat: t.cat }))
 const ALL_EXPORT_FORMATS = ['png', 'svg', 'pdf', 'eps']
@@ -121,7 +122,7 @@ export default function AdminGuestSettingsPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-600 border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

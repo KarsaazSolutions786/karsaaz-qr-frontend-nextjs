@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useContact } from '@/lib/hooks/queries/useContacts'
 import { useUpdateContact } from '@/lib/hooks/mutations/useContactMutations'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function ContactDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -30,7 +31,7 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
 
   if (isLoading) return (
     <div className="flex min-h-96 items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+      <LottieLoader size={80} />
     </div>
   )
   if (!contact) return <div className="text-center py-12">{t('Contact not found')}</div>

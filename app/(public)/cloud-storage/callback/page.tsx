@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
+import { CheckCircle, XCircle } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useTranslation } from '@/lib/i18n'
 
 /**
@@ -108,7 +109,7 @@ function CallbackContent() {
       <div className="max-w-md w-full mx-4 p-8 bg-white rounded-xl shadow-lg text-center">
         {status === 'processing' && (
           <>
-            <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+            <LottieLoader size={100} className="mx-auto mb-4" />
             <h1 className="text-xl font-semibold text-gray-900 mb-2">
               {t('Processing Authorization')}
             </h1>
@@ -162,7 +163,7 @@ export default function CloudStorageOAuthCallbackPage() {
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="max-w-md w-full mx-4 p-8 bg-white rounded-xl shadow-lg text-center">
-          <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+                <LottieLoader size={100} className="mx-auto mb-4" />
           <h1 className="text-xl font-semibold text-gray-900 mb-2">
             {t('Loading...')}
           </h1>

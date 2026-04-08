@@ -139,6 +139,7 @@ export function useRpcMutation<TResult = unknown, TParams = Record<string, unkno
   return useMutation<TResult, RpcError, TParams>({
     mutationFn: (params) =>
       rpc<TResult>(method, params as Record<string, unknown>),
+    ...mutationOptions,
     onSuccess: (data, variables, context) => {
       // Auto-invalidate related queries
       if (invalidates?.length) {
@@ -146,9 +147,9 @@ export function useRpcMutation<TResult = unknown, TParams = Record<string, unkno
           queryClient.invalidateQueries({ queryKey: rpcKeys.method(m) })
         }
       }
-      mutationOptions?.onSuccess?.(data, variables, context)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(mutationOptions?.onSuccess as ((...args: any[]) => unknown) | undefined)?.(data, variables, context)
     },
-    ...mutationOptions,
   })
 }
 

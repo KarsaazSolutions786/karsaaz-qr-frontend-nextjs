@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const KEYS = [
   'account_credit.dynamic_qrcode_price',
@@ -44,7 +45,7 @@ export default function CreditPricingPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
+        <LottieLoader size={80} />
       </div>
     )
   }

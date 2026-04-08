@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { X, CheckCircle, AlertCircle } from 'lucide-react';
 import { GoogleAuthButton } from './GoogleAuthButton';
 import { useTranslation } from '@/lib/i18n';
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export interface GoogleAuthModalProps {
   isOpen: boolean;
@@ -126,7 +127,7 @@ export function GoogleAuthModal({
 
           {authState === 'loading' && (
             <div className="py-8 text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+              <LottieLoader size={100} className="mx-auto mb-4" />
               <p className="text-sm text-gray-600">{t('Authenticating with Google...')}</p>
             </div>
           )}

@@ -15,6 +15,7 @@ import {
   type QrTypeLimit,
 } from '@/components/features/plans/QrTypeLimitsEditor'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const FREQUENCY_OPTIONS = [
   { value: 'monthly', label: 'Monthly' },
@@ -161,7 +162,7 @@ export default function EditPlanPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

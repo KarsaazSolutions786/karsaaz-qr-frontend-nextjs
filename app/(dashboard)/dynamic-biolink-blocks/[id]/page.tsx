@@ -8,6 +8,7 @@ import { useUpdateDynamicBiolinkBlock } from '@/lib/hooks/mutations/useDynamicBi
 import { dynamicBiolinkBlocksAPI } from '@/lib/api/endpoints/dynamic-biolink-blocks'
 import type { BiolinkBlockField, BiolinkFieldType, CreateDynamicBiolinkBlockRequest } from '@/types/entities/dynamic-biolink-block'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const FIELD_TYPES: { value: BiolinkFieldType; label: string }[] = [
   { value: 'text', label: 'Text' },
@@ -118,7 +119,7 @@ export default function EditDynamicBiolinkBlockPage({ params }: { params: Promis
 
   if (isLoading) return (
     <div className="flex min-h-96 items-center justify-center">
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+      <LottieLoader size={80} />
     </div>
   )
   if (!block) return <div className="text-center py-12">{t('Block not found')}</div>

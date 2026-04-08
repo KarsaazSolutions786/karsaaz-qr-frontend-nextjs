@@ -16,6 +16,7 @@ import { DomainVisibilityModal } from '@/components/features/domains/DomainVisib
 import type { DomainConnectivity, DomainAvailability } from '@/types/entities/domain'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function EditDomainPage() {
   const { t } = useTranslation()
@@ -51,7 +52,7 @@ export default function EditDomainPage() {
   if (isLoading) {
     return (
       <div className="flex h-48 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

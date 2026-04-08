@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import WebsiteDisplay from './WebsiteDisplay'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Monitor, Smartphone, Tablet, Loader2, AlertCircle } from 'lucide-react'
+import { Monitor, Smartphone, Tablet, AlertCircle } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useTranslation } from '@/lib/i18n'
 
 interface Website {
@@ -92,7 +93,7 @@ export default function WebsitePreview({ website }: WebsitePreviewProps) {
           {isLoading && (
             <div className="flex items-center justify-center h-[600px] bg-white dark:bg-gray-950">
               <div className="text-center">
-                <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+                <LottieLoader size={100} className="mx-auto mb-4" />
                 <p className="text-gray-600 dark:text-gray-400">{t('Loading website...')}</p>
               </div>
             </div>

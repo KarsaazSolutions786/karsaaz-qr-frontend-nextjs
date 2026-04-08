@@ -13,6 +13,7 @@ import {
   useGenerateMagicUrl,
 } from '@/lib/hooks/mutations/useUserMutations'
 import { Filter, Plus, Copy, Check, X, Loader2 } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import type { User } from '@/types/entities/user'
 import { UserFilterPanel, type UserFilters } from './UserFilterPanel'
 import { UserBalanceModal } from './UserBalanceModal'
@@ -349,7 +350,7 @@ export function UserListContent({ paying }: UserListContentProps) {
       <div className="mt-6">
         {isLoading ? (
           <div className="text-center py-12">
-            <Loader2 className="inline-block h-8 w-8 animate-spin text-gray-400" />
+            <LottieLoader size={80} />
             <p className="mt-2 text-sm text-gray-600">{t('Loading users...')}</p>
           </div>
         ) : isError ? (

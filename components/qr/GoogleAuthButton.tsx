@@ -8,6 +8,7 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from '@/lib/i18n';
+import { useGoogleLogin } from '@/lib/hooks/mutations/useGoogleLogin';
 
 export interface GoogleAuthButtonProps {
   onSuccess?: (credential: string) => void;
@@ -17,34 +18,18 @@ export interface GoogleAuthButtonProps {
 }
 
 export function GoogleAuthButton({
-  onSuccess,
   onError,
   text = 'signin_with',
   className = '',
 }: GoogleAuthButtonProps) {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
+  const { redirectToGoogle } = useGoogleLogin();
 
   const handleGoogleAuth = async () => {
     setIsLoading(true);
     try {
-      // In production, this would integrate with Google OAuth
-      // For now, this is a placeholder implementation
-      
-      // Example implementation would be:
-      // const response = await fetch('/api/auth/google/url');
-      // const { authUrl } = await response.json();
-      // window.location.href = authUrl;
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Google OAuth would be triggered here');
-      }
-      
-      // Simulate OAuth flow
-      setTimeout(() => {
-        onSuccess?.('mock-credential-token');
-        setIsLoading(false);
-      }, 1000);
+      redirectToGoogle();
     } catch (error) {
       console.error('Google auth error:', error);
       onError?.(error instanceof Error ? error : new Error(t('Authentication failed')));

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import apiClient from '@/lib/api/client'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 type ReportStatus = 'pending' | 'reviewed' | 'resolved' | 'dismissed'
 
@@ -102,7 +103,7 @@ export default function AbuseReportsPage() {
       <div className="mt-6">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-yellow-200 border-t-yellow-600" />
+            <LottieLoader size={80} />
           </div>
         ) : reports.length === 0 ? (
           <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">

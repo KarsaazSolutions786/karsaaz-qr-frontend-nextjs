@@ -103,11 +103,12 @@ export async function generatePayLink(
   isChangePlan?: boolean
 ) {
   const params = isChangePlan ? '?action=change-plan' : ''
-  const response = await apiClient.post<{ link: string }>(
+  const response = await apiClient.post<{ success: boolean; data: { link: string } }>(
     `/payment-processors/${processorSlug}/generate-pay-link/${planId}${params}`,
     data ?? {}
   )
-  return response.data
+  // The API wraps the link in a nested data object: { success: true, data: { link: "..." } }
+  return response.data.data
 }
 
 /**

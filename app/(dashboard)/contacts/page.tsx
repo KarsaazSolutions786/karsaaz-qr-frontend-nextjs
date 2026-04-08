@@ -7,6 +7,7 @@ import type { Contact } from '@/types/entities/contact'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
 import { VirtualizedTable } from '@/components/common/VirtualizedList'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function ContactsPage() {
   const { t } = useTranslation()
@@ -115,7 +116,7 @@ export default function ContactsPage() {
       <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
         {isLoading ? (
           <div className="flex h-48 items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+            <LottieLoader size={80} />
           </div>
         ) : contacts.length === 0 ? (
           <div className="flex h-48 flex-col items-center justify-center gap-2 text-gray-500">

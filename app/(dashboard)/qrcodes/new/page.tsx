@@ -14,7 +14,7 @@ import { useUseTemplate } from '@/lib/hooks/queries/useTemplates'
 import { QR_TYPES } from '@/lib/constants/qr-types'
 import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 /**
  * Create QR Code Page
@@ -228,7 +228,7 @@ function CreateQRCodeInner() {
         {/* Mode: Applying template (loading) */}
         {mode === 'applying' && (
           <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-            <Loader2 className="w-10 h-10 animate-spin text-purple-500" />
+            <LottieLoader size={100} />
             <p className="text-lg text-gray-600">{t('Applying template...')}</p>
           </div>
         )}

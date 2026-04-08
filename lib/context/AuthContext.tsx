@@ -11,7 +11,8 @@ import React, {
 } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import apiClient, { markAuthValidationComplete } from '@/lib/api/client'
+import apiClient from '@/lib/api/client'
+import { rpc, rpcComposite, rpcClearCache } from '@/lib/api/rpc'
 import { envConfig } from '@/lib/config/env-config'
 import { queryKeys } from '@/lib/query/keys'
 import { User } from '@/types/entities/user'
@@ -93,21 +94,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (!isLoggedIn) {
       // isLoading already initialized to false when no session exists
-      markAuthValidationComplete()
       return
     }
 
-    apiClient
-      .get<{ data: User }>('/myself')
-      .then(response => {
-        const freshUser = (response.data as any).data ?? response.data
-        setUser(freshUser as User)
+    rpcComposite<{
+      user: User
+      subscription: { subscription: Record<string, unknown> | null; plan: Record<string, unknown> | null }
+      usage: Record<string, unknown>
+      qr_count: { total: number; active: number }
+      bootstrap: Record<string, unknown>
+    }>('appInit', { lang: 'en', platform: 'web' })
+      .then(initData => {
+        const freshUser = initData.user
+        setUser(freshUser)
         if (typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(freshUser))
-          // Ensure logged_in flag is set (migration from legacy token-only storage)
           localStorage.setItem('logged_in', 'true')
         }
+        // Pre-populate React Query caches to avoid redundant network requests
         queryClient.setQueryData(queryKeys.auth.currentUser(), freshUser)
+        queryClient.setQueryData(queryKeys.subscriptions.current(), initData.subscription?.subscription ?? null)
       })
       .catch(() => {
         // Token/cookie is invalid -- clear everything
@@ -119,7 +125,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       })
       .finally(() => {
-        markAuthValidationComplete()
         setIsLoading(false)
       })
   }, [queryClient])
@@ -130,8 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const refreshUserData = useCallback(async (): Promise<User | null> => {
     try {
-      const response = await apiClient.get<{ data: User }>('/myself')
-      const freshUser = (response.data as any).data ?? (response.data as unknown as User)
+      const freshUser = await rpc<User>('user.profile', {}, { skipDedup: true })
       setUser(freshUser)
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(freshUser))
@@ -201,6 +205,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     queryClient.setQueryData(queryKeys.auth.currentUser(), null)
     queryClient.clear()
+    rpcClearCache()
 
     // Resolve after_logout_action from app config (stored in localStorage after load)
     const afterLogoutAction =

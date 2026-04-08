@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Loader2 } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useRole } from '@/lib/hooks/queries/useRoles'
 import { useUpdateRole } from '@/lib/hooks/mutations/useRoleMutations'
 import { PermissionsInput } from '@/components/features/roles/PermissionsInput'
@@ -65,7 +66,7 @@ export default function EditRolePage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <LottieLoader size={80} />
       </div>
     )
   }

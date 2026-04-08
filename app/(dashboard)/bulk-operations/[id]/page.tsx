@@ -4,6 +4,7 @@ import { use } from 'react'
 import Link from 'next/link'
 import { useBulkImportInstance } from '@/lib/hooks/queries/useBulkOperations'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 interface BulkInstance {
   id: number
   name: string | null
@@ -39,7 +40,7 @@ export default function BulkOperationDetailPage({ params }: { params: Promise<{ 
   if (loading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

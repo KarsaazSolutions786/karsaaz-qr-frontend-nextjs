@@ -6,7 +6,7 @@
 
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { FixedSizeList, VariableSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { useTranslation } from '@/lib/i18n';
@@ -19,6 +19,8 @@ export interface VirtualizedListProps<T> {
   width?: string | number;
   overscanCount?: number;
   className?: string;
+  /** When this value changes, the list scrolls back to the top (e.g. pass the current page number). */
+  scrollResetKey?: React.Key;
 }
 
 export function VirtualizedList<T>({
@@ -29,9 +31,19 @@ export function VirtualizedList<T>({
   width = '100%',
   overscanCount = 5,
   className = '',
+  scrollResetKey,
 }: VirtualizedListProps<T>) {
   const { t } = useTranslation();
   const isVariableHeight = typeof itemHeight === 'function';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const listRef = useRef<any>(null);
+
+  // Scroll back to the top whenever the page (or any external reset key) changes
+  useEffect(() => {
+    if (scrollResetKey !== undefined) {
+      listRef.current?.scrollTo(0);
+    }
+  }, [scrollResetKey]);
   
   const Row = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
     const item = items[index];
@@ -58,6 +70,7 @@ export function VirtualizedList<T>({
         <AutoSizer>
           {({ height: autoHeight, width: autoWidth }) => (
             <VariableSizeList
+              ref={listRef}
               height={autoHeight}
               width={autoWidth}
               itemCount={items.length}
@@ -77,6 +90,7 @@ export function VirtualizedList<T>({
       <AutoSizer>
         {({ height: autoHeight, width: autoWidth }) => (
           <FixedSizeList
+            ref={listRef}
             height={autoHeight}
             width={autoWidth}
             itemCount={items.length}
@@ -104,6 +118,8 @@ export interface VirtualizedGridProps<T> {
   height?: number;
   gap?: number;
   className?: string;
+  /** When this value changes, the grid scrolls back to the top (e.g. pass the current page number). */
+  scrollResetKey?: React.Key;
 }
 
 export function VirtualizedGrid<T>({
@@ -114,9 +130,19 @@ export function VirtualizedGrid<T>({
   height = 600,
   gap = 16,
   className = '',
+  scrollResetKey,
 }: VirtualizedGridProps<T>) {
   const { t: tGrid } = useTranslation();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const listRef = useRef<any>(null);
   const rowCount = Math.ceil(items.length / columnCount);
+
+  // Scroll back to the top whenever the page (or any external reset key) changes
+  useEffect(() => {
+    if (scrollResetKey !== undefined) {
+      listRef.current?.scrollTo(0);
+    }
+  }, [scrollResetKey]);
   
   const Row = useCallback(({ index, style }: { index: number; style: React.CSSProperties }) => {
     const startIndex = index * columnCount;
@@ -152,6 +178,7 @@ export function VirtualizedGrid<T>({
       <AutoSizer>
         {({ height: autoHeight, width: autoWidth }) => (
           <FixedSizeList
+            ref={listRef}
             height={autoHeight}
             width={autoWidth}
             itemCount={rowCount}

@@ -107,7 +107,7 @@ export function QuickBiolinksExample() {
   const { t } = useTranslation();
   const handleCreate = async () => {
     try {
-      const biolinks = await biolinksAPI.create({
+      await biolinksAPI.create({
         slug: 'qr-123',
         title: 'John Doe',
         blocks: [
@@ -151,8 +151,6 @@ export function QuickBiolinksExample() {
           buttonTextColor: '#ffffff',
         },
       });
-
-      console.log('Created biolinks:', biolinks);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -172,9 +170,8 @@ export function CloneBiolinksExample({ sourceId }: { sourceId: number }) {
   const { t } = useTranslation();
   const handleClone = async () => {
     try {
-      const cloned = await biolinksAPI.clone(sourceId);
+      await biolinksAPI.clone(sourceId);
       toast.success(t('Biolinks cloned successfully!'));
-      console.log('Cloned biolinks:', cloned);
     } catch (error) {
       toast.error(t('Failed to clone biolinks'));
       console.error(error);

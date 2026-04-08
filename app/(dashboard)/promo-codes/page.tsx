@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { promoCodesAPI, type PromoCode } from '@/lib/api/endpoints/promo-codes'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 function StatusBadge({ active }: { active: boolean }) {
   const { t } = useTranslation()
@@ -75,7 +76,7 @@ export default function PromoCodesPage() {
       {/* Table */}
       {isLoading ? (
         <div className="flex justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+          <LottieLoader size={80} />
         </div>
       ) : data && data.data.length > 0 ? (
         <>

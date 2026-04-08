@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useTemplateCategories, useDeleteTemplateCategory } from '@/lib/hooks/queries/useTemplates'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function TemplateCategoriesPage() {
   const { t } = useTranslation()
@@ -34,7 +35,7 @@ export default function TemplateCategoriesPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
+          <LottieLoader size={80} />
         </div>
       ) : categories.length === 0 ? (
         <div className="mt-8 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">

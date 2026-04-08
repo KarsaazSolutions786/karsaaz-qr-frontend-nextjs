@@ -24,6 +24,7 @@ import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/design
 import { transformDesignToBackend } from '@/lib/qr/design-transformer'
 import { sanitizeSvg } from '@/lib/utils/dom-safety'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -274,7 +275,7 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
       return (
         <div className={`qr-backend-preview ${className}`}>
           <div className="flex items-center justify-center p-8">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
+            <LottieLoader size={80} />
           </div>
         </div>
       )

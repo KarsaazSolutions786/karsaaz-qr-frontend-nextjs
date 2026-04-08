@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import apiClient from '@/lib/api/client'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export default function PaymentThankYouPage() {
   const { t } = useTranslation()
@@ -56,7 +57,7 @@ export default function PaymentThankYouPage() {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mx-auto mb-6" />
+          <LottieLoader size={120} className="mx-auto mb-6" />
           <h1 className="text-xl font-bold text-gray-900">{t('Loading...')}</h1>
         </div>
       </div>

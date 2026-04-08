@@ -5,6 +5,7 @@ import { useSystemConfigs } from '@/lib/hooks/queries/useSystemConfigs'
 import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutations'
 import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 const CONFIG_KEYS = [
   'mail.mailers.smtp.host',
@@ -55,7 +56,7 @@ export default function SmtpSettingsPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

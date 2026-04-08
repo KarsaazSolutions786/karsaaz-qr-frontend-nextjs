@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useCloudConnection, useCloudStorageMutations } from '@/lib/hooks/queries/useCloudStorage'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 type CloudProvider = 'aws_s3' | 'google_cloud' | 'azure' | 'digitalocean'
 
@@ -83,7 +84,7 @@ export default function EditCloudStoragePage({ params }: { params: Promise<{ id:
   if (loading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
+        <LottieLoader size={80} />
       </div>
     )
   }

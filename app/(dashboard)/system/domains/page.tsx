@@ -5,6 +5,7 @@ import apiClient from '@/lib/api/client'
 import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 import type { DomainAvailability } from '@/types/entities/domain'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 interface Domain {
   id: number
@@ -94,7 +95,7 @@ export default function SystemDomainsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600" />
+        <LottieLoader size={80} />
       </div>
     )
   }

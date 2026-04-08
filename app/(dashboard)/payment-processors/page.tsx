@@ -9,6 +9,7 @@ import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutat
 import apiClient from '@/lib/api/client'
 import { PROCESSOR_REGISTRY } from '@/components/features/payment-processors/registry'
 import { useTranslation } from '@/lib/i18n'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // ─── Processor Definitions ────────────────────────────────────────────────────
 
@@ -851,7 +852,7 @@ export default function PaymentProcessorsPage() {
     <Suspense
       fallback={
         <div className="flex min-h-96 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+          <LottieLoader size={80} />
         </div>
       }
     >

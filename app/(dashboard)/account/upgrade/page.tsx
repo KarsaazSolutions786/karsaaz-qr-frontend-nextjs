@@ -12,10 +12,10 @@ import {
   Crown,
   Zap,
   ArrowRight,
-  Loader2,
   Star,
   Shield,
 } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -401,7 +401,7 @@ export default function AccountUpgradePage() {
     return (
       <div className="flex min-h-96 items-center justify-center">
         <div className="text-center">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
+          <LottieLoader size={80} className="mx-auto" />
           <p className="mt-3 text-sm text-gray-500">{t('Loading plans...')}</p>
         </div>
       </div>

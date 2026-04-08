@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { ArrowLeft, CheckCircle, XCircle, Loader2, UserPlus, ShieldCheck } from 'lucide-react'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useUser } from '@/lib/hooks/queries/useUsers'
 import { useRoles } from '@/lib/hooks/queries/useRoles'
 import { useUpdateUser, useVerifyUserEmail } from '@/lib/hooks/mutations/useUserMutations'
@@ -165,7 +166,7 @@ export default function EditUserPage() {
   if (userLoading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+        <LottieLoader size={80} />
       </div>
     )
   }

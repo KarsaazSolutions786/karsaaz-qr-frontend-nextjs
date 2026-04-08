@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { systemConfigsAPI, SystemConfig } from '@/lib/api/endpoints/system-configs'
 import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // ─── Template Variable Definitions ───────────────────────────────────────────
 
@@ -195,7 +196,7 @@ export default function SystemNotificationsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600" />
+        <LottieLoader size={80} />
       </div>
     )
   }

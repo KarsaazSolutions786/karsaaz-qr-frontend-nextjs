@@ -9,6 +9,7 @@
 
 import React, { useState, useCallback, useRef } from 'react';
 import { useTranslation } from '@/lib/i18n';
+import { LottieLoader } from '@/components/ui/lottie-loader'
 
 export interface BackgroundImageUploadProps {
   imageUrl: string | null;
@@ -204,7 +205,7 @@ export function BackgroundImageUpload({
 
           {isLoading ? (
             <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mb-3"></div>
+              <LottieLoader size={100} className="mb-3" />
               <p className="text-sm text-gray-600">{t('Processing...')}</p>
             </div>
           ) : (
