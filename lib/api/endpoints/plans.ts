@@ -38,6 +38,9 @@ function mapPlan(raw: any): SubscriptionPlan {
     features: raw.features ?? [],
     checkpoints: raw.checkpoints ?? [],
     qrTypeLimits: raw.qr_type_limits ?? raw.qrTypeLimits ?? [],
+    hasApiAccess: raw.has_api_access ?? raw.hasApiAccess ?? false,
+    apiMonthlyRequests: raw.api_monthly_requests ?? raw.apiMonthlyRequests ?? 1000,
+    apiRateLimitPerMinute: raw.api_rate_limit_per_minute ?? raw.apiRateLimitPerMinute ?? 60,
     createdAt: raw.created_at ?? raw.createdAt ?? '',
     updatedAt: raw.updated_at ?? raw.updatedAt ?? '',
   }
@@ -81,6 +84,10 @@ function toSnakeCase(data: Partial<CreateSubscriptionPlanRequest>): Record<strin
   if (data.features !== undefined) payload.features = data.features
   if (data.checkpoints !== undefined) payload.checkpoints = data.checkpoints
   if (data.qrTypeLimits !== undefined) payload.qr_type_limits = data.qrTypeLimits
+  if (data.hasApiAccess !== undefined) payload.has_api_access = data.hasApiAccess
+  if (data.apiMonthlyRequests !== undefined) payload.api_monthly_requests = data.apiMonthlyRequests
+  if (data.apiRateLimitPerMinute !== undefined)
+    payload.api_rate_limit_per_minute = data.apiRateLimitPerMinute
 
   return payload
 }

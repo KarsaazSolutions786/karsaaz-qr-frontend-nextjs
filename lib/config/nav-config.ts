@@ -14,6 +14,8 @@ import {
   WalletIcon,
   RectangleStackIcon,
   LinkIcon,
+  BuildingOffice2Icon,
+  CodeBracketIcon,
 } from '@heroicons/react/24/outline'
 
 // Navigation types
@@ -60,6 +62,7 @@ export const ADMIN_ROUTE_PREFIXES = [
   '/contacts',
   '/lead-forms',
   '/support-tickets',
+  '/organization',
 ]
 
 export const figmaPrimaryNav: FigmaNavItem[] = [
@@ -72,6 +75,13 @@ export const figmaPrimaryNav: FigmaNavItem[] = [
     label: 'Storage Connections',
     href: '/cloud-storage',
     icon: CloudIcon,
+  },
+  {
+    key: 'organization',
+    label: 'Organization API',
+    href: '/organization',
+    icon: BuildingOffice2Icon,
+    adminOnly: true,
   },
 ]
 
@@ -170,4 +180,11 @@ export const figmaSectionNav: FigmaNavSection[] = [
 ]
 
 // Re-export icons used by sub-components
-export { ChevronRightIcon, ArrowRightOnRectangleIcon, LinkIcon, WalletIcon }
+export {
+  ChevronRightIcon,
+  ArrowRightOnRectangleIcon,
+  LinkIcon,
+  WalletIcon,
+  BuildingOffice2Icon,
+  CodeBracketIcon,
+}

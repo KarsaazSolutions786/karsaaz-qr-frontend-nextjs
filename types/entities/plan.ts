@@ -27,6 +27,9 @@ export interface SubscriptionPlan {
   features: string[]
   checkpoints?: { id: string; text: string; available: boolean }[]
   qrTypeLimits?: { typeId: string; limit: number }[]
+  hasApiAccess?: boolean
+  apiMonthlyRequests?: number
+  apiRateLimitPerMinute?: number
   createdAt: string
   updatedAt: string
 }
@@ -57,6 +60,9 @@ export interface CreateSubscriptionPlanRequest {
   features?: string[]
   checkpoints?: { id: string; text: string; available: boolean }[]
   qrTypeLimits?: { typeId: string; limit: number }[]
+  hasApiAccess?: boolean
+  apiMonthlyRequests?: number
+  apiRateLimitPerMinute?: number
 }
 
 export interface SubscriptionPlanListResponse {

@@ -13,20 +13,19 @@ import { devToolsProtection } from '@/lib/services/devtools-protection'
 import { iframeDetector } from '@/lib/services/iframe-detector'
 import { WebVitalsReporter } from '@/components/common/WebVitalsReporter'
 import { OfflineIndicator } from '@/components/common/OfflineIndicator'
-import { SessionTimeout } from '@/components/common/SessionTimeout'
 import { Toaster } from 'sonner'
 
 /** Initialize client-side protection services (T021) */
 function ProtectionInitializer() {
   useEffect(() => {
-    devToolsProtection.init();
-    iframeDetector.init();
+    devToolsProtection.init()
+    iframeDetector.init()
     return () => {
-      devToolsProtection.destroy();
-      iframeDetector.destroy();
-    };
-  }, []);
-  return null;
+      devToolsProtection.destroy()
+      iframeDetector.destroy()
+    }
+  }, [])
+  return null
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -40,7 +39,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 <ProtectionInitializer />
                 <WebVitalsReporter />
                 <OfflineIndicator />
-                <SessionTimeout />
                 <Toaster position="top-right" richColors closeButton duration={4000} />
                 {children}
               </PluginProvider>

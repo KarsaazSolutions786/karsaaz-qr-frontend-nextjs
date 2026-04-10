@@ -12,7 +12,7 @@ import React, {
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import apiClient from '@/lib/api/client'
-import { rpc, rpcComposite, rpcClearCache } from '@/lib/api/rpc'
+import { rpc, rpcComposite, rpcClearCache, RpcError } from '@/lib/api/rpc'
 import { envConfig } from '@/lib/config/env-config'
 import { queryKeys } from '@/lib/query/keys'
 import { User } from '@/types/entities/user'
@@ -99,7 +99,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     rpcComposite<{
       user: User
-      subscription: { subscription: Record<string, unknown> | null; plan: Record<string, unknown> | null }
+      subscription: {
+        subscription: Record<string, unknown> | null
+        plan: Record<string, unknown> | null
+      }
       usage: Record<string, unknown>
       qr_count: { total: number; active: number }
       bootstrap: Record<string, unknown>
@@ -113,16 +116,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         // Pre-populate React Query caches to avoid redundant network requests
         queryClient.setQueryData(queryKeys.auth.currentUser(), freshUser)
-        queryClient.setQueryData(queryKeys.subscriptions.current(), initData.subscription?.subscription ?? null)
+        queryClient.setQueryData(
+          queryKeys.subscriptions.current(),
+          initData.subscription?.subscription ?? null
+        )
       })
-      .catch(() => {
-        // Token/cookie is invalid -- clear everything
-        setUser(null)
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('user')
-          localStorage.removeItem('token')
-          localStorage.removeItem('logged_in')
+      .catch(error => {
+        // Only clear auth state on actual 401 authentication failures.
+        // Network errors, 500s, or sub-service failures in appInit must NOT log the user out.
+        const isAuthFailure = error instanceof RpcError && error.isAuthError
+        if (isAuthFailure) {
+          setUser(null)
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('user')
+            localStorage.removeItem('token')
+            localStorage.removeItem('logged_in')
+          }
         }
+        // For any other error, keep the cached user from localStorage so the session survives.
       })
       .finally(() => {
         setIsLoading(false)

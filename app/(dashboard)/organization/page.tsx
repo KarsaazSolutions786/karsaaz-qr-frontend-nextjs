@@ -1,0 +1,296 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { toast } from 'sonner'
+import {
+  Building2,
+  KeyRound,
+  BarChart3,
+  Wallet,
+  Plus,
+  AlertCircle,
+  Copy,
+  Eye,
+  EyeOff,
+  ShieldAlert,
+  CheckCircle2,
+} from 'lucide-react'
+import { organizationAPI, type Organization } from '@/lib/api/endpoints/organization'
+
+interface PortalCredentials {
+  email: string
+  password: string
+  note: string
+}
+
+export default function OrganizationPage() {
+  const [orgs, setOrgs] = useState<Organization[]>([])
+  const [loading, setLoading] = useState(true)
+  const [creating, setCreating] = useState(false)
+  const [newOrgName, setNewOrgName] = useState('')
+  const [showForm, setShowForm] = useState(false)
+  const [credentials, setCredentials] = useState<PortalCredentials | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
+  const [copied, setCopied] = useState<'email' | 'password' | null>(null)
+
+  useEffect(() => {
+    organizationAPI
+      .list()
+      .then(res => setOrgs(res.data.data ?? []))
+      .catch(() => toast.error('Failed to load organizations'))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const copyToClipboard = async (text: string, field: 'email' | 'password') => {
+    await navigator.clipboard.writeText(text)
+    setCopied(field)
+    setTimeout(() => setCopied(null), 2000)
+  }
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newOrgName.trim()) return
+    setCreating(true)
+    try {
+      const res = await organizationAPI.create({ name: newOrgName.trim() })
+      setOrgs(prev => [...prev, res.data.data])
+      setNewOrgName('')
+      setShowForm(false)
+      // Show the one-time credentials modal
+      if (res.data.portal_credentials) {
+        const creds = res.data.portal_credentials
+        setCredentials({
+          ...creds,
+          note: creds.note ?? 'Save these credentials — the password will not be shown again.',
+        })
+        setShowPassword(false)
+      } else {
+        toast.success('Organization created!')
+      }
+    } catch {
+      toast.error('Failed to create organization')
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-4xl">
+      {/* ── One-time credentials modal ── */}
+      {credentials && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            {/* Header */}
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100">
+                <ShieldAlert className="h-5 w-5 text-yellow-600" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-gray-900">
+                  Organization Portal Credentials
+                </h2>
+                <p className="text-xs text-yellow-600 font-medium">Shown once — save them now!</p>
+              </div>
+            </div>
+
+            <p className="mb-5 text-sm text-gray-500">
+              Share these with the organization owner. The password{' '}
+              <span className="font-semibold text-red-600">cannot be recovered</span> after closing
+              this dialog.
+            </p>
+
+            {/* Email */}
+            <div className="mb-3">
+              <label className="mb-1 block text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Portal Login Email
+              </label>
+              <div className="flex items-center gap-2 rounded-lg border bg-gray-50 px-3 py-2">
+                <span className="flex-1 truncate font-mono text-sm text-gray-800">
+                  {credentials.email}
+                </span>
+                <button
+                  onClick={() => copyToClipboard(credentials.email, 'email')}
+                  className="shrink-0 text-gray-400 hover:text-indigo-600"
+                  title="Copy email"
+                >
+                  {copied === 'email' ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="mb-6">
+              <label className="mb-1 block text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                Portal Password
+              </label>
+              <div className="flex items-center gap-2 rounded-lg border bg-gray-50 px-3 py-2">
+                <span className="flex-1 truncate font-mono text-sm text-gray-800">
+                  {showPassword ? credentials.password : '••••••••••••••••'}
+                </span>
+                <button
+                  onClick={() => setShowPassword(v => !v)}
+                  className="shrink-0 text-gray-400 hover:text-indigo-600"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+                <button
+                  onClick={() => copyToClipboard(credentials.password, 'password')}
+                  className="shrink-0 text-gray-400 hover:text-indigo-600"
+                  title="Copy password"
+                >
+                  {copied === 'password' ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                setCredentials(null)
+                toast.success('Organization created!')
+              }}
+              className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+            >
+              I've saved these credentials — Close
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Organizations</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Manage organizations and their API access to the QR platform.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowForm(v => !v)}
+          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+        >
+          <Plus className="h-4 w-4" />
+          New Organization
+        </button>
+      </div>
+
+      {/* Create form */}
+      {showForm && (
+        <form onSubmit={handleCreate} className="mb-6 rounded-xl border bg-white p-5 shadow-sm">
+          <h2 className="mb-4 font-semibold text-gray-800">Create Organization</h2>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={newOrgName}
+              onChange={e => setNewOrgName(e.target.value)}
+              placeholder="e.g. Acme Corp"
+              className="flex-1 rounded-lg border px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              required
+            />
+            <button
+              type="submit"
+              disabled={creating}
+              className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            >
+              {creating ? 'Creating…' : 'Create'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowForm(false)}
+              className="rounded-lg border px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
+      {orgs.length === 0 ? (
+        <div className="rounded-xl border border-dashed bg-white p-12 text-center">
+          <AlertCircle className="mx-auto mb-3 h-8 w-8 text-gray-400" />
+          <p className="font-medium text-gray-600">No organizations yet</p>
+          <p className="mt-1 text-sm text-gray-400">
+            Create your first organization to get API access.
+          </p>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {orgs.map(org => (
+            <div
+              key={org.id}
+              className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div className="mb-4 flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100">
+                    <Building2 className="h-5 w-5 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{org.name}</h3>
+                    <p className="text-xs text-gray-400">{org.slug}</p>
+                  </div>
+                </div>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                    org.status === 'active'
+                      ? 'bg-green-100 text-green-700'
+                      : org.status === 'suspended'
+                        ? 'bg-red-100 text-red-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                  }`}
+                >
+                  {org.status}
+                </span>
+              </div>
+
+              {/* Stats row */}
+              <div className="mb-4 flex gap-4 text-center">
+                <div className="flex-1 rounded-lg bg-gray-50 py-2">
+                  <Wallet className="mx-auto mb-1 h-4 w-4 text-indigo-500" />
+                  <div className="text-sm font-bold text-gray-900">{org.credits?.balance ?? 0}</div>
+                  <div className="text-xs text-gray-400">Credits</div>
+                </div>
+                <div className="flex-1 rounded-lg bg-gray-50 py-2">
+                  <KeyRound className="mx-auto mb-1 h-4 w-4 text-green-500" />
+                  <div className="text-sm font-bold text-gray-900">{org.plan ?? 'Free'}</div>
+                  <div className="text-xs text-gray-400">Plan</div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Link
+                  href={`/organization/api-keys?org=${org.id}`}
+                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <KeyRound className="h-3 w-3" /> API Keys
+                </Link>
+                <Link
+                  href={`/organization/usage?org=${org.id}`}
+                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <BarChart3 className="h-3 w-3" /> Usage
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

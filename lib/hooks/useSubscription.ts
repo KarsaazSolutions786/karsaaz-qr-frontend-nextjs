@@ -48,6 +48,9 @@ interface SubscriptionPlan {
   storage_quota_bytes?: number
   number_of_bulk_created_qrcodes: number
   dynamic_type_limits?: Record<string, string>
+  has_api_access?: boolean
+  api_monthly_requests?: number
+  api_rate_limit_per_minute?: number
 }
 
 interface SubscriptionStatusRecord {

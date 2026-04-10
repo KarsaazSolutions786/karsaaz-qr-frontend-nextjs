@@ -22,6 +22,7 @@ import {
   figmaSectionNav,
   WalletIcon,
   LinkIcon,
+  CodeBracketIcon,
   type FigmaNavSection,
 } from '@/lib/config/nav-config'
 import { useGuest } from '@/lib/hooks/useGuest'
@@ -62,10 +63,32 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const isAdmin = Boolean(user?.roles?.[0]?.super_admin)
   const filteredSectionNav = figmaSectionNav.filter(item => !item.adminOnly || isAdmin)
 
+  // Derive API access from user's active subscription plan
+  const hasApiAccess = React.useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const subs: any[] = user?.subscriptions ?? []
+    if (!subs.length) return false
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sorted = [...subs].sort(
+      (a: any, b: any) =>
+        new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+    )
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const active = sorted.find((s: any) => {
+      const latest = (s.statuses as Array<{ status: string; created_at: string }> | undefined)
+        ?.slice()
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0]
+      return latest?.status === 'active'
+    })
+    return Boolean((active ?? sorted[0])?.subscription_plan?.has_api_access)
+  }, [user?.subscriptions])
+
   // Custom client menu from admin config (for non-admin users)
   // Disabled for guests and during guest loading — they don't need custom admin menus and the API requires auth
   const shouldSkipSystemConfigs = isAdmin || isGuest || (!user && isGuestLoading)
-  const { data: menuConfig } = useSystemConfigs(shouldSkipSystemConfigs ? [] : ['app.dashboard-client-menu'])
+  const { data: menuConfig } = useSystemConfigs(
+    shouldSkipSystemConfigs ? [] : ['app.dashboard-client-menu']
+  )
   const customMenuItems: FigmaNavSection[] = React.useMemo(() => {
     if (isAdmin || !menuConfig?.['app.dashboard-client-menu']) return []
     try {
@@ -96,11 +119,13 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const guestAllowedNavKeys = ['home', 'existing-qr']
   const basePrimaryNav = isGuest
     ? figmaPrimaryNav.filter(item => guestAllowedNavKeys.includes(item.key))
-    : figmaPrimaryNav
+    : figmaPrimaryNav.filter(item => !item.adminOnly || isAdmin)
 
-  const effectivePrimaryNav = isAccountCreditMode && !isGuest
-    ? [
-        ...basePrimaryNav,
+  const effectivePrimaryNav = (() => {
+    let nav = [...basePrimaryNav]
+    if (isAccountCreditMode && !isGuest) {
+      nav = [
+        ...nav,
         {
           key: 'account-credits',
           label: 'Account Credits',
@@ -108,7 +133,20 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
           icon: WalletIcon,
         },
       ]
-    : basePrimaryNav
+    }
+    if (hasApiAccess && !isGuest) {
+      nav = [
+        ...nav,
+        {
+          key: 'apis',
+          label: 'APIs',
+          href: '/apis',
+          icon: CodeBracketIcon,
+        },
+      ]
+    }
+    return nav
+  })()
 
   const collapsedNavItems = [
     ...effectivePrimaryNav.map(item => ({ name: item.label, href: item.href, icon: item.icon })),

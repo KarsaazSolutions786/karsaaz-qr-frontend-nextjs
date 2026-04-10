@@ -80,6 +80,9 @@ export default function EditPlanPage() {
     features: [] as string[],
     checkpoints: [] as Checkpoint[],
     qrTypeLimits: [] as QrTypeLimit[],
+    hasApiAccess: false,
+    apiMonthlyRequests: 1000,
+    apiRateLimitPerMinute: 60,
   })
 
   useEffect(() => {
@@ -97,7 +100,9 @@ export default function EditPlanPage() {
         numberOfScans: plan.numberOfScans ?? -1,
         numberOfCustomDomains: plan.numberOfCustomDomains ?? -1,
         fileSizeLimit: plan.fileSizeLimit ?? -1,
-        storageQuotaMb: plan.storageQuotaBytes ? Math.round(plan.storageQuotaBytes / (1024 * 1024)) : 500,
+        storageQuotaMb: plan.storageQuotaBytes
+          ? Math.round(plan.storageQuotaBytes / (1024 * 1024))
+          : 500,
         numberOfUsers: plan.numberOfUsers ?? -1,
         numberOfRestaurantMenuItems: plan.numberOfRestaurantMenuItems ?? -1,
         numberOfProductCatalogueItems: plan.numberOfProductCatalogueItems ?? -1,
@@ -111,6 +116,9 @@ export default function EditPlanPage() {
         features: plan.features ?? [],
         checkpoints: plan.checkpoints ?? [],
         qrTypeLimits: plan.qrTypeLimits ?? [],
+        hasApiAccess: plan.hasApiAccess ?? false,
+        apiMonthlyRequests: plan.apiMonthlyRequests ?? 1000,
+        apiRateLimitPerMinute: plan.apiRateLimitPerMinute ?? 60,
       })
     }
   }, [plan])
@@ -134,7 +142,8 @@ export default function EditPlanPage() {
           numberOfScans: Number(form.numberOfScans),
           numberOfCustomDomains: Number(form.numberOfCustomDomains),
           fileSizeLimit: Number(form.fileSizeLimit),
-          storageQuotaBytes: Number(form.storageQuotaMb) === -1 ? -1 : Number(form.storageQuotaMb) * 1024 * 1024,
+          storageQuotaBytes:
+            Number(form.storageQuotaMb) === -1 ? -1 : Number(form.storageQuotaMb) * 1024 * 1024,
           numberOfUsers: Number(form.numberOfUsers),
           numberOfRestaurantMenuItems: Number(form.numberOfRestaurantMenuItems),
           numberOfProductCatalogueItems: Number(form.numberOfProductCatalogueItems),
@@ -150,6 +159,9 @@ export default function EditPlanPage() {
           features: form.features,
           checkpoints: form.checkpoints,
           qrTypeLimits: form.qrTypeLimits,
+          hasApiAccess: form.hasApiAccess,
+          apiMonthlyRequests: Number(form.apiMonthlyRequests),
+          apiRateLimitPerMinute: Number(form.apiRateLimitPerMinute),
         },
       })
       setSaved(true)
@@ -361,7 +373,9 @@ export default function EditPlanPage() {
                 onChange={e => set('storageQuotaMb', e.target.value)}
                 className={inputClass}
               />
-              <p className="mt-1 text-xs text-gray-500">{t('-1 for unlimited. Total storage per user.')}</p>
+              <p className="mt-1 text-xs text-gray-500">
+                {t('-1 for unlimited. Total storage per user.')}
+              </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -544,6 +558,59 @@ export default function EditPlanPage() {
             checkpoints={form.checkpoints}
             onChange={checkpoints => set('checkpoints', checkpoints)}
           />
+        </section>
+
+        {/* 8. API Access Settings */}
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-1 text-lg font-semibold text-gray-900">{t('API Access')}</h2>
+          <p className="mb-4 text-sm text-gray-500">
+            {t(
+              'Users on this plan can generate personal API keys to access QR features programmatically. Use -1 for unlimited monthly requests.'
+            )}
+          </p>
+          <div className="space-y-4">
+            <label className="flex cursor-pointer items-center gap-3 text-sm font-medium text-gray-700">
+              <input
+                type="checkbox"
+                checked={form.hasApiAccess}
+                onChange={e => set('hasApiAccess', e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600"
+              />
+              {t('Enable API Access for this plan')}
+            </label>
+
+            {form.hasApiAccess && (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t('Monthly API Requests')}
+                  </label>
+                  <input
+                    type="number"
+                    min={-1}
+                    step={100}
+                    value={form.apiMonthlyRequests}
+                    onChange={e => set('apiMonthlyRequests', e.target.value)}
+                    className={inputClass}
+                  />
+                  <p className="mt-1 text-xs text-gray-500">{t('-1 for unlimited.')}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t('Rate Limit (req / minute)')}
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    step={10}
+                    value={form.apiRateLimitPerMinute}
+                    onChange={e => set('apiRateLimitPerMinute', e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Actions */}
