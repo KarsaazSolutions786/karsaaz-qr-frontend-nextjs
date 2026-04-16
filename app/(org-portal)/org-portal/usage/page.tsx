@@ -7,19 +7,19 @@ import { portalAxios } from '@/lib/context/OrgPortalAuthContext'
 interface DayData {
   date: string
   requests: number
-  credits: number
+  tokens: number
 }
 interface EndpointData {
   endpoint: string
   http_method: string
   calls: number
-  credits_consumed: number
+  tokens_consumed: number
   avg_response_ms: number
 }
 interface UsageData {
   period: string
   total_requests: number
-  total_credits: number
+  total_tokens: number
   avg_response_ms: number
   success_count: number
   error_count: number

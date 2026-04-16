@@ -12,8 +12,10 @@
  * Query param overrides (matches original):
  *   ?dev=true         → force traditional login
  *   ?traditional=true → force traditional login
+ *   ?admin=true       → force traditional login (admin password-only)
  */
 
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Poppins } from 'next/font/google'
@@ -36,6 +38,7 @@ const poppins = Poppins({
 export function LoginTypeSelector() {
   const searchParams = useSearchParams()
   const { data: statusData, isLoading, isError } = usePasswordlessStatus()
+  const [forcePasswordLogin, setForcePasswordLogin] = useState(false)
 
   // ── Loading state ──
   if (isLoading) {
@@ -49,14 +52,20 @@ export function LoginTypeSelector() {
   // ── Query param overrides ──
   const forceDev = searchParams.get('dev') === 'true'
   const forceTraditional = searchParams.get('traditional') === 'true'
+  const forceAdmin = searchParams.get('admin') === 'true'
 
-  if (forceDev || forceTraditional) {
-    return <TraditionalLoginView />
+  if (forceDev || forceTraditional || forceAdmin || forcePasswordLogin) {
+    return (
+      <TraditionalLoginView
+        isAdminMode={forceAdmin || forcePasswordLogin}
+        onSwitchToOtp={forcePasswordLogin ? () => setForcePasswordLogin(false) : undefined}
+      />
+    )
   }
 
   // ── Passwordless enabled → show Email + OTP form ──
   if (!isError && statusData?.enabled === true) {
-    return <EmailOtpLoginForm />
+    return <EmailOtpLoginForm onSwitchToAdminLogin={() => setForcePasswordLogin(true)} />
   }
 
   // ── Default: Traditional email + password login ──
@@ -68,8 +77,17 @@ export function LoginTypeSelector() {
  *
  * Card: 447×543, bg rgba(255,255,255,0.3), rounded-[23px],
  *       shadow 0px 3px 12px 0px rgba(54,54,54,0.3)
+ *
+ * @param isAdminMode  — show "Admin Login" subtitle instead of default
+ * @param onSwitchToOtp — callback to go back to OTP login (shown when user manually switched)
  */
-function TraditionalLoginView() {
+function TraditionalLoginView({
+  isAdminMode,
+  onSwitchToOtp,
+}: {
+  isAdminMode?: boolean
+  onSwitchToOtp?: () => void
+}) {
   const { t } = useTranslation()
 
   return (
@@ -100,7 +118,9 @@ function TraditionalLoginView() {
         <p
           className={`${poppins.className} mt-2 text-[18px] font-normal leading-normal text-white`}
         >
-          {t('Sign in to your account and join us.')}
+          {isAdminMode
+            ? t('Admin login — password only, no OTP required.')
+            : t('Sign in to your account and join us.')}
         </p>
       </div>
 
@@ -108,32 +128,36 @@ function TraditionalLoginView() {
       <LoginForm />
 
       {/* ── Divider: lines + "or continue with" ── */}
-      <div className="my-5 flex items-center justify-center gap-3">
-        <img
-          src="/images/auth/divider-line.svg"
-          alt=""
-          className="h-px w-[134px] flex-shrink-0"
-          aria-hidden="true"
-        />
-        <span
-          className="whitespace-nowrap text-[12px] font-medium text-white"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          {t('or continue with')}
-        </span>
-        <img
-          src="/images/auth/divider-line.svg"
-          alt=""
-          className="h-px w-[134px] flex-shrink-0"
-          aria-hidden="true"
-        />
-      </div>
+      {!isAdminMode && (
+        <div className="my-5 flex items-center justify-center gap-3">
+          <img
+            src="/images/auth/divider-line.svg"
+            alt=""
+            className="h-px w-[134px] flex-shrink-0"
+            aria-hidden="true"
+          />
+          <span
+            className="whitespace-nowrap text-[12px] font-medium text-white"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {t('or continue with')}
+          </span>
+          <img
+            src="/images/auth/divider-line.svg"
+            alt=""
+            className="h-px w-[134px] flex-shrink-0"
+            aria-hidden="true"
+          />
+        </div>
+      )}
 
-      {/* ── Social login buttons — side by side ── */}
-      <div className="flex items-center justify-center gap-3">
-        <GoogleLoginButton />
-        <FacebookLoginButton />
-      </div>
+      {/* ── Social login buttons — side by side (hidden in admin mode) ── */}
+      {!isAdminMode && (
+        <div className="flex items-center justify-center gap-3">
+          <GoogleLoginButton />
+          <FacebookLoginButton />
+        </div>
+      )}
 
       {/* Hidden but functional */}
       <div className="hidden">
@@ -141,19 +165,36 @@ function TraditionalLoginView() {
         <Auth0LoginButton />
       </div>
 
-      {/* ── Bottom text: "Don't have an account? Signup" ── */}
-      <p
-        className="mt-5 text-left text-[12px] font-medium text-white"
-        style={{ fontFamily: "'Inter', sans-serif" }}
-      >
-        {t("Don't have an account?")}{' '}
-        <Link
-          href="/signup"
-          className="font-semibold text-white underline decoration-solid hover:text-white/80"
+      {/* ── Bottom links ── */}
+      <div className="mt-5 space-y-2">
+        {onSwitchToOtp && (
+          <p
+            className="text-left text-[12px] font-medium text-white"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {t('Not an admin?')}{' '}
+            <button
+              type="button"
+              onClick={onSwitchToOtp}
+              className="font-semibold text-white underline decoration-solid hover:text-white/80"
+            >
+              {t('Login with OTP')}
+            </button>
+          </p>
+        )}
+        <p
+          className="text-left text-[12px] font-medium text-white"
+          style={{ fontFamily: "'Inter', sans-serif" }}
         >
-          {t('Signup')}
-        </Link>
-      </p>
+          {t("Don't have an account?")}{' '}
+          <Link
+            href="/signup"
+            className="font-semibold text-white underline decoration-solid hover:text-white/80"
+          >
+            {t('Signup')}
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }

@@ -54,8 +54,8 @@ export default function OrgPortalCreditsPage() {
   return (
     <div className="max-w-3xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Credits</h1>
-        <p className="mt-1 text-sm text-gray-500">Your credit balance and transaction history.</p>
+        <h1 className="text-2xl font-bold text-gray-900">Tokens</h1>
+        <p className="mt-1 text-sm text-gray-500">Your token balance and transaction history.</p>
       </div>
 
       {/* Balance summary */}
@@ -63,7 +63,7 @@ export default function OrgPortalCreditsPage() {
         <div className="rounded-xl border bg-white p-5 shadow-sm text-center">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Balance</p>
           <p className="mt-2 text-3xl font-bold text-gray-900">{fmt(data.balance)}</p>
-          <p className="mt-0.5 text-xs text-gray-400">available credits</p>
+          <p className="mt-0.5 text-xs text-gray-400">available tokens</p>
         </div>
         <div className="rounded-xl border bg-white p-5 shadow-sm text-center">
           <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Purchased</p>
@@ -81,7 +81,7 @@ export default function OrgPortalCreditsPage() {
       {data.balance < 50 && (
         <div className="mb-4 flex items-center gap-2 rounded-xl border border-yellow-100 bg-yellow-50 p-4 text-sm text-yellow-700">
           <AlertCircle className="h-4 w-4 shrink-0" />
-          Your balance is low. Contact your account manager to top up.
+          Your token balance is low. Contact your account manager to top up.
         </div>
       )}
 

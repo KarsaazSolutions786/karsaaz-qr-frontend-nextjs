@@ -175,6 +175,7 @@ export const figmaSectionNav: FigmaNavSection[] = [
       { name: 'Domains', href: '/system/domains', icon: ServerIcon },
       { name: 'Template Categories', href: '/template-categories', icon: ServerIcon },
       { name: 'API Docs', href: '/system/api-docs', icon: ServerIcon },
+      { name: 'Token Costs', href: '/admin/token-costs', icon: ServerIcon },
     ],
   },
 ]

@@ -239,8 +239,22 @@ export function LoginForm() {
       {loginMutation.isError && (
         <div role="alert" className="rounded-lg bg-red-500/20 border border-red-400/30 p-3">
           <p className="text-xs text-red-100">
-            {(loginMutation.error as any)?.response?.data?.message ||
-              t('Invalid email or password. Please try again.')}
+            {(() => {
+              const err = loginMutation.error as any
+              const status = err?.response?.status
+              const data = err?.response?.data
+              if (status === 429) return t('Too many requests. Please wait a moment and try again.')
+              const firstValidationError = data?.validationErrors
+                ? ((Object.values(data.validationErrors as Record<string, string[]>).flat()[0] as
+                    | string
+                    | undefined) ?? null)
+                : null
+              return (
+                firstValidationError ||
+                data?.message ||
+                t('Invalid email or password. Please try again.')
+              )
+            })()}
           </p>
         </div>
       )}

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import apiClient from '@/lib/api/client'
 import { queryKeys } from '@/lib/query/keys'
@@ -196,17 +197,13 @@ const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
     key: 'database',
     label: 'Database',
     icon: 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4',
-    renderMetrics: (check: DatabaseCheck) => [
-      { label: 'Driver', value: check.driver ?? '-' },
-    ],
+    renderMetrics: (check: DatabaseCheck) => [{ label: 'Driver', value: check.driver ?? '-' }],
   },
   {
     key: 'cache',
     label: 'Cache',
     icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
-    renderMetrics: (check: CacheCheck) => [
-      { label: 'Driver', value: check.driver ?? '-' },
-    ],
+    renderMetrics: (check: CacheCheck) => [{ label: 'Driver', value: check.driver ?? '-' }],
   },
   {
     key: 'redis',
@@ -216,7 +213,8 @@ const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
       const metrics: { label: string; value: string }[] = []
       if (check.used_memory) metrics.push({ label: 'Used Memory', value: check.used_memory })
       if (check.max_memory) metrics.push({ label: 'Max Memory', value: check.max_memory })
-      if (check.connected_clients) metrics.push({ label: 'Clients', value: check.connected_clients })
+      if (check.connected_clients)
+        metrics.push({ label: 'Clients', value: check.connected_clients })
       return metrics
     },
   },
@@ -229,7 +227,8 @@ const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
         { label: 'Driver', value: check.driver ?? '-' },
       ]
       if (check.note) metrics.push({ label: 'Note', value: check.note })
-      if (check.failed_jobs !== undefined) metrics.push({ label: 'Failed Jobs', value: String(check.failed_jobs) })
+      if (check.failed_jobs !== undefined)
+        metrics.push({ label: 'Failed Jobs', value: String(check.failed_jobs) })
       return metrics
     },
   },
@@ -239,9 +238,12 @@ const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
     icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z',
     renderMetrics: (check: DiskCheck) => {
       const metrics: { label: string; value: string }[] = []
-      if (check.free_percent !== undefined) metrics.push({ label: 'Free', value: `${check.free_percent}%` })
-      if (check.free_bytes !== undefined) metrics.push({ label: 'Free Space', value: formatBytes(check.free_bytes) })
-      if (check.total_bytes !== undefined) metrics.push({ label: 'Total', value: formatBytes(check.total_bytes) })
+      if (check.free_percent !== undefined)
+        metrics.push({ label: 'Free', value: `${check.free_percent}%` })
+      if (check.free_bytes !== undefined)
+        metrics.push({ label: 'Free Space', value: formatBytes(check.free_bytes) })
+      if (check.total_bytes !== undefined)
+        metrics.push({ label: 'Total', value: formatBytes(check.total_bytes) })
       return metrics
     },
   },
@@ -251,9 +253,12 @@ const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
     icon: 'M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z',
     renderMetrics: (check: MemoryCheck) => {
       const metrics: { label: string; value: string }[] = []
-      if (check.usage_percent !== undefined) metrics.push({ label: 'Usage', value: `${check.usage_percent}%` })
-      if (check.usage_bytes !== undefined) metrics.push({ label: 'Used', value: formatBytes(check.usage_bytes) })
-      if (check.peak_bytes !== undefined) metrics.push({ label: 'Peak', value: formatBytes(check.peak_bytes) })
+      if (check.usage_percent !== undefined)
+        metrics.push({ label: 'Usage', value: `${check.usage_percent}%` })
+      if (check.usage_bytes !== undefined)
+        metrics.push({ label: 'Used', value: formatBytes(check.usage_bytes) })
+      if (check.peak_bytes !== undefined)
+        metrics.push({ label: 'Peak', value: formatBytes(check.peak_bytes) })
       if (check.limit) metrics.push({ label: 'Limit', value: check.limit })
       return metrics
     },
@@ -267,6 +272,113 @@ const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
 async function fetchHealth(): Promise<HealthResponse> {
   const { data } = await apiClient.get<HealthResponse>('/health')
   return data
+}
+
+// ---------------------------------------------------------------------------
+// Run Migrations button + output panel
+// ---------------------------------------------------------------------------
+
+function RunMigrationsButton() {
+  const { t } = useTranslation()
+  const [status, setStatus] = useState<'idle' | 'running' | 'done' | 'error'>('idle')
+  const [output, setOutput] = useState<string>('')
+  const [confirm, setConfirm] = useState(false)
+
+  async function run() {
+    setConfirm(false)
+    setStatus('running')
+    setOutput('')
+    try {
+      const { data } = await apiClient.post<{ success: boolean; output: string }>(
+        '/system/run-migrations'
+      )
+      setOutput(data.output)
+      setStatus(data.success ? 'done' : 'error')
+    } catch (err: any) {
+      setOutput(err?.response?.data?.message ?? err?.message ?? 'Unknown error')
+      setStatus('error')
+    }
+  }
+
+  return (
+    <div>
+      {!confirm ? (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setConfirm(true)}
+          disabled={status === 'running'}
+          className="border-orange-300 text-orange-700 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-950"
+        >
+          {status === 'running' ? (
+            <>
+              <LottieLoader size={80} />
+              {t('Running…')}
+            </>
+          ) : (
+            <>
+              {/* database / migrate icon */}
+              <svg
+                className="mr-1.5 h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
+                />
+              </svg>
+              {t('Run Migrations')}
+            </>
+          )}
+        </Button>
+      ) : (
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-orange-600 dark:text-orange-400 font-medium">
+            {t('Run migrate --force?')}
+          </span>
+          <Button
+            size="sm"
+            className="h-7 bg-orange-600 hover:bg-orange-700 text-white text-xs px-3"
+            onClick={run}
+          >
+            {t('Yes, Run')}
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 text-xs px-3"
+            onClick={() => setConfirm(false)}
+          >
+            {t('Cancel')}
+          </Button>
+        </div>
+      )}
+
+      {/* Output panel */}
+      {output && (
+        <div
+          className={`mt-3 rounded-md border px-4 py-3 text-xs font-mono whitespace-pre-wrap ${
+            status === 'done'
+              ? 'border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950/30 dark:text-green-300'
+              : 'border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300'
+          }`}
+        >
+          <div className="flex items-center gap-1.5 mb-1 font-sans font-semibold not-mono">
+            {status === 'done' ? (
+              <span className="text-green-600">✓ {t('Migration complete')}</span>
+            ) : (
+              <span className="text-red-600">✗ {t('Migration failed')}</span>
+            )}
+          </div>
+          {output}
+        </div>
+      )}
+    </div>
+  )
 }
 
 // ---------------------------------------------------------------------------
@@ -340,8 +452,12 @@ export default function SystemStatusPage() {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t('System Status')}</h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">{t('Monitor system health and performance')}</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            {t('System Status')}
+          </h1>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            {t('Monitor system health and performance')}
+          </p>
         </div>
         <Card className="mt-8">
           <CardContent className="flex flex-col items-center justify-center py-16">
@@ -358,7 +474,9 @@ export default function SystemStatusPage() {
                 d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
               />
             </svg>
-            <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">{t('Unable to Reach Server')}</h3>
+            <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+              {t('Unable to Reach Server')}
+            </h3>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
               {(error as Error)?.message || t('Could not connect to the health endpoint.')}
             </p>
@@ -378,50 +496,50 @@ export default function SystemStatusPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* ---- Header ---- */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t('System Status')}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            {t('System Status')}
+          </h1>
           <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
             {t('Monitor system health and performance')}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <span
-            className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${overallBadgeClasses(overall)}`}
-          >
-            <span className={`mr-1.5 h-2 w-2 rounded-full ${overallDotColor(overall)}`} />
-            {t(overallLabel(overall))}
-          </span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-          >
-            {isFetching ? (
-              <>
-                <LottieLoader size={80} />
-                {t('Refreshing...')}
-              </>
-            ) : (
-              <>
-                <svg
-                  className="mr-1.5 h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.016 4.372v4.992"
-                  />
-                </svg>
-                {t('Refresh')}
-              </>
-            )}
-          </Button>
+        <div className="flex flex-col items-end gap-3">
+          <div className="flex items-center gap-3">
+            <span
+              className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${overallBadgeClasses(overall)}`}
+            >
+              <span className={`mr-1.5 h-2 w-2 rounded-full ${overallDotColor(overall)}`} />
+              {t(overallLabel(overall))}
+            </span>
+            <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching}>
+              {isFetching ? (
+                <>
+                  <LottieLoader size={80} />
+                  {t('Refreshing...')}
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="mr-1.5 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M20.016 4.372v4.992"
+                    />
+                  </svg>
+                  {t('Refresh')}
+                </>
+              )}
+            </Button>
+          </div>
+          <RunMigrationsButton />
         </div>
       </div>
 
@@ -429,8 +547,18 @@ export default function SystemStatusPage() {
       <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
         {health.version && (
           <span className="inline-flex items-center gap-1">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"
+              />
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
             </svg>
             {t('Version')} {health.version}
@@ -438,18 +566,30 @@ export default function SystemStatusPage() {
         )}
         {health.timestamp && (
           <span className="inline-flex items-center gap-1">
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             {t('Last checked:')} {formatTimestamp(health.timestamp)}
           </span>
         )}
-        <span className="text-xs text-gray-400 dark:text-gray-500">{t('Auto-refreshes every 30s')}</span>
+        <span className="text-xs text-gray-400 dark:text-gray-500">
+          {t('Auto-refreshes every 30s')}
+        </span>
       </div>
 
       {/* ---- Service cards grid ---- */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {SERVICE_CONFIGS.map((svc) => {
+        {SERVICE_CONFIGS.map(svc => {
           const check = health.checks[svc.key]
           if (!check) return null
 
@@ -508,7 +648,7 @@ export default function SystemStatusPage() {
                 )}
                 {metrics.length > 0 ? (
                   <dl className="space-y-1.5">
-                    {metrics.map((m) => (
+                    {metrics.map(m => (
                       <div key={m.label} className="flex items-center justify-between text-sm">
                         <dt className="text-gray-500 dark:text-gray-400">{t(m.label)}</dt>
                         <dd className="font-medium text-gray-900 dark:text-gray-100">{m.value}</dd>

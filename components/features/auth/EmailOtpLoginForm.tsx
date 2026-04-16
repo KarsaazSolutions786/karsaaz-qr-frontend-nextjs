@@ -26,7 +26,7 @@ import { GoogleLoginButton } from './GoogleLoginButton'
 
 type Step = 'email' | 'otp' | 'password' | '2fa'
 
-export function EmailOtpLoginForm() {
+export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLogin?: () => void }) {
   const { t } = useTranslation()
 
   // ── State ──
@@ -103,8 +103,19 @@ export function EmailOtpLoginForm() {
 
   // ── Helpers ──
   function extractError(error: unknown, fallback: string): string {
-    const err = error as { response?: { data?: { message?: string } }; message?: string }
-    return err?.response?.data?.message || fallback
+    const err = error as {
+      response?: {
+        status?: number
+        data?: { message?: string; validationErrors?: Record<string, string[]> }
+      }
+      message?: string
+    }
+    if (err?.response?.status === 429)
+      return t('Too many requests. Please wait a moment and try again.')
+    const firstValidationError = err?.response?.data?.validationErrors
+      ? Object.values(err.response.data.validationErrors).flat()[0]
+      : null
+    return firstValidationError || err?.response?.data?.message || fallback
   }
 
   const isLoading =
@@ -185,7 +196,9 @@ export function EmailOtpLoginForm() {
         setErrorMessage(result.message || t('Failed to resend verification code'))
       }
     } catch (error) {
-      setErrorMessage(extractError(error, t('Failed to resend verification code. Please try again.')))
+      setErrorMessage(
+        extractError(error, t('Failed to resend verification code. Please try again.'))
+      )
     }
   }
 
@@ -401,7 +414,9 @@ export function EmailOtpLoginForm() {
           </button>
 
           {resendCountdown > 0 ? (
-            <span className="text-sm text-white/50">{t('Resend in')} {resendCountdown}s</span>
+            <span className="text-sm text-white/50">
+              {t('Resend in')} {resendCountdown}s
+            </span>
           ) : (
             <button
               type="button"
@@ -493,7 +508,8 @@ export function EmailOtpLoginForm() {
     return (
       <div className="space-y-4">
         <div className="bg-white/10 px-4 py-2.5 rounded-lg text-center text-sm text-white/80">
-          {t('Two-factor authentication is enabled for')} <strong className="text-white">{email}</strong>
+          {t('Two-factor authentication is enabled for')}{' '}
+          <strong className="text-white">{email}</strong>
         </div>
 
         <div>
@@ -614,6 +630,23 @@ export function EmailOtpLoginForm() {
       {renderOtpStep()}
       {renderPasswordStep()}
       {render2faStep()}
+
+      {/* Admin login link — password only, no OTP */}
+      {onSwitchToAdminLogin && step === 'email' && (
+        <p
+          className="mt-4 text-center text-[12px] font-medium text-white/80"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          {t('Admin?')}{' '}
+          <button
+            type="button"
+            onClick={onSwitchToAdminLogin}
+            className="font-semibold text-white underline decoration-solid hover:text-white/80"
+          >
+            {t('Login with password')}
+          </button>
+        </p>
+      )}
     </div>
   )
 }

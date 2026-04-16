@@ -18,7 +18,7 @@ const NAV = [
   { href: '/org-portal/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/org-portal/api-keys', label: 'API Keys', icon: KeyRound },
   { href: '/org-portal/usage', label: 'Usage', icon: BarChart3 },
-  { href: '/org-portal/credits', label: 'Credits', icon: Wallet },
+  { href: '/org-portal/credits', label: 'Tokens', icon: Wallet },
   { href: '/org-portal/plans', label: 'Plans', icon: Layers },
 ]
 
