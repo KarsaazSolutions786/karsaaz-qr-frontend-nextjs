@@ -82,7 +82,7 @@ export const QR_TYPE_CATEGORIES: QRTypeCategory[] = [
     label: 'Utility',
     icon: 'Wrench',
     accent: 'sky',
-    typeIds: ['wifi', 'location', 'googlemaps', 'file-upload', 'app-download', 'event'],
+    typeIds: ['wifi', 'location', 'googlemaps', 'file-upload', 'app-download', 'event', 'calendar'],
   },
 ]
 

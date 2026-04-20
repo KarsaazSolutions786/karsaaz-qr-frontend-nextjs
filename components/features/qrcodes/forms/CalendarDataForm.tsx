@@ -163,11 +163,11 @@ export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormPr
             {t('Recurrence')}
           </label>
           <select {...register('frequency')} id="frequency" className={SELECT}>
-            <option value="none">{t('None')}</option>
-            <option value="daily">{t('Daily')}</option>
-            <option value="weekly">{t('Weekly')}</option>
-            <option value="monthly">{t('Monthly')}</option>
-            <option value="yearly">{t('Yearly')}</option>
+            <option value="NONE">{t('None')}</option>
+            <option value="DAILY">{t('Daily')}</option>
+            <option value="WEEKLY">{t('Weekly')}</option>
+            <option value="MONTHLY">{t('Monthly')}</option>
+            <option value="YEARLY">{t('Yearly')}</option>
           </select>
         </div>
       </div>

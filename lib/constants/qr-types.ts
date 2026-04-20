@@ -213,6 +213,13 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     description: 'Event details and RSVP',
   },
   {
+    id: 'calendar',
+    name: 'Calendar Event',
+    cat: 'static',
+    icon: '/icons/qr-types/event.png',
+    description: 'Add iCal event to calendar',
+  },
+  {
     id: 'email-dynamic',
     name: 'Email (Dynamic)',
     cat: 'dynamic',

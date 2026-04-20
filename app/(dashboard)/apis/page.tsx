@@ -9,10 +9,18 @@ import { useTranslation } from '@/lib/i18n'
 import { envConfig } from '@/lib/config/env-config'
 import { QR_TYPES } from '@/lib/constants/qr-types'
 import { QR_TYPE_CATEGORIES } from '@/lib/constants/qr-type-categories'
+import {
+  USER_API_SECTIONS,
+  type PlaygroundEndpoint,
+  type HttpMethod,
+} from '@/lib/constants/playground-endpoints'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
+
+// Local alias so existing component code requires no further changes
+type Endpoint = PlaygroundEndpoint
 
 interface ApiKey {
   id: number
@@ -37,222 +45,9 @@ interface ApiKeysResponse {
   plan_limits: PlanLimits
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Docs types & data
-// ─────────────────────────────────────────────────────────────────────────────
-
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
-
-interface EndpointParam {
-  name: string
-  in: 'path' | 'query' | 'body'
-  required?: boolean
-  type: string
-  description: string
-  example?: string
-}
-
-interface Endpoint {
-  method: HttpMethod
-  path: string
-  summary: string
-  description?: string
-  credits?: string
-  params?: EndpointParam[]
-  bodyExample?: object
-  responseExample?: object
-}
-
-interface ApiSection {
-  tag: string
-  description: string
-  endpoints: Endpoint[]
-}
+// ─── API Guide HTML generator ─────────────────────────────────────────────────
 
 const DOCS_BASE = `${envConfig.API_URL}/api/v1`
-
-const USER_API_SECTIONS: ApiSection[] = [
-  {
-    tag: 'Account',
-    description: 'Retrieve your account profile and plan information.',
-    endpoints: [
-      {
-        method: 'GET',
-        path: '/account',
-        summary: 'Get account info',
-        description: 'Returns your user profile, active plan, and API limits.',
-        credits: '1 credit',
-        responseExample: {
-          data: {
-            id: 1,
-            name: 'John Doe',
-            email: 'john@example.com',
-            plan: 'Pro',
-            api_monthly_requests: -1,
-            api_rate_limit_per_minute: 120,
-          },
-        },
-      },
-    ],
-  },
-  {
-    tag: 'Usage',
-    description: 'Monitor your API call volume and credit consumption.',
-    endpoints: [
-      {
-        method: 'GET',
-        path: '/usage',
-        summary: 'Get usage summary',
-        description: 'Aggregate call stats and a daily trend chart for the given period.',
-        credits: '1 credit',
-        params: [
-          {
-            name: 'period',
-            in: 'query',
-            type: 'string',
-            description: 'Time window',
-            example: '7d | 30d | 90d',
-          },
-        ],
-        responseExample: {
-          data: {
-            period: '30d',
-            total_requests: 348,
-            success_count: 345,
-            error_count: 3,
-            daily_trend: [{ date: '2026-03-10', requests: 12 }],
-          },
-        },
-      },
-    ],
-  },
-  {
-    tag: 'QR Codes',
-    description: 'Full CRUD operations on your QR codes.',
-    endpoints: [
-      {
-        method: 'GET',
-        path: '/qrcodes',
-        summary: 'List QR codes',
-        description: 'Returns a paginated list of your QR codes.',
-        credits: '1 credit',
-        params: [
-          {
-            name: 'type',
-            in: 'query',
-            type: 'string',
-            description: 'Filter by QR type',
-            example: 'url',
-          },
-          {
-            name: 'search',
-            in: 'query',
-            type: 'string',
-            description: 'Partial title search',
-            example: 'promo',
-          },
-          {
-            name: 'per_page',
-            in: 'query',
-            type: 'integer',
-            description: 'Items per page (max 100)',
-            example: '15',
-          },
-          { name: 'page', in: 'query', type: 'integer', description: 'Page number', example: '1' },
-        ],
-        responseExample: {
-          data: [{ id: 1, title: 'My QR', type: 'url', is_dynamic: true, status: 'active' }],
-          meta: { current_page: 1, per_page: 15, total: 10, last_page: 1 },
-        },
-      },
-      {
-        method: 'POST',
-        path: '/qrcodes',
-        summary: 'Create a QR code',
-        description: 'Creates a new QR code under your account.',
-        credits: '2 credits',
-        bodyExample: {
-          title: 'My Promo',
-          type: 'url',
-          data: { url: 'https://example.com/promo' },
-          is_dynamic: true,
-        },
-        responseExample: {
-          data: {
-            id: 42,
-            title: 'My Promo',
-            type: 'url',
-            is_dynamic: true,
-            status: 'active',
-            created_at: '2026-04-08T10:00:00Z',
-          },
-        },
-      },
-      {
-        method: 'GET',
-        path: '/qrcodes/{id}',
-        summary: 'Get a QR code',
-        credits: '1 credit',
-        params: [
-          { name: 'id', in: 'path', required: true, type: 'integer', description: 'QR code ID' },
-        ],
-        responseExample: {
-          data: { id: 42, title: 'My Promo', type: 'url', is_dynamic: true, status: 'active' },
-        },
-      },
-      {
-        method: 'PATCH',
-        path: '/qrcodes/{id}',
-        summary: 'Update a QR code',
-        credits: '1 credit',
-        params: [
-          { name: 'id', in: 'path', required: true, type: 'integer', description: 'QR code ID' },
-        ],
-        bodyExample: { title: 'Updated Title', status: 'inactive' },
-        responseExample: {
-          data: { id: 42, title: 'Updated Title', status: 'inactive' },
-        },
-      },
-      {
-        method: 'DELETE',
-        path: '/qrcodes/{id}',
-        summary: 'Delete a QR code',
-        credits: '1 credit',
-        params: [
-          { name: 'id', in: 'path', required: true, type: 'integer', description: 'QR code ID' },
-        ],
-        responseExample: { message: 'QR code deleted.' },
-      },
-      {
-        method: 'GET',
-        path: '/qrcodes/{id}/analytics',
-        summary: 'Get scan analytics',
-        description: 'Returns daily scan counts for the QR code.',
-        credits: '1 credit',
-        params: [
-          { name: 'id', in: 'path', required: true, type: 'integer', description: 'QR code ID' },
-          {
-            name: 'period',
-            in: 'query',
-            type: 'string',
-            description: 'Time window',
-            example: '30d',
-          },
-        ],
-        responseExample: {
-          data: {
-            qr_code_id: 42,
-            period: '30d',
-            total_scans: 847,
-            daily: [{ date: '2026-04-07', scans: 33 }],
-          },
-        },
-      },
-    ],
-  },
-]
-
-// ─── API Guide HTML generator ─────────────────────────────────────────────────
 
 function buildApiGuideHtml(baseUrl: string): string {
   const now = new Date().toLocaleDateString('en-US', {
@@ -1098,7 +893,9 @@ export default function ApisPage() {
       <div className="mx-auto max-w-2xl px-4 py-16 text-center">
         <div className="rounded-xl border border-red-200 bg-red-50 p-8">
           <h2 className="mb-2 text-xl font-semibold text-red-800">{t('Something went wrong')}</h2>
-          <p className="mb-6 text-sm text-red-700">{t('Could not load API keys. Please try again.')}</p>
+          <p className="mb-6 text-sm text-red-700">
+            {t('Could not load API keys. Please try again.')}
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="inline-block rounded-lg bg-red-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
@@ -1176,7 +973,8 @@ export default function ApisPage() {
               <p className="text-2xl font-bold text-blue-600">
                 {(limits.monthly_requests_used ?? 0).toLocaleString()}
                 <span className="text-sm font-normal text-gray-400">
-                  {' '}/ {formatLimit(limits.api_monthly_requests)}
+                  {' '}
+                  / {formatLimit(limits.api_monthly_requests)}
                 </span>
               </p>
               <p className="mt-0.5 text-xs text-gray-500">{t('Monthly Requests')}</p>

@@ -944,8 +944,6 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
                 advancedShapes={ADVANCED_SHAPES}
                 onChange={handleChange}
                 variant="full"
-                isPremiumLocked={isFreePlan}
-                onPremiumBlock={handlePremiumBlock}
               />
             </TabsContent>
 

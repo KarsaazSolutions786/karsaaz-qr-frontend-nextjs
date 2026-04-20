@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -53,6 +53,8 @@ function AssetRow({
   index,
   total,
   assetType,
+  isSelected,
+  onSelect,
   onToggle,
   onMoveUp,
   onMoveDown,
@@ -67,6 +69,8 @@ function AssetRow({
   index: number
   total: number
   assetType: DesignAssetType
+  isSelected: boolean
+  onSelect: (id: number, checked: boolean) => void
   onToggle: (id: number) => void
   onMoveUp: (index: number) => void
   onMoveDown: (index: number) => void
@@ -122,6 +126,16 @@ function AssetRow({
 
   return (
     <tr className={asset.is_active ? '' : 'opacity-50'}>
+      {/* Selection checkbox */}
+      <td className="px-4 py-3 whitespace-nowrap">
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={e => onSelect(asset.id, e.target.checked)}
+          className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+        />
+      </td>
+
       {/* Thumbnail + replace button */}
       <td className="px-4 py-3 whitespace-nowrap">
         <div className="group relative inline-block">
@@ -644,6 +658,30 @@ function AssetTable({ type }: { type: DesignAssetType }) {
   const deleteMutation = useDeleteDesignAsset()
   const reorderMutation = useReorderDesignAssets()
   const [showAddForm, setShowAddForm] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
+  const [bulkDeleting, setBulkDeleting] = useState(false)
+
+  const allSelected = useMemo(
+    () => !!assets?.length && assets.every(a => selectedIds.has(a.id)),
+    [assets, selectedIds]
+  )
+
+  const handleSelectOne = useCallback((id: number, checked: boolean) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (checked) next.add(id)
+      else next.delete(id)
+      return next
+    })
+  }, [])
+
+  const handleSelectAll = useCallback(
+    (checked: boolean) => {
+      if (!assets) return
+      setSelectedIds(checked ? new Set(assets.map(a => a.id)) : new Set())
+    },
+    [assets]
+  )
 
   const handleToggle = useCallback(
     (id: number) =>
@@ -770,6 +808,24 @@ function AssetTable({ type }: { type: DesignAssetType }) {
     [assets, reorderMutation, t]
   )
 
+  const handleBulkDelete = useCallback(async () => {
+    if (!selectedIds.size) return
+    const count = selectedIds.size
+    if (!window.confirm(`Delete ${count} asset${count > 1 ? 's' : ''}? This cannot be undone.`))
+      return
+    setBulkDeleting(true)
+    try {
+      const result = await designAssetsAPI.bulkDelete(Array.from(selectedIds))
+      showSuccessToast(t(`${result.deleted} asset${result.deleted !== 1 ? 's' : ''} deleted`))
+      setSelectedIds(new Set())
+      queryClient.invalidateQueries({ queryKey: queryKeys.designAssets.all() })
+    } catch {
+      showErrorToast(t('Failed to delete selected assets.'))
+    } finally {
+      setBulkDeleting(false)
+    }
+  }, [selectedIds, queryClient, t])
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -846,6 +902,31 @@ function AssetTable({ type }: { type: DesignAssetType }) {
         )}
       </div>
 
+      {/* Bulk delete toolbar */}
+      {selectedIds.size > 0 && (
+        <div className="mb-3 flex items-center justify-between rounded-lg border border-red-200 bg-red-50 px-4 py-2.5">
+          <span className="text-sm font-medium text-red-700">
+            {selectedIds.size} asset{selectedIds.size > 1 ? 's' : ''} selected
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSelectedIds(new Set())}
+              className="rounded border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              {t('Deselect All')}
+            </button>
+            <button
+              onClick={handleBulkDelete}
+              disabled={bulkDeleting}
+              className="inline-flex items-center gap-1.5 rounded bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <TrashIcon className="h-3.5 w-3.5" />
+              {bulkDeleting ? t('Deleting...') : t('Delete Selected')}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Add form */}
       {showAddForm && <AddAssetForm type={type} onClose={() => setShowAddForm(false)} />}
 
@@ -859,6 +940,15 @@ function AssetTable({ type }: { type: DesignAssetType }) {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                <th className="px-4 py-3 whitespace-nowrap">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={e => handleSelectAll(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                    title={allSelected ? t('Deselect all') : t('Select all')}
+                  />
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   {t('Preview')}
                 </th>
@@ -888,6 +978,8 @@ function AssetTable({ type }: { type: DesignAssetType }) {
                   index={index}
                   total={assets.length}
                   assetType={type}
+                  isSelected={selectedIds.has(asset.id)}
+                  onSelect={handleSelectOne}
                   onToggle={handleToggle}
                   onMoveUp={i => handleMove(i, 'up')}
                   onMoveDown={i => handleMove(i, 'down')}

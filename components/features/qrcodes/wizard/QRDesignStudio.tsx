@@ -10,7 +10,10 @@ import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/design
 import { useDesignShapes } from '@/lib/hooks/useDesignShapes'
 import { ChevronLeft, ChevronRight, ChevronDown, ChevronUp, Upload, Lock } from 'lucide-react'
 import { LottieLoader } from '@/components/ui/lottie-loader'
-import PageDesignPanel, { TYPES_WITH_WEBPAGE_DESIGN, DEFAULT_WEBPAGE_DESIGN } from './PageDesignPanel'
+import PageDesignPanel, {
+  TYPES_WITH_WEBPAGE_DESIGN,
+  DEFAULT_WEBPAGE_DESIGN,
+} from './PageDesignPanel'
 import type { WebpageDesignData } from './PageDesignPanel'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -57,154 +60,160 @@ const TABS: { id: TabId; label: string; emoji: string }[] = [
 const PRESET_COLORS = ['#FF0000', '#8B5CF6', '#10B981', '#FFFFFF']
 
 // Color Picker with presets (hoisted to module scope to avoid remount on every render)
-const ColorPickerWithPresets = memo(({
-  label,
-  value,
-  onChange: onColorChange,
-}: {
-  label: string
-  value: string
-  onChange: (c: string) => void
-}) => (
-  <div className="flex items-center justify-between">
-    <span className="text-sm text-gray-700">{label}</span>
-    <div className="flex items-center gap-1">
-      {PRESET_COLORS.map(color => (
-        <button
-          key={color}
-          type="button"
-          onClick={() => onColorChange(color)}
-          className={cn(
-            'w-7 h-7 rounded border-2 transition-all',
-            value === color
-              ? 'border-purple-500 scale-110'
-              : 'border-gray-300 hover:border-gray-400'
-          )}
-          style={{ backgroundColor: color }}
-        />
-      ))}
-      <div className="relative ml-1">
-        <input
-          type="color"
-          value={value}
-          onChange={e => onColorChange(e.target.value)}
-          className="absolute inset-0 opacity-0 w-14 h-7 cursor-pointer"
-        />
-        <button className="px-2 py-1 text-xs font-medium bg-gray-800 text-white rounded">
-          RGB
-        </button>
+const ColorPickerWithPresets = memo(
+  ({
+    label,
+    value,
+    onChange: onColorChange,
+  }: {
+    label: string
+    value: string
+    onChange: (c: string) => void
+  }) => (
+    <div className="flex items-center justify-between">
+      <span className="text-sm text-gray-700">{label}</span>
+      <div className="flex items-center gap-1">
+        {PRESET_COLORS.map(color => (
+          <button
+            key={color}
+            type="button"
+            onClick={() => onColorChange(color)}
+            className={cn(
+              'w-7 h-7 rounded border-2 transition-all',
+              value === color
+                ? 'border-purple-500 scale-110'
+                : 'border-gray-300 hover:border-gray-400'
+            )}
+            style={{ backgroundColor: color }}
+          />
+        ))}
+        <div className="relative ml-1">
+          <input
+            type="color"
+            value={value}
+            onChange={e => onColorChange(e.target.value)}
+            className="absolute inset-0 opacity-0 w-14 h-7 cursor-pointer"
+          />
+          <button className="px-2 py-1 text-xs font-medium bg-gray-800 text-white rounded">
+            RGB
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-))
+  )
+)
 ColorPickerWithPresets.displayName = 'ColorPickerWithPresets'
 
 // Section Card Component (hoisted to module scope to avoid remount on every render)
-const SectionCard = memo(({
-  title,
-  sectionKey: _sectionKey,
-  expanded,
-  onToggle,
-  children,
-}: {
-  title: string
-  sectionKey: string
-  expanded: boolean
-  onToggle: () => void
-  children: React.ReactNode
-}) => (
-  <div className="bg-white rounded-xl border border-purple-100 overflow-hidden shadow-sm">
-    <button
-      type="button"
-      onClick={onToggle}
-      className="w-full flex items-center justify-between px-5 py-4 bg-purple-50/30 hover:bg-purple-50/60 transition-colors"
-    >
-      <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-      {expanded ? (
-        <ChevronUp className="w-5 h-5 text-purple-400" />
-      ) : (
-        <ChevronDown className="w-5 h-5 text-purple-400" />
-      )}
-    </button>
-    {expanded && <div className="px-5 py-4 space-y-4">{children}</div>}
-  </div>
-))
+const SectionCard = memo(
+  ({
+    title,
+    sectionKey: _sectionKey,
+    expanded,
+    onToggle,
+    children,
+  }: {
+    title: string
+    sectionKey: string
+    expanded: boolean
+    onToggle: () => void
+    children: React.ReactNode
+  }) => (
+    <div className="bg-white rounded-xl border border-purple-100 overflow-hidden shadow-sm">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-5 py-4 bg-purple-50/30 hover:bg-purple-50/60 transition-colors"
+      >
+        <h3 className="text-base font-semibold text-gray-900">{title}</h3>
+        {expanded ? (
+          <ChevronUp className="w-5 h-5 text-purple-400" />
+        ) : (
+          <ChevronDown className="w-5 h-5 text-purple-400" />
+        )}
+      </button>
+      {expanded && <div className="px-5 py-4 space-y-4">{children}</div>}
+    </div>
+  )
+)
 SectionCard.displayName = 'SectionCard'
 
 // Shape Grid Component with optional premium locking (hoisted to module scope to avoid remount on every render)
-const ShapeGrid = memo(({
-  items,
-  selectedValue,
-  onSelect,
-  showAll,
-  onToggleShowAll,
-  maxVisible = 15,
-  premiumLocked = false,
-  onPremiumBlock,
-  t,
-}: {
-  items: { value: string; label: string; image?: string }[]
-  selectedValue: string
-  onSelect: (value: string) => void
-  showAll: boolean
-  onToggleShowAll: () => void
-  maxVisible?: number
-  /** When true, all items except the first (default) are locked for free users */
-  premiumLocked?: boolean
-  onPremiumBlock: () => void
-  t: (key: string) => string
-}) => {
-  const visibleItems = showAll ? items : items.slice(0, maxVisible)
-  return (
-    <div>
-      <div className="grid grid-cols-7 gap-2">
-        {visibleItems.map((item, idx) => {
-          // First item (default shape) is always free; rest are premium
-          const isLocked = premiumLocked && idx > 0
-          return (
-            <button
-              key={item.value}
-              type="button"
-              onClick={() => {
-                if (isLocked) {
-                  onPremiumBlock()
-                  return
-                }
-                onSelect(item.value)
-              }}
-              className={cn(
-                'aspect-square rounded-lg border-2 flex items-center justify-center p-1.5 transition-all relative',
-                selectedValue === item.value
-                  ? 'border-purple-500 bg-purple-50'
-                  : 'border-gray-200 hover:border-gray-300',
-                isLocked && 'opacity-50 cursor-not-allowed'
-              )}
-              title={isLocked ? `${item.label} (requires paid plan)` : item.label}
-            >
-              {item.image ? (
-                <img src={item.image} alt={item.label} className="w-full h-full object-contain" />
-              ) : (
-                <span className="text-[8px] text-gray-500">{item.label}</span>
-              )}
-              {isLocked && (
-                <Lock className="absolute bottom-0.5 right-0.5 w-3 h-3 text-gray-400" />
-              )}
-            </button>
-          )
-        })}
+const ShapeGrid = memo(
+  ({
+    items,
+    selectedValue,
+    onSelect,
+    showAll,
+    onToggleShowAll,
+    maxVisible = 15,
+    premiumLocked = false,
+    onPremiumBlock,
+    t,
+  }: {
+    items: { value: string; label: string; image?: string }[]
+    selectedValue: string
+    onSelect: (value: string) => void
+    showAll: boolean
+    onToggleShowAll: () => void
+    maxVisible?: number
+    /** When true, all items except the first (default) are locked for free users */
+    premiumLocked?: boolean
+    onPremiumBlock: () => void
+    t: (key: string) => string
+  }) => {
+    const visibleItems = showAll ? items : items.slice(0, maxVisible)
+    return (
+      <div>
+        <div className="grid grid-cols-7 gap-2">
+          {visibleItems.map((item, idx) => {
+            // First item (default shape) is always free; rest are premium
+            const isLocked = premiumLocked && idx > 0
+            return (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => {
+                  if (isLocked) {
+                    onPremiumBlock()
+                    return
+                  }
+                  onSelect(item.value)
+                }}
+                className={cn(
+                  'aspect-square rounded-lg border-2 flex items-center justify-center p-1.5 transition-all relative',
+                  selectedValue === item.value
+                    ? 'border-purple-500 bg-purple-50'
+                    : 'border-gray-200 hover:border-gray-300',
+                  isLocked && 'opacity-50 cursor-not-allowed'
+                )}
+                title={isLocked ? `${item.label} (requires paid plan)` : item.label}
+              >
+                {item.image ? (
+                  <img src={item.image} alt={item.label} className="w-full h-full object-contain" />
+                ) : (
+                  <span className="text-[8px] text-gray-500">{item.label}</span>
+                )}
+                {isLocked && (
+                  <Lock className="absolute bottom-0.5 right-0.5 w-3 h-3 text-gray-400" />
+                )}
+              </button>
+            )
+          })}
+        </div>
+        {items.length > maxVisible && (
+          <button
+            type="button"
+            onClick={onToggleShowAll}
+            className="mt-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
+          >
+            {showAll ? t('show less') : t('view all')}
+          </button>
+        )}
       </div>
-      {items.length > maxVisible && (
-        <button
-          type="button"
-          onClick={onToggleShowAll}
-          className="mt-2 text-sm text-purple-600 hover:text-purple-700 font-medium"
-        >
-          {showAll ? t('show less') : t('view all')}
-        </button>
-      )}
-    </div>
-  )
-})
+    )
+  }
+)
 ShapeGrid.displayName = 'ShapeGrid'
 
 export default function QRDesignStudio({
@@ -236,7 +245,9 @@ export default function QRDesignStudio({
   const { plan, isOnTrial } = useSubscription()
   const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
   const handlePremiumBlock = () => {
-    toast.info(t('This design feature requires a paid plan. Upgrade to unlock advanced shapes and effects.'))
+    toast.info(
+      t('This design feature requires a paid plan. Upgrade to unlock advanced shapes and effects.')
+    )
   }
 
   // Determine if this QR type supports webpage design
@@ -366,26 +377,26 @@ export default function QRDesignStudio({
 
           {/* Tabs - Figma pill style with emoji icons (only shown in QR Design mode) */}
           {designMode === 'qr' && (
-          <div className="flex items-center gap-3 mt-4 pb-2 overflow-x-auto">
-            {TABS.map(tab => {
-              const isActive = activeTab === tab.id
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap',
-                    isActive
-                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                      : 'text-gray-500 hover:text-gray-700'
-                  )}
-                >
-                  {t(tab.label)}
-                  <span className="text-base">{tab.emoji}</span>
-                </button>
-              )
-            })}
-          </div>
+            <div className="flex items-center gap-3 mt-4 pb-2 overflow-x-auto">
+              {TABS.map(tab => {
+                const isActive = activeTab === tab.id
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={cn(
+                      'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap',
+                      isActive
+                        ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                        : 'text-gray-500 hover:text-gray-700'
+                    )}
+                  >
+                    {t(tab.label)}
+                    <span className="text-base">{tab.emoji}</span>
+                  </button>
+                )
+              })}
+            </div>
           )}
         </div>
       </div>
@@ -397,15 +408,17 @@ export default function QRDesignStudio({
           <div className="lg:col-span-3 space-y-4">
             {/* ==================== PAGE DESIGN PANEL ==================== */}
             {designMode === 'page' && hasWebpageDesign && (
-              <PageDesignPanel
-                value={currentWebpageDesign}
-                onChange={handleWebpageDesignChange}
-              />
+              <PageDesignPanel value={currentWebpageDesign} onChange={handleWebpageDesignChange} />
             )}
 
             {/* ==================== QR COLOR SECTION ==================== */}
             {designMode === 'qr' && (activeTab === 'color' || activeTab === 'look') && (
-              <SectionCard title={t('QR Color')} sectionKey="qrColor" expanded={!!expandedSections['qrColor']} onToggle={() => toggleSection('qrColor')}>
+              <SectionCard
+                title={t('QR Color')}
+                sectionKey="qrColor"
+                expanded={!!expandedSections['qrColor']}
+                onToggle={() => toggleSection('qrColor')}
+              >
                 {/* Fill Type */}
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-700">{t('Fill Type')}</span>
@@ -532,7 +545,9 @@ export default function QRDesignStudio({
                               {t('Save QR Code First')}
                             </p>
                             <p className="text-xs text-yellow-700 mt-1">
-                              {t('Image fill requires the QR code to be saved first. Click "Next" to save, then you can upload a foreground image.')}
+                              {t(
+                                'Image fill requires the QR code to be saved first. Click "Next" to save, then you can upload a foreground image.'
+                              )}
                             </p>
                           </div>
                         </div>
@@ -681,10 +696,17 @@ export default function QRDesignStudio({
 
             {/* ==================== LOOK & FEEL SECTION ==================== */}
             {designMode === 'qr' && (activeTab === 'look' || activeTab === 'color') && (
-              <SectionCard title={t('Look & Feel')} sectionKey="lookFeel" expanded={!!expandedSections['lookFeel']} onToggle={() => toggleSection('lookFeel')}>
+              <SectionCard
+                title={t('Look & Feel')}
+                sectionKey="lookFeel"
+                expanded={!!expandedSections['lookFeel']}
+                onToggle={() => toggleSection('lookFeel')}
+              >
                 {/* Module */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Module')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('Module')}
+                  </label>
                   <ShapeGrid
                     items={MODULE_SHAPES}
                     selectedValue={mergedConfig.moduleShape || 'square'}
@@ -699,7 +721,9 @@ export default function QRDesignStudio({
 
                 {/* Finder */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Finder')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('Finder')}
+                  </label>
                   <ShapeGrid
                     items={FINDER_STYLES}
                     selectedValue={mergedConfig.finder || 'default'}
@@ -714,7 +738,9 @@ export default function QRDesignStudio({
 
                 {/* Finder Dot */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Finder Dot')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('Finder Dot')}
+                  </label>
                   <ShapeGrid
                     items={FINDER_DOT_STYLES}
                     selectedValue={mergedConfig.finderDot || 'default'}
@@ -729,7 +755,9 @@ export default function QRDesignStudio({
 
                 {/* Shape (Outline) */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Shape')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('Shape')}
+                  </label>
                   <ShapeGrid
                     items={OUTLINED_SHAPES}
                     selectedValue={mergedConfig.shape || 'none'}
@@ -753,7 +781,9 @@ export default function QRDesignStudio({
 
                 {/* Logo Type */}
                 <div className="border-t border-gray-200 pt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{t('Logo Type')}</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t('Logo Type')}
+                  </label>
                   <div className="flex items-center gap-6">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input
@@ -800,7 +830,8 @@ export default function QRDesignStudio({
                             type="button"
                             onClick={() => {
                               // Use DB thumbnail_url if available, fallback to hardcoded path
-                              const logoUrl = logo.image || `/assets/images/png-logos/${logo.value}.png`
+                              const logoUrl =
+                                logo.image || `/assets/images/png-logos/${logo.value}.png`
                               handleLogoChange({
                                 url: logoUrl,
                                 logoType: 'preset',
@@ -871,7 +902,9 @@ export default function QRDesignStudio({
                         }}
                       />
                       <p className="text-xs text-gray-500 mt-2">
-                        {t('Upload your logo (PNG, JPG). The logo will be embedded in the QR code.')}
+                        {t(
+                          'Upload your logo (PNG, JPG). The logo will be embedded in the QR code.'
+                        )}
                       </p>
                     </div>
                   )}
@@ -1022,15 +1055,18 @@ export default function QRDesignStudio({
 
             {/* ==================== STICKER SECTION ==================== */}
             {designMode === 'qr' && (activeTab === 'sticker' || activeTab === 'look') && (
-              <SectionCard title={t('Sticker')} sectionKey="sticker" expanded={!!expandedSections['sticker']} onToggle={() => toggleSection('sticker')}>
+              <SectionCard
+                title={t('Sticker')}
+                sectionKey="sticker"
+                expanded={!!expandedSections['sticker']}
+                onToggle={() => toggleSection('sticker')}
+              >
                 <StickerEditor
                   config={mergedConfig}
                   advancedShapes={ADVANCED_SHAPES}
                   onChange={handleChange}
                   variant="compact"
                   ColorPicker={ColorPickerWithPresets}
-                  isPremiumLocked={isFreePlan}
-                  onPremiumBlock={handlePremiumBlock}
                 />
               </SectionCard>
             )}
@@ -1041,10 +1077,7 @@ export default function QRDesignStudio({
             {designMode === 'page' && hasWebpageDesign ? (
               /* Screen / landing-page preview (mirrors Lit's qrcg-webpage-preview) */
               <div className="sticky top-52">
-                <WebpagePreview
-                  ref={webpagePreviewRef}
-                  qrcodeId={savedQRId ?? null}
-                />
+                <WebpagePreview ref={webpagePreviewRef} qrcodeId={savedQRId ?? null} />
               </div>
             ) : (
               <div className="bg-white rounded-xl border border-purple-100 p-6 sticky top-52 shadow-sm">

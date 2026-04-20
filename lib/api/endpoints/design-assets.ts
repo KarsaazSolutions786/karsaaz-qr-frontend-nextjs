@@ -58,6 +58,11 @@ export const designAssetsAPI = {
     await apiClient.delete(`/design-assets/${id}`)
   },
 
+  bulkDelete: async (ids: number[]): Promise<{ deleted: number }> => {
+    const { data } = await apiClient.delete('/design-assets', { data: { ids } })
+    return data
+  },
+
   reorder: async (order: ReorderItem[]): Promise<void> => {
     await apiClient.post('/design-assets/reorder', { order })
   },

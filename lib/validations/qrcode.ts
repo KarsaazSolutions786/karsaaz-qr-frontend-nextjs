@@ -60,7 +60,7 @@ export const createVCardQRCodeSchema = qrCodeBaseSchema.extend({
 export const wifiDataSchema = z.object({
   ssid: z.string().min(1, 'Network name is required'),
   password: z.string().optional().default(''),
-  encryption: z.enum(['WPA', 'WEP', 'nopass']).default('WPA'),
+  type: z.enum(['nopass', 'WPA', 'WEP']).default('nopass'),
   hidden: z.boolean().default(false),
 })
 
@@ -122,7 +122,7 @@ export const locationDataSchema = z.object({
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
   address: z.string().optional(),
-  application: z.enum(['default', 'googlemaps', 'waze']).default('default'),
+  application: z.enum(['default', 'google_maps', 'waze']).default('default'),
 })
 
 export const createLocationQRCodeSchema = qrCodeBaseSchema.extend({
@@ -144,7 +144,7 @@ export const calendarDataSchema = z.object({
   ends_at: z.string().min(1, 'End time is required'),
   timezone: z.string().optional(),
   description: z.string().optional(),
-  frequency: z.enum(['none', 'daily', 'weekly', 'monthly', 'yearly']).default('none'),
+  frequency: z.enum(['NONE', 'DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY']).default('NONE'),
 })
 
 export const createCalendarQRCodeSchema = qrCodeBaseSchema.extend({

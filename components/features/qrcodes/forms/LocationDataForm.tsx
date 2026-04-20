@@ -61,7 +61,7 @@ export function LocationDataForm({ defaultValues, onChange }: LocationDataFormPr
         </label>
         <select {...register('application')} id="application" className={SELECT}>
           <option value="default">{t('Default')}</option>
-          <option value="googlemaps">Google Maps</option>
+          <option value="google_maps">Google Maps</option>
           <option value="waze">Waze</option>
         </select>
       </div>
