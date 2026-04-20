@@ -11,9 +11,11 @@ import { QR_TYPES } from '@/lib/constants/qr-types'
 import { QR_TYPE_CATEGORIES } from '@/lib/constants/qr-type-categories'
 import {
   USER_API_SECTIONS,
+  USER_API_BASE_PATH,
   type PlaygroundEndpoint,
   type HttpMethod,
 } from '@/lib/constants/playground-endpoints'
+import { PlaygroundPanel } from '@/components/features/playground/PlaygroundPanel'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -803,7 +805,7 @@ const revokeApiKey = async (id: number): Promise<void> => {
 // Page
 // ─────────────────────────────────────────────────────────────────────────────
 
-type Tab = 'keys' | 'docs'
+type Tab = 'keys' | 'docs' | 'playground'
 
 export default function ApisPage() {
   const { t } = useTranslation()
@@ -956,10 +958,33 @@ export default function ApisPage() {
           <BookOpen className="h-4 w-4" />
           {t('Documentation')}
         </button>
+        <button
+          onClick={() => setTab('playground')}
+          className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            tab === 'playground'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
+            />
+          </svg>
+          {t('Playground')}
+        </button>
       </div>
 
       {/* ── Docs tab ── */}
       {tab === 'docs' && <ApiDocsTab />}
+
+      {/* ── Playground tab ── */}
+      {tab === 'playground' && (
+        <PlaygroundPanel sections={USER_API_SECTIONS} basePath={USER_API_BASE_PATH} />
+      )}
 
       {/* ── Keys tab ── */}
       {tab === 'keys' && (
