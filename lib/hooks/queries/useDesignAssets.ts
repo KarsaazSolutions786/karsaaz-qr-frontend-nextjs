@@ -12,3 +12,12 @@ export function useAdminDesignAssets(type?: DesignAssetType) {
     staleTime: 60_000,
   })
 }
+
+/** Fetches all design assets (all types) for use in the plan features editor. */
+export function useAllDesignAssets() {
+  return useQuery({
+    queryKey: queryKeys.designAssets.list(),
+    queryFn: () => designAssetsAPI.getAll(),
+    staleTime: 5 * 60_000,
+  })
+}

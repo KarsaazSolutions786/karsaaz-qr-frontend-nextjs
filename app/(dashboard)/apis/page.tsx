@@ -29,6 +29,7 @@ interface PlanLimits {
   has_api_access: boolean
   api_monthly_requests: number
   api_rate_limit_per_minute: number
+  monthly_requests_used: number
 }
 
 interface ApiKeysResponse {
@@ -1054,7 +1055,9 @@ export default function ApisPage() {
   // Render: no API access
   // ──────────────────────────────────────────────────────────────────────────
 
-  if (!isLoading && (error || !data?.plan_limits?.has_api_access)) {
+  const is403 = (error as any)?.response?.status === 403
+
+  if (!isLoading && (is403 || (!error && !data?.plan_limits?.has_api_access))) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center">
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-8">
@@ -1085,6 +1088,23 @@ export default function ApisPage() {
           >
             {t('View Plans')}
           </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (!isLoading && error && !is403) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-8">
+          <h2 className="mb-2 text-xl font-semibold text-red-800">{t('Something went wrong')}</h2>
+          <p className="mb-6 text-sm text-red-700">{t('Could not load API keys. Please try again.')}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="inline-block rounded-lg bg-red-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+          >
+            {t('Retry')}
+          </button>
         </div>
       </div>
     )
@@ -1152,11 +1172,33 @@ export default function ApisPage() {
         <>
           {/* Plan limits banner */}
           <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
+            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
               <p className="text-2xl font-bold text-blue-600">
-                {formatLimit(limits.api_monthly_requests)}
+                {(limits.monthly_requests_used ?? 0).toLocaleString()}
+                <span className="text-sm font-normal text-gray-400">
+                  {' '}/ {formatLimit(limits.api_monthly_requests)}
+                </span>
               </p>
               <p className="mt-0.5 text-xs text-gray-500">{t('Monthly Requests')}</p>
+              {limits.api_monthly_requests !== -1 && (
+                <div className="mt-2 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      (limits.monthly_requests_used ?? 0) / limits.api_monthly_requests > 0.9
+                        ? 'bg-red-500'
+                        : (limits.monthly_requests_used ?? 0) / limits.api_monthly_requests > 0.7
+                          ? 'bg-amber-400'
+                          : 'bg-blue-500'
+                    }`}
+                    style={{
+                      width: `${Math.min(
+                        100,
+                        ((limits.monthly_requests_used ?? 0) / limits.api_monthly_requests) * 100
+                      )}%`,
+                    }}
+                  />
+                </div>
+              )}
             </div>
             <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
               <p className="text-2xl font-bold text-blue-600">{limits.api_rate_limit_per_minute}</p>

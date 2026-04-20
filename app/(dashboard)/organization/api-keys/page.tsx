@@ -24,6 +24,11 @@ export default function ApiKeysPage() {
   const [creating, setCreating] = useState(false)
   const [newKeyToken, setNewKeyToken] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
+  const [usageStats, setUsageStats] = useState<{
+    monthly_requests_used: number
+    monthly_requests_limit: number
+    rate_limit_per_minute: number
+  } | null>(null)
 
   const [form, setForm] = useState({
     name: '',
@@ -36,7 +41,10 @@ export default function ApiKeysPage() {
     if (!orgId) return
     apiKeyAPI
       .list(orgId)
-      .then(res => setKeys(res.data.data ?? []))
+      .then(res => {
+        setKeys(res.data.data ?? [])
+        if (res.data.usage) setUsageStats(res.data.usage)
+      })
       .catch(() => toast.error('Failed to load API keys'))
       .finally(() => setLoading(false))
   }, [orgId])
@@ -94,6 +102,8 @@ export default function ApiKeysPage() {
     return <p className="text-gray-500">Select an organization first.</p>
   }
 
+  const formatLimit = (n: number) => (n === -1 ? 'Unlimited' : n.toLocaleString())
+
   return (
     <div className="max-w-3xl">
       <div className="mb-6 flex items-center justify-between">
@@ -111,6 +121,50 @@ export default function ApiKeysPage() {
           New Key
         </button>
       </div>
+
+      {/* Usage stats */}
+      {usageStats && (
+        <div className="mb-6 grid grid-cols-3 gap-3">
+          <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <p className="text-2xl font-bold text-blue-600">
+              {usageStats.monthly_requests_used.toLocaleString()}
+              <span className="text-sm font-normal text-gray-400">
+                {' '}/ {formatLimit(usageStats.monthly_requests_limit)}
+              </span>
+            </p>
+            <p className="mt-0.5 text-xs text-gray-500">Monthly Requests</p>
+            {usageStats.monthly_requests_limit !== -1 && (
+              <div className="mt-2 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    usageStats.monthly_requests_used / usageStats.monthly_requests_limit > 0.9
+                      ? 'bg-red-500'
+                      : usageStats.monthly_requests_used / usageStats.monthly_requests_limit > 0.7
+                        ? 'bg-amber-400'
+                        : 'bg-blue-500'
+                  }`}
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      (usageStats.monthly_requests_used / usageStats.monthly_requests_limit) * 100
+                    )}%`,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
+            <p className="text-2xl font-bold text-blue-600">{usageStats.rate_limit_per_minute}</p>
+            <p className="mt-0.5 text-xs text-gray-500">Requests / min</p>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
+            <p className="text-2xl font-bold text-blue-600">
+              {keys.filter(k => k.is_active).length}
+            </p>
+            <p className="mt-0.5 text-xs text-gray-500">Active Keys</p>
+          </div>
+        </div>
+      )}
 
       {/* New key revealed token */}
       {newKeyToken && (

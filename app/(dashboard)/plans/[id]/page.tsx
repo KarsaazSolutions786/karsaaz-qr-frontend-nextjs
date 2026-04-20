@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { usePlan } from '@/lib/hooks/queries/usePlans'
 import { useUpdatePlan } from '@/lib/hooks/mutations/usePlanMutations'
 import { BalloonSelector } from '@/components/ui/balloon-selector'
-import { PLAN_FEATURE_OPTIONS } from '@/lib/constants/plan-features'
+import { BASE_PLAN_FEATURES } from '@/lib/constants/plan-features'
 import { QR_TYPES } from '@/lib/constants/qr-types'
 import { PlanCheckpoints, type Checkpoint } from '@/components/features/plans/PlanCheckpoints'
 import { CheckoutLinkGenerator } from '@/components/features/plans/CheckoutLinkGenerator'
@@ -16,6 +16,7 @@ import {
 } from '@/components/features/plans/QrTypeLimitsEditor'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useAllDesignAssets } from '@/lib/hooks/queries/useDesignAssets'
 
 const FREQUENCY_OPTIONS = [
   { value: 'monthly', label: 'Monthly' },
@@ -38,11 +39,6 @@ const qrTypeOptions = QR_TYPES.map(t => ({
   label: t.name,
 }))
 
-const featureOptions = PLAN_FEATURE_OPTIONS.map(f => ({
-  value: f.value,
-  label: f.name,
-}))
-
 const inputClass =
   'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm'
 
@@ -53,6 +49,23 @@ export default function EditPlanPage() {
   const { data: plan, isLoading } = usePlan(planId)
   const updateMutation = useUpdatePlan()
   const [saved, setSaved] = useState(false)
+  const { data: designAssets = [] } = useAllDesignAssets()
+
+  const featureOptions = useMemo(() => {
+    const shapeOptions = designAssets
+      .filter(a => a.type === 'outline_style' && a.is_active !== false)
+      .map(a => ({ value: `shape.${a.slug}`, label: `Shape: ${a.label}` }))
+
+    const stickerOptions = designAssets
+      .filter(a => a.type === 'advanced_shape' && a.is_active !== false)
+      .map(a => ({ value: `advancedShape.${a.slug}`, label: `Sticker: ${a.label}` }))
+
+    return [
+      ...BASE_PLAN_FEATURES.map(f => ({ value: f.value, label: f.name })),
+      ...shapeOptions,
+      ...stickerOptions,
+    ]
+  }, [designAssets])
 
   const [form, setForm] = useState({
     name: '',

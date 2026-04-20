@@ -33,7 +33,7 @@ function PaymentSuccessContent() {
       // Check if user is logged in - redirect to account page, otherwise to login
       const isLoggedIn = localStorage.getItem('logged_in') || localStorage.getItem('token')
       if (isLoggedIn) {
-        window.location.href = '/dashboard/qrcodes'
+        window.location.href = '/qrcodes/new'
       } else {
         window.location.href = '/login'
       }
@@ -113,7 +113,7 @@ function PaymentSuccessContent() {
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Payment Successful!')}</h1>
             <p className="text-gray-600 mb-6">{message}</p>
             <p className="text-sm text-gray-400">{t('Redirecting you to your dashboard in')} {countdown} {t('seconds...')}</p>
-            <Link href="/dashboard/qrcodes" className="mt-4 inline-block text-purple-600 hover:text-purple-700 font-medium">
+            <Link href="/qrcodes/new" className="mt-4 inline-block text-purple-600 hover:text-purple-700 font-medium">
               {t('Go to Dashboard Now')} →
             </Link>
           </>

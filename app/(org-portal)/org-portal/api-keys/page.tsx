@@ -16,6 +16,12 @@ interface ApiKey {
   created_at: string
 }
 
+interface UsageStats {
+  monthly_requests_used: number
+  monthly_requests_limit: number
+  rate_limit_per_minute: number
+}
+
 export default function OrgPortalApiKeysPage() {
   const [keys, setKeys] = useState<ApiKey[]>([])
   const [loading, setLoading] = useState(true)
@@ -24,11 +30,15 @@ export default function OrgPortalApiKeysPage() {
   const [regenerating, setRegenerating] = useState<number | null>(null)
   const [revealed, setRevealed] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [usageStats, setUsageStats] = useState<UsageStats | null>(null)
 
   useEffect(() => {
     portalAxios
-      .get<{ data: ApiKey[] }>('/api-keys')
-      .then(res => setKeys(res.data.data ?? []))
+      .get<{ data: ApiKey[]; usage?: UsageStats }>('/api-keys')
+      .then(res => {
+        setKeys(res.data.data ?? [])
+        if (res.data.usage) setUsageStats(res.data.usage)
+      })
       .catch(() => setError('Failed to load API keys.'))
       .finally(() => setLoading(false))
   }, [])
@@ -60,6 +70,7 @@ export default function OrgPortalApiKeysPage() {
   }
 
   const formatDate = (d: string | null) => (d ? new Date(d).toLocaleDateString() : '—')
+  const formatLimit = (n: number) => (n === -1 ? 'Unlimited' : n.toLocaleString())
 
   if (loading) {
     return (
@@ -75,6 +86,50 @@ export default function OrgPortalApiKeysPage() {
         <h1 className="text-2xl font-bold text-gray-900">API Keys</h1>
         <p className="mt-1 text-sm text-gray-500">Manage access keys for the Karsaaz QR API.</p>
       </div>
+
+      {/* Usage stats */}
+      {usageStats && (
+        <div className="mb-6 grid grid-cols-3 gap-3">
+          <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <p className="text-2xl font-bold text-indigo-600">
+              {usageStats.monthly_requests_used.toLocaleString()}
+              <span className="text-sm font-normal text-gray-400">
+                {' '}/ {formatLimit(usageStats.monthly_requests_limit)}
+              </span>
+            </p>
+            <p className="mt-0.5 text-xs text-gray-500">Monthly Requests</p>
+            {usageStats.monthly_requests_limit !== -1 && (
+              <div className="mt-2 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${
+                    usageStats.monthly_requests_used / usageStats.monthly_requests_limit > 0.9
+                      ? 'bg-red-500'
+                      : usageStats.monthly_requests_used / usageStats.monthly_requests_limit > 0.7
+                        ? 'bg-amber-400'
+                        : 'bg-indigo-500'
+                  }`}
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      (usageStats.monthly_requests_used / usageStats.monthly_requests_limit) * 100
+                    )}%`,
+                  }}
+                />
+              </div>
+            )}
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
+            <p className="text-2xl font-bold text-indigo-600">{usageStats.rate_limit_per_minute}</p>
+            <p className="mt-0.5 text-xs text-gray-500">Requests / min</p>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
+            <p className="text-2xl font-bold text-indigo-600">
+              {keys.filter(k => k.is_active).length}
+            </p>
+            <p className="mt-0.5 text-xs text-gray-500">Active Keys</p>
+          </div>
+        </div>
+      )}
 
       {/* New token reveal banner */}
       {newToken && (

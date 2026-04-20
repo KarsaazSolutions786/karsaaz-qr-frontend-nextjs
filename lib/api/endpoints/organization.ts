@@ -103,7 +103,15 @@ export const organizationAPI = {
 // ─── API Keys ─────────────────────────────────────────────────────────────────
 
 export const apiKeyAPI = {
-  list: (orgId: number) => apiClient.get<{ data: ApiKey[] }>(`/organization/${orgId}/api-keys`),
+  list: (orgId: number) =>
+    apiClient.get<{
+      data: ApiKey[]
+      usage: {
+        monthly_requests_used: number
+        monthly_requests_limit: number
+        rate_limit_per_minute: number
+      }
+    }>(`/organization/${orgId}/api-keys`),
 
   create: (
     orgId: number,
