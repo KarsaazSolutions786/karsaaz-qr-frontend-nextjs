@@ -19,9 +19,6 @@ import {
 // Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Local alias so existing component code requires no further changes
-type Endpoint = PlaygroundEndpoint
-
 interface ApiKey {
   id: number
   name: string
@@ -428,7 +425,7 @@ function CodeBlock({ code, lang = 'json' }: { code: string; lang?: string }) {
   )
 }
 
-function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
+function EndpointCard({ endpoint }: { endpoint: PlaygroundEndpoint }) {
   const [open, setOpen] = useState(false)
   const pathParams = endpoint.params?.filter(p => p.in === 'path') ?? []
   const queryParams = endpoint.params?.filter(p => p.in === 'query') ?? []
