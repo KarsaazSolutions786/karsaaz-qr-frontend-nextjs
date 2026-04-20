@@ -1,13 +1,23 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, ChevronRight, Copy, Check, Download, ExternalLink } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  Copy,
+  Check,
+  Download,
+  ExternalLink,
+  BookOpen,
+} from 'lucide-react'
 import {
   ORG_API_SECTIONS,
+  ORG_API_BASE_PATH,
   type PlaygroundEndpoint,
   type HttpMethod,
 } from '@/lib/constants/playground-endpoints'
 import { envConfig } from '@/lib/config/env-config'
+import { PlaygroundPanel } from '@/components/features/playground/PlaygroundPanel'
 
 // Local aliases so existing component code requires no further changes
 type Endpoint = PlaygroundEndpoint
@@ -185,107 +195,168 @@ function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ApiDocsPage() {
+  const [activeTab, setActiveTab] = useState<'docs' | 'playground'>('docs')
+
   return (
-    <div className="max-w-4xl">
-      <div className="mb-8 flex items-start justify-between gap-4">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* Page header */}
+      <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">API Reference</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Organization API</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Base URL:{' '}
-            <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">{BASE_URL}</code>
+            Reference documentation and interactive playground for the Org API.
           </p>
         </div>
-        <div className="flex gap-2 shrink-0">
-          <a
-            href="/api-spec/organization-v1.yaml"
-            download
-            className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-          >
-            <Download className="h-4 w-4" />
-            OpenAPI Spec
-          </a>
-          <a
-            href="/api-spec/organization-v1.yaml"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Raw YAML
-          </a>
-        </div>
       </div>
 
-      {/* Auth banner */}
-      <div className="mb-8 rounded-xl border border-indigo-100 bg-indigo-50 p-4">
-        <h2 className="mb-1 font-semibold text-indigo-900 text-sm">Authentication</h2>
-        <p className="text-sm text-indigo-700 mb-2">
-          All requests require a Bearer API key in the{' '}
-          <code className="font-mono bg-indigo-100 px-1 rounded">Authorization</code> header.
-        </p>
-        <CodeBlock
-          lang="bash"
-          code={`curl -H "Authorization: Bearer kq_YOUR_API_KEY" ${BASE_URL}/account`}
-        />
+      {/* Tab bar */}
+      <div className="mb-6 flex gap-1 rounded-lg border border-gray-200 bg-gray-100 p-1 w-fit">
+        <button
+          onClick={() => setActiveTab('docs')}
+          className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'docs'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <BookOpen className="h-4 w-4" />
+          Documentation
+        </button>
+        <button
+          onClick={() => setActiveTab('playground')}
+          className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'playground'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
+            />
+          </svg>
+          Playground
+        </button>
       </div>
 
-      {/* Response headers info */}
-      <div className="mb-8 rounded-xl border bg-white p-4 shadow-sm">
-        <h2 className="mb-3 font-semibold text-gray-800 text-sm">Response Headers</h2>
-        <div className="grid gap-2 text-sm md:grid-cols-2">
-          {[
-            ['X-Credits-Consumed', 'Credits deducted for this call'],
-            ['X-Credits-Balance', 'Remaining balance after deduction'],
-            ['X-RateLimit-Limit', 'Requests allowed per minute'],
-            ['X-RateLimit-Remaining', 'Requests remaining this window'],
-          ].map(([header, desc]) => (
-            <div key={header} className="flex items-start gap-2">
-              <code className="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono text-indigo-600">
-                {header}
-              </code>
-              <span className="text-gray-500 text-xs">{desc}</span>
+      {/* Docs content */}
+      {activeTab === 'docs' && (
+        <div>
+          <div className="mb-8 flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-gray-900">API Reference</h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Base URL:{' '}
+                <code className="rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono">
+                  {BASE_URL}
+                </code>
+              </p>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Error codes */}
-      <div className="mb-8 rounded-xl border bg-white p-4 shadow-sm">
-        <h2 className="mb-3 font-semibold text-gray-800 text-sm">Error Codes</h2>
-        <div className="space-y-1.5 text-sm">
-          {[
-            ['401', 'red', 'Unauthorized — Invalid or missing API key'],
-            ['402', 'orange', 'Payment Required — Insufficient credits'],
-            ['404', 'yellow', 'Not Found — Resource does not exist or belong to your org'],
-            ['422', 'blue', 'Unprocessable — Validation failed (see errors in response)'],
-            ['429', 'purple', 'Too Many Requests — Rate limit exceeded (see Retry-After header)'],
-          ].map(([code, color, desc]) => (
-            <div key={code} className="flex items-start gap-3">
-              <span
-                className={`shrink-0 rounded px-2 py-0.5 text-xs font-bold bg-${color}-100 text-${color}-700`}
+            <div className="flex gap-2 shrink-0">
+              <a
+                href="/api-spec/organization-v1.yaml"
+                download
+                className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
               >
-                {code}
-              </span>
-              <span className="text-gray-600">{desc}</span>
+                <Download className="h-4 w-4" />
+                OpenAPI Spec
+              </a>
+              <a
+                href="/api-spec/organization-v1.yaml"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Raw YAML
+              </a>
+            </div>
+          </div>
+
+          {/* Auth banner */}
+          <div className="mb-8 rounded-xl border border-indigo-100 bg-indigo-50 p-4">
+            <h2 className="mb-1 font-semibold text-indigo-900 text-sm">Authentication</h2>
+            <p className="text-sm text-indigo-700 mb-2">
+              All requests require a Bearer API key in the{' '}
+              <code className="font-mono bg-indigo-100 px-1 rounded">Authorization</code> header.
+            </p>
+            <CodeBlock
+              lang="bash"
+              code={`curl -H "Authorization: Bearer kq_YOUR_API_KEY" ${BASE_URL}/account`}
+            />
+          </div>
+
+          {/* Response headers info */}
+          <div className="mb-8 rounded-xl border bg-white p-4 shadow-sm">
+            <h2 className="mb-3 font-semibold text-gray-800 text-sm">Response Headers</h2>
+            <div className="grid gap-2 text-sm md:grid-cols-2">
+              {[
+                ['X-Credits-Consumed', 'Credits deducted for this call'],
+                ['X-Credits-Balance', 'Remaining balance after deduction'],
+                ['X-RateLimit-Limit', 'Requests allowed per minute'],
+                ['X-RateLimit-Remaining', 'Requests remaining this window'],
+              ].map(([header, desc]) => (
+                <div key={header} className="flex items-start gap-2">
+                  <code className="shrink-0 rounded bg-gray-100 px-1.5 py-0.5 text-xs font-mono text-indigo-600">
+                    {header}
+                  </code>
+                  <span className="text-gray-500 text-xs">{desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Error codes */}
+          <div className="mb-8 rounded-xl border bg-white p-4 shadow-sm">
+            <h2 className="mb-3 font-semibold text-gray-800 text-sm">Error Codes</h2>
+            <div className="space-y-1.5 text-sm">
+              {[
+                ['401', 'red', 'Unauthorized — Invalid or missing API key'],
+                ['402', 'orange', 'Payment Required — Insufficient credits'],
+                ['404', 'yellow', 'Not Found — Resource does not exist or belong to your org'],
+                ['422', 'blue', 'Unprocessable — Validation failed (see errors in response)'],
+                [
+                  '429',
+                  'purple',
+                  'Too Many Requests — Rate limit exceeded (see Retry-After header)',
+                ],
+              ].map(([code, color, desc]) => (
+                <div key={code} className="flex items-start gap-3">
+                  <span
+                    className={`shrink-0 rounded px-2 py-0.5 text-xs font-bold bg-${color}-100 text-${color}-700`}
+                  >
+                    {code}
+                  </span>
+                  <span className="text-gray-600">{desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Sections */}
+          {ORG_API_SECTIONS.map(section => (
+            <div key={section.tag} className="mb-10">
+              <div className="mb-4">
+                <h2 className="text-lg font-bold text-gray-900">{section.tag}</h2>
+                <p className="text-sm text-gray-500">{section.description}</p>
+              </div>
+              <div className="space-y-3">
+                {section.endpoints.map(ep => (
+                  <EndpointCard key={`${ep.method}-${ep.path}`} endpoint={ep} />
+                ))}
+              </div>
             </div>
           ))}
         </div>
-      </div>
+      )}
 
-      {/* Sections */}
-      {ORG_API_SECTIONS.map(section => (
-        <div key={section.tag} className="mb-10">
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-gray-900">{section.tag}</h2>
-            <p className="text-sm text-gray-500">{section.description}</p>
-          </div>
-          <div className="space-y-3">
-            {section.endpoints.map(ep => (
-              <EndpointCard key={`${ep.method}-${ep.path}`} endpoint={ep} />
-            ))}
-          </div>
-        </div>
-      ))}
+      {/* Playground */}
+      {activeTab === 'playground' && (
+        <PlaygroundPanel sections={ORG_API_SECTIONS} basePath={ORG_API_BASE_PATH} />
+      )}
     </div>
   )
 }
