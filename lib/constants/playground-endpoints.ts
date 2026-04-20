@@ -224,7 +224,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
     endpoints: [
       {
         method: 'GET',
-        path: '/v1/org/account',
+        path: '/account',
         summary: 'Get organization profile',
         description: "Returns the organization's name, slug, plan, status, and credit overview.",
         credits: '1 credit',
@@ -247,7 +247,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
     endpoints: [
       {
         method: 'GET',
-        path: '/v1/org/usage',
+        path: '/usage',
         summary: 'Get usage summary',
         description: 'Aggregate call stats and a daily trend chart for the given period.',
         credits: '1 credit',
@@ -274,7 +274,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
       },
       {
         method: 'GET',
-        path: '/v1/org/usage/breakdown',
+        path: '/usage/breakdown',
         summary: 'Get per-endpoint breakdown',
         description: 'Calls and credits grouped by endpoint and HTTP method.',
         credits: '1 credit',
@@ -305,7 +305,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
       },
       {
         method: 'GET',
-        path: '/v1/org/credits',
+        path: '/credits',
         summary: 'Get credit balance',
         description: 'Current balance, lifetime stats, and the 20 most recent transactions.',
         credits: '1 credit',
@@ -334,7 +334,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
     endpoints: [
       {
         method: 'GET',
-        path: '/v1/org/qrcodes',
+        path: '/qrcodes',
         summary: 'List QR codes',
         description: 'Returns a paginated list of QR codes belonging to the organization.',
         credits: '1 credit',
@@ -369,7 +369,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
       },
       {
         method: 'POST',
-        path: '/v1/org/qrcodes',
+        path: '/qrcodes',
         summary: 'Create a QR code',
         description: 'Creates a new QR code. Consumes qrcode.create.dynamic credits.',
         credits: '2 credits',
@@ -392,7 +392,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
       },
       {
         method: 'POST',
-        path: '/v1/org/qrcodes/bulk',
+        path: '/qrcodes/bulk',
         summary: 'Bulk create QR codes',
         description: 'Creates up to 50 QR codes in a single request. Credits charged per item.',
         credits: '2 credits × count',
@@ -412,7 +412,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
       },
       {
         method: 'GET',
-        path: '/v1/org/qrcodes/{id}',
+        path: '/qrcodes/{id}',
         summary: 'Get a QR code',
         credits: '1 credit',
         params: [
@@ -424,7 +424,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
       },
       {
         method: 'PATCH',
-        path: '/v1/org/qrcodes/{id}',
+        path: '/qrcodes/{id}',
         summary: 'Update a QR code',
         credits: '1 credit',
         params: [
@@ -437,7 +437,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
       },
       {
         method: 'DELETE',
-        path: '/v1/org/qrcodes/{id}',
+        path: '/qrcodes/{id}',
         summary: 'Delete a QR code',
         credits: '1 credit',
         params: [
@@ -447,7 +447,7 @@ export const ORG_API_SECTIONS: PlaygroundSection[] = [
       },
       {
         method: 'GET',
-        path: '/v1/org/qrcodes/{id}/analytics',
+        path: '/qrcodes/{id}/analytics',
         summary: 'Get scan analytics',
         description: 'Returns daily scan counts for the QR code in the requested period.',
         credits: '1 credit',

@@ -7,13 +7,14 @@ import {
   type PlaygroundEndpoint,
   type HttpMethod,
 } from '@/lib/constants/playground-endpoints'
+import { envConfig } from '@/lib/config/env-config'
 
 // Local aliases so existing component code requires no further changes
 type Endpoint = PlaygroundEndpoint
 
 // ─── API Definition ─────────────────────────────────────────────────────────
 
-const BASE_URL = '/api'
+const BASE_URL = `${envConfig.API_URL}/api/v1/org`
 
 // ─── Method badge ─────────────────────────────────────────────────────────────
 
@@ -224,7 +225,7 @@ export default function ApiDocsPage() {
         </p>
         <CodeBlock
           lang="bash"
-          code={`curl -H "Authorization: Bearer kq_YOUR_API_KEY" ${BASE_URL}/v1/org/account`}
+          code={`curl -H "Authorization: Bearer kq_YOUR_API_KEY" ${BASE_URL}/account`}
         />
       </div>
 
