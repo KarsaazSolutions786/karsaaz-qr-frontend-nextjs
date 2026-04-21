@@ -1,0 +1,24 @@
+{
+  "name": "@karsaazqr/sdk",
+  "version": "1.0.0",
+  "description": "Official TypeScript/JavaScript SDK for the KarsaazQR Org API",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "karsaazqr",
+    "qr-code",
+    "sdk"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
