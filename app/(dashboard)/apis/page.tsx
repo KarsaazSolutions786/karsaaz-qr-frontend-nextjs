@@ -925,7 +925,7 @@ export default function ApisPage() {
   // ──────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="px-4 py-8 sm:px-6 lg:px-8">
+    <div className="overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
       {/* Header + Tabs — always narrow */}
       <div className="mx-auto max-w-3xl">
         <div className="mb-6">
