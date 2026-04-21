@@ -18,6 +18,7 @@ export interface OrgPortalAuthContextType {
   isLoading: boolean
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
+  acceptInvite: (token: string, orgSlug: string, password: string) => Promise<void>
   logout: () => void
 }
 
@@ -63,8 +64,8 @@ export function OrgPortalAuthProvider({ children }: { children: ReactNode }) {
 
   // Validate token on mount
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(false)
       return
     }
@@ -96,6 +97,21 @@ export function OrgPortalAuthProvider({ children }: { children: ReactNode }) {
     setOrg(organization)
   }, [])
 
+  const acceptInvite = useCallback(
+    async (inviteToken: string, orgSlug: string, password: string) => {
+      const res = await portalAxios.post<{ token: string; organization: OrgPortalOrg }>(
+        '/auth/accept-invite',
+        { token: inviteToken, org_slug: orgSlug, password, password_confirmation: password }
+      )
+      const { token: t, organization } = res.data
+      localStorage.setItem(TOKEN_KEY, t)
+      localStorage.setItem(ORG_KEY, JSON.stringify(organization))
+      setToken(t)
+      setOrg(organization)
+    },
+    []
+  )
+
   const logout = useCallback(() => {
     // Fire-and-forget revocation
     if (token) {
@@ -108,8 +124,16 @@ export function OrgPortalAuthProvider({ children }: { children: ReactNode }) {
   }, [token])
 
   const value = useMemo<OrgPortalAuthContextType>(
-    () => ({ org, token, isLoading, isAuthenticated: !!token && !!org, login, logout }),
-    [org, token, isLoading, login, logout]
+    () => ({
+      org,
+      token,
+      isLoading,
+      isAuthenticated: !!token && !!org,
+      login,
+      acceptInvite,
+      logout,
+    }),
+    [org, token, isLoading, login, acceptInvite, logout]
   )
 
   return <OrgPortalAuthContext.Provider value={value}>{children}</OrgPortalAuthContext.Provider>
