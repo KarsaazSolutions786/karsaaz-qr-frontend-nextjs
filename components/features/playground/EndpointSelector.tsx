@@ -1,14 +1,13 @@
-// components/features/playground/EndpointSelector.tsx
 'use client'
 
 import type { PlaygroundEndpoint, PlaygroundSection } from '@/lib/constants/playground-endpoints'
 
-const METHOD_COLORS: Record<string, string> = {
-  GET: 'bg-blue-100 text-blue-700',
-  POST: 'bg-green-100 text-green-700',
-  PUT: 'bg-yellow-100 text-yellow-700',
-  PATCH: 'bg-orange-100 text-orange-700',
-  DELETE: 'bg-red-100 text-red-700',
+const METHOD_STYLES: Record<string, string> = {
+  GET: 'bg-blue-500 text-white',
+  POST: 'bg-green-500 text-white',
+  PUT: 'bg-yellow-500 text-white',
+  PATCH: 'bg-orange-500 text-white',
+  DELETE: 'bg-red-500 text-white',
 }
 
 interface Props {
@@ -19,15 +18,15 @@ interface Props {
 
 export function EndpointSelector({ sections, selectedEndpoint, onSelect }: Props) {
   return (
-    <div className="h-full overflow-y-auto">
+    <div className="h-full overflow-y-auto py-2">
       {sections.map(section => (
-        <div key={section.tag} className="mb-1">
-          <div className="sticky top-0 z-10 bg-gray-50 px-3 py-2">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <div key={section.tag} className="mb-3">
+          <div className="sticky top-0 z-10 bg-gray-50 px-4 pb-1 pt-2">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
               {section.tag}
             </p>
           </div>
-          <div className="pb-1">
+          <div>
             {section.endpoints.map(ep => {
               const isSelected =
                 selectedEndpoint?.method === ep.method && selectedEndpoint?.path === ep.path
@@ -35,20 +34,24 @@ export function EndpointSelector({ sections, selectedEndpoint, onSelect }: Props
                 <button
                   key={`${ep.method}-${ep.path}`}
                   onClick={() => onSelect(ep)}
-                  className={`flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-gray-100 ${
-                    isSelected ? 'bg-indigo-50 hover:bg-indigo-50' : ''
+                  className={`group flex w-full items-center gap-2.5 border-l-2 px-3 py-2 text-left transition-all ${
+                    isSelected
+                      ? 'border-indigo-500 bg-indigo-50'
+                      : 'border-transparent hover:border-gray-300 hover:bg-gray-100'
                   }`}
                 >
                   <span
-                    className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold font-mono ${
-                      METHOD_COLORS[ep.method] ?? 'bg-gray-100 text-gray-600'
+                    className={`w-12 shrink-0 rounded px-1.5 py-0.5 text-center text-[10px] font-bold ${
+                      METHOD_STYLES[ep.method] ?? 'bg-gray-500 text-white'
                     }`}
                   >
                     {ep.method}
                   </span>
                   <span
                     className={`truncate font-mono text-xs ${
-                      isSelected ? 'font-semibold text-indigo-700' : 'text-gray-600'
+                      isSelected
+                        ? 'font-semibold text-indigo-700'
+                        : 'text-gray-500 group-hover:text-gray-800'
                     }`}
                   >
                     {ep.path}
