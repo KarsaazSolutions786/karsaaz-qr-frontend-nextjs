@@ -11,6 +11,7 @@ import {
   LogOut,
   Building2,
   Layers,
+  Radio,
 } from 'lucide-react'
 import { OrgPortalAuthProvider, useOrgPortalAuth } from '@/lib/context/OrgPortalAuthContext'
 
@@ -20,6 +21,7 @@ const NAV = [
   { href: '/org-portal/usage', label: 'Usage', icon: BarChart3 },
   { href: '/org-portal/credits', label: 'Tokens', icon: Wallet },
   { href: '/org-portal/plans', label: 'Plans', icon: Layers },
+  { href: '/org-portal/webhooks', label: 'Webhooks', icon: Radio },
 ]
 
 function PortalShell({ children }: { children: React.ReactNode }) {
