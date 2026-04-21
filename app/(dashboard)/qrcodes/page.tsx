@@ -95,35 +95,38 @@ export default function QRCodesPage() {
   )
 
   // Derive state directly from URL params
-  const search        = sp('q')
-  const page          = parseInt(sp('page', '1'), 10) || 1
-  const sortBy        = (sp('sort', 'date-desc') as SortOption)
-  const selectedFolder = searchParams.get('folder')   // null = all folders
+  const search = sp('q')
+  const page = parseInt(sp('page', '1'), 10) || 1
+  const sortBy = sp('sort', 'date-desc') as SortOption
+  const selectedFolder = searchParams.get('folder') // null = all folders
   const selectedDomain = sp('domain')
 
   // ─── Filter state (also URL-backed) ────────────────────────────────────────
-  const filters = useMemo(() => ({
-    search:       sp('q'),
-    type:         (sp('type', 'all') as any),
-    status:       (sp('status', 'all') as any),
-    dateRange:    (sp('dateRange', 'all') as any),
-    dateFrom:     searchParams.get('dateFrom') ? new Date(sp('dateFrom')) : undefined,
-    dateTo:       searchParams.get('dateTo')   ? new Date(sp('dateTo'))   : undefined,
-    scanCountMin: searchParams.get('scansMin') ? parseInt(sp('scansMin'), 10) : undefined,
-    scanCountMax: searchParams.get('scansMax') ? parseInt(sp('scansMax'), 10) : undefined,
-    hasLogo:      searchParams.get('hasLogo')    ? true : undefined,
-    hasSticker:   searchParams.get('hasSticker') ? true : undefined,
-  }), [searchParams]) // eslint-disable-line react-hooks/exhaustive-deps
+  const filters = useMemo(
+    () => ({
+      search: sp('q'),
+      type: sp('type', 'all') as any,
+      status: sp('status', 'all') as any,
+      dateRange: sp('dateRange', 'all') as any,
+      dateFrom: searchParams.get('dateFrom') ? new Date(sp('dateFrom')) : undefined,
+      dateTo: searchParams.get('dateTo') ? new Date(sp('dateTo')) : undefined,
+      scanCountMin: searchParams.get('scansMin') ? parseInt(sp('scansMin'), 10) : undefined,
+      scanCountMax: searchParams.get('scansMax') ? parseInt(sp('scansMax'), 10) : undefined,
+      hasLogo: searchParams.get('hasLogo') ? true : undefined,
+      hasSticker: searchParams.get('hasSticker') ? true : undefined,
+    }),
+    [searchParams]
+  ) // eslint-disable-line react-hooks/exhaustive-deps
 
   const activeFilterCount = useMemo(() => {
     let n = 0
-    if (filters.search)                         n++
-    if (filters.type     !== 'all')             n++
-    if (filters.status   !== 'all')             n++
-    if (filters.dateRange !== 'all')            n++
+    if (filters.search) n++
+    if (filters.type !== 'all') n++
+    if (filters.status !== 'all') n++
+    if (filters.dateRange !== 'all') n++
     if (filters.scanCountMin != null || filters.scanCountMax != null) n++
-    if (filters.hasLogo)                        n++
-    if (filters.hasSticker)                     n++
+    if (filters.hasLogo) n++
+    if (filters.hasSticker) n++
     return n
   }, [filters])
 
@@ -165,24 +168,64 @@ export default function QRCodesPage() {
   )
 
   const handleSortChange = useCallback(
-    (newSort: SortOption) => updateUrl({ sort: newSort === 'date-desc' ? null : newSort, page: null }),
+    (newSort: SortOption) =>
+      updateUrl({ sort: newSort === 'date-desc' ? null : newSort, page: null }),
     [updateUrl]
   )
 
   const handleFiltersChange = useCallback(
     (newFilters: Partial<typeof filters>) => {
       updateUrl({
-        q:           newFilters.search   !== undefined ? (newFilters.search || null)                              : null,
-        type:        newFilters.type     !== undefined ? (newFilters.type === 'all' ? null : newFilters.type)     : searchParams.get('type'),
-        status:      newFilters.status   !== undefined ? (newFilters.status === 'all' ? null : newFilters.status) : searchParams.get('status'),
-        dateRange:   newFilters.dateRange !== undefined ? (newFilters.dateRange === 'all' ? null : newFilters.dateRange as string) : searchParams.get('dateRange'),
-        dateFrom:    (newFilters.dateFrom  !== undefined ? (newFilters.dateFrom  ? newFilters.dateFrom.toISOString().split('T')[0]  : null) : searchParams.get('dateFrom') ?? null) as string | null,
-        dateTo:      (newFilters.dateTo    !== undefined ? (newFilters.dateTo    ? newFilters.dateTo.toISOString().split('T')[0]    : null) : searchParams.get('dateTo') ?? null) as string | null,
-        scansMin:    (newFilters.scanCountMin != null ? String(newFilters.scanCountMin) : (newFilters.scanCountMin === undefined ? searchParams.get('scansMin') : null)) as string | null,
-        scansMax:    (newFilters.scanCountMax != null ? String(newFilters.scanCountMax) : (newFilters.scanCountMax === undefined ? searchParams.get('scansMax') : null)) as string | null,
-        hasLogo:     (newFilters.hasLogo    ? 'true' : (newFilters.hasLogo    === undefined ? searchParams.get('hasLogo')    : null)) as string | null,
-        hasSticker:  (newFilters.hasSticker ? 'true' : (newFilters.hasSticker === undefined ? searchParams.get('hasSticker') : null)) as string | null,
-        page:        null, // always reset to page 1 when filters change
+        q: newFilters.search !== undefined ? newFilters.search || null : null,
+        type:
+          newFilters.type !== undefined
+            ? newFilters.type === 'all'
+              ? null
+              : newFilters.type
+            : searchParams.get('type'),
+        status:
+          newFilters.status !== undefined
+            ? newFilters.status === 'all'
+              ? null
+              : newFilters.status
+            : searchParams.get('status'),
+        dateRange:
+          newFilters.dateRange !== undefined
+            ? newFilters.dateRange === 'all'
+              ? null
+              : (newFilters.dateRange as string)
+            : searchParams.get('dateRange'),
+        dateFrom: (newFilters.dateFrom !== undefined
+          ? newFilters.dateFrom
+            ? newFilters.dateFrom.toISOString().split('T')[0]
+            : null
+          : (searchParams.get('dateFrom') ?? null)) as string | null,
+        dateTo: (newFilters.dateTo !== undefined
+          ? newFilters.dateTo
+            ? newFilters.dateTo.toISOString().split('T')[0]
+            : null
+          : (searchParams.get('dateTo') ?? null)) as string | null,
+        scansMin: (newFilters.scanCountMin != null
+          ? String(newFilters.scanCountMin)
+          : newFilters.scanCountMin === undefined
+            ? searchParams.get('scansMin')
+            : null) as string | null,
+        scansMax: (newFilters.scanCountMax != null
+          ? String(newFilters.scanCountMax)
+          : newFilters.scanCountMax === undefined
+            ? searchParams.get('scansMax')
+            : null) as string | null,
+        hasLogo: (newFilters.hasLogo
+          ? 'true'
+          : newFilters.hasLogo === undefined
+            ? searchParams.get('hasLogo')
+            : null) as string | null,
+        hasSticker: (newFilters.hasSticker
+          ? 'true'
+          : newFilters.hasSticker === undefined
+            ? searchParams.get('hasSticker')
+            : null) as string | null,
+        page: null, // always reset to page 1 when filters change
       })
     },
     [updateUrl, searchParams]
@@ -227,14 +270,19 @@ export default function QRCodesPage() {
     setShowUpgradeModal: setShowQuotaModal,
   } = useSubscriptionLimits()
 
-  // Scroll to top when page changes
+  // Scroll to top of main content when page changes
   const isFirstRender = useRef(true)
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false
       return
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    const main = document.getElementById('main-content')
+    if (main) {
+      main.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }, [page])
 
   const plan = subscription?.plan?.name || currentUser?.plan?.name || 'free'
@@ -468,7 +516,9 @@ export default function QRCodesPage() {
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('QR Codes')}</h1>
-          <p className="mt-2 text-sm text-gray-600">{isGuest ? t('Your guest QR codes') : t('Manage all your QR codes in one place')}</p>
+          <p className="mt-2 text-sm text-gray-600">
+            {isGuest ? t('Your guest QR codes') : t('Manage all your QR codes in one place')}
+          </p>
           {!isGuest && (
             <div className="mt-3">
               <QRCodeQuotaDisplay used={qrCodesUsed} total={qrCodesLimit} plan={plan} />
@@ -759,7 +809,6 @@ export default function QRCodesPage() {
                 totalItems={data.pagination.total}
                 onPageChange={setPage}
                 showPageSize={false}
-                disabled={isFetching}
               />
             </div>
           )}
