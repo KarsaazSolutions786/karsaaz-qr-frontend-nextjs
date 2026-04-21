@@ -9,7 +9,9 @@ export interface SnippetParams {
 
 /** Replace {param} tokens in a path template with actual values */
 export function buildUrl(pathTemplate: string, pathParams: Record<string, string>): string {
-  return pathTemplate.replace(/\{(\w+)\}/g, (_, key) => pathParams[key] ?? `{${key}}`)
+  return pathTemplate.replace(/\{(\w+)\}/g, (_, key) =>
+    pathParams[key] ? encodeURIComponent(pathParams[key]) : `{${key}}`
+  )
 }
 
 /** Build a query string from a key-value map, skipping empty values */
@@ -41,9 +43,11 @@ export function buildCurlSnippet({ method, fullUrl, apiKey, body }: SnippetParam
     `  -H "Accept: application/json"`,
   ]
   if (body.trim() && method !== 'GET' && method !== 'DELETE') {
+    // Escape single quotes so the shell -d '...' literal is valid
+    const escapedBody = body.replace(/'/g, "'\\''")
     lines[lines.length - 1] += ' \\'
     lines.push(`  -H "Content-Type: application/json" \\`)
-    lines.push(`  -d '${body}'`)
+    lines.push(`  -d '${escapedBody}'`)
   }
   return lines.join('\n')
 }
@@ -75,14 +79,16 @@ console.log(data)`
 export function buildPythonSnippet({ method, fullUrl, apiKey, body }: SnippetParams): string {
   const hasBody = body.trim() !== '' && method !== 'GET' && method !== 'DELETE'
   const methodLower = method.toLowerCase()
+  const escapedBody = body.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
 
   return `import requests
+import json
 
 headers = {
     "Authorization": "Bearer ${apiKey}",
     "Accept": "application/json",${hasBody ? '\n    "Content-Type": "application/json",' : ''}
 }
-${hasBody ? `\npayload = ${body}\n` : ''}
+${hasBody ? `\npayload = json.loads('${escapedBody}')\n` : ''}
 response = requests.${methodLower}(
     "${fullUrl}",
     headers=headers,${hasBody ? '\n    json=payload,' : ''}
@@ -94,6 +100,7 @@ print(response.json())`
 
 export function buildPhpSnippet({ method, fullUrl, apiKey, body }: SnippetParams): string {
   const hasBody = body.trim() !== '' && method !== 'GET' && method !== 'DELETE'
+  const escapedBody = body.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
 
   return `<?php
 
@@ -106,7 +113,7 @@ curl_setopt_array($ch, [
     CURLOPT_HTTPHEADER => [
         "Authorization: Bearer ${apiKey}",
         "Accept: application/json",${hasBody ? '\n        "Content-Type: application/json",' : ''}
-    ],${hasBody ? `\n    CURLOPT_POSTFIELDS => json_encode(${body}),` : ''}
+    ],${hasBody ? `\n    CURLOPT_POSTFIELDS => '${escapedBody}',` : ''}
 ]);
 
 $response = curl_exec($ch);

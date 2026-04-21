@@ -7,6 +7,7 @@
 // - Captures response time and raw headers for display
 
 import axios, { type AxiosRequestConfig } from 'axios'
+import { envConfig } from '@/lib/config/env-config'
 
 export interface PlaygroundResponse {
   status: number
@@ -28,6 +29,19 @@ export async function sendPlaygroundRequest({
   apiKey: string
   body: string
 }): Promise<PlaygroundResponse> {
+  // Guard: only allow requests to our own API origin
+  const expectedOrigin = new URL(envConfig.API_URL).origin
+  if (!fullUrl.startsWith(expectedOrigin)) {
+    return {
+      status: 0,
+      statusText: 'Blocked',
+      durationMs: 0,
+      data: { error: `Playground requests must target ${expectedOrigin}` },
+      headers: {},
+      error: true,
+    }
+  }
+
   const hasBody = body.trim() !== '' && method !== 'GET' && method !== 'DELETE'
 
   const config: AxiosRequestConfig = {

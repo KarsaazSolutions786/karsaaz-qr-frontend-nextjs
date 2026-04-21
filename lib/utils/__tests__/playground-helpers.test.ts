@@ -144,8 +144,10 @@ describe('buildPythonSnippet', () => {
       apiKey: 'sk_abc',
       body: '{"title":"test"}',
     })
+    expect(result).toContain('import json')
     expect(result).toContain('requests.post(')
     expect(result).toContain('json=payload')
+    expect(result).toContain("json.loads('")
   })
 })
 

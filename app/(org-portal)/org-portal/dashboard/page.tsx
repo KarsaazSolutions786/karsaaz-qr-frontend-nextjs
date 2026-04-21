@@ -8,8 +8,8 @@ interface DashboardData {
   organization: { id: number; name: string; status: string }
   qr_created_via_api: number
   api_calls_this_month: number
-  tokens_spent_month: number
-  tokens_balance: number
+  credits_spent_month: number
+  credits_balance: number
   active_api_keys: number
 }
 

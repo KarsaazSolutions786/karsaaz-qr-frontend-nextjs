@@ -13,13 +13,13 @@ interface EndpointData {
   endpoint: string
   http_method: string
   calls: number
-  tokens_consumed: number
+  credits_consumed: number
   avg_response_ms: number
 }
 interface UsageData {
   period: string
   total_requests: number
-  total_tokens: number
+  total_credits: number
   avg_response_ms: number
   success_count: number
   error_count: number

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import { Copy, Check, Clock, ChevronDown, ChevronRight } from 'lucide-react'
 import type { PlaygroundResponse } from '@/lib/api/playground-client'
 
@@ -101,14 +101,10 @@ export function ResponseViewer({ response, isLoading }: Props) {
           {headersOpen && (
             <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 px-4 pb-3 text-xs">
               {[...interesting, ...rest].map(([k, v]) => (
-                <>
-                  <code key={`k-${k}`} className="font-mono text-indigo-600">
-                    {k}
-                  </code>
-                  <span key={`v-${k}`} className="truncate text-gray-600">
-                    {v}
-                  </span>
-                </>
+                <Fragment key={k}>
+                  <code className="font-mono text-indigo-600">{k}</code>
+                  <span className="truncate text-gray-600">{v}</span>
+                </Fragment>
               ))}
             </div>
           )}

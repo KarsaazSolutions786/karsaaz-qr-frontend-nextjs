@@ -80,6 +80,12 @@ export function CodeSnippets({ method, fullUrl, apiKey, body }: Props) {
           )}
         </button>
       </div>
+      {/* API key disclosure warning */}
+      {apiKey.trim() && (
+        <p className="border-b border-amber-100 bg-amber-50 px-3 py-1 text-xs text-amber-700">
+          Your API key is included in this snippet — do not share it.
+        </p>
+      )}
       {/* Code */}
       <pre className="overflow-auto bg-gray-900 p-4 font-mono text-xs leading-relaxed text-green-300">
         {currentSnippet}
