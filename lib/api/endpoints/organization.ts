@@ -98,6 +98,11 @@ export const organizationAPI = {
 
   removeMember: (orgId: number, memberId: number) =>
     apiClient.delete(`/organization/${orgId}/members/${memberId}`),
+
+  sendInvite: (orgId: number, contactEmail?: string) =>
+    apiClient.post<{
+      data: { invite_url: string; expires_at: string; org_name: string; org_slug: string }
+    }>(`/organization/${orgId}/send-invite`, contactEmail ? { contact_email: contactEmail } : {}),
 }
 
 // ─── API Keys ─────────────────────────────────────────────────────────────────

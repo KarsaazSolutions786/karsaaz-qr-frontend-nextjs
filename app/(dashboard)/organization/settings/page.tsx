@@ -3,7 +3,18 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { UserPlus, Trash2, Users, KeyRound, Eye, EyeOff, Copy, RefreshCw } from 'lucide-react'
+import {
+  UserPlus,
+  Trash2,
+  Users,
+  KeyRound,
+  Eye,
+  EyeOff,
+  Copy,
+  RefreshCw,
+  Link2,
+  Check,
+} from 'lucide-react'
 import {
   organizationAPI,
   orgPortalAdminAPI,
@@ -13,6 +24,88 @@ import {
 } from '@/lib/api/endpoints/organization'
 
 const ROLE_OPTIONS = ['admin', 'member', 'viewer']
+
+function SendInviteButton({ orgId }: { orgId: number }) {
+  const [email, setEmail] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [inviteUrl, setUrl] = useState('')
+  const [copied, setCopied] = useState(false)
+  const [error, setError] = useState('')
+  const [expiresAt, setExp] = useState('')
+
+  const generate = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const res = await organizationAPI.sendInvite(orgId, email || undefined)
+      setUrl(res.data.data.invite_url)
+      setExp(res.data.data.expires_at)
+    } catch {
+      setError('Failed to generate invite link.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const copy = () => {
+    navigator.clipboard.writeText(inviteUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+    toast.success('Invite link copied!')
+  }
+
+  return (
+    <div className="mt-4 border-t pt-4">
+      <p className="mb-2 text-xs font-medium text-gray-700">
+        Send an invite link instead (org sets their own password)
+      </p>
+      <div className="flex gap-2">
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="Contact email (optional)"
+          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
+        />
+        <button
+          onClick={generate}
+          disabled={loading}
+          className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+        >
+          <Link2 className="h-4 w-4" />
+          {loading ? 'Generating…' : 'Generate Invite'}
+        </button>
+      </div>
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {inviteUrl && (
+        <div className="mt-3 rounded-lg border border-indigo-100 bg-indigo-50 p-3">
+          <div className="mb-1 flex items-center justify-between">
+            <span className="text-xs font-medium text-indigo-700">
+              Invite Link (valid 72 hours)
+            </span>
+            {expiresAt && (
+              <span className="text-xs text-gray-400">
+                Expires {new Date(expiresAt).toLocaleString()}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-mono text-xs text-gray-700">
+              {inviteUrl}
+            </span>
+            <button
+              onClick={copy}
+              className="shrink-0 text-indigo-500 hover:text-indigo-700"
+              title="Copy link"
+            >
+              {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function SettingsPage() {
   const params = useSearchParams()
@@ -212,6 +305,7 @@ export default function SettingsPage() {
                   {resettingPassword ? 'Resetting…' : 'Reset Portal Password'}
                 </button>
               </div>
+              <SendInviteButton orgId={orgId} />
             </div>
           )}
 
