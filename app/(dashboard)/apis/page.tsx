@@ -925,17 +925,19 @@ export default function ApisPage() {
   // ──────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t('API Access')}</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          {t('Manage your API keys and explore available endpoints.')}
-        </p>
+    <div className="px-4 py-8 sm:px-6 lg:px-8">
+      {/* Header + Tabs — always narrow */}
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-gray-900">{t('API Access')}</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            {t('Manage your API keys and explore available endpoints.')}
+          </p>
+        </div>
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 flex gap-1 rounded-lg border border-gray-200 bg-gray-100 p-1 w-fit">
+      <div className="mx-auto mb-6 flex w-fit max-w-3xl gap-1 rounded-lg border border-gray-200 bg-gray-100 p-1">
         <button
           onClick={() => setTab('keys')}
           className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
@@ -979,193 +981,203 @@ export default function ApisPage() {
       </div>
 
       {/* ── Docs tab ── */}
-      {tab === 'docs' && <ApiDocsTab />}
+      {tab === 'docs' && (
+        <div className="mx-auto max-w-3xl">
+          <ApiDocsTab />
+        </div>
+      )}
 
-      {/* ── Playground tab ── */}
+      {/* ── Playground tab — full width ── */}
       {tab === 'playground' && (
         <PlaygroundPanel sections={USER_API_SECTIONS} basePath={USER_API_BASE_PATH} />
       )}
 
       {/* ── Keys tab ── */}
       {tab === 'keys' && (
-        <>
-          {/* Plan limits banner */}
-          <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-              <p className="text-2xl font-bold text-blue-600">
-                {(limits.monthly_requests_used ?? 0).toLocaleString()}
-                <span className="text-sm font-normal text-gray-400">
-                  {' '}
-                  / {formatLimit(limits.api_monthly_requests)}
-                </span>
-              </p>
-              <p className="mt-0.5 text-xs text-gray-500">{t('Monthly Requests')}</p>
-              {limits.api_monthly_requests !== -1 && (
-                <div className="mt-2 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${
-                      (limits.monthly_requests_used ?? 0) / limits.api_monthly_requests > 0.9
-                        ? 'bg-red-500'
-                        : (limits.monthly_requests_used ?? 0) / limits.api_monthly_requests > 0.7
-                          ? 'bg-amber-400'
-                          : 'bg-blue-500'
-                    }`}
-                    style={{
-                      width: `${Math.min(
-                        100,
-                        ((limits.monthly_requests_used ?? 0) / limits.api_monthly_requests) * 100
-                      )}%`,
-                    }}
-                  />
+        <div className="mx-auto max-w-3xl">
+          <>
+            {/* Plan limits banner */}
+            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                <p className="text-2xl font-bold text-blue-600">
+                  {(limits.monthly_requests_used ?? 0).toLocaleString()}
+                  <span className="text-sm font-normal text-gray-400">
+                    {' '}
+                    / {formatLimit(limits.api_monthly_requests)}
+                  </span>
+                </p>
+                <p className="mt-0.5 text-xs text-gray-500">{t('Monthly Requests')}</p>
+                {limits.api_monthly_requests !== -1 && (
+                  <div className="mt-2 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        (limits.monthly_requests_used ?? 0) / limits.api_monthly_requests > 0.9
+                          ? 'bg-red-500'
+                          : (limits.monthly_requests_used ?? 0) / limits.api_monthly_requests > 0.7
+                            ? 'bg-amber-400'
+                            : 'bg-blue-500'
+                      }`}
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          ((limits.monthly_requests_used ?? 0) / limits.api_monthly_requests) * 100
+                        )}%`,
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
+                <p className="text-2xl font-bold text-blue-600">
+                  {limits.api_rate_limit_per_minute}
+                </p>
+                <p className="mt-0.5 text-xs text-gray-500">{t('Requests / min')}</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm sm:col-span-1 col-span-2">
+                <p className="text-2xl font-bold text-blue-600">{data!.data.length} / 5</p>
+                <p className="mt-0.5 text-xs text-gray-500">{t('Active Keys')}</p>
+              </div>
+            </div>
+
+            {/* One-time token reveal */}
+            {revealedToken && (
+              <div className="mb-6 rounded-lg border border-green-300 bg-green-50 p-5">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="font-semibold text-green-800">
+                      🎉 {t('Key created')}: <span className="font-mono">{revealedToken.name}</span>
+                    </p>
+                    <p className="mt-1 text-xs text-green-700">
+                      ⚠️ {t('Copy this token now — it will not be shown again.')}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setRevealedToken(null)}
+                    className="text-green-600 hover:text-green-800"
+                    aria-label="Dismiss"
+                  >
+                    ✕
+                  </button>
                 </div>
+                <div className="mt-3 flex items-center gap-2 rounded-md bg-white p-3 shadow-inner">
+                  <code className="flex-1 break-all font-mono text-xs text-gray-700">
+                    {revealedToken.token}
+                  </code>
+                  <button
+                    onClick={copyToken}
+                    className="shrink-0 rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700"
+                  >
+                    {copied ? t('Copied!') : t('Copy')}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Create new key */}
+            <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-base font-semibold text-gray-900">
+                {t('Generate New Key')}
+              </h2>
+              <form
+                className="flex gap-3"
+                onSubmit={e => {
+                  e.preventDefault()
+                  if (newKeyName.trim()) createMutation.mutate(newKeyName.trim())
+                }}
+              >
+                <input
+                  type="text"
+                  required
+                  maxLength={80}
+                  placeholder={t('Key name, e.g. "My App"')}
+                  value={newKeyName}
+                  onChange={e => setNewKeyName(e.target.value)}
+                  className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={createMutation.isPending || !newKeyName.trim()}
+                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {createMutation.isPending ? t('Creating…') : t('Generate')}
+                </button>
+              </form>
+              {createMutation.isError && (
+                <p className="mt-2 text-xs text-red-600">
+                  {t(
+                    'Failed to create key. You may have reached the 5-key limit or your plan does not allow API access.'
+                  )}
+                </p>
               )}
             </div>
-            <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
-              <p className="text-2xl font-bold text-blue-600">{limits.api_rate_limit_per_minute}</p>
-              <p className="mt-0.5 text-xs text-gray-500">{t('Requests / min')}</p>
-            </div>
-            <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm sm:col-span-1 col-span-2">
-              <p className="text-2xl font-bold text-blue-600">{data!.data.length} / 5</p>
-              <p className="mt-0.5 text-xs text-gray-500">{t('Active Keys')}</p>
-            </div>
-          </div>
 
-          {/* One-time token reveal */}
-          {revealedToken && (
-            <div className="mb-6 rounded-lg border border-green-300 bg-green-50 p-5">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="font-semibold text-green-800">
-                    🎉 {t('Key created')}: <span className="font-mono">{revealedToken.name}</span>
-                  </p>
-                  <p className="mt-1 text-xs text-green-700">
-                    ⚠️ {t('Copy this token now — it will not be shown again.')}
-                  </p>
+            {/* Key list */}
+            <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+              <div className="border-b border-gray-200 px-6 py-4">
+                <h2 className="text-base font-semibold text-gray-900">{t('Your API Keys')}</h2>
+              </div>
+
+              {data!.data.length === 0 ? (
+                <div className="px-6 py-10 text-center text-sm text-gray-400">
+                  {t('No API keys yet. Generate one above.')}
                 </div>
-                <button
-                  onClick={() => setRevealedToken(null)}
-                  className="text-green-600 hover:text-green-800"
-                  aria-label="Dismiss"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="mt-3 flex items-center gap-2 rounded-md bg-white p-3 shadow-inner">
-                <code className="flex-1 break-all font-mono text-xs text-gray-700">
-                  {revealedToken.token}
-                </code>
-                <button
-                  onClick={copyToken}
-                  className="shrink-0 rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700"
-                >
-                  {copied ? t('Copied!') : t('Copy')}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Create new key */}
-          <div className="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="mb-4 text-base font-semibold text-gray-900">{t('Generate New Key')}</h2>
-            <form
-              className="flex gap-3"
-              onSubmit={e => {
-                e.preventDefault()
-                if (newKeyName.trim()) createMutation.mutate(newKeyName.trim())
-              }}
-            >
-              <input
-                type="text"
-                required
-                maxLength={80}
-                placeholder={t('Key name, e.g. "My App"')}
-                value={newKeyName}
-                onChange={e => setNewKeyName(e.target.value)}
-                className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none"
-              />
-              <button
-                type="submit"
-                disabled={createMutation.isPending || !newKeyName.trim()}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {createMutation.isPending ? t('Creating…') : t('Generate')}
-              </button>
-            </form>
-            {createMutation.isError && (
-              <p className="mt-2 text-xs text-red-600">
-                {t(
-                  'Failed to create key. You may have reached the 5-key limit or your plan does not allow API access.'
-                )}
-              </p>
-            )}
-          </div>
-
-          {/* Key list */}
-          <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-            <div className="border-b border-gray-200 px-6 py-4">
-              <h2 className="text-base font-semibold text-gray-900">{t('Your API Keys')}</h2>
-            </div>
-
-            {data!.data.length === 0 ? (
-              <div className="px-6 py-10 text-center text-sm text-gray-400">
-                {t('No API keys yet. Generate one above.')}
-              </div>
-            ) : (
-              <ul className="divide-y divide-gray-100">
-                {data!.data.map(key => (
-                  <li key={key.id} className="flex items-center justify-between gap-4 px-6 py-4">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium text-gray-900">{key.name}</p>
-                      <p className="mt-0.5 font-mono text-xs text-gray-500">
-                        {key.prefix}
-                        <span className="select-none">
-                          ••••••••••••••••••••••••••••••••••••••••••••••••••••
-                        </span>
-                      </p>
-                      <div className="mt-1 flex flex-wrap gap-2 text-xs text-gray-400">
-                        <span>
-                          {t('Rate limit')}: {key.rate_limit_per_minute} {t('req/min')}
-                        </span>
-                        {key.last_used_at && (
-                          <span>
-                            {t('Last used')}: {new Date(key.last_used_at).toLocaleDateString()}
+              ) : (
+                <ul className="divide-y divide-gray-100">
+                  {data!.data.map(key => (
+                    <li key={key.id} className="flex items-center justify-between gap-4 px-6 py-4">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium text-gray-900">{key.name}</p>
+                        <p className="mt-0.5 font-mono text-xs text-gray-500">
+                          {key.prefix}
+                          <span className="select-none">
+                            ••••••••••••••••••••••••••••••••••••••••••••••••••••
                           </span>
-                        )}
-                        {key.expires_at && (
+                        </p>
+                        <div className="mt-1 flex flex-wrap gap-2 text-xs text-gray-400">
                           <span>
-                            {t('Expires')}: {new Date(key.expires_at).toLocaleDateString()}
+                            {t('Rate limit')}: {key.rate_limit_per_minute} {t('req/min')}
                           </span>
-                        )}
-                        <span>
-                          {t('Created')}: {new Date(key.created_at).toLocaleDateString()}
-                        </span>
+                          {key.last_used_at && (
+                            <span>
+                              {t('Last used')}: {new Date(key.last_used_at).toLocaleDateString()}
+                            </span>
+                          )}
+                          {key.expires_at && (
+                            <span>
+                              {t('Expires')}: {new Date(key.expires_at).toLocaleDateString()}
+                            </span>
+                          )}
+                          <span>
+                            {t('Created')}: {new Date(key.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <button
-                      onClick={() => revokeMutation.mutate(key.id)}
-                      disabled={revokeMutation.isPending}
-                      className="shrink-0 rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
-                    >
-                      {t('Revoke')}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+                      <button
+                        onClick={() => revokeMutation.mutate(key.id)}
+                        disabled={revokeMutation.isPending}
+                        className="shrink-0 rounded-md border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                      >
+                        {t('Revoke')}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
-          {/* Usage hint */}
-          <div className="mt-6 rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
-            <p className="font-medium">{t('How to use your API key')}</p>
-            <p className="mt-1 text-xs">
-              {t('Include your key as a Bearer token in the')}{' '}
-              <code className="font-mono">Authorization</code> {t('header of every request:')}
-            </p>
-            <pre className="mt-2 overflow-x-auto rounded-md bg-gray-900 p-3 font-mono text-xs text-green-400">
-              {`Authorization: Bearer YOUR_API_KEY`}
-            </pre>
-          </div>
-        </>
+            {/* Usage hint */}
+            <div className="mt-6 rounded-lg bg-gray-50 p-4 text-sm text-gray-600">
+              <p className="font-medium">{t('How to use your API key')}</p>
+              <p className="mt-1 text-xs">
+                {t('Include your key as a Bearer token in the')}{' '}
+                <code className="font-mono">Authorization</code> {t('header of every request:')}
+              </p>
+              <pre className="mt-2 overflow-x-auto rounded-md bg-gray-900 p-3 font-mono text-xs text-green-400">
+                {`Authorization: Bearer YOUR_API_KEY`}
+              </pre>
+            </div>
+          </>
+        </div>
       )}
     </div>
   )

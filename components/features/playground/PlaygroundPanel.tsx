@@ -26,7 +26,7 @@ export function PlaygroundPanel({ sections, basePath, defaultApiKey = '' }: Prop
   const effectiveKey = pg.apiKey || defaultApiKey
 
   return (
-    <div className="flex h-[calc(100vh-180px)] min-h-[600px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div className="flex h-[calc(100vh-220px)] min-h-[600px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
       {/* Left: Endpoint Selector */}
       <div className="flex w-56 shrink-0 flex-col border-r border-gray-200 bg-gray-50">
         <PanelHeader label="Endpoints" />
