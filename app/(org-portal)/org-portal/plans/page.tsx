@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { portalAxios } from '@/lib/context/OrgPortalAuthContext'
-import { BarChart3, Zap, Globe, Star, CheckCircle2, AlertCircle } from 'lucide-react'
+import { BarChart3, Zap, Globe, Star, CheckCircle2, AlertCircle, Coins } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface OrgPlan {
   id: number
@@ -12,6 +13,7 @@ interface OrgPlan {
   monthly_api_calls: number
   monthly_qr_creates: number
   rate_limit_per_minute: number
+  included_tokens?: number
   features?: string[]
   is_popular: boolean
 }
@@ -29,14 +31,41 @@ export default function OrgPortalPlansPage() {
   const [data, setData] = useState<PlansData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [selecting, setSelecting] = useState<number | null>(null)
+  const [success, setSuccess] = useState('')
 
   useEffect(() => {
     portalAxios
-      .get<{ data: PlansData }>('/org-portal/plans')
+      .get<{ data: PlansData }>('/plans')
       .then(res => setData(res.data.data))
       .catch(() => setError(true))
       .finally(() => setLoading(false))
   }, [])
+
+  const selectPlan = async (planId: number) => {
+    setSelecting(planId)
+    setSuccess('')
+    try {
+      const res = await portalAxios.post<{
+        checkout_url?: string
+        data?: { orgPlan?: { name: string } }
+        message?: string
+      }>('/plan', { plan_id: planId })
+      if (res.data.checkout_url) {
+        window.location.href = res.data.checkout_url
+      } else {
+        const planName = res.data.data?.orgPlan?.name ?? 'new plan'
+        setSuccess(`Plan updated to ${planName}.`)
+        toast.success(`Plan updated to ${planName}.`)
+        // Reload page data to reflect new plan
+        portalAxios.get<{ data: PlansData }>('/plans').then(r => setData(r.data.data))
+      }
+    } catch {
+      toast.error('Failed to select plan. Please try again.')
+    } finally {
+      setSelecting(null)
+    }
+  }
 
   if (loading) {
     return (
@@ -64,6 +93,13 @@ export default function OrgPortalPlansPage() {
         <h1 className="text-2xl font-bold text-gray-900">Plans</h1>
         <p className="mt-1 text-sm text-gray-500">Your current plan and available options.</p>
       </div>
+
+      {success && (
+        <div className="mb-6 flex items-center gap-2 rounded-lg border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-700">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          {success}
+        </div>
+      )}
 
       {/* Current plan */}
       {current ? (
@@ -195,6 +231,15 @@ export default function OrgPortalPlansPage() {
                         {plan.rate_limit_per_minute}/min
                       </span>
                     </li>
+                    {(plan.included_tokens ?? 0) > 0 && (
+                      <li className="flex items-center gap-2">
+                        <Coins className="h-3.5 w-3.5 text-indigo-400" />
+                        Included tokens:
+                        <span className="font-semibold ml-auto">
+                          {(plan.included_tokens ?? 0).toLocaleString()}
+                        </span>
+                      </li>
+                    )}
                   </ul>
 
                   {plan.features && plan.features.length > 0 && (
@@ -211,9 +256,17 @@ export default function OrgPortalPlansPage() {
                   )}
 
                   {!isCurrent && (
-                    <div className="mt-3 rounded-lg bg-gray-50 px-3 py-2 text-center text-xs text-gray-400">
-                      Contact your admin to upgrade
-                    </div>
+                    <button
+                      onClick={() => selectPlan(plan.id)}
+                      disabled={selecting === plan.id}
+                      className="mt-3 w-full rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+                    >
+                      {selecting === plan.id
+                        ? 'Redirecting…'
+                        : plan.price > 0
+                          ? `Upgrade — $${plan.price}/mo`
+                          : 'Select Free Plan'}
+                    </button>
                   )}
                 </div>
               )
