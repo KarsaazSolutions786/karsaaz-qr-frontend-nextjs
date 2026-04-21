@@ -87,7 +87,7 @@ export function CodeSnippets({ method, fullUrl, apiKey, body }: Props) {
         </p>
       )}
       {/* Code */}
-      <pre className="overflow-auto bg-gray-900 p-4 font-mono text-xs leading-relaxed text-green-300">
+      <pre className="max-h-40 overflow-auto bg-gray-900 p-4 font-mono text-xs leading-relaxed text-green-300">
         {currentSnippet}
       </pre>
     </div>

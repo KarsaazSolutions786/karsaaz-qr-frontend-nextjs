@@ -56,17 +56,19 @@ export function PlaygroundPanel({ sections, basePath, defaultApiKey = '' }: Prop
 
       {/* Right: Response + Code Snippets */}
       <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Response section header — outside flex-1 so h-full in ResponseViewer is correct */}
+        <div className="shrink-0 border-b border-gray-200 px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Response</p>
+        </div>
+
         {/* Response viewer */}
-        <div className="min-h-0 flex-1 overflow-hidden border-b border-gray-200">
-          <div className="border-b border-gray-200 px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Response</p>
-          </div>
+        <div className="min-h-0 flex-1 overflow-hidden">
           <ResponseViewer response={pg.response} isLoading={pg.isSending} />
         </div>
 
         {/* Code snippets */}
         {pg.selectedEndpoint && (
-          <div className="shrink-0 p-4">
+          <div className="shrink-0 border-t border-gray-200 p-3">
             <CodeSnippets
               method={pg.selectedEndpoint.method}
               fullUrl={pg.fullUrl}
