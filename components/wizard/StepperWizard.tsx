@@ -26,6 +26,7 @@ export interface StepperWizardProps {
   isSubmitting?: boolean
   isValidating?: boolean
   showProgress?: boolean
+  showHeader?: boolean
   allowStepClick?: boolean
   className?: string
   headerClassName?: string
@@ -45,6 +46,7 @@ export function StepperWizard({
   canGoNext = true,
   isSubmitting = false,
   isValidating = false,
+  showHeader = true,
   allowStepClick = true,
   className,
   headerClassName,
@@ -67,91 +69,97 @@ export function StepperWizard({
       aria-label={t('Multi-step form wizard')}
     >
       {/* ── Horizontal Step Bar ── */}
-      <div
-        className={cn(
-          'sticky top-0 z-10 bg-white px-6 py-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)]',
-          headerClassName
-        )}
-      >
-        {/* Purple progress bar at very top */}
-        <div className="absolute inset-x-0 top-0 h-1 bg-gray-100">
-          <div
-            className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500 ease-out"
-            style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-          />
-        </div>
-        <div className="mx-auto max-w-5xl">
-          <nav aria-label={t('Form steps')}>
-            <ol className="flex items-center justify-between gap-2">
-              {steps.map((step, index) => {
-                const isCompleted = index < currentStep
-                const isActive = index === currentStep
-                const isClickable = allowStepClick && index <= currentStep
+      {showHeader && (
+        <div
+          className={cn(
+            'sticky top-0 z-10 bg-white px-6 py-4 shadow-[0_1px_3px_rgba(0,0,0,0.06)]',
+            headerClassName
+          )}
+        >
+          {/* Purple progress bar at very top */}
+          <div className="absolute inset-x-0 top-0 h-1 bg-gray-100">
+            <div
+              className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500 ease-out"
+              style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+            />
+          </div>
+          <div className="mx-auto max-w-5xl">
+            <nav aria-label={t('Form steps')}>
+              <ol className="flex items-center justify-between gap-2">
+                {steps.map((step, index) => {
+                  const isCompleted = index < currentStep
+                  const isActive = index === currentStep
+                  const isClickable = allowStepClick && index <= currentStep
 
-                return (
-                  <React.Fragment key={step.id}>
-                    {/* Step node */}
-                    <li
-                      className={cn(
-                        'flex flex-1 flex-col items-center gap-1.5',
-                        isClickable ? 'cursor-pointer' : 'cursor-default'
-                      )}
-                      onClick={() => isClickable && handleStepClick(index)}
-                      aria-current={isActive ? 'step' : undefined}
-                    >
-                      {/* Circle */}
-                      <div
+                  return (
+                    <React.Fragment key={step.id}>
+                      {/* Step node */}
+                      <li
                         className={cn(
-                          'flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-200',
-                          isCompleted
-                            ? 'border-purple-600 bg-purple-600 text-white'
-                            : isActive
-                            ? 'border-purple-600 bg-white text-purple-600 shadow-md shadow-purple-100'
-                            : 'border-gray-200 bg-gray-50 text-gray-400'
+                          'flex flex-1 flex-col items-center gap-1.5',
+                          isClickable ? 'cursor-pointer' : 'cursor-default'
                         )}
+                        onClick={() => isClickable && handleStepClick(index)}
+                        aria-current={isActive ? 'step' : undefined}
                       >
-                        {isCompleted ? (
-                          <Check className="h-4 w-4 stroke-[2.5]" />
-                        ) : (
-                          <span>{index + 1}</span>
-                        )}
-                      </div>
-
-                      {/* Label */}
-                      <div className="text-center hidden sm:block">
-                        <p
+                        {/* Circle */}
+                        <div
                           className={cn(
-                            'text-xs font-semibold',
-                            isActive ? 'text-purple-700' : isCompleted ? 'text-gray-600' : 'text-gray-400'
+                            'flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-200',
+                            isCompleted
+                              ? 'border-purple-600 bg-purple-600 text-white'
+                              : isActive
+                                ? 'border-purple-600 bg-white text-purple-600 shadow-md shadow-purple-100'
+                                : 'border-gray-200 bg-gray-50 text-gray-400'
                           )}
                         >
-                          {step.title}
-                        </p>
-                        {step.description && (
-                          <p className="text-[11px] text-gray-400 leading-tight max-w-[90px] truncate">
-                            {step.description}
-                          </p>
-                        )}
-                      </div>
-                    </li>
+                          {isCompleted ? (
+                            <Check className="h-4 w-4 stroke-[2.5]" />
+                          ) : (
+                            <span>{index + 1}</span>
+                          )}
+                        </div>
 
-                    {/* Connector line between steps */}
-                    {index < steps.length - 1 && (
-                      <div
-                        className={cn(
-                          'h-0.5 flex-1 rounded-full transition-all duration-300',
-                          index < currentStep ? 'bg-purple-600' : 'bg-gray-200'
-                        )}
-                        aria-hidden="true"
-                      />
-                    )}
-                  </React.Fragment>
-                )
-              })}
-            </ol>
-          </nav>
+                        {/* Label */}
+                        <div className="text-center hidden sm:block">
+                          <p
+                            className={cn(
+                              'text-xs font-semibold',
+                              isActive
+                                ? 'text-purple-700'
+                                : isCompleted
+                                  ? 'text-gray-600'
+                                  : 'text-gray-400'
+                            )}
+                          >
+                            {step.title}
+                          </p>
+                          {step.description && (
+                            <p className="text-[11px] text-gray-400 leading-tight max-w-[90px] truncate">
+                              {step.description}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+
+                      {/* Connector line between steps */}
+                      {index < steps.length - 1 && (
+                        <div
+                          className={cn(
+                            'h-0.5 flex-1 rounded-full transition-all duration-300',
+                            index < currentStep ? 'bg-purple-600' : 'bg-gray-200'
+                          )}
+                          aria-hidden="true"
+                        />
+                      )}
+                    </React.Fragment>
+                  )
+                })}
+              </ol>
+            </nav>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Content ── */}
       <div
@@ -167,9 +175,7 @@ export function StepperWizard({
               {steps[currentStep]?.title}
             </h2>
             {steps[currentStep]?.description && (
-              <p className="mt-1 text-sm text-gray-500">
-                {steps[currentStep].description}
-              </p>
+              <p className="mt-1 text-sm text-gray-500">{steps[currentStep].description}</p>
             )}
           </div>
 

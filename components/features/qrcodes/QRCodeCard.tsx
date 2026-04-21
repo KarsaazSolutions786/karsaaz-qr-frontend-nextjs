@@ -74,7 +74,9 @@ export const QRCodeCard = memo(function QRCodeCard({ qrcode, onAction }: QRCodeC
   }
 
   return (
-    <div className="group relative rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md hover:border-gray-300">
+    <div
+      className={`group relative rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md hover:border-gray-300 ${menuOpen ? 'z-50' : ''}`}
+    >
       {/* QR Preview */}
       <Link href={`/qrcodes/${qrcode.id}`} className="block p-4 pb-3">
         <div className="flex justify-center mb-3">
@@ -125,7 +127,7 @@ export const QRCodeCard = memo(function QRCodeCard({ qrcode, onAction }: QRCodeC
           </button>
 
           {menuOpen && (
-            <div className="absolute right-0 bottom-full mb-1 w-48 bg-white rounded-lg border border-gray-200 shadow-lg z-50 py-1">
+            <div className="absolute right-0 bottom-full mb-1 w-48 bg-white rounded-lg border border-gray-200 shadow-lg z-[9999] py-1">
               <button
                 onClick={() => handleAction('view')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"

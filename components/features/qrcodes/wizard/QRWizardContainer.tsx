@@ -234,7 +234,7 @@ export default function QRWizardContainer({
         if (isCreatingRef.current) {
           // A create is already in flight — wait for it by returning a pending promise
           // that resolves once the ref is set
-          return new Promise<any>((resolve) => {
+          return new Promise<any>(resolve => {
             const check = setInterval(() => {
               if (savedQRIdRef.current) {
                 clearInterval(check)
@@ -242,7 +242,10 @@ export default function QRWizardContainer({
               }
             }, 100)
             // Safety timeout after 10s
-            setTimeout(() => { clearInterval(check); resolve({ id: savedQRIdRef.current }) }, 10000)
+            setTimeout(() => {
+              clearInterval(check)
+              resolve({ id: savedQRIdRef.current })
+            }, 10000)
           })
         }
 
@@ -286,7 +289,18 @@ export default function QRWizardContainer({
         }
       }
     },
-    [qrType, formData, design, settings, webpageDesign, mode, router, isGuest, incrementActionCount, refreshSession]
+    [
+      qrType,
+      formData,
+      design,
+      settings,
+      webpageDesign,
+      mode,
+      router,
+      isGuest,
+      incrementActionCount,
+      refreshSession,
+    ]
   )
 
   // ------------------------------------------------------------------
@@ -480,6 +494,7 @@ export default function QRWizardContainer({
         isSubmitting={isSaving}
         isValidating={wizard.isValidating}
         showProgress={true}
+        showHeader={false}
         allowStepClick={true}
       >
         {renderStepContent()}

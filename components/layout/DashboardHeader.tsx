@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { Bars3Icon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/lib/i18n'
 import { LanguagePicker } from '@/components/common/LanguagePicker'
-import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { GlobalSearch } from '@/components/common/GlobalSearch'
 import { AccountBalanceWidget } from '@/components/features/payment/AccountBalanceWidget'
 
@@ -39,7 +38,6 @@ export function DashboardHeader({
           <GlobalSearch />
         </div>
         {isAccountCreditMode && <AccountBalanceWidget />}
-        <ThemeToggle />
         <LanguagePicker />
         <Link
           href="/account"
@@ -56,7 +54,6 @@ export function DashboardHeader({
           <GlobalSearch />
         </div>
         {isAccountCreditMode && <AccountBalanceWidget />}
-        <ThemeToggle />
         <LanguagePicker />
         <Link
           href="/account"

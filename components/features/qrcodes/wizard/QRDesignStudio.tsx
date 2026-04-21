@@ -279,6 +279,42 @@ export default function QRDesignStudio({
     prevIsSavedRef.current = isSaved
   }, [isSaved, designMode])
   const [activeTab, setActiveTab] = useState<TabId>('color')
+  const colorSectionRef = useRef<HTMLDivElement>(null)
+  const lookSectionRef = useRef<HTMLDivElement>(null)
+  const stickerSectionRef = useRef<HTMLDivElement>(null)
+
+  const sectionRefs: Record<TabId, React.RefObject<HTMLDivElement>> = {
+    color: colorSectionRef,
+    look: lookSectionRef,
+    sticker: stickerSectionRef,
+  }
+
+  useEffect(() => {
+    if (designMode !== 'qr') return
+    const entries: Record<string, number> = {}
+    const observer = new IntersectionObserver(
+      observed => {
+        observed.forEach(entry => {
+          const id = (entry.target as HTMLElement).dataset.tabSection
+          if (id) entries[id] = entry.intersectionRatio
+        })
+        const best = Object.entries(entries).sort((a, b) => b[1] - a[1])[0]
+        if (best && best[1] > 0) setActiveTab(best[0] as TabId)
+      },
+      { threshold: [0, 0.1, 0.5], rootMargin: '0px 0px -40% 0px' }
+    )
+    const refs = [colorSectionRef, lookSectionRef, stickerSectionRef]
+    refs.forEach(r => {
+      if (r.current) observer.observe(r.current)
+    })
+    return () => observer.disconnect()
+  }, [designMode])
+
+  const scrollToTab = (tabId: TabId) => {
+    setActiveTab(tabId)
+    sectionRefs[tabId]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     qrColor: true,
     lookFeel: true,
@@ -383,7 +419,7 @@ export default function QRDesignStudio({
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => scrollToTab(tab.id)}
                     className={cn(
                       'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap',
                       isActive
@@ -412,428 +448,482 @@ export default function QRDesignStudio({
             )}
 
             {/* ==================== QR COLOR SECTION ==================== */}
-            {designMode === 'qr' && (activeTab === 'color' || activeTab === 'look') && (
-              <SectionCard
-                title={t('QR Color')}
-                sectionKey="qrColor"
-                expanded={!!expandedSections['qrColor']}
-                onToggle={() => toggleSection('qrColor')}
-              >
-                {/* Fill Type */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-700">{t('Fill Type')}</span>
-                  <select
-                    value={
-                      (mergedConfig.foregroundFill as any)?.type === 'gradient'
-                        ? 'gradient'
-                        : (mergedConfig.foregroundFill as any)?.type === 'foreground_image'
-                          ? 'image'
-                          : 'solid'
-                    }
-                    onChange={e => {
-                      if (e.target.value !== 'solid' && isFreePlan) {
-                        handlePremiumBlock()
-                        return
+            {designMode === 'qr' && (
+              <div ref={colorSectionRef} data-tab-section="color">
+                <SectionCard
+                  title={t('QR Color')}
+                  sectionKey="qrColor"
+                  expanded={!!expandedSections['qrColor']}
+                  onToggle={() => toggleSection('qrColor')}
+                >
+                  {/* Fill Type */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700">{t('Fill Type')}</span>
+                    <select
+                      value={
+                        (mergedConfig.foregroundFill as any)?.type === 'gradient'
+                          ? 'gradient'
+                          : (mergedConfig.foregroundFill as any)?.type === 'foreground_image'
+                            ? 'image'
+                            : 'solid'
                       }
-                      if (e.target.value === 'solid') {
-                        handleChange('foregroundFill', { type: 'solid', color: '#000000' })
-                      } else if (e.target.value === 'gradient') {
-                        handleChange('foregroundFill', {
-                          type: 'gradient',
-                          gradientType: 'linear',
-                          startColor: '#000000',
-                          endColor: '#333333',
-                          rotation: 45,
-                        })
-                      } else {
-                        handleChange('foregroundFill', { type: 'foreground_image', imageUrl: '' })
-                      }
-                    }}
-                    className="px-4 py-1.5 text-sm bg-purple-100 text-purple-700 rounded-full font-medium border border-purple-200 focus:ring-2 focus:ring-purple-300 appearance-none cursor-pointer"
-                  >
-                    <option value="solid">{t('Solid Color')}</option>
-                    <option value="gradient">{t('Gradient')}</option>
-                    <option value="image">{t('Image Fill')}</option>
-                  </select>
-                </div>
-
-                {/* Solid Color Fill */}
-                {(mergedConfig.foregroundFill as any)?.type === 'solid' && (
-                  <ColorPickerWithPresets
-                    label={t('Fill Color')}
-                    value={(mergedConfig.foregroundFill as any)?.color || '#000000'}
-                    onChange={c => handleChange('foregroundFill', { type: 'solid', color: c })}
-                  />
-                )}
-
-                {/* Gradient Controls */}
-                {(mergedConfig.foregroundFill as any)?.type === 'gradient' && (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-700">{t('Gradient Type')}</span>
-                      <select
-                        value={(mergedConfig.foregroundFill as any).gradientType || 'linear'}
-                        onChange={e =>
-                          handleChange('foregroundFill', {
-                            ...(mergedConfig.foregroundFill as any),
-                            gradientType: e.target.value,
-                          })
+                      onChange={e => {
+                        if (e.target.value !== 'solid' && isFreePlan) {
+                          handlePremiumBlock()
+                          return
                         }
-                        className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg"
-                      >
-                        <option value="linear">{t('Linear')}</option>
-                        <option value="radial">{t('Radial')}</option>
-                      </select>
-                    </div>
+                        if (e.target.value === 'solid') {
+                          handleChange('foregroundFill', { type: 'solid', color: '#000000' })
+                        } else if (e.target.value === 'gradient') {
+                          handleChange('foregroundFill', {
+                            type: 'gradient',
+                            gradientType: 'linear',
+                            startColor: '#000000',
+                            endColor: '#333333',
+                            rotation: 45,
+                          })
+                        } else {
+                          handleChange('foregroundFill', { type: 'foreground_image', imageUrl: '' })
+                        }
+                      }}
+                      className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-purple-300 focus:border-purple-400 cursor-pointer"
+                    >
+                      <option value="solid">{t('Solid Color')}</option>
+                      <option value="gradient">{t('Gradient')}</option>
+                      <option value="image">{t('Image Fill')}</option>
+                    </select>
+                  </div>
+
+                  {/* Solid Color Fill */}
+                  {(mergedConfig.foregroundFill as any)?.type === 'solid' && (
                     <ColorPickerWithPresets
-                      label={t('Start Color')}
-                      value={(mergedConfig.foregroundFill as any).startColor || '#000000'}
-                      onChange={c =>
-                        handleChange('foregroundFill', {
-                          ...(mergedConfig.foregroundFill as any),
-                          startColor: c,
-                        })
-                      }
+                      label={t('Fill Color')}
+                      value={(mergedConfig.foregroundFill as any)?.color || '#000000'}
+                      onChange={c => handleChange('foregroundFill', { type: 'solid', color: c })}
                     />
-                    <ColorPickerWithPresets
-                      label={t('End Color')}
-                      value={(mergedConfig.foregroundFill as any).endColor || '#333333'}
-                      onChange={c =>
-                        handleChange('foregroundFill', {
-                          ...(mergedConfig.foregroundFill as any),
-                          endColor: c,
-                        })
-                      }
-                    />
-                    {(mergedConfig.foregroundFill as any).gradientType === 'linear' && (
-                      <div>
-                        <label className="block text-sm text-gray-700 mb-2">
-                          {t('Angle')}: {(mergedConfig.foregroundFill as any).rotation || 45}°
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="360"
-                          value={(mergedConfig.foregroundFill as any).rotation || 45}
+                  )}
+
+                  {/* Gradient Controls */}
+                  {(mergedConfig.foregroundFill as any)?.type === 'gradient' && (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-700">{t('Gradient Type')}</span>
+                        <select
+                          value={(mergedConfig.foregroundFill as any).gradientType || 'linear'}
                           onChange={e =>
                             handleChange('foregroundFill', {
                               ...(mergedConfig.foregroundFill as any),
-                              rotation: parseInt(e.target.value),
+                              gradientType: e.target.value,
                             })
                           }
-                          className="w-full accent-purple-500"
-                        />
+                          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg"
+                        >
+                          <option value="linear">{t('Linear')}</option>
+                          <option value="radial">{t('Radial')}</option>
+                        </select>
                       </div>
-                    )}
-                  </div>
-                )}
+                      <ColorPickerWithPresets
+                        label={t('Start Color')}
+                        value={(mergedConfig.foregroundFill as any).startColor || '#000000'}
+                        onChange={c =>
+                          handleChange('foregroundFill', {
+                            ...(mergedConfig.foregroundFill as any),
+                            startColor: c,
+                          })
+                        }
+                      />
+                      <ColorPickerWithPresets
+                        label={t('End Color')}
+                        value={(mergedConfig.foregroundFill as any).endColor || '#333333'}
+                        onChange={c =>
+                          handleChange('foregroundFill', {
+                            ...(mergedConfig.foregroundFill as any),
+                            endColor: c,
+                          })
+                        }
+                      />
+                      {(mergedConfig.foregroundFill as any).gradientType === 'linear' && (
+                        <div>
+                          <label className="block text-sm text-gray-700 mb-2">
+                            {t('Angle')}: {(mergedConfig.foregroundFill as any).rotation || 45}°
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="360"
+                            value={(mergedConfig.foregroundFill as any).rotation || 45}
+                            onChange={e =>
+                              handleChange('foregroundFill', {
+                                ...(mergedConfig.foregroundFill as any),
+                                rotation: parseInt(e.target.value),
+                              })
+                            }
+                            className="w-full accent-purple-500"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
 
-                {/* Image Fill */}
-                {(mergedConfig.foregroundFill as any)?.type === 'foreground_image' && (
-                  <div className="space-y-3">
-                    <label className="block text-sm font-medium text-gray-700">
-                      {t('Foreground Image')}
-                    </label>
+                  {/* Image Fill */}
+                  {(mergedConfig.foregroundFill as any)?.type === 'foreground_image' && (
+                    <div className="space-y-3">
+                      <label className="block text-sm font-medium text-gray-700">
+                        {t('Foreground Image')}
+                      </label>
 
-                    {!savedQRId ? (
-                      // Show message when QR is not saved yet
-                      <div className="border-2 border-dashed border-yellow-300 rounded-lg p-4 bg-yellow-50">
-                        <div className="flex items-start gap-3">
-                          <div className="text-yellow-600 text-xl">⚠️</div>
-                          <div>
-                            <p className="text-sm font-medium text-yellow-800">
-                              {t('Save QR Code First')}
-                            </p>
-                            <p className="text-xs text-yellow-700 mt-1">
-                              {t(
-                                'Image fill requires the QR code to be saved first. Click "Next" to save, then you can upload a foreground image.'
-                              )}
-                            </p>
+                      {!savedQRId ? (
+                        // Show message when QR is not saved yet
+                        <div className="border-2 border-dashed border-yellow-300 rounded-lg p-4 bg-yellow-50">
+                          <div className="flex items-start gap-3">
+                            <div className="text-yellow-600 text-xl">⚠️</div>
+                            <div>
+                              <p className="text-sm font-medium text-yellow-800">
+                                {t('Save QR Code First')}
+                              </p>
+                              <p className="text-xs text-yellow-700 mt-1">
+                                {t(
+                                  'Image fill requires the QR code to be saved first. Click "Next" to save, then you can upload a foreground image.'
+                                )}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      // Show file upload when QR is saved
-                      <>
-                        <div
-                          className="border-2 border-dashed border-purple-300 rounded-lg p-6 text-center cursor-pointer transition hover:border-purple-500 hover:bg-purple-50/30"
-                          onClick={() => document.getElementById('foreground-image-input')?.click()}
-                        >
-                          <input
-                            id="foreground-image-input"
-                            type="file"
-                            accept="image/png,image/jpeg,image/jpg"
-                            className="hidden"
-                            onChange={async e => {
-                              const file = e.target.files?.[0]
-                              if (file && savedQRId) {
-                                // Show local preview immediately
-                                const reader = new FileReader()
-                                reader.onload = ev => {
-                                  const dataUrl = ev.target?.result as string
-                                  handleChange('foregroundFill', {
-                                    type: 'foreground_image',
-                                    imageUrl: dataUrl,
-                                  })
-                                }
-                                reader.readAsDataURL(file)
-
-                                // Upload to backend so preview renders correctly
-                                try {
-                                  setIsUploadingImage(true)
-                                  await qrcodesAPI.uploadForegroundImage(savedQRId, file)
-                                  setHasUploadedImage(true)
-                                  setTimeout(() => previewRef.current?.refresh(), 300)
-                                } catch (err) {
-                                  console.error('[ForegroundImage] Upload failed:', err)
-                                } finally {
-                                  setIsUploadingImage(false)
-                                }
-                              }
-                            }}
-                          />
-
-                          {(mergedConfig.foregroundFill as any).imageUrl ? (
-                            <div className="flex items-center justify-center gap-3">
-                              {isUploadingImage ? (
-                                <LottieLoader size={80} />
-                              ) : (
-                                <img
-                                  src={(mergedConfig.foregroundFill as any).imageUrl}
-                                  alt="Foreground preview"
-                                  className="w-16 h-16 object-cover rounded"
-                                />
-                              )}
-                              <div className="text-left">
-                                <p className="text-sm font-medium text-gray-900">
-                                  {isUploadingImage ? t('Uploading...') : t('Image selected')}
-                                </p>
-                                <p className="text-xs text-gray-500">{t('Click to replace')}</p>
-                              </div>
-                            </div>
-                          ) : (
-                            <>
-                              <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                              <p className="text-sm text-gray-600 font-medium">
-                                {t('Drop your file here')}
-                              </p>
-                              <p className="text-xs text-gray-400 my-2">{t('or')}</p>
-                              <span className="inline-block px-4 py-1.5 text-sm font-medium text-white bg-purple-500 rounded-lg hover:bg-purple-600 transition-colors">
-                                {t('Browse Files')}
-                              </span>
-                            </>
-                          )}
-                        </div>
-
-                        {/* Clear button */}
-                        {(mergedConfig.foregroundFill as any).imageUrl && (
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              handleChange('foregroundFill', {
-                                type: 'foreground_image',
-                                imageUrl: '',
-                              })
-                              setHasUploadedImage(false)
-                              if (savedQRId) {
-                                try {
-                                  await qrcodesAPI.deleteForegroundImage(savedQRId)
-                                } catch {
-                                  // ignore — backend may not have an image to delete
-                                }
-                              }
-                            }}
-                            className="text-sm text-red-600 hover:text-red-700"
+                      ) : (
+                        // Show file upload when QR is saved
+                        <>
+                          <div
+                            className="border-2 border-dashed border-purple-300 rounded-lg p-6 text-center cursor-pointer transition hover:border-purple-500 hover:bg-purple-50/30"
+                            onClick={() =>
+                              document.getElementById('foreground-image-input')?.click()
+                            }
                           >
-                            {t('Remove image')}
-                          </button>
-                        )}
+                            <input
+                              id="foreground-image-input"
+                              type="file"
+                              accept="image/png,image/jpeg,image/jpg"
+                              className="hidden"
+                              onChange={async e => {
+                                const file = e.target.files?.[0]
+                                if (file && savedQRId) {
+                                  // Show local preview immediately
+                                  const reader = new FileReader()
+                                  reader.onload = ev => {
+                                    const dataUrl = ev.target?.result as string
+                                    handleChange('foregroundFill', {
+                                      type: 'foreground_image',
+                                      imageUrl: dataUrl,
+                                    })
+                                  }
+                                  reader.readAsDataURL(file)
 
-                        <p className="text-xs text-gray-500">
-                          {t('The image will be used as a pattern fill for the QR code modules.')}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                )}
+                                  // Upload to backend so preview renders correctly
+                                  try {
+                                    setIsUploadingImage(true)
+                                    await qrcodesAPI.uploadForegroundImage(savedQRId, file)
+                                    setHasUploadedImage(true)
+                                    setTimeout(() => previewRef.current?.refresh(), 300)
+                                  } catch (err) {
+                                    console.error('[ForegroundImage] Upload failed:', err)
+                                  } finally {
+                                    setIsUploadingImage(false)
+                                  }
+                                }
+                              }}
+                            />
 
-                {/* Eye Colors */}
-                <ColorPickerWithPresets
-                  label={t('Eye External Color')}
-                  value={mergedConfig.eyeExternalColor || '#000000'}
-                  onChange={c => handleChange('eyeExternalColor', c)}
-                />
-                <ColorPickerWithPresets
-                  label={t('Eye Internal Color')}
-                  value={mergedConfig.eyeInternalColor || '#000000'}
-                  onChange={c => handleChange('eyeInternalColor', c)}
-                />
+                            {(mergedConfig.foregroundFill as any).imageUrl ? (
+                              <div className="flex items-center justify-center gap-3">
+                                {isUploadingImage ? (
+                                  <LottieLoader size={80} />
+                                ) : (
+                                  <img
+                                    src={(mergedConfig.foregroundFill as any).imageUrl}
+                                    alt="Foreground preview"
+                                    className="w-16 h-16 object-cover rounded"
+                                  />
+                                )}
+                                <div className="text-left">
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {isUploadingImage ? t('Uploading...') : t('Image selected')}
+                                  </p>
+                                  <p className="text-xs text-gray-500">{t('Click to replace')}</p>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                                <p className="text-sm text-gray-600 font-medium">
+                                  {t('Drop your file here')}
+                                </p>
+                                <p className="text-xs text-gray-400 my-2">{t('or')}</p>
+                                <span className="inline-block px-4 py-1.5 text-sm font-medium text-white bg-purple-500 rounded-lg hover:bg-purple-600 transition-colors">
+                                  {t('Browse Files')}
+                                </span>
+                              </>
+                            )}
+                          </div>
 
-                {/* Background Toggle */}
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-700">{t('Background')}</span>
-                  <Switch
-                    checked={mergedConfig.background?.type !== 'transparent'}
-                    onCheckedChange={checked =>
-                      handleChange(
-                        'background',
-                        checked ? { type: 'solid', color: '#FFFFFF' } : { type: 'transparent' }
-                      )
-                    }
-                  />
-                </div>
+                          {/* Clear button */}
+                          {(mergedConfig.foregroundFill as any).imageUrl && (
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                handleChange('foregroundFill', {
+                                  type: 'foreground_image',
+                                  imageUrl: '',
+                                })
+                                setHasUploadedImage(false)
+                                if (savedQRId) {
+                                  try {
+                                    await qrcodesAPI.deleteForegroundImage(savedQRId)
+                                  } catch {
+                                    // ignore — backend may not have an image to delete
+                                  }
+                                }
+                              }}
+                              className="text-sm text-red-600 hover:text-red-700"
+                            >
+                              {t('Remove image')}
+                            </button>
+                          )}
 
-                {/* Background Color */}
-                {mergedConfig.background?.type !== 'transparent' && (
+                          <p className="text-xs text-gray-500">
+                            {t('The image will be used as a pattern fill for the QR code modules.')}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Eye Colors */}
                   <ColorPickerWithPresets
-                    label={t('Background Color')}
-                    value={mergedConfig.background?.color || '#FFFFFF'}
-                    onChange={c => handleChange('background', { type: 'solid', color: c })}
+                    label={t('Eye External Color')}
+                    value={mergedConfig.eyeExternalColor || '#000000'}
+                    onChange={c => handleChange('eyeExternalColor', c)}
                   />
-                )}
-              </SectionCard>
+                  <ColorPickerWithPresets
+                    label={t('Eye Internal Color')}
+                    value={mergedConfig.eyeInternalColor || '#000000'}
+                    onChange={c => handleChange('eyeInternalColor', c)}
+                  />
+
+                  {/* Background Toggle */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-700">{t('Background')}</span>
+                    <Switch
+                      checked={mergedConfig.background?.type !== 'transparent'}
+                      onCheckedChange={checked =>
+                        handleChange(
+                          'background',
+                          checked ? { type: 'solid', color: '#FFFFFF' } : { type: 'transparent' }
+                        )
+                      }
+                    />
+                  </div>
+
+                  {/* Background Color */}
+                  {mergedConfig.background?.type !== 'transparent' && (
+                    <ColorPickerWithPresets
+                      label={t('Background Color')}
+                      value={mergedConfig.background?.color || '#FFFFFF'}
+                      onChange={c => handleChange('background', { type: 'solid', color: c })}
+                    />
+                  )}
+                </SectionCard>
+              </div>
             )}
 
             {/* ==================== LOOK & FEEL SECTION ==================== */}
-            {designMode === 'qr' && (activeTab === 'look' || activeTab === 'color') && (
-              <SectionCard
-                title={t('Look & Feel')}
-                sectionKey="lookFeel"
-                expanded={!!expandedSections['lookFeel']}
-                onToggle={() => toggleSection('lookFeel')}
-              >
-                {/* Module */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('Module')}
-                  </label>
-                  <ShapeGrid
-                    items={MODULE_SHAPES}
-                    selectedValue={mergedConfig.moduleShape || 'square'}
-                    onSelect={value => handleChange('moduleShape', value)}
-                    showAll={showAllModules}
-                    onToggleShowAll={() => setShowAllModules(!showAllModules)}
-                    premiumLocked={isFreePlan}
-                    onPremiumBlock={handlePremiumBlock}
-                    t={t}
-                  />
-                </div>
-
-                {/* Finder */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('Finder')}
-                  </label>
-                  <ShapeGrid
-                    items={FINDER_STYLES}
-                    selectedValue={mergedConfig.finder || 'default'}
-                    onSelect={value => handleChange('finder', value)}
-                    showAll={showAllFinders}
-                    onToggleShowAll={() => setShowAllFinders(!showAllFinders)}
-                    premiumLocked={isFreePlan}
-                    onPremiumBlock={handlePremiumBlock}
-                    t={t}
-                  />
-                </div>
-
-                {/* Finder Dot */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('Finder Dot')}
-                  </label>
-                  <ShapeGrid
-                    items={FINDER_DOT_STYLES}
-                    selectedValue={mergedConfig.finderDot || 'default'}
-                    onSelect={value => handleChange('finderDot', value)}
-                    showAll={showAllFinderDots}
-                    onToggleShowAll={() => setShowAllFinderDots(!showAllFinderDots)}
-                    premiumLocked={isFreePlan}
-                    onPremiumBlock={handlePremiumBlock}
-                    t={t}
-                  />
-                </div>
-
-                {/* Shape (Outline) */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('Shape')}
-                  </label>
-                  <ShapeGrid
-                    items={OUTLINED_SHAPES}
-                    selectedValue={mergedConfig.shape || 'none'}
-                    onSelect={value => handleChange('shape', value)}
-                    showAll={showAllShapes}
-                    onToggleShowAll={() => setShowAllShapes(!showAllShapes)}
-                    premiumLocked={isFreePlan}
-                    onPremiumBlock={handlePremiumBlock}
-                    t={t}
-                  />
-                </div>
-
-                {/* Frame Color */}
-                {mergedConfig.shape && mergedConfig.shape !== 'none' && (
-                  <ColorPickerWithPresets
-                    label={t('Frame Color')}
-                    value={mergedConfig.frameColor || '#000000'}
-                    onChange={c => handleChange('frameColor', c)}
-                  />
-                )}
-
-                {/* Logo Type */}
-                <div className="border-t border-gray-200 pt-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('Logo Type')}
-                  </label>
-                  <div className="flex items-center gap-6">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="logoType"
-                        checked={(mergedConfig.logo?.logoType || 'preset') === 'preset'}
-                        onChange={() => handleLogoChange({ logoType: 'preset' })}
-                        className="text-purple-600 focus:ring-purple-500"
-                      />
-                      <span className="text-sm text-gray-700">{t('Preset')}</span>
+            {designMode === 'qr' && (
+              <div ref={lookSectionRef} data-tab-section="look">
+                <SectionCard
+                  title={t('Look & Feel')}
+                  sectionKey="lookFeel"
+                  expanded={!!expandedSections['lookFeel']}
+                  onToggle={() => toggleSection('lookFeel')}
+                >
+                  {/* Module */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('Module')}
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="logoType"
-                        checked={mergedConfig.logo?.logoType === 'custom'}
-                        onChange={() => handleLogoChange({ logoType: 'custom' })}
-                        className="text-purple-600 focus:ring-purple-500"
-                      />
-                      <span className="text-sm text-gray-700">{t('Your logo')}</span>
-                    </label>
+                    <ShapeGrid
+                      items={MODULE_SHAPES}
+                      selectedValue={mergedConfig.moduleShape || 'square'}
+                      onSelect={value => handleChange('moduleShape', value)}
+                      showAll={showAllModules}
+                      onToggleShowAll={() => setShowAllModules(!showAllModules)}
+                      premiumLocked={isFreePlan}
+                      onPremiumBlock={handlePremiumBlock}
+                      t={t}
+                    />
                   </div>
 
-                  {/* Preset Logos */}
-                  {(mergedConfig.logo?.logoType || 'preset') === 'preset' && (
-                    <div className="mt-3">
-                      <div className="grid grid-cols-7 gap-2 max-h-[200px] overflow-y-auto">
-                        {/* None option */}
-                        <button
-                          type="button"
-                          onClick={() => handleLogoChange({ url: undefined })}
-                          className={cn(
-                            'aspect-square rounded-lg border-2 flex items-center justify-center text-xs transition-all',
-                            !mergedConfig.logo?.url
-                              ? 'border-purple-500 bg-purple-50'
-                              : 'border-gray-200 hover:border-gray-300'
-                          )}
-                        >
-                          {t('NONE')}
-                        </button>
-                        {PRESET_LOGOS.map(logo => (
+                  {/* Finder */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('Finder')}
+                    </label>
+                    <ShapeGrid
+                      items={FINDER_STYLES}
+                      selectedValue={mergedConfig.finder || 'default'}
+                      onSelect={value => handleChange('finder', value)}
+                      showAll={showAllFinders}
+                      onToggleShowAll={() => setShowAllFinders(!showAllFinders)}
+                      premiumLocked={isFreePlan}
+                      onPremiumBlock={handlePremiumBlock}
+                      t={t}
+                    />
+                  </div>
+
+                  {/* Finder Dot */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('Finder Dot')}
+                    </label>
+                    <ShapeGrid
+                      items={FINDER_DOT_STYLES}
+                      selectedValue={mergedConfig.finderDot || 'default'}
+                      onSelect={value => handleChange('finderDot', value)}
+                      showAll={showAllFinderDots}
+                      onToggleShowAll={() => setShowAllFinderDots(!showAllFinderDots)}
+                      premiumLocked={isFreePlan}
+                      onPremiumBlock={handlePremiumBlock}
+                      t={t}
+                    />
+                  </div>
+
+                  {/* Shape (Outline) */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('Shape')}
+                    </label>
+                    <ShapeGrid
+                      items={OUTLINED_SHAPES}
+                      selectedValue={mergedConfig.shape || 'none'}
+                      onSelect={value => handleChange('shape', value)}
+                      showAll={showAllShapes}
+                      onToggleShowAll={() => setShowAllShapes(!showAllShapes)}
+                      premiumLocked={isFreePlan}
+                      onPremiumBlock={handlePremiumBlock}
+                      t={t}
+                    />
+                  </div>
+
+                  {/* Frame Color */}
+                  {mergedConfig.shape && mergedConfig.shape !== 'none' && (
+                    <ColorPickerWithPresets
+                      label={t('Frame Color')}
+                      value={mergedConfig.frameColor || '#000000'}
+                      onChange={c => handleChange('frameColor', c)}
+                    />
+                  )}
+
+                  {/* Logo Type */}
+                  <div className="border-t border-gray-200 pt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t('Logo Type')}
+                    </label>
+                    <div className="flex items-center gap-6">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="logoType"
+                          checked={(mergedConfig.logo?.logoType || 'preset') === 'preset'}
+                          onChange={() => handleLogoChange({ logoType: 'preset' })}
+                          className="text-purple-600 focus:ring-purple-500"
+                        />
+                        <span className="text-sm text-gray-700">{t('Preset')}</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="logoType"
+                          checked={mergedConfig.logo?.logoType === 'custom'}
+                          onChange={() => handleLogoChange({ logoType: 'custom' })}
+                          className="text-purple-600 focus:ring-purple-500"
+                        />
+                        <span className="text-sm text-gray-700">{t('Your logo')}</span>
+                      </label>
+                    </div>
+
+                    {/* Preset Logos */}
+                    {(mergedConfig.logo?.logoType || 'preset') === 'preset' && (
+                      <div className="mt-3">
+                        <div className="grid grid-cols-7 gap-2 max-h-[200px] overflow-y-auto">
+                          {/* None option */}
                           <button
-                            key={logo.value}
                             type="button"
-                            onClick={() => {
-                              // Use DB thumbnail_url if available, fallback to hardcoded path
-                              const logoUrl =
-                                logo.image || `/assets/images/png-logos/${logo.value}.png`
+                            onClick={() => handleLogoChange({ url: undefined })}
+                            className={cn(
+                              'aspect-square rounded-lg border-2 flex items-center justify-center text-xs transition-all',
+                              !mergedConfig.logo?.url
+                                ? 'border-purple-500 bg-purple-50'
+                                : 'border-gray-200 hover:border-gray-300'
+                            )}
+                          >
+                            {t('NONE')}
+                          </button>
+                          {PRESET_LOGOS.map(logo => (
+                            <button
+                              key={logo.value}
+                              type="button"
+                              onClick={() => {
+                                // Use DB thumbnail_url if available, fallback to hardcoded path
+                                const logoUrl =
+                                  logo.image || `/assets/images/png-logos/${logo.value}.png`
+                                handleLogoChange({
+                                  url: logoUrl,
+                                  logoType: 'preset',
+                                  size: mergedConfig.logo?.size || 0.2,
+                                  positionX: mergedConfig.logo?.positionX ?? 0.5,
+                                  positionY: mergedConfig.logo?.positionY ?? 0.5,
+                                  rotate: mergedConfig.logo?.rotate ?? 0,
+                                  backgroundEnabled: mergedConfig.logo?.backgroundEnabled ?? true,
+                                  backgroundFill: mergedConfig.logo?.backgroundFill || '#ffffff',
+                                  backgroundScale: mergedConfig.logo?.backgroundScale ?? 1.3,
+                                  backgroundShape: mergedConfig.logo?.backgroundShape || 'circle',
+                                })
+                                // Auto-set error correction to H for better scanning with logo
+                                if (mergedConfig.errorCorrectionLevel !== 'H') {
+                                  handleChange('errorCorrectionLevel', 'H')
+                                }
+                              }}
+                              className={cn(
+                                'aspect-square rounded-full border-2 p-1 transition-all overflow-hidden',
+                                mergedConfig.logo?.url?.includes(logo.value)
+                                  ? 'border-purple-500 bg-purple-50'
+                                  : 'border-gray-200 hover:border-gray-300'
+                              )}
+                              title={logo.label}
+                            >
+                              <img
+                                src={logo.image || `/images/logos/${logo.value}.png`}
+                                alt={logo.label}
+                                className="w-full h-full object-contain rounded-full"
+                                onError={e => {
+                                  ;(e.target as HTMLImageElement).style.display = 'none'
+                                }}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Custom Logo Upload */}
+                    {mergedConfig.logo?.logoType === 'custom' && (
+                      <div className="mt-3">
+                        <LogoUpload
+                          value={mergedConfig.logo?.url ?? null}
+                          onChange={url => {
+                            if (url) {
+                              // For custom logos, use logoType 'preset' with data URL
+                              // The backend can load data URLs via file_get_contents
                               handleLogoChange({
-                                url: logoUrl,
+                                url,
+                                // Use 'preset' type so backend loads from URL/dataURL
                                 logoType: 'preset',
                                 size: mergedConfig.logo?.size || 0.2,
                                 positionX: mergedConfig.logo?.positionX ?? 0.5,
@@ -844,231 +934,187 @@ export default function QRDesignStudio({
                                 backgroundScale: mergedConfig.logo?.backgroundScale ?? 1.3,
                                 backgroundShape: mergedConfig.logo?.backgroundShape || 'circle',
                               })
-                              // Auto-set error correction to H for better scanning with logo
                               if (mergedConfig.errorCorrectionLevel !== 'H') {
                                 handleChange('errorCorrectionLevel', 'H')
                               }
-                            }}
-                            className={cn(
-                              'aspect-square rounded-full border-2 p-1 transition-all overflow-hidden',
-                              mergedConfig.logo?.url?.includes(logo.value)
-                                ? 'border-purple-500 bg-purple-50'
-                                : 'border-gray-200 hover:border-gray-300'
-                            )}
-                            title={logo.label}
-                          >
-                            <img
-                              src={logo.image || `/images/logos/${logo.value}.png`}
-                              alt={logo.label}
-                              className="w-full h-full object-contain rounded-full"
-                              onError={e => {
-                                ;(e.target as HTMLImageElement).style.display = 'none'
-                              }}
-                            />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Custom Logo Upload */}
-                  {mergedConfig.logo?.logoType === 'custom' && (
-                    <div className="mt-3">
-                      <LogoUpload
-                        value={mergedConfig.logo?.url ?? null}
-                        onChange={url => {
-                          if (url) {
-                            // For custom logos, use logoType 'preset' with data URL
-                            // The backend can load data URLs via file_get_contents
-                            handleLogoChange({
-                              url,
-                              // Use 'preset' type so backend loads from URL/dataURL
-                              logoType: 'preset',
-                              size: mergedConfig.logo?.size || 0.2,
-                              positionX: mergedConfig.logo?.positionX ?? 0.5,
-                              positionY: mergedConfig.logo?.positionY ?? 0.5,
-                              rotate: mergedConfig.logo?.rotate ?? 0,
-                              backgroundEnabled: mergedConfig.logo?.backgroundEnabled ?? true,
-                              backgroundFill: mergedConfig.logo?.backgroundFill || '#ffffff',
-                              backgroundScale: mergedConfig.logo?.backgroundScale ?? 1.3,
-                              backgroundShape: mergedConfig.logo?.backgroundShape || 'circle',
-                            })
-                            if (mergedConfig.errorCorrectionLevel !== 'H') {
-                              handleChange('errorCorrectionLevel', 'H')
+                            } else {
+                              handleLogoChange({ url: undefined, logoType: 'custom' })
                             }
-                          } else {
-                            handleLogoChange({ url: undefined, logoType: 'custom' })
-                          }
-                        }}
-                      />
-                      <p className="text-xs text-gray-500 mt-2">
-                        {t(
-                          'Upload your logo (PNG, JPG). The logo will be embedded in the QR code.'
-                        )}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Logo Customization Controls - Show when logo is selected */}
-                  {mergedConfig.logo?.url && (
-                    <div className="mt-4 space-y-4 border-t border-gray-200 pt-4">
-                      <h4 className="text-sm font-semibold text-gray-900">{t('Logo Settings')}</h4>
-
-                      {/* Logo Scale */}
-                      <div>
-                        <label className="block text-sm text-gray-700 mb-2">
-                          {t('Logo Scale')}: {Math.round((mergedConfig.logo.size || 0.2) * 100)}%
-                        </label>
-                        <input
-                          type="range"
-                          min="0.05"
-                          max="0.5"
-                          step="0.01"
-                          value={mergedConfig.logo.size || 0.2}
-                          onChange={e => handleLogoChange({ size: parseFloat(e.target.value) })}
-                          className="w-full accent-purple-500"
+                          }}
                         />
+                        <p className="text-xs text-gray-500 mt-2">
+                          {t(
+                            'Upload your logo (PNG, JPG). The logo will be embedded in the QR code.'
+                          )}
+                        </p>
                       </div>
+                    )}
 
-                      {/* Logo Position X */}
-                      <div>
-                        <label className="block text-sm text-gray-700 mb-2">
-                          {t('Horizontal Position')}:{' '}
-                          {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.01"
-                          value={mergedConfig.logo.positionX ?? 0.5}
-                          onChange={e =>
-                            handleLogoChange({ positionX: parseFloat(e.target.value) })
-                          }
-                          className="w-full accent-purple-500"
-                        />
-                      </div>
+                    {/* Logo Customization Controls - Show when logo is selected */}
+                    {mergedConfig.logo?.url && (
+                      <div className="mt-4 space-y-4 border-t border-gray-200 pt-4">
+                        <h4 className="text-sm font-semibold text-gray-900">
+                          {t('Logo Settings')}
+                        </h4>
 
-                      {/* Logo Position Y */}
-                      <div>
-                        <label className="block text-sm text-gray-700 mb-2">
-                          {t('Vertical Position')}:{' '}
-                          {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="1"
-                          step="0.01"
-                          value={mergedConfig.logo.positionY ?? 0.5}
-                          onChange={e =>
-                            handleLogoChange({ positionY: parseFloat(e.target.value) })
-                          }
-                          className="w-full accent-purple-500"
-                        />
-                      </div>
-
-                      {/* Logo Rotation */}
-                      <div>
-                        <label className="block text-sm text-gray-700 mb-2">
-                          {t('Rotation')}: {mergedConfig.logo.rotate ?? 0}°
-                        </label>
-                        <input
-                          type="range"
-                          min="0"
-                          max="360"
-                          step="1"
-                          value={mergedConfig.logo.rotate ?? 0}
-                          onChange={e => handleLogoChange({ rotate: parseInt(e.target.value) })}
-                          className="w-full accent-purple-500"
-                        />
-                      </div>
-
-                      {/* Logo Background Toggle */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-700">{t('Logo Background')}</span>
-                        <Switch
-                          checked={mergedConfig.logo.backgroundEnabled ?? true}
-                          onCheckedChange={checked =>
-                            handleLogoChange({ backgroundEnabled: checked })
-                          }
-                        />
-                      </div>
-
-                      {/* Logo Background Options */}
-                      {(mergedConfig.logo.backgroundEnabled ?? true) && (
-                        <>
-                          {/* Background Shape */}
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-700">{t('Background Shape')}</span>
-                            <div className="flex gap-2">
-                              {(['circle', 'square'] as const).map(shape => (
-                                <button
-                                  key={shape}
-                                  type="button"
-                                  onClick={() => handleLogoChange({ backgroundShape: shape })}
-                                  className={cn(
-                                    'px-3 py-1 text-sm rounded-lg border-2 capitalize transition-all',
-                                    (mergedConfig.logo?.backgroundShape || 'circle') === shape
-                                      ? 'border-purple-500 bg-purple-50 text-purple-700'
-                                      : 'border-gray-200 text-gray-600 hover:border-gray-300'
-                                  )}
-                                >
-                                  {t(shape)}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          {/* Background Color */}
-                          <ColorPickerWithPresets
-                            label={t('Background Color')}
-                            value={mergedConfig.logo.backgroundFill || '#ffffff'}
-                            onChange={c => handleLogoChange({ backgroundFill: c })}
+                        {/* Logo Scale */}
+                        <div>
+                          <label className="block text-sm text-gray-700 mb-2">
+                            {t('Logo Scale')}: {Math.round((mergedConfig.logo.size || 0.2) * 100)}%
+                          </label>
+                          <input
+                            type="range"
+                            min="0.05"
+                            max="0.5"
+                            step="0.01"
+                            value={mergedConfig.logo.size || 0.2}
+                            onChange={e => handleLogoChange({ size: parseFloat(e.target.value) })}
+                            className="w-full accent-purple-500"
                           />
+                        </div>
 
-                          {/* Background Scale */}
-                          <div>
-                            <label className="block text-sm text-gray-700 mb-2">
-                              {t('Background Size')}:{' '}
-                              {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
-                            </label>
-                            <input
-                              type="range"
-                              min="1"
-                              max="2"
-                              step="0.1"
-                              value={mergedConfig.logo.backgroundScale ?? 1.3}
-                              onChange={e =>
-                                handleLogoChange({ backgroundScale: parseFloat(e.target.value) })
-                              }
-                              className="w-full accent-purple-500"
+                        {/* Logo Position X */}
+                        <div>
+                          <label className="block text-sm text-gray-700 mb-2">
+                            {t('Horizontal Position')}:{' '}
+                            {Math.round((mergedConfig.logo.positionX ?? 0.5) * 100)}%
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={mergedConfig.logo.positionX ?? 0.5}
+                            onChange={e =>
+                              handleLogoChange({ positionX: parseFloat(e.target.value) })
+                            }
+                            className="w-full accent-purple-500"
+                          />
+                        </div>
+
+                        {/* Logo Position Y */}
+                        <div>
+                          <label className="block text-sm text-gray-700 mb-2">
+                            {t('Vertical Position')}:{' '}
+                            {Math.round((mergedConfig.logo.positionY ?? 0.5) * 100)}%
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={mergedConfig.logo.positionY ?? 0.5}
+                            onChange={e =>
+                              handleLogoChange({ positionY: parseFloat(e.target.value) })
+                            }
+                            className="w-full accent-purple-500"
+                          />
+                        </div>
+
+                        {/* Logo Rotation */}
+                        <div>
+                          <label className="block text-sm text-gray-700 mb-2">
+                            {t('Rotation')}: {mergedConfig.logo.rotate ?? 0}°
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="360"
+                            step="1"
+                            value={mergedConfig.logo.rotate ?? 0}
+                            onChange={e => handleLogoChange({ rotate: parseInt(e.target.value) })}
+                            className="w-full accent-purple-500"
+                          />
+                        </div>
+
+                        {/* Logo Background Toggle */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-700">{t('Logo Background')}</span>
+                          <Switch
+                            checked={mergedConfig.logo.backgroundEnabled ?? true}
+                            onCheckedChange={checked =>
+                              handleLogoChange({ backgroundEnabled: checked })
+                            }
+                          />
+                        </div>
+
+                        {/* Logo Background Options */}
+                        {(mergedConfig.logo.backgroundEnabled ?? true) && (
+                          <>
+                            {/* Background Shape */}
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-gray-700">{t('Background Shape')}</span>
+                              <div className="flex gap-2">
+                                {(['circle', 'square'] as const).map(shape => (
+                                  <button
+                                    key={shape}
+                                    type="button"
+                                    onClick={() => handleLogoChange({ backgroundShape: shape })}
+                                    className={cn(
+                                      'px-3 py-1 text-sm rounded-lg border-2 capitalize transition-all',
+                                      (mergedConfig.logo?.backgroundShape || 'circle') === shape
+                                        ? 'border-purple-500 bg-purple-50 text-purple-700'
+                                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                                    )}
+                                  >
+                                    {t(shape)}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Background Color */}
+                            <ColorPickerWithPresets
+                              label={t('Background Color')}
+                              value={mergedConfig.logo.backgroundFill || '#ffffff'}
+                              onChange={c => handleLogoChange({ backgroundFill: c })}
                             />
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </SectionCard>
+
+                            {/* Background Scale */}
+                            <div>
+                              <label className="block text-sm text-gray-700 mb-2">
+                                {t('Background Size')}:{' '}
+                                {(mergedConfig.logo.backgroundScale ?? 1.3).toFixed(1)}x
+                              </label>
+                              <input
+                                type="range"
+                                min="1"
+                                max="2"
+                                step="0.1"
+                                value={mergedConfig.logo.backgroundScale ?? 1.3}
+                                onChange={e =>
+                                  handleLogoChange({ backgroundScale: parseFloat(e.target.value) })
+                                }
+                                className="w-full accent-purple-500"
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </SectionCard>
+              </div>
             )}
 
             {/* ==================== STICKER SECTION ==================== */}
-            {designMode === 'qr' && (activeTab === 'sticker' || activeTab === 'look') && (
-              <SectionCard
-                title={t('Sticker')}
-                sectionKey="sticker"
-                expanded={!!expandedSections['sticker']}
-                onToggle={() => toggleSection('sticker')}
-              >
-                <StickerEditor
-                  config={mergedConfig}
-                  advancedShapes={ADVANCED_SHAPES}
-                  onChange={handleChange}
-                  variant="compact"
-                  ColorPicker={ColorPickerWithPresets}
-                />
-              </SectionCard>
+            {designMode === 'qr' && (
+              <div ref={stickerSectionRef} data-tab-section="sticker">
+                <SectionCard
+                  title={t('Sticker')}
+                  sectionKey="sticker"
+                  expanded={!!expandedSections['sticker']}
+                  onToggle={() => toggleSection('sticker')}
+                >
+                  <StickerEditor
+                    config={mergedConfig}
+                    advancedShapes={ADVANCED_SHAPES}
+                    onChange={handleChange}
+                    variant="compact"
+                    ColorPicker={ColorPickerWithPresets}
+                  />
+                </SectionCard>
+              </div>
             )}
           </div>
 

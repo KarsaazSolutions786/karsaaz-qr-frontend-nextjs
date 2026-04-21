@@ -37,9 +37,7 @@ export function LanguagePicker({ variant = 'light' }: LanguagePickerProps) {
         aria-label="Select language"
         aria-expanded={open}
         className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-          isDark
-            ? 'text-white/80 hover:bg-white/10'
-            : 'text-gray-700 hover:bg-gray-100'
+          isDark ? 'text-white/80 hover:bg-white/10' : 'text-gray-700 hover:bg-gray-100'
         }`}
         title={t('Switch language')}
       >
@@ -58,12 +56,14 @@ export function LanguagePicker({ variant = 'light' }: LanguagePickerProps) {
       </button>
 
       {open && (
-        <div className={`absolute mt-1 w-48 rounded-lg border shadow-lg z-50 py-1 ${
-          isDark
-            ? 'bg-purple-900 border-white/20 bottom-full mb-1'
-            : 'bg-white border-gray-200 right-0 rtl:right-auto rtl:left-0'
-        }`}>
-          {languages.map((lang) => (
+        <div
+          className={`absolute mt-1 w-48 rounded-lg border shadow-lg z-50 py-1 max-h-72 overflow-y-auto ${
+            isDark
+              ? 'bg-purple-900 border-white/20 bottom-full mb-1'
+              : 'bg-white border-gray-200 right-0 rtl:right-auto rtl:left-0'
+          }`}
+        >
+          {languages.map(lang => (
             <button
               key={lang.id}
               onClick={() => {
