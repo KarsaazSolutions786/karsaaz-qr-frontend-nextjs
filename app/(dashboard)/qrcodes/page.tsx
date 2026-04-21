@@ -56,7 +56,6 @@ import { useSubscriptionLimits } from '@/lib/hooks/useSubscriptionLimits'
 import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
 import { BulkChangeTypeModal } from '@/components/qr/BulkChangeTypeModal'
 import { BulkChangeOwnerModal } from '@/components/qr/BulkChangeOwnerModal'
-import { VirtualizedList, VirtualizedGrid } from '@/components/common/VirtualizedList'
 import { useGuest } from '@/lib/hooks/useGuest'
 
 export default function QRCodesPage() {
@@ -116,7 +115,7 @@ export default function QRCodesPage() {
       hasSticker: searchParams.get('hasSticker') ? true : undefined,
     }),
     [searchParams]
-  ) // eslint-disable-line react-hooks/exhaustive-deps
+  )
 
   const activeFilterCount = useMemo(() => {
     let n = 0
@@ -738,33 +737,23 @@ export default function QRCodesPage() {
             <div
               className={`transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
             >
-              {/* Grid View (Virtualized) */}
+              {/* Grid View */}
               {viewMode === 'grid' && (
-                <VirtualizedGrid
-                  scrollResetKey={page}
-                  items={qrcodes}
-                  columnCount={3}
-                  rowHeight={320}
-                  gap={24}
-                  height={Math.min(800, Math.ceil(qrcodes.length / 3) * 344)}
-                  renderItem={qrcode => (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {qrcodes.map(qrcode => (
                     <QRCodeCard
                       key={qrcode.id}
                       qrcode={qrcode}
                       onAction={action => handleRowAction(action, qrcode.id)}
                     />
-                  )}
-                />
+                  ))}
+                </div>
               )}
 
-              {/* List View (Virtualized) */}
+              {/* List View */}
               {viewMode === 'list' && (
-                <VirtualizedList
-                  scrollResetKey={page}
-                  items={qrcodes}
-                  itemHeight={80}
-                  height={Math.min(600, qrcodes.length * 80)}
-                  renderItem={qrcode => (
+                <div className="space-y-2">
+                  {qrcodes.map(qrcode => (
                     <QRCodeDetailedRow
                       key={qrcode.id}
                       qrcode={qrcode}
@@ -772,29 +761,21 @@ export default function QRCodesPage() {
                       onToggleSelect={() => toggleItem(qrcode.id)}
                       onAction={action => handleRowAction(action, qrcode.id)}
                     />
-                  )}
-                />
+                  ))}
+                </div>
               )}
 
-              {/* Minimal View (Virtualized) */}
+              {/* Minimal View */}
               {viewMode === 'minimal' && (
-                <VirtualizedGrid
-                  scrollResetKey={page}
-                  items={qrcodes}
-                  columnCount={4}
-                  rowHeight={200}
-                  gap={16}
-                  height={Math.min(600, Math.ceil(qrcodes.length / 4) * 216)}
-                  renderItem={qrcode => (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {qrcodes.map(qrcode => (
                     <QRCodeMinimalCard
                       key={qrcode.id}
                       qrcode={qrcode}
-                      onSelect={() => {
-                        router.push(`/qrcodes/${qrcode.id}`)
-                      }}
+                      onSelect={() => router.push(`/qrcodes/${qrcode.id}`)}
                     />
-                  )}
-                />
+                  ))}
+                </div>
               )}
             </div>
           )}
