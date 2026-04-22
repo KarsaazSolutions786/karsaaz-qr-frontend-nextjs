@@ -95,8 +95,18 @@ export default function QRCodesPage() {
 
   // Derive state directly from URL params
   const search = sp('q')
-  const page = parseInt(sp('page', '1'), 10) || 1
+  const urlPage = parseInt(sp('page', '1'), 10) || 1
   const sortBy = sp('sort', 'date-desc') as SortOption
+
+  // Local page state — updates immediately on click; URL is kept in sync as a side-effect.
+  // This avoids a render-cycle lag where searchParams hasn't updated yet but the scroll
+  // effect already fired, making it look like pagination did nothing.
+  const [page, setPageState] = useState(urlPage)
+
+  // Keep local state in sync with URL (handles back/forward, deep links, filter resets)
+  useEffect(() => {
+    setPageState(urlPage)
+  }, [urlPage])
   const selectedFolder = searchParams.get('folder') // null = all folders
   const selectedDomain = sp('domain')
 
@@ -157,18 +167,26 @@ export default function QRCodesPage() {
   // ─── Handlers that write to URL ────────────────────────────────────────────
 
   const setPage = useCallback(
-    (p: number) => updateUrl({ page: p === 1 ? null : String(p) }),
+    (p: number) => {
+      setPageState(p)
+      updateUrl({ page: p === 1 ? null : String(p) })
+    },
     [updateUrl]
   )
 
   const handleSearch = useCallback(
-    (query: string) => updateUrl({ q: query || null, page: null }),
+    (query: string) => {
+      setPageState(1)
+      updateUrl({ q: query || null, page: null })
+    },
     [updateUrl]
   )
 
   const handleSortChange = useCallback(
-    (newSort: SortOption) =>
-      updateUrl({ sort: newSort === 'date-desc' ? null : newSort, page: null }),
+    (newSort: SortOption) => {
+      setPageState(1)
+      updateUrl({ sort: newSort === 'date-desc' ? null : newSort, page: null })
+    },
     [updateUrl]
   )
 
@@ -226,11 +244,13 @@ export default function QRCodesPage() {
             : null) as string | null,
         page: null, // always reset to page 1 when filters change
       })
+      setPageState(1)
     },
     [updateUrl, searchParams]
   )
 
   const handleResetFilters = useCallback(() => {
+    setPageState(1)
     router.replace('?', { scroll: false })
   }, [router])
 
@@ -320,6 +340,7 @@ export default function QRCodesPage() {
     try {
       await foldersAPI.delete(user.id, folderId)
       if (selectedFolder === String(folderId)) {
+        setPageState(1)
         updateUrl({ folder: null, page: null })
       }
       queryClient.invalidateQueries({ queryKey: queryKeys.folders.all() })
@@ -601,6 +622,7 @@ export default function QRCodesPage() {
               {/* "All QR Codes" option */}
               <button
                 onClick={() => {
+                  setPageState(1)
                   updateUrl({ folder: null, page: null })
                 }}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors mb-1 ${
@@ -627,6 +649,7 @@ export default function QRCodesPage() {
                     <Folder className="w-4 h-4 flex-shrink-0" />
                     <button
                       onClick={() => {
+                        setPageState(1)
                         updateUrl({ folder: String(folder.id), page: null })
                       }}
                       className="flex-1 text-left font-medium truncate"
@@ -699,6 +722,7 @@ export default function QRCodesPage() {
                   <select
                     value={selectedDomain}
                     onChange={e => {
+                      setPageState(1)
                       updateUrl({ domain: e.target.value || null, page: null })
                     }}
                     className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"

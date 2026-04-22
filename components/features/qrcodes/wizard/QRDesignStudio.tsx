@@ -367,7 +367,7 @@ export default function QRDesignStudio({
   return (
     <div className="min-h-screen karsaaz-bg">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-24 z-20">
+      <div className="bg-white border-b border-gray-200 sticky top-14 z-20">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center gap-3">
             {onBack && (
@@ -1122,11 +1122,11 @@ export default function QRDesignStudio({
           <div className="lg:col-span-2">
             {designMode === 'page' && hasWebpageDesign ? (
               /* Screen / landing-page preview (mirrors Lit's qrcg-webpage-preview) */
-              <div className="sticky top-52">
+              <div className="sticky top-28">
                 <WebpagePreview ref={webpagePreviewRef} qrcodeId={savedQRId ?? null} />
               </div>
             ) : (
-              <div className="bg-white rounded-xl border border-purple-100 p-6 sticky top-52 shadow-sm">
+              <div className="bg-white rounded-xl border border-purple-100 p-6 sticky top-28 shadow-sm">
                 {/* QR Preview */}
                 <div className="flex justify-center mb-4">
                   {hasPreviewData ? (

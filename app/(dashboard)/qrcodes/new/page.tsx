@@ -92,11 +92,7 @@ function CreateQRCodeInner() {
   } = useSubscriptionLimits()
 
   // Account credit details (for per-type affordability check)
-  const {
-    balance: creditBalance,
-    canAfford,
-    getPrice,
-  } = useAccountCredit()
+  const { balance: creditBalance, canAfford, getPrice } = useAccountCredit()
 
   // Insufficient credits modal state
   const [showCreditsModal, setShowCreditsModal] = useState(false)
@@ -107,7 +103,7 @@ function CreateQRCodeInner() {
 
   // Template application mutation
   const useTemplateMutation = useUseTemplate({
-    onSuccess: (newQRCode) => {
+    onSuccess: newQRCode => {
       const qrId = newQRCode?.id || newQRCode?.data?.id
       if (qrId) {
         toast.success(t('Template applied! Redirecting to editor...'))
@@ -143,7 +139,7 @@ function CreateQRCodeInner() {
       if (!canCreateQR) {
         if (isAccountCreditMode) {
           // In credit mode, show the credits modal with the specific type's price
-          const typeDef = QR_TYPES.find((t) => t.id === type)
+          const typeDef = QR_TYPES.find(t => t.id === type)
           const isDynamic = typeDef?.cat === 'dynamic'
           setCreditsModalType({ isDynamic, requiredAmount: getPrice(isDynamic) })
           setShowCreditsModal(true)
@@ -155,7 +151,7 @@ function CreateQRCodeInner() {
 
       // Gate: per-type credit affordability (only in credit mode)
       if (isAccountCreditMode) {
-        const typeDef = QR_TYPES.find((t) => t.id === type)
+        const typeDef = QR_TYPES.find(t => t.id === type)
         const isDynamic = typeDef?.cat === 'dynamic'
         if (!canAfford(isDynamic)) {
           setCreditsModalType({ isDynamic, requiredAmount: getPrice(isDynamic) })
@@ -191,40 +187,12 @@ function CreateQRCodeInner() {
   // with the upgrade modal instead of silently opening the wizard
   const shouldShowWizard = showWizard && selectedType && canCreateQR
 
-  // Background gradient shared across all modes
-  const backgroundStyle = {
-    background: 'linear-gradient(152deg, #faf1ff 0%, #eeeeee 100%)',
-  }
-
   return (
-    <div className="min-h-full relative" style={backgroundStyle}>
-      {/* Decorative background shapes (Figma: semi-transparent purple circles) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: 773,
-            height: 773,
-            background: 'rgba(213, 218, 255, 0.4)',
-            right: -100,
-            top: -50,
-            filter: 'blur(80px)',
-          }}
-        />
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: 773,
-            height: 773,
-            background: 'rgba(213, 218, 255, 0.3)',
-            right: -200,
-            top: 150,
-            filter: 'blur(80px)',
-          }}
-        />
-      </div>
-
-      <div className="relative px-4 py-6 sm:px-6 lg:px-8">
+    <div
+      className="min-h-full"
+      style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%)' }}
+    >
+      <div className="px-4 py-6 sm:px-6 lg:px-8">
         {/* Mode: Applying template (loading) */}
         {mode === 'applying' && (
           <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
@@ -237,7 +205,7 @@ function CreateQRCodeInner() {
         {mode === 'gateway' && (
           <TemplateSelectionAdapter
             onStartBlank={handleStartBlank}
-            onSelectTemplate={(template) => {
+            onSelectTemplate={template => {
               // Gate: if quota is exceeded, show appropriate modal
               if (!canCreateQR) {
                 if (isAccountCreditMode) {
@@ -260,7 +228,11 @@ function CreateQRCodeInner() {
             {shouldShowWizard ? (
               <QRWizardContainer mode="create" initialData={{ type: selectedType, data: {} }} />
             ) : (
-              <QRCodeTypeSelector value={selectedType} onChange={handleTypeSelect} allowedTypes={allowedQrTypes} />
+              <QRCodeTypeSelector
+                value={selectedType}
+                onChange={handleTypeSelect}
+                allowedTypes={allowedQrTypes}
+              />
             )}
           </>
         )}

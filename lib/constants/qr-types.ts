@@ -132,7 +132,7 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'product-catalogue',
     name: 'Product Catalogue',
     cat: 'dynamic',
-    icon: '/icons/qr-types/product.png',
+    icon: '/icons/qr-types/product-catalogue-figma.svg',
     description: 'Showcase your products',
   },
   {
@@ -300,7 +300,7 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'brazilpix',
     name: 'Brazilian Pix',
     cat: 'static',
-    icon: '/icons/qr-types/brazilian-pix-figma.png',
+    icon: '/icons/qr-types/brazilian-pix-figma.svg',
     description: 'PIX payment',
   },
   {

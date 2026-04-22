@@ -13,7 +13,7 @@ import { filterQrTypes } from '@/lib/constants/qr-type-categories'
  * ═══════════════════════════════════════════════════════════════════════════ */
 
 /** Wide cards spanning half the grid (col-span-4 on 8-col desktop) */
-const WIDE_TYPES = new Set(['text', 'vcard', 'paypal', 'viber'])
+const WIDE_TYPES = new Set(['text', 'vcard', 'paypal', 'viber', 'biolinks', 'website-builder'])
 
 /** Tall card spanning 2 rows */
 const TALL_TYPES = new Set(['restaurant-menu'])
@@ -27,18 +27,31 @@ const ICON_ONLY_TYPES = new Set([
   'linkedin',
   'instagram',
   'spotify',
+  'zoom',
+  'tiktok',
+  'skype',
+  'wechat',
 ])
 
 /** Compact cards — icon + chevron, no text label */
-const COMPACT_CHEVRON_TYPES = new Set(['call', 'facebookmessenger', 'x', 'snapchat'])
+const COMPACT_CHEVRON_TYPES = new Set([
+  'call',
+  'facebookmessenger',
+  'x',
+  'snapchat',
+  'googlemaps',
+  'wifi',
+])
 
 /** SMS gets its own special icon-only treatment in the Figma */
 const SMS_ICON_ONLY = new Set(['sms'])
 
-/** Display order matching the Figma bento grid layout */
+/** Display order matching the Figma bento grid layout — all 46 types */
 const FIGMA_DISPLAY_ORDER = [
+  // Row 1 — wide cards
   'text',
   'vcard',
+  // Row 2-4 — bento section with tall restaurant card
   'url',
   'business-profile',
   'restaurant-menu',
@@ -54,20 +67,42 @@ const FIGMA_DISPLAY_ORDER = [
   'product-catalogue',
   'facebookmessenger',
   'linkedin',
+  // Row 5 — wide cards
   'paypal',
   'viber',
+  // Row 6 — icon mix row
   'crypto',
   'x',
   'instagram',
   'brazilpix',
   'snapchat',
   'spotify',
+  // Row 7+ — standard 4-col grid
   'skype',
   'wechat',
+  'biolinks',
+  'business-review',
+  'website-builder',
+  'lead-form',
+  'app-download',
+  'google-review',
+  'resume',
+  'file-upload',
+  'event',
+  'calendar',
+  'email-dynamic',
+  'sms-dynamic',
+  'wifi',
+  'location',
+  'upi',
+  'upi-dynamic',
+  'zoom',
+  'googlemaps',
+  'tiktok',
 ]
 
-/** Number of types shown before "View More" — matches FIGMA_DISPLAY_ORDER count */
-const INITIAL_VISIBLE = 27
+/** Show main bento section initially; extended types appear after "View More" */
+const INITIAL_VISIBLE = 25
 
 const CARD_BG = 'linear-gradient(180deg, #fff 0%, #f9f9f9 100%)'
 const CARD_SHADOW =
@@ -77,17 +112,95 @@ const CARD_SHADOW =
  * Icon background gradients — extracted from the Figma design.
  * These provide the colored circular/rounded backgrounds behind certain icons.
  */
-const ICON_BG: Record<string, { bg: string; radius: number; size?: number }> = {
-  sms: { bg: 'linear-gradient(135deg, #8AB8FF 0%, #00B8DB 100%)', radius: 14 },
-  x: { bg: 'linear-gradient(-45deg, #020202 0%, #070707 43%, #434343 100%)', radius: 14 },
-  spotify: { bg: 'linear-gradient(135deg, #15CC64 0%, #097939 100%)', radius: 14 },
-  email: { bg: 'linear-gradient(135deg, #2196F3 0%, #1798FF 100%)', radius: 11, size: 38 },
-  crypto: { bg: 'linear-gradient(135deg, #FFCE33 15%, #FF944D 85%)', radius: 14 },
-  facetime: { bg: '#01CA51', radius: 6, size: 38 },
-  brazilpix: { bg: 'linear-gradient(135deg, #34CAB9 9%, #009F8E 91%)', radius: 14 },
-  paypal: { bg: 'rgba(42,171,238,0.5)', radius: 14 },
-  linkedin: { bg: 'linear-gradient(135deg, #128ECF 15%, #0472AC 85%)', radius: 14 },
-}
+const ICON_BG: Record<string, { bg: string; radius: number; size?: number; whiteIcon?: boolean }> =
+  {
+    // Bento section — icons already designed for their colored backgrounds
+    sms: { bg: 'linear-gradient(135deg, #8AB8FF 0%, #00B8DB 100%)', radius: 14 },
+    x: { bg: 'linear-gradient(-45deg, #020202 0%, #070707 43%, #434343 100%)', radius: 14 },
+    spotify: { bg: 'linear-gradient(135deg, #15CC64 0%, #097939 100%)', radius: 14 },
+    email: { bg: 'linear-gradient(135deg, #2196F3 0%, #1798FF 100%)', radius: 11, size: 38 },
+    crypto: { bg: 'linear-gradient(135deg, #FFCE33 15%, #FF944D 85%)', radius: 14 },
+    facetime: { bg: '#01CA51', radius: 6, size: 38 },
+    brazilpix: { bg: 'linear-gradient(135deg, #34CAB9 9%, #009F8E 91%)', radius: 14 },
+    paypal: { bg: 'rgba(42,171,238,0.5)', radius: 14 },
+    linkedin: { bg: 'linear-gradient(135deg, #128ECF 15%, #0472AC 85%)', radius: 14 },
+    // Extended types — gray outline icons rendered white on colored backgrounds
+    biolinks: {
+      bg: 'linear-gradient(135deg, #A855F7 0%, #7C3AED 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    'business-review': {
+      bg: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    'website-builder': {
+      bg: 'linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    'lead-form': {
+      bg: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    'app-download': {
+      bg: 'linear-gradient(135deg, #6366F1 0%, #4338CA 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    'google-review': {
+      bg: 'linear-gradient(135deg, #EA4335 0%, #FBBC05 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    resume: {
+      bg: 'linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    'file-upload': {
+      bg: 'linear-gradient(135deg, #06B6D4 0%, #0284C7 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    event: { bg: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)', radius: 12, whiteIcon: true },
+    calendar: {
+      bg: 'linear-gradient(135deg, #EC4899 0%, #BE185D 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    'email-dynamic': {
+      bg: 'linear-gradient(135deg, #2196F3 0%, #1798FF 100%)',
+      radius: 11,
+      whiteIcon: true,
+    },
+    'sms-dynamic': {
+      bg: 'linear-gradient(135deg, #8AB8FF 0%, #00B8DB 100%)',
+      radius: 14,
+      whiteIcon: true,
+    },
+    wifi: { bg: 'linear-gradient(135deg, #0EA5E9 0%, #0369A1 100%)', radius: 12, whiteIcon: true },
+    location: {
+      bg: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    skype: { bg: '#00AFF0', radius: 12, whiteIcon: true },
+    wechat: { bg: '#07C160', radius: 12, whiteIcon: true },
+    zoom: { bg: '#2D8CFF', radius: 12, whiteIcon: true },
+    googlemaps: {
+      bg: 'linear-gradient(135deg, #4285F4 0%, #0F9D58 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+    tiktok: {
+      bg: 'linear-gradient(-45deg, #010101 0%, #EE1D52 60%, #69C9D0 100%)',
+      radius: 12,
+      whiteIcon: true,
+    },
+  }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
  * Props
@@ -351,7 +464,7 @@ const cardStyle = (isSelected: boolean) => ({
   background: CARD_BG,
   borderRadius: 14,
   boxShadow: CARD_SHADOW,
-  border: isSelected ? '1px solid rgba(173, 70, 255, 0.8)' : '1px solid transparent',
+  border: isSelected ? '1px solid rgba(173, 70, 255, 0.8)' : '1px solid rgba(0, 0, 0, 0.06)',
 })
 
 /** Renders an icon with optional colored background (Figma design) */
@@ -376,7 +489,7 @@ function TypeIcon({ type, size = 40 }: { type: QRCodeTypeDefinition; size?: numb
           alt=""
           width={iconSize}
           height={iconSize}
-          className="object-contain"
+          className={`object-contain${bgConfig.whiteIcon ? ' brightness-0 invert' : ''}`}
           unoptimized
         />
       </div>
