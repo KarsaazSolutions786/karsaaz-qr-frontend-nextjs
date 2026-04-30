@@ -95,6 +95,7 @@ export default function QRWizardContainer({
   const [savedQRId, setSavedQRId] = useState<string | null>(qrcodeId || null)
   const savedQRIdRef = useRef<string | null>(qrcodeId || null) // sync ref to avoid stale closures
   const isCreatingRef = useRef(false) // guard against concurrent create calls
+  const isSavingRef = useRef(false)   // sync guard for handleNext (state lags one render)
   const [isSaved, setIsSaved] = useState(mode === 'edit')
   const [isSaving, setIsSaving] = useState(false)
 
@@ -309,6 +310,8 @@ export default function QRWizardContainer({
 
   /** Custom "Next" handler — auto-saves on every step change (except Type step) */
   const handleNext = useCallback(async () => {
+    // Sync guard: isSaving state lags one render cycle; ref is synchronous.
+    if (isSavingRef.current) return
     const currentStepId = WIZARD_STEPS[wizard.currentStep]?.id
 
     // Type step — no save needed, just advance
@@ -318,6 +321,7 @@ export default function QRWizardContainer({
     }
 
     // For all other steps, save when navigating forward
+    isSavingRef.current = true
     setIsSaving(true)
     try {
       // First save: create QR and track ID, but DON'T redirect yet
@@ -337,9 +341,11 @@ export default function QRWizardContainer({
         description: error?.message || t('Failed to save QR code. Please try again.'),
         icon: <AlertCircle className="w-5 h-5 text-red-600" />,
       })
+      isSavingRef.current = false
       setIsSaving(false)
       return // don't advance
     }
+    isSavingRef.current = false
     setIsSaving(false)
 
     wizard.nextStep()
