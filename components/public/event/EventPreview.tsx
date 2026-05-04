@@ -177,7 +177,7 @@ END:VCALENDAR`
         toast.error(t('Registration failed. Please try again.'))
       }
     } catch (error) {
-      console.error('Registration error:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Registration error:', error)
       toast.error(t('Registration failed. Please try again.'))
     } finally {
       setIsSubmitting(false)

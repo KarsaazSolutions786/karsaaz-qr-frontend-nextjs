@@ -17,8 +17,8 @@ export function useSubscribe() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.subscriptions.all() })
     },
-    onError: (error: any) => {
-      console.error('Subscribe error:', error)
+    onError: (error: unknown) => {
+      if (process.env.NODE_ENV === 'development') console.error('Subscribe error:', error)
     },
   })
 }
@@ -46,7 +46,7 @@ export function useCheckout() {
       isChangePlan?: boolean
     }) => {
       // Build request data
-      const data: Record<string, any> = {}
+      const data: Record<string, unknown> = {}
 
       if (billingDetailsResponseId) {
         data.billingDetailsResponseId = billingDetailsResponseId
@@ -66,8 +66,8 @@ export function useCheckout() {
         window.location.href = redirectUrl
       }
     },
-    onError: (error: any) => {
-      console.error('Checkout error:', error)
+    onError: (error: unknown) => {
+      if (process.env.NODE_ENV === 'development') console.error('Checkout error:', error)
     },
   })
 }

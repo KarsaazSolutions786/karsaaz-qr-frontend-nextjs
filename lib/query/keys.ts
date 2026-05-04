@@ -261,4 +261,10 @@ export const queryKeys = {
   systemHealth: {
     status: () => ['system', 'health'] as const,
   },
+
+  // Trash
+  trash: {
+    list: (filters?: Record<string, unknown>) => ['trash', 'list', filters] as const,
+    settings: () => ['trash', 'settings'] as const,
+  },
 }

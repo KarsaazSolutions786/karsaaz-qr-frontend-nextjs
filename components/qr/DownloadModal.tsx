@@ -151,7 +151,7 @@ export function DownloadModal({
       onDownloadComplete?.(selectedFormat)
       onClose()
     } catch (error) {
-      console.error('Download failed:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Download failed:', error)
       toast.error(t('Download failed. Please try again.'))
     } finally {
       setIsDownloading(false)

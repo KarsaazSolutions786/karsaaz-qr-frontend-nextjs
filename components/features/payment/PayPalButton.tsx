@@ -125,7 +125,7 @@ export function PayPalButton({ plan, clientId, promoCode }: PayPalButtonProps) {
         },
 
         onError: (err: any) => {
-          console.error('PayPal error:', err)
+          if (process.env.NODE_ENV === 'development') console.error('PayPal error:', err)
           setError(t('PayPal encountered an error. Please try again.'))
         },
 

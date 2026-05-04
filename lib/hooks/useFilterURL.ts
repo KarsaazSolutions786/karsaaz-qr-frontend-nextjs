@@ -242,7 +242,7 @@ export function useFilterURL(
       await navigator.clipboard.writeText(url);
       return true;
     } catch (error) {
-      console.error('Failed to copy URL:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to copy URL:', error);
       return false;
     }
   }, [getShareableURL]);

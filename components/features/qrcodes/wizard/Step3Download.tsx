@@ -170,7 +170,7 @@ export default function Step3Download({
 
         setDownloadedFormats(prev => new Set([...prev, format]))
       } catch (error) {
-        console.error(`Download ${format} failed:`, error)
+        if (process.env.NODE_ENV === 'development') console.error(`Download ${format} failed:`, error)
       } finally {
         setDownloadingFormat(null)
       }

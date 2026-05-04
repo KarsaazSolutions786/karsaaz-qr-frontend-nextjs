@@ -213,7 +213,7 @@ export const useSubscriptionStore = create<SubscriptionStore>()(
             loaded: true,
           });
         } catch (e) {
-          console.error('[SubscriptionService] Failed to load subscription:', e);
+          if (process.env.NODE_ENV === 'development') console.error('[SubscriptionService] Failed to load subscription:', e);
         }
       },
 

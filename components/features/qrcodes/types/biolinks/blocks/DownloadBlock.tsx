@@ -13,13 +13,13 @@ interface DownloadBlockProps {
   isDragging?: boolean;
 }
 
-export const DownloadBlock: React.FC<DownloadBlockProps> = ({
+export const DownloadBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: DownloadBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

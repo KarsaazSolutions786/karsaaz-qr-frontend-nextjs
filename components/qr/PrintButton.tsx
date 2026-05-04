@@ -51,7 +51,7 @@ export function PrintButton({
     try {
       await printQRCode(svgElement, printOptions, metadata);
     } catch (error) {
-      console.error('Print failed:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Print failed:', error);
       toast.error('Unable to print. Please allow popups in your browser settings.');
     } finally {
       setIsLoading(false);
@@ -65,7 +65,7 @@ export function PrintButton({
     try {
       await printPreview(svgElement, printOptions, metadata);
     } catch (error) {
-      console.error('Preview failed:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Preview failed:', error);
       toast.error('Unable to open print preview. Please allow popups in your browser.');
     } finally {
       setIsLoading(false);
@@ -254,7 +254,7 @@ export function PrintButtonCompact({
     try {
       await printQRCode(svgElement, options, metadata);
     } catch (error) {
-      console.error('Print failed:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Print failed:', error);
       toast.error('Print failed. Please try again.');
     } finally {
       setIsLoading(false);

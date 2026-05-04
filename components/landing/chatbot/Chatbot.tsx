@@ -57,7 +57,7 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
       const data = await res.json();
       return data.success; // Return the success status
     } catch (error) {
-      console.error("Turnstile verification failed", error);
+      if (process.env.NODE_ENV === 'development') console.error("Turnstile verification failed", error);
       return false;
     }
   };
@@ -85,7 +85,7 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
       };
       setMessages((prev) => [...prev, instructionMessage]);
     } catch (error) {
-      console.error("Email submission failed:", error);
+      if (process.env.NODE_ENV === 'development') console.error("Email submission failed:", error);
     } finally {
       setIsLoading(false);
     }

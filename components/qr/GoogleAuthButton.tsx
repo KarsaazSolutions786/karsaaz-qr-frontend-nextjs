@@ -31,7 +31,7 @@ export function GoogleAuthButton({
     try {
       redirectToGoogle();
     } catch (error) {
-      console.error('Google auth error:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Google auth error:', error);
       onError?.(error instanceof Error ? error : new Error(t('Authentication failed')));
       setIsLoading(false);
     }

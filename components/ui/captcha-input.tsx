@@ -59,7 +59,7 @@ export function ImageCaptcha({
         session_key: data.session_key,
       })
     } catch (err) {
-      console.error('Failed to fetch captcha:', err)
+      if (process.env.NODE_ENV === 'development') console.error('Failed to fetch captcha:', err)
     } finally {
       setLoading(false)
     }

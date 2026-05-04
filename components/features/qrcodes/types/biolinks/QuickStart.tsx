@@ -64,7 +64,7 @@ export default function QuickStartBiolinks({
           });
         })
         .catch((error) => {
-          console.error('Failed to load biolinks:', error);
+          if (process.env.NODE_ENV === 'development') console.error('Failed to load biolinks:', error);
           toast.error(t('Failed to load biolinks data'));
         });
     }
@@ -103,7 +103,7 @@ export default function QuickStartBiolinks({
         router.push(`/dashboard/biolinks/${result.id}`);
       }
     } catch (error: any) {
-      console.error('Failed to save biolinks:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to save biolinks:', error);
       
       // Show user-friendly error message
       const message = error.response?.data?.message || error.message || t('Failed to save biolinks');
@@ -146,7 +146,7 @@ export function MinimalBiolinksIntegration({ qrCodeId }: { qrCodeId: string }) {
       ...data as any,
     });
     if (process.env.NODE_ENV === 'development') {
-      console.log('Created:', biolinks);
+      if (process.env.NODE_ENV === 'development') console.log('Created:', biolinks);
     }
   };
 
@@ -165,7 +165,7 @@ export function ExampleUsageInPage() {
       qrCodeId={qrCodeId}
       onSuccess={(biolinksId) => {
         if (process.env.NODE_ENV === 'development') {
-          console.log('Biolinks created with ID:', biolinksId);
+          if (process.env.NODE_ENV === 'development') console.log('Biolinks created with ID:', biolinksId);
         }
         // Redirect, update state, etc.
       }}
@@ -185,7 +185,7 @@ export function ExampleEditMode() {
       existingBiolinksId={biolinksId}
       onSuccess={(id) => {
         if (process.env.NODE_ENV === 'development') {
-          console.log('Updated biolinks:', id);
+          if (process.env.NODE_ENV === 'development') console.log('Updated biolinks:', id);
         }
       }}
     />

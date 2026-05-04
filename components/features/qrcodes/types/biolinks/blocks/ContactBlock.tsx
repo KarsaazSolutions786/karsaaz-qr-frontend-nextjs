@@ -13,13 +13,13 @@ interface ContactBlockProps {
   isDragging?: boolean;
 }
 
-export const ContactBlock: React.FC<ContactBlockProps> = ({
+export const ContactBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: ContactBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

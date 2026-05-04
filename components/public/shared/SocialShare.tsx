@@ -42,7 +42,7 @@ export default function SocialShare({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error('Failed to copy:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to copy:', error);
     }
   };
 

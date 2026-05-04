@@ -35,7 +35,7 @@ export async function getSidebarFolders(userId?: number | string): Promise<Folde
     const folders = await foldersAPI.listByUser(userId)
     return folders || []
   } catch (error) {
-    console.error('Failed to fetch sidebar folders:', error)
+    if (process.env.NODE_ENV === 'development') console.error('Failed to fetch sidebar folders:', error)
     return []
   }
 }
@@ -49,7 +49,7 @@ export async function getSidebarTemplateCategories(): Promise<TemplateCategory[]
     const categories = await fetchTemplateCategories()
     return categories || []
   } catch (error) {
-    console.error('Failed to fetch sidebar template categories:', error)
+    if (process.env.NODE_ENV === 'development') console.error('Failed to fetch sidebar template categories:', error)
     return []
   }
 }
@@ -89,7 +89,7 @@ export async function getDynamicQRCodeCount(): Promise<number> {
     // Check if response has pagination data
     return response.data?.meta?.total || response.data?.length || 0
   } catch (error) {
-    console.error('Failed to fetch QR code count:', error)
+    if (process.env.NODE_ENV === 'development') console.error('Failed to fetch QR code count:', error)
     return 0
   }
 }
@@ -125,7 +125,7 @@ export async function getTotalScans(): Promise<number> {
 
     return response.data?.count || response.data?.total || 0
   } catch (error) {
-    console.error('Failed to fetch total scans:', error)
+    if (process.env.NODE_ENV === 'development') console.error('Failed to fetch total scans:', error)
     return 0
   }
 }
@@ -134,14 +134,16 @@ export async function getTotalScans(): Promise<number> {
  * Get user's current plan from user data
  * Matches Lit frontend currentPlan() logic - extracts plan from user's subscriptions
  */
-export function getCurrentPlanFromUser(user: any): Plan | null {
+type RawUser = { subscriptions?: Array<{ statuses?: Array<{ status?: string }>; subscription_plan?: Plan; updated_at?: string; created_at?: string }> }
+
+export function getCurrentPlanFromUser(user: RawUser | null | undefined): Plan | null {
   if (!user?.subscriptions || !Array.isArray(user.subscriptions)) {
     return null
   }
 
   // Find active subscription first
   const activeSubscription = user.subscriptions.find(
-    (sub: any) => sub.statuses?.[0]?.status === 'active'
+    (sub) => sub.statuses?.[0]?.status === 'active'
   )
 
   if (activeSubscription?.subscription_plan) {
@@ -150,12 +152,12 @@ export function getCurrentPlanFromUser(user: any): Plan | null {
 
   // If no active, get the most recent subscription
   if (user.subscriptions.length > 0) {
-    const sorted = [...user.subscriptions].sort((a: any, b: any) => {
-      const dateA = new Date(a.updated_at || a.created_at).getTime()
-      const dateB = new Date(b.updated_at || b.created_at).getTime()
+    const sorted = [...user.subscriptions].sort((a, b) => {
+      const dateA = new Date(a.updated_at ?? a.created_at ?? '').getTime()
+      const dateB = new Date(b.updated_at ?? b.created_at ?? '').getTime()
       return dateB - dateA
     })
-    return sorted[0]?.subscription_plan || null
+    return sorted[0]?.subscription_plan ?? null
   }
 
   return null

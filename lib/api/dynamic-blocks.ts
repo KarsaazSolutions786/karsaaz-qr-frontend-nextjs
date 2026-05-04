@@ -14,7 +14,7 @@ export async function fetchDynamicBlockDefinitions(): Promise<DynamicBlockDefini
     )
     return response.data || []
   } catch (error) {
-    console.error('Failed to fetch dynamic block definitions:', error)
+    if (process.env.NODE_ENV === 'development') console.error('Failed to fetch dynamic block definitions:', error)
     return []
   }
 }
@@ -27,7 +27,7 @@ export async function fetchDynamicBlockDefinition(
     const response = await apiClient.get<DynamicBlockDefinition>(`/dynamic-biolink-blocks/${id}`)
     return response.data
   } catch (error) {
-    console.error(`Failed to fetch dynamic block definition ${id}:`, error)
+    if (process.env.NODE_ENV === 'development') console.error(`Failed to fetch dynamic block definition ${id}:`, error)
     return null
   }
 }

@@ -73,7 +73,7 @@ export function buildFetchSnippet({ method, fullUrl, apiKey, body }: SnippetPara
 })
 
 const data = await response.json()
-console.log(data)`
+if (process.env.NODE_ENV === 'development') console.log(data)`
 }
 
 export function buildPythonSnippet({ method, fullUrl, apiKey, body }: SnippetParams): string {

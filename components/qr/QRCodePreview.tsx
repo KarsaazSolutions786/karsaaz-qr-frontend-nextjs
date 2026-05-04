@@ -210,7 +210,7 @@ export function QRCodePreviewWithDownload({
     try {
       await previewRef.current?.download(format, filename);
     } catch (error) {
-      console.error('Download failed:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Download failed:', error);
       toast.error('Download failed. Please try again.');
     }
   };

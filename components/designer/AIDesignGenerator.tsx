@@ -36,7 +36,7 @@ interface AIDesignGeneratorProps {
   onClose?: () => void;
 }
 
-const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose }) => {
+const AIDesignGenerator = ({ onApply, onClose }: AIDesignGeneratorProps) => {
   const { t } = useTranslation();
   const [prompt, setPrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('modern');
@@ -60,7 +60,7 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
       if (savedFavorites) setFavorites(JSON.parse(savedFavorites));
       if (savedHistory) setHistory(JSON.parse(savedHistory));
     } catch (error) {
-      console.error('Failed to load from localStorage:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to load from localStorage:', error);
     }
   };
 
@@ -68,7 +68,7 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
     try {
       localStorage.setItem(key, JSON.stringify(data));
     } catch (error) {
-      console.error('Failed to save to localStorage:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to save to localStorage:', error);
     }
   };
 
@@ -160,10 +160,10 @@ const AIDesignGenerator: React.FC<AIDesignGeneratorProps> = ({ onApply, onClose 
     setActiveTab('generate');
   };
 
-  const DesignCard: React.FC<{ design: AIDesign; showActions?: boolean }> = ({ 
-    design, 
-    showActions = true 
-  }) => {
+  const DesignCard = ({
+    design,
+    showActions = true
+  }: { design: AIDesign; showActions?: boolean }) => {
     const isFav = favorites.some(f => f.id === design.id);
 
     return (

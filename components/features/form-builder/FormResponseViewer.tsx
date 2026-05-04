@@ -73,7 +73,7 @@ export default function FormResponseViewer({
           setSelectedResponse(null)
         }
       } catch (err) {
-        console.error('Failed to delete response:', err)
+        if (process.env.NODE_ENV === 'development') console.error('Failed to delete response:', err)
       } finally {
         setDeletingId(null)
       }

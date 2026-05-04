@@ -13,13 +13,13 @@ interface NewsletterBlockProps {
   isDragging?: boolean;
 }
 
-export const NewsletterBlock: React.FC<NewsletterBlockProps> = ({
+export const NewsletterBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: NewsletterBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

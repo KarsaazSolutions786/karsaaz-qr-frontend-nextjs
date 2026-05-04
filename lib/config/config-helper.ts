@@ -47,7 +47,7 @@ export async function getSystemConfig(
 
     return configCache.data
   } catch (error) {
-    console.error('[config-helper] Failed to fetch system config:', error)
+    if (process.env.NODE_ENV === 'development') console.error('[config-helper] Failed to fetch system config:', error)
     // Return stale cache if available, otherwise empty
     return configCache?.data ?? {}
   }

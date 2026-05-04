@@ -13,13 +13,13 @@ interface EmailBlockProps {
   isDragging?: boolean;
 }
 
-export const EmailBlock: React.FC<EmailBlockProps> = ({
+export const EmailBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: EmailBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

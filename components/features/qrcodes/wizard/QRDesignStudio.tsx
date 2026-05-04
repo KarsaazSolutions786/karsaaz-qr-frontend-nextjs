@@ -624,7 +624,7 @@ export default function QRDesignStudio({
                                     setHasUploadedImage(true)
                                     setTimeout(() => previewRef.current?.refresh(), 300)
                                   } catch (err) {
-                                    console.error('[ForegroundImage] Upload failed:', err)
+                                    if (process.env.NODE_ENV === 'development') console.error('[ForegroundImage] Upload failed:', err)
                                   } finally {
                                     setIsUploadingImage(false)
                                   }

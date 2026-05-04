@@ -29,7 +29,7 @@ export interface PaginationProps {
   disabled?: boolean;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({
+export const Pagination = ({
   currentPage,
   totalPages,
   totalItems,
@@ -45,7 +45,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   className,
   compact = false,
   disabled = false,
-}) => {
+}: PaginationProps) => {
   const { t } = useTranslation();
   const hasNextPage = currentPage < totalPages;
   const hasPreviousPage = currentPage > 1;

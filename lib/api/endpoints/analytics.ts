@@ -142,33 +142,35 @@ export const analyticsAPI = {
     const osData = scansPerOS.status === 'fulfilled' ? (scansPerOS.value || []) : []
     const deviceData = scansPerDevice.status === 'fulfilled' ? (scansPerDevice.value || []) : []
 
+    type RawScanRow = { scans?: number; date?: string; country?: string; city?: string; iso_code?: string; total_scans?: number; unique_scans?: number; [key: string]: unknown }
+
     // Use main report for accurate totals; fallback to summing daily data
-    const totalScans = mainData?.total_scans
+    const totalScans: number = (mainData as RawScanRow | null)?.total_scans
       ?? (Array.isArray(dayData)
-        ? dayData.reduce((sum: number, d: any) => sum + (d.scans ?? 0), 0)
+        ? (dayData as RawScanRow[]).reduce((sum: number, d) => sum + (d.scans ?? 0), 0)
         : 0)
-    const uniqueScans = mainData?.unique_scans ?? totalScans
+    const uniqueScans: number = (mainData as RawScanRow | null)?.unique_scans ?? totalScans
 
     // Helper to convert raw breakdown array to BreakdownItem[] with percentages
-    function toBreakdown(arr: any[], labelField: string): BreakdownItem[] {
+    function toBreakdown(arr: RawScanRow[], labelField: string): BreakdownItem[] {
       if (!Array.isArray(arr) || arr.length === 0) return []
-      const total = arr.reduce((s: number, d: any) => s + (d.scans ?? 0), 0)
+      const total = arr.reduce((s: number, d) => s + (d.scans ?? 0), 0)
       return arr
-        .filter((d: any) => d[labelField])
-        .map((d: any) => ({
-          label: d[labelField] || 'Unknown',
+        .filter((d) => d[labelField])
+        .map((d) => ({
+          label: String(d[labelField]) || 'Unknown',
           value: d.scans ?? 0,
           percentage: total > 0 ? Math.round(((d.scans ?? 0) / total) * 100) : 0,
         }))
     }
 
     // Convert country data with ISO codes
-    function toCountryBreakdown(arr: any[]): CountryBreakdownItem[] {
+    function toCountryBreakdown(arr: RawScanRow[]): CountryBreakdownItem[] {
       if (!Array.isArray(arr) || arr.length === 0) return []
-      const total = arr.reduce((s: number, d: any) => s + (d.scans ?? 0), 0)
+      const total = arr.reduce((s: number, d) => s + (d.scans ?? 0), 0)
       return arr
-        .filter((d: any) => d.country)
-        .map((d: any) => ({
+        .filter((d) => d.country)
+        .map((d) => ({
           label: d.country || 'Unknown',
           value: d.scans ?? 0,
           percentage: total > 0 ? Math.round(((d.scans ?? 0) / total) * 100) : 0,
@@ -178,12 +180,12 @@ export const analyticsAPI = {
     }
 
     // Convert city data
-    function toCityBreakdown(arr: any[]): CityBreakdownItem[] {
+    function toCityBreakdown(arr: RawScanRow[]): CityBreakdownItem[] {
       if (!Array.isArray(arr) || arr.length === 0) return []
-      const total = arr.reduce((s: number, d: any) => s + (d.scans ?? 0), 0)
+      const total = arr.reduce((s: number, d) => s + (d.scans ?? 0), 0)
       return arr
-        .filter((d: any) => d.city)
-        .map((d: any) => ({
+        .filter((d) => d.city)
+        .map((d) => ({
           label: d.city || 'Unknown',
           value: d.scans ?? 0,
           percentage: total > 0 ? Math.round(((d.scans ?? 0) / total) * 100) : 0,
@@ -195,7 +197,7 @@ export const analyticsAPI = {
     // Find last scan date — find the last day with scans > 0
     let lastScan: string | undefined
     if (Array.isArray(dayData) && dayData.length > 0) {
-      const lastWithScans = [...dayData].reverse().find((d: any) => (d.scans ?? 0) > 0)
+      const lastWithScans = [...(dayData as RawScanRow[])].reverse().find((d) => (d.scans ?? 0) > 0)
       if (lastWithScans?.date) lastScan = lastWithScans.date
     }
 
@@ -206,7 +208,7 @@ export const analyticsAPI = {
       uniqueScans,
       lastScan,
       scansByDay: Array.isArray(dayData)
-        ? dayData.map((d: any) => ({ date: d.date ?? '', count: d.scans ?? 0 }))
+        ? (dayData as RawScanRow[]).map((d) => ({ date: d.date ?? '', count: d.scans ?? 0 }))
         : [],
       deviceBreakdown: toBreakdown(deviceData, 'device_brand'),
       locationBreakdown: toBreakdown(countryData, 'country'),
@@ -228,10 +230,11 @@ export const analyticsAPI = {
       const response = await apiClient.get(`/qrcodes/${qrcodeId}/scans`, {
         params: { limit },
       })
-      const rawScans = Array.isArray(response.data) ? response.data : []
+      type RawScan = { id?: unknown; created_at?: string; country?: string; iso_code?: string; city?: string; os_name?: string; device_brand?: string; device_name?: string; browser?: string; [key: string]: unknown }
+      const rawScans: RawScan[] = Array.isArray(response.data) ? response.data : []
 
-      const events: ScanEvent[] = rawScans.map((s: any) => ({
-        id: s.id,
+      const events: ScanEvent[] = rawScans.map((s) => ({
+        id: s.id as number,
         qrcodeId,
         qrcodeName: '',
         timestamp: s.created_at ?? '',

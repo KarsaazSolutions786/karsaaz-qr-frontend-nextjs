@@ -81,7 +81,7 @@ export function useDesignShapes() {
       setCachedAssets(assets)
       return assets
     },
-    staleTime: 5 * 60_000, // 5 min — short enough to pick up admin changes quickly
+    staleTime: 30 * 60_000, // 30 min — matches server-side cache TTL (1800s); admin mutations invalidate this key directly
     gcTime: 60 * 60_000, // 1 hr garbage collection
     initialData: getCachedAssets() ?? undefined,
     initialDataUpdatedAt: 0, // Treat localStorage data as stale — always refetch in background

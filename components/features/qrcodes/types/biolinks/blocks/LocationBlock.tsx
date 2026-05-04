@@ -13,13 +13,13 @@ interface LocationBlockProps {
   isDragging?: boolean;
 }
 
-export const LocationBlock: React.FC<LocationBlockProps> = ({
+export const LocationBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: LocationBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

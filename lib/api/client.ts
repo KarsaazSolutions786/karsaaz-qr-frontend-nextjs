@@ -95,7 +95,9 @@ apiClient.interceptors.request.use(
     return config
   },
   (error: AxiosError) => {
-    console.error('[API Request Error]', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[API Request Error]', error)
+    }
     return Promise.reject(error)
   }
 )
@@ -139,7 +141,7 @@ apiClient.interceptors.response.use(
     // Show user-friendly toast for all other API errors (unless silenced)
     if (!originalRequest._silent && error.response) {
       const status = error.response.status
-      const data = error.response.data as any
+      const data = error.response.data as Record<string, unknown>
 
       // Skip toast for 404 on non-critical endpoints (config, subscriptions/current)
       const silentUrls = ['/config', '/subscriptions/current', '/domains']
@@ -150,19 +152,20 @@ apiClient.interceptors.response.use(
 
         if (status === 422 && data?.errors) {
           // Validation errors — show first field error
-          const fields = Object.keys(data.errors)
-          if (fields.length > 0) {
-            const firstField = fields[0] as string
-            const fieldErrors = data.errors[firstField]
+          const errors = data.errors as Record<string, unknown>
+          const fields = Object.keys(errors)
+          const firstField = fields[0]
+          if (firstField !== undefined) {
+            const fieldErrors = errors[firstField]
             const firstError = Array.isArray(fieldErrors) ? fieldErrors[0] : fieldErrors
-            userMessage = translateMessage(firstError) || 'Please check your input and try again.'
+            userMessage = translateMessage(String(firstError)) || 'Please check your input and try again.'
           } else {
             userMessage = 'Please check your input and try again.'
           }
         } else if (data?.error_code || data?.code) {
-          userMessage = processApiError(data)
+          userMessage = processApiError(data as { error_code?: string; code?: string; message?: string })
         } else if (data?.message) {
-          userMessage = translateMessage(data.message)
+          userMessage = translateMessage(String(data.message))
         } else {
           userMessage = getHttpStatusMessage(status)
         }
@@ -209,11 +212,12 @@ export async function apiWithRetry<T>(fn: () => Promise<T>, retries = MAX_RETRIE
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       return await fn()
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const axiosErr = isAxiosError(error) ? error : null
       const isRetryable =
-        error.code === 'ECONNABORTED' ||
-        error.code === 'ERR_NETWORK' ||
-        (error.response?.status && error.response.status >= 500)
+        axiosErr?.code === 'ECONNABORTED' ||
+        axiosErr?.code === 'ERR_NETWORK' ||
+        (axiosErr?.response?.status != null && axiosErr.response.status >= 500)
 
       if (!isRetryable || attempt === retries) throw error
 

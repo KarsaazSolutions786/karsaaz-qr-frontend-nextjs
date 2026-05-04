@@ -13,13 +13,13 @@ interface ImageBlockProps {
   isDragging?: boolean;
 }
 
-export const ImageBlock: React.FC<ImageBlockProps> = ({
+export const ImageBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: ImageBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

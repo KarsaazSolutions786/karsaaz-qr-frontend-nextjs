@@ -22,11 +22,11 @@ interface AIDesignFieldsProps {
   onGenerate: (prompt: string, style: string, colorScheme: string) => Promise<AIDesign>;
 }
 
-const AIDesignFields: React.FC<AIDesignFieldsProps> = ({
+const AIDesignFields = ({
   design: _design,
   onChange,
   onGenerate,
-}) => {
+}: AIDesignFieldsProps) => {
   const [prompt, setPrompt] = useState('');
   const { t } = useTranslation();
   const [selectedStyle, setSelectedStyle] = useState('modern');

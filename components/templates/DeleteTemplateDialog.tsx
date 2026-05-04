@@ -26,7 +26,7 @@ export default function DeleteTemplateDialog({
       // You can add toast notification here if available
     },
     onError: (error) => {
-      console.error('Failed to delete template:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Failed to delete template:', error)
       // You can add toast notification here if available
     },
   })

@@ -7,8 +7,8 @@ export function useValidatePromoCode() {
       const response = await validatePromoCode(data)
       return response.data
     },
-    onError: (error: any) => {
-      console.error('Validate promo code error:', error)
+    onError: (error: unknown) => {
+      if (process.env.NODE_ENV === 'development') console.error('Validate promo code error:', error)
     },
   })
 }

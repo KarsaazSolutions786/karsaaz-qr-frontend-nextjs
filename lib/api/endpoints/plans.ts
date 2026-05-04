@@ -5,44 +5,44 @@ import type { SubscriptionPlan, CreateSubscriptionPlanRequest } from '@/types/en
 /**
  * Map backend snake_case plan to frontend camelCase SubscriptionPlan.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw API response from backend
-function mapPlan(raw: any): SubscriptionPlan {
+function mapPlan(raw: Record<string, unknown>): SubscriptionPlan {
+  const r = raw as Record<string, unknown>
   return {
-    ...raw,
-    id: raw.id,
-    name: raw.name ?? '',
-    price: raw.price ?? 0,
-    frequency: raw.frequency ?? 'monthly',
-    sortOrder: raw.sort_order ?? raw.sortOrder ?? 0,
-    isHidden: raw.is_hidden ?? raw.isHidden ?? false,
-    isTrial: raw.is_trial ?? raw.isTrial ?? false,
-    trialDays: raw.trial_days ?? raw.trialDays ?? 0,
-    numberOfDynamicQrcodes: raw.number_of_dynamic_qrcodes ?? raw.numberOfDynamicQrcodes ?? 0,
-    numberOfScans: raw.number_of_scans ?? raw.numberOfScans ?? 0,
-    numberOfCustomDomains: raw.number_of_custom_domains ?? raw.numberOfCustomDomains ?? 0,
-    fileSizeLimit: raw.file_size_limit ?? raw.fileSizeLimit ?? 0,
-    numberOfUsers: raw.number_of_users ?? raw.numberOfUsers ?? 1,
+    ...(r as object),
+    id: r.id as number,
+    name: (r.name ?? '') as string,
+    price: (r.price ?? 0) as number,
+    frequency: (r.frequency ?? 'monthly') as SubscriptionPlan['frequency'],
+    sortOrder: (r.sort_order ?? r.sortOrder ?? 0) as number,
+    isHidden: (r.is_hidden ?? r.isHidden ?? false) as boolean,
+    isTrial: (r.is_trial ?? r.isTrial ?? false) as boolean,
+    trialDays: (r.trial_days ?? r.trialDays ?? 0) as number,
+    numberOfDynamicQrcodes: (r.number_of_dynamic_qrcodes ?? r.numberOfDynamicQrcodes ?? 0) as number,
+    numberOfScans: (r.number_of_scans ?? r.numberOfScans ?? 0) as number,
+    numberOfCustomDomains: (r.number_of_custom_domains ?? r.numberOfCustomDomains ?? 0) as number,
+    fileSizeLimit: (r.file_size_limit ?? r.fileSizeLimit ?? 0) as number,
+    numberOfUsers: (r.number_of_users ?? r.numberOfUsers ?? 1) as number,
     numberOfRestaurantMenuItems:
-      raw.number_of_restaurant_menu_items ?? raw.numberOfRestaurantMenuItems ?? 0,
+      (r.number_of_restaurant_menu_items ?? r.numberOfRestaurantMenuItems ?? 0) as number,
     numberOfProductCatalogueItems:
-      raw.number_of_product_catalogue_items ?? raw.numberOfProductCatalogueItems ?? 0,
-    numberOfAiGenerations: raw.number_of_ai_generations ?? raw.numberOfAiGenerations ?? 0,
+      (r.number_of_product_catalogue_items ?? r.numberOfProductCatalogueItems ?? 0) as number,
+    numberOfAiGenerations: (r.number_of_ai_generations ?? r.numberOfAiGenerations ?? 0) as number,
     numberOfBulkCreatedQrcodes:
-      raw.number_of_bulk_created_qrcodes ?? raw.numberOfBulkCreatedQrcodes ?? 0,
-    showAds: (raw.show_ads === 'enabled' || raw.show_ads === true) ?? raw.showAds ?? false,
-    adsTimeout: raw.ads_timeout ?? raw.adsTimeout ?? 0,
-    adsCode: raw.ads_code ?? raw.adsCode ?? '',
-    qrTypes: raw.qr_types ?? raw.qrTypes ?? [],
+      (r.number_of_bulk_created_qrcodes ?? r.numberOfBulkCreatedQrcodes ?? 0) as number,
+    showAds: ((r.show_ads === 'enabled' || r.show_ads === true) || (r.showAds as boolean | undefined) || false) as boolean,
+    adsTimeout: (r.ads_timeout ?? r.adsTimeout ?? 0) as number,
+    adsCode: (r.ads_code ?? r.adsCode ?? '') as string,
+    qrTypes: (r.qr_types ?? r.qrTypes ?? []) as string[],
     unavailableTypesBehaviour:
-      raw.unavailable_types_behaviour ?? raw.unavailableTypesBehaviour ?? 'show_upgrade_message',
-    features: raw.features ?? [],
-    checkpoints: raw.checkpoints ?? [],
-    qrTypeLimits: raw.qr_type_limits ?? raw.qrTypeLimits ?? [],
-    hasApiAccess: raw.has_api_access ?? raw.hasApiAccess ?? false,
-    apiMonthlyRequests: raw.api_monthly_requests ?? raw.apiMonthlyRequests ?? 1000,
-    apiRateLimitPerMinute: raw.api_rate_limit_per_minute ?? raw.apiRateLimitPerMinute ?? 60,
-    createdAt: raw.created_at ?? raw.createdAt ?? '',
-    updatedAt: raw.updated_at ?? raw.updatedAt ?? '',
+      (r.unavailable_types_behaviour ?? r.unavailableTypesBehaviour ?? 'show_upgrade_message') as string,
+    features: (r.features ?? []) as SubscriptionPlan['features'],
+    checkpoints: (r.checkpoints ?? []) as SubscriptionPlan['checkpoints'],
+    qrTypeLimits: (r.qr_type_limits ?? r.qrTypeLimits ?? []) as SubscriptionPlan['qrTypeLimits'],
+    hasApiAccess: (r.has_api_access ?? r.hasApiAccess ?? false) as boolean | undefined,
+    apiMonthlyRequests: (r.api_monthly_requests ?? r.apiMonthlyRequests ?? 1000) as number,
+    apiRateLimitPerMinute: (r.api_rate_limit_per_minute ?? r.apiRateLimitPerMinute ?? 60) as number,
+    createdAt: (r.created_at ?? r.createdAt ?? '') as string,
+    updatedAt: (r.updated_at ?? r.updatedAt ?? '') as string,
   }
 }
 
@@ -96,8 +96,7 @@ export const plansAPI = {
   // Get all subscription plans
   getAll: async (params?: { page?: number; search?: string }) => {
     const response = await apiClient.get('/subscription-plans', { params: mapSearchParams(params) })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw API pagination response
-    const normalized = normalizePagination<any>(response.data)
+    const normalized = normalizePagination<Record<string, unknown>>(response.data)
     return {
       ...normalized,
       data: normalized.data.map(mapPlan),

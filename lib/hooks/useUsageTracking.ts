@@ -19,7 +19,7 @@ export function useUsageTracking(options: TrackingOptions = {}) {
         if (onError) {
           onError(error as Error);
         } else {
-          console.error('Failed to track usage event:', error);
+          if (process.env.NODE_ENV === 'development') console.error('Failed to track usage event:', error);
         }
       }
     },

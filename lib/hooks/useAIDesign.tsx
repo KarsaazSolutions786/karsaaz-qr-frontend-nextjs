@@ -177,7 +177,7 @@ export function useAIDesign(options: UseAIDesignOptions = {}): UseAIDesignReturn
         await loadSaved();
       }
     } catch (err) {
-      console.error('Failed to save design:', err);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to save design:', err);
     }
   }, []);
 
@@ -189,7 +189,7 @@ export function useAIDesign(options: UseAIDesignOptions = {}): UseAIDesignReturn
       const designs = await getSavedAIDesigns();
       setSavedDesigns(designs);
     } catch (err) {
-      console.error('Failed to load saved designs:', err);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to load saved designs:', err);
     }
   }, []);
 
@@ -204,7 +204,7 @@ export function useAIDesign(options: UseAIDesignOptions = {}): UseAIDesignReturn
         await loadSaved();
       }
     } catch (err) {
-      console.error('Failed to delete design:', err);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to delete design:', err);
     }
   }, [loadSaved]);
 
@@ -218,7 +218,7 @@ export function useAIDesign(options: UseAIDesignOptions = {}): UseAIDesignReturn
         setSuggestions(response.suggestions);
       }
     } catch (err) {
-      console.error('Failed to get suggestions:', err);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to get suggestions:', err);
     }
   }, []);
 

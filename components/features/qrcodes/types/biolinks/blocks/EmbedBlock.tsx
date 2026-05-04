@@ -13,13 +13,13 @@ interface EmbedBlockProps {
   isDragging?: boolean;
 }
 
-export const EmbedBlock: React.FC<EmbedBlockProps> = ({
+export const EmbedBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: EmbedBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

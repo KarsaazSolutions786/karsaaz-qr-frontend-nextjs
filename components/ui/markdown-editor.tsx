@@ -41,6 +41,21 @@ interface ToolbarAction {
   block?: boolean
 }
 
+/**
+ * SECURITY: Validate that a URL uses only safe schemes (http/https).
+ * Blocks javascript: and data: URIs that could execute arbitrary code
+ * when injected into href= or src= attributes.
+ */
+function isSafeUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url)
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:'
+  } catch {
+    // Relative URLs (no scheme) are safe — they resolve against the current origin.
+    return !url.includes(':')
+  }
+}
+
 function renderMarkdown(text: string): string {
   return text
     .replace(/&/g, '&amp;')
@@ -69,15 +84,17 @@ function renderMarkdown(text: string): string {
     // Horizontal rule
     .replace(/^---$/gm, '<hr class="my-4 border-gray-300" />')
     // Images (must come before links)
-    .replace(
-      /!\[([^\]]*)\]\(([^)]+)\)/g,
-      '<img src="$2" alt="$1" class="max-w-full rounded my-2" />'
-    )
+    // SECURITY: Reject javascript: and data: src values to block XSS via image injection.
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_match, alt, src) => {
+      if (!isSafeUrl(src)) return `[image blocked: unsafe URL]`
+      return `<img src="${src}" alt="${alt}" class="max-w-full rounded my-2" />`
+    })
     // Links
-    .replace(
-      /\[([^\]]+)\]\(([^)]+)\)/g,
-      '<a href="$2" class="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">$1</a>'
-    )
+    // SECURITY: Reject javascript: href values to block XSS via link injection.
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label, href) => {
+      if (!isSafeUrl(href)) return label
+      return `<a href="${href}" class="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">${label}</a>`
+    })
     // Lists
     .replace(/^\d+\. (.+)$/gm, '<li class="ml-6 list-decimal">$1</li>')
     .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')

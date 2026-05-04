@@ -22,7 +22,7 @@ export interface SimplePaginationProps {
   compact?: boolean;
 }
 
-export const SimplePagination: React.FC<SimplePaginationProps> = ({
+export const SimplePagination = ({
   currentPage,
   totalPages,
   onPageChange,
@@ -35,7 +35,7 @@ export const SimplePagination: React.FC<SimplePaginationProps> = ({
   disabled = false,
   showPageIndicator = true,
   compact = false,
-}) => {
+}: SimplePaginationProps) => {
   const { t } = useTranslation();
   const resolvedLoadingText = loadingText ?? t('Loading...');
   const resolvedLoadMoreText = loadMoreText ?? t('Load More');

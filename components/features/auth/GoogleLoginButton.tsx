@@ -95,7 +95,7 @@ export function GoogleLoginButton() {
           loginResult.user.roles?.[0]?.home_page?.replace('/dashboard', '') || '/qrcodes/new'
         router.push(homePage)
       } catch (error) {
-        console.error('Google login failed:', error)
+        if (process.env.NODE_ENV === 'development') console.error('Google login failed:', error)
       }
     },
     [router, queryClient, setUser]

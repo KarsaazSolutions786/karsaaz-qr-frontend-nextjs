@@ -84,7 +84,7 @@ export function ScreenshotModal({
         downloadBlob(blob, `qrcode.pdf`);
       }
     } catch (err) {
-      console.error('Export failed:', err);
+      if (process.env.NODE_ENV === 'development') console.error('Export failed:', err);
     } finally {
       setIsExporting(false);
     }

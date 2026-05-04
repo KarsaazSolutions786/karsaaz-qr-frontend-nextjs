@@ -13,13 +13,13 @@ interface PaymentBlockProps {
   isDragging?: boolean;
 }
 
-export const PaymentBlock: React.FC<PaymentBlockProps> = ({
+export const PaymentBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: PaymentBlockProps) => {
   const { t } = useTranslation()
   const formatAmount = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {

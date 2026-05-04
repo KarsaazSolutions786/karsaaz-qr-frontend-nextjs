@@ -83,7 +83,7 @@ export async function downloadQRCodesAsZip(
         zip.file(metadataPath, metadataContent)
       }
     } catch (error) {
-      console.error(`Failed to add ${qrCode.name} to ZIP:`, error)
+      if (process.env.NODE_ENV === 'development') console.error(`Failed to add ${qrCode.name} to ZIP:`, error)
       // Continue with other files
     }
   }
@@ -366,7 +366,7 @@ export async function downloadQRCodesAsZipWithProgress(
         zip.file(metadataPath, metadataContent)
       }
     } catch (error) {
-      console.error(`Failed to add ${qrCode.name} to ZIP:`, error)
+      if (process.env.NODE_ENV === 'development') console.error(`Failed to add ${qrCode.name} to ZIP:`, error)
     }
   }
 

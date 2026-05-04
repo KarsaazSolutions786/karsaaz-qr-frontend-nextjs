@@ -13,13 +13,13 @@ interface VideoBlockProps {
   isDragging?: boolean;
 }
 
-export const VideoBlock: React.FC<VideoBlockProps> = ({
+export const VideoBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: VideoBlockProps) => {
   const { t } = useTranslation()
   const getEmbedUrl = (url: string, platform?: string) => {
     if (platform === 'youtube') {

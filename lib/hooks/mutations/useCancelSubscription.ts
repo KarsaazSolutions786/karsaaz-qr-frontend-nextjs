@@ -14,8 +14,8 @@ export function useCancelSubscription() {
       // Invalidate subscription queries to update status
       queryClient.invalidateQueries({ queryKey: queryKeys.subscriptions.all() })
     },
-    onError: (error: any) => {
-      console.error('Cancel subscription error:', error)
+    onError: (error: unknown) => {
+      if (process.env.NODE_ENV === 'development') console.error('Cancel subscription error:', error)
     },
   })
 }

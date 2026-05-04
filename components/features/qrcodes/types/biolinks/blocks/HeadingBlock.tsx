@@ -13,13 +13,13 @@ interface HeadingBlockProps {
   isDragging?: boolean;
 }
 
-export const HeadingBlock: React.FC<HeadingBlockProps> = ({
+export const HeadingBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: HeadingBlockProps) => {
   const { t } = useTranslation()
   const headingSizes = {
     1: 'text-3xl',

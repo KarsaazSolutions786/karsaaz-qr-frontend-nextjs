@@ -85,7 +85,7 @@ export function useQRAPIPreview(
    */
   const download = useCallback(async (filename = 'qrcode') => {
     if (!state.url) {
-      console.error('No QR code URL available for download');
+      if (process.env.NODE_ENV === 'development') console.error('No QR code URL available for download');
       return;
     }
 
@@ -108,7 +108,7 @@ export function useQRAPIPreview(
       
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Failed to download QR code:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to download QR code:', error);
       throw error;
     }
   }, [state.url]);
@@ -118,13 +118,13 @@ export function useQRAPIPreview(
    */
   const print = useCallback(() => {
     if (!state.url) {
-      console.error('No QR code URL available for printing');
+      if (process.env.NODE_ENV === 'development') console.error('No QR code URL available for printing');
       return;
     }
 
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
-      console.error('Failed to open print window');
+      if (process.env.NODE_ENV === 'development') console.error('Failed to open print window');
       return;
     }
 

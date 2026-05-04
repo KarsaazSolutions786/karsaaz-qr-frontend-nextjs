@@ -2,6 +2,22 @@ import apiClient from '@/lib/api/client'
 
 // Bulk Operations API Endpoints
 
+export interface BulkImportUrlInstance {
+  id: number
+  name: string | null
+  status: 'running' | 'completed' | 'failed'
+  progress: number
+  total: number
+  created_at: string
+  results?: Array<{
+    row: number
+    url?: string
+    status: 'success' | 'failed'
+    error?: string
+    qrcode_id?: number
+  }>
+}
+
 export interface BulkDeleteRequest {
   qrcodeIds: string[] // QR code IDs to delete
 }
@@ -190,18 +206,18 @@ export const bulkOperationsAPI = {
   },
 
   // Get bulk import URL instances
-  getImportUrlInstances: async () => {
-    const response = await apiClient.get('/bulk-operations/import-url-qrcodes/instances')
-    const data = response.data as any
+  getImportUrlInstances: async (): Promise<BulkImportUrlInstance[]> => {
+    const response = await apiClient.get<{ data?: BulkImportUrlInstance[] } | BulkImportUrlInstance[]>('/bulk-operations/import-url-qrcodes/instances')
+    const data = response.data as { data?: BulkImportUrlInstance[] } & BulkImportUrlInstance[]
     return Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : []
   },
 
   // Get single bulk import URL instance
-  getImportUrlInstance: async (id: string) => {
-    const response = await apiClient.get(`/bulk-operations/import-url-qrcodes/instances`)
-    const data = response.data as any
-    const list = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : []
-    return list.find((i: any) => String(i.id) === id) || null
+  getImportUrlInstance: async (id: string): Promise<BulkImportUrlInstance | null> => {
+    const response = await apiClient.get<{ data?: BulkImportUrlInstance[] } | BulkImportUrlInstance[]>(`/bulk-operations/import-url-qrcodes/instances`)
+    const data = response.data as { data?: BulkImportUrlInstance[] } & BulkImportUrlInstance[]
+    const list: BulkImportUrlInstance[] = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : []
+    return list.find((i) => String(i.id) === id) ?? null
   },
 
   // Create bulk import from CSV file

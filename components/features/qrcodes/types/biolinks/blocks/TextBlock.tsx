@@ -13,13 +13,13 @@ interface TextBlockProps {
   isDragging?: boolean;
 }
 
-export const TextBlock: React.FC<TextBlockProps> = ({
+export const TextBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: TextBlockProps) => {
   const { t } = useTranslation()
   const alignmentClass = {
     left: 'text-left',

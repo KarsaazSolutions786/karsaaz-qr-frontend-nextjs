@@ -38,7 +38,7 @@ export default function UseTemplateButton({
       }, 2000)
     },
     onError: (error) => {
-      console.error('Failed to use template:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Failed to use template:', error)
       // You can add toast notification here if available
     },
   })

@@ -3,25 +3,11 @@
 import { use } from 'react'
 import Link from 'next/link'
 import { useBulkImportInstance } from '@/lib/hooks/queries/useBulkOperations'
+import type { BulkImportUrlInstance } from '@/lib/api/endpoints/bulk-operations'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
-interface BulkInstance {
-  id: number
-  name: string | null
-  status: 'running' | 'completed' | 'failed'
-  progress: number
-  total: number
-  created_at: string
-  results?: BulkResult[]
-}
 
-interface BulkResult {
-  row: number
-  url?: string
-  status: 'success' | 'failed'
-  error?: string
-  qrcode_id?: number
-}
+type BulkResult = NonNullable<BulkImportUrlInstance['results']>[number]
 
 const statusStyles: Record<string, string> = {
   running: 'bg-blue-100 text-blue-800',
@@ -35,7 +21,7 @@ export default function BulkOperationDetailPage({ params }: { params: Promise<{ 
   const { t } = useTranslation()
   const { data: instance, isLoading: loading, error: queryError } = useBulkImportInstance(id)
   const error = queryError ? t('Failed to load bulk operation details.') : (!loading && !instance ? t('Bulk operation not found.') : '')
-  const results: BulkResult[] = (instance as BulkInstance)?.results ?? []
+  const results: BulkResult[] = instance?.results ?? []
 
   if (loading) {
     return (

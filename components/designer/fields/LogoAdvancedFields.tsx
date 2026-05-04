@@ -24,10 +24,10 @@ interface LogoAdvancedFieldsProps {
   onChange: (settings: LogoSettings) => void;
 }
 
-const LogoAdvancedFields: React.FC<LogoAdvancedFieldsProps> = ({
+const LogoAdvancedFields = ({
   logoSettings,
   onChange,
-}) => {
+}: LogoAdvancedFieldsProps) => {
   const [preview, setPreview] = useState<string>(logoSettings.url || '');
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);

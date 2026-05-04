@@ -13,7 +13,7 @@ export function WebVitalsReporter() {
         reported.current.add(metric.id);
 
         if (process.env.NODE_ENV === 'development') {
-          console.log(`[Web Vital] ${metric.name}: ${Math.round(metric.value)}${metric.name === 'CLS' ? '' : 'ms'} (${metric.rating})`);
+          if (process.env.NODE_ENV === 'development') console.log(`[Web Vital] ${metric.name}: ${Math.round(metric.value)}${metric.name === 'CLS' ? '' : 'ms'} (${metric.rating})`);
         }
       };
       onCLS(report);

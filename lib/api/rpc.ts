@@ -63,7 +63,7 @@ interface JsonRpcResponse {
 
 let _nextId = 1
 const _dedupCache = new Map<string, { result: unknown; ts: number }>()
-const DEDUP_WINDOW_MS = 5000
+const DEDUP_WINDOW_MS = 15000
 
 // ─── Core API ────────────────────────────────────────────────────────────────
 
@@ -177,14 +177,15 @@ export async function rpcBatch(
 
 /**
  * Shorthand for composite endpoints (server-side aggregation).
- * Always skips dedup since composites return fresh aggregated data.
+ * Participates in dedup by default (15s window) — callers can pass skipDedup: true
+ * to bypass when they need a guaranteed fresh response (e.g., after mutations).
  */
 export async function rpcComposite<T = unknown>(
   name: string,
   params: Record<string, unknown> = {},
   options: RpcOptions = {}
 ): Promise<T> {
-  return rpc<T>(`compose.${name}`, params, { ...options, skipDedup: true })
+  return rpc<T>(`compose.${name}`, params, options)
 }
 
 /**

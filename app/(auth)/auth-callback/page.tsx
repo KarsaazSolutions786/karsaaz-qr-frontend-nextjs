@@ -39,17 +39,30 @@ function AuthCallbackContent() {
           return
         }
 
+        // SECURITY: Block any legacy flow that passes a raw token in the URL.
+        // Tokens in URLs are logged by servers/proxies and leak via Referer headers.
+        if (tokenParam) {
+          console.error('[Security] Raw token in URL detected — blocked to prevent credential exposure')
+          router.replace('/login?error=invalid_callback')
+          return
+        }
+
         let userData: User
 
         if (code && provider) {
           // OAuth code exchange flow (token is set as httpOnly cookie by backend)
           const result = await authWorkflowEngine.handleCallback(provider, code)
           userData = result.user as unknown as User
-        } else if (userParam && tokenParam) {
-          // SECURITY: Block direct token injection via URL params
-          console.error('[Security] Direct token injection attempted via URL params')
-          router.replace('/login?error=invalid_callback')
-          return
+        } else if (userParam && provider) {
+          // Cookie-based redirect flow: backend set httpOnly auth_token cookie and
+          // passed a non-sensitive base64 user payload in the URL (no token in URL).
+          try {
+            userData = JSON.parse(atob(decodeURIComponent(userParam))) as User
+          } catch {
+            console.error('[Security] Failed to decode user payload from OAuth redirect')
+            router.replace('/login?error=invalid_callback')
+            return
+          }
         } else {
           setError(t('Invalid callback parameters. Please try logging in again.'))
           return

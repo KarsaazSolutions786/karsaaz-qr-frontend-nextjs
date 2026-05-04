@@ -45,7 +45,7 @@ export default function WebsiteDisplay({
       try {
         ${jsCode}
       } catch (error) {
-        console.error('JavaScript execution error:', error);
+        if (process.env.NODE_ENV === 'development') console.error('JavaScript execution error:', error);
         window.parent.postMessage({ type: 'website-preview-error', message: error.message }, '*');
       }
     </script>
@@ -58,7 +58,7 @@ export default function WebsiteDisplay({
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'website-preview-error') {
-        console.error('Website error:', event.data.message)
+        if (process.env.NODE_ENV === 'development') console.error('Website error:', event.data.message)
         onError?.()
       }
     }

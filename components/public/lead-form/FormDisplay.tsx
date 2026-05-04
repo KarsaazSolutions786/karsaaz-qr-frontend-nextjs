@@ -107,7 +107,7 @@ export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
       });
       onSuccess();
     } catch (error) {
-      console.error('Form submission error:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Form submission error:', error);
       setSubmitError(error instanceof Error ? error.message : 'An error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);

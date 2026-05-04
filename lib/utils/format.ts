@@ -14,7 +14,7 @@ export function formatDate(
     const date = parseISO(dateString)
     return format(date, formatStr)
   } catch {
-    console.error('Invalid date string:', dateString)
+    if (process.env.NODE_ENV === 'development') console.error('Invalid date string:', dateString)
     return 'Invalid date'
   }
 }
@@ -37,7 +37,7 @@ export function formatRelativeTime(dateString: string | undefined | null): strin
     const date = parseISO(dateString)
     return formatDistance(date, new Date(), { addSuffix: true })
   } catch {
-    console.error('Invalid date string:', dateString)
+    if (process.env.NODE_ENV === 'development') console.error('Invalid date string:', dateString)
     return 'Invalid date'
   }
 }
@@ -52,7 +52,7 @@ export function formatRelativeDate(dateString: string | undefined | null): strin
     const date = parseISO(dateString)
     return formatRelative(date, new Date())
   } catch {
-    console.error('Invalid date string:', dateString)
+    if (process.env.NODE_ENV === 'development') console.error('Invalid date string:', dateString)
     return 'Invalid date'
   }
 }

@@ -18,7 +18,7 @@ class CacheManager {
       sessionStorage.clear();
       window.dispatchEvent(new CustomEvent('cache-manager:logout-cache-cleared'));
     } catch (e) {
-      console.error('[CacheManager] Failed to clear storage:', e);
+      if (process.env.NODE_ENV === 'development') console.error('[CacheManager] Failed to clear storage:', e);
     }
   }
 
@@ -31,7 +31,7 @@ class CacheManager {
       const keysToRemove = ['user', 'token', 'mainUser', 'subscription_cache'];
       keysToRemove.forEach((key) => localStorage.removeItem(key));
     } catch (e) {
-      console.error('[CacheManager] Failed to clear session:', e);
+      if (process.env.NODE_ENV === 'development') console.error('[CacheManager] Failed to clear session:', e);
     }
   }
 
@@ -58,7 +58,7 @@ class CacheManager {
         localStorage.setItem(key, serialized);
       }
     } catch (e) {
-      console.error('[CacheManager] Failed to set cache:', e);
+      if (process.env.NODE_ENV === 'development') console.error('[CacheManager] Failed to set cache:', e);
     }
   }
 

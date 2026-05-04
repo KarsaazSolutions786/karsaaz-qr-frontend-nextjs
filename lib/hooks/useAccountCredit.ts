@@ -68,7 +68,7 @@ export function useAccountCredit() {
       const data = await accountCreditsAPI.getBalance(user.id)
       store.setBalance(data.account_balance ?? 0)
     } catch {
-      console.error('Failed to refresh account balance')
+      if (process.env.NODE_ENV === 'development') console.error('Failed to refresh account balance')
     }
   }, [user?.id, store])
 

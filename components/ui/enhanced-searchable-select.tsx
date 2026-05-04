@@ -184,7 +184,7 @@ export function EnhancedSearchableSelect<T extends SelectOptionBase = SelectOpti
         const result = await loadOptions(search)
         setAsyncOptions(result)
       } catch (error) {
-        console.error('Failed to load options:', error)
+        if (process.env.NODE_ENV === 'development') console.error('Failed to load options:', error)
       } finally {
         setIsLoadingAsync(false)
       }
@@ -252,7 +252,7 @@ export function EnhancedSearchableSelect<T extends SelectOptionBase = SelectOpti
       const newOption = await onCreateOption(search)
       handleSelect(newOption.value)
     } catch (error) {
-      console.error('Failed to create option:', error)
+      if (process.env.NODE_ENV === 'development') console.error('Failed to create option:', error)
     } finally {
       setIsCreating(false)
     }

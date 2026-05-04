@@ -9,7 +9,9 @@ export function useAdminDesignAssets(type?: DesignAssetType) {
   return useQuery({
     queryKey: queryKeys.designAssets.list(type),
     queryFn: () => designAssetsAPI.getAll(type),
-    staleTime: 60_000,
+    // 30 min — assets are server-cached 1800s; match that on the client side to
+    // avoid redundant refetches when switching between design tabs.
+    staleTime: 30 * 60_000,
   })
 }
 
@@ -18,6 +20,7 @@ export function useAllDesignAssets() {
   return useQuery({
     queryKey: queryKeys.designAssets.list(),
     queryFn: () => designAssetsAPI.getAll(),
-    staleTime: 5 * 60_000,
+    // 30 min — matches server-side cache TTL (1800s) to avoid redundant round-trips.
+    staleTime: 30 * 60_000,
   })
 }

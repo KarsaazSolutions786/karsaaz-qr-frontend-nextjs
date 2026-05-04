@@ -1,6 +1,7 @@
 import {
   QrCodeIcon,
   ArchiveBoxIcon,
+  TrashIcon,
   CloudIcon,
   ChevronRightIcon,
   ArrowRightOnRectangleIcon,
@@ -69,6 +70,7 @@ export const figmaPrimaryNav: FigmaNavItem[] = [
   { key: 'home', label: 'Home', href: '/qrcodes/new', icon: HomeIcon },
   { key: 'existing-qr', label: 'Existing QR', href: '/qrcodes', icon: QrCodeIcon },
   { key: 'archived', label: 'Archived', href: '/archived', icon: ArchiveBoxIcon },
+  { key: 'trash', label: 'Trash', href: '/trash', icon: TrashIcon },
   { key: 'qr-templates', label: 'Templates', href: '/qrcode-templates', icon: RectangleStackIcon },
   {
     key: 'storage-connections',

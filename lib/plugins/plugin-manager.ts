@@ -35,7 +35,7 @@ class PluginManager {
       try {
         await plugin.initialize();
       } catch (error) {
-        console.error(`Failed to initialize plugin "${name}":`, error);
+        if (process.env.NODE_ENV === 'development') console.error(`Failed to initialize plugin "${name}":`, error);
       }
     }
   }
@@ -81,7 +81,7 @@ class PluginManager {
       try {
         result = filter.callback(result, ...args);
       } catch (error) {
-        console.error(`Error in filter "${filterName}":`, error);
+        if (process.env.NODE_ENV === 'development') console.error(`Error in filter "${filterName}":`, error);
       }
     }
 
@@ -99,7 +99,7 @@ class PluginManager {
       try {
         await hook.callback(...args);
       } catch (error) {
-        console.error(`Error in hook "${hookName}":`, error);
+        if (process.env.NODE_ENV === 'development') console.error(`Error in hook "${hookName}":`, error);
       }
     }
   }
@@ -116,7 +116,7 @@ class PluginManager {
       try {
         plugin.cleanup();
       } catch (error) {
-        console.error(`Failed to cleanup plugin "${pluginName}":`, error);
+        if (process.env.NODE_ENV === 'development') console.error(`Failed to cleanup plugin "${pluginName}":`, error);
       }
     }
 
@@ -169,7 +169,7 @@ class PluginManager {
         try {
           await plugin.cleanup();
         } catch (error) {
-          console.error(`Failed to cleanup plugin "${plugin.metadata.name}":`, error);
+          if (process.env.NODE_ENV === 'development') console.error(`Failed to cleanup plugin "${plugin.metadata.name}":`, error);
         }
       }
     }

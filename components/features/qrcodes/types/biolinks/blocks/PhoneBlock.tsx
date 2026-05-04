@@ -13,13 +13,13 @@ interface PhoneBlockProps {
   isDragging?: boolean;
 }
 
-export const PhoneBlock: React.FC<PhoneBlockProps> = ({
+export const PhoneBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: PhoneBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

@@ -13,13 +13,13 @@ interface DividerBlockProps {
   isDragging?: boolean;
 }
 
-export const DividerBlock: React.FC<DividerBlockProps> = ({
+export const DividerBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: DividerBlockProps) => {
   const { t } = useTranslation()
   const borderStyles = {
     solid: 'border-solid',

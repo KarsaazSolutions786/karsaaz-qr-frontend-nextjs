@@ -74,7 +74,7 @@ export const WebpagePreview = forwardRef<WebpagePreviewRef, WebpagePreviewProps>
         setSlug(data?.slug ?? null)
       } catch (err) {
         if (!mountedRef.current) return
-        console.error('[WebpagePreview]', err)
+        if (process.env.NODE_ENV === 'development') console.error('[WebpagePreview]', err)
         setError(t('Failed to load preview'))
       } finally {
         if (mountedRef.current) setLoading(false)

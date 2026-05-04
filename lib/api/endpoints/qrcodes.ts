@@ -31,60 +31,61 @@ export interface ListQRCodesParams {
  * Only maps known fields; passes everything else through unchanged so new
  * backend fields don't get silently dropped.
  */
-function mapQRCode(raw: any): QRCode {
+function mapQRCode(raw: Record<string, unknown>): QRCode {
+  const r = raw as Record<string, unknown>  // narrowed access below
   return {
-    ...raw,
-    id: String(raw.id),
-    userId: raw.user_id ?? raw.userId,
-    name: raw.name ?? '',
-    type: raw.type ?? 'url',
-    data: raw.data,
-    customization: raw.customization ?? raw.design ?? {},
-    designerConfig: raw.design ?? raw.designerConfig,
-    folderId: raw.folder_id ?? raw.folderId ?? null,
+    ...(r as object),
+    id: String(r.id),
+    userId: (r.user_id ?? r.userId) as string,
+    name: (r.name ?? '') as string,
+    type: (r.type ?? 'url') as QRCode['type'],
+    data: r.data as QRCode['data'],
+    customization: (r.customization ?? r.design ?? {}) as QRCode['customization'],
+    designerConfig: (r.design ?? r.designerConfig) as QRCode['designerConfig'],
+    folderId: (r.folder_id ?? r.folderId ?? null) as string | null,
     status:
-      raw.status === 'enabled' ? 'active' : (raw.status ?? (raw.archived ? 'archived' : 'active')),
-    domainId: raw.domain_id ?? raw.domainId,
+      r.status === 'enabled' ? 'active' : ((r.status ?? (r.archived ? 'archived' : 'active')) as QRCode['status']),
+    domainId: (r.domain_id ?? r.domainId) as string | undefined,
     screenshotUrl:
-      raw.qrcode_screenshot_url ?? raw.simple_png_url ?? raw.screenshotUrl ?? raw.screenshot_url,
-    svgUrl: raw.svg_url ?? raw.svgUrl,
-    createdAt: raw.created_at ?? raw.createdAt ?? '',
-    updatedAt: raw.updated_at ?? raw.updatedAt ?? '',
-    scans: raw.scans_count ?? raw.scans ?? 0,
-    tags: raw.tags ?? [],
+      (r.qrcode_screenshot_url ?? r.simple_png_url ?? r.screenshotUrl ?? r.screenshot_url) as string | undefined,
+    svgUrl: (r.svg_url ?? r.svgUrl) as string | undefined,
+    createdAt: (r.created_at ?? r.createdAt ?? '') as string,
+    updatedAt: (r.updated_at ?? r.updatedAt ?? '') as string,
+    scans: (r.scans_count ?? r.scans ?? 0) as number,
+    tags: (r.tags ?? []) as string[],
   }
 }
 
 export interface CreateQRCodeRequest {
   type: string
   name: string
-  data: any
-  customization?: any
-  design?: any // Backend expects 'design' field for QR design configuration
-  stickerConfig?: any // New: Sticker configuration
-  folderId?: string | null // New: Folder assignment
-  status?: 'active' | 'inactive' | 'archived' // New: Status
-  tags?: string[] // New: Tags
+  data: Record<string, unknown>
+  customization?: Record<string, unknown>
+  design?: object // Backend expects 'design' field for QR design configuration
+  stickerConfig?: object // Sticker configuration
+  folderId?: string | null // Folder assignment
+  status?: 'active' | 'inactive' | 'archived'
+  tags?: string[]
   password?: string
   domainId?: string
 }
 
 export interface UpdateQRCodeRequest {
   name?: string
-  data?: any
-  customization?: any
-  design?: any // Backend expects 'design' field for QR design configuration
-  stickerConfig?: any // New: Sticker configuration
-  folderId?: string | null // New: Folder assignment
-  status?: 'active' | 'inactive' | 'archived' // New: Status
-  tags?: string[] // New: Tags
+  data?: Record<string, unknown>
+  customization?: Record<string, unknown>
+  design?: object // Backend expects 'design' field for QR design configuration
+  stickerConfig?: object // Sticker configuration
+  folderId?: string | null // Folder assignment
+  status?: 'active' | 'inactive' | 'archived'
+  tags?: string[]
   password?: string
   domainId?: string
 }
 
 export interface ChangeQRTypeRequest {
   type: string
-  data: any
+  data: Record<string, unknown>
 }
 
 export interface BulkCreateRequest {
@@ -148,15 +149,18 @@ export const qrcodesAPI = {
       })
 
       // Normalize flat Laravel pagination and map QR codes
-      const normalized = normalizePagination<any>(response.data)
+      const normalized = normalizePagination<Record<string, unknown>>(response.data)
       return {
         data: normalized.data.map(mapQRCode),
         pagination: normalized.pagination,
       } as PaginatedResponse<QRCode>
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Don't log aborted requests (cancelled by page navigation)
-      if (error?.code !== 'ERR_CANCELED') {
-        console.error('QR Codes fetch error:', error)
+      if (process.env.NODE_ENV === 'development') {
+        const code = (error as { code?: string })?.code
+        if (code !== 'ERR_CANCELED') {
+          console.error('QR Codes fetch error:', error)
+        }
       }
       throw error
     }

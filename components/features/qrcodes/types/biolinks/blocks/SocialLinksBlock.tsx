@@ -13,13 +13,13 @@ interface SocialLinksBlockProps {
   isDragging?: boolean;
 }
 
-export const SocialLinksBlock: React.FC<SocialLinksBlockProps> = ({
+export const SocialLinksBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: SocialLinksBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

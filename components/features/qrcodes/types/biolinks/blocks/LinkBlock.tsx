@@ -13,13 +13,13 @@ interface LinkBlockProps {
   isDragging?: boolean;
 }
 
-export const LinkBlock: React.FC<LinkBlockProps> = ({
+export const LinkBlock = ({
   block,
   onEdit,
   onDelete,
   onToggleVisibility,
   isDragging,
-}) => {
+}: LinkBlockProps) => {
   const { t } = useTranslation()
   return (
     <div

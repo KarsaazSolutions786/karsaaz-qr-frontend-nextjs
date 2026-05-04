@@ -48,7 +48,7 @@ export function BiolinksPage({
         })
         .catch((error) => {
           toast.error(t('Failed to load biolinks data'));
-          console.error(error);
+          if (process.env.NODE_ENV === 'development') console.error(error);
         });
     }
   });
@@ -82,7 +82,7 @@ export function BiolinksPage({
       onSuccess?.(result);
     } catch (error: any) {
       toast.error(error.message || t('Failed to save biolinks'));
-      console.error('Save error:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Save error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +152,7 @@ export function QuickBiolinksExample() {
         },
       });
     } catch (error) {
-      console.error('Error:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Error:', error);
     }
   };
 
@@ -174,7 +174,7 @@ export function CloneBiolinksExample({ sourceId }: { sourceId: number }) {
       toast.success(t('Biolinks cloned successfully!'));
     } catch (error) {
       toast.error(t('Failed to clone biolinks'));
-      console.error(error);
+      if (process.env.NODE_ENV === 'development') console.error(error);
     }
   };
 
@@ -201,7 +201,7 @@ export function BiolinksAnalyticsExample({ biolinksId }: { biolinksId: number })
       });
       setAnalytics(data);
     } catch (error) {
-      console.error('Failed to load analytics:', error);
+      if (process.env.NODE_ENV === 'development') console.error('Failed to load analytics:', error);
     }
   };
 
@@ -264,7 +264,7 @@ export function PublicBiolinksViewer({ slug }: { slug: string }) {
         });
       })
       .catch((error) => {
-        console.error('Failed to load biolinks:', error);
+        if (process.env.NODE_ENV === 'development') console.error('Failed to load biolinks:', error);
       });
   });
 
