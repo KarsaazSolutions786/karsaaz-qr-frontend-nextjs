@@ -23,6 +23,8 @@ export interface TrashListResponse {
 
 export interface TrashSettings {
   trash_auto_delete_days: number | null
+  trash_storage_limit_mb: number
+  estimated_storage_mb: number
   trash_count: number
   trash_limit: number
 }
@@ -85,11 +87,16 @@ export const trashAPI = {
   },
 
   /**
-   * Update the user's trash auto-delete setting.
+   * Update the user's trash settings (auto-delete and/or storage limit).
    */
   async updateSettings(data: {
+    trash_auto_delete_days?: number | null
+    trash_storage_limit_mb?: number
+  }): Promise<{
+    message: string
     trash_auto_delete_days: number | null
-  }): Promise<{ message: string; trash_auto_delete_days: number | null }> {
+    trash_storage_limit_mb: number
+  }> {
     const response = await apiClient.put('/qrcodes/trash/settings', data)
     return response.data
   },

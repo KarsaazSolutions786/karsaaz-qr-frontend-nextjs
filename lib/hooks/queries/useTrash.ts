@@ -79,12 +79,14 @@ export function useEmptyTrash() {
   })
 }
 
-/** Update the user's trash auto-delete setting. */
+/** Update the user's trash settings (auto-delete and/or storage limit). */
 export function useUpdateTrashSettings() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: { trash_auto_delete_days: number | null }) =>
-      trashAPI.updateSettings(data),
+    mutationFn: (data: {
+      trash_auto_delete_days?: number | null
+      trash_storage_limit_mb?: number
+    }) => trashAPI.updateSettings(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.trash.settings() })
     },
