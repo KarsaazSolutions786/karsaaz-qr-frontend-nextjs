@@ -1,13 +1,18 @@
 /**
  * Design Transformer
- * 
+ *
  * Converts between React DesignerConfig format and backend-expected design format.
  * Now uses native backend keys (module, finder, finderDot) directly — no mapping needed.
- * 
+ *
  * React DesignerConfig uses the SAME shape keys as the backend (matching legacy Lit frontend).
  */
 
-import { DesignerConfig, GradientFill, SolidFill, GradientFillConfig } from '@/types/entities/designer'
+import {
+  DesignerConfig,
+  GradientFill,
+  SolidFill,
+  GradientFillConfig,
+} from '@/types/entities/designer'
 
 /**
  * Backend design format expected by the Laravel API
@@ -91,7 +96,7 @@ export function transformDesignToBackend(design: Partial<DesignerConfig>): Backe
       const gradient = foregroundFill as GradientFill
       foregroundColor = gradient.startColor || '#000000'
       gradientType = (gradient.gradientType || 'linear').toUpperCase()
-      
+
       // Convert to backend gradientFill format
       gradientFill = design.gradientFill || {
         type: gradientType,
@@ -101,7 +106,10 @@ export function transformDesignToBackend(design: Partial<DesignerConfig>): Backe
         ],
         angle: gradient.rotation || 0,
       }
-    } else if (foregroundFill.type === 'image' || (foregroundFill as any).type === 'foreground_image') {
+    } else if (
+      foregroundFill.type === 'image' ||
+      (foregroundFill as any).type === 'foreground_image'
+    ) {
       fillType = 'foreground_image'
     }
   }
@@ -118,7 +126,7 @@ export function transformDesignToBackend(design: Partial<DesignerConfig>): Backe
   }
 
   // Shape keys pass through directly (same as backend)
-  const module = design.moduleShape || 'square'
+  const moduleVal = design.moduleShape || 'square'
   const finder = design.finder || 'default'
   const finderDot = design.finderDot || 'default'
 
@@ -161,7 +169,7 @@ export function transformDesignToBackend(design: Partial<DesignerConfig>): Backe
     gradientType,
     gradientFill,
     backgroundEnabled,
-    module,
+    module: moduleVal,
     finder,
     finderDot,
     errorCorrection: design.errorCorrectionLevel || 'M',
@@ -209,7 +217,9 @@ export function transformDesignToBackend(design: Partial<DesignerConfig>): Backe
 /**
  * Transform backend design format to React DesignerConfig
  */
-export function transformDesignFromBackend(backendDesign: BackendDesignConfig | Record<string, any>): Partial<DesignerConfig> {
+export function transformDesignFromBackend(
+  backendDesign: BackendDesignConfig | Record<string, any>
+): Partial<DesignerConfig> {
   const d = backendDesign as Record<string, any>
 
   // Fill config
@@ -219,7 +229,9 @@ export function transformDesignFromBackend(backendDesign: BackendDesignConfig | 
     const colors = gf.colors || []
     foregroundFill = {
       type: 'gradient',
-      gradientType: ((gf.type || d.gradientType || 'LINEAR') as string).toLowerCase() as 'linear' | 'radial',
+      gradientType: ((gf.type || d.gradientType || 'LINEAR') as string).toLowerCase() as
+        | 'linear'
+        | 'radial',
       startColor: colors[0]?.color || d.foregroundColor || '#000000',
       endColor: colors[1]?.color || d.foregroundColor || '#000000',
       rotation: gf.angle || 0,
@@ -232,9 +244,10 @@ export function transformDesignFromBackend(backendDesign: BackendDesignConfig | 
   }
 
   // Background
-  const background: DesignerConfig['background'] = d.backgroundEnabled === false
-    ? { type: 'transparent' }
-    : { type: 'solid', color: d.backgroundColor || '#ffffff' }
+  const background: DesignerConfig['background'] =
+    d.backgroundEnabled === false
+      ? { type: 'transparent' }
+      : { type: 'solid', color: d.backgroundColor || '#ffffff' }
 
   // Logo
   let logo: DesignerConfig['logo'] | undefined
@@ -302,5 +315,15 @@ export function transformDesignFromBackend(backendDesign: BackendDesignConfig | 
     // Size
     errorCorrectionLevel: d.errorCorrection || 'M',
     margin: d.margin ?? 4,
+    // UI Aliases for backward compatibility with Step3Designer/QRCodePreview
+    style:
+      d.module === 'square'
+        ? 'squares'
+        : d.module === 'rounded'
+          ? 'rounded'
+          : d.module === 'dots'
+            ? 'dots'
+            : d.module,
+    cornerStyle: d.finder === 'default' ? 'square' : d.finder,
   }
 }

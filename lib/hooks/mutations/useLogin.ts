@@ -7,6 +7,7 @@ import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { LoginFormData } from '@/lib/validations/auth'
 import { toast } from 'sonner'
+import { rpcClearCache } from '@/lib/api/rpc'
 
 /** Determine where to send the user after login */
 function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): string {
@@ -37,7 +38,8 @@ export function useLogin() {
   return useMutation({
     mutationFn: (data: LoginFormData) => {
       // Include guest session token if present (for guest→user data migration)
-      const guestToken = typeof window !== 'undefined' ? localStorage.getItem('guest_session_token') : null
+      const guestToken =
+        typeof window !== 'undefined' ? localStorage.getItem('guest_session_token') : null
       return authAPI.login({
         email: data.email,
         password: data.password,
@@ -53,13 +55,26 @@ export function useLogin() {
 
       // Normal login success (no 2FA)
       const loginResponse = response as LoginResponse
+      const lastUserId = typeof window !== 'undefined' ? localStorage.getItem('last_user_id') : null
+      const newUserId = String(loginResponse.user.id)
+
       setUser(loginResponse.user)
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(loginResponse.user))
-        // Token is now stored in an httpOnly cookie by the backend.
-        // Store only a flag for client-side session detection.
         localStorage.setItem('logged_in', 'true')
         localStorage.removeItem('token') // Clean up legacy token
+
+        // Smart Cache Clear: Only clear if switching users to preserve performance
+        if (lastUserId && lastUserId !== newUserId) {
+          queryClient.clear()
+          rpcClearCache()
+        } else {
+          // If same user, trigger background invalidation
+          // to ensure latest data is fetched while showing cache instantly.
+          queryClient.invalidateQueries()
+        }
+        localStorage.setItem('last_user_id', newUserId)
+
         localStorage.removeItem('guest_session_token') // Clear guest session after login
         localStorage.removeItem('guest_action_count')
       }
@@ -94,12 +109,26 @@ export function useTwoFactorLoginVerify() {
       return authAPI.twoFactorLoginVerify(data)
     },
     onSuccess: response => {
+      const lastUserId = typeof window !== 'undefined' ? localStorage.getItem('last_user_id') : null
+      const newUserId = String(response.user.id)
+
       setUser(response.user)
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(response.user))
-        // Token is stored in httpOnly cookie by backend
         localStorage.setItem('logged_in', 'true')
         localStorage.removeItem('token')
+
+        // Smart Cache Clear: Only clear if switching users to preserve performance
+        if (lastUserId && lastUserId !== newUserId) {
+          queryClient.clear()
+          rpcClearCache()
+        } else {
+          // If same user, trigger background invalidation
+          // to ensure latest data is fetched while showing cache instantly.
+          queryClient.invalidateQueries()
+        }
+        localStorage.setItem('last_user_id', newUserId)
+
         localStorage.removeItem('guest_session_token')
         localStorage.removeItem('guest_action_count')
       }

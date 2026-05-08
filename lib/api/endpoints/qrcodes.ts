@@ -1,6 +1,7 @@
 import apiClient from '@/lib/api/client'
 import { QRCode } from '@/types/entities/qrcode'
 import { normalizePagination, PaginatedResponse } from '@/lib/api/pagination'
+import { transformDesignFromBackend } from '@/lib/qr/design-transformer'
 
 // QR Code API Endpoints
 
@@ -32,7 +33,11 @@ export interface ListQRCodesParams {
  * backend fields don't get silently dropped.
  */
 function mapQRCode(raw: Record<string, unknown>): QRCode {
-  const r = raw as Record<string, unknown>  // narrowed access below
+  const r = raw as Record<string, unknown>
+  const design = transformDesignFromBackend(
+    (r.design ?? r.designerConfig ?? r.customization ?? {}) as Record<string, any>
+  )
+
   return {
     ...(r as object),
     id: String(r.id),
@@ -40,14 +45,18 @@ function mapQRCode(raw: Record<string, unknown>): QRCode {
     name: (r.name ?? '') as string,
     type: (r.type ?? 'url') as QRCode['type'],
     data: r.data as QRCode['data'],
-    customization: (r.customization ?? r.design ?? {}) as QRCode['customization'],
-    designerConfig: (r.design ?? r.designerConfig) as QRCode['designerConfig'],
+    customization: design as any,
+    designerConfig: design as any,
     folderId: (r.folder_id ?? r.folderId ?? null) as string | null,
     status:
-      r.status === 'enabled' ? 'active' : ((r.status ?? (r.archived ? 'archived' : 'active')) as QRCode['status']),
+      r.status === 'enabled'
+        ? 'active'
+        : ((r.status ?? (r.archived ? 'archived' : 'active')) as QRCode['status']),
     domainId: (r.domain_id ?? r.domainId) as string | undefined,
-    screenshotUrl:
-      (r.qrcode_screenshot_url ?? r.simple_png_url ?? r.screenshotUrl ?? r.screenshot_url) as string | undefined,
+    screenshotUrl: (r.qrcode_screenshot_url ??
+      r.simple_png_url ??
+      r.screenshotUrl ??
+      r.screenshot_url) as string | undefined,
     svgUrl: (r.svg_url ?? r.svgUrl) as string | undefined,
     createdAt: (r.created_at ?? r.createdAt ?? '') as string,
     updatedAt: (r.updated_at ?? r.updatedAt ?? '') as string,

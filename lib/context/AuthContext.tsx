@@ -166,14 +166,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       const data = response.data
       setUser(data.user)
+      const lastUserId = typeof window !== 'undefined' ? localStorage.getItem('last_user_id') : null
+      const newUserId = String(data.user.id)
+
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(data.user))
-        // Store a flag instead of the raw token.
-        // The actual token is stored in an httpOnly cookie by the backend.
         localStorage.setItem('logged_in', 'true')
-        // Remove legacy token if present (migration cleanup)
         localStorage.removeItem('token')
+
+        // Smart Cache Clear: Only clear if switching users to preserve performance
+        if (lastUserId && lastUserId !== newUserId) {
+          queryClient.clear()
+          rpcClearCache()
+        } else {
+          // If same user or first login, trigger background invalidation
+          // to ensure latest data is fetched while showing cache instantly.
+          queryClient.invalidateQueries()
+        }
+        localStorage.setItem('last_user_id', newUserId)
       }
+
       queryClient.setQueryData(queryKeys.auth.currentUser(), data.user)
     },
     [queryClient]

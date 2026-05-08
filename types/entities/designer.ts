@@ -157,6 +157,8 @@ export interface DesignerConfig {
   // Keep old aliases working
   cornerFrameStyle?: FinderStyle
   cornerDotStyle?: FinderDotStyle
+  style?: string // Alias for moduleShape (legacy/UI)
+  cornerStyle?: string // Alias for finder (legacy/UI)
 
   // Eye colors (separate from foreground)
   eyeExternalColor: string
