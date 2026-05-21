@@ -9,6 +9,11 @@ import BiolinkPreview from '@/components/features/biolinks/editor/BiolinkPreview
 import type { BlockData } from '@/types/entities/biolink'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes NewBiolinkPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewBiolinkPage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -20,6 +25,11 @@ export default function NewBiolinkPage() {
   const [blocks, setBlocks] = useState<BlockData[]>([])
   const [showPreview, setShowPreview] = useState(false)
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async (isPublished: boolean) => {
     if (!title || !slug) {
       toast.error(t('Please enter both a title and slug for the biolink.'))

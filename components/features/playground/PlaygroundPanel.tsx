@@ -13,6 +13,11 @@ interface Props {
   defaultApiKey?: string
 }
 
+/**
+ * Purpose: Executes PanelHeader functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function PanelHeader({ label }: { label: string }) {
   return (
     <div className="shrink-0 border-b border-gray-100 bg-gray-50 px-4 py-2.5">
@@ -21,6 +26,11 @@ function PanelHeader({ label }: { label: string }) {
   )
 }
 
+/**
+ * Purpose: Executes PlaygroundPanel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function PlaygroundPanel({ sections, basePath, defaultApiKey = '' }: Props) {
   const pg = usePlayground(sections, basePath)
   const effectiveKey = pg.apiKey || defaultApiKey

@@ -19,6 +19,11 @@ import { GoogleLoginButton } from './GoogleLoginButton'
 import Link from 'next/link'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes SignupPageContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SignupPageContent() {
   const { t } = useTranslation()
   const router = useRouter()

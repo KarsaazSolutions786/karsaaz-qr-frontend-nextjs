@@ -24,6 +24,11 @@ interface SelectProps {
   onValueChange?: (value: string) => void
 }
 
+/**
+ * Purpose: Executes Select functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function Select({ children, value, defaultValue, onValueChange }: SelectProps) {
   const [open, setOpen] = React.useState(false)
   const [internalValue, setInternalValue] = React.useState(defaultValue || '')

@@ -5,6 +5,11 @@ import { queryKeys } from '@/lib/query/keys'
 import { designAssetsAPI } from '@/lib/api/endpoints/design-assets'
 import type { DesignAssetType } from '@/types/entities/design-asset'
 
+/**
+ * Purpose: Executes useAdminDesignAssets functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function useAdminDesignAssets(type?: DesignAssetType) {
   return useQuery({
     queryKey: queryKeys.designAssets.list(type),
@@ -15,7 +20,12 @@ export function useAdminDesignAssets(type?: DesignAssetType) {
   })
 }
 
-/** Fetches all design assets (all types) for use in the plan features editor. */
+/**
+ * Purpose: * Fetches all design assets (all types) for use in the plan features editor. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
+
 export function useAllDesignAssets() {
   return useQuery({
     queryKey: queryKeys.designAssets.list(),

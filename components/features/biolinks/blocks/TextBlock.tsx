@@ -9,6 +9,11 @@ interface TextBlockProps {
   onUpdate?: (data: TextBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes TextBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TextBlock({ block, isEditing, onUpdate }: TextBlockProps) {
   const { content, align = 'center', size = 'md' } = block.data
   const { t } = useTranslation()

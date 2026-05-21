@@ -13,8 +13,11 @@ interface TicketNotificationProps {
 }
 
 /**
- * T219: Notification badge/toast when admin replies to a support ticket.
+ * Purpose: T219: Notification badge/toast when admin replies to a support ticket.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function TicketNotification({
   ticketId,
   ticketReference,
@@ -82,8 +85,11 @@ export function TicketNotification({
 }
 
 /**
- * Notification badge showing unread ticket reply count.
+ * Purpose: Notification badge showing unread ticket reply count.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function TicketNotificationBadge({ count }: { count: number }) {
   if (count <= 0) return null
 

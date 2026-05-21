@@ -17,6 +17,11 @@ export interface RealtimeStatsWidgetProps {
   compact?: boolean;
 }
 
+/**
+ * Purpose: Executes RealtimeStatsWidget functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function RealtimeStatsWidget({
   qrCodeId,
   showRecentScans = true,
@@ -211,8 +216,11 @@ export function RealtimeStatsWidget({
 }
 
 /**
- * Format time ago
+ * Purpose: Format time ago
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function formatTimeAgo(date: Date): string {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
   

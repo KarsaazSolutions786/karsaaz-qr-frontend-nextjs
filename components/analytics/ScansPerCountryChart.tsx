@@ -61,9 +61,11 @@ const COUNTRY_FLAGS: Record<string, string> = {
 }
 
 /**
- * Generates a flag emoji from a two-letter ISO country code using regional
- * indicator symbols. Falls back to a globe emoji if the code is not two letters.
+ * Purpose: Generates a flag emoji from a two-letter ISO country code using regional indicator symbols. Falls back to a globe emoji if the code is not two letters.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function getCountryFlag(countryCode: string): string {
   if (!countryCode || countryCode.length !== 2) return '\u{1F30D}'
 
@@ -81,6 +83,11 @@ function getCountryFlag(countryCode: string): string {
 
 // ---------- Loading skeleton ----------
 
+/**
+ * Purpose: Executes TableSkeleton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function TableSkeleton() {
   return (
     <div className="space-y-3">
@@ -97,6 +104,11 @@ function TableSkeleton() {
 
 // ---------- Component ----------
 
+/**
+ * Purpose: Executes ScansPerCountryChart functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function ScansPerCountryChart({
   data,
   totalScans,

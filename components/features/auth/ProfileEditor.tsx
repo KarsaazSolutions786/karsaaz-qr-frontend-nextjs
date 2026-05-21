@@ -47,6 +47,11 @@ interface ProfileEditorProps {
   user: User
 }
 
+/**
+ * Purpose: Executes ProfileEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ProfileEditor({ user }: ProfileEditorProps) {
   const { t } = useTranslation()
   const [showPasswords, setShowPasswords] = useState(false)
@@ -65,6 +70,11 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
     },
   })
 
+  /**
+   * Purpose: Executes onSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const onSubmit = async (data: ProfileFormData) => {
     try {
       const updateData: any = {

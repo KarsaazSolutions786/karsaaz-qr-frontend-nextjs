@@ -79,6 +79,11 @@ const initialConnections: Connection[] = [
   },
 ]
 
+/**
+ * Purpose: Executes ConnectionsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ConnectionsPage() {
   const { t } = useTranslation()
   const [connections, setConnections] = useState<Connection[]>(initialConnections)
@@ -89,6 +94,11 @@ export default function ConnectionsPage() {
   const filtered =
     filter === 'All' ? connections : connections.filter((c) => c.category === filter)
 
+  /**
+   * Purpose: Executes toggleConnection functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleConnection = (id: string) => {
     setConnections((prev) =>
       prev.map((c) => (c.id === id ? { ...c, connected: !c.connected } : c))

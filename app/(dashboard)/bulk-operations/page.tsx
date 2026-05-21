@@ -21,6 +21,11 @@ const statusStyles: Record<string, string> = {
   failed: 'bg-red-100 text-red-800',
 }
 
+/**
+ * Purpose: Executes BulkOperationsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BulkOperationsPage() {
   const { t } = useTranslation()
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -33,6 +38,11 @@ export default function BulkOperationsPage() {
 
   const uploading = createImport.isPending
 
+  /**
+   * Purpose: Executes handleUpload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUpload = async () => {
     const file = fileRef.current?.files?.[0]
     if (!file) return
@@ -42,12 +52,22 @@ export default function BulkOperationsPage() {
     } catch { /* error */ }
   }
 
+  /**
+   * Purpose: Executes handleReRun functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleReRun = async (id: number) => {
     try {
       await reRunInstance.mutateAsync(id)
     } catch { /* error */ }
   }
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number) => {
     if (!confirm(t('Delete this bulk operation instance?'))) return
     try {
@@ -55,6 +75,11 @@ export default function BulkOperationsPage() {
     } catch { /* error */ }
   }
 
+  /**
+   * Purpose: Executes handleDeleteAllQR functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDeleteAllQR = async (id: number) => {
     if (!confirm(t('Delete ALL QR codes from this instance? This cannot be undone.'))) return
     try {
@@ -62,14 +87,29 @@ export default function BulkOperationsPage() {
     } catch { /* error */ }
   }
 
+  /**
+   * Purpose: Executes handleExportCsv functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleExportCsv = (id: number) => {
     window.open(`${apiClient.defaults.baseURL}/bulk-operations/export-csv/${id}`, '_blank')
   }
 
+  /**
+   * Purpose: Executes handleSampleCsv functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSampleCsv = () => {
     window.open(`${apiClient.defaults.baseURL}/bulk-operations/import-url-qrcodes/csv-sample`, '_blank')
   }
 
+  /**
+   * Purpose: Executes handleRename functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRename = async (id: number) => {
     try {
       await renameInstance.mutateAsync({ id, name: editName })

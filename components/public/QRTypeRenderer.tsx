@@ -33,6 +33,11 @@ interface QRTypeRendererProps {
   slug: string
 }
 
+/**
+ * Purpose: Executes QRTypeRenderer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
   const { t } = useTranslation()
   const normalizedType = qrType.toLowerCase().trim()
@@ -52,6 +57,11 @@ export default function QRTypeRenderer({ qrType, data }: QRTypeRendererProps) {
   }
 
   // Render appropriate preview component based on type
+  /**
+   * Purpose: Executes renderPreview functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderPreview = () => {
     switch (normalizedType) {
       case 'biolinks':

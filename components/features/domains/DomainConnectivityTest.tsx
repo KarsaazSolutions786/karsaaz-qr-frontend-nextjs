@@ -24,6 +24,11 @@ const sslStatusColors: Record<string, string> = {
   error: 'bg-red-100 text-red-800',
 }
 
+/**
+ * Purpose: Executes DomainConnectivityTest functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DomainConnectivityTest({
   connectivity,
   onTest,

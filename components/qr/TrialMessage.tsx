@@ -17,6 +17,11 @@ export interface TrialMessageProps {
   onDismiss?: () => void;
 }
 
+/**
+ * Purpose: Executes TrialMessage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TrialMessage({ trialEndsAt, onUpgrade, onDismiss }: TrialMessageProps) {
   const { t } = useTranslation();
   const [isDismissed, setIsDismissed] = useState(false);
@@ -30,6 +35,11 @@ export function TrialMessage({ trialEndsAt, onUpgrade, onDismiss }: TrialMessage
   const isExpired = endDate < now;
 
   useEffect(() => {
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const updateTimeLeft = () => {
       if (isExpired) {
         setTimeLeft('Trial expired');
@@ -44,6 +54,11 @@ export function TrialMessage({ trialEndsAt, onUpgrade, onDismiss }: TrialMessage
     return () => clearInterval(interval);
   }, [endDate, isExpired]);
 
+  /**
+   * Purpose: Executes handleDismiss functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDismiss = () => {
     setIsDismissed(true);
     onDismiss?.();
@@ -51,18 +66,33 @@ export function TrialMessage({ trialEndsAt, onUpgrade, onDismiss }: TrialMessage
 
   if (isDismissed) return null;
 
+  /**
+   * Purpose: Retrieves bannercolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getBannerColor = () => {
     if (isExpired) return 'bg-red-600';
     if (isExpiringSoon) return 'bg-orange-600';
     return 'bg-blue-600';
   };
 
+  /**
+   * Purpose: Retrieves icon.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getIcon = () => {
     if (isExpired) return <AlertCircle className="w-5 h-5" />;
     if (isExpiringSoon) return <Clock className="w-5 h-5 animate-pulse" />;
     return <Clock className="w-5 h-5" />;
   };
 
+  /**
+   * Purpose: Retrieves message.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getMessage = () => {
     if (isExpired) {
       return 'Your trial has ended. Upgrade to continue using all features.';

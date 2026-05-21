@@ -26,6 +26,11 @@ interface DirectionProviderProps {
   persistPreference?: boolean
 }
 
+/**
+ * Purpose: Executes DirectionProvider functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DirectionProvider({
   children,
   defaultDirection = 'ltr',
@@ -83,6 +88,11 @@ export function DirectionProvider({
   return <DirectionContext.Provider value={value}>{children}</DirectionContext.Provider>
 }
 
+/**
+ * Purpose: Executes useDirection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDirection(): DirectionContextValue {
   const context = useContext(DirectionContext)
   if (!context) {
@@ -92,17 +102,32 @@ export function useDirection(): DirectionContextValue {
 }
 
 // Hook that returns direction-aware values
+/**
+ * Purpose: Executes useDirectionValue functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDirectionValue<T>(ltrValue: T, rtlValue: T): T {
   const { isRTL } = useDirection()
   return isRTL ? rtlValue : ltrValue
 }
 
 // Utility function for direction-aware class names
+/**
+ * Purpose: Executes directionClass functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function directionClass(direction: Direction, ltrClass: string, rtlClass: string): string {
   return direction === 'rtl' ? rtlClass : ltrClass
 }
 
 // Hook for direction-aware styles
+/**
+ * Purpose: Executes useDirectionStyles functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDirectionStyles() {
   const { direction, isRTL } = useDirection()
 
@@ -131,6 +156,11 @@ export function useDirectionStyles() {
 }
 
 // CSS custom properties for direction
+/**
+ * Purpose: Retrieves directioncssvars.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function getDirectionCSSVars(direction: Direction) {
   const isRTL = direction === 'rtl'
   return {

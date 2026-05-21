@@ -8,6 +8,11 @@ import type { Page } from '@/types/entities/page'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes PagesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PagesPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -15,6 +20,11 @@ export default function PagesPage() {
   const { data, isLoading } = usePages({ page, search: search || undefined })
   const deleteMutation = useDeletePage()
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, title: string) => {
     if (confirm(t('Are you sure you want to delete "{{title}}"?').replace('{{title}}', title))) {
       await deleteMutation.mutateAsync(id)

@@ -27,6 +27,11 @@ import { QRCodeMinimalCard } from '@/components/qr/QRCodeMinimalCard'
 import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 
+/**
+ * Purpose: Executes TrashPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
 export default function TrashPage() {
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
@@ -41,6 +46,11 @@ export default function TrashPage() {
     return 'grid'
   })
 
+  /**
+   * Purpose: Executes handleViewModeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: May 2026
+   */
   const handleViewModeChange = (mode: 'grid' | 'list' | 'minimal') => {
     setViewMode(mode)
     if (typeof window !== 'undefined') {
@@ -107,17 +117,32 @@ export default function TrashPage() {
     [restoreMany, destroyMany, deselectAll, t]
   )
 
+  /**
+   * Purpose: Executes handleRestore functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: May 2026
+   */
   const handleRestore = async (id: string) => {
     await restoreOne.mutateAsync(id)
     toast.success(t('QR code restored'))
   }
 
+  /**
+   * Purpose: Executes handleDestroyForever functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: May 2026
+   */
   const handleDestroyForever = async (id: string) => {
     if (!confirm(t('Permanently delete this QR code? This cannot be undone.'))) return
     await destroyOne.mutateAsync(id)
     toast.success(t('QR code permanently deleted'))
   }
 
+  /**
+   * Purpose: Executes handleEmptyTrash functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: May 2026
+   */
   const handleEmptyTrash = async () => {
     if (!confirmEmpty) {
       setConfirmEmpty(true)
@@ -129,6 +154,11 @@ export default function TrashPage() {
     toast.success(t('Trash emptied'))
   }
 
+  /**
+   * Purpose: Executes handleSearch functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: May 2026
+   */
   const handleSearch = (query: string) => {
     setSearch(query)
     setPage(1)

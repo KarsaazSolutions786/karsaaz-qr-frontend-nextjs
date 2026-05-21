@@ -15,6 +15,11 @@ interface ShapeLibraryProps {
   onChange: (shape: ModuleShape, size?: number, spacing?: number) => void;
 }
 
+/**
+ * Purpose: Executes ShapeLibrary functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ShapeLibrary({
   selectedShape,
   moduleSize,
@@ -123,6 +128,11 @@ export default function ShapeLibrary({
     },
   ];
 
+  /**
+   * Purpose: Retrieves sampleqrpattern.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getSampleQRPattern = (shape: ModuleShape) => {
     const pattern = [
       [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1],
@@ -135,6 +145,11 @@ export default function ShapeLibrary({
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ];
 
+    /**
+     * Purpose: Retrieves moduleclass.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const getModuleClass = () => {
       switch (shape) {
         case 'square':
@@ -148,6 +163,11 @@ export default function ShapeLibrary({
       }
     };
 
+    /**
+     * Purpose: Retrieves modulecontent.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const getModuleContent = (module: number) => {
       if (!module) return null;
 

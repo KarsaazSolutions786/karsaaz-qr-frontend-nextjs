@@ -75,6 +75,13 @@ interface HealthResponse {
 // Helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Executes formatBytes functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B'
   const k = 1024
@@ -83,6 +90,13 @@ function formatBytes(bytes: number): string {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
 }
 
+/**
+ * Purpose: Executes formatTimestamp functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function formatTimestamp(iso: string): string {
   try {
     const date = new Date(iso)
@@ -95,7 +109,14 @@ function formatTimestamp(iso: string): string {
   }
 }
 
-/** Map any check status to a display category for consistent coloring. */
+/**
+ * Purpose: * Map any check status to a display category for consistent coloring. 
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
+
 function normalizeStatus(s: CheckStatus): 'ok' | 'degraded' | 'down' {
   switch (s) {
     case 'ok':
@@ -112,6 +133,13 @@ function normalizeStatus(s: CheckStatus): 'ok' | 'degraded' | 'down' {
   }
 }
 
+/**
+ * Purpose: Executes statusDotColor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function statusDotColor(s: 'ok' | 'degraded' | 'down') {
   switch (s) {
     case 'ok':
@@ -123,6 +151,13 @@ function statusDotColor(s: 'ok' | 'degraded' | 'down') {
   }
 }
 
+/**
+ * Purpose: Executes statusBadgeClasses functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function statusBadgeClasses(s: 'ok' | 'degraded' | 'down') {
   switch (s) {
     case 'ok':
@@ -134,6 +169,13 @@ function statusBadgeClasses(s: 'ok' | 'degraded' | 'down') {
   }
 }
 
+/**
+ * Purpose: Executes statusLabel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function statusLabel(s: CheckStatus): string {
   // These are wrapped with t() at render time
   const map: Record<CheckStatus, string> = {
@@ -147,6 +189,13 @@ function statusLabel(s: CheckStatus): string {
   return map[s] ?? s
 }
 
+/**
+ * Purpose: Executes overallBadgeClasses functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function overallBadgeClasses(s: OverallStatus) {
   switch (s) {
     case 'healthy':
@@ -158,6 +207,13 @@ function overallBadgeClasses(s: OverallStatus) {
   }
 }
 
+/**
+ * Purpose: Executes overallDotColor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function overallDotColor(s: OverallStatus) {
   switch (s) {
     case 'healthy':
@@ -169,6 +225,13 @@ function overallDotColor(s: OverallStatus) {
   }
 }
 
+/**
+ * Purpose: Executes overallLabel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function overallLabel(s: OverallStatus) {
   // These are wrapped with t() at render time
   switch (s) {
@@ -269,6 +332,11 @@ const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
 // Fetch function
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Executes fetchHealth functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 async function fetchHealth(): Promise<HealthResponse> {
   const { data } = await apiClient.get<HealthResponse>('/health')
   return data
@@ -278,12 +346,22 @@ async function fetchHealth(): Promise<HealthResponse> {
 // Run Migrations button + output panel
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Executes RunMigrationsButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function RunMigrationsButton() {
   const { t } = useTranslation()
   const [status, setStatus] = useState<'idle' | 'running' | 'done' | 'error'>('idle')
   const [output, setOutput] = useState<string>('')
   const [confirm, setConfirm] = useState(false)
 
+  /**
+   * Purpose: Executes run functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   async function run() {
     setConfirm(false)
     setStatus('running')
@@ -385,6 +463,11 @@ function RunMigrationsButton() {
 // Skeleton
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Executes SkeletonCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function SkeletonCard() {
   return (
     <Card>
@@ -411,6 +494,11 @@ function SkeletonCard() {
 // Component
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Executes SystemStatusPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SystemStatusPage() {
   const { t } = useTranslation()
   const {

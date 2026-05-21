@@ -22,6 +22,11 @@ declare global {
   }
 }
 
+/**
+ * Purpose: Executes GoogleReCaptcha functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GoogleReCaptcha({ siteKey, onVerify, action = 'submit' }: GoogleReCaptchaProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const loadedRef = useRef(false)

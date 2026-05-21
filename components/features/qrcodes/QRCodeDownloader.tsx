@@ -8,8 +8,20 @@ interface QRCodeDownloaderProps {
   qrcode: QRCode
 }
 
+/**
+ * Purpose: Executes QRCodeDownloader functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export function QRCodeDownloader({ qrcode: _qrcode }: QRCodeDownloaderProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownload = async (format: 'png' | 'svg' | 'pdf') => {
     // In a real implementation, this would call the API to get the image
     toast.info(`${t('Download as')} ${format.toUpperCase()} — ${t('coming soon!')}`)

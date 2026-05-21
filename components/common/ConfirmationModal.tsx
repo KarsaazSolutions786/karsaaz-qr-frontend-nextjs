@@ -15,6 +15,11 @@ interface ConfirmationModalProps {
   onCancel: () => void;
 }
 
+/**
+ * Purpose: Executes ConfirmationModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ConfirmationModal({
   open,
   title,
@@ -32,6 +37,11 @@ export function ConfirmationModal({
   const resolvedCancelLabel = cancelLabel ?? t('Cancel');
   const loading = externalLoading ?? internalLoading;
 
+  /**
+   * Purpose: Executes handleConfirm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleConfirm = async () => {
     setInternalLoading(true);
     try {

@@ -18,6 +18,11 @@ const BILLING_CONFIG_KEYS = [
   'account_credit.static_qrcode_price',
 ]
 
+/**
+ * Purpose: Executes useAccountCredit functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useAccountCredit() {
   const { user } = useAuth()
   const store = useAccountCreditStore()

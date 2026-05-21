@@ -45,12 +45,27 @@ const tabs: DesignerTab[] = [
   { id: 'products', label: 'Products', icon: '🛍️' },
 ]
 
+/**
+ * Purpose: Executes ProductCatalogueDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<ProductCatalogueDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderCatalogueOptionsContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderCatalogueOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Catalogue Settings')}</h4>
@@ -172,6 +187,11 @@ export function ProductCatalogueDesigner({ design, onChange }: ProductCatalogueD
     </div>
   )
 
+  /**
+   * Purpose: Executes renderProductsContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderProductsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Product Display')}</h4>

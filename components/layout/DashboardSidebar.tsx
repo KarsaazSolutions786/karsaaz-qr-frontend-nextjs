@@ -26,6 +26,11 @@ interface DashboardSidebarProps {
   isGuest?: boolean
 }
 
+/**
+ * Purpose: Executes DashboardSidebar functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function DashboardSidebar({
   sidebarOpen,
   setSidebarOpen,

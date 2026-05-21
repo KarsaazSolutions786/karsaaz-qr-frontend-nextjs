@@ -12,16 +12,31 @@ interface DynamicBlockEditorProps {
   onConfigureFields: () => void;
 }
 
+/**
+ * Purpose: Executes DynamicBlockEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DynamicBlockEditor({
   block,
   onChange,
   onConfigureFields,
 }: DynamicBlockEditorProps) {
   const { t } = useTranslation();
+  /**
+   * Purpose: Executes handleNameChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleNameChange = (name: string) => {
     onChange({ ...block, name });
   };
 
+  /**
+   * Purpose: Executes handleFieldValueChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFieldValueChange = (fieldIndex: number, value: string) => {
     const updatedFields = (block.fields || []).map((f, i) =>
       i === fieldIndex ? { ...f, placeholder: value } : f
@@ -29,10 +44,20 @@ export default function DynamicBlockEditor({
     onChange({ ...block, fields: updatedFields });
   };
 
+  /**
+   * Purpose: Executes handleCustomCodeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCustomCodeChange = (customCode: string) => {
     onChange({ ...block, customCode });
   };
 
+  /**
+   * Purpose: Executes renderFieldInput functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderFieldInput = (field: BiolinkBlockField, index: number) => {
     switch (field.type) {
       case 'textarea':

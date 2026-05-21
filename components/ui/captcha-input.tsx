@@ -28,6 +28,11 @@ interface ImageCaptchaProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes ImageCaptcha functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ImageCaptcha({
   name = 'captcha',
   value,
@@ -69,6 +74,11 @@ export function ImageCaptcha({
     fetchCaptcha()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  /**
+   * Purpose: Executes handleCodeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newCode = e.target.value
     setCode(newCode)
@@ -149,6 +159,11 @@ interface GoogleRecaptchaProps {
 
 // grecaptcha types declared in GoogleReCaptcha.tsx
 
+/**
+ * Purpose: Executes GoogleRecaptcha functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GoogleRecaptcha({
   siteKey,
   name = 'g-recaptcha-response',
@@ -243,6 +258,11 @@ export function GoogleRecaptcha({
 }
 
 // Export reset function for external use
+/**
+ * Purpose: Executes useGoogleRecaptcha functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useGoogleRecaptcha() {
   const widgetIdRef = useRef<number | null>(null)
 
@@ -277,6 +297,11 @@ interface CaptchaInputProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes CaptchaInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CaptchaInput({
   type = 'image',
   imageCaptchaProps,

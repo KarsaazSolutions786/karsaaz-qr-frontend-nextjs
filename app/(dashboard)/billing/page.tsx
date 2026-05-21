@@ -15,6 +15,11 @@ const BILLING_TOGGLE_OPTIONS = [
   { value: 'disabled', label: 'Disabled' },
 ]
 
+/**
+ * Purpose: Executes BillingPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BillingPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(BILLING_KEYS)
@@ -38,6 +43,11 @@ export default function BillingPage() {
     }
   }, [configs])
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {

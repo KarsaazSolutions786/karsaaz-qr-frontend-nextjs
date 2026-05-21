@@ -10,6 +10,11 @@ interface TypographyTabProps {
   updateTheme: (updates: Partial<ThemeSettings>) => void
 }
 
+/**
+ * Purpose: Executes TypographyTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function TypographyTab({ theme, updateTheme }: TypographyTabProps) {
   const { t } = useTranslation()
 

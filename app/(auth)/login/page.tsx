@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   description: 'Sign in to your Karsaaz QR account',
 }
 
+/**
+ * Purpose: Executes LoginPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function LoginPage() {
   return (
     <div

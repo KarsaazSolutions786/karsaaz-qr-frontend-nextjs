@@ -15,6 +15,11 @@ const RTL_LOCALES = new Set([
   'ar', 'he', 'fa', 'ur', 'ps', 'sd', 'yi', 'ku', 'ug',
 ])
 
+/**
+ * Purpose: Executes DirectionAwareWrapper functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DirectionAwareWrapper({
   children,
   locale: localeProp,

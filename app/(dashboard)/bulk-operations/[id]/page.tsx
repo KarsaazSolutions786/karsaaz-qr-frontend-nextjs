@@ -16,6 +16,11 @@ const statusStyles: Record<string, string> = {
   success: 'bg-green-100 text-green-800',
 }
 
+/**
+ * Purpose: Executes BulkOperationDetailPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BulkOperationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { t } = useTranslation()

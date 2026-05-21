@@ -42,60 +42,81 @@ export interface CreateCheckoutSessionResponse {
 }
 
 /**
- * Fetch all available subscription plans
+ * Purpose: Fetch all available subscription plans
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getPlans() {
   return apiClient.get<Plan[]>('/plans')
 }
 
 /**
- * Get current user's subscription
+ * Purpose: Get current user's subscription
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getSubscription() {
   return apiClient.get<Subscription>('/subscriptions/current')
 }
 
 /**
- * Subscribe to a plan (creates subscription record).
- * PUT /subscriptions/subscribe
+ * Purpose: Subscribe to a plan (creates subscription record). PUT /subscriptions/subscribe
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function subscribe(data: SubscribeRequest) {
   return apiClient.put<SubscribeResponse>('/subscriptions/subscribe', data)
 }
 
 /**
- * Cancel subscription (at end of current period)
+ * Purpose: Cancel subscription (at end of current period)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function cancelSubscription() {
   return apiClient.delete<Subscription>('/subscriptions/current')
 }
 
 /**
- * Reactivate a canceled subscription
+ * Purpose: Reactivate a canceled subscription
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function reactivateSubscription() {
   return apiClient.post<Subscription>('/subscriptions/current/reactivate')
 }
 
 /**
- * Validate a promo code
+ * Purpose: Validate a promo code
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function validatePromoCode(data: ValidatePromoCodeRequest) {
   return apiClient.post<ValidatePromoCodeResponse>('/promo-codes/validate', data)
 }
 
 /**
- * Create a Stripe checkout session
+ * Purpose: Create a Stripe checkout session
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function createCheckoutSession(data: CreateCheckoutSessionRequest) {
   return apiClient.post<CreateCheckoutSessionResponse>('/stripe/checkout-session', data)
 }
 
 /**
- * Generate a payment link for a given processor and plan.
- * POST /payment-processors/{slug}/generate-pay-link/{planId}
- * Returns { link: string } — browser should redirect to link.
+ * Purpose: Generate a payment link for a given processor and plan. POST /payment-processors/{slug}/generate-pay-link/{planId} Returns { link: string } — browser should redirect to link.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function generatePayLink(
   processorSlug: string,
   planId: number | string,
@@ -112,10 +133,11 @@ export async function generatePayLink(
 }
 
 /**
- * Stripe checkout for an existing subscription.
- * POST /checkout/stripe/{subscriptionId}
- * Returns { url: string } — browser should redirect to url.
+ * Purpose: Stripe checkout for an existing subscription. POST /checkout/stripe/{subscriptionId} Returns { url: string } — browser should redirect to url.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function stripeCheckout(subscriptionId: number | string) {
   const response = await apiClient.post<{ url: string }>(
     `/checkout/stripe/${subscriptionId}`
@@ -124,15 +146,21 @@ export async function stripeCheckout(subscriptionId: number | string) {
 }
 
 /**
- * Get subscription billing history
+ * Purpose: Get subscription billing history
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getBillingHistory() {
   return apiClient.get<any[]>('/subscriptions/billing-history')
 }
 
 /**
- * Update payment method
+ * Purpose: Update payment method
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function updatePaymentMethod(paymentMethodId: string) {
   return apiClient.put('/subscriptions/payment-method', { paymentMethodId })
 }

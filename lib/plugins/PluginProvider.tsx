@@ -12,6 +12,11 @@ interface PluginContextValue {
 
 const PluginContext = createContext<PluginContextValue | null>(null);
 
+/**
+ * Purpose: Executes PluginProvider functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PluginProvider({ children }: { children: ReactNode }) {
   const [isReady, setIsReady] = useState(false);
 
@@ -35,6 +40,11 @@ export function PluginProvider({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Purpose: Executes usePlugins functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function usePlugins() {
   const ctx = useContext(PluginContext);
   if (!ctx) {

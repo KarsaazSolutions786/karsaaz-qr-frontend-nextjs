@@ -7,6 +7,11 @@ interface GuestLimitsBannerProps {
   limits: GuestSessionInfo['limits']
 }
 
+/**
+ * Purpose: Executes GuestLimitsBanner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function GuestLimitsBanner({ limits }: GuestLimitsBannerProps) {
   const { t } = useTranslation()
 

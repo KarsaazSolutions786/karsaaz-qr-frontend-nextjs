@@ -15,6 +15,11 @@ interface TextareaQuestionProps {
   error?: string
 }
 
+/**
+ * Purpose: Executes TextareaQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TextareaQuestion({
   id,
   label,

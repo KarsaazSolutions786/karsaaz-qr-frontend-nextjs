@@ -23,6 +23,11 @@ interface DynamicBlocksContextValue {
 
 const DynamicBlocksContext = createContext<DynamicBlocksContextValue | null>(null)
 
+/**
+ * Purpose: Executes DynamicBlocksProvider functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DynamicBlocksProvider({ children }: { children: React.ReactNode }) {
   const { data: definitions = [], isLoading, isError } = useDynamicBlockDefinitions()
 
@@ -35,16 +40,31 @@ export function DynamicBlocksProvider({ children }: { children: React.ReactNode 
     return map
   }, [definitions])
 
+  /**
+   * Purpose: Retrieves definition.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getDefinition = (definitionId: string): DynamicBlockDefinition | undefined => {
     return definitionsMap.get(definitionId)
   }
 
+  /**
+   * Purpose: Retrieves definitionbytype.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getDefinitionByType = (blockType: string): DynamicBlockDefinition | undefined => {
     if (!isDynamicBlockType(blockType)) return undefined
     const definitionId = getDynamicBlockDefinitionId(blockType)
     return definitionId ? definitionsMap.get(definitionId) : undefined
   }
 
+  /**
+   * Purpose: Executes createBlockFromDefinition functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const createBlockFromDefinition = (
     definitionId: string,
     order: number
@@ -67,6 +87,11 @@ export function DynamicBlocksProvider({ children }: { children: React.ReactNode 
   return <DynamicBlocksContext.Provider value={value}>{children}</DynamicBlocksContext.Provider>
 }
 
+/**
+ * Purpose: Executes useDynamicBlocks functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDynamicBlocks(): DynamicBlocksContextValue {
   const context = useContext(DynamicBlocksContext)
   if (!context) {
@@ -89,6 +114,11 @@ interface DynamicBlockTypeMenuProps {
   onSelect: (definition: DynamicBlockDefinition) => void
 }
 
+/**
+ * Purpose: Executes DynamicBlockTypeMenu functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DynamicBlockTypeMenu({ onSelect }: DynamicBlockTypeMenuProps) {
   const { t } = useTranslation()
   const { definitions, isLoading, isError } = useDynamicBlocks()

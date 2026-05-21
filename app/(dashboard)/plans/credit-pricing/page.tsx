@@ -10,6 +10,11 @@ const KEYS = [
   'account_credit.static_qrcode_price',
 ]
 
+/**
+ * Purpose: Executes CreditPricingPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CreditPricingPage() {
   const { t } = useTranslation()
   const [dynamicPrice, setDynamicPrice] = useState('')
@@ -28,6 +33,11 @@ export default function CreditPricingPage() {
     }).catch(() => setLoading(false))
   }, [])
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async () => {
     setSaving(true)
     setSaved(false)

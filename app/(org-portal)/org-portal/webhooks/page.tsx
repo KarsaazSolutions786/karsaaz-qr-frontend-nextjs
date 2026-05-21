@@ -43,9 +43,19 @@ interface Delivery {
   next_retry_at: string | null
 }
 
+/**
+ * Purpose: Executes SecretModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function SecretModal({ secret, onClose }: { secret: string; onClose: () => void }) {
   const [copied, setCopied] = useState(false)
 
+  /**
+   * Purpose: Executes copy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copy = () => {
     navigator.clipboard.writeText(secret)
     setCopied(true)
@@ -81,6 +91,11 @@ function SecretModal({ secret, onClose }: { secret: string; onClose: () => void 
   )
 }
 
+/**
+ * Purpose: Executes DeliveryRow functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function DeliveryRow({ webhookId }: { webhookId: number }) {
   const [deliveries, setDeliveries] = useState<Delivery[]>([])
   const [loading, setLoading] = useState(true)
@@ -134,6 +149,11 @@ function DeliveryRow({ webhookId }: { webhookId: number }) {
   )
 }
 
+/**
+ * Purpose: Executes OrgPortalWebhooksPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrgPortalWebhooksPage() {
   const [hooks, setHooks] = useState<OrgWebhook[]>([])
   const [loading, setLoading] = useState(true)
@@ -154,10 +174,20 @@ export default function OrgPortalWebhooksPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  /**
+   * Purpose: Executes toggleEvent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const toggleEvent = (event: string) => {
     setNewEvents(prev => (prev.includes(event) ? prev.filter(e => e !== event) : [...prev, event]))
   }
 
+  /**
+   * Purpose: Executes create functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const create = async (e: React.FormEvent) => {
     e.preventDefault()
     if (newEvents.length === 0) {
@@ -184,6 +214,11 @@ export default function OrgPortalWebhooksPage() {
     }
   }
 
+  /**
+   * Purpose: Executes toggleActive functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const toggleActive = async (hook: OrgWebhook) => {
     setToggling(hook.id)
     try {
@@ -196,6 +231,11 @@ export default function OrgPortalWebhooksPage() {
     }
   }
 
+  /**
+   * Purpose: Executes destroy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const destroy = async (hookId: number) => {
     if (!confirm('Delete this webhook?')) return
     setDeleting(hookId)

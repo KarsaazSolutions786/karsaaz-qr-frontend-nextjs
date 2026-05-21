@@ -15,6 +15,11 @@ interface ScansPerDeviceBrandProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes ScansPerDeviceBrand functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ScansPerDeviceBrand({ data, className }: ScansPerDeviceBrandProps) {
   const { t } = useTranslation()
   const sorted = useMemo(() => [...data].sort((a, b) => b.count - a.count), [data])

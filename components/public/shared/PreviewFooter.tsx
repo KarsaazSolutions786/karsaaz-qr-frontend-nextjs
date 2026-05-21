@@ -12,6 +12,11 @@ interface PreviewFooterProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes PreviewFooter functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PreviewFooter({
   showCTA = true,
   ctaText: ctaTextProp,

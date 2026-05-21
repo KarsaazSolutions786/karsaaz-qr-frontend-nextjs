@@ -3,6 +3,11 @@
 import { useEffect } from 'react';
 import { useTranslation } from '@/lib/i18n';
 
+/**
+ * Purpose: Executes Error functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const { t } = useTranslation();
 

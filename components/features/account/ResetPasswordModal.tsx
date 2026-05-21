@@ -11,6 +11,11 @@ interface ResetPasswordModalProps {
   onClose: () => void
 }
 
+/**
+ * Purpose: Executes ResetPasswordModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
   const { t } = useTranslation()
   const { user } = useAuth()
@@ -57,6 +62,11 @@ export function ResetPasswordModal({ open, onClose }: ResetPasswordModalProps) {
 
   if (!open) return null
 
+  /**
+   * Purpose: Executes EyeButton functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const EyeButton = ({ show, toggle }: { show: boolean; toggle: () => void }) => (
     <button
       type="button"

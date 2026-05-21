@@ -25,6 +25,11 @@ interface FormState {
   role_id: string
 }
 
+/**
+ * Purpose: Executes EditUserPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditUserPage() {
   const { t } = useTranslation()
   const params = useParams()
@@ -93,9 +98,19 @@ export default function EditUserPage() {
     }
   }, [user])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((prev) => ({ ...prev, [key]: e.target.value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -129,12 +144,22 @@ export default function EditUserPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleVerifyEmail functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleVerifyEmail = async () => {
     if (confirm('Mark this user\'s email as verified?')) {
       await verifyEmailMutation.mutateAsync(Number(userId))
     }
   }
 
+  /**
+   * Purpose: Executes handlePasswordlessToggle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handlePasswordlessToggle = async () => {
     const newPref = passwordlessPref === 'enabled' ? 'disabled' : 'enabled'
     if (
@@ -483,6 +508,11 @@ export default function EditUserPage() {
   )
 }
 
+/**
+ * Purpose: Executes StorageSection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function StorageSection({ userId }: { userId: string }) {
   const { t } = useTranslation()
   const { data, isLoading, refetch } = useQuery({
@@ -499,6 +529,11 @@ function StorageSection({ userId }: { userId: string }) {
 
   const [isRecalculating, setIsRecalculating] = useState(false)
 
+  /**
+   * Purpose: Executes handleRecalculate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleRecalculate = async () => {
     setIsRecalculating(true)
     try {

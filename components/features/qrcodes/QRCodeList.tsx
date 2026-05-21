@@ -9,6 +9,11 @@ interface QRCodeListProps {
   isLoading?: boolean
 }
 
+/**
+ * Purpose: Executes QRCodeList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRCodeList({ qrcodes, isLoading }: QRCodeListProps) {
   const { t } = useTranslation()
   if (isLoading) {

@@ -13,6 +13,13 @@ interface DividerBlockProps {
   isDragging?: boolean;
 }
 
+/**
+ * Purpose: Executes DividerBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const DividerBlock = ({
   block,
   onEdit,

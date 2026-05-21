@@ -14,6 +14,11 @@ interface FieldTranslatorProps {
   onSave?: () => void
 }
 
+/**
+ * Purpose: Executes FieldTranslator functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FieldTranslator({
   fieldName,
   modelType,

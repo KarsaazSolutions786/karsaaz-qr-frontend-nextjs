@@ -24,10 +24,20 @@ interface UserListContentProps {
 
 // ─── Magic URL Modal ──────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes MagicUrlModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function MagicUrlModal({ url, onClose }: { url: string; onClose: () => void }) {
   const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
 
+  /**
+   * Purpose: Executes handleCopy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopy = () => {
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true)
@@ -77,6 +87,11 @@ function MagicUrlModal({ url, onClose }: { url: string; onClose: () => void }) {
 
 // ─── Filter Modal ─────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes FilterModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function FilterModal({
   filters,
   onApply,
@@ -149,6 +164,11 @@ function FilterModal({
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes UserListContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function UserListContent({ paying }: UserListContentProps) {
   const { t } = useTranslation()
   const pathname = usePathname()
@@ -192,6 +212,11 @@ export function UserListContent({ paying }: UserListContentProps) {
 
   const hasActiveFilters = !!(filters.minQRCodes || filters.maxQRCodes)
 
+  /**
+   * Purpose: Executes handlePerPageChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePerPageChange = (value: number) => {
     setPerPage(value)
     setPage(1)
@@ -208,6 +233,11 @@ export function UserListContent({ paying }: UserListContentProps) {
     setPage(1)
   }, [])
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (user: User) => {
     if (
       confirm(
@@ -218,6 +248,11 @@ export function UserListContent({ paying }: UserListContentProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleActAs functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleActAs = async (user: User) => {
     if (
       confirm(
@@ -233,6 +268,11 @@ export function UserListContent({ paying }: UserListContentProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleResetRole functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleResetRole = async (user: User) => {
     if (
       confirm(`Reset role for "${user.name || user.email}"? This will clear their assigned role.`)
@@ -246,6 +286,11 @@ export function UserListContent({ paying }: UserListContentProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleResetScans functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleResetScans = async (user: User) => {
     if (confirm(`Reset scan limits for "${user.name || user.email}"?`)) {
       setPendingAction(`resetscans-${user.id}`)
@@ -257,6 +302,11 @@ export function UserListContent({ paying }: UserListContentProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleMagicUrl functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleMagicUrl = async (user: User) => {
     setPendingAction(`magic-${user.id}`)
     try {

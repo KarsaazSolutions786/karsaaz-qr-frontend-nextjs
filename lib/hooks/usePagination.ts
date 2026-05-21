@@ -32,6 +32,11 @@ export interface UsePaginationReturn {
   getPageNumbers: (maxVisible?: number) => (number | 'ellipsis')[];
 }
 
+/**
+ * Purpose: Executes usePagination functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function usePagination({
   initialPage = 1,
   initialPageSize = 10,

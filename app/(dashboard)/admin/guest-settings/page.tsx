@@ -23,6 +23,11 @@ const ALL_DESIGN_FEATURES = [
 const inputClass =
   'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white'
 
+/**
+ * Purpose: Executes Toggle functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function Toggle({ enabled, onChange }: { enabled: boolean; onChange: (v: boolean) => void }) {
   return (
     <button
@@ -39,6 +44,11 @@ function Toggle({ enabled, onChange }: { enabled: boolean; onChange: (v: boolean
   )
 }
 
+/**
+ * Purpose: Executes AdminGuestSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function AdminGuestSettingsPage() {
   const { t } = useTranslation()
   const [config, setConfig] = useState<GuestConfiguration | null>(null)
@@ -49,6 +59,11 @@ export default function AdminGuestSettingsPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    /**
+     * Purpose: Executes load functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const load = async () => {
       try {
         const [cfg, stats] = await Promise.all([
@@ -66,12 +81,22 @@ export default function AdminGuestSettingsPage() {
     load()
   }, [t])
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const updateConfig = <K extends keyof GuestConfiguration>(key: K, value: GuestConfiguration[K]) => {
     setConfig(prev => (prev ? { ...prev, [key]: value } : prev))
     setSaved(false)
     setError(null)
   }
 
+  /**
+   * Purpose: Executes toggleArrayItem functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const toggleArrayItem = (key: 'allowed_qr_types' | 'allowed_export_formats' | 'allowed_design_features', item: string) => {
     if (!config) return
     const arr = config[key]
@@ -79,6 +104,11 @@ export default function AdminGuestSettingsPage() {
     updateConfig(key, next)
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!config) return

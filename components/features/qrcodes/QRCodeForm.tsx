@@ -69,6 +69,11 @@ interface QRCodeFormProps {
   isSubmitting?: boolean
 }
 
+/**
+ * Purpose: Executes QRCodeForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRCodeForm({
   initialType = 'url',
   initialName = '',
@@ -86,11 +91,21 @@ export function QRCodeForm({
   const [customization, setCustomization] = useState(initialCustomization || {})
   const [domainId, setDomainId] = useState(initialDomainId)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = () => {
     if (!name || !data) return
     onSubmit({ name, type, data, customization, domainId: domainId || undefined })
   }
 
+  /**
+   * Purpose: Executes renderDataForm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderDataForm = () => {
     const formProps = {
       defaultValues: data,

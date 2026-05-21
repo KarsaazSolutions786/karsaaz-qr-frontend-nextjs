@@ -44,12 +44,27 @@ const tabs: DesignerTab[] = [
   { id: 'behavior', label: 'Behavior', icon: '⚙️' },
 ]
 
+/**
+ * Purpose: Executes LeadFormDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<LeadFormDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderFormDesignContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderFormDesignContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Form Design')}</h4>
@@ -342,6 +357,11 @@ export function LeadFormDesigner({ design, onChange }: LeadFormDesignerProps) {
     </div>
   )
 
+  /**
+   * Purpose: Executes renderBehaviorContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderBehaviorContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Form Behavior')}</h4>

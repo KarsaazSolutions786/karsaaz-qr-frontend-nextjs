@@ -27,6 +27,11 @@ interface SubuserInviteModalProps {
   onSuccess?: () => void
 }
 
+/**
+ * Purpose: Executes SubuserInviteModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }: SubuserInviteModalProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
@@ -61,6 +66,11 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
     },
   })
 
+  /**
+   * Purpose: Executes handleClose functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClose = () => {
     setEmail('')
     setName('')
@@ -70,6 +80,11 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
     onClose()
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)

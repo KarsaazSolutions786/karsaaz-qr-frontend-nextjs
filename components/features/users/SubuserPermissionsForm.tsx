@@ -40,6 +40,11 @@ interface SubuserPermissionsFormProps {
   onChange: (permissions: string[]) => void
 }
 
+/**
+ * Purpose: Executes SubuserPermissionsForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SubuserPermissionsForm({ userId: _userId, permissions, onChange }: SubuserPermissionsFormProps) {
   const { t } = useTranslation()
   const allPermissions = useMemo(
@@ -79,6 +84,11 @@ export function SubuserPermissionsForm({ userId: _userId, permissions, onChange 
     [allPermissions, onChange]
   )
 
+  /**
+   * Purpose: Executes formatPermissionLabel functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatPermissionLabel = (perm: string) => {
     const action = perm.split('.')[1] || perm
     return action.charAt(0).toUpperCase() + action.slice(1)

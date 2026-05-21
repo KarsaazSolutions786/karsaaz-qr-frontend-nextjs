@@ -3,6 +3,11 @@ import { contentBlocksAPI } from '@/lib/api/endpoints/content-blocks'
 import { queryKeys } from '@/lib/query/keys'
 
 // Get all content blocks
+/**
+ * Purpose: Executes useContentBlocks functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useContentBlocks(params?: { page?: number; search?: string; translationId?: number }) {
   const apiParams = params ? {
     page: params.page,
@@ -17,6 +22,11 @@ export function useContentBlocks(params?: { page?: number; search?: string; tran
 }
 
 // Get single content block
+/**
+ * Purpose: Executes useContentBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useContentBlock(id: number) {
   return useQuery({
     queryKey: queryKeys.contentBlocks.detail(id),

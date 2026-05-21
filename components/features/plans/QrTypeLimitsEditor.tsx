@@ -16,6 +16,11 @@ interface QrTypeLimitsEditorProps {
 
 const dynamicTypes = QR_TYPES.filter((t) => t.cat === 'dynamic')
 
+/**
+ * Purpose: Executes QrTypeLimitsEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QrTypeLimitsEditor({ limits, onChange }: QrTypeLimitsEditorProps) {
   const { t } = useTranslation()
   const [selectedType, setSelectedType] = useState('')
@@ -43,6 +48,11 @@ export function QrTypeLimitsEditor({ limits, onChange }: QrTypeLimitsEditorProps
     [limits, onChange]
   )
 
+  /**
+   * Purpose: Retrieves typename.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getTypeName = (typeId: string): string => {
     const found: QRCodeTypeDefinition | undefined = QR_TYPES.find((t) => t.id === typeId)
     return found?.name ?? typeId

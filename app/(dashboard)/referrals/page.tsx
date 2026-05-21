@@ -3,8 +3,11 @@
 import { redirect } from 'next/navigation'
 
 /**
- * Redirect /referrals (plural) to /referral (singular) where the actual page lives
+ * Purpose: Redirect /referrals (plural) to /referral (singular) where the actual page lives
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export default function ReferralsRedirect() {
   redirect('/referral')
 }

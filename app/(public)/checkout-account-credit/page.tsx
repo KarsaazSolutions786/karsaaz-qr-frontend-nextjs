@@ -3,6 +3,11 @@
 import { PayPalAccountCredit } from '@/components/features/payment/PayPalAccountCredit'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes CheckoutAccountCreditPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CheckoutAccountCreditPage() {
   const { t } = useTranslation()
   return (

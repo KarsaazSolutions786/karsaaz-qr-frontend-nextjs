@@ -21,6 +21,11 @@ interface CalendarDataFormProps {
   onChange?: (data: Partial<CalendarDataFormData>) => void
 }
 
+/**
+ * Purpose: Executes CalendarDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CalendarDataForm({ defaultValues, onChange }: CalendarDataFormProps) {
   const { t } = useTranslation()
   const {

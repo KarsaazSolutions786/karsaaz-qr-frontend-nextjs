@@ -8,6 +8,11 @@ const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'
 const ERROR = 'mt-1 text-xs text-red-500'
 type UPIDynamicDataFormData = z.infer<typeof upiDynamicDataSchema>
 interface UPIDynamicDataFormProps { defaultValues?: Partial<UPIDynamicDataFormData>; onChange?: (data: Partial<UPIDynamicDataFormData>) => void }
+/**
+ * Purpose: Executes UPIDynamicDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function UPIDynamicDataForm({ defaultValues, onChange }: UPIDynamicDataFormProps) {
   const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<UPIDynamicDataFormData>({ schema: upiDynamicDataSchema, defaultValues, onChange })

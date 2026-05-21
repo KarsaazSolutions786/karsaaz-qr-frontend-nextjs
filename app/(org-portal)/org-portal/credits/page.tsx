@@ -12,6 +12,11 @@ interface CreditPackage {
   price_usd: number
 }
 
+/**
+ * Purpose: Executes CreditPackagesSection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function CreditPackagesSection() {
   const [packages, setPackages] = useState<CreditPackage[]>([])
   const [buying, setBuying] = useState<number | null>(null)
@@ -23,6 +28,11 @@ function CreditPackagesSection() {
       .catch(() => {})
   }, [])
 
+  /**
+   * Purpose: Executes buy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const buy = async (pkgId: number) => {
     setBuying(pkgId)
     try {
@@ -67,12 +77,22 @@ function CreditPackagesSection() {
   )
 }
 
+/**
+ * Purpose: Executes AlertSettingsSection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function AlertSettingsSection() {
   const [threshold, setThreshold] = useState('')
   const [email, setEmail] = useState('')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
+  /**
+   * Purpose: Saves the specified data.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const save = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -151,6 +171,11 @@ interface CreditsData {
   transactions: Transaction[]
 }
 
+/**
+ * Purpose: Executes OrgPortalCreditsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrgPortalCreditsPage() {
   const [data, setData] = useState<CreditsData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -164,7 +189,17 @@ export default function OrgPortalCreditsPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  /**
+   * Purpose: Executes fmt functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const fmt = (n: number) => n.toFixed(2)
+  /**
+   * Purpose: Executes fmtDate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const fmtDate = (d: string) => new Date(d).toLocaleString()
 
   if (loading) {

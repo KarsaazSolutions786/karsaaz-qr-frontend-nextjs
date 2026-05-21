@@ -16,6 +16,11 @@ interface FileQuestionProps {
   accept?: string
 }
 
+/**
+ * Purpose: Executes FileQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function FileQuestion({
   id,
   label,
@@ -29,11 +34,21 @@ export default function FileQuestion({
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null)
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null
     onChange(file)
   }
 
+  /**
+   * Purpose: Executes handleClear functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClear = () => {
     onChange(null)
     if (inputRef.current) inputRef.current.value = ''

@@ -25,6 +25,11 @@ const defaultForm: FormState = {
   role_id: '',
 }
 
+/**
+ * Purpose: Executes NewUserPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewUserPage() {
   const { t } = useTranslation()
   const [form, setForm] = useState<FormState>(defaultForm)
@@ -33,9 +38,19 @@ export default function NewUserPage() {
   const { data: rolesData } = useRoles()
   const createMutation = useCreateUser()
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((prev) => ({ ...prev, [key]: e.target.value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)

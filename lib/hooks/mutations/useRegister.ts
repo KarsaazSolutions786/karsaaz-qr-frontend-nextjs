@@ -7,6 +7,11 @@ import { getStoredReferralCode, clearStoredReferralCode } from '@/lib/utils/refe
 import type { RegisterFormData } from '@/lib/validations/auth'
 import { toast } from 'sonner'
 
+/**
+ * Purpose: Executes useRegister functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useRegister() {
   const router = useRouter()
   const queryClient = useQueryClient()

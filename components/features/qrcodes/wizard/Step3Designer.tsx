@@ -56,6 +56,11 @@ const DESIGN_PRESETS = [
   },
 ]
 
+/**
+ * Purpose: Executes Step3Designer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function Step3Designer({
   design,
   onChange,
@@ -65,14 +70,29 @@ export default function Step3Designer({
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('basic')
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (field: string, value: any) => {
     onChange({ ...design, [field]: value })
   }
 
+  /**
+   * Purpose: Executes applyPreset functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const applyPreset = (preset: typeof DESIGN_PRESETS[0]) => {
     onChange({ ...design, ...preset.design })
   }
 
+  /**
+   * Purpose: Executes resetToDefaults functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const resetToDefaults = () => {
     onChange({
       foregroundColor: '#000000',

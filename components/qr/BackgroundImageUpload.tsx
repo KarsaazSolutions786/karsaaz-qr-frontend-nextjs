@@ -23,6 +23,11 @@ export interface BackgroundImageUploadProps {
 const DEFAULT_MAX_SIZE_KB = 10240; // 10MB for backgrounds
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
 
+/**
+ * Purpose: Executes BackgroundImageUpload functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BackgroundImageUpload({
   imageUrl,
   opacity = 1,

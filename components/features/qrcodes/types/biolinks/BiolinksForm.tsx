@@ -33,6 +33,11 @@ interface BiolinksFormProps {
   isLoading?: boolean;
 }
 
+/**
+ * Purpose: Executes BiolinksForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BiolinksForm({
   initialData,
   onSubmit,
@@ -65,6 +70,11 @@ export function BiolinksForm({
 
   const profileData = watch('profile');
 
+  /**
+   * Purpose: Executes handleFormSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFormSubmit = (data: any) => {
     const formData: BiolinksFormData = {
       profile: data.profile,

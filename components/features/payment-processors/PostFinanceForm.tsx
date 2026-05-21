@@ -9,16 +9,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Post Finance (Switzerland) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Space ID
- * - User ID
- * - Secret
- * - Tax Percentage
- *
- * Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
+ * Purpose: Post Finance (Switzerland) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Space ID - User ID - Secret - Tax Percentage Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function PostFinanceForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

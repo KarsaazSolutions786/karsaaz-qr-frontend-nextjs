@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   description: 'Reset your Karsaaz QR password',
 }
 
+/**
+ * Purpose: Executes ForgotPasswordPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ForgotPasswordPage() {
   return <ForgotPasswordPageContent />
 }

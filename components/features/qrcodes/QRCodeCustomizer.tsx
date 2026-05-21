@@ -7,8 +7,18 @@ interface QRCodeCustomizerProps {
   onChange: (customization: any) => void
 }
 
+/**
+ * Purpose: Executes QRCodeCustomizer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRCodeCustomizer({ customization, onChange }: QRCodeCustomizerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (field: string, value: any) => {
     onChange({ ...customization, [field]: value })
   }

@@ -27,6 +27,11 @@ import {
   TableCellsIcon,
 } from '@heroicons/react/24/outline'
 
+/**
+ * Purpose: Executes QRCodeDetailPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QRCodeDetailPage({ params }: { params: { id: string } }) {
   const { t } = useTranslation()
   const { isGuest } = useGuest()
@@ -41,6 +46,11 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
   const deleteMutation = useDeleteQRCode()
   const { duplicateQRCode, archiveQRCode, transferQRCode, convertQRType, downloadQRCode } = useQRActions()
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async () => {
     try {
       await deleteMutation.mutateAsync(params.id)
@@ -49,6 +59,11 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
     }
   }
 
+  /**
+   * Purpose: Executes handleDuplicate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDuplicate = async (options: { count: number; includeDesign: boolean; includeSettings: boolean; prefix: string }) => {
     if (qrcode) {
       await duplicateQRCode(qrcode.id, options)
@@ -56,6 +71,11 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
     }
   }
 
+  /**
+   * Purpose: Executes handleArchive functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleArchive = async (reason?: string) => {
     if (qrcode) {
       await archiveQRCode(qrcode.id, { reason })
@@ -63,6 +83,11 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
     }
   }
 
+  /**
+   * Purpose: Executes handleTransfer functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTransfer = async (options: { newOwnerId: string; transferDesign: boolean; transferAnalytics: boolean; notifyNewOwner: boolean }) => {
     if (qrcode) {
       await transferQRCode(qrcode.id, options)
@@ -70,6 +95,11 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
     }
   }
 
+  /**
+   * Purpose: Executes handleConvertType functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleConvertType = async (newType: string) => {
     if (qrcode) {
       await convertQRType(qrcode.id, newType, {})

@@ -26,6 +26,11 @@ export interface OutlineFieldsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes OutlineFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function OutlineFields({
   value,
   onChange,
@@ -39,6 +44,11 @@ export function OutlineFields({
   const outlineWidth = value.width || 4;
 
   // Handle enable/disable
+  /**
+   * Purpose: Executes handleToggle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleToggle = () => {
     if (isEnabled) {
       onChange(createDefaultOutlineConfig());
@@ -49,6 +59,11 @@ export function OutlineFields({
   };
 
   // Handle color change
+  /**
+   * Purpose: Executes handleColorChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleColorChange = (color: string) => {
     onChange({
       ...value,
@@ -57,6 +72,11 @@ export function OutlineFields({
   };
 
   // Handle width change
+  /**
+   * Purpose: Executes handleWidthChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const width = parseInt(e.target.value, 10);
     onChange({
@@ -221,8 +241,11 @@ export const OUTLINE_COLOR_PRESETS = [
 ];
 
 /**
- * Outline preset picker
+ * Purpose: Outline preset picker
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function OutlinePresetPicker({
   onChange,
   className = '',

@@ -9,6 +9,11 @@ interface LinkBlockProps {
   onUpdate?: (data: LinkBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes LinkBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function LinkBlock({ block, isEditing, onUpdate }: LinkBlockProps) {
   const { url, title, style = 'button' } = block.data
   const { t } = useTranslation()

@@ -31,6 +31,11 @@ interface LeadFormSelectorProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes LeadFormSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function LeadFormSelector({
   value,
   onChange,
@@ -98,6 +103,11 @@ interface LeadFormSelectorModalProps {
   selectedId: number | null
 }
 
+/**
+ * Purpose: Executes LeadFormSelectorModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function LeadFormSelectorModal({
   open,
   onClose,

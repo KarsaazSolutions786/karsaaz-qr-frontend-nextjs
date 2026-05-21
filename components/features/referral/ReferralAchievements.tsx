@@ -8,6 +8,11 @@ import { TIERS, getTierForCount, type TierDefinition } from './ReferralBadge'
 // Individual tier card
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Executes TierCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function TierCard({
   tier,
   isUnlocked,
@@ -90,6 +95,11 @@ function TierCard({
 // Connector line between tiers
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Executes Connector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function Connector({ filled }: { filled: boolean }) {
   return (
     <div className="hidden flex-1 items-center sm:flex">
@@ -104,6 +114,11 @@ function Connector({ filled }: { filled: boolean }) {
 // Icons
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Executes ShieldCheckIcon functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function ShieldCheckIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -122,6 +137,11 @@ function ShieldCheckIcon({ className }: { className?: string }) {
   )
 }
 
+/**
+ * Purpose: Executes LockIcon functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function LockIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -140,6 +160,11 @@ function LockIcon({ className }: { className?: string }) {
   )
 }
 
+/**
+ * Purpose: Executes CheckIcon functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function CheckIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -162,6 +187,11 @@ interface ReferralAchievementsProps {
   totalReferrals: number
 }
 
+/**
+ * Purpose: Executes ReferralAchievements functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function ReferralAchievements({ totalReferrals }: ReferralAchievementsProps) {
   const { t } = useTranslation()
   const currentTier = useMemo(() => getTierForCount(totalReferrals), [totalReferrals])

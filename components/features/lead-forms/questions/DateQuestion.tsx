@@ -16,6 +16,11 @@ interface DateQuestionProps {
   max?: string
 }
 
+/**
+ * Purpose: Executes DateQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DateQuestion({
   id,
   label,

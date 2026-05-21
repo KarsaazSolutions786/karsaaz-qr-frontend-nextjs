@@ -58,7 +58,12 @@ export interface BackendQRPreviewRef {
 /*  Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
-/** Fast 32-bit hash (same algorithm as legacy preview-url-builder) */
+/**
+ * Purpose: * Fast 32-bit hash (same algorithm as legacy preview-url-builder) 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 function hashCode(str: string): string {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
@@ -73,10 +78,20 @@ function hashCode(str: string): string {
 const svgCache = new Map<string, string>()
 const MAX_CACHE = 150
 
+/**
+ * Purpose: Executes cacheGet functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function cacheGet(key: string): string | undefined {
   return svgCache.get(key)
 }
 
+/**
+ * Purpose: Executes cacheSet functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function cacheSet(key: string, svg: string) {
   if (svgCache.size >= MAX_CACHE) {
     // evict oldest entry

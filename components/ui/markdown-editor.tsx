@@ -42,10 +42,11 @@ interface ToolbarAction {
 }
 
 /**
- * SECURITY: Validate that a URL uses only safe schemes (http/https).
- * Blocks javascript: and data: URIs that could execute arbitrary code
- * when injected into href= or src= attributes.
+ * Purpose: SECURITY: Validate that a URL uses only safe schemes (http/https). Blocks javascript: and data: URIs that could execute arbitrary code when injected into href= or src= attributes.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
  */
+
 function isSafeUrl(url: string): boolean {
   try {
     const parsed = new URL(url)
@@ -56,6 +57,11 @@ function isSafeUrl(url: string): boolean {
   }
 }
 
+/**
+ * Purpose: Executes renderMarkdown functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function renderMarkdown(text: string): string {
   return text
     .replace(/&/g, '&amp;')
@@ -196,6 +202,11 @@ const MarkdownEditor = React.forwardRef<HTMLDivElement, MarkdownEditorProps>(
       { mode: 'preview', icon: <Eye className="h-3.5 w-3.5" />, label: t('Preview') },
     ]
 
+    /**
+     * Purpose: Executes renderTextarea functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const renderTextarea = () => (
       <textarea
         ref={textareaRef}
@@ -212,6 +223,11 @@ const MarkdownEditor = React.forwardRef<HTMLDivElement, MarkdownEditorProps>(
       />
     )
 
+    /**
+     * Purpose: Executes renderPreview functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const renderPreview = () => (
       <div
         className="prose prose-sm max-w-none px-3 py-2 text-sm overflow-auto"

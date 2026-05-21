@@ -14,9 +14,11 @@ interface FormRendererProps {
 }
 
 /**
- * Public-facing form renderer that takes a FormConfig JSON and renders
- * a fully functional form with validation and submission handling.
+ * Purpose: Public-facing form renderer that takes a FormConfig JSON and renders a fully functional form with validation and submission handling.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export default function FormRenderer({ config, onSubmit, className }: FormRendererProps) {
   const { t } = useTranslation();
   const { fields, settings } = config

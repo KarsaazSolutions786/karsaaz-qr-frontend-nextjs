@@ -17,6 +17,11 @@ const CONFIG_KEYS = [
   'filesystems.s3.endpoint',
 ]
 
+/**
+ * Purpose: Executes StorageSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function StorageSettingsPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
@@ -35,10 +40,20 @@ export default function StorageSettingsPage() {
     }
   }, [configs])
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (key: string, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     await save(Object.entries(formData).map(([key, value]) => ({ key, value })))

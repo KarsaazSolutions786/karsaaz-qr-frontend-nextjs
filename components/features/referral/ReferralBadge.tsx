@@ -75,6 +75,11 @@ export const TIERS: TierDefinition[] = [
 // Helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Retrieves tierforcount.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function getTierForCount(count: number): TierDefinition {
   for (let i = TIERS.length - 1; i >= 0; i--) {
     const tier = TIERS[i]
@@ -84,13 +89,23 @@ export function getTierForCount(count: number): TierDefinition {
   return TIERS[0] as TierDefinition
 }
 
+/**
+ * Purpose: Retrieves nexttier.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function getNextTier(current: TierDefinition): TierDefinition | null {
   const idx = TIERS.findIndex((t) => t.key === current.key)
   if (idx < 0 || idx >= TIERS.length - 1) return null
   return TIERS[idx + 1] ?? null
 }
 
-/** Returns progress percentage (0-100) toward the next tier, or 100 if at max. */
+/**
+ * Purpose: * Returns progress percentage (0-100) toward the next tier, or 100 if at max. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 export function getProgress(count: number, current: TierDefinition): number {
   const next = getNextTier(current)
   if (!next) return 100 // Already at platinum
@@ -107,6 +122,11 @@ export function getProgress(count: number, current: TierDefinition): number {
 // Shield / trophy icon
 // ---------------------------------------------------------------------------
 
+/**
+ * Purpose: Executes ShieldIcon functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function ShieldIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -125,6 +145,11 @@ function ShieldIcon({ className }: { className?: string }) {
   )
 }
 
+/**
+ * Purpose: Executes StarIcon functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function StarIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -148,6 +173,11 @@ interface ReferralBadgeProps {
   compact?: boolean
 }
 
+/**
+ * Purpose: Executes ReferralBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function ReferralBadge({ totalReferrals, compact = false }: ReferralBadgeProps) {
   const { t } = useTranslation()
   const tier = useMemo(() => getTierForCount(totalReferrals), [totalReferrals])

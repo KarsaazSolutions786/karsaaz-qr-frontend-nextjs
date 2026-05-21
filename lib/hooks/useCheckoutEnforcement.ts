@@ -43,6 +43,11 @@ interface CheckoutEnforcementResult {
 
 const DISMISS_KEY = 'checkout-enforcement-dismissed'
 
+/**
+ * Purpose: Executes useCheckoutEnforcement functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function useCheckoutEnforcement(): CheckoutEnforcementResult {
   const { user } = useAuth()
   const { status, plan, subscription } = useSubscription()

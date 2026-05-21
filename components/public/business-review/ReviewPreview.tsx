@@ -54,6 +54,11 @@ const platformIcons: Record<string, string> = {
   amazon: '📦',
 };
 
+/**
+ * Purpose: Executes ReviewPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ReviewPreview({ review }: ReviewPreviewProps) {
   const { t } = useTranslation();
   const [submitted, setSubmitted] = useState(false);
@@ -70,18 +75,33 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
     }
   }, [submitted]);
 
+  /**
+   * Purpose: Executes handleReviewSuccess functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleReviewSuccess = () => {
     setSubmitted(true);
     setCurrentPage(1); // Reset to first page when new review is submitted
     // Optionally refetch reviews here
   };
 
+  /**
+   * Purpose: Retrieves averagerating.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getAverageRating = () => {
     if (reviews.length === 0) return 0;
     const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
     return (sum / reviews.length).toFixed(1);
   };
 
+  /**
+   * Purpose: Retrieves ratingdistribution.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getRatingDistribution = () => {
     const distribution = [0, 0, 0, 0, 0];
     reviews.forEach(r => {
@@ -99,6 +119,11 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
   const endIndex = startIndex + reviewsPerPage;
   const paginatedReviews = reviews.slice(startIndex, endIndex);
 
+  /**
+   * Purpose: Executes handlePageChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     // Scroll to reviews section
@@ -108,6 +133,11 @@ export default function ReviewPreview({ review }: ReviewPreviewProps) {
     }
   };
 
+  /**
+   * Purpose: Executes formatDate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('en-US', { 

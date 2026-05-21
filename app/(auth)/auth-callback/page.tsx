@@ -11,11 +11,11 @@ import Link from 'next/link'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
 /**
- * OAuth callback page — handles redirect from server-side OAuth flow.
- * Supports two modes:
- *   1. Base64: /auth-callback?user=<base64>&token=<base64> (existing flow)
- *   2. Code exchange: /auth-callback?code=<code>&provider=<provider> (new OAuth code flow)
+ * Purpose: OAuth callback page — handles redirect from server-side OAuth flow. Supports two modes: 1. Base64: /auth-callback?user=<base64>&token=<base64> (existing flow) 2. Code exchange: /auth-callback?code=<code>&provider=<provider> (new OAuth code flow)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function AuthCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -24,6 +24,11 @@ function AuthCallbackContent() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    /**
+     * Purpose: Executes processCallback functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     async function processCallback() {
       try {
         const code = searchParams.get('code')
@@ -118,6 +123,11 @@ function AuthCallbackContent() {
 }
 
 // T145: OAuth callback route supporting both base64 and code-exchange flows
+/**
+ * Purpose: Executes AuthCallbackPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AuthCallbackPage() {
   const { t } = useTranslation()
 

@@ -23,16 +23,22 @@ export interface ModuleRenderContext {
 }
 
 /**
- * Generate SVG path for square module
+ * Purpose: Generate SVG path for square module
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderSquareModule(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   return `<rect x="${x}" y="${y}" width="${size}" height="${size}"/>`;
 }
 
 /**
- * Generate SVG path for rounded module
+ * Purpose: Generate SVG path for rounded module
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderRoundedModule(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const radius = size * 0.25; // 25% corner radius
@@ -40,8 +46,11 @@ export function renderRoundedModule(ctx: ModuleRenderContext): string {
 }
 
 /**
- * Generate SVG path for dot module
+ * Purpose: Generate SVG path for dot module
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderDotModule(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const cx = x + size / 2;
@@ -51,8 +60,11 @@ export function renderDotModule(ctx: ModuleRenderContext): string {
 }
 
 /**
- * Generate SVG path for circular module (smaller than dot)
+ * Purpose: Generate SVG path for circular module (smaller than dot)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderCircularModule(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const cx = x + size / 2;
@@ -62,8 +74,11 @@ export function renderCircularModule(ctx: ModuleRenderContext): string {
 }
 
 /**
- * Generate SVG path for diamond module
+ * Purpose: Generate SVG path for diamond module
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderDiamondModule(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const half = size / 2;
@@ -81,8 +96,11 @@ export function renderDiamondModule(ctx: ModuleRenderContext): string {
 }
 
 /**
- * Generate SVG path for classy module (rounded based on neighbors)
+ * Purpose: Generate SVG path for classy module (rounded based on neighbors)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderClassyModule(ctx: ModuleRenderContext): string {
   const { x, y, size, neighbors } = ctx;
 
@@ -144,8 +162,11 @@ export function renderClassyModule(ctx: ModuleRenderContext): string {
 }
 
 /**
- * Generate SVG path for classy-rounded module (smoother version)
+ * Purpose: Generate SVG path for classy-rounded module (smoother version)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderClassyRoundedModule(ctx: ModuleRenderContext): string {
   const { x, y, size, neighbors } = ctx;
 
@@ -206,9 +227,11 @@ export function renderClassyRoundedModule(ctx: ModuleRenderContext): string {
 // ============================================================
 
 /**
- * Generate polygon points (star/polygon algorithm from P1).
- * Alternates between inner and outer radii to create star shapes.
+ * Purpose: Generate polygon points (star/polygon algorithm from P1). Alternates between inner and outer radii to create star shapes.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function makePolygon(
   translateX: number,
   translateY: number,
@@ -229,30 +252,55 @@ function makePolygon(
   return points;
 }
 
+/**
+ * Purpose: Executes polygonToPath functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function polygonToPath(points: [number, number][]): string {
   const lines = points.map(([px, py]) => `L${px},${py}`).join(' ');
   const first = points[0]!;
   return `<path d="M${first[0]},${first[1]} ${lines}Z"/>`;
 }
 
+/**
+ * Purpose: Executes renderTriangleModule functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderTriangleModule(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const points = makePolygon(x, y, size / 3, size / 1.5, 3);
   return polygonToPath(points);
 }
 
+/**
+ * Purpose: Executes renderRhombusModule functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderRhombusModule(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const points = makePolygon(x, y, size / 3, size / 2, 4);
   return polygonToPath(points);
 }
 
+/**
+ * Purpose: Executes renderStar5Module functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderStar5Module(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const points = makePolygon(x, y, size / 3, size / 1.75, 5);
   return polygonToPath(points);
 }
 
+/**
+ * Purpose: Executes renderStar7Module functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderStar7Module(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const points = makePolygon(x, y, size / 3, size / 1.7, 7);
@@ -264,11 +312,21 @@ export function renderStar7Module(ctx: ModuleRenderContext): string {
 // Ported from P1 VerticalLinesModule.php / HorizontalLinesModule.php
 // ============================================================
 
+/**
+ * Purpose: Executes renderVerticalLinesModule functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderVerticalLinesModule(ctx: ModuleRenderContext): string {
   const { x, y, size, qr, row, col, moduleCount } = ctx;
   const width = size * 0.8;
   const height = size;
   const bits = getNeighbourBits(qr, row, col, moduleCount);
+  /**
+   * Purpose: Executes check functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const check = (all: number, any: number) => checkNeighbourBits(bits, all, any);
 
   const r = 0.5;
@@ -295,11 +353,21 @@ export function renderVerticalLinesModule(ctx: ModuleRenderContext): string {
   return `<path d="M${x},${y} h${width} v${height} h-${width}Z"/>`;
 }
 
+/**
+ * Purpose: Executes renderHorizontalLinesModule functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderHorizontalLinesModule(ctx: ModuleRenderContext): string {
   const { x, y, size, qr, row, col, moduleCount } = ctx;
   const height = size * 0.8;
   const width = size;
   const bits = getNeighbourBits(qr, row, col, moduleCount);
+  /**
+   * Purpose: Executes check functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const check = (all: number, any: number) => checkNeighbourBits(bits, all, any);
 
   const r = 0.5;
@@ -332,9 +400,11 @@ export function renderHorizontalLinesModule(ctx: ModuleRenderContext): string {
 // ============================================================
 
 /**
- * Generate a 6-sided parametric curved shape from 3 equilateral triangle
- * vertices. The t1/t2/t3 parameters control how the edges are interpolated.
+ * Purpose: Generate a 6-sided parametric curved shape from 3 equilateral triangle vertices. The t1/t2/t3 parameters control how the edges are interpolated.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function dynamicPathCommands(
   angle: number,
   t1: number,
@@ -390,12 +460,22 @@ function dynamicPathCommands(
 }
 
 // Seeded PRNG for deterministic per-module variation
+/**
+ * Purpose: Executes moduleHash functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function moduleHash(row: number, col: number): number {
   let h = (row * 31 + col * 127) & 0xffff;
   h = ((h >>> 0) * 2654435761) >>> 0;
   return h;
 }
 
+/**
+ * Purpose: Executes renderFishModule functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderFishModule(ctx: ModuleRenderContext): string {
   const { x, y, size, row, col } = ctx;
   const l = size / 1.5;
@@ -405,6 +485,11 @@ export function renderFishModule(ctx: ModuleRenderContext): string {
   return dynamicPathCommands(angle, 0.82, 0.13, 0.82, l, ox, oy);
 }
 
+/**
+ * Purpose: Executes renderTreeModule functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderTreeModule(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const l = size / 1.5;
@@ -413,6 +498,11 @@ export function renderTreeModule(ctx: ModuleRenderContext): string {
   return dynamicPathCommands(150, 0.4, 0.12, 0.12, l, ox, oy);
 }
 
+/**
+ * Purpose: Executes renderTwoTrianglesWithCircleModule functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderTwoTrianglesWithCircleModule(ctx: ModuleRenderContext): string {
   const { x, y, size, qr, row, col, moduleCount } = ctx;
   const l = size / 2;
@@ -431,6 +521,11 @@ export function renderTwoTrianglesWithCircleModule(ctx: ModuleRenderContext): st
   return dynamicPathCommands(90, 1.31, 1.31, 0.79, l, ox, oy);
 }
 
+/**
+ * Purpose: Executes renderFourTrianglesModule functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderFourTrianglesModule(ctx: ModuleRenderContext): string {
   const { x, y, size } = ctx;
   const l = size / 2.5;
@@ -444,9 +539,19 @@ export function renderFourTrianglesModule(ctx: ModuleRenderContext): string {
 // Ported from P1 TriangleEndModule.php
 // ============================================================
 
+/**
+ * Purpose: Executes renderTriangleEndModule functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function renderTriangleEndModule(ctx: ModuleRenderContext): string {
   const { x: px, y: py, size, qr, row, col, moduleCount } = ctx;
   const bits = getNeighbourBits(qr, row, col, moduleCount);
+  /**
+   * Purpose: Executes check functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const check = (all: number, any: number) => checkNeighbourBits(bits, all, any);
 
   const base = size;
@@ -514,8 +619,11 @@ export function renderTriangleEndModule(ctx: ModuleRenderContext): string {
 // ============================================================
 
 /**
- * Main module renderer - selects appropriate shape renderer
+ * Purpose: Main module renderer - selects appropriate shape renderer
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderModule(
   shape: string,
   ctx: ModuleRenderContext
@@ -570,8 +678,11 @@ export function renderModule(
 }
 
 /**
- * Batch render modules (optimized for performance)
+ * Purpose: Batch render modules (optimized for performance)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderModuleBatch(
   shape: string,
   contexts: ModuleRenderContext[]
@@ -580,8 +691,11 @@ export function renderModuleBatch(
 }
 
 /**
- * Get module shape description (for UI)
+ * Purpose: Get module shape description (for UI)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getModuleShapeDescription(shape: string): string {
   const descriptions: Record<string, string> = {
     square: 'Classic square modules',

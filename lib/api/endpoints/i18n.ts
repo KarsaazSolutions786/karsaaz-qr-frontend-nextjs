@@ -40,10 +40,11 @@ interface LocalizationTranslationsResponse {
 }
 
 /**
- * Fetch list of active translations (languages) from the backend.
- * Uses the public /api/localization/languages endpoint (no auth required)
- * with a fallback to the legacy /api/translations/active endpoint.
+ * Purpose: Fetch list of active translations (languages) from the backend. Uses the public /api/localization/languages endpoint (no auth required) with a fallback to the legacy /api/translations/active endpoint.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getActiveTranslations(): Promise<ActiveTranslation[]> {
   try {
     // Primary: use the new public localization endpoint
@@ -69,10 +70,11 @@ export async function getActiveTranslations(): Promise<ActiveTranslation[]> {
 }
 
 /**
- * Fetch translation key-value map for a given locale.
- * Uses the public /api/localization/translations endpoint (no auth required)
- * with a fallback to the legacy /api/translations/active endpoint.
+ * Purpose: Fetch translation key-value map for a given locale. Uses the public /api/localization/translations endpoint (no auth required) with a fallback to the legacy /api/translations/active endpoint.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getTranslationStrings(locale: string): Promise<TranslationStrings> {
   try {
     // Primary: use the new public localization endpoint
@@ -91,9 +93,11 @@ export async function getTranslationStrings(locale: string): Promise<Translation
 }
 
 /**
- * Switch language by calling backend endpoint.
- * Maps to: GET /language/{locale} (sets cookie/session)
+ * Purpose: Switch language by calling backend endpoint. Maps to: GET /language/{locale} (sets cookie/session)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function switchLanguage(locale: string): Promise<void> {
   await apiClient.get(`/language/${locale}`)
 }

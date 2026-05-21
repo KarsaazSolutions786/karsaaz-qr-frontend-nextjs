@@ -94,6 +94,11 @@ export const advancedAnalyticsAPI = {
 }
 
 // Helper to fetch a single report from the backend
+/**
+ * Purpose: Executes fetchReport functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 async function fetchReport(qrcodeId: number, slug: string, dateRange?: DateRange) {
   const params: Record<string, string> = {}
   if (dateRange) {
@@ -152,6 +157,13 @@ export const analyticsAPI = {
     const uniqueScans: number = (mainData as RawScanRow | null)?.unique_scans ?? totalScans
 
     // Helper to convert raw breakdown array to BreakdownItem[] with percentages
+    /**
+     * Purpose: Executes toBreakdown functionality.
+     * Owner/Author: Syed Ashhad
+     * Created: February 2026
+     * Last Editor: Syed Ashhad
+     * Last Updated: May 2026
+     */
     function toBreakdown(arr: RawScanRow[], labelField: string): BreakdownItem[] {
       if (!Array.isArray(arr) || arr.length === 0) return []
       const total = arr.reduce((s: number, d) => s + (d.scans ?? 0), 0)
@@ -165,6 +177,13 @@ export const analyticsAPI = {
     }
 
     // Convert country data with ISO codes
+    /**
+     * Purpose: Executes toCountryBreakdown functionality.
+     * Owner/Author: Syed Ashhad
+     * Created: February 2026
+     * Last Editor: Syed Ashhad
+     * Last Updated: May 2026
+     */
     function toCountryBreakdown(arr: RawScanRow[]): CountryBreakdownItem[] {
       if (!Array.isArray(arr) || arr.length === 0) return []
       const total = arr.reduce((s: number, d) => s + (d.scans ?? 0), 0)
@@ -180,6 +199,13 @@ export const analyticsAPI = {
     }
 
     // Convert city data
+    /**
+     * Purpose: Executes toCityBreakdown functionality.
+     * Owner/Author: Syed Ashhad
+     * Created: February 2026
+     * Last Editor: Syed Ashhad
+     * Last Updated: May 2026
+     */
     function toCityBreakdown(arr: RawScanRow[]): CityBreakdownItem[] {
       if (!Array.isArray(arr) || arr.length === 0) return []
       const total = arr.reduce((s: number, d) => s + (d.scans ?? 0), 0)

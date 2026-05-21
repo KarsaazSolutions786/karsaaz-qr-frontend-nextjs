@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Server-side proxy to call external bot API and avoid CORS issues in the browser
+/**
+ * Purpose: Executes POST functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export async function POST(request: NextRequest) {
   try {
     const payload = await request.json();

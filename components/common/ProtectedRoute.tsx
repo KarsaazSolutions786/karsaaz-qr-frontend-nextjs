@@ -20,18 +20,11 @@ interface ProtectedRouteProps {
 }
 
 /**
- * ProtectedRoute - Wraps content requiring specific permissions.
- * 
- * Matches original qrcg-protected-route.js behavior:
- * 1. Check if user is authenticated + has required permission
- * 2. If not, show a loading UI with message
- * 3. After 2 seconds, redirect to login page with ?redirect= querystring
- * 
- * Usage:
- *   <ProtectedRoute permission="manage_users">
- *     <UserManagementPage />
- *   </ProtectedRoute>
+ * Purpose: ProtectedRoute - Wraps content requiring specific permissions. Matches original qrcg-protected-route.js behavior: 1. Check if user is authenticated + has required permission 2. If not, show a loading UI with message 3. After 2 seconds, redirect to login page with ?redirect= querystring Usage: <ProtectedRoute permission="manage_users"> <UserManagementPage /> </ProtectedRoute>
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ProtectedRoute({
   permission = '',
   requireVerification = true,

@@ -86,8 +86,11 @@ const defaultFeatures: FeatureFlags = {
 }
 
 /**
- * Get the latest status from a subscription's statuses array
+ * Purpose: Get the latest status from a subscription's statuses array
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getLatestStatus(sub: Subscription | null): string | null {
   if (!sub) return null
   const statuses = sub.statuses || []
@@ -102,15 +105,21 @@ function getLatestStatus(sub: Subscription | null): string | null {
 }
 
 /**
- * Check if subscription is a trial plan
+ * Purpose: Check if subscription is a trial plan
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function isTrialPlan(sub: Subscription | null): boolean {
   return sub?.subscription_plan?.is_trial === true
 }
 
 /**
- * Select the best subscription to display from a list of subscriptions
+ * Purpose: Select the best subscription to display from a list of subscriptions
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function selectSubscription(subscriptions: Subscription[]): Subscription | null {
   if (!subscriptions || subscriptions.length === 0) return null
 
@@ -140,8 +149,11 @@ function selectSubscription(subscriptions: Subscription[]): Subscription | null 
 }
 
 /**
- * Check if user has super admin role
+ * Purpose: Check if user has super admin role
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function isSuperAdminUser(user: User | null): boolean {
   if (!user) return false
   return (user as any).roles?.some((r: any) => !!r.super_admin) ?? false
@@ -196,8 +208,11 @@ const adminFeatures: FeatureFlags = {
 }
 
 /**
- * Process user data to extract subscription information
+ * Purpose: Process user data to extract subscription information
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function processSubscriptionData(user: User | null): SubscriptionData {
   if (!user) {
     return {
@@ -300,8 +315,11 @@ function processSubscriptionData(user: User | null): SubscriptionData {
 }
 
 /**
- * Main subscription hook using TanStack Query
+ * Purpose: Main subscription hook using TanStack Query
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useSubscription() {
   const queryClient = useQueryClient()
   const { user, isLoading, refreshUserData } = useAuth()

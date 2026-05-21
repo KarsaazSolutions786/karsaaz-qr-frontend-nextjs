@@ -54,6 +54,11 @@ interface EventPreviewProps {
   event: EventData
 }
 
+/**
+ * Purpose: Executes EventPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EventPreview({ event }: EventPreviewProps) {
   const { t } = useTranslation()
   const [timeLeft, setTimeLeft] = useState<{
@@ -106,6 +111,11 @@ export default function EventPreview({ event }: EventPreviewProps) {
     : []
   const shouldShowAgendaPagination = event.agenda && event.agenda.length > AGENDA_ITEMS_PER_PAGE
 
+  /**
+   * Purpose: Executes handleShare functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -123,12 +133,22 @@ export default function EventPreview({ event }: EventPreviewProps) {
     }
   }
 
+  /**
+   * Purpose: Executes addToCalendar functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addToCalendar = (type: 'google' | 'apple' | 'outlook') => {
     const eventDate = new Date(`${event.date} ${event.time}`)
     const endDate = event.endTime
       ? new Date(`${event.date} ${event.endTime}`)
       : new Date(eventDate.getTime() + 2 * 60 * 60 * 1000)
 
+    /**
+     * Purpose: Executes formatDate functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const formatDate = (date: Date) => {
       return (date.toISOString().replace(/[-:]/g, '').split('.')[0] ?? '') + 'Z'
     }
@@ -157,6 +177,11 @@ END:VCALENDAR`
     }
   }
 
+  /**
+   * Purpose: Executes handleRegistration functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRegistration = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)

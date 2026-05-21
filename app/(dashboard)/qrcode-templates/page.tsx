@@ -14,6 +14,11 @@ import type { TemplateFilters } from '@/types/entities/template'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes QRCodeTemplatesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QRCodeTemplatesPage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -38,6 +43,11 @@ export default function QRCodeTemplatesPage() {
     setCurrentPage(1)
   }, [filters, search])
 
+  /**
+   * Purpose: Executes handleCategoryChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCategoryChange = (categoryId?: number) => {
     setFilters((prev) => ({
       ...prev,
@@ -45,6 +55,11 @@ export default function QRCodeTemplatesPage() {
     }))
   }
 
+  /**
+   * Purpose: Executes handleUseTemplate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUseTemplate = (template: { id: number }) => {
     router.push(`/qrcodes/new?template_id=${template.id}`)
   }

@@ -13,6 +13,11 @@ const navLinks = [
   { name: "Contact", href: "/", hash: "#contact" },
 ];
 
+/**
+ * Purpose: Executes Navbar functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function Navbar() {
   const [activeLink, setActiveLink] = useState("Home");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -20,6 +25,11 @@ export default function Navbar() {
   const pathname = usePathname();
 
   // Handle navigation - works from any page
+  /**
+   * Purpose: Executes handleNavClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleNavClick = (e: React.MouseEvent, link: { name: string; href: string; hash: string }) => {
     e.preventDefault();
     setActiveLink(link.name);
@@ -49,6 +59,11 @@ export default function Navbar() {
   useEffect(() => {
     if (pathname !== "/") return;
     
+    /**
+     * Purpose: Executes handleScroll functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: April 2026
+     */
     const handleScroll = () => {
       const sections = navLinks.map((link) => ({
         name: link.name,

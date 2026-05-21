@@ -13,6 +13,11 @@ import {
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes formatAmount functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatAmount(amount: number, currency?: string): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -20,6 +25,11 @@ function formatAmount(amount: number, currency?: string): string {
   }).format(amount / 100)
 }
 
+/**
+ * Purpose: Executes formatDate functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatDate(timestamp: number | string): string {
   const date = typeof timestamp === 'number'
     ? new Date(timestamp * 1000)
@@ -39,6 +49,11 @@ const statusColors: Record<string, string> = {
   uncollectible: 'bg-red-100 text-red-600',
 }
 
+/**
+ * Purpose: Executes BillingManagementCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BillingManagementCard() {
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
@@ -326,6 +341,11 @@ export function BillingManagementCard() {
   )
 }
 
+/**
+ * Purpose: Executes Spinner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function Spinner() {
   return (
     <LottieLoader size={80} />

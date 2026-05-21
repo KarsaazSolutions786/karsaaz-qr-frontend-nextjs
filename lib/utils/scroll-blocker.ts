@@ -5,6 +5,11 @@
 let savedScrollY = 0
 let blocked = false
 
+/**
+ * Purpose: Executes blockScroll functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function blockScroll(): void {
   if (typeof window === 'undefined' || blocked) return
   savedScrollY = window.scrollY
@@ -15,6 +20,11 @@ export function blockScroll(): void {
   blocked = true
 }
 
+/**
+ * Purpose: Executes unblockScroll functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function unblockScroll(): void {
   if (typeof window === 'undefined' || !blocked) return
   document.body.style.overflow = ''
@@ -25,6 +35,11 @@ export function unblockScroll(): void {
   blocked = false
 }
 
+/**
+ * Purpose: Checks if scrollblocked.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function isScrollBlocked(): boolean {
   return blocked
 }

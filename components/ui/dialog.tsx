@@ -53,6 +53,11 @@ const DialogContent = React.forwardRef<
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
+/**
+ * Purpose: Executes DialogHeader functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const DialogHeader = ({
   className,
   ...props
@@ -67,6 +72,11 @@ const DialogHeader = ({
 )
 DialogHeader.displayName = "DialogHeader"
 
+/**
+ * Purpose: Executes DialogFooter functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const DialogFooter = ({
   className,
   ...props

@@ -50,22 +50,42 @@ interface AppPreviewProps {
   app: AppData
 }
 
+/**
+ * Purpose: Executes AppPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AppPreview({ app }: AppPreviewProps) {
   const { t } = useTranslation()
   const [currentScreenshot, setCurrentScreenshot] = useState(0)
 
+  /**
+   * Purpose: Executes nextScreenshot functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const nextScreenshot = () => {
     if (app.screenshots && currentScreenshot < app.screenshots.length - 1) {
       setCurrentScreenshot(currentScreenshot + 1)
     }
   }
 
+  /**
+   * Purpose: Executes prevScreenshot functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const prevScreenshot = () => {
     if (currentScreenshot > 0) {
       setCurrentScreenshot(currentScreenshot - 1)
     }
   }
 
+  /**
+   * Purpose: Executes renderStars functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderStars = (rating: number) => {
     const stars = []
     const fullStars = Math.floor(rating)

@@ -15,14 +15,11 @@ interface UseFormPersistenceOptions<T extends FieldValues> {
 }
 
 /**
- * Persist form state to localStorage so in-progress forms survive page reloads.
- * Automatically restores on mount and clears on successful submit.
- *
- * @example
- * const methods = useForm<CreateQRForm>()
- * const { clear } = useFormPersistence({ formKey: 'create-qr', methods })
- * // Call clear() after successful submission
+ * Purpose: Persist form state to localStorage so in-progress forms survive page reloads. Automatically restores on mount and clears on successful submit. const methods = useForm<CreateQRForm>() const { clear } = useFormPersistence({ formKey: 'create-qr', methods }) // Call clear() after successful submission
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useFormPersistence<T extends FieldValues>({
   formKey,
   methods,

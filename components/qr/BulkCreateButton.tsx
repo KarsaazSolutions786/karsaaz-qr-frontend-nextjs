@@ -15,6 +15,11 @@ export interface BulkCreateButtonProps {
   disabled?: boolean;
 }
 
+/**
+ * Purpose: Executes BulkCreateButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BulkCreateButton({ onClick, disabled = false }: BulkCreateButtonProps) {
   const { t } = useTranslation();
   return (

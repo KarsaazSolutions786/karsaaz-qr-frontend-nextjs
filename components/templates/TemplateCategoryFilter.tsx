@@ -18,6 +18,11 @@ export interface TemplateCategoryFilterProps {
   templateCounts?: Record<number, number>
 }
 
+/**
+ * Purpose: Executes TemplateCategoryFilter functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TemplateCategoryFilter({
   categories,
   selectedCategoryId,

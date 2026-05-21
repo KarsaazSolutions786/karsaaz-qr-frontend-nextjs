@@ -75,11 +75,21 @@ const PLAN_FEATURES: Record<PlanType, PlanFeatures> = {
   },
 };
 
+/**
+ * Purpose: Executes featureAllowed functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function featureAllowed(featureName: FeatureName, plan: PlanType): boolean {
   const planFeatures = PLAN_FEATURES[plan];
   return planFeatures.features.includes(featureName);
 }
 
+/**
+ * Purpose: Executes checkPlanLimit functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function checkPlanLimit(
   limitType: LimitType,
   current: number,
@@ -98,10 +108,20 @@ export function checkPlanLimit(
   return { allowed, limit, percentage };
 }
 
+/**
+ * Purpose: Retrieves planfeatures.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function getPlanFeatures(plan: PlanType): PlanFeatures {
   return PLAN_FEATURES[plan];
 }
 
+/**
+ * Purpose: Retrieves nextplan.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function getNextPlan(currentPlan: PlanType): PlanType | null {
   const planOrder: PlanType[] = ['free', 'starter', 'pro', 'enterprise'];
   const currentIndex = planOrder.indexOf(currentPlan);
@@ -113,6 +133,11 @@ export function getNextPlan(currentPlan: PlanType): PlanType | null {
   return planOrder[currentIndex + 1] ?? null;
 }
 
+/**
+ * Purpose: Retrieves planname.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function getPlanName(plan: PlanType): string {
   return PLAN_FEATURES[plan].name;
 }

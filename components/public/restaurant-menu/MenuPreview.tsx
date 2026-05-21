@@ -75,6 +75,11 @@ const allergenIcons: Record<keyof AllergenInfo, { icon: typeof Wheat; label: str
   eggs: { icon: Egg, label: 'Contains Eggs', color: 'text-yellow-600 bg-yellow-50' },
 };
 
+/**
+ * Purpose: Executes MenuPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function MenuPreview({ menu }: MenuPreviewProps) {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
@@ -179,6 +184,11 @@ export default function MenuPreview({ menu }: MenuPreviewProps) {
     return Array.from(allergens);
   }, [menu.categories]);
 
+  /**
+   * Purpose: Executes scrollToCategory functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const scrollToCategory = (categoryId: string) => {
     setSelectedCategory(categoryId);
     const element = document.getElementById(`category-${categoryId}`);

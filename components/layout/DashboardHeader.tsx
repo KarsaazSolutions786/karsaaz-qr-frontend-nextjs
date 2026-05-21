@@ -14,6 +14,11 @@ interface DashboardHeaderProps {
   isAccountCreditMode: boolean
 }
 
+/**
+ * Purpose: Executes DashboardHeader functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function DashboardHeader({
   sidebarOpen,
   setSidebarOpen,

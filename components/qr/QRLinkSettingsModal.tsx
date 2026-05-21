@@ -19,6 +19,11 @@ interface LinkSettings {
   targetUrl: string
 }
 
+/**
+ * Purpose: Executes QRLinkSettingsModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRLinkSettingsModal({ qrCodeId, open, onClose, onSave }: QRLinkSettingsModalProps) {
   const { t } = useTranslation()
   const [settings, setSettings] = useState<LinkSettings>({
@@ -52,6 +57,11 @@ export function QRLinkSettingsModal({ qrCodeId, open, onClose, onSave }: QRLinkS
       ? t('Failed to save settings')
       : ''
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async () => {
     try {
       await updateMutation.mutateAsync({

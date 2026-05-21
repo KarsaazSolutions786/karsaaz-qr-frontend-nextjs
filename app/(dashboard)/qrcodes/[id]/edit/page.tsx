@@ -8,15 +8,11 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 import Link from 'next/link'
 
 /**
- * Edit QR Code Page - Uses multi-step wizard in edit mode
- *
- * Features:
- * - Pre-loads existing QR code data
- * - Same wizard flow as creation
- * - All 4 steps available for editing
- * - Updates existing QR code on save
- * - Quick link to analytics from header
+ * Purpose: Edit QR Code Page - Uses multi-step wizard in edit mode Features: - Pre-loads existing QR code data - Same wizard flow as creation - All 4 steps available for editing - Updates existing QR code on save - Quick link to analytics from header
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export default function EditQRCodePage({ params }: { params: { id: string } }) {
   const { t } = useTranslation()
   const { data: qrcode, isLoading } = useQRCode(params.id)

@@ -15,11 +15,21 @@ const COUNTRY_CODES: Record<string, string> = {
   AU: '61', DE: '49', FR: '33', IT: '39', ES: '34',
 }
 
+/**
+ * Purpose: Retrieves callingcode.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getCallingCode(isoCode?: string): string {
   if (!isoCode) return '92'
   return COUNTRY_CODES[isoCode] || '92'
 }
 
+/**
+ * Purpose: Retrieves isofromcallingcode.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getIsoFromCallingCode(code: string): string {
   const clean = code.replace('+', '')
   const reversed: Record<string, string> = {}
@@ -29,6 +39,11 @@ function getIsoFromCallingCode(code: string): string {
   return reversed[clean] || 'PK'
 }
 
+/**
+ * Purpose: Executes EditProfileModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
   const { t } = useTranslation()
   const { user, refreshUserData } = useAuth()
@@ -60,6 +75,11 @@ export function EditProfileModal({ open, onClose }: EditProfileModalProps) {
     }
   }, [open, user])
 
+  /**
+   * Purpose: Executes handleFileChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && file.type.startsWith('image/')) {

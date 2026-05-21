@@ -10,15 +10,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * PayU LATAM payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (sandbox / production)
- * - API Key
- * - API Login
- * - Merchant ID
- * - Account ID
+ * Purpose: PayU LATAM payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (sandbox / production) - API Key - API Login - Merchant ID - Account ID
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function PayULatamForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

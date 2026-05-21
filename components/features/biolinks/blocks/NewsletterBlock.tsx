@@ -10,6 +10,11 @@ interface NewsletterBlockProps {
   onUpdate?: (data: NewsletterBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes NewsletterBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewsletterBlock({ block, isEditing, onUpdate }: NewsletterBlockProps) {
   const { t } = useTranslation();
   const { title, description, placeholder = 'Enter your email', buttonText = 'Subscribe', apiEndpoint } = block.data
@@ -68,6 +73,11 @@ export default function NewsletterBlock({ block, isEditing, onUpdate }: Newslett
     )
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email || !apiEndpoint) return

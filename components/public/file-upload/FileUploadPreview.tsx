@@ -18,6 +18,11 @@ interface FileUploadData {
   }
 }
 
+/**
+ * Purpose: Executes formatFileSize functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatFileSize(bytes?: number): string {
   if (!bytes) return 'Unknown size' // translated at render time
   if (bytes < 1024) return `${bytes} B`
@@ -25,6 +30,11 @@ function formatFileSize(bytes?: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
+/**
+ * Purpose: Retrieves fileicon.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getFileIcon(fileType?: string): string {
   if (!fileType) return '📄'
   if (fileType.startsWith('image/')) return '🖼️'
@@ -37,6 +47,11 @@ function getFileIcon(fileType?: string): string {
   return '📄'
 }
 
+/**
+ * Purpose: Executes FileUploadPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function FileUploadPreview({
   fileUpload,
 }: {

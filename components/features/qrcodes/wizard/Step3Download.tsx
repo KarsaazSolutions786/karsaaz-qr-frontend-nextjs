@@ -51,6 +51,11 @@ const ALL_SIZE_OPTIONS = [
 /** Free/trial plans are limited to 512px PNG only */
 const FREE_SIZE_VALUE = 500
 
+/**
+ * Purpose: Executes Step3Download functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function Step3Download({
   qrType,
   qrData,
@@ -96,6 +101,11 @@ export default function Step3Download({
     Object.keys(qrData).length > 0 &&
     Object.values(qrData).some(v => v !== '' && v !== null && v !== undefined)
 
+  /**
+   * Purpose: Executes handleSettingsChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSettingsChange = (field: string, value: any) => {
     onSettingsChange({ ...settings, [field]: value })
   }
@@ -178,6 +188,11 @@ export default function Step3Download({
     [settings.name, qrType, selectedSize, isFreePlan]
   )
 
+  /**
+   * Purpose: Executes handleTagInput functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && e.currentTarget.value.trim()) {
       e.preventDefault()
@@ -190,6 +205,11 @@ export default function Step3Download({
     }
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeTag = (tagToRemove: string) => {
     const currentTags = settings.tags || []
     handleSettingsChange(

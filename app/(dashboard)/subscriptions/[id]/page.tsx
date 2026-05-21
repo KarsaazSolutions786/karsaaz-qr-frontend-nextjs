@@ -12,6 +12,11 @@ import { useUpdateAdminSubscription } from '@/lib/hooks/mutations/useAdminSubscr
 import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes EditSubscriptionPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditSubscriptionPage() {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
@@ -39,8 +44,20 @@ export default function EditSubscriptionPage() {
     }
   }, [sub])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const set = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {

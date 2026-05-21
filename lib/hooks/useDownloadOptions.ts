@@ -75,6 +75,11 @@ const DEFAULT_OPTIONS: DownloadOptions = {
   quality: 1.0,
 }
 
+/**
+ * Purpose: Executes useDownloadOptions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDownloadOptions(initialOptions?: Partial<DownloadOptions>) {
   const [options, setOptions] = useState<DownloadOptions>({
     ...DEFAULT_OPTIONS,
@@ -211,8 +216,11 @@ export function useDownloadOptions(initialOptions?: Partial<DownloadOptions>) {
 }
 
 /**
- * Get format recommendations
+ * Purpose: Get format recommendations
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getFormatRecommendation(useCase: 'web' | 'print' | 'vector' | 'document'): {
   format: DownloadFormat
   reason: string
@@ -300,15 +308,21 @@ export const FORMAT_CAPABILITIES = {
 }
 
 /**
- * Get file extension for format
+ * Purpose: Get file extension for format
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getFileExtension(format: DownloadFormat): string {
   return format
 }
 
 /**
- * Get MIME type for format
+ * Purpose: Get MIME type for format
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getMIMEType(format: DownloadFormat): string {
   const mimeTypes: Record<DownloadFormat, string> = {
     svg: 'image/svg+xml',

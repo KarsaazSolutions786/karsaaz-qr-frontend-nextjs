@@ -14,12 +14,18 @@ interface SortManagerProps {
 }
 
 /**
- * SortManager provides block reordering functionality.
- * Uses manual move up/down as a baseline. Can be extended with @dnd-kit
- * for full drag-and-drop support.
+ * Purpose: SortManager provides block reordering functionality. Uses manual move up/down as a baseline. Can be extended with @dnd-kit for full drag-and-drop support.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export default function SortManager({ blocks, onReorder, children }: SortManagerProps) {
   const { t } = useTranslation();
+  /**
+   * Purpose: Executes moveUp functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const moveUp = (index: number) => {
     if (index <= 0) return
     const updated = [...blocks]
@@ -30,6 +36,11 @@ export default function SortManager({ blocks, onReorder, children }: SortManager
     onReorder(updated.map((b, i) => ({ ...b, order: i })))
   }
 
+  /**
+   * Purpose: Executes moveDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const moveDown = (index: number) => {
     if (index >= blocks.length - 1) return
     const updated = [...blocks]

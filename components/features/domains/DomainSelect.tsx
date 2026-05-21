@@ -12,6 +12,11 @@ interface DomainSelectProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes DomainSelect functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DomainSelect({
   value,
   onChange,
@@ -23,6 +28,11 @@ export function DomainSelect({
   const { data, isLoading } = useDomains()
   const domains = data?.data ?? []
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const domainId = e.target.value
     const domain = domains.find((d) => d.id === domainId)

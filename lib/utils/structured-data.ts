@@ -4,8 +4,11 @@ import { envConfig } from '@/lib/config/env-config'
 const SITE_URL = envConfig.APP_URL
 
 /**
- * Generate Article (BlogPosting) JSON-LD schema for a blog post.
+ * Purpose: Generate Article (BlogPosting) JSON-LD schema for a blog post.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function blogPostSchema(post: BlogPost) {
   return {
     '@context': 'https://schema.org',
@@ -34,8 +37,11 @@ export function blogPostSchema(post: BlogPost) {
 }
 
 /**
- * Generate Organization JSON-LD schema.
+ * Purpose: Generate Organization JSON-LD schema.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function organizationSchema() {
   return {
     '@context': 'https://schema.org',
@@ -49,8 +55,11 @@ export function organizationSchema() {
 }
 
 /**
- * Generate SoftwareApplication JSON-LD schema.
+ * Purpose: Generate SoftwareApplication JSON-LD schema.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function softwareApplicationSchema() {
   return {
     '@context': 'https://schema.org',

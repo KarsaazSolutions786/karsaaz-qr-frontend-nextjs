@@ -6,15 +6,21 @@
 import { isEmpty } from './checks'
 
 /**
- * Deep equality check using JSON serialization
+ * Purpose: Deep equality check using JSON serialization
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function equals<T>(obj: T, another: T): boolean {
   return JSON.stringify(obj) === JSON.stringify(another)
 }
 
 /**
- * Pick only specified keys from object
+ * Purpose: Pick only specified keys from object
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function only<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
   return keys.reduce(
     (result, key) => {
@@ -26,8 +32,11 @@ export function only<T extends object, K extends keyof T>(obj: T, keys: K[]): Pi
 }
 
 /**
- * Remove empty fields from object
+ * Purpose: Remove empty fields from object
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function removeEmptyFields<T extends Record<string, unknown>>(obj: T): Partial<T> {
   return Object.keys(obj).reduce((result, key) => {
     if (!isEmpty(obj[key])) {
@@ -38,8 +47,11 @@ export function removeEmptyFields<T extends Record<string, unknown>>(obj: T): Pa
 }
 
 /**
- * Deep clone an object
+ * Purpose: Deep clone an object
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') return obj
   if (obj instanceof Date) return new Date(obj.getTime()) as T
@@ -59,8 +71,11 @@ export function deepClone<T>(obj: T): T {
 }
 
 /**
- * Deep merge objects
+ * Purpose: Deep merge objects
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function deepMerge<T extends Record<string, unknown>>(
   target: T,
   ...sources: Partial<T>[]

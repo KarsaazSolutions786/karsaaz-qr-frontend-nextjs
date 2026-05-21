@@ -33,7 +33,14 @@ type RawDomain = Record<string, unknown> & {
   updated_at?: unknown; updatedAt?: unknown
 }
 
-/** Map backend snake_case domain response to frontend camelCase Domain type */
+/**
+ * Purpose: * Map backend snake_case domain response to frontend camelCase Domain type 
+ * Owner/Author: Syed Ashhad
+ * Created: March 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
+
 function transformDomain(raw: RawDomain): Domain {
   return {
     id: raw.id as Domain['id'],

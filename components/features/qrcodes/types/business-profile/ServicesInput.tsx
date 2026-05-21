@@ -10,21 +10,41 @@ interface ServicesInputProps {
   onChange: (value: Service[]) => void;
 }
 
+/**
+ * Purpose: Executes ServicesInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ServicesInput({ value, onChange }: ServicesInputProps) {
   const { t } = useTranslation();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  /**
+   * Purpose: Executes addService functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addService = () => {
     const newService = createService(value.length);
     onChange([...value, newService]);
     setEditingId(newService.id);
   };
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeService = (id: string) => {
     onChange(value.filter((s) => s.id !== id));
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateService = (id: string, updates: Partial<Service>) => {
     onChange(
       value.map((service) =>
@@ -33,10 +53,20 @@ export function ServicesInput({ value, onChange }: ServicesInputProps) {
     );
   };
 
+  /**
+   * Purpose: Executes handleDragStart functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
   };
 
+  /**
+   * Purpose: Executes handleDragOver functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index) return;
@@ -57,6 +87,11 @@ export function ServicesInput({ value, onChange }: ServicesInputProps) {
     setDraggedIndex(index);
   };
 
+  /**
+   * Purpose: Executes handleDragEnd functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragEnd = () => {
     setDraggedIndex(null);
   };

@@ -70,6 +70,11 @@ const TYPE_CONFIG = {
   },
 }
 
+/**
+ * Purpose: Executes PayPalPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function PayPalPreview({ data }: PayPalPreviewProps) {
   const { t } = useTranslation()
   const [isProcessing, setIsProcessing] = useState(false)
@@ -87,10 +92,20 @@ export default function PayPalPreview({ data }: PayPalPreviewProps) {
   const taxAmount = subtotal * (taxRate / 100)
   const total = subtotal + shippingCost + taxAmount
 
+  /**
+   * Purpose: Executes formatAmount functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const formatAmount = (amount: number) => {
     return `${currencySymbol}${amount.toFixed(2)}`
   }
 
+  /**
+   * Purpose: Executes buildPayPalUrl functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const buildPayPalUrl = () => {
     const params = new URLSearchParams()
     params.append('cmd', data.type)
@@ -106,6 +121,11 @@ export default function PayPalPreview({ data }: PayPalPreviewProps) {
     return `https://www.paypal.com/cgi-bin/webscr?${params.toString()}`
   }
 
+  /**
+   * Purpose: Executes handlePayPalClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handlePayPalClick = () => {
     if (subtotal > 0) {
       setShowConfirm(true)
@@ -114,6 +134,11 @@ export default function PayPalPreview({ data }: PayPalPreviewProps) {
     }
   }
 
+  /**
+   * Purpose: Executes proceedToPayPal functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const proceedToPayPal = () => {
     setIsProcessing(true)
     const url = buildPayPalUrl()

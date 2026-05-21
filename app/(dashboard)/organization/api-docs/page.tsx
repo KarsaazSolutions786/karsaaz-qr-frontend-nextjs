@@ -36,6 +36,11 @@ const METHOD_COLORS: Record<HttpMethod, string> = {
   DELETE: 'bg-red-100 text-red-700',
 }
 
+/**
+ * Purpose: Executes MethodBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function MethodBadge({ method }: { method: HttpMethod }) {
   return (
     <span className={`rounded px-2 py-0.5 text-xs font-bold font-mono ${METHOD_COLORS[method]}`}>
@@ -46,8 +51,18 @@ function MethodBadge({ method }: { method: HttpMethod }) {
 
 // ─── Copy button ──────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes CopyButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
+  /**
+   * Purpose: Executes copy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copy = () => {
     navigator.clipboard.writeText(text)
     setCopied(true)
@@ -62,6 +77,11 @@ function CopyButton({ text }: { text: string }) {
 
 // ─── Code block ───────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes CodeBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function CodeBlock({ code, lang = 'json' }: { code: string; lang?: string }) {
   return (
     <div className="relative">
@@ -78,6 +98,11 @@ function CodeBlock({ code, lang = 'json' }: { code: string; lang?: string }) {
 
 // ─── Single endpoint card ─────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes EndpointCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
   const [open, setOpen] = useState(false)
 
@@ -194,6 +219,11 @@ function EndpointCard({ endpoint }: { endpoint: Endpoint }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes ApiDocsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function ApiDocsPage() {
   const [activeTab, setActiveTab] = useState<'docs' | 'playground'>('docs')
 

@@ -13,6 +13,13 @@ interface LocationBlockProps {
   isDragging?: boolean;
 }
 
+/**
+ * Purpose: Executes LocationBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const LocationBlock = ({
   block,
   onEdit,

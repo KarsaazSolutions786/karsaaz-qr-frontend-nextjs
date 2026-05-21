@@ -26,6 +26,13 @@ import { GoogleLoginButton } from './GoogleLoginButton'
 
 type Step = 'email' | 'otp' | 'password' | '2fa'
 
+/**
+ * Purpose: Executes EmailOtpLoginForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: April 2026
+ */
 export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLogin?: () => void }) {
   const { t } = useTranslation()
 
@@ -102,6 +109,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }, [twoFactorCode, step])
 
   // ── Helpers ──
+  /**
+   * Purpose: Executes extractError functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function extractError(error: unknown, fallback: string): string {
     const err = error as {
       response?: {
@@ -127,6 +139,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
     twoFactorVerify.isPending
 
   // ── Step 1: Email submit → check preference → init OTP or go to password ──
+  /**
+   * Purpose: Executes handleEmailSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleEmailSubmit(e?: React.FormEvent) {
     e?.preventDefault()
     setErrorMessage('')
@@ -166,6 +183,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Step 2a: Verify OTP ──
+  /**
+   * Purpose: Executes handleVerifyOtp functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleVerifyOtp() {
     if (!otp || otp.length !== 6) {
       setErrorMessage(t('Please enter the 6-digit verification code'))
@@ -184,6 +206,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Resend OTP ──
+  /**
+   * Purpose: Executes handleResendOtp functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleResendOtp() {
     if (resendCountdown > 0) return
     setErrorMessage('')
@@ -203,6 +230,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Step 2b: Password fallback (for users who prefer traditional) ──
+  /**
+   * Purpose: Executes handlePasswordSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handlePasswordSubmit(e?: React.FormEvent) {
     e?.preventDefault()
     if (!password) {
@@ -229,6 +261,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Step 3: 2FA TOTP verification ──
+  /**
+   * Purpose: Executes handle2faSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   async function handle2faSubmit(e?: React.FormEvent) {
     e?.preventDefault()
     if (!twoFactorCode || twoFactorCode.length < 6) {
@@ -249,6 +286,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Go back to email step (matches original goBackToEmail) ──
+  /**
+   * Purpose: Executes goBackToEmail functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function goBackToEmail() {
     setStep('email')
     setOtp('')
@@ -259,6 +301,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Step indicator (matches original exactly: two circles with connecting line) ──
+  /**
+   * Purpose: Executes renderStepIndicator functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function renderStepIndicator() {
     const isSecondStep = step === 'otp' || step === 'password'
     const is2faStep = step === '2fa'
@@ -305,6 +352,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Heading text (matches original getHeadingText) ──
+  /**
+   * Purpose: Retrieves headingtext.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function getHeadingText(): string {
     switch (step) {
       case 'otp':
@@ -319,6 +371,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Email step (matches original renderEmailStep) ──
+  /**
+   * Purpose: Executes renderEmailStep functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function renderEmailStep() {
     if (step !== 'email') return null
     return (
@@ -358,6 +415,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── OTP step (matches original renderOtpStep) ──
+  /**
+   * Purpose: Executes renderOtpStep functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function renderOtpStep() {
     if (step !== 'otp') return null
     return (
@@ -433,6 +495,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Password fallback step (matches original renderPasswordStep) ──
+  /**
+   * Purpose: Executes renderPasswordStep functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function renderPasswordStep() {
     if (step !== 'password') return null
     return (
@@ -503,6 +570,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── 2FA TOTP verification step ──
+  /**
+   * Purpose: Executes render2faStep functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   function render2faStep() {
     if (step !== '2fa') return null
     return (
@@ -570,6 +642,11 @@ export function EmailOtpLoginForm({ onSwitchToAdminLogin }: { onSwitchToAdminLog
   }
 
   // ── Error display ──
+  /**
+   * Purpose: Executes renderError functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function renderError() {
     if (!errorMessage) return null
     return (

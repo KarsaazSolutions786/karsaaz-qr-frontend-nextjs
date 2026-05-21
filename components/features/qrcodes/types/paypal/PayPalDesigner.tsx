@@ -26,12 +26,27 @@ const tabs: DesignerTab[] = [
   { id: 'payment', label: 'Payment', icon: '💳' },
 ]
 
+/**
+ * Purpose: Executes PayPalDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function PayPalDesigner({ design, onChange }: PayPalDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const updateDesign = (updates: Partial<PayPalDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderPaymentContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const renderPaymentContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Payment Page Settings')}</h4>

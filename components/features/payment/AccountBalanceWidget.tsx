@@ -6,11 +6,11 @@ import { useAccountCredit } from '@/lib/hooks/useAccountCredit'
 import { useTranslation } from '@/lib/i18n'
 
 /**
- * Compact widget showing the user's current credit balance.
- * Displayed in the dashboard header when account-credit billing mode is active.
- * The balance is derived from the user object (populated by GET /api/myself)
- * so no additional API call is needed.
+ * Purpose: Compact widget showing the user's current credit balance. Displayed in the dashboard header when account-credit billing mode is active. The balance is derived from the user object (populated by GET /api/myself) so no additional API call is needed.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function AccountBalanceWidget() {
   const { balance, isAccountCreditMode } = useAccountCredit()
   const { t } = useTranslation()

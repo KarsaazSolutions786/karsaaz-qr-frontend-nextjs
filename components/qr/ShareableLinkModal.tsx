@@ -11,6 +11,11 @@ export interface ShareableLinkModalProps {
   onClose: () => void
 }
 
+/**
+ * Purpose: Executes ShareableLinkModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ShareableLinkModal({
   slug,
   isOpen,
@@ -24,6 +29,11 @@ export function ShareableLinkModal({
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
   const previewUrl = `${baseUrl}/s/${slug}`
 
+  /**
+   * Purpose: Executes handleCopy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(previewUrl)

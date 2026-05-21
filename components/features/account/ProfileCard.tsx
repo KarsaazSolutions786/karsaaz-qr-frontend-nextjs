@@ -9,6 +9,11 @@ interface ProfileCardProps {
   onResetPassword: () => void
 }
 
+/**
+ * Purpose: Executes formatMobileNumber functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatMobileNumber(mobileNumber: any): string {
   if (!mobileNumber || !mobileNumber.mobile_number) return ''
   const codes: Record<string, string> = {
@@ -19,6 +24,11 @@ function formatMobileNumber(mobileNumber: any): string {
   return `+${callingCode}${mobileNumber.mobile_number}`
 }
 
+/**
+ * Purpose: Executes ProfileCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ProfileCard({ user, onEditProfile, onResetPassword }: ProfileCardProps) {
   const { t } = useTranslation()
   const profileImageUrl = (user as any).profile_image_url || null

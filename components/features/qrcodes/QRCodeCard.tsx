@@ -50,6 +50,11 @@ export const QRCodeCard = memo(function QRCodeCard({ qrcode, onAction }: QRCodeC
 
   // Close menu on outside click
   useEffect(() => {
+    /**
+     * Purpose: Executes handleClickOutside functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     function handleClickOutside(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMenuOpen(false)
@@ -68,6 +73,11 @@ export const QRCodeCard = memo(function QRCodeCard({ qrcode, onAction }: QRCodeC
     dot: string
   }
 
+  /**
+   * Purpose: Executes handleAction functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleAction = (action: string) => {
     setMenuOpen(false)
     onAction?.(action, qrcode.id)

@@ -6,6 +6,11 @@ import type { Plan } from '@/types/entities/subscription'
 import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes PricingPlans functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PricingPlans({ billingMode }: { billingMode?: string }) {
   const { t } = useTranslation()
   const { data: plansData, isLoading, error } = usePlans()

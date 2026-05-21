@@ -22,6 +22,11 @@ interface QRPreviewImageProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes QRPreviewImage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRPreviewImage({
   svgUrl,
   fallbackUrl,
@@ -65,6 +70,11 @@ export function QRPreviewImage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [svgUrl])
 
+  /**
+   * Purpose: Executes fetchSvg functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function fetchSvg(url: string) {
     setLoading(true)
     setError(false)

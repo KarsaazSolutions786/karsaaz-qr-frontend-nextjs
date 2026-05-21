@@ -40,6 +40,11 @@ const SearchableSelect = React.forwardRef<HTMLDivElement, SearchableSelectProps>
     }, [filtered.length])
 
     React.useEffect(() => {
+      /**
+       * Purpose: Executes handleClickOutside functionality.
+       * Owner/Author: Syed Ashhad
+       * Created/Updated: February 2026
+       */
       const handleClickOutside = (e: MouseEvent) => {
         if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
           setOpen(false)

@@ -10,11 +10,21 @@ interface CopyableDataBlockProps {
   onUpdate?: (data: CopyableDataBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes CopyableDataBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CopyableDataBlock({ block, isEditing, onUpdate }: CopyableDataBlockProps) {
   const { t } = useTranslation();
   const { label, value } = block.data
   const [copied, setCopied] = useState(false)
 
+  /**
+   * Purpose: Executes handleCopy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(value)

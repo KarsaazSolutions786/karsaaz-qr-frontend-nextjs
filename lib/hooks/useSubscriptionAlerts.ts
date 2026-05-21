@@ -53,16 +53,31 @@ interface SubscriptionAlertsReturn {
   hasWarning: boolean
 }
 
+/**
+ * Purpose: Checks if dismissed.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function isDismissed(alertType: AlertType): boolean {
   if (typeof window === 'undefined') return false
   return sessionStorage.getItem(`${DISMISS_KEY_PREFIX}${alertType}`) === 'true'
 }
 
+/**
+ * Purpose: Sets dismissed.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function setDismissed(alertType: AlertType): void {
   if (typeof window === 'undefined') return
   sessionStorage.setItem(`${DISMISS_KEY_PREFIX}${alertType}`, 'true')
 }
 
+/**
+ * Purpose: Executes useSubscriptionAlerts functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function useSubscriptionAlerts(): SubscriptionAlertsReturn {
   const { status, remainingDays, isOnTrial, isLoading } = useSubscription()
 

@@ -19,6 +19,11 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes formatPrice functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function formatPrice(price: number, frequency: string): string {
   if (price === 0) return 'Free'
   const formatted = new Intl.NumberFormat('en-US', {
@@ -40,6 +45,11 @@ function formatPrice(price: number, frequency: string): string {
   return `${formatted}${suffix}`
 }
 
+/**
+ * Purpose: Retrieves plantier.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getPlanTier(plan: SubscriptionPlan): 'free' | 'starter' | 'pro' | 'enterprise' {
   if (plan.isTrial || plan.price === 0) return 'free'
   const name = plan.name.toLowerCase()
@@ -48,6 +58,11 @@ function getPlanTier(plan: SubscriptionPlan): 'free' | 'starter' | 'pro' | 'ente
   return 'starter'
 }
 
+/**
+ * Purpose: Retrieves tiercolor.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getTierColor(tier: string): string {
   switch (tier) {
     case 'free':
@@ -63,6 +78,11 @@ function getTierColor(tier: string): string {
   }
 }
 
+/**
+ * Purpose: Retrieves tierbadgecolor.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getTierBadgeColor(tier: string): string {
   switch (tier) {
     case 'free':
@@ -78,6 +98,11 @@ function getTierBadgeColor(tier: string): string {
   }
 }
 
+/**
+ * Purpose: Retrieves buttonstyle.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getButtonStyle(tier: string, isCurrent: boolean): string {
   if (isCurrent) {
     return 'border border-gray-300 bg-white text-gray-700 cursor-default'
@@ -96,6 +121,11 @@ function getButtonStyle(tier: string, isCurrent: boolean): string {
 
 // ── Plan Card ────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes PlanCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function PlanCard({
   plan,
   isCurrentPlan,
@@ -267,6 +297,11 @@ function PlanCard({
 
 // ── Comparison Table ─────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes ComparisonTable functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function ComparisonTable({ plans }: { plans: SubscriptionPlan[] }) {
   const { t } = useTranslation()
 
@@ -371,6 +406,11 @@ function ComparisonTable({ plans }: { plans: SubscriptionPlan[] }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes AccountUpgradePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function AccountUpgradePage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -392,6 +432,11 @@ export default function AccountUpgradePage() {
       })
   }, [plansData])
 
+  /**
+   * Purpose: Executes handleSelectPlan functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSelectPlan = (plan: SubscriptionPlan) => {
     // Navigate to checkout with plan ID
     router.push(`/checkout?plan_id=${plan.id}`)

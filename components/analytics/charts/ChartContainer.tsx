@@ -12,6 +12,11 @@ interface ChartContainerProps {
   actions?: React.ReactNode
 }
 
+/**
+ * Purpose: Executes ChartContainer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ChartContainer({
   title,
   description,

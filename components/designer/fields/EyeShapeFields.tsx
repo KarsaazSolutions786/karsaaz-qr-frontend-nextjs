@@ -21,6 +21,11 @@ interface EyeShapeFieldsProps {
   onChange: (settings: EyeSettings) => void;
 }
 
+/**
+ * Purpose: Executes EyeShapeFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EyeShapeFields({
   eyeSettings,
   onChange,
@@ -28,6 +33,11 @@ export default function EyeShapeFields({
   const { t } = useTranslation();
   const [localSettings, setLocalSettings] = useState<EyeSettings>(eyeSettings);
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateSettings = (updates: Partial<EyeSettings>) => {
     const newSettings = { ...localSettings, ...updates };
     setLocalSettings(newSettings);
@@ -72,6 +82,11 @@ export default function EyeShapeFields({
     },
   ];
 
+  /**
+   * Purpose: Executes renderEyePreview functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderEyePreview = (
     outerShape: EyeShape,
     innerShape: EyeShape,

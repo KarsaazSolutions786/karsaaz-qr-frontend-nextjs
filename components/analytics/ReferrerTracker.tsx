@@ -26,6 +26,11 @@ export interface ReferrerTrackerProps {
   unknownScans?: number;
 }
 
+/**
+ * Purpose: Executes ReferrerTracker functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ReferrerTracker({
   referrers,
   totalScans,
@@ -256,8 +261,11 @@ export function ReferrerTracker({
 }
 
 /**
- * Compact Referrer Stats
+ * Purpose: Compact Referrer Stats
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ReferrerStatsCompact({
   topReferrers,
   directScans,

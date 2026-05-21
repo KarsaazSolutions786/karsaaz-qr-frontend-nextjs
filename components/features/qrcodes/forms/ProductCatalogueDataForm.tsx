@@ -31,6 +31,13 @@ interface CategoryEntry {
 
 
 
+/**
+ * Purpose: Executes ProductCatalogueDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export function ProductCatalogueDataForm({
   defaultValues,
   onChange,
@@ -50,8 +57,22 @@ export function ProductCatalogueDataForm({
   )
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
 
+  /**
+   * Purpose: Executes generateId functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const generateId = () => Math.random().toString(36).substring(2, 9)
 
+  /**
+   * Purpose: Executes toggleCategory functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const toggleCategory = (id: string) => {
     setExpandedCategories(prev => {
       const next = new Set(prev)
@@ -64,6 +85,13 @@ export function ProductCatalogueDataForm({
     })
   }
 
+  /**
+   * Purpose: Executes addCategory functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const addCategory = () => {
     const newCat: CategoryEntry = {
       id: generateId(),
@@ -76,12 +104,26 @@ export function ProductCatalogueDataForm({
     onChange?.({ ...(defaultValues as any), categories: updated })
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const removeCategory = (id: string) => {
     const updated = categories.filter(c => c.id !== id)
     setCategories(updated)
     onChange?.({ ...(defaultValues as any), categories: updated })
   }
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const updateCategory = (id: string, field: keyof CategoryEntry, value: string) => {
     const updated = categories.map(c => (c.id === id ? { ...c, [field]: value } : c))
     setCategories(updated)

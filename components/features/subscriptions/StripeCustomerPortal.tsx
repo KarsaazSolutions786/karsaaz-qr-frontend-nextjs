@@ -11,6 +11,11 @@ import {
 import { CreditCard, ExternalLink, Trash2, Star } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes StripeCustomerPortal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StripeCustomerPortal() {
   const { t } = useTranslation()
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
@@ -22,6 +27,11 @@ export function StripeCustomerPortal() {
     loadPaymentMethods()
   }, [])
 
+  /**
+   * Purpose: Executes loadPaymentMethods functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function loadPaymentMethods() {
     try {
       const { data } = await getPaymentMethods()
@@ -33,6 +43,11 @@ export function StripeCustomerPortal() {
     }
   }
 
+  /**
+   * Purpose: Executes handleOpenPortal functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleOpenPortal() {
     setPortalLoading(true)
     try {
@@ -45,6 +60,11 @@ export function StripeCustomerPortal() {
     }
   }
 
+  /**
+   * Purpose: Executes handleSetDefault functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleSetDefault(id: string) {
     setActionLoading(id)
     try {
@@ -57,6 +77,11 @@ export function StripeCustomerPortal() {
     }
   }
 
+  /**
+   * Purpose: Executes handleRemove functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleRemove(id: string) {
     if (!confirm(t('Remove this payment method?'))) return
     setActionLoading(id)

@@ -15,11 +15,21 @@ interface FormPreviewProps {
   form: LeadForm;
 }
 
+/**
+ * Purpose: Executes FormPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function FormPreview({ form }: FormPreviewProps) {
   const { t } = useTranslation();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
+  /**
+   * Purpose: Executes handleSubmitSuccess functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmitSuccess = () => {
     setIsSubmitted(true);
     

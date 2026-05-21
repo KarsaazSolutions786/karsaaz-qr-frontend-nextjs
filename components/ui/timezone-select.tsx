@@ -5,6 +5,11 @@ import { cn } from '@/lib/utils'
 import { useTranslation } from '@/lib/i18n'
 import { ChevronDown, Clock, Search } from 'lucide-react'
 
+/**
+ * Purpose: Retrieves timezones.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getTimezones(): string[] {
   try {
     return Intl.supportedValuesOf('timeZone')
@@ -24,6 +29,11 @@ function getTimezones(): string[] {
   }
 }
 
+/**
+ * Purpose: Retrieves utcoffset.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getUtcOffset(tz: string): string {
   try {
     const now = new Date()
@@ -35,6 +45,11 @@ function getUtcOffset(tz: string): string {
   }
 }
 
+/**
+ * Purpose: Retrieves region.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getRegion(tz: string): string {
   const slash = tz.indexOf('/')
   if (slash === -1) return 'Other'
@@ -74,6 +89,13 @@ interface TimezoneSelectProps {
   placeholder?: string
 }
 
+/**
+ * Purpose: Executes TimezoneSelect functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export function TimezoneSelect({
   value,
   onChange,
@@ -144,6 +166,11 @@ export function TimezoneSelect({
 
   // Close on outside click
   React.useEffect(() => {
+    /**
+     * Purpose: Executes handler functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
@@ -166,6 +193,11 @@ export function TimezoneSelect({
     [entries, value]
   )
 
+  /**
+   * Purpose: Executes renderItem functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const renderItem = (entry: TimezoneEntry) => (
     <button
       key={entry.tz}

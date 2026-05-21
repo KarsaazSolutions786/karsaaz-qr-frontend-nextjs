@@ -60,6 +60,11 @@ export const DPI_PRESETS: DPIPreset[] = [
   },
 ];
 
+/**
+ * Purpose: Executes DPISettings functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DPISettings({
   value,
   onChange,
@@ -72,11 +77,21 @@ export function DPISettings({
   const [customValue, setCustomValue] = useState(value);
   const [showCustomInput, setShowCustomInput] = useState(!DPI_PRESETS.some(p => p.value === value));
   
+  /**
+   * Purpose: Executes handlePresetClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePresetClick = (presetValue: number) => {
     onChange(presetValue);
     setShowCustomInput(false);
   };
   
+  /**
+   * Purpose: Executes handleCustomChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCustomChange = (newValue: string) => {
     const num = parseInt(newValue, 10);
     if (!isNaN(num)) {
@@ -237,8 +252,11 @@ export function DPISettings({
 }
 
 /**
- * Compact DPI selector (dropdown)
+ * Purpose: Compact DPI selector (dropdown)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function DPISettingsCompact({
   value,
   onChange,
@@ -278,8 +296,11 @@ export function DPISettingsCompact({
 }
 
 /**
- * Get DPI use case description
+ * Purpose: Get DPI use case description
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getDPIUseCase(dpi: number): string {
   if (dpi <= 72) return 'Screen display';
   if (dpi <= 150) return 'Draft printing';
@@ -289,8 +310,11 @@ function getDPIUseCase(dpi: number): string {
 }
 
 /**
- * Get DPI print quality rating
+ * Purpose: Get DPI print quality rating
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getDPIPrintQuality(dpi: number): string {
   if (dpi <= 72) return 'Not suitable for print';
   if (dpi <= 150) return 'Basic';
@@ -300,8 +324,11 @@ function getDPIPrintQuality(dpi: number): string {
 }
 
 /**
- * Calculate pixel dimensions for physical size at given DPI
+ * Purpose: Calculate pixel dimensions for physical size at given DPI
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculatePixelDimensions(
   widthInches: number,
   heightInches: number,
@@ -314,8 +341,11 @@ export function calculatePixelDimensions(
 }
 
 /**
- * Calculate physical size from pixel dimensions at given DPI
+ * Purpose: Calculate physical size from pixel dimensions at given DPI
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculatePhysicalSize(
   widthPixels: number,
   heightPixels: number,
@@ -328,8 +358,11 @@ export function calculatePhysicalSize(
 }
 
 /**
- * Get recommended DPI for use case
+ * Purpose: Get recommended DPI for use case
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getRecommendedDPI(useCase: 'screen' | 'draft' | 'print' | 'premium'): number {
   switch (useCase) {
     case 'screen':

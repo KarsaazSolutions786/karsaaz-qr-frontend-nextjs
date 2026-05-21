@@ -175,8 +175,11 @@ const FIELD_SPECIFIC_MESSAGES: Record<string, Record<string, string>> = {
 }
 
 /**
- * Get user-friendly error message from error code
+ * Purpose: Get user-friendly error message from error code
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getErrorMessage(errorCode: string | null | undefined): string {
   if (!errorCode) {
     return ERROR_MESSAGES.UNKNOWN_ERROR ?? 'An unexpected error occurred.'
@@ -187,16 +190,22 @@ export function getErrorMessage(errorCode: string | null | undefined): string {
 }
 
 /**
- * Capitalize first letter of string
+ * Purpose: Capitalize first letter of string
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function capitalizeFirst(str: string): string {
   if (!str) return ''
   return str.charAt(0).toUpperCase() + str.slice(1).replace(/_/g, ' ')
 }
 
 /**
- * Get user-friendly validation error message
+ * Purpose: Get user-friendly validation error message
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getValidationMessage(field: string, rule: string, originalMessage = ''): string {
   // Check for field-specific messages first
   if (FIELD_SPECIFIC_MESSAGES[field]?.[rule]) {
@@ -228,8 +237,11 @@ export function getValidationMessage(field: string, rule: string, originalMessag
 }
 
 /**
- * Extract validation rule from error message
+ * Purpose: Extract validation rule from error message
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function extractRuleFromMessage(message: string): string {
   const lowerMessage = message.toLowerCase()
 
@@ -247,8 +259,11 @@ function extractRuleFromMessage(message: string): string {
 }
 
 /**
- * Process validation errors and return formatted message
+ * Purpose: Process validation errors and return formatted message
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function processValidationErrors(
   validationErrors: Record<string, string | string[]> | null | undefined
 ): string {
@@ -272,8 +287,11 @@ export function processValidationErrors(
 }
 
 /**
- * Translate backend message to user-friendly message
+ * Purpose: Translate backend message to user-friendly message
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function translateMessage(message: string | null | undefined): string {
   if (!message) return ERROR_MESSAGES.UNKNOWN_ERROR
 
@@ -310,8 +328,11 @@ export function translateMessage(message: string | null | undefined): string {
 }
 
 /**
- * Get HTTP status code message
+ * Purpose: Get HTTP status code message
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getHttpStatusMessage(status: number): string {
   const statusMessages: Record<number, string> = {
     400: ERROR_MESSAGES.BAD_REQUEST,
@@ -338,8 +359,11 @@ interface ApiError {
 }
 
 /**
- * Process API error response and return user-friendly message
+ * Purpose: Process API error response and return user-friendly message
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function processApiError(error: ApiError): string {
   // Handle validation errors
   if (error.validationErrors) {
@@ -365,8 +389,11 @@ export function processApiError(error: ApiError): string {
 }
 
 /**
- * Check if error is a network error
+ * Purpose: Check if error is a network error
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isNetworkError(error: Error | ApiError): boolean {
   const err = error as Error
   return (
@@ -378,8 +405,11 @@ export function isNetworkError(error: Error | ApiError): boolean {
 }
 
 /**
- * Check if error is a timeout error
+ * Purpose: Check if error is a timeout error
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isTimeoutError(error: Error | ApiError): boolean {
   const err = error as Error & { code?: string }
   return (
@@ -394,8 +424,11 @@ export function isTimeoutError(error: Error | ApiError): boolean {
 }
 
 /**
- * Check if error is a connection error
+ * Purpose: Check if error is a connection error
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isConnectionError(error: Error | ApiError): boolean {
   const err = error as Error
   return (

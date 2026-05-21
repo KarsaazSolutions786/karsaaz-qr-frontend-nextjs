@@ -88,6 +88,11 @@ const STEP_ORDER: WizardStep[] = ['type', 'content', 'design', 'sticker', 'previ
 // Uses DEFAULT_DESIGNER_CONFIG from types/entities/designer.ts
 
 // Generate session ID
+/**
+ * Purpose: Executes generateSessionId functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generateSessionId(): string {
   return `wizard_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
@@ -331,8 +336,11 @@ if (typeof window !== 'undefined' && typeof BroadcastChannel !== 'undefined') {
 }
 
 /**
- * Check if there's persisted wizard state
+ * Purpose: Check if there's persisted wizard state
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hasPersistedWizardState(): boolean {
   try {
     const stored = localStorage.getItem('qr-wizard-storage');
@@ -346,8 +354,11 @@ export function hasPersistedWizardState(): boolean {
 }
 
 /**
- * Get last modification time of persisted state
+ * Purpose: Get last modification time of persisted state
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getPersistedStateAge(): number | null {
   try {
     const stored = localStorage.getItem('qr-wizard-storage');
@@ -365,8 +376,11 @@ export function getPersistedStateAge(): number | null {
 }
 
 /**
- * Check if persisted state is stale (older than 24 hours)
+ * Purpose: Check if persisted state is stale (older than 24 hours)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isPersistedStateStale(): boolean {
   const age = getPersistedStateAge();
   if (age === null) return false;

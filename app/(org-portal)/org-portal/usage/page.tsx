@@ -29,6 +29,11 @@ interface UsageData {
 
 const PERIODS = ['7d', '30d', '90d'] as const
 
+/**
+ * Purpose: Executes OrgPortalUsagePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrgPortalUsagePage() {
   const [period, setPeriod] = useState<'7d' | '30d' | '90d'>('30d')
   const [data, setData] = useState<UsageData | null>(null)

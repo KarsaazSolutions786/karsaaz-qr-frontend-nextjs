@@ -22,6 +22,11 @@ interface LineChartProps {
   height?: number
 }
 
+/**
+ * Purpose: Executes LineChart functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function LineChart({
   data,
   dataKey = 'count',

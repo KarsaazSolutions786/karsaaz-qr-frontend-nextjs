@@ -9,6 +9,11 @@ interface ImageBlockProps {
   onUpdate?: (data: ImageBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes ImageBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ImageBlock({ block, isEditing, onUpdate }: ImageBlockProps) {
   const { url, alt = '', link, caption } = block.data
   const { t } = useTranslation()

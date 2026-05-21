@@ -9,15 +9,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Mollie payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - API Key
- * - Partner ID
- * - Profile ID
- *
- * No webhook registration (P1: shouldRegisterWebhook = false).
+ * Purpose: Mollie payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - API Key - Partner ID - Profile ID No webhook registration (P1: shouldRegisterWebhook = false).
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function MollieForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

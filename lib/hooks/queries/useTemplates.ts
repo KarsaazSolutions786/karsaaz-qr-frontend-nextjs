@@ -39,8 +39,11 @@ export const templatesKeys = {
 }
 
 /**
- * Get all templates with optional filters
+ * Purpose: Get all templates with optional filters
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useTemplates(
   filters?: TemplateFilters,
   options?: Omit<UseQueryOptions<QRCodeTemplate[]>, 'queryKey' | 'queryFn'>
@@ -53,8 +56,11 @@ export function useTemplates(
 }
 
 /**
- * Get a single template by ID
+ * Purpose: Get a single template by ID
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useTemplate(
   id: number,
   options?: Omit<UseQueryOptions<QRCodeTemplate>, 'queryKey' | 'queryFn'>
@@ -68,8 +74,11 @@ export function useTemplate(
 }
 
 /**
- * Get template categories
+ * Purpose: Get template categories
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useTemplateCategories(
   options?: Omit<UseQueryOptions<TemplateCategory[]>, 'queryKey' | 'queryFn'>
 ) {
@@ -82,8 +91,11 @@ export function useTemplateCategories(
 }
 
 /**
- * Create a new template
+ * Purpose: Create a new template
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useCreateTemplate(
   options?: UseMutationOptions<QRCodeTemplate, Error, CreateTemplateInput>
 ) {
@@ -99,8 +111,11 @@ export function useCreateTemplate(
 }
 
 /**
- * Update an existing template
+ * Purpose: Update an existing template
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useUpdateTemplate(
   options?: UseMutationOptions<QRCodeTemplate, Error, UpdateTemplateInput>
 ) {
@@ -117,8 +132,11 @@ export function useUpdateTemplate(
 }
 
 /**
- * Delete a template
+ * Purpose: Delete a template
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useDeleteTemplate(
   options?: UseMutationOptions<void, Error, number>
 ) {
@@ -134,8 +152,11 @@ export function useDeleteTemplate(
 }
 
 /**
- * Use a template (get pre-filled data for QR code creation)
+ * Purpose: Use a template (get pre-filled data for QR code creation)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useUseTemplate(
   options?: UseMutationOptions<Partial<any>, Error, UseTemplateInput>
 ) {
@@ -148,8 +169,11 @@ export function useUseTemplate(
 // ─── Template Category Hooks ──────────────────────────────────────────────────
 
 /**
- * Get a single template category by ID
+ * Purpose: Get a single template category by ID
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useTemplateCategory(
   id: number | string | null,
   options?: Omit<UseQueryOptions<TemplateCategory>, 'queryKey' | 'queryFn'>
@@ -163,8 +187,11 @@ export function useTemplateCategory(
 }
 
 /**
- * Create a new template category
+ * Purpose: Create a new template category
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useCreateTemplateCategory(
   options?: UseMutationOptions<TemplateCategory, Error, { name: string; text_color?: string; sort_order?: number }>
 ) {
@@ -180,8 +207,11 @@ export function useCreateTemplateCategory(
 }
 
 /**
- * Update an existing template category
+ * Purpose: Update an existing template category
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useUpdateTemplateCategory(
   options?: UseMutationOptions<TemplateCategory, Error, { id: number | string; data: { name?: string; text_color?: string; sort_order?: number } }>
 ) {
@@ -198,8 +228,11 @@ export function useUpdateTemplateCategory(
 }
 
 /**
- * Delete a template category
+ * Purpose: Delete a template category
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useDeleteTemplateCategory(
   options?: UseMutationOptions<void, Error, number | string>
 ) {

@@ -24,6 +24,11 @@ const FEATURE_LABEL_KEYS: Record<FeatureName, string> = {
   custom_domains: 'Custom Domains',
 };
 
+/**
+ * Purpose: Executes UpgradePrompt functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function UpgradePrompt({
   feature,
   currentPlan,
@@ -42,11 +47,21 @@ export default function UpgradePrompt({
   const nextPlanFeatures = getPlanFeatures(nextPlan);
   const featureLabel = t(FEATURE_LABEL_KEYS[feature] || feature);
 
+  /**
+   * Purpose: Executes handleClose functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClose = () => {
     setIsOpen(false);
     onClose?.();
   };
 
+  /**
+   * Purpose: Executes handleUpgrade functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUpgrade = () => {
     onUpgrade?.();
   };

@@ -9,6 +9,11 @@ interface HeaderBannerBlockProps {
   onUpdate?: (data: HeaderBannerBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes HeaderBannerBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function HeaderBannerBlock({ block, isEditing, onUpdate }: HeaderBannerBlockProps) {
   const {
     title,

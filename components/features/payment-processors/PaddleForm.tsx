@@ -11,16 +11,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Paddle (Classic) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (Sandbox / Live)
- * - Vendor ID
- * - Vendor Auth Code
- * - Public Key (textarea)
- *
- * Webhook is NOT auto-registered. Manual URL is displayed.
+ * Purpose: Paddle (Classic) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (Sandbox / Live) - Vendor ID - Vendor Auth Code - Public Key (textarea) Webhook is NOT auto-registered. Manual URL is displayed.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function PaddleForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

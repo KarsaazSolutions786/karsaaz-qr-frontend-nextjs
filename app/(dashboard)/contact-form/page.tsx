@@ -8,6 +8,11 @@ import type { Contact } from '@/types/entities/contact'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes ContactFormPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ContactFormPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -15,12 +20,22 @@ export default function ContactFormPage() {
   const { data, isLoading } = useContacts({ page, search: search || undefined })
   const deleteMutation = useDeleteContact()
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, name: string) => {
     if (confirm(t('Are you sure you want to delete the submission from "{{name}}"?').replace('{{name}}', name))) {
       await deleteMutation.mutateAsync(id)
     }
   }
 
+  /**
+   * Purpose: Executes formatDate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatDate = (dateStr: string) => {
     try {
       return new Date(dateStr).toLocaleDateString('en-US', {
@@ -33,6 +48,11 @@ export default function ContactFormPage() {
     }
   }
 
+  /**
+   * Purpose: Executes truncate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const truncate = (text: string | undefined, maxLen: number) => {
     if (!text) return '\u2014'
     return text.length > maxLen ? text.slice(0, maxLen) + '\u2026' : text

@@ -41,6 +41,11 @@ const CURRENCY_OPTIONS = [
   { value: 'PHP', label: 'PHP - Philippine Peso', symbol: '\u20b1' },
 ]
 
+/**
+ * Purpose: Executes PayPalDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PayPalDataForm({ defaultValues, onChange }: PayPalDataFormProps) {
   const { t } = useTranslation()
   const {

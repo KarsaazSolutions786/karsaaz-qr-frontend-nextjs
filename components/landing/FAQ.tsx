@@ -3,6 +3,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 
+/**
+ * Purpose: Executes FAQ functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(-1); // All closed by default
 
@@ -45,10 +50,20 @@ export default function FAQ() {
     },
   ];
 
+  /**
+   * Purpose: Executes toggleFAQ functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? -1 : index);
   };
 
+  /**
+   * Purpose: Executes PlusIcon functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const PlusIcon = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <path
@@ -60,6 +75,11 @@ export default function FAQ() {
     </svg>
   );
 
+  /**
+   * Purpose: Executes MinusIcon functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const MinusIcon = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <path

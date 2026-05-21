@@ -13,11 +13,11 @@ interface PageEditorProps {
 }
 
 /**
- * T252 + T255: Simple page editor with title, slug, content, and save button.
- *
- * Uses a textarea with HTML preview as a fallback.
- * TODO: Integrate TipTap rich text editor when @tiptap/react is added to dependencies.
+ * Purpose: T252 + T255: Simple page editor with title, slug, content, and save button. Uses a textarea with HTML preview as a fallback. TODO: Integrate TipTap rich text editor when @tiptap/react is added to dependencies.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function PageEditor({ page, onSave }: PageEditorProps) {
   const { t } = useTranslation()
   const [title, setTitle] = useState(page?.title || '')
@@ -29,12 +29,22 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
   const [error, setError] = useState<string | null>(null)
   const [showPreview, setShowPreview] = useState(false)
 
+  /**
+   * Purpose: Executes generateSlug functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const generateSlug = (text: string) =>
     text
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '')
 
+  /**
+   * Purpose: Executes handleTitleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTitleChange = (value: string) => {
     setTitle(value)
     if (!page) {
@@ -42,6 +52,11 @@ export function PageEditor({ page, onSave }: PageEditorProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async () => {
     if (!title.trim() || !content.trim()) {
       setError(t('Title and content are required.'))

@@ -27,6 +27,11 @@ import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
 import { Download, Trash2, ArchiveRestore, Copy } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes ArchivedQRCodesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ArchivedQRCodesPage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -46,6 +51,11 @@ export default function ArchivedQRCodesPage() {
   })
 
   // Persist view mode to localStorage
+  /**
+   * Purpose: Executes handleViewModeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleViewModeChange = (mode: 'grid' | 'list' | 'minimal') => {
     setViewMode(mode)
     if (typeof window !== 'undefined') {
@@ -165,6 +175,11 @@ export default function ArchivedQRCodesPage() {
     [unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode]
   )
 
+  /**
+   * Purpose: Executes handleSearch functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSearch = (query: string) => {
     setSearch(query)
     setPage(1)

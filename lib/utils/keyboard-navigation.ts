@@ -14,9 +14,11 @@ interface KeyNavOptions {
 }
 
 /**
- * Handle keyboard navigation (arrow keys) within a list container.
- * Attach to the container's onKeyDown event.
+ * Purpose: Handle keyboard navigation (arrow keys) within a list container. Attach to the container's onKeyDown event.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function handleKeyboardNav(e: React.KeyboardEvent, options: KeyNavOptions = {}) {
   const {
     direction = 'vertical',
@@ -73,9 +75,11 @@ export function handleKeyboardNav(e: React.KeyboardEvent, options: KeyNavOptions
 }
 
 /**
- * Trap focus within a container element (for modals/dialogs).
- * Returns cleanup function.
+ * Purpose: Trap focus within a container element (for modals/dialogs). Returns cleanup function.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function trapFocus(containerRef: RefObject<HTMLElement | null>) {
   const container = containerRef.current
   if (!container) return () => {}
@@ -83,6 +87,11 @@ export function trapFocus(containerRef: RefObject<HTMLElement | null>) {
   const focusableSelector =
     'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
+  /**
+   * Purpose: Executes handleKeyDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key !== 'Tab') return
 
@@ -106,8 +115,11 @@ export function trapFocus(containerRef: RefObject<HTMLElement | null>) {
 }
 
 /**
- * React hook to trap focus inside a container ref.
+ * Purpose: React hook to trap focus inside a container ref.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useFocusTrap(containerRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
     return trapFocus(containerRef)

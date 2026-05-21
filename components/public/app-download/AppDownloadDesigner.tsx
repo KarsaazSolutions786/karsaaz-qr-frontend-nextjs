@@ -21,6 +21,11 @@ interface AppDownloadDesignerProps {
   category?: string
 }
 
+/**
+ * Purpose: Executes AppDownloadDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AppDownloadDesigner({
   appName,
   description,
@@ -36,6 +41,11 @@ export default function AppDownloadDesigner({
   const { t } = useTranslation()
   const [currentScreenshot, setCurrentScreenshot] = useState(0)
 
+  /**
+   * Purpose: Executes renderStars functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderStars = (r: number) => {
     return Array.from({ length: 5 }).map((_, i) => (
       <Star

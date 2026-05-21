@@ -530,6 +530,11 @@ const PROCESSORS: ProcessorDef[] = [
 
 // ─── Processor Form ────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes ProcessorForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function ProcessorForm({ processor }: { processor: ProcessorDef }) {
   const { t } = useTranslation()
   const CustomForm = PROCESSOR_REGISTRY[processor.slug] ?? null
@@ -557,6 +562,11 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
     if (configs) setValues(configs) // eslint-disable-line react-hooks/set-state-in-effect -- syncing server state to form state
   }, [configs])
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const configs = allKeys.map(key => ({ key, value: values[key] ?? '' }))
@@ -565,6 +575,11 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
     setTimeout(() => setSaved(false), 3000)
   }
 
+  /**
+   * Purpose: Executes handleTestCredentials functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTestCredentials = async () => {
     setTestResult(null)
     try {
@@ -581,6 +596,11 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
     }
   }
 
+  /**
+   * Purpose: Executes handleRegisterWebhook functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRegisterWebhook = async () => {
     try {
       await apiClient.post(`/payment-processors/${processor.slug}/register-webhook`)
@@ -590,6 +610,11 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
     }
   }
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: string, val: string) => setValues(prev => ({ ...prev, [key]: val }))
 
   if (isLoading) {
@@ -793,6 +818,11 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes PaymentProcessorsPageInner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function PaymentProcessorsPageInner() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
@@ -801,6 +831,11 @@ function PaymentProcessorsPageInner() {
   const activeProcessor = (PROCESSORS.find(p => p.id === activeTabId) ??
     PROCESSORS[0]) as ProcessorDef
 
+  /**
+   * Purpose: Executes switchTab functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const switchTab = (id: string) => {
     const params = new URLSearchParams(searchParams.toString())
     params.set('tab-id', id)
@@ -847,6 +882,11 @@ function PaymentProcessorsPageInner() {
   )
 }
 
+/**
+ * Purpose: Executes PaymentProcessorsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PaymentProcessorsPage() {
   return (
     <Suspense

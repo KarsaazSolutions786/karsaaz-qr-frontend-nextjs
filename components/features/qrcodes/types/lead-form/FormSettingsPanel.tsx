@@ -35,6 +35,11 @@ interface FormSettingsPanelProps {
   onChange: (settings: FormSettings) => void
 }
 
+/**
+ * Purpose: Executes FormSettingsPanel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function FormSettingsPanel({ settings, onChange }: FormSettingsPanelProps) {
   const { t } = useTranslation()
   const [newEmail, setNewEmail] = useState('')
@@ -73,6 +78,11 @@ export function FormSettingsPanel({ settings, onChange }: FormSettingsPanelProps
     [settings.emailRecipients, update]
   )
 
+  /**
+   * Purpose: Executes handleEmailKeyDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleEmailKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault()

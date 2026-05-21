@@ -9,6 +9,11 @@ interface AudioBlockProps {
   onUpdate?: (data: AudioBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes AudioBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AudioBlock({ block, isEditing, onUpdate }: AudioBlockProps) {
   const { audioUrl, title, autoplay } = block.data
   const { t } = useTranslation()

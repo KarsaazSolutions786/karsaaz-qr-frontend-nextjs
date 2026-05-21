@@ -25,6 +25,11 @@ const defaultPresets = [
   ['#78350f', '#166534', '#1e3a5f', '#4c1d95', '#831843', '#1f2937'],
 ]
 
+/**
+ * Purpose: Retrieves recentcolors.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getRecentColors(): string[] {
   if (typeof window === 'undefined') return []
   try {
@@ -37,6 +42,11 @@ function getRecentColors(): string[] {
   }
 }
 
+/**
+ * Purpose: Executes addRecentColor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function addRecentColor(color: string): string[] {
   if (typeof window === 'undefined') return []
   try {
@@ -52,6 +62,11 @@ function addRecentColor(color: string): string[] {
   }
 }
 
+/**
+ * Purpose: Checks if lightcolor.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function isLightColor(hex: string): boolean {
   const clean = hex.replace('#', '')
   if (clean.length < 6) return true
@@ -62,6 +77,11 @@ function isLightColor(hex: string): boolean {
   return (r * 299 + g * 587 + b * 114) / 1000 > 186
 }
 
+/**
+ * Purpose: Executes ColorPalette functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ColorPalette({
   value,
   onChange,
@@ -94,6 +114,11 @@ export function ColorPalette({
     [onChange, showRecent]
   )
 
+  /**
+   * Purpose: Executes renderColorButton functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const renderColorButton = (color: string) => {
     const selected = value.toLowerCase() === color.toLowerCase()
     const light = isLightColor(color)

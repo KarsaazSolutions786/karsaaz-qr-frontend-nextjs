@@ -11,6 +11,11 @@ interface ChoicesQuestionProps {
   multiple?: boolean;
 }
 
+/**
+ * Purpose: Executes ChoicesQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ChoicesQuestion({
   value,
   onChange,
@@ -21,6 +26,11 @@ export default function ChoicesQuestion({
   const { t } = useTranslation();
   const selectedValues = Array.isArray(value) ? value : value ? [value] : [];
 
+  /**
+   * Purpose: Executes handleSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSelect = (option: string) => {
     if (multiple) {
       const current = Array.isArray(value) ? value : [];

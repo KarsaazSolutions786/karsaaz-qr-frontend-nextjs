@@ -10,6 +10,11 @@ import Pricing from '@/components/landing/Pricing'
 import ChatbotButton from '@/components/landing/chatbot/ChatbotButton'
 import Chatbot from '@/components/landing/chatbot/Chatbot'
 
+/**
+ * Purpose: Executes HomePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function HomePage() {
   const [activeType, setActiveType] = useState('PDF')
   const [isChatbotOpen, setIsChatbotOpen] = useState(false)

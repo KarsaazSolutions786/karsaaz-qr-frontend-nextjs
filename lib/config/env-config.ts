@@ -22,11 +22,21 @@ interface EnvConfig {
   NODE_ENV: string
 }
 
+/**
+ * Purpose: Executes parseBool functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function parseBool(value: string | undefined, fallback: boolean): boolean {
   if (value === undefined || value === '') return fallback
   return value === 'true' || value === '1'
 }
 
+/**
+ * Purpose: Executes buildEnvConfig functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function buildEnvConfig(): EnvConfig {
   return {
     API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://app.karsaazqr.com',
@@ -41,9 +51,11 @@ function buildEnvConfig(): EnvConfig {
 }
 
 /**
- * Validate that required environment variables are set.
- * Logs warnings in development; can be called at app startup.
+ * Purpose: Validate that required environment variables are set. Logs warnings in development; can be called at app startup.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateEnv(): string[] {
   const missing: string[] = []
 

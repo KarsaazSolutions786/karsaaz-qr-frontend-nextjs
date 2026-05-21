@@ -9,6 +9,11 @@ interface DownloadBlockProps {
   onUpdate?: (data: DownloadBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes DownloadBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DownloadBlock({ block, isEditing, onUpdate }: DownloadBlockProps) {
   const { fileName, fileUrl, fileSize, fileType } = block.data
   const { t } = useTranslation()

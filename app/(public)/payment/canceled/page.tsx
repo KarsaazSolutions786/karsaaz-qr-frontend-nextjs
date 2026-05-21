@@ -6,6 +6,11 @@ import apiClient from '@/lib/api/client'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes PaymentCanceledPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PaymentCanceledPage() {
   const { t } = useTranslation()
   const [message, setMessage] = useState('')
@@ -27,6 +32,11 @@ export default function PaymentCanceledPage() {
     }
   }, [autoRedirect, countdown])
 
+  /**
+   * Purpose: Executes loadMessage functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function loadMessage() {
     try {
       const { data } = await apiClient.get('/payment/canceled')

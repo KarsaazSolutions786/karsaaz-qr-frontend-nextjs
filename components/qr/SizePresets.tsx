@@ -60,6 +60,11 @@ const PRESET_INFO: Record<SizePresetKey, {
   },
 };
 
+/**
+ * Purpose: Executes SizePresets functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SizePresets({
   selected,
   onSelect,
@@ -130,8 +135,11 @@ export function SizePresets({
 }
 
 /**
- * Compact size preset selector (dropdown style)
+ * Purpose: Compact size preset selector (dropdown style)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function SizePresetsCompact({
   selected,
   onSelect,
@@ -176,8 +184,11 @@ export function SizePresetsCompact({
 }
 
 /**
- * Size preset with visual preview
+ * Purpose: Size preset with visual preview
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function SizePresetsWithPreview({
   selected,
   onSelect,
@@ -231,8 +242,11 @@ export function SizePresetsWithPreview({
 }
 
 /**
- * Estimate file size for PNG
+ * Purpose: Estimate file size for PNG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function estimateFileSize(width: number, height: number): string {
   // PNG file size rough estimate: pixels * 4 bytes (RGBA) with compression (~0.3 ratio)
   const pixels = width * height;

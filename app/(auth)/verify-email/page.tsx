@@ -7,6 +7,11 @@ import { useTranslation } from '@/lib/i18n'
 import { OTPVerificationForm } from '@/components/features/auth/OTPVerificationForm'
 import Link from 'next/link'
 
+/**
+ * Purpose: Executes VerifyEmailContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function VerifyEmailContent() {
   const searchParams = useSearchParams()
   const { user } = useAuth()
@@ -66,6 +71,11 @@ function VerifyEmailContent() {
   )
 }
 
+/**
+ * Purpose: Executes VerifyEmailPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function VerifyEmailPage() {
   const { t } = useTranslation()
 

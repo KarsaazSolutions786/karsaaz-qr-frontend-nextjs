@@ -4,7 +4,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { trashAPI, TrashListParams } from '@/lib/api/endpoints/trash'
 import { queryKeys } from '@/lib/query/keys'
 
-/** Fetch paginated trashed QR codes. */
+/**
+ * Purpose: * Fetch paginated trashed QR codes. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
+
 export function useTrashList(params: TrashListParams = {}) {
   return useQuery({
     queryKey: queryKeys.trash.list(params as Record<string, unknown>),
@@ -13,7 +18,12 @@ export function useTrashList(params: TrashListParams = {}) {
   })
 }
 
-/** Fetch the user's trash settings. */
+/**
+ * Purpose: * Fetch the user's trash settings. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
+
 export function useTrashSettings() {
   return useQuery({
     queryKey: queryKeys.trash.settings(),
@@ -22,7 +32,12 @@ export function useTrashSettings() {
   })
 }
 
-/** Restore a single QR code from trash. */
+/**
+ * Purpose: * Restore a single QR code from trash. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
+
 export function useRestoreQRCode() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -34,7 +49,12 @@ export function useRestoreQRCode() {
   })
 }
 
-/** Restore multiple QR codes from trash. */
+/**
+ * Purpose: * Restore multiple QR codes from trash. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
+
 export function useRestoreManyQRCodes() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -46,7 +66,12 @@ export function useRestoreManyQRCodes() {
   })
 }
 
-/** Permanently delete a single QR code from trash. */
+/**
+ * Purpose: * Permanently delete a single QR code from trash. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
+
 export function useDestroyTrashedQRCode() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -57,7 +82,12 @@ export function useDestroyTrashedQRCode() {
   })
 }
 
-/** Permanently delete multiple QR codes from trash. */
+/**
+ * Purpose: * Permanently delete multiple QR codes from trash. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
+
 export function useDestroyManyTrashedQRCodes() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -68,7 +98,12 @@ export function useDestroyManyTrashedQRCodes() {
   })
 }
 
-/** Empty the entire trash. */
+/**
+ * Purpose: * Empty the entire trash. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
+
 export function useEmptyTrash() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -79,7 +114,12 @@ export function useEmptyTrash() {
   })
 }
 
-/** Update the user's trash settings (auto-delete and/or storage limit). */
+/**
+ * Purpose: * Update the user's trash settings (auto-delete and/or storage limit). 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
+
 export function useUpdateTrashSettings() {
   const queryClient = useQueryClient()
   return useMutation({

@@ -15,6 +15,11 @@ interface BreadcrumbsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes Breadcrumbs functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Breadcrumbs({ links, className = '' }: BreadcrumbsProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
@@ -52,6 +57,11 @@ export function Breadcrumbs({ links, className = '' }: BreadcrumbsProps) {
   );
 }
 
+/**
+ * Purpose: Executes generateFromPath functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generateFromPath(pathname: string): BreadcrumbLink[] {
   const segments = pathname.split('/').filter(Boolean);
   return segments.map((seg, i) => ({

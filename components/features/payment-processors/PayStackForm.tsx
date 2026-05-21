@@ -9,14 +9,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * PayStack payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Public Key
- * - Secret Key
- *
- * Webhook is NOT auto-registered; a manual webhook URL is displayed.
+ * Purpose: PayStack payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Public Key - Secret Key Webhook is NOT auto-registered; a manual webhook URL is displayed.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function PayStackForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

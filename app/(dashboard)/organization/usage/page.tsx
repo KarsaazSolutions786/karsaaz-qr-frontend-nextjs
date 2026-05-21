@@ -9,6 +9,11 @@ import { orgUsageAPI, type UsageSummary } from '@/lib/api/endpoints/organization
 const PERIODS = ['7d', '30d', '90d'] as const
 type Period = (typeof PERIODS)[number]
 
+/**
+ * Purpose: Executes UsagePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function UsagePage() {
   const params = useSearchParams()
   const orgId = Number(params.get('org') ?? 0)

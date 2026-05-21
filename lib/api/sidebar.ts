@@ -26,9 +26,11 @@ export interface Plan {
 }
 
 /**
- * Fetch user's folders with QR counts for sidebar
- * Matches Lit frontend: GET /folders/{userId}
+ * Purpose: Fetch user's folders with QR counts for sidebar Matches Lit frontend: GET /folders/{userId}
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getSidebarFolders(userId?: number | string): Promise<Folder[]> {
   if (!userId) return []
   try {
@@ -41,9 +43,11 @@ export async function getSidebarFolders(userId?: number | string): Promise<Folde
 }
 
 /**
- * Fetch template categories for sidebar
- * Uses existing templates API
+ * Purpose: Fetch template categories for sidebar Uses existing templates API
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getSidebarTemplateCategories(): Promise<TemplateCategory[]> {
   try {
     const categories = await fetchTemplateCategories()
@@ -55,9 +59,11 @@ export async function getSidebarTemplateCategories(): Promise<TemplateCategory[]
 }
 
 /**
- * Get count of dynamic QR codes
- * Matches Lit frontend getDynamicQRCodeCount()
+ * Purpose: Get count of dynamic QR codes Matches Lit frontend getDynamicQRCodeCount()
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getDynamicQRCodeCount(): Promise<number> {
   try {
     // Dynamic QR types (matching Lit frontend QRCodeTypeManager.getDynamicSlugs())
@@ -95,9 +101,11 @@ export async function getDynamicQRCodeCount(): Promise<number> {
 }
 
 /**
- * Get total scan count
- * Matches Lit frontend getTotalScans()
+ * Purpose: Get total scan count Matches Lit frontend getTotalScans()
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getTotalScans(): Promise<number> {
   try {
     const dynamicTypes = [
@@ -136,6 +144,13 @@ export async function getTotalScans(): Promise<number> {
  */
 type RawUser = { subscriptions?: Array<{ statuses?: Array<{ status?: string }>; subscription_plan?: Plan; updated_at?: string; created_at?: string }> }
 
+/**
+ * Purpose: Retrieves currentplanfromuser.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export function getCurrentPlanFromUser(user: RawUser | null | undefined): Plan | null {
   if (!user?.subscriptions || !Array.isArray(user.subscriptions)) {
     return null
@@ -164,17 +179,22 @@ export function getCurrentPlanFromUser(user: RawUser | null | undefined): Plan |
 }
 
 /**
- * Get user's current plan (legacy, now no-op - use getCurrentPlanFromUser instead)
- * @deprecated Use getCurrentPlanFromUser with user object from auth context
+ * Purpose: Get user's current plan (legacy, now no-op - use getCurrentPlanFromUser instead)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getCurrentPlan(): Promise<Plan | null> {
   // This endpoint doesn't exist - return null and let consumer use getCurrentPlanFromUser
   return null
 }
 
 /**
- * Get all user stats at once
+ * Purpose: Get all user stats at once
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getUserStats(): Promise<UserStats> {
   const [qrCount, scans] = await Promise.all([getDynamicQRCodeCount(), getTotalScans()])
 
@@ -185,9 +205,11 @@ export async function getUserStats(): Promise<UserStats> {
 }
 
 /**
- * Format unlimited/numeric values for display
- * Matches BillingMode.formatTotalNumber() from Lit frontend
+ * Purpose: Format unlimited/numeric values for display Matches BillingMode.formatTotalNumber() from Lit frontend
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatLimit(value: number | 'unlimited' | string): string {
   if (value === 'unlimited' || value === '0' || value === 0) {
     return 'Unlimited'

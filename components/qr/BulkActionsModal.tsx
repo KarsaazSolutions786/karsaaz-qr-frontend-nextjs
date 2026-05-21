@@ -25,6 +25,11 @@ export interface BulkActionsModalProps {
   action: 'download' | 'delete' | 'move' | 'archive';
 }
 
+/**
+ * Purpose: Executes BulkActionsModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BulkActionsModal({
   isOpen,
   onClose,
@@ -44,8 +49,11 @@ export function BulkActionsModal({
 }
 
 /**
- * Bulk download modal
+ * Purpose: Bulk download modal
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function BulkDownloadModal({
   isOpen: _isOpen,
   onClose,
@@ -69,8 +77,22 @@ function BulkDownloadModal({
   const [currentFile, setCurrentFile] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Purpose: Checks if premiumformat.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const isPremiumFormat = (f: string) => f === 'svg' || f === 'pdf' || f === 'all';
 
+  /**
+   * Purpose: Executes handleFormatSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const handleFormatSelect = (f: 'svg' | 'png' | 'pdf' | 'all') => {
     if (isFreePlan && isPremiumFormat(f)) {
       toast.info(`${f.toUpperCase()} bulk download requires a paid plan. Upgrade to unlock all formats.`);
@@ -79,6 +101,13 @@ function BulkDownloadModal({
     setFormat(f);
   };
 
+  /**
+   * Purpose: Executes handlePngSizeSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const handlePngSizeSelect = (size: number) => {
     if (isFreePlan && size > 512) {
       toast.info('Higher resolution downloads require a paid plan. Upgrade to unlock all sizes.');
@@ -89,6 +118,11 @@ function BulkDownloadModal({
 
   const estimatedSize = estimateZipSize(qrCodes.length, format, pngSize);
   
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownload = async () => {
     // Enforce format restrictions for free/trial plans
     if (isFreePlan && isPremiumFormat(format)) {
@@ -320,8 +354,11 @@ function BulkDownloadModal({
 }
 
 /**
- * Bulk delete modal
+ * Purpose: Bulk delete modal
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function BulkDeleteModal({
   isOpen: _isOpen,
   onClose,
@@ -334,6 +371,11 @@ function BulkDeleteModal({
   const { t } = useTranslation();
   const [isDeleting, setIsDeleting] = useState(false);
   
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async () => {
     setIsDeleting(true);
     // Simulate deletion

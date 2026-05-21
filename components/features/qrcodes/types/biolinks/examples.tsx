@@ -21,8 +21,11 @@ interface BiolinksPageProps {
 }
 
 /**
- * Example component for creating/editing biolinks
+ * Purpose: Example component for creating/editing biolinks
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function BiolinksPage({
   qrCodeId,
   mode = 'create',
@@ -53,6 +56,11 @@ export function BiolinksPage({
     }
   });
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (data: BiolinksFormData) => {
     setIsLoading(true);
 
@@ -101,10 +109,18 @@ export function BiolinksPage({
 }
 
 /**
- * Example: Create biolinks with default data
+ * Purpose: Example: Create biolinks with default data
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function QuickBiolinksExample() {
   const { t } = useTranslation();
+  /**
+   * Purpose: Executes handleCreate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCreate = async () => {
     try {
       await biolinksAPI.create({
@@ -164,10 +180,18 @@ export function QuickBiolinksExample() {
 }
 
 /**
- * Example: Clone existing biolinks
+ * Purpose: Example: Clone existing biolinks
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function CloneBiolinksExample({ sourceId }: { sourceId: number }) {
   const { t } = useTranslation();
+  /**
+   * Purpose: Executes handleClone functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClone = async () => {
     try {
       await biolinksAPI.clone(sourceId);
@@ -186,12 +210,20 @@ export function CloneBiolinksExample({ sourceId }: { sourceId: number }) {
 }
 
 /**
- * Example: Analytics Dashboard
+ * Purpose: Example: Analytics Dashboard
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function BiolinksAnalyticsExample({ biolinksId }: { biolinksId: number }) {
   const { t } = useTranslation();
   const [analytics, setAnalytics] = useState<any>(null);
 
+  /**
+   * Purpose: Executes loadAnalytics functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const loadAnalytics = async () => {
     try {
       const data = await biolinksAPI.getAnalytics(biolinksId, {
@@ -246,8 +278,11 @@ export function BiolinksAnalyticsExample({ biolinksId }: { biolinksId: number })
 }
 
 /**
- * Example: Public Biolinks Viewer
+ * Purpose: Example: Public Biolinks Viewer
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function PublicBiolinksViewer({ slug }: { slug: string }) {
   const { t } = useTranslation();
   const [biolinks, setBiolinks] = useState<any>(null);
@@ -270,6 +305,11 @@ export function PublicBiolinksViewer({ slug }: { slug: string }) {
 
   if (!biolinks) return <div>{t('Loading...')}</div>;
 
+  /**
+   * Purpose: Executes handleBlockClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleBlockClick = (blockId: string) => {
     biolinksAPI.trackBlockClick(biolinks.id, blockId, {
       userAgent: navigator.userAgent,

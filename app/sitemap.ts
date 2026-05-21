@@ -1,6 +1,11 @@
 import type { MetadataRoute } from 'next'
 import { envConfig } from '@/lib/config/env-config'
 
+/**
+ * Purpose: Executes sitemap functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = envConfig.APP_URL
 

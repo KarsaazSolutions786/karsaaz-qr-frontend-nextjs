@@ -11,6 +11,11 @@ const METHOD_STYLES: Record<string, string> = {
   DELETE: 'bg-red-500 text-white',
 }
 
+/**
+ * Purpose: Executes FieldLabel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
     <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-gray-400">
@@ -34,6 +39,11 @@ interface Props {
   onSend: () => void
 }
 
+/**
+ * Purpose: Executes RequestBuilder functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function RequestBuilder({
   endpoint,
   apiKey,

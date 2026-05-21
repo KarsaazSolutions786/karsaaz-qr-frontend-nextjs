@@ -8,6 +8,11 @@ import { AppLogo } from '@/components/ui/app-logo'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes GuestLayout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function GuestLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const { user, isLoading } = useAuth()

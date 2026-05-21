@@ -5,6 +5,11 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from '@/lib/i18n';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 
+/**
+ * Purpose: Executes ThemeToggle functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ThemeToggle() {
   const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);

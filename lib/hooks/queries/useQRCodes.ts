@@ -6,6 +6,11 @@ import { guestAPI } from '@/lib/api/endpoints/guest'
 import { queryKeys } from '@/lib/query/keys'
 import { useGuest } from '@/lib/hooks/useGuest'
 
+/**
+ * Purpose: Executes useQRCodes functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useQRCodes(params: ListQRCodesParams = {}) {
   const { isGuest } = useGuest()
 
@@ -49,6 +54,11 @@ export function useQRCodes(params: ListQRCodesParams = {}) {
 }
 
 // QR Code Analytics hook
+/**
+ * Purpose: Executes useQRCodeAnalytics functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useQRCodeAnalytics(qrCodeId: number | string | undefined) {
   return useQuery({
     queryKey: ['qrcodes', qrCodeId, 'analytics'],
@@ -59,6 +69,11 @@ export function useQRCodeAnalytics(qrCodeId: number | string | undefined) {
 }
 
 // QR Code Link Settings hook
+/**
+ * Purpose: Executes useQRLinkSettings functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useQRLinkSettings(qrCodeId: string | undefined, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['qrcodes', qrCodeId, 'link-settings'],
@@ -69,6 +84,11 @@ export function useQRLinkSettings(qrCodeId: string | undefined, options?: { enab
 }
 
 // Update QR Code Link Settings mutation
+/**
+ * Purpose: Executes useUpdateQRLinkSettings functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useUpdateQRLinkSettings(qrCodeId: string) {
   const queryClient = useQueryClient()
   return useMutation({

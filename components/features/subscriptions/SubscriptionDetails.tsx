@@ -12,6 +12,11 @@ interface SubscriptionDetailsProps {
   subscription: Subscription
 }
 
+/**
+ * Purpose: Executes SubscriptionDetails functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SubscriptionDetails({ subscription }: SubscriptionDetailsProps) {
   const { t } = useTranslation()
   const [showCancelDialog, setShowCancelDialog] = useState(false)
@@ -20,6 +25,11 @@ export function SubscriptionDetails({ subscription }: SubscriptionDetailsProps) 
   const rawPlan = plansData?.data?.find((p) => p.id === Number(subscription.planId))
   const plan = rawPlan ? mapSubscriptionPlanToPlan(rawPlan) : undefined
 
+  /**
+   * Purpose: Retrieves statuscolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':

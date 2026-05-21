@@ -22,6 +22,11 @@ export interface DataTableProps<T = any> {
 
 type SortDirection = 'asc' | 'desc' | null
 
+/**
+ * Purpose: Executes DataTable functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DataTable<T extends Record<string, any>>({
   columns,
   data,
@@ -35,6 +40,11 @@ export function DataTable<T extends Record<string, any>>({
   const [sortDir, setSortDir] = React.useState<SortDirection>(null)
   const [selected, setSelected] = React.useState<Set<number>>(new Set())
 
+  /**
+   * Purpose: Executes handleSort functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSort = (key: string) => {
     if (!sortable) return
     if (sortKey === key) {
@@ -58,6 +68,11 @@ export function DataTable<T extends Record<string, any>>({
     })
   }, [data, sortKey, sortDir])
 
+  /**
+   * Purpose: Executes toggleRow functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleRow = (idx: number) => {
     const next = new Set(selected)
     next.has(idx) ? next.delete(idx) : next.add(idx)
@@ -65,6 +80,11 @@ export function DataTable<T extends Record<string, any>>({
     onRowSelect?.(sortedData.filter((_, i) => next.has(i)))
   }
 
+  /**
+   * Purpose: Executes toggleAll functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleAll = () => {
     if (selected.size === sortedData.length) {
       setSelected(new Set())
@@ -76,6 +96,11 @@ export function DataTable<T extends Record<string, any>>({
     }
   }
 
+  /**
+   * Purpose: Executes SortIcon functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const SortIcon = ({ col }: { col: string }) => {
     if (sortKey !== col || !sortDir) return <span className="ml-1 text-gray-300">↕</span>
     return <span className="ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>

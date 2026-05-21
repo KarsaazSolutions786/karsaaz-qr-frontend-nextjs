@@ -8,6 +8,11 @@ import { Calendar } from 'lucide-react'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes BlogListingPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BlogListingPage() {
   const { t } = useTranslation()
   const [posts, setPosts] = useState<BlogPost[]>([])

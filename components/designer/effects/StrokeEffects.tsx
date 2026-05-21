@@ -24,10 +24,20 @@ const defaultStroke: StrokeSettings = {
   opacity: 100,
 };
 
+/**
+ * Purpose: Executes StrokeEffects functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function StrokeEffects({ stroke, onChange }: StrokeEffectsProps) {
   const { t } = useTranslation();
   const s = stroke ?? defaultStroke;
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (partial: Partial<StrokeSettings>) => {
     onChange({ ...s, ...partial });
   };

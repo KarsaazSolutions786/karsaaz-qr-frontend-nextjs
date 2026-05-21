@@ -11,6 +11,11 @@ import { useTranslation } from '@/lib/i18n'
 import { envConfig } from '@/lib/config/env-config'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes EditBlogPostPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
   const { id } = use(params)
@@ -19,6 +24,11 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
   const updateMutation = useUpdateBlogPost()
   const [uploading, setUploading] = useState(false)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (data: BlogPostFormData) => {
     await updateMutation.mutateAsync({
       id: Number(id),
@@ -32,6 +42,11 @@ export default function EditBlogPostPage({ params }: { params: Promise<{ id: str
     })
   }
 
+  /**
+   * Purpose: Executes handleImageUpload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleImageUpload = async (file: File) => {
     setUploading(true)
     try {

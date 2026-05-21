@@ -4,6 +4,11 @@ import { pagesAPI } from '@/lib/api/endpoints/pages'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreatePageRequest } from '@/types/entities/page'
 
+/**
+ * Purpose: Executes useCreatePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useCreatePage() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -16,6 +21,11 @@ export function useCreatePage() {
   })
 }
 
+/**
+ * Purpose: Executes useUpdatePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useUpdatePage() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -28,6 +38,11 @@ export function useUpdatePage() {
   })
 }
 
+/**
+ * Purpose: Executes useDeletePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDeletePage() {
   const queryClient = useQueryClient()
   return useMutation({

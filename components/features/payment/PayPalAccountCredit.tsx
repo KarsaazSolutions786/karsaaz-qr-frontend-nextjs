@@ -9,6 +9,11 @@ import { useTranslation } from '@/lib/i18n'
 const PRESET_AMOUNTS = [5, 10, 20, 30, 40, 50]
 const MIN_AMOUNT = 5
 
+/**
+ * Purpose: Executes PayPalAccountCredit functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PayPalAccountCredit() {
   const { t } = useTranslation()
   const [amount, setAmount] = useState(10)
@@ -18,6 +23,11 @@ export function PayPalAccountCredit() {
 
   const effectiveAmount = customAmount ? Number(customAmount) : amount
 
+  /**
+   * Purpose: Executes handlePurchase functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handlePurchase() {
     if (effectiveAmount < MIN_AMOUNT) {
       setError(t('Minimum amount is') + ` $${MIN_AMOUNT}`)

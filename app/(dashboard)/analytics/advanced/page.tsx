@@ -10,6 +10,13 @@ import ConversionFunnel from '@/components/analytics/ConversionFunnel'
 import ABTestResults from '@/components/analytics/ABTestResults'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes AdvancedAnalyticsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export default function AdvancedAnalyticsPage() {
   const { t } = useTranslation()
 

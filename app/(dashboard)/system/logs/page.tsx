@@ -6,6 +6,11 @@ import { envConfig } from '@/lib/config/env-config'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes SystemLogsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SystemLogsPage() {
   const { t } = useTranslation()
   const [logContent, setLogContent] = useState('')
@@ -14,11 +19,21 @@ export default function SystemLogsPage() {
   const [feedback, setFeedback] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  /**
+   * Purpose: Executes showFeedback functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const showFeedback = (msg: string) => {
     setFeedback(msg)
     setTimeout(() => setFeedback(null), 3000)
   }
 
+  /**
+   * Purpose: Executes fetchLogs functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const fetchLogs = async () => {
     setIsLoading(true)
     try {
@@ -43,6 +58,11 @@ export default function SystemLogsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownload = async () => {
     try {
       const url = await systemConfigsAPI.downloadLogFile()
@@ -57,6 +77,11 @@ export default function SystemLogsPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleClear functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClear = async () => {
     if (!confirm(t('Are you sure you want to clear the log file? This cannot be undone.'))) return
     try {
@@ -69,6 +94,11 @@ export default function SystemLogsPage() {
     }
   }
 
+  /**
+   * Purpose: Executes formatSize functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`

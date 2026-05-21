@@ -15,6 +15,11 @@ interface PreviewLayoutProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes PreviewLayout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PreviewLayout({
   children,
   title: titleProp,

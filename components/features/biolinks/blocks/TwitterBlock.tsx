@@ -11,23 +11,31 @@ interface TwitterBlockProps {
 }
 
 /**
- * Validates a Twitter/X tweet URL.
- * Supports:
- * - https://twitter.com/username/status/1234567890
- * - https://x.com/username/status/1234567890
+ * Purpose: Validates a Twitter/X tweet URL. Supports: - https://twitter.com/username/status/1234567890 - https://x.com/username/status/1234567890
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function isValidTweetUrl(url: string): boolean {
   return /^https?:\/\/(www\.)?(twitter|x)\.com\/\w+\/status\/\d+/.test(url)
 }
 
 /**
- * Extracts tweet ID from URL.
+ * Purpose: Extracts tweet ID from URL.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function extractTweetId(url: string): string | null {
   const match = url.match(/status\/(\d+)/)
   return match?.[1] ?? null
 }
 
+/**
+ * Purpose: Executes TwitterBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function TwitterBlock({ block, isEditing, onUpdate }: TwitterBlockProps) {
   const { t } = useTranslation();
   const { url, theme = 'light' } = block.data
@@ -36,6 +44,11 @@ export default function TwitterBlock({ block, isEditing, onUpdate }: TwitterBloc
   useEffect(() => {
     if (isEditing || !url || !isValidTweetUrl(url)) return
 
+    /**
+     * Purpose: Executes loadTwitterWidget functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const loadTwitterWidget = () => {
       const twttr = (window as any).twttr
 

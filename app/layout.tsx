@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   ),
 }
 
+/**
+ * Purpose: Executes RootLayout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>

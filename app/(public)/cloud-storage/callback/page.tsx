@@ -23,6 +23,11 @@ import { useTranslation } from '@/lib/i18n'
 
 type CallbackStatus = 'processing' | 'success' | 'error'
 
+/**
+ * Purpose: Executes CallbackContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function CallbackContent() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
@@ -157,6 +162,11 @@ function CallbackContent() {
   )
 }
 
+/**
+ * Purpose: Executes CloudStorageOAuthCallbackPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CloudStorageOAuthCallbackPage() {
   const { t } = useTranslation()
   return (

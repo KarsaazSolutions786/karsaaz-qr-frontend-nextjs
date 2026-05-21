@@ -11,6 +11,11 @@ interface BuyToolbarProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes BuyToolbar functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BuyToolbar({
   message,
   ctaText,

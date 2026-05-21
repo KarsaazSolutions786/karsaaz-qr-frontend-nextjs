@@ -7,14 +7,24 @@ export interface SnippetParams {
   body: string
 }
 
-/** Replace {param} tokens in a path template with actual values */
+/**
+ * Purpose: * Replace {param} tokens in a path template with actual values 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
+
 export function buildUrl(pathTemplate: string, pathParams: Record<string, string>): string {
   return pathTemplate.replace(/\{(\w+)\}/g, (_, key) =>
     pathParams[key] ? encodeURIComponent(pathParams[key]) : `{${key}}`
   )
 }
 
-/** Build a query string from a key-value map, skipping empty values */
+/**
+ * Purpose: * Build a query string from a key-value map, skipping empty values 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
+
 export function buildQueryString(params: Record<string, string>): string {
   const filled = Object.entries(params).filter(([, v]) => v.trim() !== '')
   if (filled.length === 0) return ''
@@ -22,7 +32,12 @@ export function buildQueryString(params: Record<string, string>): string {
   return '?' + qs
 }
 
-/** Build the full URL by combining base, resolved path, and query string */
+/**
+ * Purpose: * Build the full URL by combining base, resolved path, and query string 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
+
 export function buildFullUrl(
   baseUrl: string,
   basePath: string,
@@ -35,6 +50,11 @@ export function buildFullUrl(
   return `${baseUrl}/api${basePath}${resolvedPath}${qs}`
 }
 
+/**
+ * Purpose: Executes buildCurlSnippet functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function buildCurlSnippet({ method, fullUrl, apiKey, body }: SnippetParams): string {
   const lines: string[] = [
     `curl -X ${method} \\`,
@@ -52,6 +72,11 @@ export function buildCurlSnippet({ method, fullUrl, apiKey, body }: SnippetParam
   return lines.join('\n')
 }
 
+/**
+ * Purpose: Executes buildFetchSnippet functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function buildFetchSnippet({ method, fullUrl, apiKey, body }: SnippetParams): string {
   const hasBody = body.trim() !== '' && method !== 'GET' && method !== 'DELETE'
   const bodyParsed = hasBody
@@ -76,6 +101,11 @@ const data = await response.json()
 if (process.env.NODE_ENV === 'development') console.log(data)`
 }
 
+/**
+ * Purpose: Executes buildPythonSnippet functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function buildPythonSnippet({ method, fullUrl, apiKey, body }: SnippetParams): string {
   const hasBody = body.trim() !== '' && method !== 'GET' && method !== 'DELETE'
   const methodLower = method.toLowerCase()
@@ -98,6 +128,11 @@ print(response.status_code)
 print(response.json())`
 }
 
+/**
+ * Purpose: Executes buildPhpSnippet functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function buildPhpSnippet({ method, fullUrl, apiKey, body }: SnippetParams): string {
   const hasBody = body.trim() !== '' && method !== 'GET' && method !== 'DELETE'
   const escapedBody = body.replace(/\\/g, '\\\\').replace(/'/g, "\\'")

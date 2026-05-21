@@ -24,9 +24,11 @@ const DEFAULT_DURATION = {
 }
 
 /**
- * useToast hook - provides a consistent toast API wrapping sonner
- * Compatible with the toast patterns from Project 1
+ * Purpose: useToast hook - provides a consistent toast API wrapping sonner Compatible with the toast patterns from Project 1
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useToast() {
   const toast = useCallback((message: string, options?: ToastOptions) => {
     return sonnerToast(message, {
@@ -145,13 +147,38 @@ export function useToast() {
 }
 
 // Static methods for use outside of components (like in API clients)
+/**
+ * Purpose: Executes showToast functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export const showToast = (message: string) => sonnerToast(message)
+/**
+ * Purpose: Executes showSuccessToast functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export const showSuccessToast = (message: string) => sonnerToast.success(message)
+/**
+ * Purpose: Executes showErrorToast functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export const showErrorToast = (message: string | Error) => {
   const msg = message instanceof Error ? message.message : message
   return sonnerToast.error(msg, { duration: DEFAULT_DURATION.error })
 }
+/**
+ * Purpose: Executes showWarningToast functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export const showWarningToast = (message: string) => sonnerToast.warning(message)
+/**
+ * Purpose: Executes showInfoToast functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export const showInfoToast = (message: string) => sonnerToast.info(message)
 
 export default useToast

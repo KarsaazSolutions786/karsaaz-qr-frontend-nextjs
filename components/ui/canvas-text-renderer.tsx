@@ -34,7 +34,12 @@ interface CanvasTextRendererProps {
   onRender?: (dataUrl: string) => void
 }
 
-/** Load a Google Font by name and variant */
+/**
+ * Purpose: * Load a Google Font by name and variant 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 async function loadGoogleFont(
   fontFamily: string,
   fontVariant: string = '400'
@@ -78,7 +83,12 @@ async function loadGoogleFont(
   }
 }
 
-/** Trim transparent pixels from a canvas, returning a new canvas */
+/**
+ * Purpose: * Trim transparent pixels from a canvas, returning a new canvas 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function trimCanvas(canvas: HTMLCanvasElement): HTMLCanvasElement {
   const ctx = canvas.getContext('2d', { willReadFrequently: true })
   if (!ctx) return canvas
@@ -121,7 +131,12 @@ function trimCanvas(canvas: HTMLCanvasElement): HTMLCanvasElement {
   return result
 }
 
-/** Render text to a canvas and return the data URL */
+/**
+ * Purpose: * Render text to a canvas and return the data URL 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 async function renderTextToCanvas(
   canvas: HTMLCanvasElement,
   options: CanvasTextRenderOptions

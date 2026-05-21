@@ -4,6 +4,11 @@ import { currenciesAPI } from '@/lib/api/endpoints/currencies'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateCurrencyRequest } from '@/types/entities/currency'
 
+/**
+ * Purpose: Executes useCreateCurrency functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useCreateCurrency() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -16,6 +21,11 @@ export function useCreateCurrency() {
   })
 }
 
+/**
+ * Purpose: Executes useUpdateCurrency functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useUpdateCurrency() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -28,6 +38,11 @@ export function useUpdateCurrency() {
   })
 }
 
+/**
+ * Purpose: Executes useDeleteCurrency functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDeleteCurrency() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -38,6 +53,11 @@ export function useDeleteCurrency() {
   })
 }
 
+/**
+ * Purpose: Executes useToggleCurrencyEnabled functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useToggleCurrencyEnabled() {
   const queryClient = useQueryClient()
   return useMutation({

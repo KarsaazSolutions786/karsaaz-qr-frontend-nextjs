@@ -18,6 +18,11 @@ import { DeleteAccountDialog } from '@/components/features/auth/DeleteAccountDia
 import { queryKeys } from '@/lib/query/keys'
 import type { User } from '@/types/entities/user'
 
+/**
+ * Purpose: Executes AccountPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AccountPage() {
   const { t } = useTranslation()
   const { user, isLoading } = useAuth()

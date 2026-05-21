@@ -12,6 +12,13 @@ interface OpeningHoursInputProps {
 
 const DAY_KEYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
 
+/**
+ * Purpose: Retrieves days.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 const getDays = (t: (key: string) => string) => [
   { key: 'monday' as const, label: t('Monday') },
   { key: 'tuesday' as const, label: t('Tuesday') },
@@ -22,11 +29,21 @@ const getDays = (t: (key: string) => string) => [
   { key: 'sunday' as const, label: t('Sunday') },
 ];
 
+/**
+ * Purpose: Executes OpeningHoursInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
   const { t } = useTranslation();
   const DAYS = getDays(t);
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDay = (day: string, schedule: DaySchedule) => {
     onChange({
       ...value,
@@ -34,6 +51,11 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
     });
   };
 
+  /**
+   * Purpose: Executes copyToAllDays functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const copyToAllDays = (sourceDay: string) => {
     const sourceSchedule = value[sourceDay as keyof OpeningHours] as DaySchedule;
     const newHours = { ...value };
@@ -45,6 +67,11 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
     onChange(newHours);
   };
 
+  /**
+   * Purpose: Executes addBreak functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addBreak = (day: string) => {
     const daySchedule = value[day as keyof OpeningHours] as DaySchedule;
     updateDay(day, {
@@ -56,6 +83,11 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
     });
   };
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeBreak = (day: string, index: number) => {
     const daySchedule = value[day as keyof OpeningHours] as DaySchedule;
     updateDay(day, {
@@ -64,6 +96,11 @@ export function OpeningHoursInput({ value, onChange }: OpeningHoursInputProps) {
     });
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateBreak = (
     day: string,
     index: number,

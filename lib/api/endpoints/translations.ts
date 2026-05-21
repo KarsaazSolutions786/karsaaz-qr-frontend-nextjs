@@ -29,7 +29,12 @@ interface RawPaginatedResponse {
   total: number
 }
 
-/** Map a single backend item to the frontend Translation type */
+/**
+ * Purpose: * Map a single backend item to the frontend Translation type 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function mapTranslation(raw: RawTranslationItem): Translation {
   return {
     id: raw.id,
@@ -46,7 +51,12 @@ function mapTranslation(raw: RawTranslationItem): Translation {
   }
 }
 
-/** Map frontend camelCase request to backend snake_case */
+/**
+ * Purpose: * Map frontend camelCase request to backend snake_case 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function mapRequest(data: Partial<CreateTranslationRequest>): Record<string, unknown> {
   const mapped: Record<string, unknown> = {}
   if (data.name !== undefined) mapped.name = data.name

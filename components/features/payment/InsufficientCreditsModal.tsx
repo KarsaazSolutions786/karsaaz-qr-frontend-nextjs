@@ -17,10 +17,11 @@ interface InsufficientCreditsModalProps {
 }
 
 /**
- * Modal shown when a user in account-credit billing mode tries to create
- * a QR code but does not have enough credits. Offers a link to the
- * account credits page where they can top up their balance.
+ * Purpose: Modal shown when a user in account-credit billing mode tries to create a QR code but does not have enough credits. Offers a link to the account credits page where they can top up their balance.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function InsufficientCreditsModal({
   open,
   onClose,

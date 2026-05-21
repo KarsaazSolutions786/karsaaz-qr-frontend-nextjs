@@ -30,8 +30,18 @@ const languages = [
   { value: 'pt', label: 'Portuguese' },
 ]
 
+/**
+ * Purpose: Executes AppDetailsStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AppDetailsStep({ config, onChange }: AppDetailsStepProps) {
   const { t } = useTranslation();
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (field: keyof AppDetailsConfig, value: string) => {
     onChange({ ...config, [field]: value })
   }

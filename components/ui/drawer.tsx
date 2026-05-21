@@ -19,9 +19,19 @@ const sizeClasses = {
   full: 'max-w-full',
 }
 
+/**
+ * Purpose: Executes Drawer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Drawer({ open, onClose, title, size = 'md', children, className }: DrawerProps) {
   React.useEffect(() => {
     if (!open) return
+    /**
+     * Purpose: Executes handleKey functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
     }

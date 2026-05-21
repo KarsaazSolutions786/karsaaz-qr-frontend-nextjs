@@ -3,6 +3,11 @@ import { notFound } from 'next/navigation'
 import BusinessProfilePreview from '@/components/public/business-profile/BusinessProfilePreview'
 import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
+/**
+ * Purpose: Retrieves businessprofile.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getBusinessProfile(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -25,6 +30,11 @@ async function getBusinessProfile(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const profile = await getBusinessProfile(params.slug)
 
@@ -53,6 +63,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes PublicBusinessProfilePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function PublicBusinessProfilePage({ params }: { params: { slug: string } }) {
   const profile = await getBusinessProfile(params.slug)
 

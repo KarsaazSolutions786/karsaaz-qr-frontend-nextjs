@@ -13,6 +13,11 @@ interface ReviewFormProps {
   primaryColor?: string;
 }
 
+/**
+ * Purpose: Executes ReviewForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ReviewForm({ businessName, slug, onSuccess, primaryColor = '#2563eb' }: ReviewFormProps) {
   const { t } = useTranslation();
   const [rating, setRating] = useState(0);
@@ -25,6 +30,11 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -72,6 +82,11 @@ export default function ReviewForm({ businessName, slug, onSuccess, primaryColor
     }
   };
 
+  /**
+   * Purpose: Executes handleInputChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,

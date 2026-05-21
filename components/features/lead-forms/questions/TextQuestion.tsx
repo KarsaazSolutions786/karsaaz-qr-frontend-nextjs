@@ -15,6 +15,11 @@ interface TextQuestionProps {
   error?: string
 }
 
+/**
+ * Purpose: Executes TextQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TextQuestion({
   id,
   label,

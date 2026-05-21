@@ -10,16 +10,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * FIB (First Iraqi Bank) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (staging / production)
- * - Client ID
- * - Client Secret
- *
- * No auto-webhook registration; no manual webhook URL display.
- * Test credentials are verified after save (shouldTestCredentialsAfterSave = true in P1).
+ * Purpose: FIB (First Iraqi Bank) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (staging / production) - Client ID - Client Secret No auto-webhook registration; no manual webhook URL display. Test credentials are verified after save (shouldTestCredentialsAfterSave = true in P1).
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function FIBForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

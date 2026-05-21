@@ -22,11 +22,21 @@ import {
 
 // ---------- CSV helpers ----------
 
+/**
+ * Purpose: Executes escapeCsvCell functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function escapeCsvCell(val: string | number | null | undefined): string {
   const str = String(val ?? '')
   return `"${str.replace(/"/g, '""')}"`
 }
 
+/**
+ * Purpose: Executes downloadCsv functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function downloadCsv(content: string, filename: string) {
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
@@ -39,6 +49,11 @@ function downloadCsv(content: string, filename: string) {
 
 // ---------- Field extraction ----------
 
+/**
+ * Purpose: Retrieves fields.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getFields(response: LeadFormResponse): LeadFormResponseField[] {
   if (response.fields && response.fields.length > 0) return response.fields
   return Object.entries(response.data).map(([k, v]) => ({
@@ -49,12 +64,22 @@ function getFields(response: LeadFormResponse): LeadFormResponseField[] {
 
 // ---------- Date range helpers ----------
 
+/**
+ * Purpose: Executes startOfDay functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function startOfDay(date: Date): Date {
   const d = new Date(date)
   d.setHours(0, 0, 0, 0)
   return d
 }
 
+/**
+ * Purpose: Executes endOfDay functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function endOfDay(date: Date): Date {
   const d = new Date(date)
   d.setHours(23, 59, 59, 999)
@@ -63,6 +88,11 @@ function endOfDay(date: Date): Date {
 
 // ---------- Main page ----------
 
+/**
+ * Purpose: Executes FormResponsesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function FormResponsesPage({ params }: { params: { id: string } }) {
   const { t } = useTranslation()
   const qrCodeId = params.id
@@ -158,6 +188,11 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
     downloadCsv(csvLines.join('\n'), `form-responses-${qrCodeId}-${date}.csv`)
   }, [filtered, columns, qrCodeId])
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleDelete = async (responseId: number) => {
     if (!window.confirm(t('Delete this response? This cannot be undone.'))) return
     await deleteMutation.mutateAsync(responseId)

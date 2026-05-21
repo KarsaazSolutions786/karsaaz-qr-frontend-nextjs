@@ -35,6 +35,11 @@ const CONFIG_KEYS = [
   'dashboard.sidebar_account_widget_style',
 ]
 
+/**
+ * Purpose: Executes DashboardAreaSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DashboardAreaSettingsPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
@@ -46,9 +51,19 @@ export default function DashboardAreaSettingsPage() {
     if (configs) setForm({ ...configs })
   }, [configs])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: string, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async () => {
     await saveMutation.mutateAsync(
       CONFIG_KEYS.map((key) => ({ key, value: form[key] ?? '' }))

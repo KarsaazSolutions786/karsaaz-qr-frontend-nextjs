@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+/**
+ * Purpose: Executes middleware functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function middleware(_request: NextRequest) {
   // Note: Token is stored in localStorage (client-side), not in cookies
   // Middleware can't access localStorage, so we skip auth checks here

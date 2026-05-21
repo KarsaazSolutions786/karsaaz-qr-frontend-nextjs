@@ -20,6 +20,11 @@ interface MegaConnectorModalProps {
   isConnecting: boolean
 }
 
+/**
+ * Purpose: Executes MegaConnectorModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function MegaConnectorModal({
   open,
   onClose,
@@ -31,6 +36,11 @@ export function MegaConnectorModal({
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSubmit = () => {
     if (!email.trim()) {
       setError(t('Please enter your email'))

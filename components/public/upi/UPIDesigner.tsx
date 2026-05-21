@@ -28,6 +28,11 @@ const UPI_APPS = [
   { name: 'BHIM', icon: '🏦', color: '#097ebd' },
 ]
 
+/**
+ * Purpose: Executes UPIDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function UPIDesigner({
   merchantName,
   vpa,
@@ -43,6 +48,11 @@ export default function UPIDesigner({
   const primaryColor = theme?.primaryColor || '#5f259f'
   const bgColor = theme?.backgroundColor || '#f8f9fa'
 
+  /**
+   * Purpose: Executes buildUpiString functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const buildUpiString = () => {
     const params = new URLSearchParams({
       pa: vpa,
@@ -56,12 +66,22 @@ export default function UPIDesigner({
 
   const upiString = buildUpiString()
 
+  /**
+   * Purpose: Executes handleCopy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopy = () => {
     navigator.clipboard.writeText(vpa)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
+  /**
+   * Purpose: Executes handlePayWithApp functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePayWithApp = () => {
     window.location.href = upiString
   }

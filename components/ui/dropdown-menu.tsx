@@ -168,6 +168,11 @@ const DropdownMenuSeparator = React.forwardRef<
 ))
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
 
+/**
+ * Purpose: Executes DropdownMenuShortcut functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const DropdownMenuShortcut = ({
   className,
   ...props

@@ -11,6 +11,11 @@ import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 
+/**
+ * Purpose: Executes Calendar functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function Calendar({
   className,
   classNames,
@@ -172,6 +177,11 @@ function Calendar({
   )
 }
 
+/**
+ * Purpose: Executes CalendarDayButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function CalendarDayButton({
   className,
   day,

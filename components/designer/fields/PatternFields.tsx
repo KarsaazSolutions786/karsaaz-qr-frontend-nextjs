@@ -15,6 +15,11 @@ interface PatternFieldsProps {
 
 type BlendMode = 'normal' | 'multiply' | 'screen' | 'overlay' | 'darken' | 'lighten';
 
+/**
+ * Purpose: Executes PatternFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PatternFields({
   patternSettings,
   onChange,
@@ -23,6 +28,11 @@ export default function PatternFields({
   const [enabled, setEnabled] = useState(!!patternSettings && patternSettings.type !== 'none');
   const [blendMode, setBlendMode] = useState<BlendMode>('normal');
 
+  /**
+   * Purpose: Executes togglePattern functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const togglePattern = () => {
     const newEnabled = !enabled;
     setEnabled(newEnabled);
@@ -37,6 +47,11 @@ export default function PatternFields({
     }
   };
 
+  /**
+   * Purpose: Executes handlePatternChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePatternChange = (pattern?: PatternSettings) => {
     onChange(pattern);
     setEnabled(!!pattern && pattern.type !== 'none');

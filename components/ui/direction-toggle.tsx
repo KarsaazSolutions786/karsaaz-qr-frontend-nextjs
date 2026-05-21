@@ -11,6 +11,11 @@ interface DirectionToggleProps {
   size?: 'sm' | 'md' | 'lg'
 }
 
+/**
+ * Purpose: Executes DirectionToggle functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DirectionToggle({
   className,
   showLabel = true,
@@ -68,6 +73,11 @@ interface DirectionIconToggleProps {
   size?: 'sm' | 'md' | 'lg'
 }
 
+/**
+ * Purpose: Executes DirectionIconToggle functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DirectionIconToggle({ className, size = 'md' }: DirectionIconToggleProps) {
   const { toggleDirection, isRTL } = useDirection()
   const { t } = useTranslation()
@@ -136,6 +146,11 @@ interface DirectionSelectorProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes DirectionSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DirectionSelector({ className }: DirectionSelectorProps) {
   const { direction, setDirection } = useDirection()
   const { t } = useTranslation()

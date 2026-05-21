@@ -15,6 +15,11 @@ interface OAuthConnectorProps {
 
 type Status = 'idle' | 'getting-url' | 'waiting' | 'processing' | 'success' | 'error'
 
+/**
+ * Purpose: Executes OAuthConnector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConnectorProps) {
   const { t } = useTranslation()
   const [status, setStatus] = useState<Status>('idle')
@@ -75,6 +80,11 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
     return () => clearInterval(checkClosed)
   }, [authWindow, status])
 
+  /**
+   * Purpose: Executes startOAuth functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const startOAuth = async () => {
     setStatus('getting-url')
     setError(null)
@@ -106,6 +116,11 @@ export function OAuthConnector({ provider, providerName, onSuccess }: OAuthConne
     }
   }
 
+  /**
+   * Purpose: Executes renderContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderContent = () => {
     switch (status) {
       case 'idle':

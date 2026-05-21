@@ -29,6 +29,11 @@ const viewportSizes = {
   mobile: { width: '375px', height: '667px', icon: Smartphone, label: 'Mobile' },
 }
 
+/**
+ * Purpose: Executes WebsitePreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function WebsitePreview({ website }: WebsitePreviewProps) {
   const { t } = useTranslation()
   const [viewport, setViewport] = useState<ViewportSize>('desktop')
@@ -40,6 +45,11 @@ export default function WebsitePreview({ website }: WebsitePreviewProps) {
     return () => clearTimeout(timer)
   }, [])
 
+  /**
+   * Purpose: Executes handleError functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleError = () => {
     setHasError(true)
     setIsLoading(false)

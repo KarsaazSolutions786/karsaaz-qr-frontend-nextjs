@@ -4,6 +4,11 @@ import { Minus, Plus, Trash2 } from 'lucide-react'
 import { useAccountCredit } from '@/lib/hooks/useAccountCredit'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes AccountCreditCart functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AccountCreditCart() {
   const { cartItems, balance, cartTotal, amountToPay, updateQuantity, removeFromCart, clearCart } = useAccountCredit()
   const { t } = useTranslation()

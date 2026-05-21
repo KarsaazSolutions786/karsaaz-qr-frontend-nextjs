@@ -28,10 +28,13 @@ export interface ListQRCodesParams {
 }
 
 /**
- * Map a single backend QR code (snake_case) to frontend QRCode (camelCase).
- * Only maps known fields; passes everything else through unchanged so new
- * backend fields don't get silently dropped.
+ * Purpose: Map a single backend QR code (snake_case) to frontend QRCode (camelCase). Only maps known fields; passes everything else through unchanged so new backend fields don't get silently dropped.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
  */
+
 function mapQRCode(raw: Record<string, unknown>): QRCode {
   const r = raw as Record<string, unknown>
   const design = transformDesignFromBackend(

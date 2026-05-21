@@ -10,8 +10,11 @@ import { verifyContentHash } from '@/lib/utils/qr-preview-url-builder';
 export const dynamic = 'force-dynamic';
 
 /**
- * Parse design options from query parameters
+ * Purpose: Parse design options from query parameters
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function parseDesignOptions(searchParams: URLSearchParams): QRDesignOptions {
   const design: QRDesignOptions = {};
 
@@ -47,8 +50,11 @@ function parseDesignOptions(searchParams: URLSearchParams): QRDesignOptions {
 }
 
 /**
- * GET /api/qrcodes/preview
+ * Purpose: GET /api/qrcodes/preview
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;

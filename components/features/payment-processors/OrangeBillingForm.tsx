@@ -9,16 +9,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Orange (Mobile Money) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (test / production)
- * - Merchant
- * - Login ID
- * - Password
- *
- * No webhook registration. No manual webhook URL display.
+ * Purpose: Orange (Mobile Money) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (test / production) - Merchant - Login ID - Password No webhook registration. No manual webhook URL display.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function OrangeBillingForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

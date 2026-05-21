@@ -18,16 +18,31 @@ interface DatabaseStepProps {
   onChange: (config: DatabaseConfig) => void
 }
 
+/**
+ * Purpose: Executes DatabaseStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DatabaseStep({ config, onChange }: DatabaseStepProps) {
   const { t } = useTranslation();
   const [testStatus, setTestStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle')
   const [migrateStatus, setMigrateStatus] = useState<'idle' | 'running' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (field: keyof DatabaseConfig, value: string) => {
     onChange({ ...config, [field]: value })
   }
 
+  /**
+   * Purpose: Executes testConnection functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const testConnection = async () => {
     setTestStatus('testing')
     setMessage('')
@@ -41,6 +56,11 @@ export function DatabaseStep({ config, onChange }: DatabaseStepProps) {
     }
   }
 
+  /**
+   * Purpose: Executes runMigrations functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const runMigrations = async () => {
     setMigrateStatus('running')
     setMessage('')

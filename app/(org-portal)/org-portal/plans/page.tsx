@@ -23,10 +23,20 @@ interface PlansData {
   available_plans: OrgPlan[]
 }
 
+/**
+ * Purpose: Executes formatLimit functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function formatLimit(n: number) {
   return n === -1 ? 'Unlimited' : n.toLocaleString()
 }
 
+/**
+ * Purpose: Executes OrgPortalPlansPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrgPortalPlansPage() {
   const [data, setData] = useState<PlansData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -42,6 +52,11 @@ export default function OrgPortalPlansPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  /**
+   * Purpose: Executes selectPlan functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const selectPlan = async (planId: number) => {
     setSelecting(planId)
     setSuccess('')

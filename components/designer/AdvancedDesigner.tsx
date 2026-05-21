@@ -164,10 +164,20 @@ const designPresets = [
   },
 ]
 
+/**
+ * Purpose: Executes AdvancedDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedDesignerProps) {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('colors')
 
+  /**
+   * Purpose: Executes handleExport functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleExport = () => {
     const dataStr = JSON.stringify(design, null, 2)
     const dataBlob = new Blob([dataStr], { type: 'application/json' })
@@ -179,6 +189,11 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
     URL.revokeObjectURL(url)
   }
 
+  /**
+   * Purpose: Executes handleImport functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
@@ -195,10 +210,20 @@ export default function AdvancedDesigner({ design, onChange, qrData }: AdvancedD
     }
   }
 
+  /**
+   * Purpose: Executes handleReset functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleReset = () => {
     onChange(defaultDesign)
   }
 
+  /**
+   * Purpose: Executes applyPreset functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const applyPreset = (preset: QRDesign) => {
     onChange(preset)
   }

@@ -68,6 +68,11 @@ const typeConfig: Record<
   },
 }
 
+/**
+ * Purpose: Executes ConfirmationProvider functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ConfirmationProvider({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation()
   const [state, setState] = useState<ConfirmationState>({
@@ -112,6 +117,11 @@ export function ConfirmationProvider({ children }: { children: React.ReactNode }
     })
   }, [])
 
+  /**
+   * Purpose: Executes handleClose functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClose = (result: boolean) => {
     if (state.resolve) {
       state.resolve(result)
@@ -189,6 +199,11 @@ export function ConfirmationProvider({ children }: { children: React.ReactNode }
   )
 }
 
+/**
+ * Purpose: Executes useConfirmation functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useConfirmation(): ConfirmationContextValue {
   const context = useContext(ConfirmationContext)
   if (!context) {
@@ -212,6 +227,11 @@ interface ConfirmationModalProps {
   isLoading?: boolean
 }
 
+/**
+ * Purpose: Executes ConfirmationModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ConfirmationModal({
   isOpen,
   onClose,
@@ -301,6 +321,11 @@ export function ConfirmationModal({
 }
 
 // Utility function for quick confirmation
+/**
+ * Purpose: Executes confirmAction functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function confirmAction(options: ConfirmationOptions): Promise<boolean> {
   return new Promise(resolve => {
     // This is a fallback using window.confirm if no provider is available

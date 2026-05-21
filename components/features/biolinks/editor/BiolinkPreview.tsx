@@ -50,6 +50,11 @@ interface BiolinkPreviewProps {
   blocks: BlockData[]
 }
 
+/**
+ * Purpose: Executes BiolinkPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps) {
   const { t } = useTranslation();
   const BLOCKS_PER_PAGE = 10
@@ -67,10 +72,20 @@ export default function BiolinkPreview({ biolink, blocks }: BiolinkPreviewProps)
   const hasMoreBlocks = visibleBlocksCount < totalBlocks
   const showPagination = totalBlocks > BLOCKS_PER_PAGE
 
+  /**
+   * Purpose: Executes handleLoadMore functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleLoadMore = () => {
     setVisibleBlocksCount(prev => Math.min(prev + BLOCKS_PER_PAGE, totalBlocks))
   }
 
+  /**
+   * Purpose: Executes renderBlock functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderBlock = (block: BlockData) => {
     switch (block.type) {
       case 'link':

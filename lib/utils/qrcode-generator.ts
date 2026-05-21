@@ -37,8 +37,11 @@ export interface QRCodeGenerationResult {
 }
 
 /**
- * Generate QR code with full designer configuration (sync version for use in useMemo)
+ * Purpose: Generate QR code with full designer configuration (sync version for use in useMemo)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateQRCodeSync(
   options: GenerateQRCodeOptions
 ): QRCodeGenerationResult {
@@ -76,8 +79,11 @@ export function generateQRCodeSync(
 }
 
 /**
- * Generate QR code with full designer configuration
+ * Purpose: Generate QR code with full designer configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function generateQRCode(
   options: GenerateQRCodeOptions
 ): Promise<QRCodeGenerationResult> {
@@ -85,8 +91,11 @@ export async function generateQRCode(
 }
 
 /**
- * Get QR code data URL (for preview/download)
+ * Purpose: Get QR code data URL (for preview/download)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getQRCodeDataURL(
   options: GenerateQRCodeOptions,
   format: 'png' | 'svg' = 'png'
@@ -103,8 +112,11 @@ export async function getQRCodeDataURL(
 }
 
 /**
- * Estimate QR code complexity
+ * Purpose: Estimate QR code complexity
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function estimateQRComplexity(data: string): {
   estimatedModules: number;
   estimatedVersion: number;
@@ -146,8 +158,11 @@ export function estimateQRComplexity(data: string): {
 }
 
 /**
- * Calculate optimal logo size based on error correction level
+ * Purpose: Calculate optimal logo size based on error correction level
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculateOptimalLogoSize(
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'
 ): number {
@@ -165,8 +180,11 @@ export function calculateOptimalLogoSize(
 }
 
 /**
- * Validate designer configuration
+ * Purpose: Validate designer configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateDesignerConfig(config: Partial<DesignerConfig>): {
   isValid: boolean;
   errors: string[];
@@ -212,8 +230,11 @@ export function validateDesignerConfig(config: Partial<DesignerConfig>): {
 }
 
 /**
- * Get QR code module matrix as 2D array
+ * Purpose: Get QR code module matrix as 2D array
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getModuleMatrix(qr: QRCodeType): boolean[][] {
   const moduleCount = getModuleCount(qr);
   const matrix: boolean[][] = [];
@@ -230,8 +251,11 @@ export function getModuleMatrix(qr: QRCodeType): boolean[][] {
 }
 
 /**
- * Check if QR code needs logo margin clearing
+ * Purpose: Check if QR code needs logo margin clearing
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function needsLogoMarginClearing(
   row: number,
   col: number,
@@ -252,8 +276,11 @@ export function needsLogoMarginClearing(
 }
 
 /**
- * Get corner module type (for special rendering)
+ * Purpose: Get corner module type (for special rendering)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getCornerModuleType(
   row: number,
   col: number,

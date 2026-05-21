@@ -9,6 +9,11 @@ import { ArrowLeft } from 'lucide-react'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes PluginDetailPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PluginDetailPage() {
   const params = useParams()
   const { t } = useTranslation()
@@ -17,6 +22,11 @@ export default function PluginDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  /**
+   * Purpose: Executes loadPlugin functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const loadPlugin = () => {
     setLoading(true)
     pluginsAPI

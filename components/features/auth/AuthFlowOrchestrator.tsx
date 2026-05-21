@@ -21,6 +21,11 @@ interface AuthFlowContextValue {
 
 const AuthFlowContext = createContext<AuthFlowContextValue | null>(null)
 
+/**
+ * Purpose: Executes useAuthFlow functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useAuthFlow() {
   const ctx = useContext(AuthFlowContext)
   if (!ctx) throw new Error('useAuthFlow must be used within AuthFlowOrchestrator')
@@ -34,9 +39,11 @@ interface AuthFlowOrchestratorProps {
 }
 
 /**
- * Multi-step auth controller: credentials → 2FA → redirect.
- * Can be used standalone or as a modal gate (requireAuth wrapper).
+ * Purpose: Multi-step auth controller: credentials → 2FA → redirect. Can be used standalone or as a modal gate (requireAuth wrapper).
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function AuthFlowOrchestrator({
   onSuccess,
   initialStep = 'login',
@@ -103,8 +110,11 @@ export function AuthFlowOrchestrator({
 }
 
 /**
- * HOC / wrapper that requires auth before rendering children.
+ * Purpose: HOC / wrapper that requires auth before rendering children.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function RequireAuth({
   children,
   fallback,

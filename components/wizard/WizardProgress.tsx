@@ -12,6 +12,11 @@ export interface WizardProgressProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes WizardProgress functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WizardProgress({
   totalSteps,
   currentStep,

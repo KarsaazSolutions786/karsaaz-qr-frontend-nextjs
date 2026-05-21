@@ -15,7 +15,12 @@ import { WebVitalsReporter } from '@/components/common/WebVitalsReporter'
 import { OfflineIndicator } from '@/components/common/OfflineIndicator'
 import { Toaster } from 'sonner'
 
-/** Initialize client-side protection services (T021) */
+/**
+ * Purpose: * Initialize client-side protection services (T021) 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 function ProtectionInitializer() {
   useEffect(() => {
     devToolsProtection.init()
@@ -28,6 +33,11 @@ function ProtectionInitializer() {
   return null
 }
 
+/**
+ * Purpose: Executes Providers functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>

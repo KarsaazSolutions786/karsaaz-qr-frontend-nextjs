@@ -11,6 +11,11 @@ interface LivePreviewPanelProps {
   qrData: string
 }
 
+/**
+ * Purpose: Executes LivePreviewPanel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function LivePreviewPanel({ design, qrData }: LivePreviewPanelProps) {
   const { t } = useTranslation()
   return (

@@ -21,6 +21,11 @@ export interface WizardNavigationProps {
   enableKeyboardShortcuts?: boolean;
 }
 
+/**
+ * Purpose: Executes WizardNavigation functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WizardNavigation({
   onBack,
   onNext,
@@ -45,6 +50,11 @@ export function WizardNavigation({
   useEffect(() => {
     if (!enableKeyboardShortcuts) return;
 
+    /**
+     * Purpose: Executes handleKeyDown functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
         return;

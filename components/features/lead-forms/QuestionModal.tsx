@@ -48,6 +48,11 @@ interface QuestionModalProps {
   onSave: (question: Omit<LeadFormField, 'id' | 'order'>) => void
 }
 
+/**
+ * Purpose: Executes QuestionModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QuestionModal({
   open,
   onOpenChange,
@@ -83,6 +88,11 @@ export default function QuestionModal({
     setPattern(question?.validation?.pattern ?? '')
   }, [question])
 
+  /**
+   * Purpose: Executes handleOpenChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) resetForm()
     onOpenChange(isOpen)
@@ -90,6 +100,11 @@ export default function QuestionModal({
 
   const hasOptions = TYPES_WITH_OPTIONS.includes(type)
 
+  /**
+   * Purpose: Executes addOption functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addOption = () => {
     const trimmed = newOption.trim()
     if (!trimmed || options.includes(trimmed)) return
@@ -97,10 +112,20 @@ export default function QuestionModal({
     setNewOption('')
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeOption = (index: number) => {
     setOptions(options.filter((_, i) => i !== index))
   }
 
+  /**
+   * Purpose: Executes moveOption functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const moveOption = (index: number, direction: -1 | 1) => {
     const target = index + direction
     if (target < 0 || target >= options.length) return
@@ -111,6 +136,11 @@ export default function QuestionModal({
     setOptions(updated)
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = () => {
     if (!label.trim()) return
 

@@ -95,7 +95,12 @@ export interface StickerEditorProps {
 /*  Sub-components                                                     */
 /* ------------------------------------------------------------------ */
 
-/** Simple color picker fallback */
+/**
+ * Purpose: * Simple color picker fallback 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function DefaultColorPicker({
   label,
   value,
@@ -134,6 +139,11 @@ function DefaultColorPicker({
 /*  Main Component                                                     */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Purpose: Executes StickerEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function StickerEditor({
   config,
   advancedShapes,

@@ -4,28 +4,33 @@ import { User } from '@/types/entities/user'
 export type Permission = string
 
 /**
- * Check whether the user's email is verified.
- * Matches original: verified() → email_verified_at is not empty
+ * Purpose: Check whether the user's email is verified. Matches original: verified() → email_verified_at is not empty
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function verified(user: User | null | undefined): boolean {
   if (!user) return false
   return !!user.email_verified_at
 }
 
 /**
- * Check whether the user is a Super Admin.
- * Super Admins bypass ALL permission checks.
- * Matches original: isSuperAdmin() — any role where role.super_admin is truthy
+ * Purpose: Check whether the user is a Super Admin. Super Admins bypass ALL permission checks. Matches original: isSuperAdmin() — any role where role.super_admin is truthy
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isSuperAdmin(user: User | null | undefined): boolean {
   if (!user) return false
   return user.roles?.some(r => !!r.super_admin) ?? false
 }
 
 /**
- * Check whether the user is a regular customer (Client or Sub User role).
- * Matches original: isCustomer() → roles[0].name === 'Client' || 'Sub User'
+ * Purpose: Check whether the user is a regular customer (Client or Sub User role). Matches original: isCustomer() → roles[0].name === 'Client' || 'Sub User'
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isCustomer(user: User | null | undefined): boolean {
   if (!user) return false
   const primaryRoleName = user.roles?.[0]?.name
@@ -33,29 +38,32 @@ export function isCustomer(user: User | null | undefined): boolean {
 }
 
 /**
- * Check whether the user is a Client (not Sub User).
- * Matches original: isClient() → any role named 'Client'
+ * Purpose: Check whether the user is a Client (not Sub User). Matches original: isClient() → any role named 'Client'
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isClient(user: User | null | undefined): boolean {
   if (!user) return false
   return user.roles?.some(r => r.name === 'Client') ?? false
 }
 
 /**
- * Check whether the user is a Sub User.
- * Matches original: isSubUser() → user.is_sub flag
+ * Purpose: Check whether the user is a Sub User. Matches original: isSubUser() → user.is_sub flag
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isSubUser(user: User | null | undefined): boolean {
   return !!user?.is_sub
 }
 
 /**
- * Resolve the home page for a user after login.
- * Sub users use parent_user.roles[0].home_page (parent's role home).
- * Regular users use roles[0].home_page.
- * Falls back to '/qrcodes'.
- * Matches original: userHomePage()
+ * Purpose: Resolve the home page for a user after login. Sub users use parent_user.roles[0].home_page (parent's role home). Regular users use roles[0].home_page. Falls back to '/qrcodes'. Matches original: userHomePage()
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function userHomePage(user: User | null | undefined): string {
   if (!user) return '/qrcodes/new'
   let homePage: string | undefined
@@ -72,17 +80,11 @@ export function userHomePage(user: User | null | undefined): string {
 }
 
 /**
- * Core RBAC permission check — exact replica of original permitted(slug).
- *
- * Logic:
- *  1. Empty slug → always allowed (public route)
- *  2. No user / no roles → denied
- *  3. Super Admin → always allowed
- *  4. Email not verified → denied
- *  5. Flatten all role permissions and check if slug matches
- *
- * Matches original src/core/auth.js permitted()
+ * Purpose: Core RBAC permission check — exact replica of original permitted(slug). Logic: 1. Empty slug → always allowed (public route) 2. No user / no roles → denied 3. Super Admin → always allowed 4. Email not verified → denied 5. Flatten all role permissions and check if slug matches Matches original src/core/auth.js permitted()
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function permitted(user: User | null | undefined, slug: string | undefined | null): boolean {
   // No permission required
   if (!slug || slug.trim() === '') return true
@@ -102,45 +104,62 @@ export function permitted(user: User | null | undefined, slug: string | undefine
 }
 
 /**
- * Check if user has a specific permission slug.
- * Convenience wrapper around permitted().
+ * Purpose: Check if user has a specific permission slug. Convenience wrapper around permitted().
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hasPermission(user: User | null | undefined, permission: string): boolean {
   return permitted(user, permission)
 }
 
 /**
- * Check if user has all of the specified permissions
+ * Purpose: Check if user has all of the specified permissions
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hasAllPermissions(user: User | null | undefined, permissions: string[]): boolean {
   return permissions.every(p => permitted(user, p))
 }
 
 /**
- * Check if user has any of the specified permissions
+ * Purpose: Check if user has any of the specified permissions
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hasAnyPermission(user: User | null | undefined, permissions: string[]): boolean {
   return permissions.some(p => permitted(user, p))
 }
 
 /**
- * Check if user has a specific role name (e.g. 'Client', 'Admin', 'Sub User')
+ * Purpose: Check if user has a specific role name (e.g. 'Client', 'Admin', 'Sub User')
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hasRole(user: User | null | undefined, role: string): boolean {
   if (!user) return false
   return user.roles?.some(r => r.name === role) ?? false
 }
 
 /**
- * @deprecated Use isSuperAdmin() instead. Checks if user is admin.
+ * Purpose: Checks if admin.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isAdmin(user: User | null | undefined): boolean {
   return isSuperAdmin(user)
 }
 
 /**
- * @deprecated - legacy check
+ * Purpose: Checks if moderator.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isModerator(user: User | null | undefined): boolean {
   if (!user) return false
   const role = user.roles?.[0]?.name
@@ -148,9 +167,11 @@ export function isModerator(user: User | null | undefined): boolean {
 }
 
 /**
- * Check if user can perform action on resource
- * This is a helper that combines permission and ownership checks
+ * Purpose: Check if user can perform action on resource This is a helper that combines permission and ownership checks
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function canPerformAction(
   user: User | null | undefined,
   permission: string,

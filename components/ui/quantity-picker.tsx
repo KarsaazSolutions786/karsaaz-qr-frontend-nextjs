@@ -13,6 +13,11 @@ interface QuantityPickerProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes QuantityPicker functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QuantityPicker({
   value,
   onChange,
@@ -23,16 +28,31 @@ export function QuantityPicker({
 }: QuantityPickerProps) {
   const { t } = useTranslation()
 
+  /**
+   * Purpose: Executes decrement functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const decrement = () => {
     const next = value - step
     if (next >= min) onChange(next)
   }
 
+  /**
+   * Purpose: Executes increment functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const increment = () => {
     const next = value + step
     if (next <= max) onChange(next)
   }
 
+  /**
+   * Purpose: Executes handleInput functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value
     if (raw === '') return onChange(min)

@@ -5,10 +5,11 @@ import { useTranslation } from '@/lib/i18n'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
 /**
- * Banner shown when admin is impersonating another user.
- * Displays warning with user name/email and "Return to Admin" button.
- * Spans the full width above the sidebar and header.
+ * Purpose: Banner shown when admin is impersonating another user. Displays warning with user name/email and "Return to Admin" button. Spans the full width above the sidebar and header.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ActAsBanner() {
   const { t } = useTranslation()
   const { isActingAs, actingAsUser, removeActAs } = useAuth()

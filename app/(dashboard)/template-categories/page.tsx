@@ -5,12 +5,22 @@ import { useTemplateCategories, useDeleteTemplateCategory } from '@/lib/hooks/qu
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes TemplateCategoriesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TemplateCategoriesPage() {
   const { t } = useTranslation()
   // TanStack Query hooks
   const { data: categories = [], isLoading: loading } = useTemplateCategories()
   const deleteMutation = useDeleteTemplateCategory()
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number) => {
     if (!confirm(t('Delete this category?'))) return
     try {

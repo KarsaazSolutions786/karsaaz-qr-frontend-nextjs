@@ -19,6 +19,11 @@ interface PieChartProps {
   height?: number
 }
 
+/**
+ * Purpose: Executes PieChart functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PieChart({ data, height = 300 }: PieChartProps) {
   const { t } = useTranslation()
 

@@ -14,6 +14,11 @@ interface FormDynamicRendererProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes validateField functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function validateField(
   field: LeadFormField,
   value: unknown
@@ -78,6 +83,11 @@ function validateField(
   return null
 }
 
+/**
+ * Purpose: Executes FormDynamicRenderer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function FormDynamicRenderer({
   fields,
   onSubmit,
@@ -106,6 +116,11 @@ export default function FormDynamicRenderer({
     []
   )
 
+  /**
+   * Purpose: Executes validate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {}
     for (const field of sortedFields) {
@@ -116,6 +131,11 @@ export default function FormDynamicRenderer({
     return Object.keys(newErrors).length === 0
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setSubmitError(null)

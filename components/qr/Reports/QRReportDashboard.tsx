@@ -8,6 +8,13 @@ import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // Lazy-load recharts-based chart components to reduce main bundle size
+/**
+ * Purpose: Executes ChartSkeleton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 const ChartSkeleton = () => <div className="animate-pulse h-64 bg-muted rounded" />
 
 const LineChartWrapper = dynamic(
@@ -49,6 +56,11 @@ const EMPTY_DATA: AnalyticsData = {
   locations: [],
 }
 
+/**
+ * Purpose: Executes QRReportDashboard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
   const { t } = useTranslation()
   const { data: rawData, isLoading: loading, error: queryError } = useQRCodeAnalytics(qrCodeId)
@@ -171,6 +183,11 @@ export function QRReportDashboard({ qrCodeId }: QRReportDashboardProps) {
 /* Internal helper                                                    */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Purpose: Executes SummaryCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function SummaryCard({
   label,
   value,

@@ -22,8 +22,11 @@ export interface EPSExportOptions {
 }
 
 /**
- * Export SVG to EPS
+ * Purpose: Export SVG to EPS
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function exportEPS(svg: string, options: EPSExportOptions = {}): Promise<void> {
   const {
     filename = 'qr-code.eps',
@@ -55,8 +58,11 @@ export async function exportEPS(svg: string, options: EPSExportOptions = {}): Pr
 }
 
 /**
- * Generate EPS content from SVG
+ * Purpose: Generate EPS content from SVG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function generateEPSFromSVG(svg: string, options: EPSExportOptions): string {
   const {
     width = 300,
@@ -135,13 +141,11 @@ function generateEPSFromSVG(svg: string, options: EPSExportOptions): string {
 }
 
 /**
- * Convert SVG to PostScript commands.
- *
- * Strategy: try vector conversion first (rects, circles, paths).
- * If the SVG produces zero drawing commands (complex SVG the regex parser
- * cannot handle), fall back to rasterising the SVG onto a canvas and
- * embedding the image data as ASCII85-encoded Level-2 PostScript.
+ * Purpose: Convert SVG to PostScript commands. Strategy: try vector conversion first (rects, circles, paths). If the SVG produces zero drawing commands (complex SVG the regex parser cannot handle), fall back to rasterising the SVG onto a canvas and embedding the image data as ASCII85-encoded Level-2 PostScript.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function svgToPostScript(svg: string, width: number, height: number): string {
   const vectorPS = svgToPostScriptVector(svg, width, height);
 
@@ -158,8 +162,11 @@ function svgToPostScript(svg: string, width: number, height: number): string {
 }
 
 /**
- * Vector SVG-to-PostScript conversion for rects, circles, and path elements.
+ * Purpose: Vector SVG-to-PostScript conversion for rects, circles, and path elements.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function svgToPostScriptVector(svg: string, width: number, height: number): string {
   let ps = '';
 
@@ -224,10 +231,11 @@ function svgToPostScriptVector(svg: string, width: number, height: number): stri
 }
 
 /**
- * Generate EPS with raster fallback (async).
- * Renders the SVG onto a canvas, then embeds the raw RGB pixel data
- * using PostScript Level 2 image / colorimage operator with ASCII hex encoding.
+ * Purpose: Generate EPS with raster fallback (async). Renders the SVG onto a canvas, then embeds the raw RGB pixel data using PostScript Level 2 image / colorimage operator with ASCII hex encoding.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 async function generateRasterEPS(
   svg: string,
   epsTemplate: string,
@@ -291,8 +299,11 @@ async function generateRasterEPS(
 }
 
 /**
- * Convert SVG path commands to PostScript
+ * Purpose: Convert SVG path commands to PostScript
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function pathToPostScript(d: string, svgHeight: number): string {
   let ps = '';
   const commands = d.match(/[MLHVCSQTAZ][^MLHVCSQTAZ]*/gi) || [];
@@ -347,8 +358,11 @@ function pathToPostScript(d: string, svgHeight: number): string {
 }
 
 /**
- * Convert hex color to RGB (0-1 range for PostScript)
+ * Purpose: Convert hex color to RGB (0-1 range for PostScript)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function hexToRGB(hex: string): { r: number; g: number; b: number } {
   const cleaned = hex.replace('#', '');
   const r = parseInt(cleaned.substring(0, 2), 16) / 255;
@@ -358,8 +372,11 @@ function hexToRGB(hex: string): { r: number; g: number; b: number } {
 }
 
 /**
- * Download blob as file
+ * Purpose: Download blob as file
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -372,8 +389,13 @@ function downloadBlob(blob: Blob, filename: string): void {
 }
 
 /**
- * Get EPS as blob (async to support raster fallback)
+ * Purpose: Get EPS as blob (async to support raster fallback)
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export async function getEPSBlob(svg: string, options: EPSExportOptions = {}): Promise<Blob> {
   let eps = generateEPSFromSVG(svg, options);
 
@@ -390,16 +412,22 @@ export async function getEPSBlob(svg: string, options: EPSExportOptions = {}): P
 }
 
 /**
- * Get EPS file size
+ * Purpose: Get EPS file size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getEPSFileSize(svg: string, options: EPSExportOptions = {}): number {
   const eps = generateEPSFromSVG(svg, options);
   return new Blob([eps]).size;
 }
 
 /**
- * Format EPS file size
+ * Purpose: Format EPS file size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatEPSSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;

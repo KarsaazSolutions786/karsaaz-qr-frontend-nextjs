@@ -12,6 +12,11 @@ import { Loader } from '@/components/ui/loader'
 import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 
+/**
+ * Purpose: Executes GuestScannerPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function GuestScannerPage() {
   const { t } = useTranslation()
   const { guestConfig, sessionLimits, isGuestLoading, isGuest } = useGuest()
@@ -26,6 +31,11 @@ export default function GuestScannerPage() {
   useEffect(() => {
     if (!isGuest || !guestConfig?.allow_scan_history) return
 
+    /**
+     * Purpose: Executes loadHistory functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const loadHistory = async () => {
       setIsLoadingHistory(true)
       try {
@@ -40,6 +50,11 @@ export default function GuestScannerPage() {
     loadHistory()
   }, [isGuest, guestConfig?.allow_scan_history])
 
+  /**
+   * Purpose: Executes handleRecordScan functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleRecordScan = async () => {
     if (!scannedData.trim()) {
       toast.error(t('Please enter the scanned data'))

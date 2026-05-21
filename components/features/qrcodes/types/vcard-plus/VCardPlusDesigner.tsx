@@ -38,6 +38,13 @@ const tabs: DesignerTab[] = [
   { id: 'portfolio', label: 'Portfolio', icon: '🖼️' },
 ]
 
+/**
+ * Purpose: Retrieves businesstypes.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 const getBusinessTypes = (t: (key: string) => string) => [
   { value: 'bakery', label: t('Bakery') },
   { value: 'healthcare', label: t('Healthcare') },
@@ -61,13 +68,28 @@ const getBusinessTypes = (t: (key: string) => string) => [
   { value: 'other', label: t('Other') },
 ]
 
+/**
+ * Purpose: Executes VCardPlusDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) {
   const { t } = useTranslation()
   const businessTypes = getBusinessTypes(t)
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<VCardPlusDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderPageSettingsContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderPageSettingsContent = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Page Settings')}</h4>
@@ -230,6 +252,11 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
     </div>
   )
 
+  /**
+   * Purpose: Executes renderAddContactButtonContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderAddContactButtonContent = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Add to Contact Button')}</h4>
@@ -346,6 +373,11 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
     </div>
   )
 
+  /**
+   * Purpose: Executes renderPortfolioContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderPortfolioContent = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Portfolio & Products')}</h4>
@@ -411,6 +443,11 @@ export function VCardPlusDesigner({ design, onChange }: VCardPlusDesignerProps) 
     </div>
   )
 
+  /**
+   * Purpose: Executes renderAdditionalColors functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderAdditionalColors = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Additional Colors')}</h4>

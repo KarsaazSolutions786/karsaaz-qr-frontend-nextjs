@@ -23,6 +23,11 @@ export interface StickerUploadProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerUpload functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerUpload({
   onUpload,
   onCancel,
@@ -64,23 +69,43 @@ export function StickerUpload({
   }, []);
 
   // Handle drag events
+  /**
+   * Purpose: Executes handleDragEnter functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   };
 
+  /**
+   * Purpose: Executes handleDragLeave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   };
 
+  /**
+   * Purpose: Executes handleDragOver functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
+  /**
+   * Purpose: Executes handleDrop functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -94,6 +119,11 @@ export function StickerUpload({
   };
 
   // Handle file input change
+  /**
+   * Purpose: Executes handleFileInputChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     const firstFile = files?.[0];
@@ -103,6 +133,11 @@ export function StickerUpload({
   };
 
   // Handle upload
+  /**
+   * Purpose: Executes handleUpload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUpload = async () => {
     if (!selectedFile || !stickerName.trim()) {
       setError('Please select a file and provide a name');
@@ -131,6 +166,11 @@ export function StickerUpload({
   };
 
   // Handle cancel
+  /**
+   * Purpose: Executes handleCancel functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCancel = () => {
     setSelectedFile(null);
     setPreviewUrl(null);

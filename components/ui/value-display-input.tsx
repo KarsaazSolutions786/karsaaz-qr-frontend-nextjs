@@ -11,10 +11,20 @@ interface ValueDisplayInputProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes ValueDisplayInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ValueDisplayInput({ value, label, className }: ValueDisplayInputProps) {
   const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
 
+  /**
+   * Purpose: Executes handleCopy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopy = async () => {
     await navigator.clipboard.writeText(value)
     setCopied(true)

@@ -27,24 +27,33 @@ export interface GuestStorageStats {
 
 export const storageAPI = {
   /**
-   * Get storage usage stats for the authenticated user
+   * Purpose: Get storage usage stats for the authenticated user
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
    */
+  
   async getUsage(): Promise<StorageUsageStats> {
     const response = await apiClient.get('/storage/usage')
     return response.data.data
   },
 
   /**
-   * Get storage usage for guest session
+   * Purpose: Get storage usage for guest session
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
    */
+  
   async getGuestUsage(): Promise<GuestStorageStats> {
     const response = await apiClient.get('/guest/storage')
     return response.data.data
   },
 
   /**
-   * Trigger storage recalculation for the current user
+   * Purpose: Trigger storage recalculation for the current user
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
    */
+  
   async recalculate(): Promise<StorageUsageStats> {
     const response = await apiClient.post('/storage/recalculate')
     return response.data.data

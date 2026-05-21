@@ -36,12 +36,27 @@ const tabs: DesignerTab[] = [
   { id: 'feedback', label: 'Feedback', icon: '⭐' },
 ]
 
+/**
+ * Purpose: Executes BusinessReviewDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<BusinessReviewDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderFormSettingsContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderFormSettingsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Logo & Form')}</h4>
@@ -257,6 +272,11 @@ export function BusinessReviewDesigner({ design, onChange }: BusinessReviewDesig
     </div>
   )
 
+  /**
+   * Purpose: Executes renderFeedbackSettingsContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderFeedbackSettingsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Feedback Settings')}</h4>

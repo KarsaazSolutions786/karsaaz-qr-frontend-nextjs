@@ -2,9 +2,11 @@ import type { SubscriptionPlan } from '@/types/entities/plan'
 import type { Plan } from '@/types/entities/subscription'
 
 /**
- * Maps an admin SubscriptionPlan to a user-facing Plan type.
- * Used by checkout, pricing, and subscription detail components.
+ * Purpose: Maps an admin SubscriptionPlan to a user-facing Plan type. Used by checkout, pricing, and subscription detail components.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function mapSubscriptionPlanToPlan(sp: SubscriptionPlan): Plan {
   return {
     id: String(sp.id),

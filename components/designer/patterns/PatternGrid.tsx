@@ -11,6 +11,11 @@ interface PatternGridProps {
   onSelectType: (type: PatternSettings['type']) => void
 }
 
+/**
+ * Purpose: Executes PatternGrid functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function PatternGrid({ pattern, onSelectType }: PatternGridProps) {
   const { t } = useTranslation()
   const patternOptions = [

@@ -23,6 +23,11 @@ interface WithdrawalHistoryProps {
   refreshKey?: number
 }
 
+/**
+ * Purpose: Executes WithdrawalHistory functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WithdrawalHistory({ refreshKey }: WithdrawalHistoryProps) {
   const { t } = useTranslation()
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([])
@@ -31,6 +36,7 @@ export function WithdrawalHistory({ refreshKey }: WithdrawalHistoryProps) {
   const [lastPage, setLastPage] = useState(1)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true)
     withdrawalsAPI
       .list({ page })

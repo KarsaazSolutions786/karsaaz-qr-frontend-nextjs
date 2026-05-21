@@ -37,6 +37,11 @@ interface DoughnutChartProps {
   centerValue?: string | number
 }
 
+/**
+ * Purpose: Executes renderCustomLabel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function renderCustomLabel({
   cx,
   cy,
@@ -67,6 +72,11 @@ function renderCustomLabel({
   )
 }
 
+/**
+ * Purpose: Executes DoughnutChart functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function DoughnutChart({
   data,
   height = 300,

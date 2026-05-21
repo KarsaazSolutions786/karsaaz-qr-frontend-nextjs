@@ -9,6 +9,11 @@ import { useDeleteRole } from '@/lib/hooks/mutations/useRoleMutations'
 import type { RoleEntity } from '@/lib/api/endpoints/roles'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes RoleNameCell functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function RoleNameCell({ role }: { role: RoleEntity }) {
   const { t } = useTranslation()
   const isSuperAdmin = role.name?.toLowerCase() === 'super admin'
@@ -29,6 +34,11 @@ function RoleNameCell({ role }: { role: RoleEntity }) {
   )
 }
 
+/**
+ * Purpose: Executes RolesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function RolesPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -36,6 +46,11 @@ export default function RolesPage() {
   const { data, isLoading } = useRoles({ page, search: search || undefined })
   const deleteMutation = useDeleteRole()
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, name: string) => {
     if (confirm(t('Are you sure you want to delete the role "{{name}}"?').replace('{{name}}', name))) {
       await deleteMutation.mutateAsync(id)

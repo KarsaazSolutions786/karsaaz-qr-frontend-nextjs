@@ -539,8 +539,11 @@ export const blockRegistry: Record<string, DynamicBlockDefinition> = {
 }
 
 /**
- * Register a dynamic block type from a DynamicBiolinkBlock definition.
+ * Purpose: Register a dynamic block type from a DynamicBiolinkBlock definition.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function registerDynamicBlock(
   slug: string,
   dynamicBlock: DynamicBiolinkBlock,
@@ -566,8 +569,11 @@ export function registerDynamicBlock(
 }
 
 /**
- * Unregister a dynamic block type.
+ * Purpose: Unregister a dynamic block type.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function unregisterDynamicBlock(slug: string) {
   const definition = blockRegistry[slug]
   if (definition?.isDynamic) {
@@ -576,8 +582,11 @@ export function unregisterDynamicBlock(slug: string) {
 }
 
 /**
- * Get all registered block definitions, optionally filtered by category or dynamic flag.
+ * Purpose: Get all registered block definitions, optionally filtered by category or dynamic flag.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getBlockDefinitions(filter?: {
   category?: string
   dynamicOnly?: boolean
@@ -589,6 +598,11 @@ export function getBlockDefinitions(filter?: {
   })
 }
 
+/**
+ * Purpose: Executes createBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function createBlock(type: BlockType | string, order: number) {
   const definition = blockRegistry[type]
   return {

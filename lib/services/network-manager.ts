@@ -4,10 +4,20 @@
 type ConnectionType = '4g' | '3g' | '2g' | 'slow-2g' | 'unknown';
 type NetworkEventHandler = (status: { isOnline: boolean; connectionType: ConnectionType; isSlow: boolean }) => void;
 
+/**
+ * Purpose: Class definition for NetworkManager.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 class NetworkManager {
   private static instance: NetworkManager;
   private listeners: NetworkEventHandler[] = [];
 
+  /**
+   * Purpose: Retrieves instance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getInstance(): NetworkManager {
     if (!this.instance) this.instance = new NetworkManager();
     return this.instance;
@@ -33,7 +43,12 @@ class NetworkManager {
     return (conn.downlink ?? Infinity) < 1;
   }
 
-  /** Get current network status snapshot */
+  /**
+   * Purpose: * Get current network status snapshot 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   getStatus() {
     return {
       isOnline: this.isOnline,
@@ -42,7 +57,12 @@ class NetworkManager {
     };
   }
 
-  /** Subscribe to network changes */
+  /**
+   * Purpose: * Subscribe to network changes 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   subscribe(handler: NetworkEventHandler): () => void {
     this.listeners.push(handler);
     return () => {
@@ -50,7 +70,12 @@ class NetworkManager {
     };
   }
 
-  /** Initialize event listeners */
+  /**
+   * Purpose: * Initialize event listeners 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   init(): void {
     if (typeof window === 'undefined') return;
     window.addEventListener('online', this.notify);
@@ -59,7 +84,12 @@ class NetworkManager {
     if (conn) conn.addEventListener('change', this.notify);
   }
 
-  /** Cleanup listeners */
+  /**
+   * Purpose: * Cleanup listeners 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   destroy(): void {
     if (typeof window === 'undefined') return;
     window.removeEventListener('online', this.notify);

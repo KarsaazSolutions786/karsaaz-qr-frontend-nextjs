@@ -28,6 +28,11 @@ interface PayPalButtonProps {
   promoCode?: string
 }
 
+/**
+ * Purpose: Executes PayPalButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PayPalButton({ plan, clientId, promoCode }: PayPalButtonProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [loading, setLoading] = useState(true)

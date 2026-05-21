@@ -15,6 +15,11 @@ const STATUS_STYLES: Record<string, string> = {
 
 const LIMIT_OPTIONS = [5, 10, 25, 50]
 
+/**
+ * Purpose: Executes StripeInvoices functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StripeInvoices() {
   const { t } = useTranslation()
   const [invoices, setInvoices] = useState<StripeInvoice[]>([])
@@ -25,6 +30,11 @@ export function StripeInvoices() {
     loadInvoices()
   }, [limit])
 
+  /**
+   * Purpose: Executes loadInvoices functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function loadInvoices() {
     setLoading(true)
     try {
@@ -37,12 +47,22 @@ export function StripeInvoices() {
     }
   }
 
+  /**
+   * Purpose: Executes formatDate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function formatDate(dateStr: string) {
     return new Date(dateStr).toLocaleDateString('en-US', {
       year: 'numeric', month: 'short', day: 'numeric',
     })
   }
 
+  /**
+   * Purpose: Executes formatAmount functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function formatAmount(amount: number, currency: string) {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',

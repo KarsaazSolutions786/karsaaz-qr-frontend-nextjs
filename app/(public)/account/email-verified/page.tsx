@@ -6,16 +6,11 @@ import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
 
 /**
- * Email Verified Success Page
- *
- * The backend (AccountController::verifyEmail) redirects here after
- * successfully verifying the user's email via the link sent in the
- * verification email.  The redirect target is:
- *   config('frontend.url') . '/account/email-verified'
- *
- * This page shows a success message with an auto-redirect countdown
- * to the dashboard, matching the legacy qrcg-email-verified behaviour.
+ * Purpose: Email Verified Success Page The backend (AccountController::verifyEmail) redirects here after successfully verifying the user's email via the link sent in the verification email.  The redirect target is: config('frontend.url') . '/account/email-verified' This page shows a success message with an auto-redirect countdown to the dashboard, matching the legacy qrcg-email-verified behaviour.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export default function EmailVerifiedPage() {
   const { t } = useTranslation()
   const router = useRouter()

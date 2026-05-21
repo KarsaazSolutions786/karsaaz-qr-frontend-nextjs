@@ -18,6 +18,11 @@ interface UseFirebaseReturn {
   reset: () => void;
 }
 
+/**
+ * Purpose: Executes useFirebase functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useFirebase(): UseFirebaseReturn {
   const [isSending, setIsSending] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);

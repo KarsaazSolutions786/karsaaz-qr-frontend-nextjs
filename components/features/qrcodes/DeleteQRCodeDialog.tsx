@@ -11,6 +11,11 @@ interface DeleteQRCodeDialogProps {
   isDeleting?: boolean
 }
 
+/**
+ * Purpose: Executes DeleteQRCodeDialog functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DeleteQRCodeDialog({
   qrcode,
   isOpen,

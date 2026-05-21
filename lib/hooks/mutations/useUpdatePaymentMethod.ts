@@ -3,9 +3,11 @@ import { updatePaymentMethod } from '@/lib/api/endpoints/stripe'
 import { queryKeys } from '@/lib/query/keys'
 
 /**
- * T226: Mutation hook for updating payment method.
- * Invalidates billing queries on success.
+ * Purpose: T226: Mutation hook for updating payment method. Invalidates billing queries on success.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useUpdatePaymentMethod() {
   const queryClient = useQueryClient()
 

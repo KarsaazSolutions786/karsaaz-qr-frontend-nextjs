@@ -12,6 +12,11 @@ export interface LoaderProps {
 const spinnerSizes = { sm: 'h-4 w-4', md: 'h-8 w-8', lg: 'h-12 w-12' }
 const barSizes = { sm: 'h-1', md: 'h-2', lg: 'h-3' }
 
+/**
+ * Purpose: Executes Loader functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Loader({ variant = 'spinner', size = 'md', className }: LoaderProps) {
   if (variant === 'bar') {
     return (

@@ -3,8 +3,11 @@ import type { FilterState } from '@/lib/hooks/useFilters'
 import type { ListQRCodesParams } from '@/lib/api/endpoints/qrcodes'
 
 /**
- * Parse a SortOption string into sortBy + sortOrder for the API.
+ * Purpose: Parse a SortOption string into sortBy + sortOrder for the API.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function parseSortOption(sort: SortOption): {
   sortBy: ListQRCodesParams['sortBy']
   sortOrder: ListQRCodesParams['sortOrder']
@@ -23,9 +26,11 @@ export function parseSortOption(sort: SortOption): {
 }
 
 /**
- * Convert FilterState from the useFilters hook into API query params.
- * Only includes non-default values.
+ * Purpose: Convert FilterState from the useFilters hook into API query params. Only includes non-default values.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function buildApiFilters(filters: FilterState): Partial<ListQRCodesParams> {
   const params: Partial<ListQRCodesParams> = {}
 

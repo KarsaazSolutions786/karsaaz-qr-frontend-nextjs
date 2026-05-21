@@ -37,11 +37,21 @@ const shareChannels = [
   },
 ]
 
+/**
+ * Purpose: Executes ShareBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ShareBlock({ block, isEditing, onUpdate }: ShareBlockProps) {
   const { t } = useTranslation();
   const { url, title = '' } = block.data
   const [copied, setCopied] = useState(false)
 
+  /**
+   * Purpose: Executes handleCopyLink functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url)

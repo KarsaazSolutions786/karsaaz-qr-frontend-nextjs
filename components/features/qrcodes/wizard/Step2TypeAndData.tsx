@@ -59,6 +59,11 @@ interface Step2TypeAndDataProps {
   showPreview?: boolean
 }
 
+/**
+ * Purpose: Executes Step2TypeAndData functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function Step2TypeAndData({
   qrType,
   onChange,
@@ -67,16 +72,31 @@ export default function Step2TypeAndData({
   showPreview = true,
 }: Step2TypeAndDataProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes handleTypeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTypeChange = (type: string) => {
     onChange('type', type)
     // Reset data when type changes
     onChange('data', {})
   }
 
+  /**
+   * Purpose: Executes handleDataChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDataChange = (data: any) => {
     onChange('data', data)
   }
 
+  /**
+   * Purpose: Executes renderDataForm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderDataForm = () => {
     const commonProps = {
       defaultValues: formData.data || {},

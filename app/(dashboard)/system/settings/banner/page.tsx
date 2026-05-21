@@ -19,6 +19,11 @@ const DEFAULT_BANNER: BannerSettings = {
   text_color: '#FFFFFF',
 }
 
+/**
+ * Purpose: Executes BannerSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BannerSettingsPage() {
   const { t } = useTranslation()
   const { data, isLoading, isError } = useQuery({

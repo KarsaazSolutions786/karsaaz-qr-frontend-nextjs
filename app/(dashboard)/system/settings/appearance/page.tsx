@@ -36,6 +36,11 @@ const CONFIG_KEYS = [
   'appearance.stats_image',
 ]
 
+/**
+ * Purpose: Executes ColorField functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function ColorField({
   label,
   value,
@@ -66,6 +71,11 @@ function ColorField({
   )
 }
 
+/**
+ * Purpose: Executes AppearanceSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AppearanceSettingsPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
@@ -77,9 +87,19 @@ export default function AppearanceSettingsPage() {
     if (configs) setForm({ ...configs })
   }, [configs])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: string, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async () => {
     await saveMutation.mutateAsync(
       CONFIG_KEYS.map((key) => ({ key, value: form[key] ?? '' }))

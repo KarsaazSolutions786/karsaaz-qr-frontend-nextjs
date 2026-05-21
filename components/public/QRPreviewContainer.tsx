@@ -11,6 +11,11 @@ interface QRPreviewContainerProps {
   onError?: (error: Error) => void;
 }
 
+/**
+ * Purpose: Executes QRPreviewContainer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QRPreviewContainer({
   slug,
   children,

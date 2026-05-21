@@ -11,6 +11,11 @@ interface CancelSubscriptionDialogProps {
   subscription: Subscription
 }
 
+/**
+ * Purpose: Executes CancelSubscriptionDialog functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CancelSubscriptionDialog({
   isOpen,
   onClose,
@@ -19,11 +24,16 @@ export function CancelSubscriptionDialog({
   const { t } = useTranslation()
   const cancelMutation = useCancelSubscription()
 
+  /**
+   * Purpose: Executes handleCancel functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCancel = async () => {
     try {
       await cancelMutation.mutateAsync()
       onClose()
-    } catch (error) {
+    } catch {
       // Error handled by mutation
     }
   }

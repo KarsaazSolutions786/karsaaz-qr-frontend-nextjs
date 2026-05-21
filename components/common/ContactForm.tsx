@@ -30,6 +30,11 @@ const inputClass = cn(
   'disabled:cursor-not-allowed disabled:opacity-50'
 )
 
+/**
+ * Purpose: Executes ContactForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ContactForm({ onSubmit, isLoading, defaultValues, className }: ContactFormProps) {
   const { t } = useTranslation()
   const {

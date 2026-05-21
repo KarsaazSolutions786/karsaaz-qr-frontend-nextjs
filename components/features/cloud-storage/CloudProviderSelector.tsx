@@ -16,6 +16,11 @@ interface CloudProviderSelectorProps {
 
 type Step = 'select' | 'connect'
 
+/**
+ * Purpose: Executes CloudProviderSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CloudProviderSelector({
   isOpen,
   onClose,
@@ -25,16 +30,31 @@ export function CloudProviderSelector({
   const [step, setStep] = useState<Step>('select')
   const [selectedProvider, setSelectedProvider] = useState<CloudProvider | null>(null)
 
+  /**
+   * Purpose: Executes handleProviderSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleProviderSelect = (provider: CloudProvider) => {
     setSelectedProvider(provider)
     setStep('connect')
   }
 
+  /**
+   * Purpose: Executes handleBack functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleBack = () => {
     setStep('select')
     setSelectedProvider(null)
   }
 
+  /**
+   * Purpose: Executes handleSuccess functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSuccess = () => {
     if (selectedProvider) {
       onConnectionSuccess(selectedProvider.id)
@@ -147,6 +167,11 @@ interface CloudConnectionCardProps {
   isTesting?: boolean
 }
 
+/**
+ * Purpose: Executes CloudConnectionCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CloudConnectionCard({
   connection,
   onTest,

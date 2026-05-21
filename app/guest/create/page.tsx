@@ -27,6 +27,11 @@ const TYPE_LABELS: Record<string, string> = {
   calendar: 'Calendar Event',
 }
 
+/**
+ * Purpose: Executes GuestCreatePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function GuestCreatePage() {
   const searchParams = useSearchParams()
   const { t } = useTranslation()
@@ -104,6 +109,11 @@ export default function GuestCreatePage() {
     }
   }, [type, formData])
 
+  /**
+   * Purpose: Executes handlePreview functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handlePreview = async () => {
     setIsPreviewing(true)
     try {
@@ -120,6 +130,11 @@ export default function GuestCreatePage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleCreate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleCreate = async () => {
     if (!name.trim()) {
       toast.error(t('Please enter a name for your QR code'))
@@ -153,6 +168,11 @@ export default function GuestCreatePage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleDownload = async () => {
     if (!createdQr) return
     setIsDownloading(true)

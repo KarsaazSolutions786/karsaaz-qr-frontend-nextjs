@@ -19,6 +19,11 @@ interface ShapeFieldsProps {
   onChange: (settings: ShapeSettings) => void;
 }
 
+/**
+ * Purpose: Executes ShapeFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ShapeFields({
   shapeSettings,
   onChange,
@@ -28,6 +33,11 @@ export default function ShapeFields({
   const [moduleSpacing, setModuleSpacing] = useState(0);
   const [cornerRadius, setCornerRadius] = useState(shapeSettings.cornerRadius || 0);
 
+  /**
+   * Purpose: Executes handleShapeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleShapeChange = (
     shape: ModuleShape,
     size?: number,
@@ -42,6 +52,11 @@ export default function ShapeFields({
     });
   };
 
+  /**
+   * Purpose: Executes handleCornerRadiusChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCornerRadiusChange = (radius: number) => {
     setCornerRadius(radius);
     onChange({

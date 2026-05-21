@@ -9,6 +9,11 @@ interface FileBlockProps {
   onUpdate?: (data: FileBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes FileBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function FileBlock({ block, isEditing, onUpdate }: FileBlockProps) {
   const { t } = useTranslation();
   const { fileUrl, fileName, fileSize, downloadCount } = block.data

@@ -9,6 +9,11 @@ interface VimeoBlockProps {
   onUpdate?: (data: VimeoBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes extractVimeoId functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function extractVimeoId(url: string): string | null {
   const patterns = [
     /vimeo\.com\/(\d+)/,
@@ -24,6 +29,11 @@ function extractVimeoId(url: string): string | null {
   return null
 }
 
+/**
+ * Purpose: Executes VimeoBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function VimeoBlock({ block, isEditing, onUpdate }: VimeoBlockProps) {
   const { url, autoplay = false, loop = false } = block.data
   const { t } = useTranslation()

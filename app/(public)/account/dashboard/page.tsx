@@ -7,12 +7,11 @@ import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
 /**
- * This route handles payment success redirects from payment processors.
- *
- * Stripe redirects to: /account/dashboard?payment_gateway=stripe&s_id={session_id}
- *
- * This page redirects to the proper /payment/success page with the same params.
+ * Purpose: This route handles payment success redirects from payment processors. Stripe redirects to: /account/dashboard?payment_gateway=stripe&s_id={session_id} This page redirects to the proper /payment/success page with the same params.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function PaymentRedirectHandler() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
@@ -55,6 +54,11 @@ function PaymentRedirectHandler() {
   )
 }
 
+/**
+ * Purpose: Executes AccountDashboardPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AccountDashboardPage() {
   const { t } = useTranslation()
   return (

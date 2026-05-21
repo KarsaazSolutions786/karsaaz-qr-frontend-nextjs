@@ -45,6 +45,11 @@ const VIEW_MODES: ViewModeOption[] = [
   },
 ];
 
+/**
+ * Purpose: Executes ViewModeToggle functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ViewModeToggle({ currentMode, onModeChange }: ViewModeToggleProps) {
   const { t } = useTranslation();
   return (

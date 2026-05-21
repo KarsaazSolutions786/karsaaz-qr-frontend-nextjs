@@ -11,6 +11,11 @@ interface DomainStatusModalProps {
   isLoading?: boolean
 }
 
+/**
+ * Purpose: Executes DomainStatusModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DomainStatusModal({
   domain,
   open,

@@ -123,6 +123,13 @@ const inputClass =
 
 // ─── Build all config keys needed ────────────────────────────────────────────
 
+/**
+ * Purpose: Executes buildAllKeys functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function buildAllKeys(): string[] {
   return NOTIFICATION_EVENTS.flatMap((evt) => {
     const prefix = `notification_${evt.key}`
@@ -142,6 +149,11 @@ function buildAllKeys(): string[] {
 
 // ─── Page Component ──────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes SystemNotificationsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SystemNotificationsPage() {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(NOTIFICATION_EVENTS[0]?.key ?? 'trial_expired')
@@ -172,6 +184,11 @@ export default function SystemNotificationsPage() {
     setSaved(false)
   }, [])
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async () => {
     setSaving(true)
     try {

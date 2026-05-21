@@ -10,16 +10,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Stripe payment processor configuration form.
- *
- * Fields (matching PROCESSORS definition):
- * - Publisher Key
- * - Secret Key
- * - Automatic Tax (enabled / disabled)
- * - Tax Behavior (inclusive / exclusive)
- *
- * Webhook IS auto-registered. Test credentials supported.
+ * Purpose: Stripe payment processor configuration form. Fields (matching PROCESSORS definition): - Publisher Key - Secret Key - Automatic Tax (enabled / disabled) - Tax Behavior (inclusive / exclusive) Webhook IS auto-registered. Test credentials supported.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function StripeForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

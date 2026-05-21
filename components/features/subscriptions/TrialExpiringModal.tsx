@@ -32,14 +32,11 @@ const TRIAL_FEATURES = [
 ] as const
 
 /**
- * Modal displayed when a trial subscription is about to expire (< 3 days remaining).
- *
- * Matches P1 TrialExpiringSoonSubscription behavior:
- * - Shows trial days remaining
- * - Feature comparison showing what user will lose
- * - "Upgrade Now" CTA redirects to pricing page
- * - "Continue Trial" dismisses for the current session
+ * Purpose: Modal displayed when a trial subscription is about to expire (< 3 days remaining). Matches P1 TrialExpiringSoonSubscription behavior: - Shows trial days remaining - Feature comparison showing what user will lose - "Upgrade Now" CTA redirects to pricing page - "Continue Trial" dismisses for the current session
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function TrialExpiringModal({
   open,
   daysRemaining,

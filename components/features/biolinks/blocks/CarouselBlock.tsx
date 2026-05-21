@@ -10,6 +10,11 @@ interface CarouselBlockProps {
   onUpdate?: (data: CarouselBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes CarouselBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function CarouselBlock({ block, isEditing, onUpdate }: CarouselBlockProps) {
   const { t } = useTranslation();
   const { images, autoplay = false, interval = 5, showDots = true, showArrows = true, height = 300 } =
@@ -28,14 +33,29 @@ export default function CarouselBlock({ block, isEditing, onUpdate }: CarouselBl
   // The autoplay attribute is stored for potential server-side rendering of the block
 
   if (isEditing) {
+    /**
+     * Purpose: Executes addImage functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const addImage = () => {
       onUpdate?.({ ...block.data, images: [...images, { url: '', alt: '', caption: '' }] })
     }
 
+    /**
+     * Purpose: Deletes the specified resource.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const removeImage = (index: number) => {
       onUpdate?.({ ...block.data, images: images.filter((_, i) => i !== index) })
     }
 
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const updateImage = (index: number, field: string, value: string) => {
       const updated = images.map((img, i) => (i === index ? { ...img, [field]: value } : img))
       onUpdate?.({ ...block.data, images: updated })

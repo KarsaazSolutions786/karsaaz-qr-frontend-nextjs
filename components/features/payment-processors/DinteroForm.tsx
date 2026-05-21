@@ -10,19 +10,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Dintero (Norway) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (test / production)
- * - Account ID
- * - Client ID
- * - Client Secret
- * - Profile ID
- * - VAT Percentage
- * - Reference Prefix
- *
- * No auto-webhook registration; no manual webhook URL display.
+ * Purpose: Dintero (Norway) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (test / production) - Account ID - Client ID - Client Secret - Profile ID - VAT Percentage - Reference Prefix No auto-webhook registration; no manual webhook URL display.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function DinteroForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

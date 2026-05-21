@@ -9,6 +9,11 @@ interface MapBlockProps {
   onUpdate?: (data: MapBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes buildMapEmbedUrl functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function buildMapEmbedUrl(data: MapBlockData['data']): string {
   const { provider = 'openstreetmap', lat, lng, zoom = 14, address } = data
 
@@ -32,11 +37,21 @@ function buildMapEmbedUrl(data: MapBlockData['data']): string {
   return ''
 }
 
+/**
+ * Purpose: Executes calculateBBox functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function calculateBBox(lat: number, lng: number, zoom: number): string {
   const delta = 0.01 * Math.pow(2, 15 - zoom)
   return `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`
 }
 
+/**
+ * Purpose: Executes MapBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function MapBlock({ block, isEditing, onUpdate }: MapBlockProps) {
   const {
     lat,

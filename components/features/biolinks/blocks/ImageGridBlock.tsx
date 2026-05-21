@@ -10,20 +10,40 @@ interface ImageGridBlockProps {
   onUpdate?: (data: ImageGridBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes ImageGridBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ImageGridBlock({ block, isEditing, onUpdate }: ImageGridBlockProps) {
   const { t } = useTranslation();
   const { title, items, gridGap = 8, columns = 3, lightbox = false } = block.data
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   if (isEditing) {
+    /**
+     * Purpose: Executes addItem functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const addItem = () => {
       onUpdate?.({ ...block.data, items: [...items, { url: '', alt: '' }] })
     }
 
+    /**
+     * Purpose: Deletes the specified resource.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const removeItem = (index: number) => {
       onUpdate?.({ ...block.data, items: items.filter((_, i) => i !== index) })
     }
 
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const updateItem = (index: number, field: string, value: string) => {
       const newItems = items.map((item, i) =>
         i === index ? { url: item.url, alt: item.alt, link: item.link, [field]: value } : item

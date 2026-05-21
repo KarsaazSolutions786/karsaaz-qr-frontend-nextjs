@@ -31,6 +31,11 @@ const DEFAULT_FORM_SETTINGS: FormSettings = {
   captchaEnabled: false,
 }
 
+/**
+ * Purpose: Executes LeadFormDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LeadFormDataForm({ defaultValues, onChange }: LeadFormDataFormProps) {
   const { t } = useTranslation()
   const {

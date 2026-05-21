@@ -8,6 +8,11 @@ import type { SubscriptionPlan } from '@/types/entities/plan'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes PlansPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PlansPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -16,6 +21,11 @@ export default function PlansPage() {
   const deleteMutation = useDeletePlan()
   const duplicateMutation = useDuplicatePlan()
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, name: string) => {
     if (confirm(t('Are you sure you want to delete "{{name}}"?').replace('{{name}}', name))) {
       try {
@@ -26,6 +36,11 @@ export default function PlansPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleDuplicate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDuplicate = async (id: number) => {
     try {
       await duplicateMutation.mutateAsync(id)

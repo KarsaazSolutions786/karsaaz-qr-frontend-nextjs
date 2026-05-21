@@ -3,6 +3,11 @@ import { notFound } from 'next/navigation'
 import MenuPreview from '@/components/public/restaurant-menu/MenuPreview'
 import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
+/**
+ * Purpose: Retrieves restaurantmenu.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getRestaurantMenu(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -25,6 +30,11 @@ async function getRestaurantMenu(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const menu = await getRestaurantMenu(params.slug)
 
@@ -52,6 +62,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes PublicMenuPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function PublicMenuPage({ params }: { params: { slug: string } }) {
   const menu = await getRestaurantMenu(params.slug)
 

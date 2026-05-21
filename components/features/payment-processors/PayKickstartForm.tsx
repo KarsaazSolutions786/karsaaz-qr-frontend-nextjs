@@ -11,17 +11,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * PayKickstart subscription billing payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (test / live)
- * - Secret Key
- * - New Registration Email Template (textarea)
- * - Upsale Email Template (textarea)
- *
- * Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
- * PayKickstart requires IPN URL in Product Settings > Integration.
+ * Purpose: PayKickstart subscription billing payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (test / live) - Secret Key - New Registration Email Template (textarea) - Upsale Email Template (textarea) Manual webhook URL is shown (showWebhookUrl on PROCESSORS). PayKickstart requires IPN URL in Product Settings > Integration.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function PayKickstartForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

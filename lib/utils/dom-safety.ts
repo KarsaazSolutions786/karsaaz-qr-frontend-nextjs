@@ -7,7 +7,12 @@
  */
 import DOMPurify from 'dompurify'
 
-/** Escape HTML entities to prevent XSS */
+/**
+ * Purpose: * Escape HTML entities to prevent XSS 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function escapeHtml(str: string): string {
   const div = typeof document !== 'undefined' ? document.createElement('div') : null
   if (div) {
@@ -23,7 +28,12 @@ export function escapeHtml(str: string): string {
     .replace(/'/g, '&#039;')
 }
 
-/** Sanitize SVG string — remove script tags, event handlers, javascript: URIs */
+/**
+ * Purpose: * Sanitize SVG string — remove script tags, event handlers, javascript: URIs 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function sanitizeSvg(svg: string): string {
   if (!svg) return ''
   if (typeof window === 'undefined') {
@@ -41,7 +51,12 @@ export function sanitizeSvg(svg: string): string {
   })
 }
 
-/** Sanitize HTML string using DOMPurify with a safe allowlist */
+/**
+ * Purpose: * Sanitize HTML string using DOMPurify with a safe allowlist 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function sanitizeHTML(html: string): string {
   if (!html) return ''
   if (typeof window === 'undefined') {
@@ -55,7 +70,12 @@ export function sanitizeHTML(html: string): string {
   })
 }
 
-/** Check if a URL is safe — uses protocol allowlist instead of denylist */
+/**
+ * Purpose: * Check if a URL is safe — uses protocol allowlist instead of denylist 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function isSafeUrl(url: string): boolean {
   if (!url) return false
   const trimmed = url.trim()
@@ -69,9 +89,11 @@ export function isSafeUrl(url: string): boolean {
 }
 
 /**
- * Strips script tags and inline event handlers from an HTML string.
- * Uses DOMPurify for robust sanitization on the client.
+ * Purpose: Strips script tags and inline event handlers from an HTML string. Uses DOMPurify for robust sanitization on the client.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function preventScriptInjection(html: string): string {
   if (!html) return ''
   if (typeof window === 'undefined') {
@@ -84,7 +106,12 @@ export function preventScriptInjection(html: string): string {
   return DOMPurify.sanitize(html)
 }
 
-/** Validate that a URL uses only an allowed scheme (http, https, mailto, tel) */
+/**
+ * Purpose: * Validate that a URL uses only an allowed scheme (http, https, mailto, tel) 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function sanitizeUrl(url: string): string {
   if (!url) return ''
   const trimmed = url.trim()
@@ -98,14 +125,21 @@ export function sanitizeUrl(url: string): string {
 }
 
 /**
- * Set up a listener for Content-Security-Policy violation reports.
- * Call once at app startup; returns a cleanup function.
+ * Purpose: Set up a listener for Content-Security-Policy violation reports. Call once at app startup; returns a cleanup function.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function handleCSPViolation(
   onViolation?: (event: SecurityPolicyViolationEvent) => void
 ): () => void {
   if (typeof document === 'undefined') return () => {}
 
+  /**
+   * Purpose: Executes handler functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handler = (event: SecurityPolicyViolationEvent) => {
     console.warn('[CSP Violation]', {
       blockedURI: event.blockedURI,

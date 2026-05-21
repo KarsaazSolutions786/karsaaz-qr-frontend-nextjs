@@ -33,6 +33,11 @@ interface Step2DesignerProps {
   qrData: Record<string, any>
 }
 
+/**
+ * Purpose: Executes Step2Designer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function Step2Designer({ design, onChange, qrType, qrData }: Step2DesignerProps) {
   const { t } = useTranslation()
   const {
@@ -47,6 +52,11 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
   // Subscription-based premium feature gating
   const { plan, isOnTrial } = useSubscription()
   const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
+  /**
+   * Purpose: Executes handlePremiumBlock functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handlePremiumBlock = () => {
     toast.info(
       t('This design feature requires a paid plan. Upgrade to unlock advanced shapes and effects.')
@@ -63,14 +73,29 @@ export default function Step2Designer({ design, onChange, qrType, qrData }: Step
     Object.keys(qrData).length > 0 &&
     Object.values(qrData).some(v => v !== '' && v !== null && v !== undefined)
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (field: string, value: any) => {
     onChange({ ...design, [field]: value })
   }
 
+  /**
+   * Purpose: Executes applyPreset functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const applyPreset = (preset: (typeof DESIGN_PRESETS)[0]) => {
     onChange({ ...design, ...preset.config })
   }
 
+  /**
+   * Purpose: Executes resetToDefaults functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const resetToDefaults = () => {
     onChange({ ...DEFAULT_DESIGNER_CONFIG })
   }

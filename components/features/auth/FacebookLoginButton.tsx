@@ -3,8 +3,18 @@
 import { authAPI } from '@/lib/api/endpoints/auth'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes FacebookLoginButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FacebookLoginButton() {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes handleFacebookLogin functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFacebookLogin = () => {
     const redirectUrl = authAPI.getFacebookRedirectUrl()
     window.location.href = redirectUrl

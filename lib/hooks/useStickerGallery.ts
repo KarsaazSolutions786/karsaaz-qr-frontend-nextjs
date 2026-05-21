@@ -45,6 +45,11 @@ export interface UseStickerGalleryReturn {
   reset: () => void;
 }
 
+/**
+ * Purpose: Executes useStickerGallery functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useStickerGallery(
   options: UseStickerGalleryOptions = {}
 ): UseStickerGalleryReturn {
@@ -236,6 +241,11 @@ export interface UseStickerPositionOptions {
   initialOpacity?: number;
 }
 
+/**
+ * Purpose: Executes useStickerPosition functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useStickerPosition(options: UseStickerPositionOptions) {
   const { qrSize, initialSize = 0.2, initialRotation = 0, initialOpacity = 1.0 } = options;
 
@@ -268,8 +278,11 @@ export function useStickerPosition(options: UseStickerPositionOptions) {
 }
 
 /**
- * Hook for sticker search with debouncing
+ * Purpose: Hook for sticker search with debouncing
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useStickerSearch(delay: number = 300) {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -290,8 +303,11 @@ export function useStickerSearch(delay: number = 300) {
 }
 
 /**
- * Hook for managing sticker favorites
+ * Purpose: Hook for managing sticker favorites
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useStickerFavorites() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 

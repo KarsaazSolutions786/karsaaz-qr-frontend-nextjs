@@ -4,6 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 
+/**
+ * Purpose: Executes Footer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function Footer() {
   return (
     <footer

@@ -7,6 +7,11 @@ import { useGuest } from '@/lib/hooks/useGuest'
 const STORAGE_QUERY_KEY = ['storage', 'usage']
 const GUEST_STORAGE_QUERY_KEY = ['guest-storage', 'usage']
 
+/**
+ * Purpose: Executes useStorage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function useStorage() {
   const { isGuest } = useGuest()
 

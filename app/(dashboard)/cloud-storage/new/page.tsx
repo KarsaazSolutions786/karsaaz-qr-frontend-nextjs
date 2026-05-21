@@ -24,6 +24,11 @@ const PROVIDERS: { value: CloudProvider; label: string }[] = [
   { value: 'digitalocean', label: 'DigitalOcean Spaces' },
 ]
 
+/**
+ * Purpose: Executes NewCloudStoragePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewCloudStoragePage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -38,9 +43,19 @@ export default function NewCloudStoragePage() {
     region: '',
   })
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = <K extends keyof CloudStorageForm>(key: K, value: CloudStorageForm[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)

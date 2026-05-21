@@ -24,8 +24,11 @@ export interface SVGRenderOptions {
 }
 
 /**
- * Generate complete QR code SVG
+ * Purpose: Generate complete QR code SVG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateQRCodeSVG(options: SVGRenderOptions): string {
   const { qr, moduleCount, config, stickerConfig } = options;
 
@@ -85,8 +88,11 @@ export function generateQRCodeSVG(options: SVGRenderOptions): string {
 }
 
 /**
- * Render background
+ * Purpose: Render background
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function renderBackground(config: DesignerConfig, size: number): string {
   const bg = config.background;
 
@@ -113,8 +119,11 @@ function renderBackground(config: DesignerConfig, size: number): string {
 }
 
 /**
- * Render SVG definitions (gradients, patterns, etc.)
+ * Purpose: Render SVG definitions (gradients, patterns, etc.)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function renderDefinitions(config: DesignerConfig): string {
   let defs = '<defs>';
 
@@ -144,8 +153,11 @@ function renderDefinitions(config: DesignerConfig): string {
 }
 
 /**
- * Render gradient definition
+ * Purpose: Render gradient definition
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function renderGradientDefinition(id: string, fill: FillConfig): string {
   if (fill.type !== 'gradient') return '';
 
@@ -177,8 +189,11 @@ function renderGradientDefinition(id: string, fill: FillConfig): string {
 }
 
 /**
- * Render gradient from colors
+ * Purpose: Render gradient from colors
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function renderGradientDefinitionFromColors(
   id: string,
   startColor: string,
@@ -203,8 +218,11 @@ function renderGradientDefinitionFromColors(
 }
 
 /**
- * Render all modules
+ * Purpose: Render all modules
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function renderModules(
   qr: QRCodeType,
   moduleCount: number,
@@ -250,8 +268,11 @@ function renderModules(
 }
 
 /**
- * Get foreground fill (color or gradient reference)
+ * Purpose: Get foreground fill (color or gradient reference)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getForegroundFill(config: DesignerConfig): string {
   if (config.foregroundFill.type === 'solid') {
     return config.foregroundFill.color;
@@ -265,8 +286,11 @@ function getForegroundFill(config: DesignerConfig): string {
 }
 
 /**
- * Get foreground color (for corners)
+ * Purpose: Get foreground color (for corners)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getForegroundColor(config: DesignerConfig): string {
   if (config.foregroundFill.type === 'solid') {
     return config.foregroundFill.color;
@@ -280,8 +304,11 @@ function getForegroundColor(config: DesignerConfig): string {
 }
 
 /**
- * Render logo
+ * Purpose: Render logo
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function renderLogo(logo: NonNullable<DesignerConfig['logo']>, svgSize: number): string {
   const logoSize = svgSize * logo.size;
   const x = (svgSize - logoSize) / 2;
@@ -342,8 +369,11 @@ function renderLogo(logo: NonNullable<DesignerConfig['logo']>, svgSize: number):
 }
 
 /**
- * Render sticker
+ * Purpose: Render sticker
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function renderSticker(sticker: StickerConfig, svgSize: number): string {
   // Use utility function for proper position calculation
   const { x, y } = calculateStickerPosition(sticker.position, svgSize, sticker.size);
@@ -363,8 +393,11 @@ function renderSticker(sticker: StickerConfig, svgSize: number): string {
 }
 
 /**
- * Convert SVG string to data URL
+ * Purpose: Convert SVG string to data URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function svgToDataURL(svg: string): string {
   const encoded = encodeURIComponent(svg)
     .replace(/'/g, '%27')
@@ -373,8 +406,11 @@ export function svgToDataURL(svg: string): string {
 }
 
 /**
- * Get SVG element from string
+ * Purpose: Get SVG element from string
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function svgStringToElement(svg: string): SVGSVGElement {
   const parser = new DOMParser();
   const doc = parser.parseFromString(svg, 'image/svg+xml');

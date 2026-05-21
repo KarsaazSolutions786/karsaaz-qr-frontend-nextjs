@@ -29,6 +29,11 @@ const gradientPresets = [
   { name: 'Fire', colors: ['#fa709a', '#fee140'] },
 ];
 
+/**
+ * Purpose: Executes BiolinksDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'background' | 'typography' | 'buttons' | 'layout'>(
@@ -36,10 +41,20 @@ export function BiolinksDesigner({ theme, onChange }: BiolinksDesignerProps) {
   );
   const [backgroundMode, setBackgroundMode] = useState<'color' | 'gradient' | 'image'>('color');
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateTheme = (updates: Partial<ThemeSettings>) => {
     onChange({ ...theme, ...updates });
   };
 
+  /**
+   * Purpose: Executes applyGradient functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const applyGradient = (colors: string[]) => {
     updateTheme({
       backgroundGradient: {

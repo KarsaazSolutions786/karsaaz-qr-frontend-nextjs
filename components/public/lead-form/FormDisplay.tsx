@@ -13,6 +13,11 @@ interface FormDisplayProps {
   onSuccess: () => void;
 }
 
+/**
+ * Purpose: Executes validateField functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function validateField(field: LeadFormField, value: unknown): string | null {
   if (
     field.required &&
@@ -65,6 +70,11 @@ function validateField(field: LeadFormField, value: unknown): string | null {
   return null;
 }
 
+/**
+ * Purpose: Executes FormDisplay functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<Record<string, unknown>>({});
@@ -84,6 +94,11 @@ export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
     });
   }, []);
 
+  /**
+   * Purpose: Executes validateForm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
     sortedFields.forEach(field => {
@@ -94,6 +109,11 @@ export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitError(null);
@@ -167,6 +187,11 @@ export default function FormDisplay({ form, onSuccess }: FormDisplayProps) {
 }
 
 // Generate simple browser fingerprint for duplicate detection
+/**
+ * Purpose: Executes generateFingerprint functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generateFingerprint(): string {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');

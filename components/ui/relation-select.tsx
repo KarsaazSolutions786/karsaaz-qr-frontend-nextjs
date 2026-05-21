@@ -17,6 +17,11 @@ interface RelationSelectProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes RelationSelect functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function RelationSelect({
   value,
   onChange,
@@ -34,6 +39,11 @@ export function RelationSelect({
   const debounceRef = React.useRef<ReturnType<typeof setTimeout>>(undefined)
 
   React.useEffect(() => {
+    /**
+     * Purpose: Executes handler functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
@@ -58,6 +68,11 @@ export function RelationSelect({
     return () => clearTimeout(debounceRef.current)
   }, [search, open, fetchOptions])
 
+  /**
+   * Purpose: Executes handleSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSelect = (opt: RelationOption) => {
     onChange(opt.value)
     setSelectedLabel(opt.label)

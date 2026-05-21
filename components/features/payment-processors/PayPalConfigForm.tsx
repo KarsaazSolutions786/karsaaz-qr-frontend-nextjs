@@ -16,6 +16,11 @@ interface PayPalConfigFormProps {
   }) => Promise<void>
 }
 
+/**
+ * Purpose: Executes PayPalConfigForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PayPalConfigForm({ initialValues, onSave }: PayPalConfigFormProps) {
   const { t } = useTranslation()
   const [mode, setMode] = useState(initialValues?.paypal_mode || 'sandbox')
@@ -23,6 +28,11 @@ export function PayPalConfigForm({ initialValues, onSave }: PayPalConfigFormProp
   const [clientSecret, setClientSecret] = useState(initialValues?.paypal_client_secret || '')
   const [saving, setSaving] = useState(false)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)

@@ -30,6 +30,11 @@ import { GuestSignupPrompt } from '@/components/guest/GuestSignupPrompt'
 import { GuestLimitsBanner } from '@/components/guest/GuestLimitsBanner'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes DashboardLayout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <Suspense
@@ -46,6 +51,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   )
 }
 
+/**
+ * Purpose: Executes DashboardLayoutInner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
@@ -153,6 +163,11 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     ...allSectionNav.map(item => ({ name: item.label, href: item.href, icon: item.icon })),
   ]
 
+  /**
+   * Purpose: Checks if itemactive.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const isItemActive = (href: string) => {
     if (!pathname) return false
     const [itemPath, itemQueryString = ''] = href.split('?')
@@ -178,6 +193,11 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     return !hasExtraParams
   }
 
+  /**
+   * Purpose: Executes handleLogout functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleLogout = async () => {
     if (isLoggingOut) return
     setIsLoggingOut(true)
@@ -188,6 +208,11 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     }
   }
 
+  /**
+   * Purpose: Executes toggleSection functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleSection = (sectionKey: string) => {
     setExpandedSections(prev => ({ ...prev, [sectionKey]: !prev[sectionKey] }))
   }

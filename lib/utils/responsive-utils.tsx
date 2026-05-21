@@ -22,10 +22,11 @@ export const BREAKPOINTS = {
 export type Breakpoint = keyof typeof BREAKPOINTS;
 
 /**
- * useMediaQuery Hook
- * 
- * Detects if a media query matches.
+ * Purpose: useMediaQuery Hook Detects if a media query matches.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
   
@@ -33,6 +34,11 @@ export function useMediaQuery(query: string): boolean {
     const mediaQuery = window.matchMedia(query);
     setMatches(mediaQuery.matches);
     
+    /**
+     * Purpose: Executes handler functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
     mediaQuery.addEventListener('change', handler);
     
@@ -43,14 +49,20 @@ export function useMediaQuery(query: string): boolean {
 }
 
 /**
- * useBreakpoint Hook
- * 
- * Returns current breakpoint.
+ * Purpose: useBreakpoint Hook Returns current breakpoint.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useBreakpoint(): Breakpoint {
   const [breakpoint, setBreakpoint] = useState<Breakpoint>('sm');
   
   useEffect(() => {
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const updateBreakpoint = () => {
       const width = window.innerWidth;
       
@@ -77,19 +89,21 @@ export function useBreakpoint(): Breakpoint {
 }
 
 /**
- * useIsMobile Hook
- * 
- * Detects if viewport is mobile size.
+ * Purpose: useIsMobile Hook Detects if viewport is mobile size.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useIsMobile(): boolean {
   return useMediaQuery(`(max-width: ${BREAKPOINTS.md - 1}px)`);
 }
 
 /**
- * useIsTablet Hook
- * 
- * Detects if viewport is tablet size.
+ * Purpose: useIsTablet Hook Detects if viewport is tablet size.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useIsTablet(): boolean {
   const isMdUp = useMediaQuery(`(min-width: ${BREAKPOINTS.md}px)`);
   const isLgDown = useMediaQuery(`(max-width: ${BREAKPOINTS.lg - 1}px)`);
@@ -97,19 +111,21 @@ export function useIsTablet(): boolean {
 }
 
 /**
- * useIsDesktop Hook
- * 
- * Detects if viewport is desktop size.
+ * Purpose: useIsDesktop Hook Detects if viewport is desktop size.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useIsDesktop(): boolean {
   return useMediaQuery(`(min-width: ${BREAKPOINTS.lg}px)`);
 }
 
 /**
- * useWindowSize Hook
- * 
- * Returns current window dimensions.
+ * Purpose: useWindowSize Hook Returns current window dimensions.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWindowSize() {
   const [size, setSize] = useState({
     width: typeof window !== 'undefined' ? window.innerWidth : 0,
@@ -117,6 +133,11 @@ export function useWindowSize() {
   });
   
   useEffect(() => {
+    /**
+     * Purpose: Executes handleResize functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleResize = () => {
       setSize({
         width: window.innerWidth,
@@ -132,14 +153,20 @@ export function useWindowSize() {
 }
 
 /**
- * useOrientation Hook
- * 
- * Detects device orientation.
+ * Purpose: useOrientation Hook Detects device orientation.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useOrientation(): 'portrait' | 'landscape' {
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   
   useEffect(() => {
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const updateOrientation = () => {
       setOrientation(window.innerHeight > window.innerWidth ? 'portrait' : 'landscape');
     };
@@ -154,10 +181,11 @@ export function useOrientation(): 'portrait' | 'landscape' {
 }
 
 /**
- * ResponsiveContainer Component
- * 
- * Renders different content based on breakpoint.
+ * Purpose: ResponsiveContainer Component Renders different content based on breakpoint.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ResponsiveContainer({
   mobile,
   tablet,
@@ -178,10 +206,11 @@ export function ResponsiveContainer({
 }
 
 /**
- * Container Component
- * 
- * Responsive container with max-width.
+ * Purpose: Container Component Responsive container with max-width.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function Container({
   children,
   className = '',
@@ -208,10 +237,11 @@ export function Container({
 }
 
 /**
- * Grid Component
- * 
- * Responsive grid with configurable columns.
+ * Purpose: Grid Component Responsive grid with configurable columns.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function Grid({
   children,
   cols = { sm: 1, md: 2, lg: 3, xl: 4 },

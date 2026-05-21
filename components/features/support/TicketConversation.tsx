@@ -10,10 +10,20 @@ interface TicketConversationProps {
   isReplying: boolean
 }
 
+/**
+ * Purpose: Executes TicketConversation functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TicketConversation({ messages, onReply, isReplying }: TicketConversationProps) {
   const { t } = useTranslation()
   const [replyText, setReplyText] = useState('')
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!replyText.trim()) return

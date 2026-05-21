@@ -19,14 +19,11 @@ interface SaveAsTemplateButtonProps {
 }
 
 /**
- * SaveAsTemplateButton -- Opens a modal to save the current QR code as a
- * reusable template. The backend creates the template by cloning the QR code's
- * data, design, and settings from the referenced `qrcode_id`.
- *
- * Requirements:
- * - The QR code must already be saved (has a valid ID)
- * - Backend route: POST /qrcode-templates { qrcode_id, name, description, ... }
+ * Purpose: SaveAsTemplateButton -- Opens a modal to save the current QR code as a reusable template. The backend creates the template by cloning the QR code's data, design, and settings from the referenced `qrcode_id`. Requirements: - The QR code must already be saved (has a valid ID) - Backend route: POST /qrcode-templates { qrcode_id, name, description, ... }
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export default function SaveAsTemplateButton({
   qrcodeId,
   qrcodeName,
@@ -60,6 +57,11 @@ export default function SaveAsTemplateButton({
     },
   })
 
+  /**
+   * Purpose: Executes handleSaveTemplate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSaveTemplate = () => {
     if (!formData.name.trim()) return
     if (!formData.description.trim()) {
@@ -75,6 +77,11 @@ export default function SaveAsTemplateButton({
     })
   }
 
+  /**
+   * Purpose: Executes handleOpenModal functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleOpenModal = () => {
     setFormData({
       name: qrcodeName ? `${qrcodeName} Template` : '',

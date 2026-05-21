@@ -25,6 +25,11 @@ const defaultLabels: Record<StatusBadgeProps['status'], string> = {
   error: 'Error',
 }
 
+/**
+ * Purpose: Executes StatusBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StatusBadge({ status, label, animated = false, className }: StatusBadgeProps) {
   const { t } = useTranslation()
   const styles = statusStyles[status]

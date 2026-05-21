@@ -9,14 +9,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * MercadoPago payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Public Key
- * - Access Token
- *
- * No auto-webhook registration; no manual webhook URL display.
+ * Purpose: MercadoPago payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Public Key - Access Token No auto-webhook registration; no manual webhook URL display.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function MercadoPagoForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

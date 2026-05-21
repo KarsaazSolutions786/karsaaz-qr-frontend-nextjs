@@ -14,6 +14,11 @@ interface BaseReportProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes BaseReport functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BaseReport({
   title,
   isLoading = false,

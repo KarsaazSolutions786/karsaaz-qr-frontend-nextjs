@@ -9,6 +9,11 @@ interface ApiTokensTabProps {
   userId: number | string
 }
 
+/**
+ * Purpose: Executes ApiTokensTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ApiTokensTab({ userId }: ApiTokensTabProps) {
   const { t } = useTranslation()
   const [tokens, setTokens] = useState<ApiToken[]>([])
@@ -36,6 +41,11 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
     fetchTokens()
   }
 
+  /**
+   * Purpose: Executes handleGenerate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleGenerate = async () => {
     try {
       setLoading(true)
@@ -51,6 +61,11 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleRevoke functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRevoke = async (tokenId: number) => {
     try {
       setLoading(true)
@@ -63,6 +78,11 @@ export function ApiTokensTab({ userId }: ApiTokensTabProps) {
     }
   }
 
+  /**
+   * Purpose: Executes copyToClipboard functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
   }

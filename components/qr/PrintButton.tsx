@@ -29,6 +29,11 @@ export interface PrintButtonProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes PrintButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PrintButton({
   svgElement,
   options = {},
@@ -44,6 +49,11 @@ export function PrintButton({
   const [showOptions, setShowOptions] = useState(false);
   const [printOptions, setPrintOptions] = useState<PrintOptions>(options);
   
+  /**
+   * Purpose: Executes handlePrint functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePrint = async () => {
     if (!svgElement) return;
     
@@ -58,6 +68,11 @@ export function PrintButton({
     }
   };
   
+  /**
+   * Purpose: Executes handlePreview functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePreview = async () => {
     if (!svgElement) return;
     
@@ -235,8 +250,11 @@ export function PrintButton({
 }
 
 /**
- * Compact print button (icon only)
+ * Purpose: Compact print button (icon only)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function PrintButtonCompact({
   svgElement,
   options = {},
@@ -247,6 +265,11 @@ export function PrintButtonCompact({
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   
+  /**
+   * Purpose: Executes handlePrint functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePrint = async () => {
     if (!svgElement) return;
     

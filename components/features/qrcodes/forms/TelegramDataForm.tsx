@@ -16,6 +16,11 @@ interface TelegramDataFormProps {
   onChange?: (data: Partial<TelegramDataFormData>) => void
 }
 
+/**
+ * Purpose: Executes TelegramDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TelegramDataForm({ defaultValues, onChange }: TelegramDataFormProps) {
   const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<TelegramDataFormData>({

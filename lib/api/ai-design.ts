@@ -47,8 +47,11 @@ export interface AIDesignVariationsResponse {
 }
 
 /**
- * Generate AI design from prompt
+ * Purpose: Generate AI design from prompt
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function generateAIDesign(request: AIDesignRequest): Promise<AIDesignResponse> {
   try {
     const response = await apiClient.post<AIDesignResponse>('/ai-designs/generate', request);
@@ -64,8 +67,11 @@ export async function generateAIDesign(request: AIDesignRequest): Promise<AIDesi
 }
 
 /**
- * Generate multiple variations
+ * Purpose: Generate multiple variations
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function generateAIDesignVariations(
   request: AIDesignRequest,
   count: number = 3
@@ -86,8 +92,11 @@ export async function generateAIDesignVariations(
 }
 
 /**
- * Get AI design by ID
+ * Purpose: Get AI design by ID
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getAIDesign(designId: string): Promise<AIDesignResponse> {
   try {
     const response = await apiClient.get<AIDesignResponse>(`/ai-designs/${designId}`);
@@ -103,8 +112,11 @@ export async function getAIDesign(designId: string): Promise<AIDesignResponse> {
 }
 
 /**
- * Refine existing AI design
+ * Purpose: Refine existing AI design
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function refineAIDesign(
   designId: string,
   refinementPrompt: string
@@ -125,8 +137,11 @@ export async function refineAIDesign(
 }
 
 /**
- * Save AI design to user's collection
+ * Purpose: Save AI design to user's collection
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function saveAIDesign(designId: string, name?: string): Promise<{ success: boolean }> {
   try {
     const response = await apiClient.post(`/ai-designs/${designId}/save`, { name });
@@ -137,8 +152,11 @@ export async function saveAIDesign(designId: string, name?: string): Promise<{ s
 }
 
 /**
- * Get user's saved AI designs
+ * Purpose: Get user's saved AI designs
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getSavedAIDesigns(): Promise<AIDesignVariation[]> {
   try {
     const response = await apiClient.get<{ designs: AIDesignVariation[] }>('/ai-designs/saved');
@@ -149,8 +167,11 @@ export async function getSavedAIDesigns(): Promise<AIDesignVariation[]> {
 }
 
 /**
- * Delete saved AI design
+ * Purpose: Delete saved AI design
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function deleteAIDesign(designId: string): Promise<{ success: boolean }> {
   try {
     const response = await apiClient.delete(`/ai-designs/${designId}`);
@@ -161,8 +182,11 @@ export async function deleteAIDesign(designId: string): Promise<{ success: boole
 }
 
 /**
- * Get AI design suggestions based on QR content
+ * Purpose: Get AI design suggestions based on QR content
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getAIDesignSuggestions(qrData: string): Promise<{
   success: boolean;
   suggestions: Array<{ prompt: string; style: string }>;
@@ -176,8 +200,11 @@ export async function getAIDesignSuggestions(qrData: string): Promise<{
 }
 
 /**
- * Estimate AI design generation time
+ * Purpose: Estimate AI design generation time
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function estimateGenerationTime(complexity: 'simple' | 'moderate' | 'complex'): number {
   const times = {
     simple: 3000, // 3 seconds
@@ -188,8 +215,11 @@ export function estimateGenerationTime(complexity: 'simple' | 'moderate' | 'comp
 }
 
 /**
- * Validate AI design prompt
+ * Purpose: Validate AI design prompt
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateAIPrompt(prompt: string): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 

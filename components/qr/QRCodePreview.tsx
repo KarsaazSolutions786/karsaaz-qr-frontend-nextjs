@@ -180,8 +180,11 @@ export const QRCodePreview = React.forwardRef<QRCodePreviewRef, QRCodePreviewPro
 QRCodePreview.displayName = 'QRCodePreview';
 
 /**
- * Simple preview without ref (for basic use cases)
+ * Purpose: Simple preview without ref (for basic use cases)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function SimpleQRCodePreview({
   data,
   config,
@@ -192,8 +195,11 @@ export function SimpleQRCodePreview({
 }
 
 /**
- * Preview with download buttons
+ * Purpose: Preview with download buttons
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function QRCodePreviewWithDownload({
   data,
   config,
@@ -206,6 +212,11 @@ export function QRCodePreviewWithDownload({
 }) {
   const previewRef = React.useRef<QRCodePreviewRef>(null);
 
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownload = async (format: DownloadFormat) => {
     try {
       await previewRef.current?.download(format, filename);

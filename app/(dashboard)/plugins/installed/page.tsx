@@ -7,6 +7,11 @@ import { Settings } from 'lucide-react'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes PluginsInstalledPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PluginsInstalledPage() {
   const { t } = useTranslation()
   const [plugins, setPlugins] = useState<PluginInfo[]>([])

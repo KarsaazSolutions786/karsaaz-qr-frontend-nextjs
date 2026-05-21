@@ -10,6 +10,11 @@ interface WebsiteDisplayProps {
   onError?: () => void
 }
 
+/**
+ * Purpose: Executes WebsiteDisplay functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function WebsiteDisplay({
   htmlCode,
   cssCode,
@@ -56,6 +61,11 @@ export default function WebsiteDisplay({
 
   // Listen for error messages from iframe
   useEffect(() => {
+    /**
+     * Purpose: Executes handleMessage functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'website-preview-error') {
         if (process.env.NODE_ENV === 'development') console.error('Website error:', event.data.message)

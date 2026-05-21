@@ -6,6 +6,11 @@ import { guestAPI } from '@/lib/api/endpoints/guest'
 import { queryKeys } from '@/lib/query/keys'
 import { useGuest } from '@/lib/hooks/useGuest'
 
+/**
+ * Purpose: Executes useQRCode functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useQRCode(id: string) {
   const { isGuest } = useGuest()
 

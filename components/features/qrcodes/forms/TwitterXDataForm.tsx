@@ -12,6 +12,11 @@ interface TwitterXDataFormProps {
   defaultValues?: Partial<TwitterXDataFormData>
   onChange?: (data: Partial<TwitterXDataFormData>) => void
 }
+/**
+ * Purpose: Executes TwitterXDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TwitterXDataForm({ defaultValues, onChange }: TwitterXDataFormProps) {
   const { t } = useTranslation()
   const {

@@ -21,6 +21,11 @@ const authOptions: AuthOption[] = [
   { key: 'magicLink', label: 'Magic Link Login', description: 'Allow passwordless login via email magic links' },
 ]
 
+/**
+ * Purpose: Executes AuthWorkflowPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AuthWorkflowPage() {
   const { t } = useTranslation()
   const [saved, setSaved] = useState(false)
@@ -53,16 +58,31 @@ export default function AuthWorkflowPage() {
     fetchAuthConfig()
   }, [fetchAuthConfig])
 
+  /**
+   * Purpose: Executes toggle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggle = (key: string) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }))
     setSaved(false)
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = () => {
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
   }
 
+  /**
+   * Purpose: Executes handleProviderSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleProviderSubmit = async (data: AuthSettingsFormData) => {
     setProviderSaving(true)
     try {

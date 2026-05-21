@@ -35,9 +35,11 @@ export interface PaginatedResponse<T> {
 }
 
 /**
- * Normalize a raw Laravel paginated response into frontend format.
- * Handles both Laravel paginator format and already-normalized format.
+ * Purpose: Normalize a raw Laravel paginated response into frontend format. Handles both Laravel paginator format and already-normalized format.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
   // Already normalized (has nested pagination object)
   if (raw?.pagination?.lastPage != null) {
@@ -57,9 +59,11 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
 }
 
 /**
- * Map frontend search params to backend format.
- * Backend uses 'keyword' for text search, not 'search'.
+ * Purpose: Map frontend search params to backend format. Backend uses 'keyword' for text search, not 'search'.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function mapSearchParams(params?: {
   page?: number
   search?: string

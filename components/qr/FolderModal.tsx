@@ -22,6 +22,11 @@ export interface FolderModalProps {
   maxNameLength?: number;
 }
 
+/**
+ * Purpose: Executes FolderModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FolderModal({
   isOpen,
   onClose,
@@ -47,6 +52,11 @@ export function FolderModal({
   
   if (!isOpen) return null;
   
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -244,6 +254,11 @@ export interface FolderDeleteModalProps {
   hasItems: boolean;
 }
 
+/**
+ * Purpose: Executes FolderDeleteModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FolderDeleteModal({
   isOpen,
   onClose,

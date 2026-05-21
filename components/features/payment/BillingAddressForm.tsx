@@ -38,8 +38,18 @@ interface BillingAddressFormProps {
   onChange: (address: BillingAddress) => void
 }
 
+/**
+ * Purpose: Executes BillingAddressForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BillingAddressForm({ value, onChange }: BillingAddressFormProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (field: keyof BillingAddress, val: string) => {
     onChange({ ...value, [field]: val })
   }

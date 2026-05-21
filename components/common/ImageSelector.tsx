@@ -12,6 +12,11 @@ interface ImageSelectorProps {
   mode?: ImageMode;
 }
 
+/**
+ * Purpose: Executes ImageSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ImageSelector({
   value,
   onChange,

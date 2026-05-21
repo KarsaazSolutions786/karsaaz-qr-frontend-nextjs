@@ -9,15 +9,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Flutterwave payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Public Key
- * - Secret Key
- * - Encryption Key
- *
- * Webhook is NOT auto-registered; a manual webhook URL is displayed.
+ * Purpose: Flutterwave payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Public Key - Secret Key - Encryption Key Webhook is NOT auto-registered; a manual webhook URL is displayed.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function FlutterwaveForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

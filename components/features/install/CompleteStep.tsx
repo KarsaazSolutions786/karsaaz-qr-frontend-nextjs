@@ -5,6 +5,11 @@ import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
 import { CheckCircle } from 'lucide-react'
 
+/**
+ * Purpose: Executes CompleteStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CompleteStep() {
   const { t } = useTranslation();
   return (

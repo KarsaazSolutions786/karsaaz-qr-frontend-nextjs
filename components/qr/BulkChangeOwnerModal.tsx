@@ -24,6 +24,11 @@ interface BulkChangeOwnerModalProps {
   onComplete: () => void
 }
 
+/**
+ * Purpose: Executes BulkChangeOwnerModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function BulkChangeOwnerModal({
   open,
   onClose,
@@ -50,6 +55,11 @@ export function BulkChangeOwnerModal({
     return users.find((u) => String(u.id) === selectedUserId) ?? null
   }, [selectedUserId, users])
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSubmit = async () => {
     if (!selectedUserId || selectedIds.length === 0) return
 

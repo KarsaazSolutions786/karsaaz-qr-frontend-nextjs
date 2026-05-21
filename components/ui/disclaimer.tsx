@@ -21,6 +21,11 @@ interface DisclaimerProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes Disclaimer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Disclaimer({ children, variant = 'info', className }: DisclaimerProps) {
   const v = variants[variant]
   const Icon = v.icon

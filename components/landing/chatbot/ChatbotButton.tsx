@@ -3,6 +3,11 @@
 import Image from "next/image";
 import React from "react";
 
+/**
+ * Purpose: Executes ChatbotButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function ChatbotButton({ onClick }: { onClick: () => void }) {
   return (
     <>

@@ -68,6 +68,11 @@ const UPI_APPS = [
   { name: 'WhatsApp', icon: '💬', packageName: 'com.whatsapp', color: '#25d366' },
 ];
 
+/**
+ * Purpose: Executes UPIPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function UPIPreview({ upiData }: UPIPreviewProps) {
   const { t } = useTranslation();
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('idle');
@@ -89,6 +94,11 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
     }
   }, [currentAmount, currentNote]);
 
+  /**
+   * Purpose: Executes generateUPIString functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const generateUPIString = (amount: number, note: string) => {
     const params = new URLSearchParams({
       pa: upiData.vpa,
@@ -110,6 +120,11 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
     setUpiString(upiUri);
   };
 
+  /**
+   * Purpose: Executes handlePaymentInitiate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePaymentInitiate = (amount: number, note: string) => {
     setCurrentAmount(amount);
     setCurrentNote(note);
@@ -129,6 +144,11 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
     setPaymentReceipt(receipt);
   };
 
+  /**
+   * Purpose: Executes handleUPIAppClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUPIAppClick = (_packageName: string) => {
     if (upiString) {
       window.location.href = upiString;
@@ -139,12 +159,22 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
     }
   };
 
+  /**
+   * Purpose: Executes handleCopyUPI functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopyUPI = () => {
     navigator.clipboard.writeText(upiData.vpa);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  /**
+   * Purpose: Executes handleDownloadQR functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownloadQR = () => {
     const svg = document.getElementById('upi-qr-code');
     if (svg) {
@@ -169,6 +199,11 @@ export default function UPIPreview({ upiData }: UPIPreviewProps) {
     }
   };
 
+  /**
+   * Purpose: Executes resetPayment functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const resetPayment = () => {
     setPaymentStatus('idle');
     setPaymentReceipt(null);

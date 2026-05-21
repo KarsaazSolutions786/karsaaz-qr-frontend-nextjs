@@ -13,14 +13,13 @@ const textareaClass =
   'w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500'
 
 /**
- * Offline Payments processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Customer Instructions (Markdown)
- * - Payment Proof toggle (Enabled / Disabled)
- *
- * No webhook registration. No credentials test.
+ * Purpose: Offline Payments processor configuration form. Fields (matching P1 + PROCESSORS definition): - Customer Instructions (Markdown) - Payment Proof toggle (Enabled / Disabled) No webhook registration. No credentials test.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function OfflinePaymentForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

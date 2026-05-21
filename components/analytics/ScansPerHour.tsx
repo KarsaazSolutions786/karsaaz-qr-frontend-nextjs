@@ -29,12 +29,22 @@ export interface ScansPerHourProps {
   loading?: boolean;
 }
 
+/**
+ * Purpose: Executes formatHour functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatHour(hour: number): string {
   if (hour === 0) return '12AM';
   if (hour === 12) return '12PM';
   return hour < 12 ? `${hour}AM` : `${hour - 12}PM`;
 }
 
+/**
+ * Purpose: Executes ScansPerHour functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ScansPerHour({ data, loading = false }: ScansPerHourProps) {
   const { t } = useTranslation();
 

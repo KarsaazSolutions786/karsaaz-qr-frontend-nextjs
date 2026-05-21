@@ -15,6 +15,11 @@ const LANGUAGES = [
   { value: 'css', label: 'CSS' },
 ] as const
 
+/**
+ * Purpose: Executes EditCustomCodePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditCustomCodePage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
   const { id } = use(params)
@@ -44,9 +49,19 @@ export default function EditCustomCodePage({ params }: { params: Promise<{ id: s
     }
   }, [code])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = <K extends keyof CreateCustomCodeRequest>(key: K, value: CreateCustomCodeRequest[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await updateMutation.mutateAsync({ id: Number(id), data: form })

@@ -25,6 +25,11 @@ const FormFieldRenderer = forwardRef<HTMLInputElement, FormFieldRendererProps>(
     const fieldId = `form-field-${field.id}`
     const hasError = !!error
 
+    /**
+     * Purpose: Executes renderField functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const renderField = () => {
       switch (field.type) {
         case 'text':

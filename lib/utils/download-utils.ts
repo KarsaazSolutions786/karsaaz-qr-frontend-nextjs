@@ -16,8 +16,11 @@ export interface DownloadOptions {
 }
 
 /**
- * Trigger browser download of a file
+ * Purpose: Trigger browser download of a file
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function triggerDownload(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -30,8 +33,11 @@ export function triggerDownload(blob: Blob, filename: string): void {
 }
 
 /**
- * Download SVG as file
+ * Purpose: Download SVG as file
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function downloadSVG(svgElement: SVGSVGElement, filename: string): void {
   const svgString = new XMLSerializer().serializeToString(svgElement);
   const blob = new Blob([svgString], { type: 'image/svg+xml' });
@@ -39,8 +45,11 @@ export function downloadSVG(svgElement: SVGSVGElement, filename: string): void {
 }
 
 /**
- * Convert SVG to Canvas
+ * Purpose: Convert SVG to Canvas
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function svgToCanvas(
   svgElement: SVGSVGElement,
   width: number,
@@ -76,8 +85,11 @@ export async function svgToCanvas(
 }
 
 /**
- * Download PNG from SVG
+ * Purpose: Download PNG from SVG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function downloadPNG(
   svgElement: SVGSVGElement,
   filename: string,
@@ -107,8 +119,11 @@ export async function downloadPNG(
 }
 
 /**
- * Download PDF from SVG (requires jsPDF and svg2pdf.js)
+ * Purpose: Download PDF from SVG (requires jsPDF and svg2pdf.js)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function downloadPDF(
   svgElement: SVGSVGElement,
   filename: string,
@@ -148,8 +163,11 @@ export async function downloadPDF(
 }
 
 /**
- * Download EPS from SVG (converts to EPS format)
+ * Purpose: Download EPS from SVG (converts to EPS format)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function downloadEPS(
   svgElement: SVGSVGElement,
   filename: string
@@ -190,8 +208,11 @@ showpage
 }
 
 /**
- * Get optimal file size for format
+ * Purpose: Get optimal file size for format
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getOptimalSize(format: DownloadFormat): number {
   switch (format) {
     case 'png':
@@ -208,15 +229,21 @@ export function getOptimalSize(format: DownloadFormat): number {
 }
 
 /**
- * Get file extension for format
+ * Purpose: Get file extension for format
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getFileExtension(format: DownloadFormat): string {
   return format;
 }
 
 /**
- * Get MIME type for format
+ * Purpose: Get MIME type for format
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getMimeType(format: DownloadFormat): string {
   switch (format) {
     case 'png':
@@ -233,8 +260,11 @@ export function getMimeType(format: DownloadFormat): string {
 }
 
 /**
- * Validate download options
+ * Purpose: Validate download options
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateDownloadOptions(options: DownloadOptions): {
   isValid: boolean;
   error?: string;
@@ -255,8 +285,11 @@ export function validateDownloadOptions(options: DownloadOptions): {
 }
 
 /**
- * Generate filename with timestamp
+ * Purpose: Generate filename with timestamp
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateFilename(baseName: string, format: DownloadFormat): string {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
   const sanitizedName = baseName.replace(/[^a-z0-9_-]/gi, '_').toLowerCase();
@@ -264,8 +297,11 @@ export function generateFilename(baseName: string, format: DownloadFormat): stri
 }
 
 /**
- * Calculate DPI-adjusted size
+ * Purpose: Calculate DPI-adjusted size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculatePrintSize(widthInches: number, heightInches: number, dpi: number = 300): {
   width: number;
   height: number;

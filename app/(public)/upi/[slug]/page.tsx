@@ -3,6 +3,11 @@ import { notFound } from 'next/navigation'
 import UPIPreview from '@/components/public/upi/UPIPreview'
 import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
+/**
+ * Purpose: Retrieves upipayment.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getUPIPayment(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -25,6 +30,11 @@ async function getUPIPayment(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const upiData = await getUPIPayment(params.slug)
 
@@ -56,6 +66,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes PublicUPIPaymentPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function PublicUPIPaymentPage({ params }: { params: { slug: string } }) {
   const upiData = await getUPIPayment(params.slug)
 

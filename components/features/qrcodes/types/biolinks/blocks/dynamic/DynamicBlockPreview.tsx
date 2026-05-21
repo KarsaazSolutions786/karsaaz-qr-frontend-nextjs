@@ -9,6 +9,11 @@ interface DynamicBlockPreviewProps {
   block: DynamicBlockData
 }
 
+/**
+ * Purpose: Executes DynamicBlockPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DynamicBlockPreview({ definition, block }: DynamicBlockPreviewProps) {
   const sortedFields = [...definition.fields].sort((a, b) => a.sort_order - b.sort_order)
 
@@ -19,6 +24,11 @@ export function DynamicBlockPreview({ definition, block }: DynamicBlockPreviewPr
     fontSize: block.styles.font_size,
   }
 
+  /**
+   * Purpose: Executes renderFieldValue functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderFieldValue = (field: (typeof sortedFields)[0]) => {
     const value = block.field_values[field.name]
     if (!value) return null

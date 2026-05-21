@@ -18,6 +18,11 @@ import { resolveBackendUrl } from '@/lib/utils/resolve-backend-url'
 
 const DESIGN_ASSETS_STORAGE_KEY = 'karsaaz_design_assets'
 
+/**
+ * Purpose: Executes toShapeOption functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function toShapeOption(asset: DesignAsset): ShapeOption {
   return {
     value: asset.slug,
@@ -26,6 +31,11 @@ function toShapeOption(asset: DesignAsset): ShapeOption {
   }
 }
 
+/**
+ * Purpose: Executes toOutlinedShape functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function toOutlinedShape(asset: DesignAsset): OutlinedShape {
   return {
     value: asset.slug,
@@ -34,6 +44,11 @@ function toOutlinedShape(asset: DesignAsset): OutlinedShape {
   }
 }
 
+/**
+ * Purpose: Executes toAdvancedShape functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function toAdvancedShape(asset: DesignAsset): AdvancedShape {
   const meta = asset.metadata as Record<string, unknown> | null
   return {
@@ -45,7 +60,12 @@ function toAdvancedShape(asset: DesignAsset): AdvancedShape {
   }
 }
 
-/** Read cached design assets from localStorage (if available). */
+/**
+ * Purpose: * Read cached design assets from localStorage (if available). 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function getCachedAssets(): DesignAsset[] | null {
   try {
     const raw = localStorage.getItem(DESIGN_ASSETS_STORAGE_KEY)
@@ -56,7 +76,12 @@ function getCachedAssets(): DesignAsset[] | null {
   }
 }
 
-/** Persist design assets to localStorage for instant hydration next visit. */
+/**
+ * Purpose: * Persist design assets to localStorage for instant hydration next visit. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function setCachedAssets(assets: DesignAsset[]) {
   try {
     localStorage.setItem(DESIGN_ASSETS_STORAGE_KEY, JSON.stringify(assets))
@@ -66,13 +91,11 @@ function setCachedAssets(assets: DesignAsset[]) {
 }
 
 /**
- * Fetches all active design assets from the DB API and maps them
- * to the same ShapeOption/OutlinedShape/AdvancedShape format used
- * by the QR designer. Falls back to hardcoded constants on error.
- *
- * Uses localStorage for instant hydration and `initialDataUpdatedAt: 0` so
- * a background refetch always fires, ensuring fresh data after admin edits.
+ * Purpose: Fetches all active design assets from the DB API and maps them to the same ShapeOption/OutlinedShape/AdvancedShape format used by the QR designer. Falls back to hardcoded constants on error. Uses localStorage for instant hydration and `initialDataUpdatedAt: 0` so a background refetch always fires, ensuring fresh data after admin edits.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function useDesignShapes() {
   const { data: allAssets, isLoading } = useQuery({
     queryKey: queryKeys.designAssets.all(),
@@ -101,6 +124,11 @@ export function useDesignShapes() {
       }
     }
 
+    /**
+     * Purpose: Executes byType functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const byType = (type: string) =>
       allAssets
         .filter(a => a.type === type && a.is_active)

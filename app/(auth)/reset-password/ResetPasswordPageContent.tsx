@@ -3,6 +3,11 @@
 import { ResetPasswordForm } from '@/components/features/auth/ResetPasswordForm'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes ResetPasswordPageContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function ResetPasswordPageContent({ token, email }: { token: string; email: string }) {
   const { t } = useTranslation()
 

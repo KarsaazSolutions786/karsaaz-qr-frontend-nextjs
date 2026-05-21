@@ -3,6 +3,11 @@
 import Link from 'next/link';
 import { useTranslation } from '@/lib/i18n';
 
+/**
+ * Purpose: Executes NotFound functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NotFound() {
   const { t } = useTranslation();
   return (

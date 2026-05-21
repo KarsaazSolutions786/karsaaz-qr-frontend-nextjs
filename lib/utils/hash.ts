@@ -4,9 +4,11 @@
  */
 
 /**
- * Generate hash from string (MurmurHash3 variant)
- * Generates a 53-bit hash from a string.
+ * Purpose: Generate hash from string (MurmurHash3 variant) Generates a 53-bit hash from a string.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function hash(str: string, seed = 0): number {
   let h1 = 0xdeadbeef ^ seed
   let h2 = 0x41c6ce57 ^ seed

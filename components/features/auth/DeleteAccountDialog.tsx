@@ -11,6 +11,11 @@ interface DeleteAccountDialogProps {
   onClose: () => void
 }
 
+/**
+ * Purpose: Executes DeleteAccountDialog functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps) {
   const { t } = useTranslation()
   const [password, setPassword] = useState('')
@@ -33,6 +38,11 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
     },
   })
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -50,6 +60,11 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
     deleteAccountMutation.mutate(password)
   }
 
+  /**
+   * Purpose: Executes handleClose functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClose = () => {
     setPassword('')
     setConfirmText('')

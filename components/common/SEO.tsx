@@ -24,6 +24,11 @@ export interface SEOProps {
   canonical?: string;
 }
 
+/**
+ * Purpose: Executes SEO functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SEO({
   title,
   description,
@@ -96,8 +101,11 @@ export function SEO({
 }
 
 /**
- * Structured Data (JSON-LD)
+ * Purpose: Structured Data (JSON-LD)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function StructuredData({ data }: { data: Record<string, any> }) {
   return (
     <script
@@ -108,8 +116,11 @@ export function StructuredData({ data }: { data: Record<string, any> }) {
 }
 
 /**
- * Generate breadcrumb structured data
+ * Purpose: Generate breadcrumb structured data
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateBreadcrumbStructuredData(items: Array<{ name: string; url: string }>) {
   return {
     '@context': 'https://schema.org',
@@ -124,8 +135,11 @@ export function generateBreadcrumbStructuredData(items: Array<{ name: string; ur
 }
 
 /**
- * Generate organization structured data
+ * Purpose: Generate organization structured data
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateOrganizationStructuredData() {
   return {
     '@context': 'https://schema.org',
@@ -141,8 +155,11 @@ export function generateOrganizationStructuredData() {
 }
 
 /**
- * Generate product structured data
+ * Purpose: Generate product structured data
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateProductStructuredData(product: {
   name: string;
   description: string;

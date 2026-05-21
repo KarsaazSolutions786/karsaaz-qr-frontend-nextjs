@@ -16,6 +16,11 @@ import type { ChartDatePreset } from '@/lib/hooks/useAnalyticsCharts'
 import { chartPresetToDateRange } from '@/lib/hooks/useAnalyticsCharts'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes ChartSkeleton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 const ChartSkeleton = () => <div className="animate-pulse h-64 bg-gray-100 rounded-lg" />
 
 const ScansPerDayChart = dynamic(
@@ -28,6 +33,11 @@ const PieChart = dynamic(() => import('@/components/analytics/charts/PieChart'),
   ssr: false,
 })
 
+/**
+ * Purpose: Executes AnalyticsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AnalyticsPage() {
   const { t } = useTranslation()
   const router = useRouter()

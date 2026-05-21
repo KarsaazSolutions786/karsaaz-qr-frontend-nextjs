@@ -12,6 +12,11 @@ interface ExtendedLicenseProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes ExtendedLicense functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ExtendedLicense({
   isOpen,
   onClose,

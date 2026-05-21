@@ -26,6 +26,11 @@ export interface DownloadModalProps {
   onDownloadComplete?: (format: DownloadFormat) => void
 }
 
+/**
+ * Purpose: Executes DownloadModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DownloadModal({
   svg,
   defaultFilename = 'qr-code',
@@ -42,11 +47,25 @@ export function DownloadModal({
   const { plan, isOnTrial } = useSubscription()
   const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
 
-  /** Formats that require a paid plan */
+  /**
+   * Purpose: * Formats that require a paid plan 
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
+  
   const isPremiumFormat = (format: DownloadFormat): boolean => {
     return format === 'svg' || format === 'pdf' || format === 'eps'
   }
 
+  /**
+   * Purpose: Executes handleFormatSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const handleFormatSelect = (format: DownloadFormat) => {
     if (isFreePlan && isPremiumFormat(format)) {
       toast.info(
@@ -79,6 +98,11 @@ export function DownloadModal({
   /** Free plans are restricted to small/thumbnail PNG sizes only */
   const FREE_ALLOWED_PNG_SIZES: Set<string> = new Set(['thumbnail', 'small'])
 
+  /**
+   * Purpose: Executes handlePNGSizeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handlePNGSizeChange = (size: keyof typeof PNG_SIZE_PRESETS) => {
     if (isFreePlan && !FREE_ALLOWED_PNG_SIZES.has(size)) {
       toast.info(t('Higher resolution downloads require a paid plan. Upgrade to unlock all sizes.'))
@@ -87,6 +111,11 @@ export function DownloadModal({
     setPNGSize(size)
   }
 
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownload = async () => {
     // Enforce format restrictions for free/trial plans
     if (isFreePlan && isPremiumFormat(selectedFormat)) {
@@ -336,6 +365,13 @@ interface FormatButtonProps {
   isLocked?: boolean
 }
 
+/**
+ * Purpose: Executes FormatButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function FormatButton({
   label,
   description,
@@ -375,6 +411,13 @@ interface PNGOptionsProps {
   freeAllowedSizes?: Set<string>
 }
 
+/**
+ * Purpose: Executes PNGOptions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function PNGOptions({
   size,
   onSizeChange,
@@ -439,6 +482,13 @@ interface SVGOptionsProps {
   onBackgroundChange: (background: boolean) => void
 }
 
+/**
+ * Purpose: Executes SVGOptions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function SVGOptions({
   optimized,
   onOptimizedChange,
@@ -480,6 +530,11 @@ interface PDFOptionsProps {
   onMarginChange: (margin: number) => void
 }
 
+/**
+ * Purpose: Executes PDFOptions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function PDFOptions({
   pageSize,
   onPageSizeChange,
@@ -558,6 +613,11 @@ interface EPSOptionsProps {
   onHeightChange: (height: number) => void
 }
 
+/**
+ * Purpose: Executes EPSOptions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function EPSOptions({ width, onWidthChange, height, onHeightChange }: EPSOptionsProps) {
   const { t } = useTranslation()
   return (

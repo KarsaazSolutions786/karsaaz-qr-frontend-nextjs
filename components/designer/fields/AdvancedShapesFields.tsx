@@ -36,19 +36,39 @@ const MODULE_PATTERNS: Array<{ type: ModulePattern; name: string }> = [
   { type: 'gradient', name: 'Gradient' },
 ]
 
+/**
+ * Purpose: Executes AdvancedShapesFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AdvancedShapesFields({ value, onChange }: AdvancedShapesFieldsProps) {
   const { t } = useTranslation()
   const [previewShape, setPreviewShape] = useState<ShapeType>(value.shapeType)
 
+  /**
+   * Purpose: Executes handleShapeTypeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleShapeTypeChange = (shapeType: ShapeType) => {
     setPreviewShape(shapeType)
     onChange({ ...value, shapeType })
   }
 
+  /**
+   * Purpose: Executes handlePatternChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePatternChange = (modulePattern: ModulePattern) => {
     onChange({ ...value, modulePattern })
   }
 
+  /**
+   * Purpose: Executes renderShapePreview functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderShapePreview = (type: ShapeType) => {
     switch (type) {
       case 'custom-svg':

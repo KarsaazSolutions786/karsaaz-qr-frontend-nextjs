@@ -16,6 +16,11 @@ interface OTPStepProps {
 const OTP_LENGTH = 6
 const RESEND_COOLDOWN_SECONDS = 60
 
+/**
+ * Purpose: Executes OTPStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function OTPStep({ email, onVerify, onResend, onBack, loading }: OTPStepProps) {
   const { t } = useTranslation()
   const [otp, setOtp] = useState('')
@@ -36,6 +41,11 @@ export function OTPStep({ email, onVerify, onResend, onBack, loading }: OTPStepP
     inputRef.current?.focus()
   }, [])
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     const trimmed = otp.trim()
@@ -43,12 +53,22 @@ export function OTPStep({ email, onVerify, onResend, onBack, loading }: OTPStepP
     onVerify(trimmed)
   }
 
+  /**
+   * Purpose: Executes handleResend functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleResend = () => {
     if (resendCountdown > 0) return
     setResendCountdown(RESEND_COOLDOWN_SECONDS)
     onResend()
   }
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (value: string) => {
     // Only allow digits
     const digits = value.replace(/\D/g, '').slice(0, OTP_LENGTH)

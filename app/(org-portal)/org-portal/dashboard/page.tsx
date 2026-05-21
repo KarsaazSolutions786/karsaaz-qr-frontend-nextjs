@@ -13,6 +13,11 @@ interface DashboardData {
   active_api_keys: number
 }
 
+/**
+ * Purpose: Executes StatCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function StatCard({
   label,
   value,
@@ -40,6 +45,11 @@ function StatCard({
   )
 }
 
+/**
+ * Purpose: Executes OrgPortalDashboardPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrgPortalDashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)

@@ -25,16 +25,36 @@ const STROKE_STYLES: Array<{ type: StrokeStyle; name: string; dasharray: string 
   { type: 'dotted', name: 'Dotted', dasharray: '1 2' },
 ]
 
+/**
+ * Purpose: Executes OutlinedShapesFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function OutlinedShapesFields({ value, onChange }: OutlinedShapesFieldsProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes handleStrokeWidthChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleStrokeWidthChange = (strokeWidth: number) => {
     onChange({ ...value, strokeWidth })
   }
 
+  /**
+   * Purpose: Executes handleStrokeStyleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleStrokeStyleChange = (strokeStyle: StrokeStyle) => {
     onChange({ ...value, strokeStyle })
   }
 
+  /**
+   * Purpose: Executes handleFillOpacityChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFillOpacityChange = (fillOpacity: number) => {
     onChange({ ...value, fillOpacity })
   }

@@ -17,6 +17,11 @@ export interface QRCodeQuotaDisplayProps {
   onUpgrade?: () => void;
 }
 
+/**
+ * Purpose: Executes QRCodeQuotaDisplay functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRCodeQuotaDisplay({
   used,
   total,
@@ -28,24 +33,44 @@ export function QRCodeQuotaDisplay({
   const isNearLimit = percentage >= 80;
   const isAtLimit = percentage >= 100;
 
+  /**
+   * Purpose: Retrieves progresscolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getProgressColor = () => {
     if (isAtLimit) return 'bg-red-600';
     if (isNearLimit) return 'bg-orange-500';
     return 'bg-blue-600';
   };
 
+  /**
+   * Purpose: Retrieves backgroundcolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getBackgroundColor = () => {
     if (isAtLimit) return 'bg-red-100';
     if (isNearLimit) return 'bg-orange-100';
     return 'bg-blue-100';
   };
 
+  /**
+   * Purpose: Retrieves textcolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getTextColor = () => {
     if (isAtLimit) return 'text-red-700';
     if (isNearLimit) return 'text-orange-700';
     return 'text-blue-700';
   };
 
+  /**
+   * Purpose: Retrieves icon.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getIcon = () => {
     if (isAtLimit) return <AlertTriangle className="w-5 h-5 text-red-600" />;
     if (isNearLimit) return <TrendingUp className="w-5 h-5 text-orange-600" />;

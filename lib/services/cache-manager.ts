@@ -2,15 +2,30 @@
 // Thin wrapper around localStorage/sessionStorage with event-based clearing
 // Per research.md R2: Singleton pattern, clears both storages on logout
 
+/**
+ * Purpose: Class definition for CacheManager.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 class CacheManager {
   private static instance: CacheManager;
 
+  /**
+   * Purpose: Retrieves instance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getInstance(): CacheManager {
     if (!this.instance) this.instance = new CacheManager();
     return this.instance;
   }
 
-  /** Clear all cached data from both storages */
+  /**
+   * Purpose: * Clear all cached data from both storages 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   clearAll(): void {
     if (typeof window === 'undefined') return;
     try {
@@ -22,7 +37,12 @@ class CacheManager {
     }
   }
 
-  /** Clear only session-specific data, preserving persistent preferences */
+  /**
+   * Purpose: * Clear only session-specific data, preserving persistent preferences 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   clearSession(): void {
     if (typeof window === 'undefined') return;
     try {
@@ -35,7 +55,12 @@ class CacheManager {
     }
   }
 
-  /** Get cached value with optional JSON parsing */
+  /**
+   * Purpose: * Get cached value with optional JSON parsing 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   get<T = string>(key: string, parse = false): T | null {
     if (typeof window === 'undefined') return null;
     try {
@@ -47,7 +72,12 @@ class CacheManager {
     }
   }
 
-  /** Set cached value */
+  /**
+   * Purpose: * Set cached value 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   set(key: string, value: string | object, storage: 'local' | 'session' = 'local'): void {
     if (typeof window === 'undefined') return;
     const serialized = typeof value === 'string' ? value : JSON.stringify(value);
@@ -62,7 +92,12 @@ class CacheManager {
     }
   }
 
-  /** Remove a specific cached key */
+  /**
+   * Purpose: * Remove a specific cached key 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   remove(key: string): void {
     if (typeof window === 'undefined') return;
     localStorage.removeItem(key);

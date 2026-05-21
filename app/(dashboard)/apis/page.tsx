@@ -48,6 +48,11 @@ interface ApiKeysResponse {
 
 const DOCS_BASE = `${envConfig.API_URL}/api/v1`
 
+/**
+ * Purpose: Executes buildApiGuideHtml functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function buildApiGuideHtml(baseUrl: string): string {
   const now = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -70,18 +75,43 @@ function buildApiGuideHtml(baseUrl: string): string {
     DELETE: '#fee2e2',
   }
 
+  /**
+   * Purpose: Executes escHtml functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const escHtml = (s: string) =>
     s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
+  /**
+   * Purpose: Executes badge functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const badge = (method: string) =>
     `<span style="background:${methodBg[method]};color:${methodColor[method]};padding:2px 8px;border-radius:4px;font-family:monospace;font-size:11px;font-weight:700;">${method}</span>`
 
+  /**
+   * Purpose: Executes code functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const code = (txt: string) =>
     `<code style="background:#f1f5f9;color:#4f46e5;padding:2px 6px;border-radius:4px;font-size:12px;font-family:monospace;">${escHtml(txt)}</code>`
 
+  /**
+   * Purpose: Executes pre functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const pre = (txt: string) =>
     `<pre style="background:#0f172a;color:#86efac;padding:16px;border-radius:8px;font-size:12px;overflow-x:auto;white-space:pre-wrap;word-break:break-all;margin:8px 0;">${escHtml(txt)}</pre>`
 
+  /**
+   * Purpose: Executes sectionHeader functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const sectionHeader = (title: string, desc: string) =>
     `<div style="margin:36px 0 12px;border-left:4px solid #4f46e5;padding-left:14px;">
       <h2 style="margin:0;font-size:18px;color:#1e1b4b;">${escHtml(title)}</h2>
@@ -366,6 +396,11 @@ function buildApiGuideHtml(baseUrl: string): string {
 </html>`
 }
 
+/**
+ * Purpose: Executes downloadApiGuide functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function downloadApiGuide() {
   const html = buildApiGuideHtml(DOCS_BASE)
   const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
@@ -389,6 +424,11 @@ const METHOD_COLORS: Record<HttpMethod, string> = {
   DELETE: 'bg-red-100 text-red-700',
 }
 
+/**
+ * Purpose: Executes MethodBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function MethodBadge({ method }: { method: HttpMethod }) {
   return (
     <span className={`rounded px-2 py-0.5 text-xs font-bold font-mono ${METHOD_COLORS[method]}`}>
@@ -397,6 +437,11 @@ function MethodBadge({ method }: { method: HttpMethod }) {
   )
 }
 
+/**
+ * Purpose: Executes CopyButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
   return (
@@ -413,6 +458,11 @@ function CopyButton({ text }: { text: string }) {
   )
 }
 
+/**
+ * Purpose: Executes CodeBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function CodeBlock({ code, lang = 'json' }: { code: string; lang?: string }) {
   return (
     <div className="relative">
@@ -427,6 +477,11 @@ function CodeBlock({ code, lang = 'json' }: { code: string; lang?: string }) {
   )
 }
 
+/**
+ * Purpose: Executes EndpointCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function EndpointCard({ endpoint }: { endpoint: PlaygroundEndpoint }) {
   const [open, setOpen] = useState(false)
   const pathParams = endpoint.params?.filter(p => p.in === 'path') ?? []
@@ -540,6 +595,11 @@ function EndpointCard({ endpoint }: { endpoint: PlaygroundEndpoint }) {
   )
 }
 
+/**
+ * Purpose: Executes ApiDocsTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function ApiDocsTab() {
   return (
     <div>
@@ -670,6 +730,11 @@ function ApiDocsTab() {
   )
 }
 
+/**
+ * Purpose: Executes QrTypesSection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function QrTypesSection() {
   const [activeCategory, setActiveCategory] = useState('all')
   const categories = QR_TYPE_CATEGORIES.filter(c => c.id !== 'all')
@@ -787,16 +852,31 @@ function QrTypesSection() {
 // API calls
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes fetchApiKeys functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 const fetchApiKeys = async (): Promise<ApiKeysResponse> => {
   const res = await apiClient.get('/user/api-keys')
   return res.data
 }
 
+/**
+ * Purpose: Executes createApiKey functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 const createApiKey = async (name: string): Promise<{ data: ApiKey & { token: string } }> => {
   const res = await apiClient.post('/user/api-keys', { name })
   return res.data
 }
 
+/**
+ * Purpose: Executes revokeApiKey functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 const revokeApiKey = async (id: number): Promise<void> => {
   await apiClient.delete(`/user/api-keys/${id}`)
 }
@@ -807,6 +887,11 @@ const revokeApiKey = async (id: number): Promise<void> => {
 
 type Tab = 'keys' | 'docs' | 'playground'
 
+/**
+ * Purpose: Executes ApisPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function ApisPage() {
   const { t } = useTranslation()
   const qc = useQueryClient()
@@ -836,6 +921,11 @@ export default function ApisPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['user-api-keys'] }),
   })
 
+  /**
+   * Purpose: Executes copyToken functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copyToken = async () => {
     if (!revealedToken) return
     await navigator.clipboard.writeText(revealedToken.token)
@@ -843,6 +933,11 @@ export default function ApisPage() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  /**
+   * Purpose: Executes formatLimit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const formatLimit = (n: number) => (n === -1 ? t('Unlimited') : n.toLocaleString())
 
   // ──────────────────────────────────────────────────────────────────────────

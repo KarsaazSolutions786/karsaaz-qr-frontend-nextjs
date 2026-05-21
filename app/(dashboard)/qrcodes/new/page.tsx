@@ -17,28 +17,11 @@ import { toast } from 'sonner'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
 /**
- * Create QR Code Page
- *
- * Route: /qrcodes/new (Home)
- *
- * Flow (updated to match legacy Lit frontend with template gateway):
- * 1. No params          -> show Template Selection Gateway (choose template vs blank)
- * 2. ?template_id=X     -> apply template, redirect to /qrcodes/{newId}/edit
- * 3. User clicks blank  -> show QR type selector grid
- * 4. User clicks type   -> URL becomes /qrcodes/new?type=url -> wizard opens at Data step
- * 5. Wizard steps: Type -> Data -> Design -> Download
- *
- * On small screens (mobile), the gateway is skippable -- it shows a compact
- * version that still allows both paths.
- *
- * Quota gate: Before entering the wizard, we check the user's subscription
- * limits. If they have reached their dynamic QR code quota, the upgrade modal
- * is shown instead of the wizard.
- *
- * Credit gate: When billing mode is "account_credit", subscription limits are
- * bypassed and instead the user's credit balance is checked against the
- * per-type price. If insufficient, the InsufficientCreditsModal is shown.
+ * Purpose: Create QR Code Page Route: /qrcodes/new (Home) Flow (updated to match legacy Lit frontend with template gateway): 1. No params          -> show Template Selection Gateway (choose template vs blank) 2. ?template_id=X     -> apply template, redirect to /qrcodes/{newId}/edit 3. User clicks blank  -> show QR type selector grid 4. User clicks type   -> URL becomes /qrcodes/new?type=url -> wizard opens at Data step 5. Wizard steps: Type -> Data -> Design -> Download On small screens (mobile), the gateway is skippable -- it shows a compact version that still allows both paths. Quota gate: Before entering the wizard, we check the user's subscription limits. If they have reached their dynamic QR code quota, the upgrade modal is shown instead of the wizard. Credit gate: When billing mode is "account_credit", subscription limits are bypassed and instead the user's credit balance is checked against the per-type price. If insufficient, the InsufficientCreditsModal is shown.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function CreateQRCodeInner() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -263,6 +246,11 @@ function CreateQRCodeInner() {
   )
 }
 
+/**
+ * Purpose: Executes CreateQRCodePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CreateQRCodePage() {
   return (
     <Suspense fallback={<div className="px-4 py-6 sm:px-6 lg:px-8 animate-pulse">Loading...</div>}>

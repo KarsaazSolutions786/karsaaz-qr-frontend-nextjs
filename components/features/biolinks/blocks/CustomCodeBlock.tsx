@@ -9,6 +9,11 @@ interface CustomCodeBlockProps {
   onUpdate?: (data: CustomCodeBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes CustomCodeBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CustomCodeBlock({ block, isEditing, onUpdate }: CustomCodeBlockProps) {
   const { t } = useTranslation();
   const { htmlCode = '', cssCode = '', jsCode = '' } = block.data

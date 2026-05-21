@@ -36,6 +36,11 @@ const favoriteGradients: string[] = [
   '#38f9d7',
 ];
 
+/**
+ * Purpose: Executes ColorFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ColorFields({
   foregroundColor,
   backgroundColor,
@@ -47,16 +52,31 @@ export default function ColorFields({
   const [foregroundOpacity, setForegroundOpacity] = useState(100);
   const [backgroundOpacity, setBackgroundOpacity] = useState(100);
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateForeground = (color: string) => {
     setLocalForeground(color);
     onChange(color, localBackground);
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateBackground = (color: string) => {
     setLocalBackground(color);
     onChange(localForeground, color);
   };
 
+  /**
+   * Purpose: Executes swapColors functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const swapColors = () => {
     const tempForeground = localForeground;
     setLocalForeground(localBackground);
@@ -64,6 +84,11 @@ export default function ColorFields({
     onChange(localBackground, tempForeground);
   };
 
+  /**
+   * Purpose: Executes hexToRgba functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const hexToRgba = (hex: string, opacity: number): string => {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -71,10 +96,20 @@ export default function ColorFields({
     return `rgba(${r}, ${g}, ${b}, ${opacity / 100})`;
   };
 
+  /**
+   * Purpose: Executes validateHex functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const validateHex = (value: string): boolean => {
     return /^#[0-9A-Fa-f]{6}$/.test(value);
   };
 
+  /**
+   * Purpose: Executes handleHexInput functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleHexInput = (value: string, isForeground: boolean) => {
     if (validateHex(value)) {
       if (isForeground) {

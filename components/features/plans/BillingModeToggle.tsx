@@ -15,6 +15,11 @@ const OPTIONS: { value: BillingMode; label: string; badge?: string }[] = [
   { value: 'credit', label: 'Credit' },
 ]
 
+/**
+ * Purpose: Executes BillingModeToggle functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BillingModeToggle({ mode, onChange }: BillingModeToggleProps) {
   const { t } = useTranslation()
 

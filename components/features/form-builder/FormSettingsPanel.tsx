@@ -11,8 +11,18 @@ interface FormSettingsPanelProps {
   onUpdate: (settings: FormSettings) => void
 }
 
+/**
+ * Purpose: Executes FormSettingsPanel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function FormSettingsPanel({ settings, onUpdate }: FormSettingsPanelProps) {
   const { t } = useTranslation();
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const update = (changes: Partial<FormSettings>) => {
     onUpdate({ ...settings, ...changes })
   }

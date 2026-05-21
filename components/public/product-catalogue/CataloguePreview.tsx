@@ -46,6 +46,11 @@ interface CartItem extends Product {
   selectedVariants?: Variant[];
 }
 
+/**
+ * Purpose: Executes CataloguePreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CataloguePreview({ data }: { data: CatalogueData }) {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
@@ -114,6 +119,11 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
+  /**
+   * Purpose: Executes addToCart functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addToCart = (product: Product, variants?: Variant[]) => {
     setCart(prev => {
       const existing = prev.find(
@@ -135,10 +145,20 @@ export default function CataloguePreview({ data }: { data: CatalogueData }) {
     });
   };
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeFromCart = (index: number) => {
     setCart(prev => prev.filter((_, i) => i !== index));
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateQuantity = (index: number, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(index);

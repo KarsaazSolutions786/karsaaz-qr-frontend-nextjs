@@ -3,6 +3,11 @@ import { supportTicketsAPI } from '@/lib/api/endpoints/support-tickets'
 import { queryKeys } from '@/lib/query/keys'
 
 // List tickets for a user
+/**
+ * Purpose: Executes useSupportTickets functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useSupportTickets(email: string) {
   return useQuery({
     queryKey: queryKeys.support.tickets(),
@@ -13,6 +18,11 @@ export function useSupportTickets(email: string) {
 }
 
 // Get conversation for a ticket
+/**
+ * Purpose: Executes useSupportTicket functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useSupportTicket(ticketId: number) {
   return useQuery({
     queryKey: queryKeys.support.ticket(String(ticketId)),

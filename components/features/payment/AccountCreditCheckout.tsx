@@ -8,12 +8,22 @@ interface AccountCreditCheckoutProps {
   isLoading?: boolean
 }
 
+/**
+ * Purpose: Executes AccountCreditCheckout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AccountCreditCheckout({
   balance,
   onConfirm,
   isLoading = false,
 }: AccountCreditCheckoutProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)

@@ -12,6 +12,11 @@ interface DeleteTemplateDialogProps {
   onConfirm?: () => void
 }
 
+/**
+ * Purpose: Executes DeleteTemplateDialog functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DeleteTemplateDialog({
   isOpen,
   onClose,
@@ -31,6 +36,11 @@ export default function DeleteTemplateDialog({
     },
   })
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = () => {
     deleteTemplateMutation.mutate(template.id)
   }

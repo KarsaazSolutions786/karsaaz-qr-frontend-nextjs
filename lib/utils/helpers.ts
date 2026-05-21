@@ -4,8 +4,11 @@
  */
 
 /**
- * Check if a value is empty
+ * Purpose: Check if a value is empty
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isEmpty(subject: unknown): boolean {
   if (subject instanceof File) {
     return false
@@ -38,19 +41,30 @@ export function isEmpty(subject: unknown): boolean {
   return false
 }
 
+/**
+ * Purpose: Checks if notempty.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export const isNotEmpty = <T>(v: T | null | undefined): v is T => !isEmpty(v)
 
 /**
- * Check if running on mobile device
+ * Purpose: Check if running on mobile device
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isMobile(): boolean {
   if (typeof window === 'undefined') return false
   return window.innerWidth < 900
 }
 
 /**
- * Debounce function calls
+ * Purpose: Debounce function calls
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function debounce<T extends (...args: unknown[]) => unknown>(
   cb: T,
   ms = 300
@@ -65,8 +79,11 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
- * Throttle function calls
+ * Purpose: Throttle function calls
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function throttle<T extends (...args: unknown[]) => unknown>(
   cb: T,
   ms = 300
@@ -84,8 +101,11 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
- * Get query parameter from URL
+ * Purpose: Get query parameter from URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function queryParam(name: string): string | null {
   if (typeof window === 'undefined') return null
   const params = new URLSearchParams(window.location.search)
@@ -93,8 +113,11 @@ export function queryParam(name: string): string | null {
 }
 
 /**
- * Load JSON from localStorage
+ * Purpose: Load JSON from localStorage
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function loadStoredJson<T>(key: string): T | null {
   if (typeof window === 'undefined') return null
   try {
@@ -106,30 +129,42 @@ export function loadStoredJson<T>(key: string): T | null {
 }
 
 /**
- * Store JSON in localStorage
+ * Purpose: Store JSON in localStorage
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function storeJson<T>(data: T, key: string): void {
   if (typeof window === 'undefined') return
   localStorage.setItem(key, JSON.stringify(data))
 }
 
 /**
- * Check if value is null or undefined
+ * Purpose: Check if value is null or undefined
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function nullOrUndefined(value: unknown): value is null | undefined {
   return value === null || value === undefined
 }
 
 /**
- * Capitalize first letter of each word
+ * Purpose: Capitalize first letter of each word
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function capitalize(str: string): string {
   return str.replace(/\b\w/g, m => m.toUpperCase())
 }
 
 /**
- * Convert string to kebab-case
+ * Purpose: Convert string to kebab-case
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function kebabCase(str: string, forceLowerCase = true): string {
   if (isEmpty(str)) return ''
   if (forceLowerCase) str = str.toLowerCase()
@@ -137,8 +172,11 @@ export function kebabCase(str: string, forceLowerCase = true): string {
 }
 
 /**
- * Convert string to slug
+ * Purpose: Convert string to slug
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function slugify(str: string): string {
   if (isEmpty(str)) return ''
   str = str.replace(/[[\]{}#~/.|<>,&"'?`\-=+]/g, ' ')
@@ -147,15 +185,21 @@ export function slugify(str: string): string {
 }
 
 /**
- * Convert string to StudlyCase/PascalCase
+ * Purpose: Convert string to StudlyCase/PascalCase
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function studlyCase(str: string): string {
   return titleCase(str).replace(/ /g, '')
 }
 
 /**
- * Convert string to Title Case
+ * Purpose: Convert string to Title Case
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function titleCase(str: string): string {
   return capitalize(
     str
@@ -166,8 +210,11 @@ export function titleCase(str: string): string {
 }
 
 /**
- * Generate random number between min and max
+ * Purpose: Generate random number between min and max
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function random(min: number, max: number): number {
   min = Math.ceil(min)
   max = Math.floor(max)
@@ -175,8 +222,11 @@ export function random(min: number, max: number): number {
 }
 
 /**
- * Generate array of numbers in range
+ * Purpose: Generate array of numbers in range
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function range(from: number, to?: number): number[] {
   const start = to !== undefined && to > from ? from : 0
   const length = to !== undefined && to > from ? to - from : from
@@ -184,15 +234,21 @@ export function range(from: number, to?: number): number[] {
 }
 
 /**
- * Check if value is a function
+ * Purpose: Check if value is a function
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isFunction(param: unknown): param is (...args: unknown[]) => unknown {
   return typeof param === 'function'
 }
 
 /**
- * Deferred promise pattern
+ * Purpose: Deferred promise pattern
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export class Deferred<T> {
   promise: Promise<T>
   resolve!: (value: T | PromiseLike<T>) => void
@@ -201,6 +257,11 @@ export class Deferred<T> {
   isRejected = false
   isConsumed = false
 
+  /**
+   * Purpose: Constructor for constructor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   constructor() {
     this.promise = new Promise((resolve, reject) => {
       this.reject = reason => {
@@ -218,22 +279,31 @@ export class Deferred<T> {
 }
 
 /**
- * Check if value is primitive
+ * Purpose: Check if value is primitive
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isPrimitive(val: unknown): boolean {
   return val !== Object(val)
 }
 
 /**
- * Deep equality check using JSON serialization
+ * Purpose: Deep equality check using JSON serialization
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function equals<T>(obj: T, another: T): boolean {
   return JSON.stringify(obj) === JSON.stringify(another)
 }
 
 /**
- * Pick only specified keys from object
+ * Purpose: Pick only specified keys from object
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function only<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
   return keys.reduce(
     (result, key) => {
@@ -245,16 +315,22 @@ export function only<T extends object, K extends keyof T>(obj: T, keys: K[]): Pi
 }
 
 /**
- * Convert RGB to hex color
+ * Purpose: Convert RGB to hex color
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function rgbToHex({ r, g, b }: { r: number; g: number; b: number }): string {
   const rgb = (r << 16) | (g << 8) | (b << 0)
   return '#' + (0x1000000 + rgb).toString(16).slice(1)
 }
 
 /**
- * Convert hex color to RGB
+ * Purpose: Convert hex color to RGB
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return result
@@ -267,24 +343,33 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
 }
 
 /**
- * Convert pixels to rem
+ * Purpose: Convert pixels to rem
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function pxToRem(px: number): number {
   if (typeof document === 'undefined') return px / 16
   return px / parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
 
 /**
- * Convert rem to pixels
+ * Purpose: Convert rem to pixels
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function remToPx(rem: number): number {
   if (typeof document === 'undefined') return rem * 16
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
 
 /**
- * Generate hash from string
+ * Purpose: Generate hash from string
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hash(str: string, seed = 0): number {
   let h1 = 0xdeadbeef ^ seed
   let h2 = 0x41c6ce57 ^ seed
@@ -299,16 +384,22 @@ export function hash(str: string, seed = 0): number {
 }
 
 /**
- * Check if running on iPhone Safari
+ * Purpose: Check if running on iPhone Safari
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function iPhoneSafari(): boolean {
   if (typeof navigator === 'undefined') return false
   return !!navigator.userAgent.match('iPhone OS')
 }
 
 /**
- * Parse boolean value from various types
+ * Purpose: Parse boolean value from various types
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function parseBooleanValue(value: unknown): boolean {
   if (typeof value === 'boolean') return value
   if (typeof value === 'number') return value !== 0
@@ -320,15 +411,21 @@ export function parseBooleanValue(value: unknown): boolean {
 }
 
 /**
- * Check if value is an array
+ * Purpose: Check if value is an array
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isArray(value: unknown): value is unknown[] {
   return Array.isArray(value)
 }
 
 /**
- * Parse number value with default
+ * Purpose: Parse number value with default
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function parseNumberValue(value: unknown, defaultValue = 0): number {
   if (typeof value === 'number') return value
   if (typeof value === 'string' && !isNaN(+value)) return +value
@@ -336,29 +433,41 @@ export function parseNumberValue(value: unknown, defaultValue = 0): number {
 }
 
 /**
- * Generate unique ID
+ * Purpose: Generate unique ID
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateUniqueID(idLength = 10): string {
   return [...Array(idLength).keys()].map(() => Math.random().toString(36).substring(2, 3)).join('')
 }
 
 /**
- * Uppercase first character
+ * Purpose: Uppercase first character
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ucfirst(str: string): string {
   return (str[0] ?? '').toUpperCase() + str.substring(1)
 }
 
 /**
- * Uppercase first character of each word
+ * Purpose: Uppercase first character of each word
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ucwords(str: string): string {
   return str.split(' ').map(ucfirst).join(' ')
 }
 
 /**
- * Get scrollbar width
+ * Purpose: Get scrollbar width
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getScrollbarWidth(): number {
   if (typeof document === 'undefined') return 0
 
@@ -377,8 +486,11 @@ export function getScrollbarWidth(): number {
 }
 
 /**
- * Remove empty fields from object
+ * Purpose: Remove empty fields from object
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function removeEmptyFields<T extends Record<string, unknown>>(obj: T): Partial<T> {
   return Object.keys(obj).reduce((result, key) => {
     if (!isEmpty(obj[key])) {
@@ -389,15 +501,21 @@ export function removeEmptyFields<T extends Record<string, unknown>>(obj: T): Pa
 }
 
 /**
- * Escape RegExp special characters
+ * Purpose: Escape RegExp special characters
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function escapeRegExp(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 /**
- * Download content as blob
+ * Purpose: Download content as blob
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function downloadBlob(content: BlobPart, filename: string, contentType: string): void {
   if (typeof document === 'undefined') return
 
@@ -415,15 +533,21 @@ export function downloadBlob(content: BlobPart, filename: string, contentType: s
 }
 
 /**
- * Add query string to URL
+ * Purpose: Add query string to URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function urlWithQueryString(url: string, queryString: string): string {
   return url.includes('?') ? `${url}&${queryString}` : `${url}?${queryString}`
 }
 
 /**
- * Open link in new tab
+ * Purpose: Open link in new tab
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function openLinkInNewTab(link: string): void {
   if (typeof document === 'undefined') return
 
@@ -438,8 +562,11 @@ export function openLinkInNewTab(link: string): void {
 }
 
 /**
- * Shuffle array
+ * Purpose: Shuffle array
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function shuffle<T>(array: T[]): T[] {
   const result: T[] = []
   const keys = array.map((_, i) => i)
@@ -453,15 +580,21 @@ export function shuffle<T>(array: T[]): T[] {
 }
 
 /**
- * Sleep/delay for specified milliseconds
+ * Purpose: Sleep/delay for specified milliseconds
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function sleep(ms: number): Promise<void> {
   return new Promise(r => setTimeout(r, ms))
 }
 
 /**
- * Format number with separators
+ * Purpose: Format number with separators
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function numberFormat(
   number: number,
   decimals?: number,
@@ -489,8 +622,11 @@ export function numberFormat(
 }
 
 /**
- * Convert 2D array to CSV string
+ * Purpose: Convert 2D array to CSV string
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function arrayToCsv(data: string[][]): string {
   return data
     .map(row =>
@@ -504,8 +640,11 @@ export function arrayToCsv(data: string[][]): string {
 }
 
 /**
- * Validate email address
+ * Purpose: Validate email address
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isEmail(value: string): boolean {
   return !!String(value)
     .toLowerCase()
@@ -515,8 +654,11 @@ export function isEmail(value: string): boolean {
 }
 
 /**
- * Escape HTML special characters
+ * Purpose: Escape HTML special characters
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function escapeHtml(str: string): string {
   if (typeof str !== 'string') return ''
   if (typeof document === 'undefined') {
@@ -533,8 +675,11 @@ export function escapeHtml(str: string): string {
 }
 
 /**
- * Sanitize SVG content
+ * Purpose: Sanitize SVG content
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function sanitizeSvg(svg: string): string {
   if (typeof svg !== 'string') return ''
   let sanitized = svg
@@ -550,8 +695,11 @@ export function sanitizeSvg(svg: string): string {
 }
 
 /**
- * Deep clone an object
+ * Purpose: Deep clone an object
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') return obj
   if (obj instanceof Date) return new Date(obj.getTime()) as T
@@ -571,8 +719,11 @@ export function deepClone<T>(obj: T): T {
 }
 
 /**
- * Deep merge objects
+ * Purpose: Deep merge objects
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function deepMerge<T extends Record<string, unknown>>(
   target: T,
   ...sources: Partial<T>[]
@@ -601,8 +752,11 @@ export function deepMerge<T extends Record<string, unknown>>(
 }
 
 /**
- * Format bytes to human readable string
+ * Purpose: Format bytes to human readable string
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatBytes(bytes: number, decimals = 2): string {
   if (bytes === 0) return '0 Bytes'
   const k = 1024
@@ -613,8 +767,11 @@ export function formatBytes(bytes: number, decimals = 2): string {
 }
 
 /**
- * Format duration in seconds to human readable string
+ * Purpose: Format duration in seconds to human readable string
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatDuration(seconds: number): string {
   if (seconds < 60) return `${seconds}s`
   if (seconds < 3600) {
@@ -628,15 +785,21 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
- * Clamp a number between min and max
+ * Purpose: Clamp a number between min and max
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max)
 }
 
 /**
- * Get initials from name
+ * Purpose: Get initials from name
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getInitials(name: string, maxLength = 2): string {
   if (!name) return ''
   return name
@@ -649,16 +812,22 @@ export function getInitials(name: string, maxLength = 2): string {
 }
 
 /**
- * Truncate string with ellipsis
+ * Purpose: Truncate string with ellipsis
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function truncate(str: string, length: number, ending = '...'): string {
   if (str.length <= length) return str
   return str.substring(0, length - ending.length) + ending
 }
 
 /**
- * Copy text to clipboard
+ * Purpose: Copy text to clipboard
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function copyToClipboard(text: string): Promise<boolean> {
   if (typeof navigator === 'undefined') return false
   try {

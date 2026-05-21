@@ -35,6 +35,11 @@ const typeIcons: Record<DashboardBannerProps['type'], React.ReactNode> = {
   promo: <Megaphone className="w-5 h-5 shrink-0" />,
 }
 
+/**
+ * Purpose: Executes DashboardBanner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DashboardBanner({
   type,
   message,
@@ -50,6 +55,11 @@ export function DashboardBanner({
     setIsDismissed(localStorage.getItem(storageKey) === 'true')
   }, [storageKey])
 
+  /**
+   * Purpose: Executes handleDismiss functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDismiss = () => {
     localStorage.setItem(storageKey, 'true')
     setIsDismissed(true)

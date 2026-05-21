@@ -10,6 +10,11 @@ interface PaymentGatewayListProps {
   onDelete: (id: number) => void
 }
 
+/**
+ * Purpose: Executes PaymentGatewayList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PaymentGatewayList({ gateways, onToggle, onEdit, onDelete }: PaymentGatewayListProps) {
   const { t } = useTranslation()
 

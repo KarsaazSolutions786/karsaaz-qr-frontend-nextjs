@@ -14,6 +14,11 @@ interface WiFiDataFormProps {
   defaultValues?: Partial<WiFiDataFormData>
   onChange?: (data: Partial<WiFiDataFormData>) => void
 }
+/**
+ * Purpose: Executes WiFiDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WiFiDataForm({ defaultValues, onChange }: WiFiDataFormProps) {
   const { t } = useTranslation()
   const {

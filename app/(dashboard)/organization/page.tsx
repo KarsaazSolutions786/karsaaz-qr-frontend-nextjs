@@ -24,6 +24,11 @@ interface PortalCredentials {
   note: string
 }
 
+/**
+ * Purpose: Executes OrganizationPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrganizationPage() {
   const [orgs, setOrgs] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
@@ -42,12 +47,22 @@ export default function OrganizationPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  /**
+   * Purpose: Executes copyToClipboard functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copyToClipboard = async (text: string, field: 'email' | 'password') => {
     await navigator.clipboard.writeText(text)
     setCopied(field)
     setTimeout(() => setCopied(null), 2000)
   }
 
+  /**
+   * Purpose: Executes handleCreate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newOrgName.trim()) return

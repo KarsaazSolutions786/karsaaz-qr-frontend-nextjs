@@ -10,6 +10,11 @@ interface ParagraphBlockProps {
   onUpdate?: (data: ParagraphBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes ParagraphBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ParagraphBlock({ block, isEditing, onUpdate }: ParagraphBlockProps) {
   const { t } = useTranslation();
   const { content } = block.data

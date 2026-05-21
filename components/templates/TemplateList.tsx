@@ -27,6 +27,11 @@ interface TemplateListProps {
 type SortField = 'name' | 'type' | 'category' | 'created_at'
 type SortDirection = 'asc' | 'desc'
 
+/**
+ * Purpose: Executes TemplateList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TemplateList({
   templates,
   onUseTemplate,
@@ -42,6 +47,11 @@ export default function TemplateList({
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [activeMenu, setActiveMenu] = useState<number | null>(null)
 
+  /**
+   * Purpose: Executes handleSort functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
@@ -152,6 +162,11 @@ export default function TemplateList({
     )
   }
 
+  /**
+   * Purpose: Executes SortButton functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const SortButton = ({ field, label }: { field: SortField; label: string }) => (
     <button
       onClick={() => handleSort(field)}

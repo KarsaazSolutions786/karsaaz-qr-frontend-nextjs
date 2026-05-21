@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   ),
 }
 
+/**
+ * Purpose: Executes PricingPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PricingPage() {
   return <PricingPageWrapper />
 }

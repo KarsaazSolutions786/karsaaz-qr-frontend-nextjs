@@ -9,6 +9,11 @@ import SupportTicketList from '@/components/features/support/SupportTicketList'
 import type { SupportTicket } from '@/types/entities/support-ticket'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes SupportTicketsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SupportTicketsPage() {
   const { t } = useTranslation()
   const { user } = useAuth()
@@ -20,6 +25,11 @@ export default function SupportTicketsPage() {
   useEffect(() => {
     if (!user?.email) return
 
+    /**
+     * Purpose: Executes fetchTickets functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const fetchTickets = async () => {
       try {
         setIsLoading(true)

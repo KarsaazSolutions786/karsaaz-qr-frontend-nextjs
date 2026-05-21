@@ -25,6 +25,11 @@ const PROVIDERS: { value: CloudProvider; label: string }[] = [
   { value: 'digitalocean', label: 'DigitalOcean Spaces' },
 ]
 
+/**
+ * Purpose: Executes EditCloudStoragePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditCloudStoragePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
@@ -66,9 +71,19 @@ export default function EditCloudStoragePage({ params }: { params: Promise<{ id:
       ? (updateConnection.error as any)?.response?.data?.message || t('Failed to update configuration.')
       : ''
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = <K extends keyof CloudStorageForm>(key: K, value: CloudStorageForm[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaved(false)

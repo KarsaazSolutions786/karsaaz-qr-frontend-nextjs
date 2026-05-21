@@ -61,7 +61,17 @@ const RangeInput = React.forwardRef<HTMLInputElement, RangeInputProps>(
       [value, onChange]
     )
 
+    /**
+     * Purpose: Executes handleMouseDown functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleMouseDown = () => setIsDragging(true)
+    /**
+     * Purpose: Executes handleMouseUp functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleMouseUp = () => {
       setIsDragging(false)
       onChangeComplete?.(currentValue)
@@ -268,6 +278,11 @@ interface DualRangeInputProps {
   disabled?: boolean
 }
 
+/**
+ * Purpose: Executes DualRangeInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DualRangeInput({
   min = 0,
   max = 100,
@@ -285,11 +300,21 @@ export function DualRangeInput({
   const minPercent = ((minValue - min) / (max - min)) * 100
   const maxPercent = ((maxValue - min) / (max - min)) * 100
 
+  /**
+   * Purpose: Executes handleMinChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newMin = Math.min(Number(e.target.value), maxValue - step)
     onChange(newMin, maxValue)
   }
 
+  /**
+   * Purpose: Executes handleMaxChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newMax = Math.max(Number(e.target.value), minValue + step)
     onChange(minValue, newMax)

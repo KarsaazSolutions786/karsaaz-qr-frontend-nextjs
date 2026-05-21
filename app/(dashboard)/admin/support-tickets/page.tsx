@@ -15,8 +15,11 @@ const STATUS_BADGES: Record<SupportTicket['status'], { label: string; className:
 }
 
 /**
- * T221: Admin page showing ALL tickets across users.
+ * Purpose: T221: Admin page showing ALL tickets across users.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export default function AdminSupportTicketsPage() {
   const { t } = useTranslation()
   const [tickets, setTickets] = useState<SupportTicket[]>([])
@@ -25,6 +28,11 @@ export default function AdminSupportTicketsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all')
 
   useEffect(() => {
+    /**
+     * Purpose: Executes fetchAllTickets functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const fetchAllTickets = async () => {
       try {
         setIsLoading(true)

@@ -82,6 +82,11 @@ const gradientPresets = [
   { name: 'Fire', colors: ['#fa709a', '#fee140'] },
 ]
 
+/**
+ * Purpose: Executes BaseDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BaseDesigner({
   design,
   onChange,
@@ -93,10 +98,20 @@ export function BaseDesigner({
   const [activeTab, setActiveTab] = useState(tabs[0]?.id || 'colors')
   const [backgroundMode, setBackgroundMode] = useState<'color' | 'gradient' | 'image'>('color')
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<DesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes applyGradient functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const applyGradient = (colors: string[]) => {
     updateDesign({
       backgroundGradient: {
@@ -107,6 +122,11 @@ export function BaseDesigner({
     })
   }
 
+  /**
+   * Purpose: Executes renderColorsTab functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderColorsTab = () => (
     <>
       <div className="flex gap-2 mb-4">
@@ -234,6 +254,11 @@ export function BaseDesigner({
     </>
   )
 
+  /**
+   * Purpose: Executes renderTypographyTab functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderTypographyTab = () => (
     <div className="space-y-4">
       <div>
@@ -265,6 +290,11 @@ export function BaseDesigner({
     </div>
   )
 
+  /**
+   * Purpose: Executes renderButtonsTab functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderButtonsTab = () => (
     <div className="space-y-4">
       <div>
@@ -317,6 +347,11 @@ export function BaseDesigner({
     </div>
   )
 
+  /**
+   * Purpose: Executes renderLayoutTab functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderLayoutTab = () => (
     <div className="space-y-4">
       <RangeInput
@@ -385,6 +420,11 @@ export function BaseDesigner({
     </div>
   )
 
+  /**
+   * Purpose: Executes renderTabContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderTabContent = () => {
     switch (activeTab) {
       case 'colors':
@@ -433,6 +473,11 @@ export function BaseDesigner({
 }
 
 // Helper Components
+/**
+ * Purpose: Executes ColorInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function ColorInput({
   label,
   value,
@@ -463,6 +508,11 @@ function ColorInput({
   )
 }
 
+/**
+ * Purpose: Executes RangeInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function RangeInput({
   label,
   value,

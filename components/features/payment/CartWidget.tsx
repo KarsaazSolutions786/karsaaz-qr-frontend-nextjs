@@ -10,17 +10,11 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
 /**
- * Floating cart widget that shows when items are in the account credit cart.
- *
- * Matches P1's QrcgAccountCreditCartWidget:
- * - Fixed position at bottom center
- * - Shows item count
- * - "Checkout Now" CTA links to cart page
- * - Animated entrance
- * - Only visible in account-credit billing mode
- *
- * Place this in the dashboard layout alongside QuickActions.
+ * Purpose: Floating cart widget that shows when items are in the account credit cart. Matches P1's QrcgAccountCreditCartWidget: - Fixed position at bottom center - Shows item count - "Checkout Now" CTA links to cart page - Animated entrance - Only visible in account-credit billing mode Place this in the dashboard layout alongside QuickActions.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function CartWidget() {
   const { t } = useTranslation()
   const { isAccountCreditMode } = useAccountCredit()

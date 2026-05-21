@@ -20,6 +20,11 @@ interface Domain {
   user?: { id: number; name: string }
 }
 
+/**
+ * Purpose: Executes SystemDomainsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SystemDomainsPage() {
   const { t } = useTranslation()
   const [domains, setDomains] = useState<Domain[]>([])
@@ -45,6 +50,11 @@ export default function SystemDomainsPage() {
 
   useEffect(() => { fetchDomains() }, [fetchDomains])
 
+  /**
+   * Purpose: Executes handleAdd functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleAdd = async () => {
     if (!newDomain.trim()) return
     setSaving(true)
@@ -60,6 +70,11 @@ export default function SystemDomainsPage() {
     setSaving(false)
   }
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number) => {
     if (!confirm(t('Are you sure you want to remove this domain?'))) return
     try {
@@ -71,11 +86,25 @@ export default function SystemDomainsPage() {
     }
   }
 
+  /**
+   * Purpose: Executes openAvailabilityModal functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const openAvailabilityModal = (domain: Domain) => {
     setAvailabilityTarget(domain)
     setSelectedAvailability(domain.availability ?? 'public')
   }
 
+  /**
+   * Purpose: Executes handleUpdateAvailability functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const handleUpdateAvailability = async () => {
     if (!availabilityTarget) return
     setUpdatingAvailability(true)

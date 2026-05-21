@@ -23,6 +23,11 @@ export interface VirtualizedListProps<T> {
   scrollResetKey?: React.Key;
 }
 
+/**
+ * Purpose: Executes VirtualizedList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function VirtualizedList<T>({
   items,
   itemHeight = 80,
@@ -122,6 +127,11 @@ export interface VirtualizedGridProps<T> {
   scrollResetKey?: React.Key;
 }
 
+/**
+ * Purpose: Executes VirtualizedGrid functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function VirtualizedGrid<T>({
   items,
   columnCount = 3,
@@ -212,6 +222,11 @@ export interface VirtualizedTableProps<T> {
   onRowClick?: (item: T, index: number) => void;
 }
 
+/**
+ * Purpose: Executes VirtualizedTable functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function VirtualizedTable<T extends Record<string, any>>({
   items,
   columns,

@@ -8,6 +8,11 @@ import type { CreatePageRequest } from '@/types/entities/page'
 import { useTranslation } from '@/lib/i18n'
 import { envConfig } from '@/lib/config/env-config'
 
+/**
+ * Purpose: Executes slugify functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -17,6 +22,11 @@ function slugify(text: string): string {
 
 const APP_URL = envConfig.APP_URL
 
+/**
+ * Purpose: Executes NewPagePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewPagePage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -30,13 +40,28 @@ export default function NewPagePage() {
     published: false,
   })
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = <K extends keyof CreatePageRequest>(key: K, value: CreatePageRequest[K]) =>
     setForm(prev => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleTitleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTitleChange = (value: string) => {
     setForm(prev => ({ ...prev, title: value, slug: slugify(value) }))
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await createMutation.mutateAsync(form)

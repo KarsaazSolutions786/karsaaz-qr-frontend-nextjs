@@ -18,6 +18,11 @@ const DEV_FALLBACK_PROCESSORS: PaymentProcessor[] = [
 ]
 
 // Icons for payment processors
+/**
+ * Purpose: Executes ProcessorIcon functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const ProcessorIcon = ({ slug }: { slug: string }) => {
   switch (slug) {
     case 'stripe':
@@ -33,6 +38,11 @@ const ProcessorIcon = ({ slug }: { slug: string }) => {
   }
 }
 
+/**
+ * Purpose: Executes CheckoutContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function CheckoutContent() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
@@ -50,6 +60,11 @@ function CheckoutContent() {
   const [useFallback, setUseFallback] = useState(false)
   const checkout = useCheckout()
 
+  /**
+   * Purpose: Executes fetchProcessors functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const fetchProcessors = async () => {
     setLoadingProcessors(true)
     setProcessorError(null)
@@ -111,6 +126,11 @@ function CheckoutContent() {
     fetchProcessors()
   }, [])
 
+  /**
+   * Purpose: Executes handlePay functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePay = async () => {
     if (!planId || !selectedProcessor) return
     checkout.mutate({
@@ -119,6 +139,11 @@ function CheckoutContent() {
     })
   }
 
+  /**
+   * Purpose: Executes handleRetry functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRetry = () => {
     fetchProcessors()
   }
@@ -409,6 +434,11 @@ function CheckoutContent() {
   )
 }
 
+/**
+ * Purpose: Executes CheckoutPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CheckoutPage() {
   const { t } = useTranslation()
   return (

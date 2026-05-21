@@ -50,17 +50,32 @@ export const TranslationContext = createContext<TranslationContextValue>({
   isLoading: true,
 })
 
+/**
+ * Purpose: Retrieves savedlocale.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getSavedLocale(): string {
   if (typeof window === 'undefined') return DEFAULT_LOCALE
   return localStorage.getItem(LOCALE_STORAGE_KEY) || DEFAULT_LOCALE
 }
 
+/**
+ * Purpose: Saves the specified data.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function saveLocale(locale: string) {
   if (typeof window !== 'undefined') {
     localStorage.setItem(LOCALE_STORAGE_KEY, locale)
   }
 }
 
+/**
+ * Purpose: Executes TranslationProvider functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TranslationProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState(DEFAULT_LOCALE)
   const [dir, setDir] = useState<'ltr' | 'rtl'>(DEFAULT_DIR)
@@ -156,7 +171,12 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   )
 }
 
-/** Update <html> element dir and lang attributes */
+/**
+ * Purpose: * Update <html> element dir and lang attributes 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 function updateDocumentDir(dir: 'ltr' | 'rtl', locale: string) {
   if (typeof document === 'undefined') return
   document.documentElement.dir = dir

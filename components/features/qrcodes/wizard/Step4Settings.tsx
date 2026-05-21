@@ -21,6 +21,11 @@ interface Step4SettingsProps {
   folders?: any[]
 }
 
+/**
+ * Purpose: Executes Step4Settings functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function Step4Settings({
   settings,
   onChange,
@@ -30,10 +35,20 @@ export default function Step4Settings({
   const [showFolderPicker, setShowFolderPicker] = useState(false)
   const folderManager = useFolders(folders)
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (field: string, value: any) => {
     onChange({ ...settings, [field]: value })
   }
 
+  /**
+   * Purpose: Executes handleTagInput functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && e.currentTarget.value.trim()) {
       const newTag = e.currentTarget.value.trim()
@@ -45,6 +60,11 @@ export default function Step4Settings({
     }
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeTag = (tagToRemove: string) => {
     const currentTags = settings.tags || []
     handleChange(

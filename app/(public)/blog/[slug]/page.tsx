@@ -10,6 +10,11 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 import { sanitizeHTML } from '@/lib/utils/dom-safety'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes BlogPostPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BlogPostPage() {
   const { t } = useTranslation()
   const params = useParams()

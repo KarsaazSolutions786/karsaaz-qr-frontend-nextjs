@@ -3,6 +3,11 @@ import { notFound } from 'next/navigation'
 import VCardPreview from '@/components/public/vcard/VCardPreview'
 import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
+/**
+ * Purpose: Retrieves vcard.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getVCard(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -18,6 +23,11 @@ async function getVCard(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const vcard = await getVCard(params.slug)
 
@@ -49,6 +59,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes PublicVCardPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function PublicVCardPage({ params }: { params: { slug: string } }) {
   const vcard = await getVCard(params.slug)
 

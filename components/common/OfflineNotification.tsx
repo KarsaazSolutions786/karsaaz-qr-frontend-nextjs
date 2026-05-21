@@ -5,9 +5,11 @@ import { useTranslation } from '@/lib/i18n'
 import { WifiOff } from 'lucide-react'
 
 /**
- * Banner displayed when the user goes offline.
- * Automatically hides when connectivity is restored.
+ * Purpose: Banner displayed when the user goes offline. Automatically hides when connectivity is restored.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function OfflineNotification() {
   const { t } = useTranslation()
   const isOnline = useOnlineStatus()

@@ -11,6 +11,13 @@ interface FileImageProps {
   fallback?: React.ReactNode
 }
 
+/**
+ * Purpose: Executes FileImage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export function FileImage({ file, alt, className, fallback }: FileImageProps) {
   const { t } = useTranslation()
   const [src, setSrc] = useState<string | null>(null)

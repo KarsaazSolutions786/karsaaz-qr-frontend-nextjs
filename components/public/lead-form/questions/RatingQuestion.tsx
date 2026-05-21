@@ -10,6 +10,11 @@ interface RatingQuestionProps {
   max?: number;
 }
 
+/**
+ * Purpose: Executes RatingQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function RatingQuestion({
   value,
   onChange,

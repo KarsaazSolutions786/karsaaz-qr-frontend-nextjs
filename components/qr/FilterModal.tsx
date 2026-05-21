@@ -48,6 +48,11 @@ const DATE_RANGES: { value: DateRangeType; label: string }[] = [
   { value: 'custom', label: 'Custom Range' },
 ];
 
+/**
+ * Purpose: Executes FilterModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FilterModal({
   isOpen,
   onClose,
@@ -71,11 +76,21 @@ export function FilterModal({
 
   if (!isOpen) return null;
   
+  /**
+   * Purpose: Executes handleApply functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleApply = () => {
     onFiltersChange(localFilters);
     onClose();
   };
   
+  /**
+   * Purpose: Executes handleReset functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleReset = () => {
     onReset();
     setLocalFilters({
@@ -86,6 +101,11 @@ export function FilterModal({
     });
   };
   
+  /**
+   * Purpose: Executes handleSavePreset functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSavePreset = () => {
     if (presetName.trim() && onSavePreset) {
       onSavePreset(presetName.trim());
@@ -94,6 +114,11 @@ export function FilterModal({
     }
   };
   
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateLocalFilter = <K extends keyof FilterState>(
     key: K,
     value: FilterState[K]

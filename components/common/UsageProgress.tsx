@@ -12,6 +12,11 @@ interface UsageProgressProps {
   warningThreshold?: number;
 }
 
+/**
+ * Purpose: Executes UsageProgress functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function UsageProgress({
   used,
   total,
@@ -26,12 +31,22 @@ export default function UsageProgress({
   const isNearLimit = percentage >= warningThreshold;
   const isAtLimit = percentage >= 100;
 
+  /**
+   * Purpose: Retrieves progresscolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getProgressColor = () => {
     if (isAtLimit) return 'bg-red-600';
     if (isNearLimit) return 'bg-yellow-500';
     return 'bg-blue-600';
   };
 
+  /**
+   * Purpose: Retrieves backgroundcolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getBackgroundColor = () => {
     if (isAtLimit) return 'bg-red-100';
     if (isNearLimit) return 'bg-yellow-100';

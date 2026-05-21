@@ -10,6 +10,11 @@ interface LeadFormBlockProps {
   onUpdate?: (data: LeadFormBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes LeadFormBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBlockProps) {
   const { t } = useTranslation();
   const { title, fields, buttonText = 'Submit', apiEndpoint } = block.data
@@ -17,6 +22,11 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
   const [submitted, setSubmitted] = useState(false)
 
   if (isEditing) {
+    /**
+     * Purpose: Executes addField functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const addField = () => {
       onUpdate?.({
         ...block.data,
@@ -24,10 +34,20 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
       })
     }
 
+    /**
+     * Purpose: Deletes the specified resource.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const removeField = (index: number) => {
       onUpdate?.({ ...block.data, fields: fields.filter((_, i) => i !== index) })
     }
 
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const updateField = (index: number, key: string, value: string | boolean) => {
       const newFields = [...fields]
       newFields[index] = { ...newFields[index], [key]: value } as LeadFormBlockData['data']['fields'][number]
@@ -112,6 +132,11 @@ export default function LeadFormBlock({ block, isEditing, onUpdate }: LeadFormBl
     )
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (apiEndpoint) {

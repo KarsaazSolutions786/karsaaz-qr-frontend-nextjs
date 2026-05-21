@@ -3,6 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 
+/**
+ * Purpose: Executes ActiveBorder functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 const ActiveBorder = () => (
   <Image
     src="/img/Group 1000004911.png"
@@ -13,6 +18,11 @@ const ActiveBorder = () => (
   />
 );
 
+/**
+ * Purpose: Executes Hero functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function Hero({ activeType, setActiveType }: { activeType: string; setActiveType: (t: string) => void }) {
   const qrTypes = [
     { name: "PDF", icon: "file" },
@@ -319,6 +329,11 @@ export default function Hero({ activeType, setActiveType }: { activeType: string
   );
 }
 
+/**
+ * Purpose: Executes Icon functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 const Icon = ({ type, isActive }: { type: string; isActive: boolean }) => {
   const iconMap = {
     file: "/icons/proicons_pdf-2.svg",
@@ -353,6 +368,11 @@ const Icon = ({ type, isActive }: { type: string; isActive: boolean }) => {
   );
 };
 
+/**
+ * Purpose: Executes QRTypeContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 const QRTypeContent = ({ activeType }: { activeType: string }) => {
   const qrContent = {
     PDF: {

@@ -36,6 +36,13 @@ interface AIDesignGeneratorProps {
   onClose?: () => void;
 }
 
+/**
+ * Purpose: Executes AIDesignGenerator functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 const AIDesignGenerator = ({ onApply, onClose }: AIDesignGeneratorProps) => {
   const { t } = useTranslation();
   const [prompt, setPrompt] = useState('');
@@ -52,6 +59,11 @@ const AIDesignGenerator = ({ onApply, onClose }: AIDesignGeneratorProps) => {
     loadFromLocalStorage();
   }, []);
 
+  /**
+   * Purpose: Executes loadFromLocalStorage functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const loadFromLocalStorage = () => {
     try {
       const savedFavorites = localStorage.getItem('ai-design-favorites');
@@ -64,6 +76,11 @@ const AIDesignGenerator = ({ onApply, onClose }: AIDesignGeneratorProps) => {
     }
   };
 
+  /**
+   * Purpose: Saves the specified data.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const saveToLocalStorage = (key: string, data: any) => {
     try {
       localStorage.setItem(key, JSON.stringify(data));
@@ -72,6 +89,11 @@ const AIDesignGenerator = ({ onApply, onClose }: AIDesignGeneratorProps) => {
     }
   };
 
+  /**
+   * Purpose: Executes generateDesigns functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const generateDesigns = async () => {
     setIsGenerating(true);
     
@@ -106,26 +128,51 @@ const AIDesignGenerator = ({ onApply, onClose }: AIDesignGeneratorProps) => {
     setIsGenerating(false);
   };
 
+  /**
+   * Purpose: Retrieves randomcolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getRandomColor = (): string => {
     const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE'];
     return colors[Math.floor(Math.random() * colors.length)] ?? '#FF6B6B';
   };
 
+  /**
+   * Purpose: Retrieves randompattern.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getRandomPattern = (): string => {
     const patterns = ['dots', 'squares', 'rounded', 'classy', 'extra-rounded'];
     return patterns[Math.floor(Math.random() * patterns.length)] ?? 'dots';
   };
 
+  /**
+   * Purpose: Retrieves randomcornerstyle.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getRandomCornerStyle = (): string => {
     const styles = ['square', 'extra-rounded', 'dot'];
     return styles[Math.floor(Math.random() * styles.length)] ?? 'square';
   };
 
+  /**
+   * Purpose: Retrieves randomdotstyle.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getRandomDotStyle = (): string => {
     const styles = ['square', 'rounded', 'classy', 'extra-rounded'];
     return styles[Math.floor(Math.random() * styles.length)] ?? 'square';
   };
 
+  /**
+   * Purpose: Executes toggleFavorite functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleFavorite = (design: AIDesign) => {
     const isFav = favorites.some(f => f.id === design.id);
     let updatedFavorites: AIDesign[];
@@ -147,12 +194,22 @@ const AIDesignGenerator = ({ onApply, onClose }: AIDesignGeneratorProps) => {
     saveToLocalStorage('ai-design-history', updatedHistory);
   };
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const deleteFromHistory = (id: string) => {
     const updatedHistory = history.filter(h => h.id !== id);
     setHistory(updatedHistory);
     saveToLocalStorage('ai-design-history', updatedHistory);
   };
 
+  /**
+   * Purpose: Executes duplicateDesign functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const duplicateDesign = (design: AIDesign) => {
     setPrompt(design.prompt || '');
     setSelectedStyle(design.style || 'modern');
@@ -160,6 +217,13 @@ const AIDesignGenerator = ({ onApply, onClose }: AIDesignGeneratorProps) => {
     setActiveTab('generate');
   };
 
+  /**
+   * Purpose: Executes DesignCard functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: May 2026
+   */
   const DesignCard = ({
     design,
     showActions = true

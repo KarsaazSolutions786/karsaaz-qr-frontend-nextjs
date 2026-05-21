@@ -9,6 +9,11 @@ interface PaymentBlockProps {
   onUpdate?: (data: PaymentBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes PaymentBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PaymentBlock({ block, isEditing, onUpdate }: PaymentBlockProps) {
   const { amount, currency, description, paymentUrl } = block.data
   const { t } = useTranslation()

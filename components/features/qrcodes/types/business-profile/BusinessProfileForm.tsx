@@ -68,6 +68,11 @@ const TABS = [
   { key: 'theme' as TabKey, label: 'Theme', icon: Palette },
 ];
 
+/**
+ * Purpose: Executes BusinessProfileForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BusinessProfileForm({
   initialData,
   onSubmit,
@@ -117,6 +122,11 @@ export function BusinessProfileForm({
 
   const basicInfo = watch('basicInfo');
 
+  /**
+   * Purpose: Executes handleFormSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFormSubmit = (data: any) => {
     const formData: BusinessProfileFormData = {
       basicInfo: data.basicInfo,

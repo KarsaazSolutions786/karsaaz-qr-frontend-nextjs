@@ -18,6 +18,11 @@ const PREF_LABELS: { key: keyof NotificationPreferences; label: string; descript
   { key: 'weekly_digest', label: 'Weekly Digest', description: 'Weekly summary of your QR code analytics' },
 ]
 
+/**
+ * Purpose: Executes NotificationsTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function NotificationsTab({ userId }: NotificationsTabProps) {
   const { t } = useTranslation()
   const [prefs, setPrefs] = useState<NotificationPreferences | null>(null)
@@ -52,12 +57,22 @@ export function NotificationsTab({ userId }: NotificationsTabProps) {
     fetchPrefs()
   }
 
+  /**
+   * Purpose: Executes handleToggle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleToggle = (key: keyof NotificationPreferences) => {
     if (!prefs) return
     setPrefs({ ...prefs, [key]: !prefs[key] })
     setSuccess(null)
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async () => {
     if (!prefs) return
     try {

@@ -9,6 +9,11 @@ interface LanguagePickerProps {
   variant?: 'light' | 'dark'
 }
 
+/**
+ * Purpose: Executes LanguagePicker functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LanguagePicker({ variant = 'light' }: LanguagePickerProps) {
   const { languages, currentLanguage, locale, setLocale, t } = useTranslation()
   const [open, setOpen] = useState(false)
@@ -16,6 +21,11 @@ export function LanguagePicker({ variant = 'light' }: LanguagePickerProps) {
 
   // Close on outside click
   useEffect(() => {
+    /**
+     * Purpose: Executes handleClick functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false)

@@ -28,6 +28,11 @@ interface GoogleReviewPreviewProps {
   data: GoogleReviewData
 }
 
+/**
+ * Purpose: Executes GoogleReviewPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function GoogleReviewPreview({ data }: GoogleReviewPreviewProps) {
   const { t } = useTranslation()
   const [redirecting, setRedirecting] = useState(false)
@@ -51,6 +56,11 @@ export default function GoogleReviewPreview({ data }: GoogleReviewPreviewProps) 
     }
   }, [googleReviewUrl])
 
+  /**
+   * Purpose: Executes renderStars functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const renderStars = (rating: number, size = 'w-6 h-6') => {
     return Array.from({ length: 5 }).map((_, i) => (
       <Star

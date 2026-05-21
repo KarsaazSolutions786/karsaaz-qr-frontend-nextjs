@@ -19,17 +19,32 @@ interface StickerTextInputProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes StickerTextInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerTextInput({ value, onChange, className }: StickerTextInputProps) {
   const { t } = useTranslation()
   const current = value || DEFAULT_VALUE
   const [modalOpen, setModalOpen] = React.useState(false)
   const [draft, setDraft] = React.useState<StickerText>(current)
 
+  /**
+   * Purpose: Executes openModal functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const openModal = () => {
     setDraft(current)
     setModalOpen(true)
   }
 
+  /**
+   * Purpose: Executes apply functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const apply = () => {
     onChange(draft)
     setModalOpen(false)

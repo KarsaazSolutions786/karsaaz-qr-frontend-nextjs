@@ -20,6 +20,11 @@ interface EventDetailsProps {
   };
 }
 
+/**
+ * Purpose: Executes EventDetails functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EventDetails({ event }: EventDetailsProps) {
   const { t } = useTranslation();
   const eventDate = new Date(event.date);

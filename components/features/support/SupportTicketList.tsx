@@ -21,6 +21,11 @@ interface SupportTicketListProps {
   tickets: SupportTicket[]
 }
 
+/**
+ * Purpose: Executes SupportTicketList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SupportTicketList({ tickets }: SupportTicketListProps) {
   const { t } = useTranslation()
   if (tickets.length === 0) {

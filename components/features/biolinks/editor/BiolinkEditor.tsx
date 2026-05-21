@@ -73,6 +73,11 @@ interface BiolinkEditorProps {
   onChange: (blocks: BlockData[]) => void
 }
 
+/**
+ * Purpose: Executes SortableBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function SortableBlock({
   block,
   onUpdate,
@@ -93,6 +98,11 @@ function SortableBlock({
     opacity: isDragging ? 0.5 : 1,
   }
 
+  /**
+   * Purpose: Executes renderBlock functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderBlock = () => {
     switch (block.type) {
       case 'link':
@@ -218,6 +228,11 @@ function SortableBlock({
   )
 }
 
+/**
+ * Purpose: Executes BiolinkEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BiolinkEditor({ blocks, onChange }: BiolinkEditorProps) {
   const { t } = useTranslation();
   const [showBlockSelector, setShowBlockSelector] = useState(false)
@@ -229,6 +244,11 @@ export default function BiolinkEditor({ blocks, onChange }: BiolinkEditorProps) 
     })
   )
 
+  /**
+   * Purpose: Executes handleDragEnd functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
@@ -245,12 +265,22 @@ export default function BiolinkEditor({ blocks, onChange }: BiolinkEditorProps) 
     }
   }
 
+  /**
+   * Purpose: Executes addBlock functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addBlock = (type: BlockType) => {
     const newBlock = createBlock(type, blocks.length)
     onChange([...blocks, newBlock as BlockData])
     setShowBlockSelector(false)
   }
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateBlock = (id: string, data: any) => {
     onChange(
       blocks.map((block) =>
@@ -259,6 +289,11 @@ export default function BiolinkEditor({ blocks, onChange }: BiolinkEditorProps) 
     )
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const deleteBlock = (id: string) => {
     onChange(blocks.filter((block) => block.id !== id))
   }

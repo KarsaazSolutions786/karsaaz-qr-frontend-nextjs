@@ -25,6 +25,11 @@ import {
 
 const ROLE_OPTIONS = ['admin', 'member', 'viewer']
 
+/**
+ * Purpose: Executes SendInviteButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function SendInviteButton({ orgId }: { orgId: number }) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
@@ -33,6 +38,11 @@ function SendInviteButton({ orgId }: { orgId: number }) {
   const [error, setError] = useState('')
   const [expiresAt, setExp] = useState('')
 
+  /**
+   * Purpose: Executes generate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const generate = async () => {
     setLoading(true)
     setError('')
@@ -47,6 +57,11 @@ function SendInviteButton({ orgId }: { orgId: number }) {
     }
   }
 
+  /**
+   * Purpose: Executes copy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copy = () => {
     navigator.clipboard.writeText(inviteUrl)
     setCopied(true)
@@ -107,6 +122,11 @@ function SendInviteButton({ orgId }: { orgId: number }) {
   )
 }
 
+/**
+ * Purpose: Executes SettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function SettingsPage() {
   const params = useSearchParams()
   const orgId = Number(params.get('org') ?? 0)
@@ -139,6 +159,11 @@ export default function SettingsPage() {
       .finally(() => setLoading(false))
   }, [orgId])
 
+  /**
+   * Purpose: Executes handleResetPortalPassword functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleResetPortalPassword = async () => {
     if (!confirm('Reset the portal password? The new password will be shown once.')) return
     setResettingPassword(true)
@@ -154,11 +179,21 @@ export default function SettingsPage() {
     }
   }
 
+  /**
+   * Purpose: Executes copyToClipboard functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text)
     toast.success(`${label} copied!`)
   }
 
+  /**
+   * Purpose: Executes handleInvite functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault()
     setInviting(true)
@@ -174,6 +209,11 @@ export default function SettingsPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleRemove functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleRemove = async (memberId: number, role: string) => {
     if (role === 'owner') {
       toast.error('Cannot remove the owner')

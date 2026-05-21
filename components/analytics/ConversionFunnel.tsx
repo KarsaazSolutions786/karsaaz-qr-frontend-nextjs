@@ -19,6 +19,11 @@ const stepColors = [
   'bg-fuchsia-300 dark:bg-fuchsia-200',
 ]
 
+/**
+ * Purpose: Executes ConversionFunnel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ConversionFunnel({ data, className }: ConversionFunnelProps) {
   const { t } = useTranslation()
   const { steps, conversion_rate, total_entered, total_converted } = data

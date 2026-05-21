@@ -10,6 +10,11 @@ interface PatternPreviewRendererProps {
   pattern: PatternSettings
 }
 
+/**
+ * Purpose: Executes PatternPreviewRenderer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function PatternPreviewRenderer({ pattern }: PatternPreviewRendererProps) {
   const { t } = useTranslation()
   if (pattern.type === 'none') return null
@@ -21,6 +26,11 @@ export default function PatternPreviewRenderer({ pattern }: PatternPreviewRender
     transformOrigin: 'center center',
   }
 
+  /**
+   * Purpose: Executes renderPreview functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const renderPreview = () => {
     switch (pattern.type) {
       case 'dots':

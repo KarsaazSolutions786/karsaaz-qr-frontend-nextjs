@@ -33,25 +33,31 @@ export interface PaymentProcessor {
 // ── API Functions ──────────────────────────────────────────────
 
 /**
- * Create a subscription record before PayPal approval.
- * POST /api/subscriptions/subscribe
+ * Purpose: Create a subscription record before PayPal approval. POST /api/subscriptions/subscribe
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function createPayPalSubscription(data: PayPalSubscribeRequest) {
   return apiClient.post<PayPalSubscribeResponse>('/subscriptions/subscribe', data)
 }
 
 /**
- * Update subscription with PayPal IDs after approval.
- * PUT /api/subscriptions/{id}/update-paypal-ids
+ * Purpose: Update subscription with PayPal IDs after approval. PUT /api/subscriptions/{id}/update-paypal-ids
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function updatePayPalIds(subscriptionId: number, data: PayPalUpdateIdsRequest) {
   return apiClient.put(`/subscriptions/${subscriptionId}/update-paypal-ids`, data)
 }
 
 /**
- * Generate a PayPal one-time charge link for account credit.
- * POST /api/payment-processors/paypal/create-charge-link/{amount}
+ * Purpose: Generate a PayPal one-time charge link for account credit. POST /api/payment-processors/paypal/create-charge-link/{amount}
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function createPayPalChargeLink(amount: number) {
   return apiClient.post<PayPalChargeLinkResponse>(
     `/payment-processors/paypal/create-charge-link/${amount}`
@@ -59,17 +65,21 @@ export async function createPayPalChargeLink(amount: number) {
 }
 
 /**
- * Fetch available payment processors.
- * GET /api/payment-processors
+ * Purpose: Fetch available payment processors. GET /api/payment-processors
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getPaymentProcessors() {
   return apiClient.get<PaymentProcessor[]>('/payment-processors')
 }
 
 /**
- * Update payment processor settings.
- * PUT /api/payment-processors/{slug}
+ * Purpose: Update payment processor settings. PUT /api/payment-processors/{slug}
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function updatePaymentProcessor(
   slug: string,
   data: { is_enabled?: boolean; settings?: Record<string, string> }

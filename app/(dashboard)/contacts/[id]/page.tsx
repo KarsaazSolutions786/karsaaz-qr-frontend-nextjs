@@ -8,6 +8,11 @@ import { useUpdateContact } from '@/lib/hooks/mutations/useContactMutations'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes ContactDetailPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ContactDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
@@ -22,6 +27,11 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
     if (contact) setNotes(contact.notes ?? '')
   }, [contact])
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     await updateMutation.mutateAsync({ id: Number(id), data: { notes } })

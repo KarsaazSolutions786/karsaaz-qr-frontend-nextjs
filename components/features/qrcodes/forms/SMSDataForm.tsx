@@ -17,6 +17,11 @@ interface SMSDataFormProps {
   onChange?: (data: Partial<SMSDataFormData>) => void
 }
 
+/**
+ * Purpose: Executes SMSDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SMSDataForm({ defaultValues, onChange }: SMSDataFormProps) {
   const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<SMSDataFormData>({

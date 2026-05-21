@@ -34,6 +34,11 @@ export interface VCardEntry {
   title: string
 }
 
+/**
+ * Purpose: Executes toVCardItems functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function toVCardItems(entry: VCardEntry): VCardItem[] {
   return [
     { property: 'FN', value: entry.name },
@@ -44,6 +49,11 @@ export function toVCardItems(entry: VCardEntry): VCardItem[] {
   ].filter(item => item.value.trim() !== '')
 }
 
+/**
+ * Purpose: Executes toVCardCollection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function toVCardCollection(entries: VCardEntry[]): VCardCollection {
   return { items: entries.flatMap(toVCardItems) }
 }
@@ -54,14 +64,29 @@ interface VCardListInputProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes generateId functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generateId(): string {
   return `vcard-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
 }
 
+/**
+ * Purpose: Executes createEmptyEntry functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function createEmptyEntry(): VCardEntry {
   return { id: generateId(), name: '', phone: '', email: '', organization: '', title: '' }
 }
 
+/**
+ * Purpose: Executes VCardListInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function VCardListInput({ value, onChange, className }: VCardListInputProps) {
   const { t } = useTranslation()
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -135,6 +160,11 @@ export function VCardListInput({ value, onChange, className }: VCardListInputPro
     setDraft(prev => ({ ...prev, [field]: val }))
   }, [])
 
+  /**
+   * Purpose: Executes renderForm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderForm = (onSave: () => void, onCancel: () => void) => (
     <div className="space-y-2 rounded-lg border border-blue-200 bg-blue-50/50 p-3">
       <Input

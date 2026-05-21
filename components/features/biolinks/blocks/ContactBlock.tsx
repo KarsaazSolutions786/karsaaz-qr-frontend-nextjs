@@ -9,6 +9,11 @@ interface ContactBlockProps {
   onUpdate?: (data: ContactBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes ContactBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ContactBlock({ block, isEditing, onUpdate }: ContactBlockProps) {
   const { name, phone, email, address } = block.data
   const { t } = useTranslation()

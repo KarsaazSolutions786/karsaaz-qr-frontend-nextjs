@@ -8,6 +8,11 @@ interface QRCodePreviewProps {
   size?: number
 }
 
+/**
+ * Purpose: Executes QRCodePreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRCodePreview({ qrcode, size = 256 }: QRCodePreviewProps) {
   return (
     <div className="flex flex-col items-center gap-4">

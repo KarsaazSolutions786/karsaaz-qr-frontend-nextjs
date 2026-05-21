@@ -9,8 +9,11 @@ interface AppConfig {
 }
 
 /**
- * Hook to fetch general app configuration
+ * Purpose: Hook to fetch general app configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useAppConfig() {
   return useQuery({
     queryKey: ['app-config'],
@@ -25,8 +28,11 @@ export function useAppConfig() {
 }
 
 /**
- * Hook to check if Auth0 is enabled
+ * Purpose: Hook to check if Auth0 is enabled
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useAuth0Enabled() {
   const { data, isLoading, error } = useAppConfig()
 

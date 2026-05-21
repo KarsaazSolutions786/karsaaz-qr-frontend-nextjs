@@ -5,6 +5,11 @@ import Link from 'next/link'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes AuthError functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function AuthError({
   error,
   reset,

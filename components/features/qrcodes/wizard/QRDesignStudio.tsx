@@ -216,6 +216,11 @@ const ShapeGrid = memo(
 )
 ShapeGrid.displayName = 'ShapeGrid'
 
+/**
+ * Purpose: Executes QRDesignStudio functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QRDesignStudio({
   qrType,
   qrTypeLabel,
@@ -244,6 +249,11 @@ export default function QRDesignStudio({
   // Subscription-based premium feature gating
   const { plan, isOnTrial } = useSubscription()
   const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
+  /**
+   * Purpose: Executes handlePremiumBlock functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handlePremiumBlock = () => {
     toast.info(
       t('This design feature requires a paid plan. Upgrade to unlock advanced shapes and effects.')
@@ -259,6 +269,11 @@ export default function QRDesignStudio({
     webpageDesign || { ...DEFAULT_WEBPAGE_DESIGN }
   )
   const currentWebpageDesign = webpageDesign || localWebpageDesign
+  /**
+   * Purpose: Executes handleWebpageDesignChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleWebpageDesignChange = (data: WebpageDesignData) => {
     if (onWebpageDesignChange) {
       onWebpageDesignChange(data)
@@ -310,6 +325,11 @@ export default function QRDesignStudio({
     return () => observer.disconnect()
   }, [designMode])
 
+  /**
+   * Purpose: Executes scrollToTab functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const scrollToTab = (tabId: TabId) => {
     setActiveTab(tabId)
     sectionRefs[tabId]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -342,10 +362,20 @@ export default function QRDesignStudio({
     Object.keys(qrData).length > 0 &&
     Object.values(qrData).some(v => v !== '' && v !== null && v !== undefined)
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (field: string, value: any) => {
     onChange({ ...design, [field]: value })
   }
 
+  /**
+   * Purpose: Executes handleLogoChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleLogoChange = (logoUpdates: Partial<DesignerConfig['logo']>) => {
     onChange({
       ...design,
@@ -356,10 +386,20 @@ export default function QRDesignStudio({
     })
   }
 
+  /**
+   * Purpose: Executes resetToDefaults functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const resetToDefaults = () => {
     onChange({ ...DEFAULT_DESIGNER_CONFIG })
   }
 
+  /**
+   * Purpose: Executes toggleSection functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleSection = (section: string) => {
     setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }))
   }

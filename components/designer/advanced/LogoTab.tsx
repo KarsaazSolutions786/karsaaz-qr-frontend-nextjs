@@ -12,6 +12,11 @@ interface LogoTabProps {
   onChange: (design: QRDesign) => void
 }
 
+/**
+ * Purpose: Executes LogoTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function LogoTab({ design, onChange }: LogoTabProps) {
   const { t } = useTranslation()
   return (

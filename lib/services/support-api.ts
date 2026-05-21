@@ -37,15 +37,30 @@ const DEPARTMENT_MAP: Record<string, string> = {
   Billing: 'BILLING',
 };
 
+/**
+ * Purpose: Class definition for SupportAPI.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 class SupportAPI {
   private static instance: SupportAPI;
 
+  /**
+   * Purpose: Retrieves instance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getInstance(): SupportAPI {
     if (!this.instance) this.instance = new SupportAPI();
     return this.instance;
   }
 
-  /** Create a new support ticket */
+  /**
+   * Purpose: * Create a new support ticket 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   async createTicket(payload: CreateTicketPayload) {
     const response = await supportClient.post('/tickets', {
       name: payload.name,
@@ -59,7 +74,12 @@ class SupportAPI {
     return response.data;
   }
 
-  /** Get all tickets for a user by email */
+  /**
+   * Purpose: * Get all tickets for a user by email 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   async getUserTickets(email: string) {
     const response = await supportClient.get('/tickets/user', {
       params: { email, productId: PRODUCT_ID },
@@ -67,13 +87,23 @@ class SupportAPI {
     return response.data;
   }
 
-  /** Get ticket conversation messages */
+  /**
+   * Purpose: * Get ticket conversation messages 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   async getConversation(ticketId: number) {
     const response = await supportClient.get(`/tickets/${ticketId}/conversation`);
     return response.data;
   }
 
-  /** Reply to a ticket */
+  /**
+   * Purpose: * Reply to a ticket 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   async addUserMessage(ticketId: number, email: string, text: string) {
     const response = await supportClient.post(`/tickets/${ticketId}/messages/user`, {
       email,

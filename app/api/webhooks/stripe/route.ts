@@ -14,9 +14,11 @@ interface StripeEvent {
 }
 
 /**
- * Verify Stripe webhook signature using HMAC-SHA256 without the stripe SDK.
- * Signature format: "t=<timestamp>,v1=<hex-signature>"
+ * Purpose: Verify Stripe webhook signature using HMAC-SHA256 without the stripe SDK. Signature format: "t=<timestamp>,v1=<hex-signature>"
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
  */
+
 function verifyStripeSignature(body: string, signature: string, secret: string): StripeEvent {
   const parts = signature.split(',')
   const tPart = parts.find((p) => p.startsWith('t='))
@@ -46,6 +48,11 @@ function verifyStripeSignature(body: string, signature: string, secret: string):
   return JSON.parse(body) as StripeEvent
 }
 
+/**
+ * Purpose: Executes POST functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text()

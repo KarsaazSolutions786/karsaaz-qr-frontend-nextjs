@@ -7,6 +7,11 @@ import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/lib/validat
 import { useForgotPassword } from '@/lib/hooks/mutations/useForgotPassword'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes ForgotPasswordForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ForgotPasswordForm() {
   const { t } = useTranslation()
   const forgotPasswordMutation = useForgotPassword()
@@ -19,6 +24,11 @@ export function ForgotPasswordForm() {
     resolver: zodResolver(forgotPasswordSchema),
   })
 
+  /**
+   * Purpose: Executes onSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       await forgotPasswordMutation.mutateAsync(data)

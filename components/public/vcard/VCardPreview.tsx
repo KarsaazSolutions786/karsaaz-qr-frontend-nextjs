@@ -48,6 +48,11 @@ interface VCardPreviewProps {
   vcard: VCardData;
 }
 
+/**
+ * Purpose: Executes VCardPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function VCardPreview({ vcard }: VCardPreviewProps) {
   const { t } = useTranslation();
   const primaryColor = vcard.theme?.primaryColor || '#2563eb';
@@ -63,6 +68,11 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
     youtube: { icon: Youtube, color: 'bg-red-600 hover:bg-red-700' },
   };
 
+  /**
+   * Purpose: Executes handleDownloadVCard functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownloadVCard = () => {
     const vcfData = generateVCF(vcard);
     const blob = new Blob([vcfData], { type: 'text/vcard;charset=utf-8' });
@@ -259,6 +269,11 @@ export default function VCardPreview({ vcard }: VCardPreviewProps) {
 }
 
 // Generate VCF file content
+/**
+ * Purpose: Executes generateVCF functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generateVCF(vcard: VCardData): string {
   const lines: string[] = ['BEGIN:VCARD', 'VERSION:3.0'];
 

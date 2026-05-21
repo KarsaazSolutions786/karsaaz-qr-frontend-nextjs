@@ -5,10 +5,11 @@ import { envConfig } from '@/lib/config/env-config'
 import { useTranslation } from '@/lib/i18n'
 
 /**
- * Auth0LoginButton — shows "Sign in with Auth0" when Auth0 is enabled in backend config.
- * Redirects to /auth0/login which the Laravel backend handles (server-side OIDC flow).
- * After Auth0 callback, backend redirects to /auth-callback?user=<b64>&token=<b64>.
+ * Purpose: Auth0LoginButton — shows "Sign in with Auth0" when Auth0 is enabled in backend config. Redirects to /auth0/login which the Laravel backend handles (server-side OIDC flow). After Auth0 callback, backend redirects to /auth-callback?user=<b64>&token=<b64>.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function Auth0LoginButton() {
   const { enabled, isLoading: loading } = useAuth0Enabled()
   const { t } = useTranslation()

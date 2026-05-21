@@ -17,6 +17,11 @@ interface QuestionRendererProps {
   error?: string
 }
 
+/**
+ * Purpose: Executes QuestionRenderer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QuestionRenderer({
   field,
   value,

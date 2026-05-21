@@ -30,6 +30,11 @@ interface Props {
   onClose: () => void
 }
 
+/**
+ * Purpose: Executes RenderConfigEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function RenderConfigEditor({ config, onSave, onClose }: Props) {
   const { t } = useTranslation()
   const [mode, setMode] = useState(config?.mode || 'none')

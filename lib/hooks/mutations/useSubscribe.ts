@@ -3,9 +3,11 @@ import { subscribe, SubscribeRequest, generatePayLink } from '@/lib/api/endpoint
 import { queryKeys } from '@/lib/query/keys'
 
 /**
- * Create a subscription record on the backend.
- * Returns the subscription object with id.
+ * Purpose: Create a subscription record on the backend. Returns the subscription object with id.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useSubscribe() {
   const queryClient = useQueryClient()
 
@@ -24,12 +26,11 @@ export function useSubscribe() {
 }
 
 /**
- * Generate a payment link and redirect the browser.
- *
- * Flow (matching Lit reference qrcg-pay-button.js):
- * - Call generate-pay-link for ALL processors
- * - Backend handles subscription creation during payment processing
+ * Purpose: Generate a payment link and redirect the browser. Flow (matching Lit reference qrcg-pay-button.js): - Call generate-pay-link for ALL processors - Backend handles subscription creation during payment processing
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useCheckout() {
   return useMutation({
     mutationFn: async ({

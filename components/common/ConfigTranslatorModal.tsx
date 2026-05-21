@@ -32,6 +32,11 @@ interface ConfigLine {
   locale: string
 }
 
+/**
+ * Purpose: Executes ConfigTranslatorModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ConfigTranslatorModal({
   isOpen,
   onClose,
@@ -82,10 +87,24 @@ export function ConfigTranslatorModal({
     setTranslations(map)
   }, [existingLines])
 
+  /**
+   * Purpose: Executes handleLocaleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const handleLocaleChange = (locale: string, text: string) => {
     setTranslations((prev) => ({ ...prev, [locale]: text }))
   }
 
+  /**
+   * Purpose: Executes handleSaveAll functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const handleSaveAll = async () => {
     const entries = Object.entries(translations).filter(
       ([, text]) => text.trim().length > 0

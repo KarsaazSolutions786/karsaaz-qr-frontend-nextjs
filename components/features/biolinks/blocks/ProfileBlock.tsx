@@ -9,6 +9,11 @@ interface ProfileBlockProps {
   onUpdate?: (data: ProfileBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes ProfileBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ProfileBlock({ block, isEditing, onUpdate }: ProfileBlockProps) {
   const { profileImage, backgroundImage, text, borderStyle = 'circle', size = 7 } = block.data
   const { t } = useTranslation()

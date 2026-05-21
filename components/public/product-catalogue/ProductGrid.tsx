@@ -33,6 +33,11 @@ interface ProductGridProps {
   allowCart?: boolean;
 }
 
+/**
+ * Purpose: Executes ProductCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function ProductCard({
   product,
   viewMode,
@@ -53,6 +58,11 @@ function ProductCard({
     ? Math.round(((product.price - product.salePrice) / product.price) * 100)
     : 0;
 
+  /**
+   * Purpose: Executes handleVariantChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleVariantChange = (type: string, variant: Variant) => {
     setSelectedVariants(prev => {
       const filtered = prev.filter(v => v.type !== type);
@@ -324,6 +334,11 @@ function ProductCard({
   );
 }
 
+/**
+ * Purpose: Executes ProductGrid functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ProductGrid({ products, viewMode, onAddToCart, allowCart }: ProductGridProps) {
   return (
     <div

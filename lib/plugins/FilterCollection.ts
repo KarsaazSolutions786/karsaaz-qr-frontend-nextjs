@@ -3,9 +3,19 @@ type FilterCallback = {
   sortOrder: number;
 };
 
+/**
+ * Purpose: Class definition for FilterCollection.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export class FilterCollection {
   private store = new Map<string, FilterCallback[]>();
 
+  /**
+   * Purpose: Retrieves filters.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   private getFilters(filterName: string): FilterCallback[] {
     if (!this.store.has(filterName)) {
       this.store.set(filterName, []);
@@ -13,6 +23,11 @@ export class FilterCollection {
     return this.store.get(filterName)!;
   }
 
+  /**
+   * Purpose: Executes addFilter functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   addFilter(
     filterName: string,
     callback: (value: unknown, ...rest: unknown[]) => unknown,
@@ -23,6 +38,11 @@ export class FilterCollection {
     filters.sort((a, b) => a.sortOrder - b.sortOrder);
   }
 
+  /**
+   * Purpose: Executes applyFilters functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   applyFilters<T>(filterName: string, value: T, ...params: unknown[]): T {
     const filters = this.getFilters(filterName);
     return filters.reduce<T>(

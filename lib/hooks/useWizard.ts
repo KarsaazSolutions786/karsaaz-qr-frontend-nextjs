@@ -10,22 +10,31 @@ import { useEffect } from 'react';
 import { useWizardStore, WizardStep, WizardState } from '@/lib/store/wizard-store';
 
 /**
- * Hook for accessing wizard state and actions
+ * Purpose: Hook for accessing wizard state and actions
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizard() {
   return useWizardStore();
 }
 
 /**
- * Hook for current step only
+ * Purpose: Hook for current step only
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardStep() {
   return useWizardStore((state) => state.currentStep);
 }
 
 /**
- * Hook for navigation actions
+ * Purpose: Hook for navigation actions
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardNavigation() {
   return useWizardStore((state) => ({
     currentStep: state.currentStep,
@@ -39,8 +48,11 @@ export function useWizardNavigation() {
 }
 
 /**
- * Hook for QR configuration
+ * Purpose: Hook for QR configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardQRConfig() {
   return useWizardStore((state) => ({
     qrType: state.qrType,
@@ -55,8 +67,11 @@ export function useWizardQRConfig() {
 }
 
 /**
- * Hook for designer configuration
+ * Purpose: Hook for designer configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardDesignerConfig() {
   return useWizardStore((state) => ({
     designerConfig: state.designerConfig,
@@ -66,8 +81,11 @@ export function useWizardDesignerConfig() {
 }
 
 /**
- * Hook for sticker configuration
+ * Purpose: Hook for sticker configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardStickerConfig() {
   return useWizardStore((state) => ({
     stickerConfig: state.stickerConfig,
@@ -76,8 +94,11 @@ export function useWizardStickerConfig() {
 }
 
 /**
- * Hook for metadata
+ * Purpose: Hook for metadata
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardMetadata() {
   return useWizardStore((state) => ({
     name: state.name,
@@ -88,8 +109,11 @@ export function useWizardMetadata() {
 }
 
 /**
- * Hook for state management
+ * Purpose: Hook for state management
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardState() {
   return useWizardStore((state) => ({
     isDirty: state.isDirty,
@@ -102,22 +126,31 @@ export function useWizardState() {
 }
 
 /**
- * Hook for step completion status
+ * Purpose: Hook for step completion status
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useStepComplete(step: WizardStep) {
   return useWizardStore((state) => state.completedSteps.includes(step));
 }
 
 /**
- * Hook to check if can navigate to step
+ * Purpose: Hook to check if can navigate to step
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useCanGoToStep(step: WizardStep) {
   return useWizardStore((state) => state.canGoToStep(step));
 }
 
 /**
- * Hook to auto-save on changes
+ * Purpose: Hook to auto-save on changes
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardAutoSave(onSave?: () => void) {
   const isDirty = useWizardStore((state) => state.isDirty);
   const markClean = useWizardStore((state) => state.markClean);
@@ -139,8 +172,11 @@ export function useWizardAutoSave(onSave?: () => void) {
 }
 
 /**
- * Hook for step progress
+ * Purpose: Hook for step progress
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardProgress() {
   return useWizardStore((state) => {
     const totalSteps = 6; // type, content, design, sticker, preview, download
@@ -157,8 +193,11 @@ export function useWizardProgress() {
 }
 
 /**
- * Hook to get step label
+ * Purpose: Hook to get step label
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useStepLabel(step: WizardStep): string {
   const labels: Record<WizardStep, string> = {
     type: 'QR Type',
@@ -172,8 +211,11 @@ export function useStepLabel(step: WizardStep): string {
 }
 
 /**
- * Hook to get step icon
+ * Purpose: Hook to get step icon
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useStepIcon(step: WizardStep): string {
   const icons: Record<WizardStep, string> = {
     type: '📋',
@@ -187,8 +229,11 @@ export function useStepIcon(step: WizardStep): string {
 }
 
 /**
- * Hook for complete wizard data
+ * Purpose: Hook for complete wizard data
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardCompleteData() {
   return useWizardStore((state) => ({
     qrType: state.qrType,
@@ -204,8 +249,11 @@ export function useWizardCompleteData() {
 }
 
 /**
- * Hook to validate wizard state
+ * Purpose: Hook to validate wizard state
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardValidation() {
   return useWizardStore((state) => {
     const errors: string[] = [];
@@ -233,8 +281,11 @@ export function useWizardValidation() {
 }
 
 /**
- * Selector hook for performance
+ * Purpose: Selector hook for performance
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useWizardSelector<T>(selector: (state: WizardState) => T): T {
   return useWizardStore(selector);
 }

@@ -20,6 +20,11 @@ interface GoogleReviewDataFormProps {
   onChange?: (data: Partial<GoogleReviewDataFormData>) => void
 }
 
+/**
+ * Purpose: Executes GoogleReviewDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GoogleReviewDataForm({ defaultValues, onChange }: GoogleReviewDataFormProps) {
   const { t } = useTranslation()
   const {

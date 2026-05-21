@@ -25,11 +25,23 @@ interface WelcomeModalProps {
   showDontShowAgain?: boolean
 }
 
+/**
+ * Purpose: Retrieves dismisskey.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getDismissKey(condition?: DisplayCondition): string {
   if (condition?.showForFeature) return `welcome-dismissed-${condition.showForFeature}`
   return 'welcome-dismissed'
 }
 
+/**
+ * Purpose: Executes WelcomeModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export function WelcomeModal({
   steps,
   open,

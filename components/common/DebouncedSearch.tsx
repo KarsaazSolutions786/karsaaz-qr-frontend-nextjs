@@ -22,6 +22,11 @@ export interface DebouncedSearchProps {
   initialValue?: string;
 }
 
+/**
+ * Purpose: Executes DebouncedSearch functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DebouncedSearch({
   onSearch,
   placeholder,
@@ -39,6 +44,11 @@ export function DebouncedSearch({
   const debouncedQuery = useDebounce(query, delay);
   
   useEffect(() => {
+    /**
+     * Purpose: Executes performSearch functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const performSearch = async () => {
       if (debouncedQuery.length >= minLength) {
         setIsSearching(true);
@@ -110,6 +120,11 @@ export interface DebouncedInputProps extends Omit<React.InputHTMLAttributes<HTML
   delay?: number;
 }
 
+/**
+ * Purpose: Executes DebouncedInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DebouncedInput({
   value: externalValue,
   onChange,
@@ -125,6 +140,11 @@ export function DebouncedInput({
     setInternalValue(externalValue);
   }, [externalValue]);
   
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setInternalValue(newValue);
@@ -154,6 +174,11 @@ export interface SearchWithSuggestionsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes SearchWithSuggestions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SearchWithSuggestions({
   onSearch,
   getSuggestions,
@@ -170,6 +195,11 @@ export function SearchWithSuggestions({
   const debouncedQuery = useDebounce(query, delay);
   
   useEffect(() => {
+    /**
+     * Purpose: Executes fetchSuggestions functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const fetchSuggestions = async () => {
       if (debouncedQuery && getSuggestions) {
         setIsLoading(true);

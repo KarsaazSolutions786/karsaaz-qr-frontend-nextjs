@@ -44,10 +44,20 @@ const LANGUAGE_FLAGS: Record<string, string> = {
   malay: '🇲🇾',
 };
 
+/**
+ * Purpose: Retrieves flagemoji.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getFlagEmoji(language: string): string {
   return LANGUAGE_FLAGS[language.toLowerCase()] ?? '🌐';
 }
 
+/**
+ * Purpose: Executes ScansPerLanguage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ScansPerLanguage({ data, loading = false }: ScansPerLanguageProps) {
   const { t } = useTranslation();
 

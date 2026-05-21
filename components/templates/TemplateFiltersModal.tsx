@@ -37,6 +37,11 @@ const ACCESS_LEVELS = [
   { value: 'private', label: 'Private Only' },
 ]
 
+/**
+ * Purpose: Executes TemplateFiltersModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TemplateFiltersModal({
   isOpen,
   onClose,
@@ -61,11 +66,21 @@ export default function TemplateFiltersModal({
 
   if (!isOpen) return null
 
+  /**
+   * Purpose: Executes handleApply functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleApply = () => {
     onApplyFilters(localFilters)
     onClose()
   }
 
+  /**
+   * Purpose: Executes handleClearFilters functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClearFilters = () => {
     const clearedFilters: TemplateFilters = {
       category_id: undefined,
@@ -76,12 +91,22 @@ export default function TemplateFiltersModal({
     setLocalFilters(clearedFilters)
   }
 
+  /**
+   * Purpose: Executes handleBackdropClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose()
     }
   }
 
+  /**
+   * Purpose: Executes handleKeyDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       onClose()

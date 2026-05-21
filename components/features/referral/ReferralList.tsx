@@ -12,6 +12,11 @@ const STATUS_STYLES: Record<Referral['status'], { bg: string; text: string }> = 
   credited: { bg: 'bg-blue-50', text: 'text-blue-700' },
 }
 
+/**
+ * Purpose: Executes ReferralList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ReferralList() {
   const { t } = useTranslation()
   const [referrals, setReferrals] = useState<Referral[]>([])
@@ -20,6 +25,7 @@ export function ReferralList() {
   const [lastPage, setLastPage] = useState(1)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true)
     referralAPI
       .list({ page })

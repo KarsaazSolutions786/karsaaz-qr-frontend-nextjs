@@ -14,6 +14,11 @@ interface RadioQuestionProps {
   error?: string
 }
 
+/**
+ * Purpose: Executes RadioQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function RadioQuestion({
   id,
   label,

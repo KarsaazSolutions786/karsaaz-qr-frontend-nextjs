@@ -5,9 +5,11 @@ const SITE_URL = envConfig.APP_URL
 const SITE_NAME = 'Karsaaz QR'
 
 /**
- * Generate Open Graph metadata for any page.
- * Merge the result into your page's metadata export.
+ * Purpose: Generate Open Graph metadata for any page. Merge the result into your page's metadata export.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateOGMetadata(
   title: string,
   description: string,

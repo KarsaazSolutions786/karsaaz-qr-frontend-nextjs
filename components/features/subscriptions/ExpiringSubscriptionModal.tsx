@@ -20,13 +20,11 @@ interface ExpiringSubscriptionModalProps {
 }
 
 /**
- * Modal displayed when a paid subscription is about to expire (< 7 days remaining).
- *
- * Matches P1 ExpiringSoonSubscription behavior:
- * - Shows days remaining counter
- * - "Renew Now" CTA redirects to pricing page
- * - "Remind Me Later" dismisses for the current session
+ * Purpose: Modal displayed when a paid subscription is about to expire (< 7 days remaining). Matches P1 ExpiringSoonSubscription behavior: - Shows days remaining counter - "Renew Now" CTA redirects to pricing page - "Remind Me Later" dismisses for the current session
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function ExpiringSubscriptionModal({
   open,
   daysRemaining,

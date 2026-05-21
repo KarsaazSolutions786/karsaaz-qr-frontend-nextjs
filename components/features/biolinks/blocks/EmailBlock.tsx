@@ -9,6 +9,11 @@ interface EmailBlockProps {
   onUpdate?: (data: EmailBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes EmailBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EmailBlock({ block, isEditing, onUpdate }: EmailBlockProps) {
   const { email, subject, buttonText = 'Send Email' } = block.data
   const { t } = useTranslation()

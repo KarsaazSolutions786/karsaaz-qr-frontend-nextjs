@@ -3,16 +3,22 @@
  */
 
 /**
- * Check if string is a valid email
+ * Purpose: Check if string is a valid email
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
 }
 
 /**
- * Check if string is a valid URL
+ * Purpose: Check if string is a valid URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isValidUrl(url: string): boolean {
   try {
     new URL(url)
@@ -23,20 +29,22 @@ export function isValidUrl(url: string): boolean {
 }
 
 /**
- * Check if string is a valid hex color
+ * Purpose: Check if string is a valid hex color
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isValidHexColor(color: string): boolean {
   const hexRegex = /^#[0-9A-Fa-f]{6}$/
   return hexRegex.test(color)
 }
 
 /**
- * Check if password meets minimum requirements
- * - At least 8 characters
- * - At least 1 uppercase letter
- * - At least 1 lowercase letter
- * - At least 1 number
+ * Purpose: Check if password meets minimum requirements - At least 8 characters - At least 1 uppercase letter - At least 1 lowercase letter - At least 1 number
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isValidPassword(password: string): boolean {
   if (password.length < 8) return false
   if (!/[A-Z]/.test(password)) return false
@@ -46,13 +54,11 @@ export function isValidPassword(password: string): boolean {
 }
 
 /**
- * Get password strength score (0-4)
- * 0: Very weak
- * 1: Weak
- * 2: Fair
- * 3: Strong
- * 4: Very strong
+ * Purpose: Get password strength score (0-4) 0: Very weak 1: Weak 2: Fair 3: Strong 4: Very strong
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getPasswordStrength(password: string): number {
   let strength = 0
 
@@ -66,8 +72,11 @@ export function getPasswordStrength(password: string): number {
 }
 
 /**
- * Sanitize string for safe display (prevent XSS)
+ * Purpose: Sanitize string for safe display (prevent XSS)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function sanitizeString(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -79,16 +88,22 @@ export function sanitizeString(str: string): string {
 }
 
 /**
- * Truncate string to max length with ellipsis
+ * Purpose: Truncate string to max length with ellipsis
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function truncate(str: string, maxLength: number): string {
   if (str.length <= maxLength) return str
   return str.slice(0, maxLength - 3) + '...'
 }
 
 /**
- * Slugify string (convert to URL-friendly format)
+ * Purpose: Slugify string (convert to URL-friendly format)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function slugify(str: string): string {
   return str
     .toLowerCase()

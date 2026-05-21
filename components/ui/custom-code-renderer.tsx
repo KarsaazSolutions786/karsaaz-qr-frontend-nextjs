@@ -12,6 +12,11 @@ interface CustomCodeRendererProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes CustomCodeRenderer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CustomCodeRenderer({
   html = '',
   css = '',

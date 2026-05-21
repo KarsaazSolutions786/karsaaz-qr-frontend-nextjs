@@ -24,6 +24,11 @@ interface ContactCardProps {
   };
 }
 
+/**
+ * Purpose: Executes ContactCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ContactCard({
   firstName,
   lastName,

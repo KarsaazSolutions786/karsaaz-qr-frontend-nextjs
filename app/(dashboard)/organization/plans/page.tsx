@@ -36,10 +36,20 @@ const DEFAULT_FORM: Omit<OrgPlan, 'id' | 'slug' | 'created_at'> = {
   sort_order: 0,
 }
 
+/**
+ * Purpose: Executes formatLimit functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function formatLimit(n: number) {
   return n === -1 ? 'Unlimited' : n.toLocaleString()
 }
 
+/**
+ * Purpose: Executes OrgPlansPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrgPlansPage() {
   const searchParams = useSearchParams()
   const orgId = Number(searchParams.get('org') ?? 0)
@@ -68,6 +78,11 @@ export default function OrgPlansPage() {
       .finally(() => setLoading(false))
   }, [orgId])
 
+  /**
+   * Purpose: Executes openCreate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const openCreate = () => {
     setEditing(null)
     setForm(DEFAULT_FORM)
@@ -75,6 +90,11 @@ export default function OrgPlansPage() {
     setShowForm(true)
   }
 
+  /**
+   * Purpose: Executes openEdit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const openEdit = (plan: OrgPlan) => {
     setEditing(plan)
     setForm({
@@ -93,6 +113,11 @@ export default function OrgPlansPage() {
     setShowForm(true)
   }
 
+  /**
+   * Purpose: Executes addFeature functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const addFeature = () => {
     const f = featureInput.trim()
     if (f && !form.features?.includes(f)) {
@@ -101,9 +126,19 @@ export default function OrgPlansPage() {
     setFeatureInput('')
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const removeFeature = (f: string) =>
     setForm(p => ({ ...p, features: (p.features ?? []).filter(x => x !== f) }))
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleSave = async () => {
     if (!form.name.trim()) return toast.error('Name is required')
     setSaving(true)
@@ -125,6 +160,11 @@ export default function OrgPlansPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleDelete = async (plan: OrgPlan) => {
     if (!confirm(`Delete plan "${plan.name}"? This cannot be undone.`)) return
     try {
@@ -136,6 +176,11 @@ export default function OrgPlansPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleAssign functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleAssign = async (planId: number | null) => {
     if (!orgId) return
     setAssigning(true)

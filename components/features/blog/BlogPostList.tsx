@@ -10,6 +10,11 @@ interface BlogPostListProps {
   onDelete?: (post: BlogPost) => void
 }
 
+/**
+ * Purpose: Executes StatusBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function StatusBadge({ post }: { post: BlogPost }) {
   const isPublished = !!post.publishedAt && new Date(post.publishedAt) <= new Date()
   const label = isPublished ? 'Published' : 'Draft'
@@ -21,6 +26,11 @@ function StatusBadge({ post }: { post: BlogPost }) {
   )
 }
 
+/**
+ * Purpose: Executes BlogPostList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BlogPostList({ posts, onEdit, onDelete }: BlogPostListProps) {
   const { t } = useTranslation();
   if (posts.length === 0) {

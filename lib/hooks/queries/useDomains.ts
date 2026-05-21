@@ -2,6 +2,11 @@ import { useQuery } from '@tanstack/react-query'
 import { domainsAPI } from '@/lib/api/endpoints/domains'
 import { queryKeys } from '@/lib/query/keys'
 
+/**
+ * Purpose: Executes useDomains functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDomains(
   params?: { page?: number; search?: string },
   options?: { enabled?: boolean }
@@ -14,6 +19,11 @@ export function useDomains(
   })
 }
 
+/**
+ * Purpose: Executes useDomain functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDomain(id: string) {
   return useQuery({
     queryKey: queryKeys.domains.detail(id),

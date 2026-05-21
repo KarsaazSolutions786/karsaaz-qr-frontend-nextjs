@@ -38,6 +38,11 @@ interface Step4DownloadProps {
   savedQRId?: string | null
 }
 
+/**
+ * Purpose: Executes Step4Download functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function Step4Download({
   qrType,
   qrData,

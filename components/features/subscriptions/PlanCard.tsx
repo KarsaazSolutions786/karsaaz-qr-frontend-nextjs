@@ -10,6 +10,13 @@ interface PlanCardProps {
   current?: boolean
 }
 
+/**
+ * Purpose: Executes formatFrequency functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function formatFrequency(freq: string | undefined, t: (key: string) => string) {
   switch (freq) {
     case 'yearly':
@@ -21,6 +28,13 @@ function formatFrequency(freq: string | undefined, t: (key: string) => string) {
   }
 }
 
+/**
+ * Purpose: Executes formatLimit functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function formatLimit(value: number | null | undefined, label: string, t: (key: string) => string) {
   if (value === null || value === undefined) return `${t('Unlimited')} ${label}`
   if (value === -1) return `${t('Unlimited')} ${label}`

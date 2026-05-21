@@ -21,8 +21,18 @@ const tabs: DesignerTab[] = [
   { id: 'layout', label: 'Layout', icon: '📐' },
 ]
 
+/**
+ * Purpose: Executes ResumeDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ResumeDesigner({ design, onChange }: ResumeDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes renderInfoContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderInfoContent = () => (
     <div className="space-y-4 mt-4 pt-4 border-t">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">

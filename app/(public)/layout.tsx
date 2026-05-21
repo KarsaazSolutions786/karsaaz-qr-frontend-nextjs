@@ -1,5 +1,10 @@
 import { LanguagePicker } from '@/components/common/LanguagePicker'
 
+/**
+ * Purpose: Executes PublicLayout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <>

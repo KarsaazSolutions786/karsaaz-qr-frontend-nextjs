@@ -11,6 +11,11 @@ import apiClient from '@/lib/api/client'
 import type { CreateTranslationRequest } from '@/types/entities/translation'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes EditTranslationPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditTranslationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
@@ -45,9 +50,19 @@ export default function EditTranslationPage({ params }: { params: Promise<{ id: 
     }
   }, [translation])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: keyof CreateTranslationRequest, value: unknown) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     let flagFileId: number | undefined
@@ -74,6 +89,11 @@ export default function EditTranslationPage({ params }: { params: Promise<{ id: 
     setTimeout(() => setSaved(false), 3000)
   }
 
+  /**
+   * Purpose: Executes handleTranslationFileUpload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTranslationFileUpload = async () => {
     if (!translationFile) return
     try {

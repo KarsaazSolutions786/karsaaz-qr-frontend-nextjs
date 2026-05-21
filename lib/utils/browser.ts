@@ -8,22 +8,33 @@
  */
 const MOBILE_BREAKPOINT = 900
 
+/**
+ * Purpose: Checks if mobile.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function isMobile(): boolean {
   if (typeof window === 'undefined') return false
   return window.innerWidth < MOBILE_BREAKPOINT
 }
 
 /**
- * Check if running on iPhone Safari
+ * Purpose: Check if running on iPhone Safari
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function iPhoneSafari(): boolean {
   if (typeof navigator === 'undefined') return false
   return !!navigator.userAgent.match('iPhone OS')
 }
 
 /**
- * Get query parameter from URL
+ * Purpose: Get query parameter from URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function queryParam(name: string): string | null {
   if (typeof window === 'undefined') return null
   const params = new URLSearchParams(window.location.search)
@@ -31,8 +42,11 @@ export function queryParam(name: string): string | null {
 }
 
 /**
- * Get scrollbar width
+ * Purpose: Get scrollbar width
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function getScrollbarWidth(): number {
   if (typeof document === 'undefined') return 0
 
@@ -51,8 +65,11 @@ export function getScrollbarWidth(): number {
 }
 
 /**
- * Copy text to clipboard
+ * Purpose: Copy text to clipboard
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export async function copyToClipboard(text: string): Promise<boolean> {
   if (typeof navigator === 'undefined') return false
   try {
@@ -79,8 +96,11 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 /**
- * Download content as blob
+ * Purpose: Download content as blob
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function downloadBlob(content: BlobPart, filename: string, contentType: string): void {
   if (typeof document === 'undefined') return
 
@@ -98,8 +118,11 @@ export function downloadBlob(content: BlobPart, filename: string, contentType: s
 }
 
 /**
- * Open link in new tab
+ * Purpose: Open link in new tab
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function openLinkInNewTab(link: string): void {
   if (typeof document === 'undefined') return
 
@@ -114,16 +137,22 @@ export function openLinkInNewTab(link: string): void {
 }
 
 /**
- * Convert pixels to rem
+ * Purpose: Convert pixels to rem
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function pxToRem(px: number): number {
   if (typeof document === 'undefined') return px / 16
   return px / parseFloat(getComputedStyle(document.documentElement).fontSize)
 }
 
 /**
- * Convert rem to pixels
+ * Purpose: Convert rem to pixels
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function remToPx(rem: number): number {
   if (typeof document === 'undefined') return rem * 16
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)

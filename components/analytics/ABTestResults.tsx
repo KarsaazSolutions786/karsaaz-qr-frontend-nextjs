@@ -17,6 +17,11 @@ const statusConfig: Record<ABTestData['status'], { label: string; variant: 'defa
   paused: { label: 'Paused', variant: 'destructive' },
 }
 
+/**
+ * Purpose: Executes ABTestResults functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ABTestResults({ data, className }: ABTestResultsProps) {
   const { t } = useTranslation()
   const { name, status, start_date, end_date, variants, winner } = data

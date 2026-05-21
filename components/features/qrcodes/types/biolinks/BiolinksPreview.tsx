@@ -21,10 +21,20 @@ interface BiolinksPreviewProps {
   theme: ThemeSettings;
 }
 
+/**
+ * Purpose: Executes BiolinksPreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BiolinksPreview({ profile, blocks, theme }: BiolinksPreviewProps) {
   const { t } = useTranslation();
   const visibleBlocks = blocks.filter((block) => block.visible).sort((a, b) => a.order - b.order);
 
+  /**
+   * Purpose: Retrieves backgroundstyle.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getBackgroundStyle = () => {
     if (theme.backgroundGradient) {
       const { type: _type, colors, angle } = theme.backgroundGradient;
@@ -45,6 +55,11 @@ export function BiolinksPreview({ profile, blocks, theme }: BiolinksPreviewProps
     };
   };
 
+  /**
+   * Purpose: Retrieves buttonstyle.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getButtonStyle = () => {
     const baseStyle: React.CSSProperties = {
       backgroundColor: theme.buttonColor || '#3b82f6',
@@ -62,6 +77,11 @@ export function BiolinksPreview({ profile, blocks, theme }: BiolinksPreviewProps
     return baseStyle;
   };
 
+  /**
+   * Purpose: Executes renderBlock functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderBlock = (block: BiolinkBlock) => {
     switch (block.type) {
       case BlockType.LINK:

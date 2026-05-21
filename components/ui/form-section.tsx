@@ -19,6 +19,11 @@ interface FormSectionProps {
   required?: boolean
 }
 
+/**
+ * Purpose: Executes FormSection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FormSection({
   title,
   description,
@@ -53,6 +58,11 @@ export function FormSection({
     }
   }, [isExpanded])
 
+  /**
+   * Purpose: Executes handleToggle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleToggle = () => {
     if (collapsible) {
       setIsExpanded(!isExpanded)
@@ -128,6 +138,11 @@ interface FormFieldProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes FormField functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FormField({
   label,
   htmlFor,
@@ -170,6 +185,11 @@ interface FormGroupProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes FormGroup functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FormGroup({ children, columns = 1, gap = 'md', className }: FormGroupProps) {
   const gapClasses = {
     sm: 'gap-2',
@@ -194,6 +214,11 @@ interface InputErrorsProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes InputErrors functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function InputErrors({ errors, className }: InputErrorsProps) {
   if (!errors) return null
 
@@ -225,6 +250,11 @@ interface FormCommentProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes FormComment functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FormComment({ children, type = 'info', className }: FormCommentProps) {
   const typeClasses = {
     info: 'bg-blue-50 border-blue-200 text-blue-800',

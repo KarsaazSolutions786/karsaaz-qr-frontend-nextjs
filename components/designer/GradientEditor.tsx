@@ -67,6 +67,11 @@ const presetGradients: GradientSettings[] = [
   },
 ];
 
+/**
+ * Purpose: Executes GradientEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function GradientEditor({ gradient, onChange }: GradientEditorProps) {
   const { t } = useTranslation();
   const [localGradient, setLocalGradient] = useState<GradientSettings>(
@@ -79,12 +84,22 @@ export default function GradientEditor({ gradient, onChange }: GradientEditorPro
     }
   );
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateGradient = (updates: Partial<GradientSettings>) => {
     const newGradient = { ...localGradient, ...updates };
     setLocalGradient(newGradient);
     onChange(newGradient.type === 'none' ? undefined : newGradient);
   };
 
+  /**
+   * Purpose: Executes addColorStop functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addColorStop = () => {
     const newColors = [
       ...localGradient.colors,
@@ -93,12 +108,22 @@ export default function GradientEditor({ gradient, onChange }: GradientEditorPro
     updateGradient({ colors: newColors });
   };
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeColorStop = (index: number) => {
     if (localGradient.colors.length <= 2) return;
     const newColors = localGradient.colors.filter((_, i) => i !== index);
     updateGradient({ colors: newColors });
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateColorStop = (index: number, updates: Partial<{ color: string; position: number }>) => {
     const newColors = localGradient.colors.map((stop, i) =>
       i === index ? { ...stop, ...updates } : stop
@@ -106,11 +131,21 @@ export default function GradientEditor({ gradient, onChange }: GradientEditorPro
     updateGradient({ colors: newColors.sort((a, b) => a.position - b.position) });
   };
 
+  /**
+   * Purpose: Executes applyPreset functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const applyPreset = (preset: GradientSettings) => {
     setLocalGradient(preset);
     onChange(preset);
   };
 
+  /**
+   * Purpose: Retrieves gradientpreview.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getGradientPreview = (gradientSettings: GradientSettings) => {
     if (gradientSettings.type === 'none') return 'transparent';
     

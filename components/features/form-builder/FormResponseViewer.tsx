@@ -14,12 +14,11 @@ interface FormResponseViewerProps {
 }
 
 /**
- * Displays all submissions for a form in a table view with:
- * - Individual response detail view
- * - CSV export
- * - Date filtering
- * - Delete individual responses
+ * Purpose: Displays all submissions for a form in a table view with: - Individual response detail view - CSV export - Date filtering - Delete individual responses
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export default function FormResponseViewer({
   responses,
   onDeleteResponse,

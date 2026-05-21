@@ -9,16 +9,11 @@ import { bannerApi, type BannerSettings } from '@/lib/api/endpoints/banner'
 import { cn } from '@/lib/utils/cn'
 
 /**
- * Public-facing website banner with optional scrolling marquee.
- *
- * Behaviour:
- * - Fetches banner config from `/admin/settings/banner`.
- * - If `background_color` is set, uses custom colors; otherwise falls back to
- *   type-based preset colors.
- * - If the content is long (>100 chars), automatically enables marquee scroll.
- *   Admin can also force scroll mode via the `scroll` config key.
- * - Dismissal persists in localStorage keyed by content hash.
+ * Purpose: Public-facing website banner with optional scrolling marquee. Behaviour: - Fetches banner config from `/admin/settings/banner`. - If `background_color` is set, uses custom colors; otherwise falls back to type-based preset colors. - If the content is long (>100 chars), automatically enables marquee scroll. Admin can also force scroll mode via the `scroll` config key. - Dismissal persists in localStorage keyed by content hash.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 
 function hashContent(str: string): string {
   let hash = 0
@@ -36,6 +31,11 @@ const PRESET_STYLES: Record<string, string> = {
   promo: 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white',
 }
 
+/**
+ * Purpose: Executes WebsiteAnnouncementBanner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function WebsiteAnnouncementBanner() {
   const { t } = useTranslation()
   const [dismissed, setDismissed] = useState(false)
@@ -65,6 +65,11 @@ export function WebsiteAnnouncementBanner() {
     return null
   }
 
+  /**
+   * Purpose: Executes handleDismiss functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleDismiss = () => {
     setDismissed(true)
     if (storageKey) {

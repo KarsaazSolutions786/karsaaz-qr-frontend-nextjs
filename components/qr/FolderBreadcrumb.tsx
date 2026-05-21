@@ -17,6 +17,11 @@ export interface FolderBreadcrumbProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes FolderBreadcrumb functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FolderBreadcrumb({
   path,
   onNavigate,
@@ -80,8 +85,11 @@ export function FolderBreadcrumb({
 }
 
 /**
- * Compact breadcrumb (dropdown style)
+ * Purpose: Compact breadcrumb (dropdown style)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function FolderBreadcrumbCompact({
   path,
   onNavigate,

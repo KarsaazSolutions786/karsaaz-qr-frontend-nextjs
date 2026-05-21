@@ -48,6 +48,11 @@ const ASSET_TABS: { value: DesignAssetType; label: string }[] = [
   { value: 'preset_logo', label: 'Preset Logos' },
 ]
 
+/**
+ * Purpose: Executes AssetRow functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function AssetRow({
   asset,
   index,
@@ -374,6 +379,11 @@ function AssetRow({
   )
 }
 
+/**
+ * Purpose: Executes AddAssetForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () => void }) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
@@ -392,6 +402,11 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
   const needsSvg = type === 'outline_style' || type === 'advanced_shape'
   const isAdvanced = type === 'advanced_shape'
 
+  /**
+   * Purpose: Executes handleFileChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0]
     if (!selected) return
@@ -403,11 +418,21 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
     reader.readAsDataURL(selected)
   }
 
+  /**
+   * Purpose: Clears or resets the local cache/state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const clearFile = () => {
     setFile(null)
     setFilePreview(null)
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!slug.trim() || !label.trim()) return
@@ -650,6 +675,11 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
   )
 }
 
+/**
+ * Purpose: Executes AssetTable functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function AssetTable({ type }: { type: DesignAssetType }) {
   const { t } = useTranslation()
   const { data: assets, isLoading, isError } = useAdminDesignAssets(type)
@@ -1003,6 +1033,11 @@ function AssetTable({ type }: { type: DesignAssetType }) {
   )
 }
 
+/**
+ * Purpose: Executes DesignAssetsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function DesignAssetsPage() {
   const { t } = useTranslation()
   const router = useRouter()

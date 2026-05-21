@@ -3,6 +3,11 @@ import { notFound } from 'next/navigation'
 import WebsitePreview from '@/components/public/website-builder/WebsitePreview'
 import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
+/**
+ * Purpose: Retrieves website.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getWebsite(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -23,6 +28,11 @@ async function getWebsite(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const website = await getWebsite(params.slug)
 
@@ -49,6 +59,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes WebsitePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function WebsitePage({ params }: { params: { slug: string } }) {
   const website = await getWebsite(params.slug)
 

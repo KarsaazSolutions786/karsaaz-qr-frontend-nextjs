@@ -10,15 +10,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * PayU International payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (sandbox / production)
- * - POS ID
- * - Second Key (MD5)
- * - OAuth Client ID
- * - OAuth Client Secret
+ * Purpose: PayU International payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (sandbox / production) - POS ID - Second Key (MD5) - OAuth Client ID - OAuth Client Secret
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function PayUInternationalForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

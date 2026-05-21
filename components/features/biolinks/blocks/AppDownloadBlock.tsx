@@ -9,6 +9,11 @@ interface AppDownloadBlockProps {
   onUpdate?: (data: AppDownloadBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes AppDownloadBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function AppDownloadBlock({ block, isEditing, onUpdate }: AppDownloadBlockProps) {
   const {
     appName,

@@ -23,6 +23,11 @@ export interface StickerGalleryProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerGallery functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerGallery({
   stickers,
   selectedStickerId,
@@ -172,6 +177,11 @@ export interface StickerGalleryPaginatedProps extends StickerGalleryProps {
   itemsPerPage?: number;
 }
 
+/**
+ * Purpose: Executes StickerGalleryPaginated functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerGalleryPaginated({
   itemsPerPage = 12,
   ...props

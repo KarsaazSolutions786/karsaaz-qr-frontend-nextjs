@@ -91,6 +91,11 @@ const DEFAULT_ACTIONS: BulkAction[] = [
   },
 ];
 
+/**
+ * Purpose: Executes MultiSelectToolbar functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function MultiSelectToolbar({
   selectedCount,
   onClearSelection,
@@ -207,8 +212,11 @@ export function MultiSelectToolbar({
 }
 
 /**
- * Action button component
+ * Purpose: Action button component
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function ActionButton({
   action,
   selectedCount,
@@ -219,6 +227,11 @@ function ActionButton({
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   
+  /**
+   * Purpose: Executes handleClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClick = async () => {
     if (action.requiresConfirmation) {
       const confirmed = confirm(
@@ -258,8 +271,11 @@ function ActionButton({
 }
 
 /**
- * Compact multi-select toolbar (sticky)
+ * Purpose: Compact multi-select toolbar (sticky)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function MultiSelectToolbarCompact({
   selectedCount,
   onClearSelection,

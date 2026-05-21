@@ -32,12 +32,27 @@ const tabs: DesignerTab[] = [
   { id: 'payment', label: 'Payment Page', icon: '💳' },
 ]
 
+/**
+ * Purpose: Executes UPIDynamicDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function UPIDynamicDesigner({ design, onChange }: UPIDynamicDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<UPIDynamicDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderPaymentPageContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderPaymentPageContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Payment Page Settings')}</h4>

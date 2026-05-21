@@ -28,16 +28,31 @@ const defaultPattern: PatternSettings = {
   density: 50,
 };
 
+/**
+ * Purpose: Executes PatternLibrary functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PatternLibrary({ selectedPattern, onChange }: PatternLibraryProps) {
   const { t } = useTranslation();
   const [pattern, setPattern] = useState<PatternSettings>(selectedPattern || defaultPattern);
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updatePattern = (updates: Partial<PatternSettings>) => {
     const newPattern = { ...pattern, ...updates };
     setPattern(newPattern);
     onChange(newPattern.type === 'none' ? undefined : newPattern);
   };
 
+  /**
+   * Purpose: Executes handleCustomImageUpload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCustomImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -186,6 +201,11 @@ export default function PatternLibrary({ selectedPattern, onChange }: PatternLib
     },
   ];
 
+  /**
+   * Purpose: Retrieves patternpreview.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getPatternPreview = () => {
     const rotation = pattern.rotation ?? 0;
     const scale = (pattern.scale ?? 100) / 100;

@@ -11,6 +11,11 @@ import { useTranslation } from '@/lib/i18n'
 import { PasswordStrengthBar } from '@/lib/utils/password-strength'
 import { extractReferralCode, storeReferralCode } from '@/lib/utils/referral-tracking'
 
+/**
+ * Purpose: Executes RegisterForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function RegisterForm({
   onRegistrationDisabled,
 }: { onRegistrationDisabled?: () => void } = {}) {
@@ -41,6 +46,11 @@ export function RegisterForm({
 
   const password = watch('password', '')
 
+  /**
+   * Purpose: Executes onSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const onSubmit = async (data: RegisterFormData) => {
     try {
       await registerMutation.mutateAsync(data)

@@ -13,6 +13,11 @@ interface ResetPasswordFormProps {
   email?: string
 }
 
+/**
+ * Purpose: Executes ResetPasswordForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps) {
   const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
@@ -33,6 +38,11 @@ export function ResetPasswordForm({ token, email = '' }: ResetPasswordFormProps)
 
   const password = watch('password', '')
 
+  /**
+   * Purpose: Executes onSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const onSubmit = async (data: ResetPasswordFormData) => {
     try {
       await resetPasswordMutation.mutateAsync(data)

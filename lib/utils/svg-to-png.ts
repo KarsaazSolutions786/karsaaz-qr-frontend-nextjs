@@ -10,6 +10,11 @@ export interface SvgToPngOptions {
   scale?: number;
 }
 
+/**
+ * Purpose: Executes svgToPng functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function svgToPng(
   svgElement: SVGElement,
   options: SvgToPngOptions = {}
@@ -58,6 +63,11 @@ export async function svgToPng(
   }
 }
 
+/**
+ * Purpose: Executes loadImage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();

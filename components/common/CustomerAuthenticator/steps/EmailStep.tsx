@@ -13,11 +13,21 @@ interface EmailStepProps {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+/**
+ * Purpose: Executes EmailStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function EmailStep({ onSubmit, onCancel, loading }: EmailStepProps) {
   const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     const trimmed = email.trim()

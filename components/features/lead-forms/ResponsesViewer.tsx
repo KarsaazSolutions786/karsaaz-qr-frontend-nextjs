@@ -9,6 +9,11 @@ import { ChevronDown, ChevronRight, Download, Search, Trash2 } from 'lucide-reac
 
 // ─── CSV helpers ─────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes arrayToCsv functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function arrayToCsv(rows: (string | number | null)[][]): string {
   return rows
     .map((row) =>
@@ -17,6 +22,11 @@ function arrayToCsv(rows: (string | number | null)[][]): string {
     .join('\n')
 }
 
+/**
+ * Purpose: Executes downloadCsv functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function downloadCsv(content: string, filename: string) {
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
@@ -33,6 +43,11 @@ interface ResponsesViewerProps {
   formId: number
 }
 
+/**
+ * Purpose: Retrieves fields.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getFields(response: LeadFormResponse): LeadFormResponseField[] {
   if (response.fields && response.fields.length > 0) return response.fields
   return Object.entries(response.data).map(([k, v]) => ({
@@ -41,6 +56,11 @@ function getFields(response: LeadFormResponse): LeadFormResponseField[] {
   }))
 }
 
+/**
+ * Purpose: Executes ResponsesViewer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
   const { t } = useTranslation();
   const [keyword, setKeyword] = useState('')
@@ -80,6 +100,11 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
     return list
   }, [responses, keyword, dateFrom, dateTo])
 
+  /**
+   * Purpose: Executes handleExportCsv functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleExportCsv = () => {
     if (filtered.length === 0) return
     const firstResponse = filtered[0]
@@ -96,6 +121,11 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
     downloadCsv(csv, filename)
   }
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (responseId: number) => {
     if (!confirm('Delete this response? This cannot be undone.')) return
     await deleteMutation.mutateAsync(responseId)

@@ -11,6 +11,11 @@ interface TaxSummaryProps {
   state?: string
 }
 
+/**
+ * Purpose: Executes TaxSummary functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TaxSummary({ planId, planPrice, country, state }: TaxSummaryProps) {
   const { t } = useTranslation()
   const [tax, setTax] = useState<TaxCalculation | null>(null)
@@ -24,6 +29,11 @@ export function TaxSummary({ planId, planPrice, country, state }: TaxSummaryProp
     }
 
     let cancelled = false
+    /**
+     * Purpose: Executes fetchTax functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const fetchTax = async () => {
       try {
         setLoading(true)

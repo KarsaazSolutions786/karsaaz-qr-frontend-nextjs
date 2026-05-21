@@ -17,6 +17,11 @@ interface WhatsAppDataFormProps {
   onChange?: (data: Partial<WhatsAppDataFormData>) => void
 }
 
+/**
+ * Purpose: Executes WhatsAppDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WhatsAppDataForm({ defaultValues, onChange }: WhatsAppDataFormProps) {
   const { t } = useTranslation()
   const {

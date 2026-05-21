@@ -10,6 +10,11 @@ interface PromoCodeInputProps {
   onPromoRemoved: () => void
 }
 
+/**
+ * Purpose: Executes PromoCodeInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PromoCodeInput({
   planId,
   onPromoApplied,
@@ -22,6 +27,11 @@ export function PromoCodeInput({
   
   const validatePromo = useValidatePromoCode()
 
+  /**
+   * Purpose: Executes handleApply functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleApply = async () => {
     if (!code) return
 
@@ -45,6 +55,11 @@ export function PromoCodeInput({
     }
   }
 
+  /**
+   * Purpose: Executes handleRemove functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRemove = () => {
     setAppliedCode(undefined)
     setError(undefined)

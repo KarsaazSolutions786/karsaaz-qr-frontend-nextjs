@@ -58,6 +58,11 @@ import { BulkChangeTypeModal } from '@/components/qr/BulkChangeTypeModal'
 import { BulkChangeOwnerModal } from '@/components/qr/BulkChangeOwnerModal'
 import { useGuest } from '@/lib/hooks/useGuest'
 
+/**
+ * Purpose: Executes QRCodesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QRCodesPage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -148,6 +153,11 @@ export default function QRCodesPage() {
   })
 
   // Persist view mode to localStorage
+  /**
+   * Purpose: Executes handleViewModeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleViewModeChange = (mode: 'grid' | 'list' | 'minimal') => {
     setViewMode(mode)
     if (typeof window !== 'undefined') {
@@ -300,6 +310,11 @@ export default function QRCodesPage() {
   const hasQRCodes = qrcodes.length > 0
 
   // Folder actions
+  /**
+   * Purpose: Executes handleCreateFolder functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleCreateFolder = async () => {
     if (!newFolderName.trim() || !user?.id) return
     setFolderLoading(true)
@@ -314,6 +329,11 @@ export default function QRCodesPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleDeleteFolder functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleDeleteFolder = async (folderId: number) => {
     if (!user?.id) return
     if (

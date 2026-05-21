@@ -13,6 +13,11 @@ interface SocialShareProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
+/**
+ * Purpose: Executes SocialShare functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SocialShare({
   url,
   title = 'Check this out!',
@@ -36,6 +41,11 @@ export default function SocialShare({
     email: `mailto:?subject=${encodedTitle}&body=${encodedDescription}%0A%0A${encodedUrl}`,
   };
 
+  /**
+   * Purpose: Executes handleCopyLink functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
@@ -46,6 +56,11 @@ export default function SocialShare({
     }
   };
 
+  /**
+   * Purpose: Executes handleShare functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleShare = async () => {
     if (navigator.share) {
       try {

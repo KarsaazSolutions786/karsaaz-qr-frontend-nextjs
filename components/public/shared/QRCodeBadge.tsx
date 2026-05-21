@@ -11,6 +11,11 @@ interface QRCodeBadgeProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes QRCodeBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QRCodeBadge({
   variant = 'default',
   position = 'bottom-right',

@@ -7,6 +7,11 @@ import { useCreateRole } from '@/lib/hooks/mutations/useRoleMutations'
 import { PermissionsInput } from '@/components/features/roles/PermissionsInput'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes NewRolePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewRolePage() {
   const { t } = useTranslation()
   const [name, setName] = useState('')
@@ -16,6 +21,11 @@ export default function NewRolePage() {
 
   const createMutation = useCreateRole()
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)

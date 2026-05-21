@@ -48,6 +48,11 @@ const MobileInput = React.forwardRef<HTMLDivElement, MobileInputProps>(
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     React.useEffect(() => {
+      /**
+       * Purpose: Executes handleClickOutside functionality.
+       * Owner/Author: Syed Ashhad
+       * Created/Updated: February 2026
+       */
       const handleClickOutside = (e: MouseEvent) => {
         if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false)
       }
@@ -55,6 +60,11 @@ const MobileInput = React.forwardRef<HTMLDivElement, MobileInputProps>(
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
+    /**
+     * Purpose: Executes formatPhone functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const formatPhone = (raw: string) => raw.replace(/[^0-9]/g, '')
 
     const handlePhoneChange = React.useCallback(

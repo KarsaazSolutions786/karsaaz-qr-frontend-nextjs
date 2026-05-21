@@ -34,6 +34,11 @@ const ERROR_CORRECTION_OPTIONS = [
   { value: 'H', label: 'H – High (30% recovery)' },
 ]
 
+/**
+ * Purpose: Executes QrCodeTypesSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QrCodeTypesSettingsPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
@@ -50,12 +55,22 @@ export default function QrCodeTypesSettingsPage() {
     }
   }, [configs])
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (key: string, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
   }
 
   const selectedTypes = (formData['app.available_qrcode_types'] || '').split(',').filter(Boolean)
 
+  /**
+   * Purpose: Executes toggleType functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleType = (type: string) => {
     const current = new Set(selectedTypes)
     if (current.has(type)) {
@@ -66,6 +81,11 @@ export default function QrCodeTypesSettingsPage() {
     update('app.available_qrcode_types', Array.from(current).join(','))
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     await save(Object.entries(formData).map(([key, value]) => ({ key, value })))

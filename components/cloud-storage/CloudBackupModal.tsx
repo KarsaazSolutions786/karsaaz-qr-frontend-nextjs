@@ -40,6 +40,11 @@ interface CloudBackupModalProps {
   qrCodeCount?: number
 }
 
+/**
+ * Purpose: Retrieves connectionstatus.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getConnectionStatus(connection: CloudConnection): 'connected' | 'expired' | 'inactive' {
   if ((connection as { status?: string }).status) {
     const legacyStatus = (connection as { status: string }).status
@@ -50,6 +55,11 @@ function getConnectionStatus(connection: CloudConnection): 'connected' | 'expire
   return 'connected'
 }
 
+/**
+ * Purpose: Executes CloudBackupModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function CloudBackupModal({
   open,
   onClose,
@@ -72,6 +82,11 @@ export function CloudBackupModal({
   const [includeAnalytics, setIncludeAnalytics] = useState(true)
   const [includeImages, setIncludeImages] = useState(false)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSubmit = () => {
     if (!selectedConnection) return
     onStart({

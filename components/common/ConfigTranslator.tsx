@@ -12,6 +12,11 @@ interface ConfigTranslatorProps {
   onSave?: () => void
 }
 
+/**
+ * Purpose: Executes ConfigTranslator functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ConfigTranslator({
   configKey,
   currentValue,

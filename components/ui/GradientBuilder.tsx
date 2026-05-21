@@ -28,6 +28,11 @@ export interface GradientBuilderProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes GradientBuilder functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GradientBuilder({
   value,
   onChange,
@@ -46,18 +51,38 @@ export function GradientBuilder({
     }
   }, [value]);
 
+  /**
+   * Purpose: Executes handleTypeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTypeChange = (type: GradientType) => {
     onChange({ ...value, type });
   };
 
+  /**
+   * Purpose: Executes handleStartColorChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleStartColorChange = (startColor: string) => {
     onChange({ ...value, startColor });
   };
 
+  /**
+   * Purpose: Executes handleEndColorChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleEndColorChange = (endColor: string) => {
     onChange({ ...value, endColor });
   };
 
+  /**
+   * Purpose: Executes handleRotationChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRotationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rotation = parseInt(e.target.value, 10);
     onChange({ ...value, rotation });
@@ -188,8 +213,11 @@ export const GRADIENT_PRESETS: Array<{ name: string; config: GradientConfig }> =
 ];
 
 /**
- * Gradient preset selector
+ * Purpose: Gradient preset selector
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function GradientPresetPicker({
   onChange,
   className = '',

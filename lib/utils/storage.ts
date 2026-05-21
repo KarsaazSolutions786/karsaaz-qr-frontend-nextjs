@@ -4,8 +4,11 @@
  */
 
 /**
- * Load JSON from localStorage
+ * Purpose: Load JSON from localStorage
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function loadStoredJson<T>(key: string): T | null {
   if (typeof window === 'undefined') return null
   try {
@@ -20,8 +23,11 @@ export function loadStoredJson<T>(key: string): T | null {
 }
 
 /**
- * Store JSON in localStorage
+ * Purpose: Store JSON in localStorage
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function storeJson<T>(data: T, key: string): void {
   if (typeof window === 'undefined') return
   localStorage.setItem(key, JSON.stringify(data))

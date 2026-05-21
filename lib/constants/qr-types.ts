@@ -362,8 +362,11 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
 ]
 
 /**
- * Get available QR code types, optionally filtered by category.
+ * Purpose: Get available QR code types, optionally filtered by category.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getAvailableQrCodeTypes(
   category?: 'all' | 'static' | 'dynamic'
 ): QRCodeTypeDefinition[] {
@@ -372,24 +375,34 @@ export function getAvailableQrCodeTypes(
 }
 
 /**
- * Find a QR code type definition by its slug/id.
+ * Purpose: Find a QR code type definition by its slug/id.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function findQrCodeType(slug: string): QRCodeTypeDefinition | undefined {
   return QR_TYPES.find(t => t.id === slug)
 }
 
 /**
- * Check if a QR code type is dynamic.
+ * Purpose: Check if a QR code type is dynamic.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isQrCodeTypeDynamic(slug: string): boolean {
   const type = findQrCodeType(slug)
   return type?.cat === 'dynamic'
 }
 
 /**
- * Check if a type ID corresponds to a social media type
- * that should render as an icon-only card.
+ * Purpose: Check if a type ID corresponds to a social media type that should render as an icon-only card.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isSocialMediaType(typeId: string): boolean {
   return !!SOCIAL_MEDIA_TYPES[typeId]
 }

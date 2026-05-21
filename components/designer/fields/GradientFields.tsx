@@ -46,6 +46,11 @@ const quickPresets: GradientSettings[] = [
   },
 ];
 
+/**
+ * Purpose: Executes GradientFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function GradientFields({
   gradientSettings,
   onChange,
@@ -53,6 +58,11 @@ export default function GradientFields({
   const { t } = useTranslation();
   const [enabled, setEnabled] = useState(!!gradientSettings && gradientSettings.type !== 'none');
 
+  /**
+   * Purpose: Executes toggleGradient functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleGradient = () => {
     const newEnabled = !enabled;
     setEnabled(newEnabled);
@@ -63,16 +73,31 @@ export default function GradientFields({
     }
   };
 
+  /**
+   * Purpose: Executes handleGradientChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleGradientChange = (gradient?: GradientSettings) => {
     onChange(gradient);
     setEnabled(!!gradient && gradient.type !== 'none');
   };
 
+  /**
+   * Purpose: Executes applyQuickPreset functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const applyQuickPreset = (preset: GradientSettings) => {
     setEnabled(true);
     onChange(preset);
   };
 
+  /**
+   * Purpose: Retrieves gradientpreview.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getGradientPreview = (gradientSettings: GradientSettings) => {
     if (gradientSettings.type === 'none') return 'transparent';
     

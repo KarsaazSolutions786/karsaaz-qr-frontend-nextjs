@@ -48,6 +48,13 @@ interface BalloonSelectorMultiProps {
 
 type BalloonSelectorProps = BalloonSelectorSingleProps | BalloonSelectorMultiProps
 
+/**
+ * Purpose: Executes BalloonSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export function BalloonSelector(props: BalloonSelectorProps) {
   const {
     options,

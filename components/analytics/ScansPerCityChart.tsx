@@ -49,6 +49,11 @@ const BAR_COLORS = [
 
 // ---------- Loading skeleton ----------
 
+/**
+ * Purpose: Executes ChartSkeleton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function ChartSkeleton({ height }: { height: number }) {
   return (
     <div className="animate-pulse" style={{ height }}>
@@ -69,6 +74,11 @@ function ChartSkeleton({ height }: { height: number }) {
 
 // ---------- Custom tooltip ----------
 
+/**
+ * Purpose: Executes CustomTooltip functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function CustomTooltip({
   active,
   payload,
@@ -98,6 +108,11 @@ function CustomTooltip({
 
 // ---------- Component ----------
 
+/**
+ * Purpose: Executes ScansPerCityChart functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function ScansPerCityChart({
   data,
   isLoading = false,

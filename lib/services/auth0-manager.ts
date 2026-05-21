@@ -15,26 +15,51 @@ interface Auth0TokenResponse {
   token: string
 }
 
+/**
+ * Purpose: Class definition for Auth0Manager.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 class Auth0Manager {
   private static instance: Auth0Manager
   private config: Auth0Config | null = null
 
+  /**
+   * Purpose: Retrieves instance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getInstance(): Auth0Manager {
     if (!this.instance) this.instance = new Auth0Manager()
     return this.instance
   }
 
-  /** Initialize with Auth0 tenant configuration */
+  /**
+   * Purpose: * Initialize with Auth0 tenant configuration 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   init(config: Auth0Config): void {
     this.config = config
   }
 
-  /** Check if Auth0 has been initialized */
+  /**
+   * Purpose: * Check if Auth0 has been initialized 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   isInitialized(): boolean {
     return this.config !== null
   }
 
-  /** Redirect to Auth0 Universal Login */
+  /**
+   * Purpose: * Redirect to Auth0 Universal Login 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   login(): void {
     if (!this.config) {
       console.error('[Auth0Manager] Not initialized. Call init() first.')
@@ -52,7 +77,12 @@ class Auth0Manager {
     window.location.href = `https://${this.config.domain}/authorize?${params.toString()}`
   }
 
-  /** Exchange authorization code for tokens via backend */
+  /**
+   * Purpose: * Exchange authorization code for tokens via backend 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   async handleCallback(code: string): Promise<Auth0TokenResponse> {
     const response = await apiClient.post<Auth0TokenResponse>('/auth0/callback', {
       code,
@@ -61,7 +91,12 @@ class Auth0Manager {
     return response.data
   }
 
-  /** Redirect to Auth0 logout endpoint */
+  /**
+   * Purpose: * Redirect to Auth0 logout endpoint 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   logout(): void {
     if (!this.config) return
     if (typeof window === 'undefined') return

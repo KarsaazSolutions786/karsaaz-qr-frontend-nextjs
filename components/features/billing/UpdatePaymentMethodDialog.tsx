@@ -12,14 +12,11 @@ interface UpdatePaymentMethodDialogProps {
 }
 
 /**
- * T231 + T234: Modal dialog for updating payment method.
- *
- * NOTE: For full Stripe Elements integration, install @stripe/stripe-js
- * and @stripe/react-stripe-js, then replace the manual card fields with
- * <CardElement /> from Stripe. See: https://stripe.com/docs/stripe-js/react
- *
- * TODO: Integrate Stripe Elements when @stripe/stripe-js is added to dependencies.
+ * Purpose: T231 + T234: Modal dialog for updating payment method. NOTE: For full Stripe Elements integration, install @stripe/stripe-js and @stripe/react-stripe-js, then replace the manual card fields with <CardElement /> from Stripe. See: https://stripe.com/docs/stripe-js/react TODO: Integrate Stripe Elements when @stripe/stripe-js is added to dependencies.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function UpdatePaymentMethodDialog({
   open,
   onClose,
@@ -36,6 +33,11 @@ export function UpdatePaymentMethodDialog({
 
   if (!open) return null
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)

@@ -9,6 +9,11 @@ interface YouTubeBlockProps {
   onUpdate?: (data: YouTubeBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes extractYouTubeId functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function extractYouTubeId(url: string): string | null {
   const patterns = [
     /(?:youtube\.com\/watch\?v=)([^&\s]+)/,
@@ -25,6 +30,11 @@ function extractYouTubeId(url: string): string | null {
   return null
 }
 
+/**
+ * Purpose: Executes YouTubeBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function YouTubeBlock({ block, isEditing, onUpdate }: YouTubeBlockProps) {
   const { url, autoplay = false, startTime = 0 } = block.data
   const { t } = useTranslation()

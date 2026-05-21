@@ -2,9 +2,11 @@ import dynamic from 'next/dynamic'
 import type { ComponentType, ReactNode } from 'react'
 
 /**
- * Lazy-load heavy components to reduce initial bundle size.
- * Usage: const Chart = lazyLoad(() => import('@/components/ui/chart'))
+ * Purpose: Lazy-load heavy components to reduce initial bundle size. Usage: const Chart = lazyLoad(() => import('@/components/ui/chart'))
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function lazyLoad<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
   options?: { ssr?: boolean; loading?: () => ReactNode | null }
@@ -16,9 +18,11 @@ export function lazyLoad<T extends ComponentType<any>>(
 }
 
 /**
- * Lazy-load a named export as a dynamic component.
- * Usage: const Editor = lazyLoadNamed(() => import('@/components/ui/markdown-editor'), 'MarkdownEditor')
+ * Purpose: Lazy-load a named export as a dynamic component. Usage: const Editor = lazyLoadNamed(() => import('@/components/ui/markdown-editor'), 'MarkdownEditor')
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function lazyLoadNamed<M extends Record<string, any>, K extends keyof M>(
   importFn: () => Promise<M>,
   exportName: K,

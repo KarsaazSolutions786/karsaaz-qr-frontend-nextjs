@@ -4,6 +4,11 @@ import { useState, Fragment } from 'react'
 import { Copy, Check, Clock, ChevronDown, ChevronRight, Zap } from 'lucide-react'
 import type { PlaygroundResponse } from '@/lib/api/playground-client'
 
+/**
+ * Purpose: Executes statusColor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function statusColor(status: number): string {
   if (status === 0) return 'bg-gray-100 text-gray-600'
   if (status < 300) return 'bg-green-100 text-green-700'
@@ -28,6 +33,11 @@ interface Props {
   isLoading: boolean
 }
 
+/**
+ * Purpose: Executes ResponseViewer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function ResponseViewer({ response, isLoading }: Props) {
   const [copied, setCopied] = useState(false)
   const [headersOpen, setHeadersOpen] = useState(false)
@@ -60,6 +70,11 @@ export function ResponseViewer({ response, isLoading }: Props) {
   const bodyStr =
     typeof response.data === 'string' ? response.data : JSON.stringify(response.data, null, 2)
 
+  /**
+   * Purpose: Executes copy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copy = async () => {
     await navigator.clipboard.writeText(bodyStr)
     setCopied(true)

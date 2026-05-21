@@ -3,6 +3,11 @@ import { notFound } from 'next/navigation'
 import BiolinkPreview from '@/components/features/biolinks/editor/BiolinkPreview'
 import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
+/**
+ * Purpose: Retrieves biolink.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getBiolink(slug: string) {
   try {
     // Use the public API to get QR code data
@@ -24,6 +29,11 @@ async function getBiolink(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const biolink = await getBiolink(params.slug)
 
@@ -39,6 +49,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes PublicBiolinkPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function PublicBiolinkPage({ params }: { params: { slug: string } }) {
   const biolink = await getBiolink(params.slug)
 

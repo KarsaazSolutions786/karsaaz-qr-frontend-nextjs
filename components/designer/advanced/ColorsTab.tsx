@@ -12,6 +12,11 @@ interface ColorsTabProps {
   onChange: (design: QRDesign) => void
 }
 
+/**
+ * Purpose: Executes ColorsTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function ColorsTab({ design, onChange }: ColorsTabProps) {
   const { t } = useTranslation()
   return (

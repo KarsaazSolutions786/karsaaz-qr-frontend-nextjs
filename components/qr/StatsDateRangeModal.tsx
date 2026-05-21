@@ -47,9 +47,19 @@ const PRESETS: Array<{ value: DateRangePreset; label: string }> = [
   { value: 'custom', label: 'Custom Range' },
 ];
 
+/**
+ * Purpose: Retrieves daterangeforpreset.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getDateRangeForPreset(preset: DateRangePreset): { startDate: string; endDate: string } {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  /**
+   * Purpose: Executes toDateStr functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toDateStr = (d: Date) => d.toISOString().split('T')[0] ?? '';
   
   switch (preset) {
@@ -93,6 +103,11 @@ function getDateRangeForPreset(preset: DateRangePreset): { startDate: string; en
   }
 }
 
+/**
+ * Purpose: Executes StatsDateRangeModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StatsDateRangeModal({
   isOpen,
   onClose,
@@ -111,6 +126,11 @@ export function StatsDateRangeModal({
 
   if (!isOpen) return null;
 
+  /**
+   * Purpose: Executes handlePresetChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePresetChange = (newPreset: DateRangePreset) => {
     setPreset(newPreset);
     if (newPreset !== 'custom') {
@@ -120,6 +140,11 @@ export function StatsDateRangeModal({
     }
   };
 
+  /**
+   * Purpose: Executes handleApply functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleApply = () => {
     onApply({
       preset: preset !== 'custom' ? preset : undefined,
@@ -130,6 +155,11 @@ export function StatsDateRangeModal({
     onClose();
   };
 
+  /**
+   * Purpose: Executes handleReset functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleReset = () => {
     const defaultPreset: DateRangePreset = 'last7days';
     const range = getDateRangeForPreset(defaultPreset);

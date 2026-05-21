@@ -20,15 +20,21 @@ export interface PreviewURLParams {
 }
 
 /**
- * Generate content hash for validation
+ * Purpose: Generate content hash for validation
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateContentHash(content: string): string {
   return crypto.createHash('sha256').update(content).digest('hex').substring(0, 16);
 }
 
 /**
- * Build preview API URL
+ * Purpose: Build preview API URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function buildPreviewURL(params: PreviewURLParams): string {
   const { data, type = 'text', design = {} } = params;
 
@@ -65,8 +71,11 @@ export function buildPreviewURL(params: PreviewURLParams): string {
 }
 
 /**
- * Build full-screen preview URL
+ * Purpose: Build full-screen preview URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function buildFullScreenPreviewURL(src: string): string {
   const queryParams = new URLSearchParams();
   queryParams.set('src', encodeURIComponent(src));
@@ -75,8 +84,11 @@ export function buildFullScreenPreviewURL(src: string): string {
 }
 
 /**
- * Parse preview URL parameters
+ * Purpose: Parse preview URL parameters
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function parsePreviewURL(url: string): PreviewURLParams | null {
   try {
     const urlObj = new URL(url, 'http://localhost');
@@ -125,8 +137,11 @@ export function parsePreviewURL(url: string): PreviewURLParams | null {
 }
 
 /**
- * Verify content hash
+ * Purpose: Verify content hash
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function verifyContentHash(data: string, hash: string): boolean {
   const expectedHash = generateContentHash(data);
   return expectedHash === hash;

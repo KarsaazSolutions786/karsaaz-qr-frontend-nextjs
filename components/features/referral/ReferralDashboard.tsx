@@ -14,6 +14,11 @@ const defaultStats: ReferralStats = {
   available_balance: 0,
 }
 
+/**
+ * Purpose: Executes ReferralDashboard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ReferralDashboard() {
   const { t } = useTranslation()
   const { data: stats = defaultStats, isLoading } = useReferralStats()

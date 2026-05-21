@@ -25,6 +25,11 @@ export interface StickerFieldsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerFields({
   value,
   onChange,
@@ -39,6 +44,11 @@ export function StickerFields({
   const [showSelector, setShowSelector] = useState(!value);
 
   // Handle sticker selection
+  /**
+   * Purpose: Executes handleStickerSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleStickerSelect = (sticker: Sticker) => {
     const newConfig = createDefaultStickerConfig(sticker.id, sticker.url);
     onChange(newConfig);
@@ -46,30 +56,55 @@ export function StickerFields({
   };
 
   // Handle position change
+  /**
+   * Purpose: Executes handlePositionChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePositionChange = (position: StickerConfig['position']) => {
     if (!value) return;
     onChange({ ...value, position });
   };
 
   // Handle size change
+  /**
+   * Purpose: Executes handleSizeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSizeChange = (size: number) => {
     if (!value) return;
     onChange({ ...value, size });
   };
 
   // Handle rotation change
+  /**
+   * Purpose: Executes handleRotationChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRotationChange = (rotation: number) => {
     if (!value) return;
     onChange({ ...value, rotation });
   };
 
   // Handle opacity change
+  /**
+   * Purpose: Executes handleOpacityChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleOpacityChange = (opacity: number) => {
     if (!value) return;
     onChange({ ...value, opacity });
   };
 
   // Handle remove sticker
+  /**
+   * Purpose: Executes handleRemove functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRemove = () => {
     onChange(null);
     setShowSelector(true);

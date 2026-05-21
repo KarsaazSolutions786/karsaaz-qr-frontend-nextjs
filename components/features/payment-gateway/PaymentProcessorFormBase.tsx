@@ -41,16 +41,11 @@ interface PaymentProcessorFormBaseProps extends ProcessorFormProps {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
- * Base component for all payment processor configuration forms.
- *
- * Provides:
- * - Optional description/instructions area
- * - Optional webhook URL display with copy button
- * - A slot (children) for gateway-specific fields
- *
- * Does NOT render any gateway-specific fields (API key, secret, mode, etc.)
- * -- those are the responsibility of each gateway form component.
+ * Purpose: Base component for all payment processor configuration forms. Provides: - Optional description/instructions area - Optional webhook URL display with copy button - A slot (children) for gateway-specific fields Does NOT render any gateway-specific fields (API key, secret, mode, etc.) -- those are the responsibility of each gateway form component.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export default function PaymentProcessorFormBase({
   slug,
   settings: _settings,

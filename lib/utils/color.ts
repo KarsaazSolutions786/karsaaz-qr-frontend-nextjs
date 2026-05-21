@@ -4,16 +4,22 @@
  */
 
 /**
- * Convert RGB to hex color
+ * Purpose: Convert RGB to hex color
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function rgbToHex({ r, g, b }: { r: number; g: number; b: number }): string {
   const rgb = (r << 16) | (g << 8) | (b << 0)
   return '#' + (0x1000000 + rgb).toString(16).slice(1)
 }
 
 /**
- * Convert hex color to RGB
+ * Purpose: Convert hex color to RGB
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return result

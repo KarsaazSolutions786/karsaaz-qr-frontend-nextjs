@@ -11,22 +11,31 @@ interface InstagramBlockProps {
 }
 
 /**
- * Validates and normalizes an Instagram URL.
- * Supports:
- * - https://www.instagram.com/p/XXXX/
- * - https://www.instagram.com/reel/XXXX/
- * - https://www.instagram.com/tv/XXXX/
+ * Purpose: Validates and normalizes an Instagram URL. Supports: - https://www.instagram.com/p/XXXX/ - https://www.instagram.com/reel/XXXX/ - https://www.instagram.com/tv/XXXX/
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function isValidInstagramUrl(url: string): boolean {
   return /^https?:\/\/(www\.)?instagram\.com\/(p|reel|tv)\/[\w-]+/.test(url)
 }
 
+/**
+ * Purpose: Retrieves instagramembedurl.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getInstagramEmbedUrl(url: string): string {
   // Ensure URL ends with a slash before adding embed
   const cleanUrl = url.replace(/\/?$/, '/')
   return `${cleanUrl}embed`
 }
 
+/**
+ * Purpose: Executes InstagramBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function InstagramBlock({ block, isEditing, onUpdate }: InstagramBlockProps) {
   const { t } = useTranslation();
   const { url } = block.data

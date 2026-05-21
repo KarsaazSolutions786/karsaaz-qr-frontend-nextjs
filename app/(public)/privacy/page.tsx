@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   ),
 }
 
+/**
+ * Purpose: Executes PrivacyPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PrivacyPage() {
   return <PrivacyPageContent />
 }

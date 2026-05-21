@@ -4,6 +4,11 @@ import React from 'react'
 import { useTranslation } from '@/lib/i18n'
 import { Sparkles } from 'lucide-react'
 
+/**
+ * Purpose: Executes IntroductionStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function IntroductionStep() {
   const { t } = useTranslation();
   return (

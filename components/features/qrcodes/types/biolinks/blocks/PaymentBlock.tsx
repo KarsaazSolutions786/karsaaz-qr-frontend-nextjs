@@ -13,6 +13,13 @@ interface PaymentBlockProps {
   isDragging?: boolean;
 }
 
+/**
+ * Purpose: Executes PaymentBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const PaymentBlock = ({
   block,
   onEdit,
@@ -21,6 +28,11 @@ export const PaymentBlock = ({
   isDragging,
 }: PaymentBlockProps) => {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes formatAmount functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatAmount = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',

@@ -26,6 +26,11 @@ const FEATURE_LABELS: Record<string, string> = {
   'tokens.get': 'Get Token Balance',
 }
 
+/**
+ * Purpose: Executes TokenCostsAdminPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function TokenCostsAdminPage() {
   const [costs, setCosts] = useState<FeatureCost[]>([])
   const [editing, setEditing] = useState<Record<number, string>>({})
@@ -46,10 +51,20 @@ export default function TokenCostsAdminPage() {
     load()
   }, [load])
 
+  /**
+   * Purpose: Executes startEdit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   function startEdit(cost: FeatureCost) {
     setEditing(prev => ({ ...prev, [cost.id]: cost.tokens_cost }))
   }
 
+  /**
+   * Purpose: Executes cancelEdit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   function cancelEdit(id: number) {
     setEditing(prev => {
       const next = { ...prev }
@@ -58,6 +73,11 @@ export default function TokenCostsAdminPage() {
     })
   }
 
+  /**
+   * Purpose: Saves the specified data.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   async function save(cost: FeatureCost) {
     const newCost = editing[cost.id]
     if (newCost === undefined) return

@@ -34,6 +34,11 @@ export interface PreviewModalProps {
   };
 }
 
+/**
+ * Purpose: Executes PreviewModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PreviewModal({
   isOpen,
   onClose,
@@ -46,11 +51,21 @@ export function PreviewModal({
 
   if (!isOpen) return null;
 
+  /**
+   * Purpose: Executes handleEdit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleEdit = () => {
     router.push(`/qrcodes/${qrcode.id}/edit`);
     onClose();
   };
 
+  /**
+   * Purpose: Executes handleViewAnalytics functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleViewAnalytics = () => {
     router.push(`/qrcodes/${qrcode.id}/analytics`);
     onClose();

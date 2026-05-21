@@ -89,6 +89,11 @@ export interface GuestAnalytics {
 
 // ── Guest API Client helper ────────────────────────────────────────────────────
 
+/**
+ * Purpose: Retrieves guestheaders.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getGuestHeaders(): Record<string, string> {
   if (typeof window === 'undefined') return {}
   const token = localStorage.getItem('guest_session_token')

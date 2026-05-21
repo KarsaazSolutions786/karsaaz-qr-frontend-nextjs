@@ -4,8 +4,11 @@
  */
 
 /**
- * Debounce function calls
+ * Purpose: Debounce function calls
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function debounce<T extends (...args: unknown[]) => unknown>(
   cb: T,
   ms = 300
@@ -20,8 +23,11 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
- * Throttle function calls
+ * Purpose: Throttle function calls
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function throttle<T extends (...args: unknown[]) => unknown>(
   cb: T,
   ms = 300
@@ -39,15 +45,21 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
- * Sleep/delay for specified milliseconds
+ * Purpose: Sleep/delay for specified milliseconds
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function sleep(ms: number): Promise<void> {
   return new Promise(r => setTimeout(r, ms))
 }
 
 /**
- * Deferred promise pattern
+ * Purpose: Deferred promise pattern
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export class Deferred<T> {
   promise: Promise<T>
   resolve!: (value: T | PromiseLike<T>) => void
@@ -56,6 +68,11 @@ export class Deferred<T> {
   isRejected = false
   isConsumed = false
 
+  /**
+   * Purpose: Constructor for constructor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   constructor() {
     this.promise = new Promise((resolve, reject) => {
       this.reject = reason => {

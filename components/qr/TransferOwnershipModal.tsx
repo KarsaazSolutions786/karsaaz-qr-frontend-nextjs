@@ -24,6 +24,11 @@ export interface TransferOwnershipModalProps {
   availableUsers?: Array<{ id: string; name: string; email: string }>;
 }
 
+/**
+ * Purpose: Executes TransferOwnershipModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TransferOwnershipModal({
   isOpen,
   onClose,
@@ -50,6 +55,11 @@ export function TransferOwnershipModal({
   
   const selectedUser = availableUsers.find(u => u.id === selectedUserId);
   
+  /**
+   * Purpose: Executes handleTransfer functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTransfer = async () => {
     if (!selectedUserId) {
       setError(t('Please select a user to transfer to'));

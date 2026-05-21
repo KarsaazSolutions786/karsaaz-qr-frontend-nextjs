@@ -21,21 +21,41 @@ interface TeamMembersInputProps {
   onChange: (value: TeamMember[]) => void;
 }
 
+/**
+ * Purpose: Executes TeamMembersInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TeamMembersInput({ value, onChange }: TeamMembersInputProps) {
   const { t } = useTranslation();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  /**
+   * Purpose: Executes addTeamMember functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addTeamMember = () => {
     const newMember = createTeamMember(value.length);
     onChange([...value, newMember]);
     setEditingId(newMember.id);
   };
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeMember = (id: string) => {
     onChange(value.filter((m) => m.id !== id));
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateMember = (id: string, updates: Partial<TeamMember>) => {
     onChange(
       value.map((member) =>
@@ -44,6 +64,11 @@ export function TeamMembersInput({ value, onChange }: TeamMembersInputProps) {
     );
   };
 
+  /**
+   * Purpose: Executes toggleFeatured functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleFeatured = (id: string) => {
     const member = value.find((m) => m.id === id);
     if (member) {
@@ -51,10 +76,20 @@ export function TeamMembersInput({ value, onChange }: TeamMembersInputProps) {
     }
   };
 
+  /**
+   * Purpose: Executes handleDragStart functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
   };
 
+  /**
+   * Purpose: Executes handleDragOver functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index) return;
@@ -75,6 +110,11 @@ export function TeamMembersInput({ value, onChange }: TeamMembersInputProps) {
     setDraggedIndex(index);
   };
 
+  /**
+   * Purpose: Executes handleDragEnd functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragEnd = () => {
     setDraggedIndex(null);
   };

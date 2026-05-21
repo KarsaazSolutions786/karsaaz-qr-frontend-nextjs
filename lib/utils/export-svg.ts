@@ -22,8 +22,11 @@ export interface SVGExportOptions {
 }
 
 /**
- * Export SVG to file
+ * Purpose: Export SVG to file
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function exportSVG(svg: string, options: SVGExportOptions = {}): Promise<void> {
   const {
     filename = 'qr-code.svg',
@@ -68,8 +71,11 @@ export async function exportSVG(svg: string, options: SVGExportOptions = {}): Pr
 }
 
 /**
- * Get SVG as data URL
+ * Purpose: Get SVG as data URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getSVGDataURL(svg: string, options: SVGExportOptions = {}): string {
   const { includeXmlDeclaration = false } = options;
 
@@ -84,8 +90,11 @@ export function getSVGDataURL(svg: string, options: SVGExportOptions = {}): stri
 }
 
 /**
- * Get SVG as blob
+ * Purpose: Get SVG as blob
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getSVGBlob(svg: string, options: SVGExportOptions = {}): Blob {
   const { optimized = false } = options;
 
@@ -99,8 +108,11 @@ export function getSVGBlob(svg: string, options: SVGExportOptions = {}): Blob {
 }
 
 /**
- * Add metadata to SVG
+ * Purpose: Add metadata to SVG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function addSVGMetadata(
   svg: string,
   metadata: Required<SVGExportOptions>['metadata']
@@ -135,8 +147,11 @@ function addSVGMetadata(
 }
 
 /**
- * Add background rectangle to SVG
+ * Purpose: Add background rectangle to SVG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function addBackgroundRectToSVG(svg: string, backgroundColor: string): string {
   // Extract viewBox or width/height
   const viewBoxMatch = svg.match(/viewBox="([^"]+)"/);
@@ -159,8 +174,11 @@ function addBackgroundRectToSVG(svg: string, backgroundColor: string): string {
 }
 
 /**
- * Optimize SVG (minify)
+ * Purpose: Optimize SVG (minify)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function optimizeSVG(svg: string): string {
   return svg
     // Remove comments
@@ -175,8 +193,11 @@ function optimizeSVG(svg: string): string {
 }
 
 /**
- * Embed fonts in SVG (placeholder - requires actual font data)
+ * Purpose: Embed fonts in SVG (placeholder - requires actual font data)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 async function embedFontsInSVG(svg: string): Promise<string> {
   // This is a placeholder - actual implementation would require:
   // 1. Detect fonts used in SVG
@@ -189,8 +210,11 @@ async function embedFontsInSVG(svg: string): Promise<string> {
 }
 
 /**
- * Escape XML special characters
+ * Purpose: Escape XML special characters
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function escapeXml(text: string): string {
   return text
     .replace(/&/g, '&amp;')
@@ -201,8 +225,11 @@ function escapeXml(text: string): string {
 }
 
 /**
- * Download blob as file
+ * Purpose: Download blob as file
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -215,8 +242,11 @@ function downloadBlob(blob: Blob, filename: string): void {
 }
 
 /**
- * Copy SVG to clipboard
+ * Purpose: Copy SVG to clipboard
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function copySVGToClipboard(svg: string): Promise<void> {
   try {
     await navigator.clipboard.writeText(svg);
@@ -226,15 +256,21 @@ export async function copySVGToClipboard(svg: string): Promise<void> {
 }
 
 /**
- * Get SVG file size
+ * Purpose: Get SVG file size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getSVGFileSize(svg: string): number {
   return new Blob([svg]).size;
 }
 
 /**
- * Format file size for display
+ * Purpose: Format file size for display
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatSVGSize(svg: string): string {
   const bytes = getSVGFileSize(svg);
   
@@ -244,8 +280,11 @@ export function formatSVGSize(svg: string): string {
 }
 
 /**
- * Validate SVG
+ * Purpose: Validate SVG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateSVG(svg: string): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -273,8 +312,11 @@ export function validateSVG(svg: string): { valid: boolean; errors: string[] } {
 }
 
 /**
- * Extract SVG dimensions
+ * Purpose: Extract SVG dimensions
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getSVGDimensions(svg: string): { width: number; height: number } | null {
   // Try viewBox first
   const viewBoxMatch = svg.match(/viewBox="([^"]+)"/);
@@ -301,8 +343,11 @@ export function getSVGDimensions(svg: string): { width: number; height: number }
 }
 
 /**
- * Resize SVG
+ * Purpose: Resize SVG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function resizeSVG(svg: string, newWidth: number, newHeight: number): string {
   // Update viewBox to match new dimensions
   return svg

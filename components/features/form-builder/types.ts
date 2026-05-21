@@ -92,6 +92,11 @@ export const FIELD_TYPE_OPTIONS: Array<{ type: FormFieldType; label: string; ico
   { type: 'number', label: 'Number', icon: 'N' },
 ]
 
+/**
+ * Purpose: Executes createFormField functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function createFormField(type: FormFieldType): FormField {
   const base: FormField = {
     id: `field-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,

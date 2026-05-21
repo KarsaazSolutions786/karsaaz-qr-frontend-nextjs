@@ -43,6 +43,11 @@ export interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+/**
+ * Purpose: Executes AuthProvider functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -318,6 +323,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 }
 
+/**
+ * Purpose: Executes useAuth functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useAuth(): AuthContextType {
   const context = React.useContext(AuthContext)
   if (!context) {

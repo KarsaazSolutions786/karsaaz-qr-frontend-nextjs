@@ -9,6 +9,11 @@ interface TitleBlockProps {
   onUpdate?: (data: TitleBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes TitleBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TitleBlock({ block, isEditing, onUpdate }: TitleBlockProps) {
   const { text, level = 'h2', align = 'center' } = block.data
   const { t } = useTranslation()

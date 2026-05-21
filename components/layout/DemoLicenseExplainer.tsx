@@ -33,6 +33,11 @@ const DEMO_LIMITATIONS = [
   'No API access',
 ]
 
+/**
+ * Purpose: Executes DemoLicenseExplainer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DemoLicenseExplainer({ isOpen, onClose }: DemoLicenseExplainerProps) {
   const { t } = useTranslation()
   return (

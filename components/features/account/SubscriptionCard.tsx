@@ -12,12 +12,24 @@ interface SubscriptionCardProps {
   user: User
 }
 
+/**
+ * Purpose: Executes formatNumber functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function formatNumber(value: number | null | undefined, translate?: (key: string) => string): string {
   if (value === null || value === undefined) return '0'
   if (value === -1) return translate ? translate('Unlimited') : 'Unlimited'
   return String(value)
 }
 
+/**
+ * Purpose: Executes SubscriptionCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SubscriptionCard({ user }: SubscriptionCardProps) {
   const { t } = useTranslation()
   const router = useRouter()
@@ -53,6 +65,11 @@ export function SubscriptionCard({ user }: SubscriptionCardProps) {
 
   const isCanceled = status === 'expired'
 
+  /**
+   * Purpose: Executes handleCancelSubscription functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCancelSubscription = async () => {
     if (!confirm(t('Are you sure you want to cancel your subscription?'))) return
     setCancelLoading(true)

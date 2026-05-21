@@ -12,6 +12,11 @@ interface AdvancedSettingsTabProps {
   onChange: (design: QRDesign) => void
 }
 
+/**
+ * Purpose: Executes AdvancedSettingsTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function AdvancedSettingsTab({ design, onChange }: AdvancedSettingsTabProps) {
   const { t } = useTranslation()
   return (

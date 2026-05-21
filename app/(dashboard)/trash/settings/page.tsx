@@ -12,6 +12,11 @@ import { toast } from 'sonner'
 type AutoDeleteOption = 'never' | '7' | '15' | '30' | 'custom'
 type StoragePreset = '25' | '50' | '100' | 'custom'
 
+/**
+ * Purpose: Executes TrashSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
 export default function TrashSettingsPage() {
   const { t } = useTranslation()
   const { data: settings, isLoading } = useTrashSettings()
@@ -56,16 +61,31 @@ export default function TrashSettingsPage() {
   const effectiveStoragePreset = isDirty ? storagePreset : serverStoragePreset
   const effectiveCustomStorageMb = isDirty ? customStorageMb : serverCustomStorageMb
 
+  /**
+   * Purpose: Executes handleOptionChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: May 2026
+   */
   const handleOptionChange = (option: AutoDeleteOption) => {
     setSelected(option)
     setIsDirty(true)
   }
 
+  /**
+   * Purpose: Executes handleStoragePresetChange functionality.
+   * Owner/Author: Moiz Ansari
+   * Created/Updated: May 2026
+   */
   const handleStoragePresetChange = (preset: StoragePreset) => {
     setStoragePreset(preset)
     setIsDirty(true)
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: May 2026
+   */
   const handleSave = async () => {
     // Resolve auto-delete days
     let days: number | null = null

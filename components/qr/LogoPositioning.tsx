@@ -21,6 +21,11 @@ export interface LogoPositioningProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes LogoPositioning functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LogoPositioning({
   value,
   onChange,
@@ -29,33 +34,68 @@ export function LogoPositioning({
   className = '',
 }: LogoPositioningProps) {
   const { t } = useTranslation();
+  /**
+   * Purpose: Executes handleSizeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const size = parseFloat(e.target.value);
     onChange({ ...value, size });
   };
 
+  /**
+   * Purpose: Executes handleMarginChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleMarginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const margin = parseFloat(e.target.value);
     onChange({ ...value, margin });
   };
 
+  /**
+   * Purpose: Executes handleShapeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleShapeChange = (shape: 'square' | 'circle') => {
     onChange({ ...value, shape });
   };
 
+  /**
+   * Purpose: Executes handleBackgroundColorChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleBackgroundColorChange = (backgroundColor: string) => {
     onChange({ ...value, backgroundColor });
   };
 
+  /**
+   * Purpose: Executes handleBorderColorChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleBorderColorChange = (borderColor: string) => {
     onChange({ ...value, borderColor });
   };
 
+  /**
+   * Purpose: Executes handleBorderWidthChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleBorderWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const borderWidth = parseFloat(e.target.value);
     onChange({ ...value, borderWidth });
   };
 
+  /**
+   * Purpose: Executes toggleBackground functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleBackground = () => {
     if (value.backgroundColor) {
       const { backgroundColor, ...rest } = value;
@@ -65,6 +105,11 @@ export function LogoPositioning({
     }
   };
 
+  /**
+   * Purpose: Executes toggleBorder functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleBorder = () => {
     if (value.borderColor) {
       const { borderColor, borderWidth, ...rest } = value;

@@ -17,6 +17,11 @@ import {
   DAYS,
 } from '@/components/ui/business-hours-input'
 
+/**
+ * Purpose: Executes createDefaultHours functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function createDefaultHours(): BusinessHours[] {
   return DAYS.map((day) => ({
     day,
@@ -36,6 +41,11 @@ interface BusinessHoursModalProps {
   description?: string
 }
 
+/**
+ * Purpose: Executes BusinessHoursModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function BusinessHoursModal({
   open,
   onOpenChange,

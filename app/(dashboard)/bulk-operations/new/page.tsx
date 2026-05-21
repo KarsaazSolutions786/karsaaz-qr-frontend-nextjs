@@ -12,6 +12,11 @@ interface PreviewRow {
   [key: string]: string
 }
 
+/**
+ * Purpose: Executes NewBulkOperationPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewBulkOperationPage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -24,6 +29,11 @@ export default function NewBulkOperationPage() {
   const [progress, setProgress] = useState(0)
   const [error, setError] = useState('')
 
+  /**
+   * Purpose: Executes parseCSV functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const parseCSV = (text: string) => {
     const lines = text.split('\n').filter((l) => l.trim())
     if (lines.length < 2) return { headers: [], rows: [] }
@@ -37,6 +47,11 @@ export default function NewBulkOperationPage() {
     return { headers: hdrs, rows }
   }
 
+  /**
+   * Purpose: Executes handleFileChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0]
     if (!f) return
@@ -53,6 +68,11 @@ export default function NewBulkOperationPage() {
     reader.readAsText(f)
   }
 
+  /**
+   * Purpose: Executes handleExecute functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleExecute = async () => {
     if (!file) return
     setExecuting(true)

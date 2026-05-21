@@ -34,11 +34,21 @@ export interface UsageEvent {
 }
 
 export const usageApi = {
+  /**
+   * Purpose: Retrieves usagestats.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async getUsageStats(): Promise<UsageStats> {
     const response = await apiClient.get('/usage/stats');
     return response.data;
   },
 
+  /**
+   * Purpose: Executes trackEvent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async trackEvent(eventType: UsageEvent['eventType'], data?: Record<string, any>): Promise<void> {
     await apiClient.post('/usage/track', {
       eventType,
@@ -47,12 +57,22 @@ export const usageApi = {
     });
   },
 
+  /**
+   * Purpose: Retrieves quotainfo.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async getQuotaInfo(quotaType?: string): Promise<QuotaInfo[]> {
     const params = quotaType ? { type: quotaType } : {};
     const response = await apiClient.get('/usage/quota', { params });
     return response.data;
   },
 
+  /**
+   * Purpose: Retrieves usagehistory.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async getUsageHistory(days: number = 30): Promise<any[]> {
     const response = await apiClient.get('/usage/history', {
       params: { days },

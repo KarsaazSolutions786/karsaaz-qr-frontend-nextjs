@@ -10,6 +10,11 @@ interface OTPVerificationFormProps {
   email: string
 }
 
+/**
+ * Purpose: Executes OTPVerificationForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
   const { t } = useTranslation()
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''))
@@ -30,6 +35,11 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
     [email, verifyMutation]
   )
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (index: number, value: string) => {
     // Only allow digits
     if (value && !/^\d$/.test(value)) return
@@ -49,6 +59,11 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleKeyDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace') {
       if (!otp[index] && index > 0) {
@@ -65,6 +80,11 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handlePaste functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePaste = (e: React.ClipboardEvent) => {
     e.preventDefault()
     const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, OTP_LENGTH)
@@ -83,6 +103,11 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleManualSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const code = otp.join('')
@@ -99,6 +124,11 @@ export function OTPVerificationForm({ email }: OTPVerificationFormProps) {
     }
   }, [countdown])
 
+  /**
+   * Purpose: Executes handleResend functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleResend = async () => {
     try {
       await resendMutation.mutateAsync(email)

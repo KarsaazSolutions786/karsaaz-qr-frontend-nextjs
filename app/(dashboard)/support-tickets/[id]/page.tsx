@@ -17,6 +17,11 @@ const STATUS_BADGES: Record<SupportTicket['status'], { label: string; className:
   CLOSED: { label: 'Closed', className: 'bg-gray-100 text-gray-800' },
 }
 
+/**
+ * Purpose: Executes TicketDetailPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TicketDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
   const { id } = use(params)
@@ -28,6 +33,11 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    /**
+     * Purpose: Executes fetchData functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const fetchData = async () => {
       try {
         setIsLoading(true)
@@ -57,6 +67,11 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
   useEffect(() => {
     if (ticket || !user?.email) return
 
+    /**
+     * Purpose: Executes fetchTicket functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const fetchTicket = async () => {
       try {
         const tickets = await supportTicketsAPI.list(user.email)
@@ -72,6 +87,11 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     fetchTicket()
   }, [id, user?.email, ticket])
 
+  /**
+   * Purpose: Executes handleReply functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleReply = async (text: string) => {
     if (!user?.email) return
     try {

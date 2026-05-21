@@ -13,9 +13,11 @@ interface LottieLoaderProps {
 }
 
 /**
- * LottieLoader — renders the branded Karsaaz QR loading animation.
- * Uses dynamic import to avoid SSR issues with lottie-react.
+ * Purpose: LottieLoader — renders the branded Karsaaz QR loading animation. Uses dynamic import to avoid SSR issues with lottie-react.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
  */
+
 export function LottieLoader({ size = 120, className = '' }: LottieLoaderProps) {
   return (
     <div className={`flex items-center justify-center ${className}`}>
@@ -29,7 +31,12 @@ export function LottieLoader({ size = 120, className = '' }: LottieLoaderProps) 
   )
 }
 
-/** Full-screen centred loader — used for page-level loading states */
+/**
+ * Purpose: * Full-screen centred loader — used for page-level loading states 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
+
 export function PageLoader() {
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-gray-950">

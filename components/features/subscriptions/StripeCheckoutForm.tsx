@@ -10,6 +10,11 @@ interface StripeCheckoutFormProps {
   plan: Plan
 }
 
+/**
+ * Purpose: Executes StripeCheckoutForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StripeCheckoutForm({ plan }: StripeCheckoutFormProps) {
   const { t } = useTranslation()
   const [_promoCode, setPromoCode] = useState<string>()
@@ -18,16 +23,31 @@ export function StripeCheckoutForm({ plan }: StripeCheckoutFormProps) {
 
   const finalPrice = discountedPrice ?? plan.price
 
+  /**
+   * Purpose: Executes handlePromoApplied functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePromoApplied = (code: string, newPrice: number) => {
     setPromoCode(code)
     setDiscountedPrice(newPrice)
   }
 
+  /**
+   * Purpose: Executes handlePromoRemoved functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePromoRemoved = () => {
     setPromoCode(undefined)
     setDiscountedPrice(undefined)
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     

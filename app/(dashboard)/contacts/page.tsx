@@ -9,6 +9,11 @@ import { useTranslation } from '@/lib/i18n'
 import { VirtualizedTable } from '@/components/common/VirtualizedList'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes ContactsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ContactsPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -18,6 +23,11 @@ export default function ContactsPage() {
 
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null)
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (contact: Contact) => {
     if (
       !confirm(

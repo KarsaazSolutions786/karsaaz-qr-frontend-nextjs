@@ -11,6 +11,11 @@ interface PreviewThemeProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes PreviewTheme functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PreviewTheme({
   defaultTheme = 'auto',
   showToggle = true,
@@ -34,6 +39,11 @@ export default function PreviewTheme({
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme, defaultTheme]);
 
+  /**
+   * Purpose: Executes toggleTheme functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };

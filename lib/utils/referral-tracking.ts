@@ -7,9 +7,11 @@ import apiClient from '@/lib/api/client'
 const REFERRAL_STORAGE_KEY = 'karsaaz_referral_code'
 
 /**
- * Extract referral code from a URL string.
- * Supports ?ref=CODE query parameter.
+ * Purpose: Extract referral code from a URL string. Supports ?ref=CODE query parameter.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function extractReferralCode(url: string): string | null {
   try {
     const parsed = new URL(url, 'https://placeholder.com')
@@ -20,8 +22,11 @@ export function extractReferralCode(url: string): string | null {
 }
 
 /**
- * Validate a referral code against the backend.
+ * Purpose: Validate a referral code against the backend.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function validateReferralCode(code: string): Promise<boolean> {
   if (!code || code.trim().length === 0) return false
   try {
@@ -35,8 +40,11 @@ export async function validateReferralCode(code: string): Promise<boolean> {
 }
 
 /**
- * Attribute a referral to a newly registered user.
+ * Purpose: Attribute a referral to a newly registered user.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function attributeReferral(userId: string, code: string): Promise<void> {
   await apiClient.post('/referrals/attribute', {
     user_id: userId,
@@ -45,8 +53,11 @@ export async function attributeReferral(userId: string, code: string): Promise<v
 }
 
 /**
- * Store referral code in localStorage for use during registration.
+ * Purpose: Store referral code in localStorage for use during registration.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function storeReferralCode(code: string): void {
   if (typeof window !== 'undefined') {
     localStorage.setItem(REFERRAL_STORAGE_KEY, code)
@@ -54,8 +65,11 @@ export function storeReferralCode(code: string): void {
 }
 
 /**
- * Retrieve stored referral code from localStorage.
+ * Purpose: Retrieve stored referral code from localStorage.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getStoredReferralCode(): string | null {
   if (typeof window !== 'undefined') {
     return localStorage.getItem(REFERRAL_STORAGE_KEY)
@@ -64,8 +78,11 @@ export function getStoredReferralCode(): string | null {
 }
 
 /**
- * Clear stored referral code after successful attribution.
+ * Purpose: Clear stored referral code after successful attribution.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function clearStoredReferralCode(): void {
   if (typeof window !== 'undefined') {
     localStorage.removeItem(REFERRAL_STORAGE_KEY)

@@ -12,6 +12,11 @@ interface ResumeDataFormProps {
   defaultValues?: Partial<ResumeData>
   onChange?: (data: Partial<ResumeData>) => void
 }
+/**
+ * Purpose: Executes ResumeDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ResumeDataForm({ defaultValues, onChange }: ResumeDataFormProps) {
   const { t } = useTranslation()
   const {

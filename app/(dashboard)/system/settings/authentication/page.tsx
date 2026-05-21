@@ -17,6 +17,11 @@ const CONFIG_KEYS = [
   'app.firebase_service_account_credentials',
 ]
 
+/**
+ * Purpose: Executes AuthenticationSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AuthenticationSettingsPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
@@ -34,10 +39,20 @@ export default function AuthenticationSettingsPage() {
     }
   }, [configs])
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (key: string, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
   }
 
+  /**
+   * Purpose: Executes toggleBool functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleBool = (key: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -45,8 +60,18 @@ export default function AuthenticationSettingsPage() {
     }))
   }
 
+  /**
+   * Purpose: Checks if truthy.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const isTruthy = (key: string) => formData[key] === '1' || formData[key] === 'true'
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     await save(Object.entries(formData).map(([key, value]) => ({ key, value })))

@@ -18,6 +18,11 @@ interface TabsProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes Tabs functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Tabs({ value, onValueChange, children, className }: TabsProps) {
   return (
     <TabsContext.Provider value={{ value, onValueChange }}>
@@ -31,6 +36,11 @@ interface TabsListProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes TabsList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TabsList({ children, className }: TabsListProps) {
   return (
     <div
@@ -51,6 +61,11 @@ interface TabsTriggerProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes TabsTrigger functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TabsTrigger({ value, children, className }: TabsTriggerProps) {
   const context = React.useContext(TabsContext)
   const isActive = context.value === value
@@ -82,6 +97,11 @@ interface TabsContentProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes TabsContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TabsContent({ value, children, className }: TabsContentProps) {
   const context = React.useContext(TabsContext)
   const isActive = context.value === value

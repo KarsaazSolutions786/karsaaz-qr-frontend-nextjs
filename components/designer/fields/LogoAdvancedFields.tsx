@@ -24,6 +24,13 @@ interface LogoAdvancedFieldsProps {
   onChange: (settings: LogoSettings) => void;
 }
 
+/**
+ * Purpose: Executes LogoAdvancedFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 const LogoAdvancedFields = ({
   logoSettings,
   onChange,
@@ -33,6 +40,11 @@ const LogoAdvancedFields = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
 
+  /**
+   * Purpose: Executes handleFileUpload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFileUpload = (file: File) => {
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
@@ -45,6 +57,11 @@ const LogoAdvancedFields = ({
     }
   };
 
+  /**
+   * Purpose: Executes handleDrop functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
@@ -52,20 +69,40 @@ const LogoAdvancedFields = ({
     if (file) handleFileUpload(file);
   };
 
+  /**
+   * Purpose: Executes handleDragOver functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
   };
 
+  /**
+   * Purpose: Executes handleDragLeave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragLeave = () => {
     setIsDragging(false);
   };
 
+  /**
+   * Purpose: Executes handleUrlChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUrlChange = (url: string) => {
     setPreview(url);
     onChange({ ...logoSettings, url, file: undefined });
   };
 
+  /**
+   * Purpose: Executes handlePositionChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePositionChange = (position: LogoSettings['position']) => {
     const updates: Partial<LogoSettings> = { position };
     if (position !== 'custom') {
@@ -75,6 +112,11 @@ const LogoAdvancedFields = ({
     onChange({ ...logoSettings, ...updates });
   };
 
+  /**
+   * Purpose: Retrieves positionpreview.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getPositionPreview = () => {
     const { position, x, y } = logoSettings;
     const positions = {

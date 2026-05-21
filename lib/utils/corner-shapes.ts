@@ -22,8 +22,11 @@ export interface CornerRenderContext {
 // ============================================================
 
 /**
- * Render corner frame (outer pattern)
+ * Purpose: Render corner frame (outer pattern)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderCornerFrame(
   style: string,
   ctx: CornerRenderContext,
@@ -64,8 +67,11 @@ export function renderCornerFrame(
 }
 
 /**
- * Render corner dot (inner pattern)
+ * Purpose: Render corner dot (inner pattern)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderCornerDot(
   style: string,
   ctx: CornerRenderContext,
@@ -111,6 +117,11 @@ export function renderCornerDot(
 // Basic frame renderers (existing)
 // ============================================================
 
+/**
+ * Purpose: Executes renderSquareFrame functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function renderSquareFrame(
   x: number,
   y: number,
@@ -126,6 +137,11 @@ function renderSquareFrame(
   return `<g>${outer}${inner}</g>`;
 }
 
+/**
+ * Purpose: Executes renderRoundedFrame functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function renderRoundedFrame(
   x: number,
   y: number,
@@ -142,6 +158,11 @@ function renderRoundedFrame(
   return `<g>${outer}${inner}</g>`;
 }
 
+/**
+ * Purpose: Executes renderExtraRoundedFrame functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function renderExtraRoundedFrame(
   x: number,
   y: number,
@@ -159,6 +180,11 @@ function renderExtraRoundedFrame(
   return `<g>${outer}${inner}</g>`;
 }
 
+/**
+ * Purpose: Executes renderCircularFrame functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function renderCircularFrame(
   x: number,
   y: number,
@@ -175,6 +201,11 @@ function renderCircularFrame(
   return `<g>${outer}${inner}</g>`;
 }
 
+/**
+ * Purpose: Executes renderDotFrame functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function renderDotFrame(
   x: number,
   y: number,
@@ -201,10 +232,11 @@ function renderDotFrame(
 // ============================================================
 
 /**
- * Render a finder frame from embedded SVG path data.
- * The path data is in a 700×700 coordinate system (P1's viewBox).
- * We scale it down to `targetSize` and apply position-dependent flipping.
+ * Purpose: Render a finder frame from embedded SVG path data. The path data is in a 700×700 coordinate system (P1's viewBox). We scale it down to `targetSize` and apply position-dependent flipping.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function renderSvgPathFrame(
   x: number,
   y: number,
@@ -236,9 +268,11 @@ function renderSvgPathFrame(
 }
 
 /**
- * Render a finder dot from embedded SVG path data.
- * The dot path data is also in a 700×700 coordinate system.
+ * Purpose: Render a finder dot from embedded SVG path data. The dot path data is also in a 700×700 coordinate system.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function renderSvgPathDot(
   x: number,
   y: number,
@@ -324,8 +358,11 @@ const FINDER_DOT_PATHS: Record<string, string> = {
 // ============================================================
 
 /**
- * Render complete corner (frame + dot)
+ * Purpose: Render complete corner (frame + dot)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderCompleteCorner(
   frameStyle: string,
   dotStyle: string,
@@ -338,8 +375,11 @@ export function renderCompleteCorner(
 }
 
 /**
- * Render all three corners
+ * Purpose: Render all three corners
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderAllCorners(
   frameStyle: string,
   dotStyle: string,
@@ -377,8 +417,11 @@ export function renderAllCorners(
 }
 
 /**
- * Get corner style description (for UI)
+ * Purpose: Get corner style description (for UI)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getCornerStyleDescription(
   frameStyle: string,
   dotStyle: string

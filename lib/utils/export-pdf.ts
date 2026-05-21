@@ -8,9 +8,13 @@ import type jsPDF from 'jspdf'
 import { getSVGDimensions } from './export-svg'
 
 /**
- * Lazily load jsPDF to avoid bundling it at the top level (~200KB).
- * The library is only fetched when the user actually triggers a PDF export.
+ * Purpose: Lazily load jsPDF to avoid bundling it at the top level (~200KB). The library is only fetched when the user actually triggers a PDF export.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 async function loadJsPDF(): Promise<typeof jsPDF> {
   const { default: jsPDF } = await import('jspdf')
   return jsPDF
@@ -43,8 +47,11 @@ export interface PDFExportOptions {
 }
 
 /**
- * Export SVG to PDF
+ * Purpose: Export SVG to PDF
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function exportPDF(svg: string, options: PDFExportOptions = {}): Promise<void> {
   const {
     filename = 'qr-code.pdf',
@@ -125,8 +132,11 @@ export async function exportPDF(svg: string, options: PDFExportOptions = {}): Pr
 }
 
 /**
- * Get PDF as blob
+ * Purpose: Get PDF as blob
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getPDFBlob(svg: string, options: PDFExportOptions = {}): Promise<Blob> {
   const {
     pageSize = 'a4',
@@ -192,8 +202,11 @@ export async function getPDFBlob(svg: string, options: PDFExportOptions = {}): P
 }
 
 /**
- * Create PDF document
+ * Purpose: Create PDF document
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function createPDFDocument(
   JsPDF: typeof jsPDF,
   pageSize: PDFPageSize,
@@ -214,8 +227,11 @@ function createPDFDocument(
 }
 
 /**
- * Add metadata to PDF
+ * Purpose: Add metadata to PDF
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function addPDFMetadata(pdf: jsPDF, metadata: Required<PDFExportOptions>['metadata']): void {
   if (!metadata) return
 
@@ -233,16 +249,22 @@ function addPDFMetadata(pdf: jsPDF, metadata: Required<PDFExportOptions>['metada
 }
 
 /**
- * Convert SVG to data URL
+ * Purpose: Convert SVG to data URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function svgToDataURL(svg: string): string {
   const encoded = encodeURIComponent(svg).replace(/'/g, '%27').replace(/"/g, '%22')
   return `data:image/svg+xml;charset=utf-8,${encoded}`
 }
 
 /**
- * Convert SVG to PNG (for fallback)
+ * Purpose: Convert SVG to PNG (for fallback)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 async function svgToPNG(svg: string, width: number, height: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas')
@@ -266,8 +288,11 @@ async function svgToPNG(svg: string, width: number, height: number): Promise<str
 }
 
 /**
- * Get page size dimensions in mm
+ * Purpose: Get page size dimensions in mm
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getPageSizeDimensions(
   pageSize: PDFPageSize,
   orientation: PDFOrientation = 'portrait'
@@ -290,8 +315,11 @@ export function getPageSizeDimensions(
 }
 
 /**
- * Calculate optimal QR size for page
+ * Purpose: Calculate optimal QR size for page
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculateOptimalQRSize(
   pageSize: PDFPageSize,
   orientation: PDFOrientation,
@@ -315,8 +343,11 @@ export function calculateOptimalQRSize(
 }
 
 /**
- * Get PDF file size estimate
+ * Purpose: Get PDF file size estimate
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function estimatePDFSize(svg: string): number {
   // Rough estimate: base PDF overhead + SVG size
   const baseSize = 5000 // ~5KB base PDF structure
@@ -325,8 +356,11 @@ export function estimatePDFSize(svg: string): number {
 }
 
 /**
- * Format PDF size for display
+ * Purpose: Format PDF size for display
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatPDFSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`

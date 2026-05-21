@@ -43,12 +43,27 @@ const tabs: DesignerTab[] = [
   { id: 'display', label: 'Display', icon: '👁️' },
 ]
 
+/**
+ * Purpose: Executes RestaurantMenuDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<RestaurantMenuDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderMenuOptionsContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderMenuOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Menu Layout')}</h4>
@@ -271,6 +286,11 @@ export function RestaurantMenuDesigner({ design, onChange }: RestaurantMenuDesig
     </div>
   )
 
+  /**
+   * Purpose: Executes renderDisplayContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderDisplayContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Display Options')}</h4>

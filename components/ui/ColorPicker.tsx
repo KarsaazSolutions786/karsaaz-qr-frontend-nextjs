@@ -40,15 +40,21 @@ const DEFAULT_PRESETS = [
 ]
 
 /**
- * Validate hex color
+ * Purpose: Validate hex color
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function isValidHex(hex: string): boolean {
   return /^#[0-9A-F]{6}$/i.test(hex)
 }
 
 /**
- * Extract RGB from hex
+ * Purpose: Extract RGB from hex
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
   return result
@@ -60,6 +66,11 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
     : null
 }
 
+/**
+ * Purpose: Executes ColorPicker functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ColorPicker({
   value,
   onChange,
@@ -210,6 +221,11 @@ export function ColorPicker({
 /*  QRColorPicker — matches legacy Lit frontend qrcg-color-picker     */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Purpose: Executes randomHex functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function randomHex(): string {
   return (
     '#' +
@@ -219,14 +235,21 @@ function randomHex(): string {
   )
 }
 
+/**
+ * Purpose: Executes generatePalette functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generatePalette(count: number): string[] {
   return Array.from({ length: count }, () => randomHex())
 }
 
 /**
- * QR Color Picker — inline swatches + HEX button + native picker + refresh
- * Matches the legacy P1 color picker pattern exactly.
+ * Purpose: QR Color Picker — inline swatches + HEX button + native picker + refresh Matches the legacy P1 color picker pattern exactly.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function QRColorPicker({
   value,
   onChange,
@@ -342,8 +365,11 @@ export function QRColorPicker({
 }
 
 /**
- * Simple color swatch selector
+ * Purpose: Simple color swatch selector
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ColorSwatchPicker({
   value,
   onChange,

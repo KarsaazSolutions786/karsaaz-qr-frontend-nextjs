@@ -18,6 +18,11 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // ─── Copy Modal ───────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes CopyModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function CopyModal({
   translations,
   onClose,
@@ -88,6 +93,11 @@ function CopyModal({
 
 // ─── Inner page (needs useSearchParams) ──────────────────────────────────────
 
+/**
+ * Purpose: Executes ContentBlocksPageInner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function ContentBlocksPageInner() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
@@ -109,6 +119,11 @@ function ContentBlocksPageInner() {
 
   const allTranslations = translationsData?.data ?? []
 
+  /**
+   * Purpose: Sets translationfilter.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const setTranslationFilter = (id: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (id) params.set('translation_id', id)
@@ -117,6 +132,11 @@ function ContentBlocksPageInner() {
     setPage(1)
   }
 
+  /**
+   * Purpose: Executes handleDeleteAll functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDeleteAll = async () => {
     if (!translationId) {
       toast.warning(t('Please select a language first to delete blocks from.'))
@@ -127,11 +147,21 @@ function ContentBlocksPageInner() {
     await deleteAllMutation.mutateAsync(translationId)
   }
 
+  /**
+   * Purpose: Executes handleCopy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopy = async (sourceId: number, destinationId: number) => {
     await copyMutation.mutateAsync({ sourceId, destinationId })
     setShowCopyModal(false)
   }
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, title: string) => {
     if (confirm(t('Delete "{{title}}"?').replace('{{title}}', title))) {
       await deleteMutation.mutateAsync(id)
@@ -272,6 +302,11 @@ function ContentBlocksPageInner() {
   )
 }
 
+/**
+ * Purpose: Executes ContentBlocksPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ContentBlocksPage() {
   return (
     <Suspense fallback={

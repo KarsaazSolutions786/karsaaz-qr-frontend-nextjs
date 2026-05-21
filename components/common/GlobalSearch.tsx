@@ -41,6 +41,11 @@ const mockResults: SearchResult[] = [
   { id: '6', title: 'Jane Smith', category: 'users', href: '/users/2', icon: UserIcon },
 ]
 
+/**
+ * Purpose: Executes GlobalSearch functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GlobalSearch() {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
@@ -63,6 +68,11 @@ export function GlobalSearch() {
 
   // Ctrl+K shortcut
   useEffect(() => {
+    /**
+     * Purpose: Executes handleKeyDown functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault()

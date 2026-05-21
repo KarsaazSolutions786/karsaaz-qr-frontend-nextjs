@@ -12,6 +12,11 @@ interface CodeEditorProps {
   rows?: number;
 }
 
+/**
+ * Purpose: Executes CodeEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CodeEditor({ value, onChange, language = 'json', placeholder, className, readOnly, rows = 12 }: CodeEditorProps) {
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Tab') {

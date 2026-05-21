@@ -27,6 +27,11 @@ interface CornerFieldsProps {
   onChange: (settings: CornerSettings) => void;
 }
 
+/**
+ * Purpose: Executes CornerFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CornerFields({
   cornerSettings,
   onChange,
@@ -34,12 +39,22 @@ export default function CornerFields({
   const { t } = useTranslation();
   const [localSettings, setLocalSettings] = useState<CornerSettings>(cornerSettings);
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateSettings = (updates: Partial<CornerSettings>) => {
     const newSettings = { ...localSettings, ...updates };
     setLocalSettings(newSettings);
     onChange(newSettings);
   };
 
+  /**
+   * Purpose: Executes handleRadiusChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRadiusChange = (radius: number) => {
     if (localSettings.applyToAll) {
       updateSettings({ radius });
@@ -56,6 +71,11 @@ export default function CornerFields({
     }
   };
 
+  /**
+   * Purpose: Executes handleIndividualCorner functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleIndividualCorner = (
     corner: keyof NonNullable<CornerSettings['individual']>,
     value: number
@@ -98,6 +118,11 @@ export default function CornerFields({
     },
   ];
 
+  /**
+   * Purpose: Retrieves qrpreview.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getQRPreview = (
     borderRadius: string | number,
     label: string = ''

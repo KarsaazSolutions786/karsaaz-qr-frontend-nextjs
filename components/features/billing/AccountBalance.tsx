@@ -30,6 +30,11 @@ interface AccountBalanceProps {
 }
 
 // Mock API function - replace with actual API call
+/**
+ * Purpose: Executes fetchAccountBalance functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function fetchAccountBalance(): Promise<AccountBalanceData> {
   const response = await fetch('/api/account/balance')
   if (!response.ok) {
@@ -38,6 +43,11 @@ async function fetchAccountBalance(): Promise<AccountBalanceData> {
   return response.json()
 }
 
+/**
+ * Purpose: Executes AccountBalance functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AccountBalance({
   className,
   showAddButton = true,
@@ -60,6 +70,11 @@ export function AccountBalance({
     refetchInterval: 60 * 1000, // Refresh every minute
   })
 
+  /**
+   * Purpose: Executes handleRefresh functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRefresh = async () => {
     setIsRefreshing(true)
     try {
@@ -177,6 +192,11 @@ interface AccountBalanceWidgetProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes AccountBalanceWidget functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AccountBalanceWidget({ className }: AccountBalanceWidgetProps) {
   return <AccountBalance className={className} compact={false} showAddButton={true} />
 }
@@ -187,6 +207,11 @@ interface InlineBalanceProps {
   showCurrency?: boolean
 }
 
+/**
+ * Purpose: Executes InlineBalance functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function InlineBalance({ className, showCurrency = false }: InlineBalanceProps) {
   const {
     data: balanceData,
@@ -218,6 +243,11 @@ export function InlineBalance({ className, showCurrency = false }: InlineBalance
 }
 
 // Hook for accessing balance data
+/**
+ * Purpose: Executes useAccountBalance functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useAccountBalance() {
   const queryClient = useQueryClient()
 
@@ -227,6 +257,11 @@ export function useAccountBalance() {
     staleTime: 30 * 1000,
   })
 
+  /**
+   * Purpose: Executes refresh functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const refresh = () => {
     return queryClient.invalidateQueries({ queryKey: ['account-balance'] })
   }

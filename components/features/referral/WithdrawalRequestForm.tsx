@@ -23,6 +23,11 @@ interface WithdrawalRequestFormProps {
   onSuccess?: () => void
 }
 
+/**
+ * Purpose: Executes WithdrawalRequestForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WithdrawalRequestForm({ onSuccess }: WithdrawalRequestFormProps) {
   const { t } = useTranslation()
   const [submitting, setSubmitting] = useState(false)
@@ -43,6 +48,11 @@ export function WithdrawalRequestForm({ onSuccess }: WithdrawalRequestFormProps)
     },
   })
 
+  /**
+   * Purpose: Executes onSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const onSubmit = async (data: WithdrawalFormData) => {
     setSubmitting(true)
     setError('')

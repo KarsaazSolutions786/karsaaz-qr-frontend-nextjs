@@ -1,14 +1,11 @@
 import { envConfig } from '@/lib/config/env-config'
 
 /**
- * Resolves a backend-relative URL (e.g. `/api/design-assets/thumbnail/...`)
- * to a full URL pointing at the Laravel backend.
- *
- * - If the URL is already absolute (starts with http), returns it as-is.
- * - If the URL is a relative `/api/...` path, prefixes the backend host.
- * - If the URL is a frontend-local path (e.g. `/images/...`), returns as-is.
- * - Returns `null` for falsy input.
+ * Purpose: Resolves a backend-relative URL (e.g. `/api/design-assets/thumbnail/...`) to a full URL pointing at the Laravel backend. - If the URL is already absolute (starts with http), returns it as-is. - If the URL is a relative `/api/...` path, prefixes the backend host. - If the URL is a frontend-local path (e.g. `/images/...`), returns as-is. - Returns `null` for falsy input.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function resolveBackendUrl(url: string | null | undefined): string | null {
   if (!url) return null
 
@@ -25,6 +22,11 @@ export function resolveBackendUrl(url: string | null | undefined): string | null
   return url
 }
 
+/**
+ * Purpose: Retrieves backendhost.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getBackendHost(): string {
   // Priority 1: window.BACKEND_URL (runtime override)
   if (typeof window !== 'undefined' && (window as any).BACKEND_URL) {

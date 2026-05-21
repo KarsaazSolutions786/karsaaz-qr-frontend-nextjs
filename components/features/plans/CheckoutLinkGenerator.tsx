@@ -10,6 +10,11 @@ interface CheckoutLinkGeneratorProps {
 
 type BillingCycle = 'monthly' | 'annual'
 
+/**
+ * Purpose: Executes CheckoutLinkGenerator functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CheckoutLinkGenerator({ planId, planName }: CheckoutLinkGeneratorProps) {
   const { t } = useTranslation()
   const [cycle, setCycle] = useState<BillingCycle>('monthly')

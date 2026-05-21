@@ -17,6 +17,11 @@ interface VCardDataFormProps {
   onChange?: (data: Partial<VCardDataFormData>) => void
 }
 
+/**
+ * Purpose: Executes VCardDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function VCardDataForm({ defaultValues, onChange }: VCardDataFormProps) {
   const { t } = useTranslation()
   const {

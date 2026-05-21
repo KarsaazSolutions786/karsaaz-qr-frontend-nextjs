@@ -6,6 +6,11 @@ import { useGuest } from '@/lib/hooks/useGuest'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes GuestSignupPrompt functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function GuestSignupPrompt() {
   const { t } = useTranslation()
   const { shouldShowSignupPrompt, guestConfig } = useGuest()

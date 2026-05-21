@@ -37,6 +37,11 @@ const DEFAULT_VALUES: AuthSettingsFormData = {
   auth0: { enabled: false, client_id: '', client_secret: '', domain: '' },
 }
 
+/**
+ * Purpose: Executes AuthSettingsForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSettingsFormProps) {
   const { t } = useTranslation()
   const { register, handleSubmit, watch } = useForm<AuthSettingsFormData>({

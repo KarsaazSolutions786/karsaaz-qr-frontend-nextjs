@@ -18,6 +18,11 @@ export interface PlaygroundResponse {
   error: boolean
 }
 
+/**
+ * Purpose: Executes sendPlaygroundRequest functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export async function sendPlaygroundRequest({
   method,
   fullUrl,

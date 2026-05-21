@@ -26,12 +26,22 @@ interface DateRangeInputProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes startOfDay functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function startOfDay(date: Date): Date {
   const d = new Date(date)
   d.setHours(0, 0, 0, 0)
   return d
 }
 
+/**
+ * Purpose: Executes formatDate functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatDate(date: Date | undefined): string {
   if (!date) return ''
   return date.toLocaleDateString(undefined, {
@@ -87,6 +97,11 @@ const defaultPresets: PresetOption[] = [
   },
 ]
 
+/**
+ * Purpose: Executes DateRangeInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DateRangeInput({
   value,
   onChange,

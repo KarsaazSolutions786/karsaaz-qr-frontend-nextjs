@@ -2,7 +2,12 @@
  * SVG processor utilities for QR SVG manipulation.
  */
 
-/** Changes all fill and stroke colors on the SVG element tree. */
+/**
+ * Purpose: * Changes all fill and stroke colors on the SVG element tree. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function recolorSVG(svg: SVGElement, color: string): void {
   const elements = svg.querySelectorAll('*');
   elements.forEach((el) => {
@@ -23,7 +28,12 @@ export function recolorSVG(svg: SVGElement, color: string): void {
   }
 }
 
-/** Scales the SVG by updating its viewBox and width/height attributes. */
+/**
+ * Purpose: * Scales the SVG by updating its viewBox and width/height attributes. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function scaleSVG(svg: SVGElement, scale: number): void {
   const vb = svg.getAttribute('viewBox');
   const width = parseFloat(svg.getAttribute('width') || '0');
@@ -38,7 +48,12 @@ export function scaleSVG(svg: SVGElement, scale: number): void {
   }
 }
 
-/** Inserts a background rect behind all existing content. */
+/**
+ * Purpose: * Inserts a background rect behind all existing content. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function addBackgroundToSVG(
   svg: SVGElement,
   color: string,
@@ -74,7 +89,12 @@ export function addBackgroundToSVG(
   svg.insertBefore(rect, svg.firstChild);
 }
 
-/** Serializes an SVGElement to a data:image/svg+xml URL. */
+/**
+ * Purpose: * Serializes an SVGElement to a data:image/svg+xml URL. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function svgToDataURL(svg: SVGElement): string {
   const serializer = new XMLSerializer();
   const svgString = serializer.serializeToString(svg);

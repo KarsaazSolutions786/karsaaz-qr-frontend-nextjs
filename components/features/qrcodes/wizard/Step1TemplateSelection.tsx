@@ -16,6 +16,11 @@ interface Step1TemplateSelectionProps {
   isLoading?: boolean
 }
 
+/**
+ * Purpose: Executes Step1TemplateSelection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function Step1TemplateSelection({
   templates,
   selectedTemplateId: _selectedTemplateId,
@@ -51,6 +56,11 @@ export default function Step1TemplateSelection({
     })
   }, [templates, searchQuery, categoryFilter])
 
+  /**
+   * Purpose: Executes handleTemplateSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTemplateSelect = (template: QRCodeTemplate) => {
     onTemplateSelect(template)
   }

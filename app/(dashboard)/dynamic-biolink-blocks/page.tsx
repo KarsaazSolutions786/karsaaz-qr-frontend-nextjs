@@ -7,6 +7,11 @@ import { useDeleteDynamicBiolinkBlock } from '@/lib/hooks/mutations/useDynamicBi
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes DynamicBiolinkBlocksPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DynamicBiolinkBlocksPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -15,6 +20,11 @@ export default function DynamicBiolinkBlocksPage() {
 
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null)
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number) => {
     if (!confirm(t('Are you sure you want to delete this dynamic block?'))) return
     setDeleteTarget(id)

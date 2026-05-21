@@ -33,14 +33,11 @@ interface QuickStartBiolinksProps {
 }
 
 /**
- * Quick Start Component - Ready to use!
- * 
- * Usage:
- * <QuickStartBiolinks 
- *   qrCodeId="qr-123" 
- *   onSuccess={(id) => router.push(`/biolinks/${id}`)}
- * />
+ * Purpose: Quick Start Component - Ready to use! Usage: <QuickStartBiolinks qrCodeId="qr-123" onSuccess={(id) => router.push(`/biolinks/${id}`)} />
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export default function QuickStartBiolinks({
   qrCodeId,
   existingBiolinksId,
@@ -70,6 +67,11 @@ export default function QuickStartBiolinks({
     }
   });
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (formData: BiolinksFormData) => {
     setIsLoading(true);
 
@@ -113,6 +115,11 @@ export default function QuickStartBiolinks({
     }
   };
 
+  /**
+   * Purpose: Executes handleCancel functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCancel = () => {
     // Navigate back or show confirmation dialog
     if (confirm(t('Are you sure you want to cancel? Unsaved changes will be lost.'))) {
@@ -133,12 +140,18 @@ export default function QuickStartBiolinks({
 }
 
 /**
- * Alternative: Minimal Integration Example
- * 
- * For when you just need the form without the wrapper
+ * Purpose: Alternative: Minimal Integration Example For when you just need the form without the wrapper
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function MinimalBiolinksIntegration({ qrCodeId }: { qrCodeId: string }) {
   const { t } = useTranslation();
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (data: BiolinksFormData) => {
     const biolinks = await biolinksAPI.create({
       slug: qrCodeId,
@@ -154,8 +167,11 @@ export function MinimalBiolinksIntegration({ qrCodeId }: { qrCodeId: string }) {
 }
 
 /**
- * Example: Inline Usage in a Page
+ * Purpose: Example: Inline Usage in a Page
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ExampleUsageInPage() {
   // Get QR code ID from your route params or props
   const qrCodeId = 'qr-123'; // Replace with actual ID
@@ -174,8 +190,11 @@ export function ExampleUsageInPage() {
 }
 
 /**
- * Example: Edit Mode
+ * Purpose: Example: Edit Mode
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ExampleEditMode() {
   const biolinksId = 456; // From route params or props
 

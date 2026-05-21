@@ -17,6 +17,11 @@ export interface WizardStepProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes WizardStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WizardStep({
   stepNumber,
   title,
@@ -29,12 +34,22 @@ export function WizardStep({
   className,
 }: WizardStepProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes handleClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClick = () => {
     if (!isDisabled && onClick) {
       onClick();
     }
   };
 
+  /**
+   * Purpose: Executes handleKeyDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if ((e.key === 'Enter' || e.key === ' ') && !isDisabled && onClick) {
       e.preventDefault();

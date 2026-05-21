@@ -31,6 +31,11 @@ const CATEGORIES: Array<StickerCategory | 'all'> = [
   'custom',
 ];
 
+/**
+ * Purpose: Executes StickerCategoryFilter functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerCategoryFilter({
   selectedCategory,
   onCategoryChange,
@@ -100,6 +105,11 @@ export interface StickerCategoryDropdownProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerCategoryDropdown functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerCategoryDropdown({
   selectedCategory,
   onCategoryChange,
@@ -146,6 +156,11 @@ export interface StickerCategoryTabsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerCategoryTabs functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerCategoryTabs({
   selectedCategory,
   onCategoryChange,
@@ -202,6 +217,11 @@ export interface StickerCategoryChipsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerCategoryChips functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerCategoryChips({
   selectedCategory,
   onCategoryChange,

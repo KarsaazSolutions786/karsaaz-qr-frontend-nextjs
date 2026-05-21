@@ -42,6 +42,11 @@ const qrTypeOptions = QR_TYPES.map(t => ({
 const inputClass =
   'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm'
 
+/**
+ * Purpose: Executes EditPlanPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditPlanPage() {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
@@ -136,8 +141,20 @@ export default function EditPlanPage() {
     }
   }, [plan])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const set = (field: string, value: unknown) => setForm(prev => ({ ...prev, [field]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {

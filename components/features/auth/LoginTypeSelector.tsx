@@ -35,6 +35,11 @@ const poppins = Poppins({
   weight: ['400', '500', '600'],
 })
 
+/**
+ * Purpose: Executes LoginTypeSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LoginTypeSelector() {
   const searchParams = useSearchParams()
   const { data: statusData, isLoading, isError } = usePasswordlessStatus()
@@ -73,14 +78,13 @@ export function LoginTypeSelector() {
 }
 
 /**
- * Traditional login view — card matching Figma design spec exactly
- *
- * Card: 447×543, bg rgba(255,255,255,0.3), rounded-[23px],
- *       shadow 0px 3px 12px 0px rgba(54,54,54,0.3)
- *
- * @param isAdminMode  — show "Admin Login" subtitle instead of default
- * @param onSwitchToOtp — callback to go back to OTP login (shown when user manually switched)
+ * Purpose: Traditional login view — card matching Figma design spec exactly Card: 447×543, bg rgba(255,255,255,0.3), rounded-[23px], shadow 0px 3px 12px 0px rgba(54,54,54,0.3)
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: April 2026
  */
+
 function TraditionalLoginView({
   isAdminMode,
   onSwitchToOtp,

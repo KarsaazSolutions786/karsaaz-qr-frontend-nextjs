@@ -32,6 +32,11 @@ interface UpgradeRequiredModalProps {
   planLimit?: number
 }
 
+/**
+ * Purpose: Executes UpgradeRequiredModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function UpgradeRequiredModal({
   open,
   onClose,
@@ -43,6 +48,11 @@ export function UpgradeRequiredModal({
   const { t } = useTranslation()
   const router = useRouter()
 
+  /**
+   * Purpose: Executes handleUpgrade functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleUpgrade = () => {
     onClose()
     router.push(ROUTES.PRICING)

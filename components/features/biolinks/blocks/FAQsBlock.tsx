@@ -10,20 +10,40 @@ interface FAQsBlockProps {
   onUpdate?: (data: FAQsBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes FAQsBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function FAQsBlock({ block, isEditing, onUpdate }: FAQsBlockProps) {
   const { t } = useTranslation();
   const { title, subtitle, faqs } = block.data
   const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   if (isEditing) {
+    /**
+     * Purpose: Executes addFaq functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const addFaq = () => {
       onUpdate?.({ ...block.data, faqs: [...faqs, { question: '', answer: '' }] })
     }
 
+    /**
+     * Purpose: Deletes the specified resource.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const removeFaq = (index: number) => {
       onUpdate?.({ ...block.data, faqs: faqs.filter((_, i) => i !== index) })
     }
 
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const updateFaq = (index: number, field: 'question' | 'answer', value: string) => {
       const newFaqs = faqs.map((faq, i) =>
         i === index ? { question: faq.question, answer: faq.answer, [field]: value } : faq

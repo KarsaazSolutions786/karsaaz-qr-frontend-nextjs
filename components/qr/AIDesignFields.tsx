@@ -26,6 +26,11 @@ export interface AIDesignFieldsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes AIDesignFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AIDesignFields({
   value,
   onChange,
@@ -43,6 +48,11 @@ export function AIDesignFields({
   const validation = validateAIPrompt(prompt);
 
   // Handle prompt change
+  /**
+   * Purpose: Executes handlePromptChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newPrompt = e.target.value;
     setPrompt(newPrompt);
@@ -53,6 +63,11 @@ export function AIDesignFields({
   };
 
   // Handle style change
+  /**
+   * Purpose: Executes handleStyleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleStyleChange = (style: string) => {
     setSelectedStyle(style);
     onChange({
@@ -62,6 +77,11 @@ export function AIDesignFields({
   };
 
   // Handle example selection
+  /**
+   * Purpose: Executes handleExampleClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleExampleClick = (examplePrompt: string) => {
     setPrompt(examplePrompt);
     onChange({
@@ -72,6 +92,11 @@ export function AIDesignFields({
   };
 
   // Handle generate
+  /**
+   * Purpose: Executes handleGenerate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleGenerate = () => {
     if (validation.valid && onGenerate) {
       onGenerate(prompt, selectedStyle);

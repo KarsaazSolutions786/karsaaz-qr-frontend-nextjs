@@ -51,12 +51,27 @@ const allergenIcons: Record<keyof AllergenInfo, { icon: typeof Wheat; label: str
   eggs: { icon: Egg, label: 'E', tooltip: 'Contains Eggs', color: 'text-yellow-600 bg-yellow-50' },
 };
 
+/**
+ * Purpose: Executes MenuDisplay functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function MenuDisplay({ items, currencySymbol, primaryColor, accentColor }: MenuDisplayProps) {
   const { t } = useTranslation();
+  /**
+   * Purpose: Executes formatPrice functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatPrice = (price: number) => {
     return `${currencySymbol}${price.toFixed(2)}`;
   };
 
+  /**
+   * Purpose: Executes renderSpicyLevel functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderSpicyLevel = (level: number) => {
     return (
       <div className="flex items-center gap-1">

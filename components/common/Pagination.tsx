@@ -29,6 +29,13 @@ export interface PaginationProps {
   disabled?: boolean;
 }
 
+/**
+ * Purpose: Executes Pagination functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const Pagination = ({
   currentPage,
   totalPages,
@@ -50,11 +57,21 @@ export const Pagination = ({
   const hasNextPage = currentPage < totalPages;
   const hasPreviousPage = currentPage > 1;
 
+  /**
+   * Purpose: Executes handlePageChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages || page === currentPage || disabled) return;
     onPageChange(page);
   };
 
+  /**
+   * Purpose: Retrieves pagenumbers.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getPageNumbers = (): (number | 'ellipsis')[] => {
     if (totalPages <= maxVisiblePages) {
       return Array.from({ length: totalPages }, (_, i) => i + 1);

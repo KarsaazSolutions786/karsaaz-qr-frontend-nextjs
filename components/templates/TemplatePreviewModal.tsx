@@ -19,6 +19,11 @@ export interface TemplatePreviewModalProps {
   onUseTemplate?: (template: QRCodeTemplate) => void
 }
 
+/**
+ * Purpose: Executes TemplatePreviewModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TemplatePreviewModal({
   isOpen,
   onClose,
@@ -39,6 +44,11 @@ export default function TemplatePreviewModal({
   }, [isOpen])
 
   useEffect(() => {
+    /**
+     * Purpose: Executes handleKeyDown functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose()
@@ -53,12 +63,22 @@ export default function TemplatePreviewModal({
 
   if (!isOpen || !template) return null
 
+  /**
+   * Purpose: Executes handleBackdropClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose()
     }
   }
 
+  /**
+   * Purpose: Executes handleUseTemplate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUseTemplate = () => {
     if (onUseTemplate) {
       onUseTemplate(template)

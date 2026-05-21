@@ -15,7 +15,12 @@ import {
   type ErrorCategory,
 } from '@/lib/utils/error-boundary-utils'
 
-/** Per-category UI metadata */
+/**
+ * Purpose: * Per-category UI metadata 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 function getCategoryMeta(category: ErrorCategory) {
   switch (category) {
     case 'network':
@@ -64,7 +69,17 @@ interface State {
   retryCount: number
 }
 
+/**
+ * Purpose: Class definition for ErrorBoundary.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export class ErrorBoundary extends Component<Props, State> {
+  /**
+   * Purpose: Constructor for constructor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   constructor(props: Props) {
     super(props)
     this.state = {
@@ -76,6 +91,11 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   }
 
+  /**
+   * Purpose: Retrieves derivedstatefromerror.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getDerivedStateFromError(error: Error): Partial<State> {
     return {
       hasError: true,
@@ -85,6 +105,11 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   }
 
+  /**
+   * Purpose: Executes componentDidCatch functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     const category = categorizeError(error)
     const retryable = isRetryableError(error)
@@ -126,6 +151,11 @@ export class ErrorBoundary extends Component<Props, State> {
     }
   }
 
+  /**
+   * Purpose: Executes render functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
@@ -199,8 +229,11 @@ export class ErrorBoundary extends Component<Props, State> {
 }
 
 /**
- * Functional wrapper for error boundary
+ * Purpose: Functional wrapper for error boundary
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
   fallback?: ReactNode
@@ -215,8 +248,11 @@ export function withErrorBoundary<P extends object>(
 }
 
 /**
- * Simple error fallback component
+ * Purpose: Simple error fallback component
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ErrorFallback({ error, resetError }: { error: Error; resetError: () => void }) {
   const { t } = useTranslation()
   return (

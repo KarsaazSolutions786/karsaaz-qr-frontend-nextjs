@@ -21,12 +21,22 @@ interface AudioRecorderProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes formatTime functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60)
   const s = Math.floor(seconds % 60)
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
 }
 
+/**
+ * Purpose: Executes AudioRecorder functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AudioRecorder({
   onRecordingComplete,
   maxDuration = 120,

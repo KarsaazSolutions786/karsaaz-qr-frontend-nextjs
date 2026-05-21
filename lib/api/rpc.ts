@@ -68,10 +68,11 @@ const DEDUP_WINDOW_MS = 15000
 // ─── Core API ────────────────────────────────────────────────────────────────
 
 /**
- * Execute a single RPC method.
- *
- * @throws {RpcError} If the method returns an error
+ * Purpose: Execute a single RPC method.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export async function rpc<T = unknown>(
   method: string,
   params: Record<string, unknown> = {},
@@ -107,9 +108,11 @@ export async function rpc<T = unknown>(
 }
 
 /**
- * Execute multiple RPC calls in a single HTTP request.
- * Returns a Map keyed by method name.
+ * Purpose: Execute multiple RPC calls in a single HTTP request. Returns a Map keyed by method name.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export async function rpcBatch(
   calls: RpcCallDef[],
   options: RpcOptions = {}
@@ -176,10 +179,11 @@ export async function rpcBatch(
 }
 
 /**
- * Shorthand for composite endpoints (server-side aggregation).
- * Participates in dedup by default (15s window) — callers can pass skipDedup: true
- * to bypass when they need a guaranteed fresh response (e.g., after mutations).
+ * Purpose: Shorthand for composite endpoints (server-side aggregation). Participates in dedup by default (15s window) — callers can pass skipDedup: true to bypass when they need a guaranteed fresh response (e.g., after mutations).
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export async function rpcComposite<T = unknown>(
   name: string,
   params: Record<string, unknown> = {},
@@ -189,14 +193,22 @@ export async function rpcComposite<T = unknown>(
 }
 
 /**
- * Clear dedup cache. Call on logout or user switch.
+ * Purpose: Clear dedup cache. Call on logout or user switch.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function rpcClearCache(): void {
   _dedupCache.clear()
 }
 
 // ─── Transport ───────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Retrieves baseurl.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function _getBaseUrl(): string {
   if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).BACKEND_URL) {
     return `${(window as unknown as Record<string, unknown>).BACKEND_URL}`
@@ -204,6 +216,11 @@ function _getBaseUrl(): string {
   return envConfig.API_URL
 }
 
+/**
+ * Purpose: Executes _rpcFetch functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 async function _rpcFetch(
   body: JsonRpcRequest | JsonRpcRequest[],
   isPublic = false,
@@ -249,16 +266,31 @@ async function _rpcFetch(
   return response.json()
 }
 
+/**
+ * Purpose: Executes _dedupKey functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function _dedupKey(method: string, params: Record<string, unknown>): string {
   return `${method}:${JSON.stringify(params || {})}`
 }
 
 // ─── Error Class ─────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Class definition for RpcError.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export class RpcError extends Error {
   code: number
   data: unknown
 
+  /**
+   * Purpose: Constructor for constructor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   constructor(code: number, message: string, data?: unknown) {
     super(message)
     this.name = 'RpcError'

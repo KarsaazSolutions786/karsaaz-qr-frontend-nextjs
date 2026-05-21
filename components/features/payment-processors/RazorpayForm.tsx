@@ -10,16 +10,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Razorpay payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Integration Type (onetime / recurring)
- * - Key ID
- * - Key Secret
- * - Webhook Secret
- *
- * Webhook is NOT auto-registered; a manual webhook URL is displayed.
+ * Purpose: Razorpay payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Integration Type (onetime / recurring) - Key ID - Key Secret - Webhook Secret Webhook is NOT auto-registered; a manual webhook URL is displayed.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function RazorpayForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

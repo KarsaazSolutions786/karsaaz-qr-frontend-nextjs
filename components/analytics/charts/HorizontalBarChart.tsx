@@ -37,6 +37,11 @@ interface HorizontalBarChartProps {
   showPercentage?: boolean
 }
 
+/**
+ * Purpose: Executes HorizontalBarChart functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function HorizontalBarChart({
   data,
   height = 300,

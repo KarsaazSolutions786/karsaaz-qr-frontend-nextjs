@@ -42,6 +42,11 @@ const TERMINAL_STATUSES: QRGenerationStatus[] = ['ready', 'failed']
 
 // ─── API fetch ───────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes fetchGenerationStatus functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
+ */
 async function fetchGenerationStatus(id: string): Promise<QRGenerationStatusResponse> {
   const { data } = await apiClient.get<QRGenerationStatusResponse>(
     `/qrcodes/${id}/generation-status`
@@ -52,23 +57,11 @@ async function fetchGenerationStatus(id: string): Promise<QRGenerationStatusResp
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 /**
- * Poll `GET /api/qrcodes/{id}/generation-status` every 2 seconds until the
- * QR code generation is complete or has failed.
- *
- * Polling stops automatically when:
- *   - status === 'ready' or 'failed'  (terminal state)
- *   - 30 polls have been made (60-second timeout)
- *   - id is falsy (hook is disabled)
- *
- * @param id - QR code ID to poll. Pass null/undefined to disable the hook.
- *
- * @example
- * const { isReady, svgUrl, isPolling, error } = useQRGenerationStatus(qrId)
- *
- * if (isPolling) return <Spinner />
- * if (isReady)   return <img src={svgUrl} />
- * if (error)     return <ErrorMessage message={error} />
+ * Purpose: Poll `GET /api/qrcodes/{id}/generation-status` every 2 seconds until the QR code generation is complete or has failed. Polling stops automatically when: - status === 'ready' or 'failed'  (terminal state) - 30 polls have been made (60-second timeout) - id is falsy (hook is disabled) const { isReady, svgUrl, isPolling, error } = useQRGenerationStatus(qrId) if (isPolling) return <Spinner /> if (isReady)   return <img src={svgUrl} /> if (error)     return <ErrorMessage message={error} />
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: May 2026
  */
+
 export function useQRGenerationStatus(
   id: string | null | undefined
 ): UseQRGenerationStatusResult {

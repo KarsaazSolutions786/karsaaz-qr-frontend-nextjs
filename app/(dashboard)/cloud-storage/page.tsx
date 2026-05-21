@@ -24,9 +24,11 @@ import { useTranslation } from '@/lib/i18n'
 // ─── Helper Functions ───────────────────────────────────────────────────
 
 /**
- * Get normalized connection status from backend fields
- * Per CLOUD_STORAGE_DOCUMENTATION.md Section 9
+ * Purpose: Get normalized connection status from backend fields Per CLOUD_STORAGE_DOCUMENTATION.md Section 9
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getConnectionStatus(connection: CloudConnection): 'connected' | 'expired' | 'inactive' {
   // Support legacy status field
   if (connection.status) {
@@ -39,15 +41,21 @@ function getConnectionStatus(connection: CloudConnection): 'connected' | 'expire
 }
 
 /**
- * Get connection email (handles both field names)
+ * Purpose: Get connection email (handles both field names)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getConnectionEmail(connection: CloudConnection): string | undefined {
   return connection.account_email || connection.email
 }
 
 /**
- * Check if backup job is in progress
+ * Purpose: Check if backup job is in progress
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function isJobInProgress(status: BackupJobStatusLegacy): boolean {
   return status === 'pending' || status === 'processing' || status === 'in_progress'
 }
@@ -117,12 +125,11 @@ const PROVIDERS: ProviderInfo[] = [
 // ─── Backup Modal ────────────────────────────────────────────────────────
 
 /**
- * Backup Modal per CLOUD_STORAGE_DOCUMENTATION.md Section 10
- * Options:
- * - include_designs: QR code design data (default: true)
- * - include_analytics: Scan statistics (default: true)
- * - include_images: SVG + PNG images (default: false, increases backup size)
+ * Purpose: Backup Modal per CLOUD_STORAGE_DOCUMENTATION.md Section 10 Options: - include_designs: QR code design data (default: true) - include_analytics: Scan statistics (default: true) - include_images: SVG + PNG images (default: false, increases backup size)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function BackupModal({
   connections,
   onClose,
@@ -283,6 +290,11 @@ function BackupModal({
 
 // ─── MEGA Connect Modal ──────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes MegaConnectModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function MegaConnectModal({
   onClose,
   onConnect,
@@ -349,12 +361,11 @@ function MegaConnectModal({
 // ─── Backup Progress Component ───────────────────────────────────────────
 
 /**
- * Real-time backup progress tracker per CLOUD_STORAGE_DOCUMENTATION.md Section 11
- * - Polls every 2s while pending/processing
- * - Shows progress bar with percentage
- * - Displays "{processed}/{total} QR codes"
- * - Shows file size on completion
+ * Purpose: Real-time backup progress tracker per CLOUD_STORAGE_DOCUMENTATION.md Section 11 - Polls every 2s while pending/processing - Shows progress bar with percentage - Displays "{processed}/{total} QR codes" - Shows file size on completion
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function BackupProgress({
   job,
   onCancel,
@@ -370,6 +381,11 @@ function BackupProgress({
   const isInProgress = isJobInProgress(job.status)
   
   // Format file size
+  /**
+   * Purpose: Executes formatSize functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatSize = (bytes?: number) => {
     if (!bytes) return '—'
     if (bytes < 1024) return `${bytes} B`
@@ -443,6 +459,11 @@ function BackupProgress({
 
 // ─── Main Page ───────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes CloudStoragePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CloudStoragePage() {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<'connections' | 'history'>('connections')
@@ -474,6 +495,11 @@ export default function CloudStoragePage() {
   const backups = backupJobs || []
 
   // Get provider info
+  /**
+   * Purpose: Retrieves providerinfo.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getProviderInfo = (provider: CloudProvider) =>
     PROVIDERS.find(p => p.id === provider)
 
@@ -522,6 +548,11 @@ export default function CloudStoragePage() {
   }, [createBackup])
 
   // Format file size
+  /**
+   * Purpose: Executes formatSize functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatSize = (bytes?: number) => {
     if (!bytes) return '—'
     if (bytes < 1024) return `${bytes} B`

@@ -45,6 +45,11 @@ const availablePlugins: Plugin[] = [
   },
 ]
 
+/**
+ * Purpose: Executes PluginsAvailablePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PluginsAvailablePage() {
   const { t } = useTranslation()
   const [search, setSearch] = useState('')

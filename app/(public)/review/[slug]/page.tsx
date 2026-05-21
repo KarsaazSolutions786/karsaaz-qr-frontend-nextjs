@@ -8,6 +8,13 @@ const BUSINESS_REVIEW_TYPES = ['business-review', 'review', 'rating']
 const GOOGLE_REVIEW_TYPES = ['google-review']
 const ALL_REVIEW_TYPES = [...BUSINESS_REVIEW_TYPES, ...GOOGLE_REVIEW_TYPES]
 
+/**
+ * Purpose: Retrieves reviewdata.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 async function getReviewData(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -26,6 +33,11 @@ async function getReviewData(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const result = await getReviewData(params.slug)
 
@@ -58,6 +70,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes PublicReviewPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export default async function PublicReviewPage({ params }: { params: { slug: string } }) {
   const result = await getReviewData(params.slug)
 

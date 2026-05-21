@@ -21,6 +21,11 @@ export interface StateRecoveryModalProps {
   onDiscard?: () => void;
 }
 
+/**
+ * Purpose: Executes StateRecoveryModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StateRecoveryModal({ onRestore, onDiscard }: StateRecoveryModalProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -36,11 +41,21 @@ export function StateRecoveryModal({ onRestore, onDiscard }: StateRecoveryModalP
     }
   }, []);
 
+  /**
+   * Purpose: Executes handleRestore functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRestore = () => {
     setIsOpen(false);
     onRestore?.();
   };
 
+  /**
+   * Purpose: Executes handleDiscard functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDiscard = () => {
     clearPersistedState();
     setIsOpen(false);
@@ -150,6 +165,11 @@ export interface StateRecoveryBannerProps {
   onDismiss?: () => void;
 }
 
+/**
+ * Purpose: Executes StateRecoveryBanner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StateRecoveryBanner({ onRestore, onDismiss }: StateRecoveryBannerProps) {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
@@ -161,11 +181,21 @@ export function StateRecoveryBanner({ onRestore, onDismiss }: StateRecoveryBanne
     }
   }, []);
 
+  /**
+   * Purpose: Executes handleRestore functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRestore = () => {
     setIsVisible(false);
     onRestore?.();
   };
 
+  /**
+   * Purpose: Executes handleDismiss functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDismiss = () => {
     clearPersistedState();
     setIsVisible(false);
@@ -215,8 +245,11 @@ export function StateRecoveryBanner({ onRestore, onDismiss }: StateRecoveryBanne
 }
 
 /**
- * Hook for state recovery
+ * Purpose: Hook for state recovery
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useStateRecovery() {
   const [shouldShowRecovery, setShouldShowRecovery] = useState(false);
 

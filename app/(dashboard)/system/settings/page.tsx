@@ -18,6 +18,11 @@ const CONFIG_KEYS = [
   'seo.meta_description',
 ]
 
+/**
+ * Purpose: Executes SystemSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SystemSettingsPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
@@ -36,11 +41,21 @@ export default function SystemSettingsPage() {
     }
   }, [configs])
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (key: string, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }))
     setSaved(false)
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     await save(Object.entries(formData).map(([key, value]) => ({ key, value })))

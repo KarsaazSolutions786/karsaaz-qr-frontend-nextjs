@@ -19,6 +19,11 @@ const typeStyles: Record<WebsiteBannerProps['type'], string> = {
   promo: 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white',
 }
 
+/**
+ * Purpose: Executes WebsiteBanner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WebsiteBanner({ type, message, dismissible = false, onDismiss }: WebsiteBannerProps) {
   const { t } = useTranslation()
   return (

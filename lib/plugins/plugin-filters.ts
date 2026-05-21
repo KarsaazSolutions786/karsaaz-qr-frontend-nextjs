@@ -24,6 +24,11 @@ export const DEFAULT_FILTER_VALUES: Record<FilterName, any> = {
   [FILTER_NAMES.TEMPLATE_DATA]: {},
 };
 
+/**
+ * Purpose: Retrieves defaultfiltervalue.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function getDefaultFilterValue(filterName: FilterName): any {
   return DEFAULT_FILTER_VALUES[filterName];
 }

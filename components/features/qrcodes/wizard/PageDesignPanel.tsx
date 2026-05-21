@@ -95,16 +95,31 @@ export { DEFAULT_WEBPAGE_DESIGN }
 /*  Component                                                          */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Purpose: Executes PageDesignPanel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function PageDesignPanel({ value, onChange }: PageDesignPanelProps) {
   const { t } = useTranslation()
   const [isDragging, setIsDragging] = useState(false)
 
   const data = { ...DEFAULT_WEBPAGE_DESIGN, ...value }
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const update = (patch: Partial<WebpageDesignData>) => {
     onChange({ ...data, ...patch })
   }
 
+  /**
+   * Purpose: Executes handleImageFile functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleImageFile = (file: File) => {
     if (!file.type.startsWith('image/')) return
     const reader = new FileReader()
@@ -115,6 +130,11 @@ export default function PageDesignPanel({ value, onChange }: PageDesignPanelProp
     reader.readAsDataURL(file)
   }
 
+  /**
+   * Purpose: Executes handleDrop functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(false)

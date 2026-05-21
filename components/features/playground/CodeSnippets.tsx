@@ -25,6 +25,11 @@ interface Props {
   body: string
 }
 
+/**
+ * Purpose: Executes CodeSnippets functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function CodeSnippets({ method, fullUrl, apiKey, body }: Props) {
   const [lang, setLang] = useState<Lang>('curl')
   const [copied, setCopied] = useState(false)
@@ -40,6 +45,11 @@ export function CodeSnippets({ method, fullUrl, apiKey, body }: Props) {
 
   const currentSnippet = snippets[lang]
 
+  /**
+   * Purpose: Executes copy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copy = async () => {
     await navigator.clipboard.writeText(currentSnippet)
     setCopied(true)

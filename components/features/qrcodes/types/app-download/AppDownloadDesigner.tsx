@@ -36,12 +36,27 @@ const tabs: DesignerTab[] = [
   { id: 'advanced', label: 'Advanced', icon: '⚙️' },
 ]
 
+/**
+ * Purpose: Executes AppDownloadDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<AppDownloadDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderAppOptionsContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderAppOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('App Display Options')}</h4>
@@ -273,6 +288,11 @@ export function AppDownloadDesigner({ design, onChange }: AppDownloadDesignerPro
     </div>
   )
 
+  /**
+   * Purpose: Executes renderAdvancedContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderAdvancedContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Advanced Settings')}</h4>

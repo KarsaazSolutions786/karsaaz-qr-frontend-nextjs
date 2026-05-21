@@ -3,6 +3,11 @@ import { notFound } from 'next/navigation'
 import FormPreview from '@/components/public/lead-form/FormPreview'
 import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
+/**
+ * Purpose: Retrieves leadform.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getLeadForm(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -20,6 +25,11 @@ async function getLeadForm(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const form = await getLeadForm(params.slug)
 
@@ -46,6 +56,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes PublicLeadFormPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function PublicLeadFormPage({ params }: { params: { slug: string } }) {
   const form = await getLeadForm(params.slug)
 

@@ -75,8 +75,11 @@ export interface BackendDesignConfig {
 }
 
 /**
- * Transform React DesignerConfig to backend design format
+ * Purpose: Transform React DesignerConfig to backend design format
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function transformDesignToBackend(design: Partial<DesignerConfig>): BackendDesignConfig {
   const foregroundFill = design.foregroundFill
   const background = design.background
@@ -215,8 +218,13 @@ export function transformDesignToBackend(design: Partial<DesignerConfig>): Backe
 }
 
 /**
- * Transform backend design format to React DesignerConfig
+ * Purpose: Transform backend design format to React DesignerConfig
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Moiz Ansari
+ * Last Updated: May 2026
  */
+
 export function transformDesignFromBackend(
   backendDesign: BackendDesignConfig | Record<string, any>
 ): Partial<DesignerConfig> {

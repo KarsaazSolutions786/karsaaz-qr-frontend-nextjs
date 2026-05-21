@@ -24,6 +24,11 @@ const NAV = [
   { href: '/org-portal/webhooks', label: 'Webhooks', icon: Radio },
 ]
 
+/**
+ * Purpose: Executes PortalShell functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 function PortalShell({ children }: { children: React.ReactNode }) {
   const { org, isLoading, isAuthenticated, logout } = useOrgPortalAuth()
   const router = useRouter()
@@ -109,6 +114,11 @@ function PortalShell({ children }: { children: React.ReactNode }) {
   )
 }
 
+/**
+ * Purpose: Executes OrgPortalLayout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrgPortalLayout({ children }: { children: React.ReactNode }) {
   return (
     <OrgPortalAuthProvider>

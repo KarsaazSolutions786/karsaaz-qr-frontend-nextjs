@@ -20,6 +20,11 @@ export interface GoogleAuthModalProps {
   onError?: (error: Error) => void;
 }
 
+/**
+ * Purpose: Executes GoogleAuthModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GoogleAuthModal({
   isOpen,
   onClose,
@@ -33,6 +38,11 @@ export function GoogleAuthModal({
 
   if (!isOpen) return null;
 
+  /**
+   * Purpose: Executes handleSuccess functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSuccess = async (_credential: string) => {
     setAuthState('loading');
     try {
@@ -68,12 +78,22 @@ export function GoogleAuthModal({
     }
   };
 
+  /**
+   * Purpose: Executes handleError functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleError = (error: Error) => {
     setAuthState('error');
     setErrorMessage(error.message);
     onError?.(error);
   };
 
+  /**
+   * Purpose: Executes handleClose functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClose = () => {
     if (authState !== 'loading') {
       onClose();

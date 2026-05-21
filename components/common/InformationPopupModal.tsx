@@ -21,6 +21,11 @@ interface InformationPopupModalProps {
   linkText?: string
 }
 
+/**
+ * Purpose: Executes InformationPopupModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function InformationPopupModal({
   isOpen,
   onClose,

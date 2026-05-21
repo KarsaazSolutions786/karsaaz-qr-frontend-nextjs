@@ -5,6 +5,11 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { useOrgPortalAuth } from '@/lib/context/OrgPortalAuthContext'
 import { Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react'
 
+/**
+ * Purpose: Executes AcceptInvitePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function AcceptInvitePage() {
   const params = useSearchParams()
   const router = useRouter()
@@ -24,6 +29,11 @@ export default function AcceptInvitePage() {
     if (!inviteToken || !orgSlug) setError('Invalid invite link.')
   }, [inviteToken, orgSlug])
 
+  /**
+   * Purpose: Executes submit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (password.length < 8) {

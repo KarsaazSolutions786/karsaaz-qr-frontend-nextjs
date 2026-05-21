@@ -31,6 +31,11 @@ interface MailStepProps {
   showSkipOption?: boolean
 }
 
+/**
+ * Purpose: Executes MailStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function MailStep({
   config,
   onChange,
@@ -44,12 +49,22 @@ export function MailStep({
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null)
   const [showSkipConfirm, setShowSkipConfirm] = useState(false)
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (field: keyof MailConfig, value: string) => {
     onChange({ ...config, [field]: value })
     // Clear test result when config changes
     if (testResult) setTestResult(null)
   }
 
+  /**
+   * Purpose: Executes handleTestEmail functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTestEmail = async () => {
     if (!testEmail || !onTestEmail) return
 

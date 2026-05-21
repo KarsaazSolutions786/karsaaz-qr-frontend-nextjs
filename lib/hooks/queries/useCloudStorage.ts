@@ -6,8 +6,11 @@ import { cloudStorageAPI, type CreateBackupData, type OAuthCallbackData, type Me
 import { queryKeys } from '@/lib/query/keys'
 
 /**
- * Hook to list all cloud storage connections
+ * Purpose: Hook to list all cloud storage connections
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useCloudConnections() {
   return useQuery({
     queryKey: queryKeys.cloudStorage.connections(),
@@ -17,8 +20,11 @@ export function useCloudConnections() {
 }
 
 /**
- * Hook to get a single connection
+ * Purpose: Hook to get a single connection
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useCloudConnection(id: string | null) {
   return useQuery({
     queryKey: queryKeys.cloudStorage.connection(id || ''),
@@ -29,8 +35,11 @@ export function useCloudConnection(id: string | null) {
 }
 
 /**
- * Hook to list backup jobs
+ * Purpose: Hook to list backup jobs
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useBackupJobs() {
   return useQuery({
     queryKey: queryKeys.cloudStorage.backupJobs(),
@@ -40,9 +49,11 @@ export function useBackupJobs() {
 }
 
 /**
- * Hook to get a single backup job (for polling progress)
- * Polls every 2s while job is pending/processing per CLOUD_STORAGE_DOCUMENTATION.md
+ * Purpose: Hook to get a single backup job (for polling progress) Polls every 2s while job is pending/processing per CLOUD_STORAGE_DOCUMENTATION.md
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useBackupJob(id: string | null) {
   return useQuery({
     queryKey: queryKeys.cloudStorage.backupJob(id || ''),
@@ -65,9 +76,11 @@ export function useBackupJob(id: string | null) {
 export type OAuthPopupStatus = 'idle' | 'waiting' | 'success' | 'error'
 
 /**
- * Hook to manage OAuth popup flow with message listening
- * Per CLOUD_STORAGE_DOCUMENTATION.md Section 7
+ * Purpose: Hook to manage OAuth popup flow with message listening Per CLOUD_STORAGE_DOCUMENTATION.md Section 7
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useOAuthPopup(onComplete?: () => void) {
   const queryClient = useQueryClient()
   const popupRef = useRef<Window | null>(null)
@@ -166,11 +179,19 @@ export function useOAuthPopup(onComplete?: () => void) {
 }
 
 /**
- * Mutations for cloud storage operations
+ * Purpose: Mutations for cloud storage operations
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useCloudStorageMutations() {
   const queryClient = useQueryClient()
 
+  /**
+   * Purpose: Executes invalidateAll functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const invalidateAll = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.cloudStorage.connections() })
     queryClient.invalidateQueries({ queryKey: queryKeys.cloudStorage.backupJobs() })

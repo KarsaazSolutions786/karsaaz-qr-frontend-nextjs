@@ -3,15 +3,11 @@
 import { useTranslation } from '@/lib/i18n'
 
 /**
- * Password strength calculator — reused across RegisterForm, ResetPasswordForm, etc.
- *
- * Scoring criteria (5 total):
- * - Length >= 8 characters
- * - Length >= 12 characters
- * - Mix of lower + uppercase letters
- * - Contains digits
- * - Contains special characters
+ * Purpose: Password strength calculator — reused across RegisterForm, ResetPasswordForm, etc. Scoring criteria (5 total): - Length >= 8 characters - Length >= 12 characters - Mix of lower + uppercase letters - Contains digits - Contains special characters
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getPasswordStrength(password: string): {
   score: number
   label: string
@@ -33,9 +29,11 @@ export function getPasswordStrength(password: string): {
 }
 
 /**
- * PasswordStrengthBar — visual strength indicator component.
- * Renders a progress bar with label text.
+ * Purpose: PasswordStrengthBar — visual strength indicator component. Renders a progress bar with label text.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function PasswordStrengthBar({ password }: { password: string }) {
   const { t } = useTranslation()
   const strength = getPasswordStrength(password)

@@ -22,6 +22,11 @@ interface BarChartProps {
   layout?: 'horizontal' | 'vertical'
 }
 
+/**
+ * Purpose: Executes BarChart functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BarChart({
   data,
   dataKey = 'value',

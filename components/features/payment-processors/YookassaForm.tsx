@@ -9,14 +9,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * YooKassa (Russia) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Shop ID
- * - Secret Key
- *
- * Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
+ * Purpose: YooKassa (Russia) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Shop ID - Secret Key Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function YookassaForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

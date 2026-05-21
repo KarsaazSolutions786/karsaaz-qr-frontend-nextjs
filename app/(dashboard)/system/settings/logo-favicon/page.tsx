@@ -33,6 +33,11 @@ interface FileUploadZoneProps {
   previewSize: { width: number; height: number }
 }
 
+/**
+ * Purpose: Executes FileUploadZone functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function FileUploadZone({
   label,
   description,
@@ -155,6 +160,11 @@ function FileUploadZone({
   )
 }
 
+/**
+ * Purpose: Executes LogoFaviconSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function LogoFaviconSettingsPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading, isError } = useSystemConfigs(CONFIG_KEYS)

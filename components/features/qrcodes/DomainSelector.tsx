@@ -10,9 +10,11 @@ interface DomainSelectorProps {
 }
 
 /**
- * T182: Reusable domain selector for QR code create/edit forms.
- * Wraps DomainSelect with QR-form-specific labelling.
+ * Purpose: T182: Reusable domain selector for QR code create/edit forms. Wraps DomainSelect with QR-form-specific labelling.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function DomainSelector({ value, onChange, className }: DomainSelectorProps) {
   const { t } = useTranslation()
   return (

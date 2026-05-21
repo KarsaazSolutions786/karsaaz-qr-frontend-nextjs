@@ -10,6 +10,11 @@ import { useAuth } from '@/lib/context/AuthContext'
 import { Wallet, ArrowUpRight, ArrowDownLeft, AlertTriangle } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes AccountCreditsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AccountCreditsPage() {
   const { t } = useTranslation()
   const { user } = useAuth()

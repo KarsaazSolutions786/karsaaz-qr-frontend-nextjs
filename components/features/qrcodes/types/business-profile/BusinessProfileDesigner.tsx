@@ -43,12 +43,27 @@ const tabs: DesignerTab[] = [
   { id: 'sections', label: 'Sections', icon: '📋' },
 ]
 
+/**
+ * Purpose: Executes BusinessProfileDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<BusinessProfileDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderProfileOptionsContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderProfileOptionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Profile Layout')}</h4>
@@ -251,6 +266,11 @@ export function BusinessProfileDesigner({ design, onChange }: BusinessProfileDes
     </div>
   )
 
+  /**
+   * Purpose: Executes renderSectionsContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderSectionsContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('Page Sections')}</h4>

@@ -13,6 +13,11 @@ interface StarsQuestionProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes StarsQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StarsQuestion({
   value,
   onChange,

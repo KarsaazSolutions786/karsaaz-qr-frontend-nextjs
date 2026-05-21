@@ -3,6 +3,11 @@
 import { PricingPageContent } from './PricingPageContent'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes PricingPageWrapper functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function PricingPageWrapper() {
   const { t } = useTranslation()
 

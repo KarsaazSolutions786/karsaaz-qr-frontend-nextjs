@@ -19,6 +19,11 @@ export interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement
   onError?: () => void;
 }
 
+/**
+ * Purpose: Executes LazyImage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LazyImage({
   src,
   alt,
@@ -78,6 +83,11 @@ export interface LazyLoadWrapperProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes LazyLoadWrapper functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LazyLoadWrapper({
   children,
   placeholder,
@@ -114,6 +124,11 @@ export interface ProgressiveImageProps extends React.ImgHTMLAttributes<HTMLImage
   placeholder?: string;
 }
 
+/**
+ * Purpose: Executes ProgressiveImage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ProgressiveImage({
   src,
   alt,

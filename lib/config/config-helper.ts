@@ -15,14 +15,21 @@ interface CacheEntry<T> {
 
 let configCache: CacheEntry<Record<string, string | null>> | null = null
 
+/**
+ * Purpose: Checks if cachevalid.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function isCacheValid<T>(entry: CacheEntry<T> | null): entry is CacheEntry<T> {
   return entry !== null && Date.now() < entry.expiresAt
 }
 
 /**
- * Fetch system settings from the API and cache the result.
- * Pass specific keys or omit for common site-level keys.
+ * Purpose: Fetch system settings from the API and cache the result. Pass specific keys or omit for common site-level keys.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getSystemConfig(
   keys: string[] = ['site_name', 'site_logo', 'site_favicon', 'feature_flags']
 ): Promise<Record<string, string | null>> {
@@ -53,19 +60,34 @@ export async function getSystemConfig(
   }
 }
 
-/** Get the configured site name */
+/**
+ * Purpose: * Get the configured site name 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export async function getSiteName(): Promise<string> {
   const config = await getSystemConfig(['site_name'])
   return config['site_name'] ?? 'Karsaaz QR'
 }
 
-/** Get the configured site logo URL */
+/**
+ * Purpose: * Get the configured site logo URL 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export async function getSiteLogo(): Promise<string | null> {
   const config = await getSystemConfig(['site_logo'])
   return config['site_logo'] ?? null
 }
 
-/** Get server-side feature flags as a parsed object */
+/**
+ * Purpose: * Get server-side feature flags as a parsed object 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export async function getFeatureFlags(): Promise<Record<string, boolean>> {
   const config = await getSystemConfig(['feature_flags'])
   const raw = config['feature_flags']
@@ -85,7 +107,12 @@ export async function getFeatureFlags(): Promise<Record<string, boolean>> {
   }
 }
 
-/** Invalidate the in-memory config cache */
+/**
+ * Purpose: * Invalidate the in-memory config cache 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function clearConfigCache(): void {
   configCache = null
 }

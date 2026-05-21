@@ -53,12 +53,22 @@ const FALLBACK_COLORS = [
   '#06b6d4',
 ]
 
+/**
+ * Purpose: Retrieves oscolor.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function getOSColor(osName: string, index: number): string {
   return OS_COLORS[osName] ?? FALLBACK_COLORS[index % FALLBACK_COLORS.length] ?? '#6366f1'
 }
 
 // ---------- Loading skeleton ----------
 
+/**
+ * Purpose: Executes ChartSkeleton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function ChartSkeleton() {
   return (
     <div className="flex items-center justify-center py-8">
@@ -75,6 +85,11 @@ function ChartSkeleton() {
 // ---------- Active shape renderer (for hover effect on segments) ----------
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+/**
+ * Purpose: Executes renderActiveShape functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function renderActiveShape(props: any) {
   const {
     cx,
@@ -135,6 +150,11 @@ function renderActiveShape(props: any) {
 
 // ---------- Custom tooltip ----------
 
+/**
+ * Purpose: Executes CustomTooltip functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function CustomTooltip({
   active,
   payload,
@@ -169,6 +189,11 @@ function CustomTooltip({
 
 // ---------- Component ----------
 
+/**
+ * Purpose: Executes ScansPerOSChart functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function ScansPerOSChart({
   data,
   totalScans,

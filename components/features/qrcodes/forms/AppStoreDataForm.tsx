@@ -17,6 +17,11 @@ interface AppStoreDataFormProps {
   onChange?: (data: Partial<AppStoreDataFormData>) => void
 }
 
+/**
+ * Purpose: Executes AppStoreDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AppStoreDataForm({ defaultValues, onChange }: AppStoreDataFormProps) {
   const { t } = useTranslation()
   const {

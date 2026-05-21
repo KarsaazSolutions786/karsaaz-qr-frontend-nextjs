@@ -10,6 +10,11 @@ export const metadata: Metadata = {
 // Mark as dynamic since it uses searchParams
 export const dynamic = 'force-dynamic'
 
+/**
+ * Purpose: Executes ResetPasswordPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ResetPasswordPage({
   searchParams,
 }: {

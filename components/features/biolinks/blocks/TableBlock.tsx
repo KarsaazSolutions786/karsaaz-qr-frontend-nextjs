@@ -9,6 +9,11 @@ interface TableBlockProps {
   onUpdate?: (data: TableBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes parseTableData functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function parseTableData(csv: string): string[][] {
   return csv
     .trim()
@@ -16,6 +21,11 @@ function parseTableData(csv: string): string[][] {
     .map(row => row.split(',').map(cell => cell.trim()))
 }
 
+/**
+ * Purpose: Executes TableBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TableBlock({ block, isEditing, onUpdate }: TableBlockProps) {
   const { tableData, textColor, bordered = true } = block.data
   const { t } = useTranslation()

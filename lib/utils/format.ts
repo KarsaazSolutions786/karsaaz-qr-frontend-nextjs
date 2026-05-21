@@ -1,10 +1,11 @@
 import { format, formatDistance, formatRelative, parseISO } from 'date-fns'
 
 /**
- * Format ISO date string to readable format
- * @param dateString ISO 8601 date string
- * @param formatStr date-fns format string (default: "MMM dd, yyyy")
+ * Purpose: Format ISO date string to readable format
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatDate(
   dateString: string | undefined | null,
   formatStr: string = 'MMM dd, yyyy'
@@ -20,17 +21,21 @@ export function formatDate(
 }
 
 /**
- * Format ISO date string to date and time
- * @param dateString ISO 8601 date string
+ * Purpose: Format ISO date string to date and time
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatDateTime(dateString: string | undefined | null): string {
   return formatDate(dateString, 'MMM dd, yyyy HH:mm')
 }
 
 /**
- * Format ISO date string to relative time (e.g., "2 hours ago")
- * @param dateString ISO 8601 date string
+ * Purpose: Format ISO date string to relative time (e.g., "2 hours ago")
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatRelativeTime(dateString: string | undefined | null): string {
   if (!dateString) return '—'
   try {
@@ -43,9 +48,11 @@ export function formatRelativeTime(dateString: string | undefined | null): strin
 }
 
 /**
- * Format ISO date string to relative format (e.g., "yesterday at 3:21 PM")
- * @param dateString ISO 8601 date string
+ * Purpose: Format ISO date string to relative format (e.g., "yesterday at 3:21 PM")
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatRelativeDate(dateString: string | undefined | null): string {
   if (!dateString) return '—'
   try {
@@ -58,18 +65,21 @@ export function formatRelativeDate(dateString: string | undefined | null): strin
 }
 
 /**
- * Format number with thousand separators
- * @param value Number to format
+ * Purpose: Format number with thousand separators
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatNumber(value: number): string {
   return new Intl.NumberFormat('en-US').format(value)
 }
 
 /**
- * Format currency
- * @param cents Amount in cents
- * @param currency Currency code (default: USD)
+ * Purpose: Format currency
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatCurrency(cents: number, currency: string = 'USD'): string {
   const dollars = cents / 100
   return new Intl.NumberFormat('en-US', {
@@ -79,18 +89,21 @@ export function formatCurrency(cents: number, currency: string = 'USD'): string 
 }
 
 /**
- * Format percentage
- * @param value Decimal value (e.g., 0.85 for 85%)
- * @param decimals Number of decimal places (default: 0)
+ * Purpose: Format percentage
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatPercentage(value: number, decimals: number = 0): string {
   return `${(value * 100).toFixed(decimals)}%`
 }
 
 /**
- * Format file size in human-readable format
- * @param bytes File size in bytes
+ * Purpose: Format file size in human-readable format
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 Bytes'
 

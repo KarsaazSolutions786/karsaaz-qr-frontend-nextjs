@@ -17,6 +17,11 @@ interface AbuseReport {
   details: string
 }
 
+/**
+ * Purpose: Executes AbuseReportsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AbuseReportsPage() {
   const { t } = useTranslation()
   const [reports, setReports] = useState<AbuseReport[]>([])
@@ -39,6 +44,11 @@ export default function AbuseReportsPage() {
 
   useEffect(() => { fetchReports() }, [fetchReports])
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateStatus = async (id: number, status: ReportStatus) => {
     try {
       await apiClient.put(`/admin/abuse-reports/${id}`, { status })

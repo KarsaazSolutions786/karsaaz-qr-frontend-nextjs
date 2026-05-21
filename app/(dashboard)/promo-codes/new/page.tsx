@@ -7,6 +7,11 @@ import { toast } from 'sonner'
 import { promoCodesAPI, type CreatePromoCodeRequest } from '@/lib/api/endpoints/promo-codes'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes NewPromoCodePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function NewPromoCodePage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -19,6 +24,11 @@ export default function NewPromoCodePage() {
   const [usageLimit, setUsageLimit] = useState('')
   const [isActive, setIsActive] = useState(true)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)

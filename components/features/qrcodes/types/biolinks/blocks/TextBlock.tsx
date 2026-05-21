@@ -13,6 +13,13 @@ interface TextBlockProps {
   isDragging?: boolean;
 }
 
+/**
+ * Purpose: Executes TextBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const TextBlock = ({
   block,
   onEdit,

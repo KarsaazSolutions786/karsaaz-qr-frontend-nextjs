@@ -18,17 +18,32 @@ const initialCaches: CacheEntry[] = [
   { id: 'config', name: 'Config Cache', description: 'Cached configuration files and environment values', status: 'active' },
 ]
 
+/**
+ * Purpose: Executes SystemCachePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SystemCachePage() {
   const { t } = useTranslation()
   const [caches, setCaches] = useState<CacheEntry[]>(initialCaches)
   const [feedback, setFeedback] = useState<string | null>(null)
   const [loading, setLoading] = useState<Record<string, boolean>>({})
 
+  /**
+   * Purpose: Executes showFeedback functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const showFeedback = (msg: string) => {
     setFeedback(msg)
     setTimeout(() => setFeedback(null), 3000)
   }
 
+  /**
+   * Purpose: Clears or resets the local cache/state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const clearSingle = async (id: string) => {
     setLoading((prev) => ({ ...prev, [`clear-${id}`]: true }))
     try {
@@ -44,6 +59,11 @@ export default function SystemCachePage() {
     }
   }
 
+  /**
+   * Purpose: Executes rebuildSingle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const rebuildSingle = async (id: string) => {
     setLoading((prev) => ({ ...prev, [`rebuild-${id}`]: true }))
     try {
@@ -59,6 +79,11 @@ export default function SystemCachePage() {
     }
   }
 
+  /**
+   * Purpose: Clears or resets the local cache/state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const clearAll = async () => {
     setLoading((prev) => ({ ...prev, all: true }))
     try {

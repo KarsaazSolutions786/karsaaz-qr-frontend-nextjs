@@ -20,8 +20,11 @@ export interface UseBrowserBackButtonOptions {
 }
 
 /**
- * Hook to handle browser back/forward buttons
+ * Purpose: Hook to handle browser back/forward buttons
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useBrowserBackButton(options: UseBrowserBackButtonOptions = {}) {
   const { basePath = '/dashboard/qr-codes/create', onNavigate, enabled = true } = options;
   
@@ -47,6 +50,11 @@ export function useBrowserBackButton(options: UseBrowserBackButtonOptions = {}) 
   useEffect(() => {
     if (!enabled) return;
 
+    /**
+     * Purpose: Executes handlePopState functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handlePopState = (event: PopStateEvent) => {
       const step = event.state?.step as WizardStep | undefined;
       
@@ -92,14 +100,22 @@ export function useBrowserBackButton(options: UseBrowserBackButtonOptions = {}) 
 }
 
 /**
- * Hook to prevent accidental navigation away
+ * Purpose: Hook to prevent accidental navigation away
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function usePreventAccidentalExit(shouldPrevent: boolean = true) {
   const isDirty = useWizardStore((state) => state.isDirty);
 
   useEffect(() => {
     if (!shouldPrevent || !isDirty) return;
 
+    /**
+     * Purpose: Executes handleBeforeUnload functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       e.returnValue = ''; // Chrome requires returnValue to be set
@@ -121,6 +137,11 @@ export interface WizardBreadcrumbProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes WizardBreadcrumb functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WizardBreadcrumb({ onStepClick, className = '' }: WizardBreadcrumbProps) {
   const currentStep = useWizardStore((state) => state.currentStep);
   const completedSteps = useWizardStore((state) => state.completedSteps);
@@ -136,6 +157,11 @@ export function WizardBreadcrumb({ onStepClick, className = '' }: WizardBreadcru
     download: 'Download',
   };
 
+  /**
+   * Purpose: Executes handleStepClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleStepClick = (step: WizardStep) => {
     if (canGoToStep(step)) {
       setCurrentStep(step);
@@ -203,6 +229,11 @@ export interface WizardProgressBarProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes WizardProgressBar functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WizardProgressBar({ className = '' }: WizardProgressBarProps) {
   const currentStep = useWizardStore((state) => state.currentStep);
 
@@ -236,12 +267,22 @@ export interface WizardStepIndicatorProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes WizardStepIndicator functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WizardStepIndicator({ onStepClick, className = '' }: WizardStepIndicatorProps) {
   const currentStep = useWizardStore((state) => state.currentStep);
   const completedSteps = useWizardStore((state) => state.completedSteps);
   const canGoToStep = useWizardStore((state) => state.canGoToStep);
   const setCurrentStep = useWizardStore((state) => state.setCurrentStep);
 
+  /**
+   * Purpose: Executes handleStepClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleStepClick = (step: WizardStep) => {
     if (canGoToStep(step)) {
       setCurrentStep(step);

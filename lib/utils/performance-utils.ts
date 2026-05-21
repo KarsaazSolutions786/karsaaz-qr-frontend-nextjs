@@ -7,8 +7,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
- * Debounce function - delays execution until after wait milliseconds
+ * Purpose: Debounce function - delays execution until after wait milliseconds
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
@@ -22,8 +25,11 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 /**
- * Throttle function - limits execution to once per wait milliseconds
+ * Purpose: Throttle function - limits execution to once per wait milliseconds
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
   wait: number
@@ -40,10 +46,11 @@ export function throttle<T extends (...args: any[]) => any>(
 }
 
 /**
- * useDebounce Hook
- * 
- * Debounces a value with specified delay.
+ * Purpose: useDebounce Hook Debounces a value with specified delay.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useDebounce<T>(value: T, delay: number = 300): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
   
@@ -61,10 +68,11 @@ export function useDebounce<T>(value: T, delay: number = 300): T {
 }
 
 /**
- * useDebouncedCallback Hook
- * 
- * Creates a debounced version of a callback.
+ * Purpose: useDebouncedCallback Hook Creates a debounced version of a callback.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useDebouncedCallback<T extends (...args: any[]) => any>(
   callback: T,
   delay: number = 300
@@ -88,10 +96,11 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
 }
 
 /**
- * useThrottledCallback Hook
- * 
- * Creates a throttled version of a callback.
+ * Purpose: useThrottledCallback Hook Creates a throttled version of a callback.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useThrottledCallback<T extends (...args: any[]) => any>(
   callback: T,
   delay: number = 300
@@ -116,10 +125,11 @@ export function useThrottledCallback<T extends (...args: any[]) => any>(
 }
 
 /**
- * useIntersectionObserver Hook
- * 
- * Detects when element enters viewport (for lazy loading).
+ * Purpose: useIntersectionObserver Hook Detects when element enters viewport (for lazy loading).
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useIntersectionObserver(
   ref: React.RefObject<Element | null>,
   options: IntersectionObserverInit = {}
@@ -151,10 +161,11 @@ export function useIntersectionObserver(
 }
 
 /**
- * useMemoizedValue Hook
- * 
- * Advanced memoization with custom equality check.
+ * Purpose: useMemoizedValue Hook Advanced memoization with custom equality check.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useMemoizedValue<T>(
   value: T,
   isEqual: (prev: T, next: T) => boolean = (a, b) => a === b
@@ -169,10 +180,11 @@ export function useMemoizedValue<T>(
 }
 
 /**
- * useImagePreloader Hook
- * 
- * Preloads images for better performance.
+ * Purpose: useImagePreloader Hook Preloads images for better performance.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useImagePreloader(urls: string[]): boolean {
   const [loaded, setLoaded] = useState(false);
   
@@ -215,8 +227,11 @@ export function useImagePreloader(urls: string[]): boolean {
 }
 
 /**
- * Measure function execution time
+ * Purpose: Measure function execution time
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function measurePerformance<T>(
   name: string,
   fn: () => T
@@ -233,8 +248,11 @@ export function measurePerformance<T>(
 }
 
 /**
- * Deep equality check for objects/arrays
+ * Purpose: Deep equality check for objects/arrays
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function deepEqual(a: any, b: any): boolean {
   if (a === b) return true;
   
@@ -255,8 +273,11 @@ export function deepEqual(a: any, b: any): boolean {
 }
 
 /**
- * Batch updates to reduce re-renders
+ * Purpose: Batch updates to reduce re-renders
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function batchUpdates(
   updates: Array<() => void>,
   callback?: () => void
@@ -267,8 +288,11 @@ export function batchUpdates(
 }
 
 /**
- * Request Idle Callback wrapper
+ * Purpose: Request Idle Callback wrapper
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function requestIdleTask(
   callback: () => void,
   options?: { timeout?: number }
@@ -282,8 +306,11 @@ export function requestIdleTask(
 }
 
 /**
- * Cancel Idle Callback wrapper
+ * Purpose: Cancel Idle Callback wrapper
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function cancelIdleTask(id: number): void {
   if (typeof cancelIdleCallback !== 'undefined') {
     cancelIdleCallback(id);
@@ -293,8 +320,11 @@ export function cancelIdleTask(id: number): void {
 }
 
 /**
- * Chunk array processing for better performance
+ * Purpose: Chunk array processing for better performance
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function processInChunks<T, R>(
   items: T[],
   processor: (item: T) => R | Promise<R>,

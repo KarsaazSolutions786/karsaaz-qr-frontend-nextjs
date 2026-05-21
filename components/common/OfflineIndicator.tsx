@@ -3,12 +3,27 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes OfflineIndicator functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function OfflineIndicator() {
   const { t } = useTranslation()
   const [isOffline, setIsOffline] = useState(false)
 
   useEffect(() => {
+    /**
+     * Purpose: Executes handleOnline functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleOnline = () => setIsOffline(false)
+    /**
+     * Purpose: Executes handleOffline functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleOffline = () => setIsOffline(true)
     setIsOffline(!navigator.onLine)
     window.addEventListener('online', handleOnline)

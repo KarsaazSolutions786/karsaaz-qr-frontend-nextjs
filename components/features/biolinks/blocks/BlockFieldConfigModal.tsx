@@ -21,6 +21,11 @@ const FIELD_TYPES: { value: BiolinkFieldType; label: string }[] = [
   { value: 'custom_code', label: 'Custom Code' },
 ];
 
+/**
+ * Purpose: Executes BlockFieldConfigModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BlockFieldConfigModal({
   fields: initialFields,
   open,
@@ -32,6 +37,11 @@ export default function BlockFieldConfigModal({
 
   if (!open) return null;
 
+  /**
+   * Purpose: Executes addField functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addField = () => {
     setFields([
       ...fields,
@@ -44,14 +54,29 @@ export default function BlockFieldConfigModal({
     ]);
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateField = (index: number, updates: Partial<BiolinkBlockField>) => {
     setFields(fields.map((f, i) => (i === index ? { ...f, ...updates } : f)));
   };
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeField = (index: number) => {
     setFields(fields.filter((_, i) => i !== index));
   };
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = () => {
     const validFields = fields.filter((f) => f.name.trim());
     onSave(validFields);

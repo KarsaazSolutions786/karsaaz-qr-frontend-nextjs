@@ -18,18 +18,11 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
 /**
- * Full cart page for account credit purchases.
- *
- * Matches P1's QrcgAccountCreditCartView with:
- * - Item list with quantity controls (+/- buttons)
- * - Per-item subtotal display
- * - Remove item action
- * - Totals section: Subtotal, Available Credit, Amount to Pay
- * - Checkout/Pay button
- * - Empty cart state
- *
- * Route: /account-credit-cart (dashboard)
+ * Purpose: Full cart page for account credit purchases. Matches P1's QrcgAccountCreditCartView with: - Item list with quantity controls (+/- buttons) - Per-item subtotal display - Remove item action - Totals section: Subtotal, Available Credit, Amount to Pay - Checkout/Pay button - Empty cart state Route: /account-credit-cart (dashboard)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export default function AccountCreditCartPage() {
   const { t } = useTranslation()
   const {
@@ -45,6 +38,11 @@ export default function AccountCreditCartPage() {
   const numberOfItems = useAccountCreditStore((s) => s.numberOfItems())
   const [checkingOut, setCheckingOut] = useState(false)
 
+  /**
+   * Purpose: Executes handleCheckout functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleCheckout = async () => {
     setCheckingOut(true)
     try {

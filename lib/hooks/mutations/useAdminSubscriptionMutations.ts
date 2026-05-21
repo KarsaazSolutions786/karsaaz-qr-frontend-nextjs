@@ -3,6 +3,11 @@ import { useRouter } from 'next/navigation'
 import { adminSubscriptionsAPI, CreateAdminSubscriptionRequest } from '@/lib/api/endpoints/admin-subscriptions'
 import { queryKeys } from '@/lib/query/keys'
 
+/**
+ * Purpose: Executes useCreateAdminSubscription functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useCreateAdminSubscription() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -15,6 +20,11 @@ export function useCreateAdminSubscription() {
   })
 }
 
+/**
+ * Purpose: Executes useUpdateAdminSubscription functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useUpdateAdminSubscription() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -27,6 +37,11 @@ export function useUpdateAdminSubscription() {
   })
 }
 
+/**
+ * Purpose: Executes useDeletePendingSubscriptions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDeletePendingSubscriptions() {
   const queryClient = useQueryClient()
   return useMutation({

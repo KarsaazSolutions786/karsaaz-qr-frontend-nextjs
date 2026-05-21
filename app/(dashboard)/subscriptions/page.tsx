@@ -9,6 +9,11 @@ import { useDeletePendingSubscriptions } from '@/lib/hooks/mutations/useAdminSub
 import type { AdminSubscription } from '@/lib/api/endpoints/admin-subscriptions'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes StatusBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function StatusBadge({ status }: { status?: string }) {
   const s = status?.toLowerCase() ?? ''
   const styles: Record<string, string> = {
@@ -25,6 +30,11 @@ function StatusBadge({ status }: { status?: string }) {
   )
 }
 
+/**
+ * Purpose: Executes SubscriptionsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SubscriptionsPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -32,6 +42,11 @@ export default function SubscriptionsPage() {
   const { data, isLoading } = useAdminSubscriptions({ page, keyword: keyword || undefined })
   const deletePendingMutation = useDeletePendingSubscriptions()
 
+  /**
+   * Purpose: Executes handleDeletePending functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDeletePending = async () => {
     if (!confirm(t('Delete all pending subscriptions? This cannot be undone.'))) return
     const result = await deletePendingMutation.mutateAsync()

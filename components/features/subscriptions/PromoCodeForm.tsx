@@ -17,6 +17,11 @@ interface PromoCodeFormProps {
   isEdit?: boolean
 }
 
+/**
+ * Purpose: Executes PromoCodeForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeFormProps) {
   const { t } = useTranslation()
   const [code, setCode] = useState(initialValues?.code ?? '')
@@ -31,6 +36,11 @@ export function PromoCodeForm({ initialValues, onSubmit, isEdit }: PromoCodeForm
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string>()
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(undefined)

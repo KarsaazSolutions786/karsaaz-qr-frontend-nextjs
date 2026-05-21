@@ -13,6 +13,13 @@ interface LinkBlockProps {
   isDragging?: boolean;
 }
 
+/**
+ * Purpose: Executes LinkBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const LinkBlock = ({
   block,
   onEdit,

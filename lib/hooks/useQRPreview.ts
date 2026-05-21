@@ -30,8 +30,11 @@ export interface QRPreviewState {
 }
 
 /**
- * Hook for QR code preview with real-time updates
+ * Purpose: Hook for QR code preview with real-time updates
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
   const { data, config, stickerConfig, debounce = 100, onError } = options;
 
@@ -48,6 +51,11 @@ export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
     let timeoutId: NodeJS.Timeout;
     let isCancelled = false;
 
+    /**
+     * Purpose: Executes generate functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const generate = async () => {
       if (!data || data.trim() === '') {
         setState({
@@ -127,8 +135,11 @@ export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
 }
 
 /**
- * Hook for downloading QR code
+ * Purpose: Hook for downloading QR code
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useQRDownload(svg: string | null, size: number) {
   const { downloadPNG, downloadSVG, downloadPDF, downloadEPS } = useMemo(() => {
     return {
@@ -159,8 +170,11 @@ export function useQRDownload(svg: string | null, size: number) {
 }
 
 /**
- * Hook for config validation
+ * Purpose: Hook for config validation
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useConfigValidation(config: DesignerConfig) {
   return useMemo(() => {
     const errors: string[] = [];
@@ -204,8 +218,11 @@ export function useConfigValidation(config: DesignerConfig) {
 }
 
 /**
- * Hook for performance metrics
+ * Purpose: Hook for performance metrics
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useQRPerformance(data: string, config: DesignerConfig) {
   return useMemo(() => {
     const dataLength = data.length;

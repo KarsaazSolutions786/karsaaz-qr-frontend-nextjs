@@ -24,6 +24,11 @@ interface QRWizardContainerProps {
   onCancel?: () => void
 }
 
+/**
+ * Purpose: Executes QRWizardContainer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QRWizardContainer({
   mode = 'create',
   qrcodeId,
@@ -436,6 +441,11 @@ export default function QRWizardContainer({
   // Render current step
   // ------------------------------------------------------------------
 
+  /**
+   * Purpose: Executes renderStepContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderStepContent = () => {
     const currentStepId = WIZARD_STEPS[wizard.currentStep]?.id ?? 'data'
 

@@ -29,6 +29,11 @@ export interface EmptyStateProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes EmptyState functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function EmptyState({
   icon,
   title,
@@ -63,8 +68,11 @@ export function EmptyState({
 }
 
 /**
- * No QR Codes Empty State
+ * Purpose: No QR Codes Empty State
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function NoQRCodesEmptyState({ onCreate }: { onCreate?: () => void }) {
   const { t } = useTranslation();
   return (
@@ -81,8 +89,11 @@ export function NoQRCodesEmptyState({ onCreate }: { onCreate?: () => void }) {
 }
 
 /**
- * No Search Results Empty State
+ * Purpose: No Search Results Empty State
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function NoSearchResultsEmptyState({ query }: { query?: string }) {
   const { t } = useTranslation();
   return (
@@ -99,8 +110,11 @@ export function NoSearchResultsEmptyState({ query }: { query?: string }) {
 }
 
 /**
- * No Data Empty State
+ * Purpose: No Data Empty State
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function NoDataEmptyState({ message }: { message?: string }) {
   const { t } = useTranslation();
   return (
@@ -113,8 +127,11 @@ export function NoDataEmptyState({ message }: { message?: string }) {
 }
 
 /**
- * Empty Folder State
+ * Purpose: Empty Folder State
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function EmptyFolderState({ onAddItem }: { onAddItem?: () => void }) {
   const { t } = useTranslation();
   return (
@@ -131,8 +148,11 @@ export function EmptyFolderState({ onAddItem }: { onAddItem?: () => void }) {
 }
 
 /**
- * No Analytics Empty State
+ * Purpose: No Analytics Empty State
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function NoAnalyticsEmptyState() {
   const { t } = useTranslation();
   return (
@@ -145,8 +165,13 @@ export function NoAnalyticsEmptyState() {
 }
 
 /**
- * Error Empty State
+ * Purpose: Error Empty State
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function ErrorEmptyState({
   title,
   message,
@@ -171,8 +196,11 @@ export function ErrorEmptyState({
 }
 
 /**
- * Generic Empty State with Custom Content
+ * Purpose: Generic Empty State with Custom Content
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function CustomEmptyState({
   children,
   className = '',

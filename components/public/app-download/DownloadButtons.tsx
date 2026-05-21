@@ -14,6 +14,11 @@ interface DownloadButtonsProps {
 
 type Platform = 'ios' | 'android' | 'other'
 
+/**
+ * Purpose: Executes DownloadButtons functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DownloadButtons({
   appStoreUrl,
   playStoreUrl,
@@ -44,6 +49,11 @@ export default function DownloadButtons({
     )
   }
 
+  /**
+   * Purpose: Executes AppStoreButton functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const AppStoreButton = () => (
     <Button
       asChild
@@ -60,6 +70,11 @@ export default function DownloadButtons({
     </Button>
   )
 
+  /**
+   * Purpose: Executes PlayStoreButton functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const PlayStoreButton = () => (
     <Button
       asChild
@@ -78,6 +93,11 @@ export default function DownloadButtons({
     </Button>
   )
 
+  /**
+   * Purpose: Executes ApkButton functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const ApkButton = () => (
     <Button
       asChild

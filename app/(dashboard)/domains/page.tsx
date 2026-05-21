@@ -11,6 +11,11 @@ import type { Domain } from '@/types/entities/domain'
 import Link from 'next/link'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes DomainsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DomainsPage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -22,15 +27,30 @@ export default function DomainsPage() {
 
   const domains = data?.data ?? []
 
+  /**
+   * Purpose: Executes handleEdit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleEdit = (domain: Domain) => {
     router.push(`/domains/${domain.id}`)
   }
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (domain: Domain) => {
     if (!confirm(t('Delete domain "{{domain}}"? This action cannot be undone.').replace('{{domain}}', domain.domain))) return
     await deleteMutation.mutateAsync(domain.id)
   }
 
+  /**
+   * Purpose: Executes handleStatusConfirm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleStatusConfirm = async () => {
     if (!statusTarget) return
     const newStatus = statusTarget.status === 'verified' ? 'failed' : 'verified'

@@ -17,6 +17,11 @@ interface DesignerPreviewModalProps {
   title?: string;
 }
 
+/**
+ * Purpose: Executes DesignerPreviewModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DesignerPreviewModal({
   src,
   isOpen,
@@ -28,12 +33,22 @@ export function DesignerPreviewModal({
   const { t } = useTranslation();
   if (!isOpen) return null;
 
+  /**
+   * Purpose: Executes handleBackdropClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();
     }
   };
 
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownload = () => {
     if (onDownload) {
       onDownload();
@@ -48,6 +63,11 @@ export function DesignerPreviewModal({
     }
   };
 
+  /**
+   * Purpose: Executes handlePrint functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePrint = () => {
     if (onPrint) {
       onPrint();

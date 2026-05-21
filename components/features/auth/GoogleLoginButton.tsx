@@ -25,6 +25,11 @@ declare global {
   }
 }
 
+/**
+ * Purpose: Executes GoogleLoginButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GoogleLoginButton() {
   const containerRef = useRef<HTMLDivElement>(null)
   const twoFactorInputRef = useRef<HTMLInputElement>(null)
@@ -52,6 +57,13 @@ export function GoogleLoginButton() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [twoFactorCode, show2fa])
 
+  /**
+   * Purpose: Executes handle2faSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const handle2faSubmit = async () => {
     if (twoFactorCode.length < 6) return
     setTwoFactorError('')
@@ -109,6 +121,11 @@ export function GoogleLoginButton() {
       'script[src="https://accounts.google.com/gsi/client"]'
     )
 
+    /**
+     * Purpose: Initializes the service or component.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const initializeGSI = () => {
       if (!window.google || !containerRef.current) return
 

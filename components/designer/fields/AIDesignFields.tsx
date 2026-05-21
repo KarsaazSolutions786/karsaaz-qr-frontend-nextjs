@@ -22,6 +22,13 @@ interface AIDesignFieldsProps {
   onGenerate: (prompt: string, style: string, colorScheme: string) => Promise<AIDesign>;
 }
 
+/**
+ * Purpose: Executes AIDesignFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 const AIDesignFields = ({
   design: _design,
   onChange,
@@ -63,6 +70,11 @@ const AIDesignFields = ({
     t('Retro 80s style QR code with neon colors'),
   ];
 
+  /**
+   * Purpose: Executes handleGenerate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       setError(t('Please enter a design description'));
@@ -82,6 +94,11 @@ const AIDesignFields = ({
     }
   };
 
+  /**
+   * Purpose: Executes applyDesign functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const applyDesign = (designToApply: AIDesign) => {
     onChange(designToApply);
   };

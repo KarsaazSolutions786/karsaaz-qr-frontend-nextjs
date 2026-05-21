@@ -1,6 +1,9 @@
 /**
- * Dynamic CSS injection utilities.
+ * Purpose: Dynamic CSS injection utilities.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 
 export function injectStyle(id: string, css: string): void {
   const existing = document.getElementById(id) as HTMLStyleElement | null
@@ -14,10 +17,20 @@ export function injectStyle(id: string, css: string): void {
   document.head.appendChild(style)
 }
 
+/**
+ * Purpose: Deletes the specified resource.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function removeStyle(id: string): void {
   document.getElementById(id)?.remove()
 }
 
+/**
+ * Purpose: Executes injectTheme functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function injectTheme(variables: Record<string, string>): void {
   const css = Object.entries(variables)
     .map(([key, value]) => `${key.startsWith('--') ? key : `--${key}`}: ${value};`)

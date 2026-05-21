@@ -12,6 +12,11 @@ interface FieldSettingsPanelProps {
   onUpdate: (field: FormField) => void
 }
 
+/**
+ * Purpose: Executes FieldSettingsPanel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function FieldSettingsPanel({ field, onUpdate }: FieldSettingsPanelProps) {
   const { t } = useTranslation();
 
@@ -28,12 +33,22 @@ export default function FieldSettingsPanel({ field, onUpdate }: FieldSettingsPan
     )
   }
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const update = (changes: Partial<FormField>) => {
     onUpdate({ ...field, ...changes })
   }
 
   const hasOptions = field.type === 'select' || field.type === 'checkbox' || field.type === 'radio'
 
+  /**
+   * Purpose: Executes addOption functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const addOption = () => {
     const options = field.options || []
     const newOption: FormFieldOption = {
@@ -43,6 +58,11 @@ export default function FieldSettingsPanel({ field, onUpdate }: FieldSettingsPan
     update({ options: [...options, newOption] })
   }
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const updateOption = (index: number, changes: Partial<FormFieldOption>) => {
     const options = [...(field.options || [])]
     const existing = options[index]
@@ -51,6 +71,11 @@ export default function FieldSettingsPanel({ field, onUpdate }: FieldSettingsPan
     update({ options })
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const removeOption = (index: number) => {
     const options = (field.options || []).filter((_, i) => i !== index)
     update({ options })

@@ -28,6 +28,11 @@ const STATUS_OPTIONS = [
   { value: 'banned', label: 'Banned' },
 ]
 
+/**
+ * Purpose: Executes UserFilterPanel functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
@@ -46,6 +51,11 @@ export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
     []
   )
 
+  /**
+   * Purpose: Executes handleApply functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleApply = () => {
     // Strip empty values
     const clean: UserFilters = {}
@@ -58,6 +68,11 @@ export function UserFilterPanel({ onChange }: UserFilterPanelProps) {
     setOpen(false)
   }
 
+  /**
+   * Purpose: Executes handleClear functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClear = () => {
     setFilters({})
     onChange({})

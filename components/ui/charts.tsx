@@ -41,6 +41,11 @@ export interface DoughnutChartProps extends ChartProps {
   nameKey?: string
 }
 
+/**
+ * Purpose: Executes LineChartWrapper functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LineChartWrapper({ data, xKey, yKey, title, className }: LineChartProps) {
   const keys = Array.isArray(yKey) ? yKey : [yKey]
   return (
@@ -70,6 +75,11 @@ export function LineChartWrapper({ data, xKey, yKey, title, className }: LineCha
   )
 }
 
+/**
+ * Purpose: Executes BarChartWrapper functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BarChartWrapper({ data, xKey, yKey, title, className }: BarChartProps) {
   const keys = Array.isArray(yKey) ? yKey : [yKey]
   return (
@@ -91,6 +101,11 @@ export function BarChartWrapper({ data, xKey, yKey, title, className }: BarChart
   )
 }
 
+/**
+ * Purpose: Executes DoughnutChartWrapper functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DoughnutChartWrapper({ data, dataKey, nameKey = 'name', title, className }: DoughnutChartProps) {
   return (
     <div className={cn('w-full', className)}>

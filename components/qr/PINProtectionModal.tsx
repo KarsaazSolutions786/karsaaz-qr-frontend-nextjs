@@ -15,6 +15,11 @@ export interface PINProtectionModalProps {
 
 type FlowState = 'set' | 'verify' | 'clear';
 
+/**
+ * Purpose: Executes PINProtectionModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PINProtectionModal({
   qrCodeId,
   hasPIN,
@@ -33,6 +38,11 @@ export function PINProtectionModal({
 
   if (!open) return null;
 
+  /**
+   * Purpose: Executes resetForm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const resetForm = () => {
     setPin('');
     setConfirmPin('');
@@ -40,6 +50,11 @@ export function PINProtectionModal({
     setShowPin(false);
   };
 
+  /**
+   * Purpose: Executes handleSetPIN functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSetPIN = async () => {
     if (pin.length < 4 || pin.length > 6) {
       setError(t('PIN must be 4-6 digits'));
@@ -64,6 +79,11 @@ export function PINProtectionModal({
     }
   };
 
+  /**
+   * Purpose: Executes handleVerifyPIN functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleVerifyPIN = async () => {
     if (!pin) {
       setError(t('Please enter the PIN'));
@@ -84,6 +104,11 @@ export function PINProtectionModal({
     }
   };
 
+  /**
+   * Purpose: Executes handleClearPIN functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClearPIN = async () => {
     setIsProcessing(true);
     setError('');
@@ -99,6 +124,11 @@ export function PINProtectionModal({
     }
   };
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (flow === 'set') handleSetPIN();

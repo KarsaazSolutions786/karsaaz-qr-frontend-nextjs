@@ -9,6 +9,11 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 
 // ─── CSV helpers ─────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes arrayToCsv functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function arrayToCsv(rows: (string | number | null)[][]): string {
   return rows
     .map((row) =>
@@ -17,6 +22,11 @@ function arrayToCsv(rows: (string | number | null)[][]): string {
     .join('\n')
 }
 
+/**
+ * Purpose: Executes downloadCsv functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function downloadCsv(content: string, filename: string) {
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
@@ -27,6 +37,11 @@ function downloadCsv(content: string, filename: string) {
   URL.revokeObjectURL(url)
 }
 
+/**
+ * Purpose: Executes todayFilename functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function todayFilename(): string {
   const d = new Date()
   const dd = String(d.getDate()).padStart(2, '0')
@@ -40,6 +55,11 @@ interface ResponsesViewerProps {
   formId: number
 }
 
+/**
+ * Purpose: Retrieves fields.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getFields(response: LeadFormResponse): LeadFormResponseField[] {
   if (response.fields && response.fields.length > 0) return response.fields
   return Object.entries(response.data).map(([k, v]) => ({
@@ -48,6 +68,11 @@ function getFields(response: LeadFormResponse): LeadFormResponseField[] {
   }))
 }
 
+/**
+ * Purpose: Executes LeadFormResponsesViewer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
   const { t } = useTranslation()
   const [keyword, setKeyword] = useState('')
@@ -64,6 +89,11 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
     )
   }, [responses, keyword])
 
+  /**
+   * Purpose: Executes handleExportCsv functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleExportCsv = () => {
     if (responses.length === 0) return
     const firstResponse = responses[0]
@@ -74,6 +104,11 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
     downloadCsv(csv, todayFilename())
   }
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (responseId: number) => {
     if (!confirm(t('Delete this response? This cannot be undone.'))) return
     await deleteMutation.mutateAsync(responseId)
@@ -180,6 +215,11 @@ interface FormCardProps {
   form: LeadForm
 }
 
+/**
+ * Purpose: Executes LeadFormCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function LeadFormCard({ form }: FormCardProps) {
   const { t } = useTranslation()
   const title = form.qrcode_name ?? t('Lead Form #{{id}} - QR Code Not Found').replace('{{id}}', String(form.id))
@@ -209,6 +249,11 @@ function LeadFormCard({ form }: FormCardProps) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes LeadFormsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function LeadFormsPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)

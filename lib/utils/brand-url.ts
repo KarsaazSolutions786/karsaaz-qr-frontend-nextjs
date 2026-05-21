@@ -6,9 +6,11 @@
 import { envConfig } from '../config/env-config'
 
 /**
- * Determine protocol based on environment.
- * Production uses https; development defaults to http.
+ * Purpose: Determine protocol based on environment. Production uses https; development defaults to http.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getProtocol(): 'https' | 'http' {
   if (envConfig.NODE_ENV === 'production') return 'https'
 
@@ -19,9 +21,11 @@ export function getProtocol(): 'https' | 'http' {
 }
 
 /**
- * Build a brand-facing URL, using a custom domain if provided.
- * Falls back to APP_URL from envConfig.
+ * Purpose: Build a brand-facing URL, using a custom domain if provided. Falls back to APP_URL from envConfig.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getBrandUrl(path?: string, customDomain?: string): string {
   const base = customDomain
     ? `${getProtocol()}://${customDomain.replace(/^https?:\/\//, '')}`
@@ -33,9 +37,11 @@ export function getBrandUrl(path?: string, customDomain?: string): string {
 }
 
 /**
- * Build an API URL with optional path appended.
- * Always appends /api to the configured API_URL.
+ * Purpose: Build an API URL with optional path appended. Always appends /api to the configured API_URL.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getApiUrl(path?: string): string {
   const base = `${envConfig.API_URL.replace(/\/+$/, '')}/api`
   if (!path) return base

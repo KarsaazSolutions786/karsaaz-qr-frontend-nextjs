@@ -17,6 +17,11 @@ interface QRCodeListSettingsModalProps {
   onApply: (settings: ListSettings) => void;
 }
 
+/**
+ * Purpose: Retrieves storedsettings.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getStoredSettings(): ListSettings {
   if (typeof window === 'undefined') return { pageSize: 25, showQRCodePreview: true };
   try {
@@ -26,6 +31,11 @@ function getStoredSettings(): ListSettings {
   return { pageSize: 25, showQRCodePreview: true };
 }
 
+/**
+ * Purpose: Executes QRCodeListSettingsModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRCodeListSettingsModal({ open, onClose, onApply }: QRCodeListSettingsModalProps) {
   const { t } = useTranslation();
   const [pageSize, setPageSize] = useState(25);
@@ -39,6 +49,11 @@ export function QRCodeListSettingsModal({ open, onClose, onApply }: QRCodeListSe
     }
   }, [open]);
 
+  /**
+   * Purpose: Executes handleApply functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleApply = () => {
     const settings: ListSettings = { pageSize, showQRCodePreview: showPreview };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));

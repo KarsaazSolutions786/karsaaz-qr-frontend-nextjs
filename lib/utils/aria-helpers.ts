@@ -2,7 +2,12 @@
  * Helpers for generating common ARIA attribute sets.
  */
 
-/** Props for a button that opens/closes something (dropdown, accordion, dialog) */
+/**
+ * Purpose: * Props for a button that opens/closes something (dropdown, accordion, dialog) 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function ariaExpander(isExpanded: boolean, controlsId: string) {
   return {
     'aria-expanded': isExpanded,
@@ -10,7 +15,12 @@ export function ariaExpander(isExpanded: boolean, controlsId: string) {
   } as const
 }
 
-/** Props for the content region controlled by an expander */
+/**
+ * Purpose: * Props for the content region controlled by an expander 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function ariaExpandable(id: string, isExpanded: boolean) {
   return {
     id,
@@ -19,7 +29,12 @@ export function ariaExpandable(id: string, isExpanded: boolean) {
   }
 }
 
-/** Props for a tab button */
+/**
+ * Purpose: * Props for a tab button 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function ariaTab(isSelected: boolean, panelId: string) {
   return {
     role: 'tab' as const,
@@ -29,7 +44,12 @@ export function ariaTab(isSelected: boolean, panelId: string) {
   }
 }
 
-/** Props for a tab panel */
+/**
+ * Purpose: * Props for a tab panel 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function ariaTabPanel(id: string, tabId: string) {
   return {
     id,
@@ -39,7 +59,12 @@ export function ariaTabPanel(id: string, tabId: string) {
   }
 }
 
-/** Props for a live region (announcements, toasts) */
+/**
+ * Purpose: * Props for a live region (announcements, toasts) 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function ariaLive(politeness: 'polite' | 'assertive' = 'polite') {
   return {
     role: 'status' as const,
@@ -48,7 +73,12 @@ export function ariaLive(politeness: 'polite' | 'assertive' = 'polite') {
   }
 }
 
-/** Props for a labeled dialog/modal */
+/**
+ * Purpose: * Props for a labeled dialog/modal 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function ariaDialog(titleId: string, descriptionId?: string) {
   return {
     role: 'dialog' as const,
@@ -58,7 +88,12 @@ export function ariaDialog(titleId: string, descriptionId?: string) {
   }
 }
 
-/** Generate a unique id from a prefix and index */
+/**
+ * Purpose: * Generate a unique id from a prefix and index 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function ariaId(prefix: string, index?: number | string) {
   return index !== undefined ? `${prefix}-${index}` : prefix
 }

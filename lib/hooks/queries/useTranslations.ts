@@ -3,6 +3,11 @@ import { translationsAPI } from '@/lib/api/endpoints/translations'
 import { queryKeys } from '@/lib/query/keys'
 
 // Get all translations
+/**
+ * Purpose: Executes useTranslations functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useTranslations(params?: { page?: number; search?: string }) {
   return useQuery({
     queryKey: queryKeys.translations.list(params),
@@ -12,6 +17,11 @@ export function useTranslations(params?: { page?: number; search?: string }) {
 }
 
 // Get single translation
+/**
+ * Purpose: Executes useTranslation functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useTranslation(id: number) {
   return useQuery({
     queryKey: queryKeys.translations.detail(id),

@@ -3,9 +3,11 @@ import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 import { queryKeys } from '@/lib/query/keys'
 
 /**
- * Fetch system configs by keys array.
- * Returns a map: { [key]: value }
+ * Purpose: Fetch system configs by keys array. Returns a map: { [key]: value }
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useSystemConfigs(keys: string[]) {
   return useQuery({
     queryKey: queryKeys.systemConfigs.byKeys(keys),

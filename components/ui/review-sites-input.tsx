@@ -106,6 +106,13 @@ interface ReviewSitesInputProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes ReviewSitesInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export function ReviewSitesInput({
   value = [],
   onChange,
@@ -114,6 +121,11 @@ export function ReviewSitesInput({
 }: ReviewSitesInputProps) {
   const { t } = useTranslation()
 
+  /**
+   * Purpose: Executes addRow functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addRow = () => {
     // Default to the first platform not already used
     const usedPlatforms = new Set(value.map((r) => r.platform))
@@ -121,14 +133,29 @@ export function ReviewSitesInput({
     onChange([...value, { platform: nextPlatform?.id || platforms[0]?.id || 'google', url: '' }])
   }
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateRow = (index: number, patch: Partial<ReviewSite>) => {
     onChange(value.map((r, i) => (i === index ? { ...r, ...patch } : r)))
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeRow = (index: number) => {
     onChange(value.filter((_, i) => i !== index))
   }
 
+  /**
+   * Purpose: Retrieves platformconfig.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const getPlatformConfig = (platformId: string) =>
     platforms.find((p) => p.id === platformId) || platforms[0]
 

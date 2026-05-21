@@ -24,6 +24,11 @@ interface BreadcrumbsProps {
   separatorClassName?: string
 }
 
+/**
+ * Purpose: Executes Breadcrumbs functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Breadcrumbs({
   items,
   separator,
@@ -107,6 +112,11 @@ interface SimpleBreadcrumbsProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes SimpleBreadcrumbs functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SimpleBreadcrumbs({
   path,
   separator = ' / ',
@@ -141,6 +151,11 @@ interface BreadcrumbProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes Breadcrumb functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Breadcrumb({ href, children, className }: BreadcrumbProps) {
   if (href) {
     return (
@@ -166,6 +181,11 @@ interface BreadcrumbListProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes BreadcrumbList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BreadcrumbList({ children, separator, className }: BreadcrumbListProps) {
   const { t } = useTranslation()
   const childArray = React.Children.toArray(children)
@@ -202,6 +222,11 @@ interface PageHeaderProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes PageHeader functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PageHeader({
   title,
   description,

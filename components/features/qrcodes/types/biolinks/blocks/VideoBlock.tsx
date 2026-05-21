@@ -13,6 +13,13 @@ interface VideoBlockProps {
   isDragging?: boolean;
 }
 
+/**
+ * Purpose: Executes VideoBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const VideoBlock = ({
   block,
   onEdit,
@@ -21,6 +28,11 @@ export const VideoBlock = ({
   isDragging,
 }: VideoBlockProps) => {
   const { t } = useTranslation()
+  /**
+   * Purpose: Retrieves embedurl.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getEmbedUrl = (url: string, platform?: string) => {
     if (platform === 'youtube') {
       const videoId = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/)?.[1];

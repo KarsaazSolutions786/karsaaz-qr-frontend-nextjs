@@ -16,6 +16,11 @@ interface TwoFactorTabProps {
   userId: number | string
 }
 
+/**
+ * Purpose: Executes TwoFactorTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TwoFactorTab({ userId }: TwoFactorTabProps) {
   const { t } = useTranslation()
   const [status, setStatus] = useState<TwoFactorStatus | null>(null)
@@ -49,6 +54,11 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
     fetchStatus()
   }
 
+  /**
+   * Purpose: Executes handleEnable functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleEnable = async () => {
     try {
       setLoading(true)
@@ -62,6 +72,11 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleConfirm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleConfirm = async () => {
     if (!confirmCode) return
     try {
@@ -79,6 +94,11 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleDisable functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDisable = async () => {
     if (!disablePassword || !disableCode) return
     try {
@@ -97,6 +117,11 @@ export function TwoFactorTab({ userId }: TwoFactorTabProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleShowRecovery functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleShowRecovery = async () => {
     try {
       setLoading(true)

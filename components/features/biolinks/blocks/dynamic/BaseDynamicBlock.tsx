@@ -12,9 +12,11 @@ interface BaseDynamicBlockProps {
 }
 
 /**
- * BaseDynamicBlock renders a block by looking up its type in a component registry.
- * Falls back to an "unsupported" placeholder if the block type is not registered.
+ * Purpose: BaseDynamicBlock renders a block by looking up its type in a component registry. Falls back to an "unsupported" placeholder if the block type is not registered.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export default function BaseDynamicBlock({
   block,
   isEditing,

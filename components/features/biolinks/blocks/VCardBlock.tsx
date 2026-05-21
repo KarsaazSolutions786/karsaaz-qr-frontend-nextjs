@@ -9,6 +9,11 @@ interface VCardBlockProps {
   onUpdate?: (data: VCardBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes generateVCardString functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generateVCardString(data: VCardBlockData['data']): string {
   const lines = ['BEGIN:VCARD', 'VERSION:3.0']
   lines.push(`N:${data.lastName || ''};${data.firstName};;;`)
@@ -23,6 +28,11 @@ function generateVCardString(data: VCardBlockData['data']): string {
   return lines.join('\n')
 }
 
+/**
+ * Purpose: Executes VCardBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function VCardBlock({ block, isEditing, onUpdate }: VCardBlockProps) {
   const { firstName, lastName, organization, phone, email, website, address, title: jobTitle } = block.data
   const { t } = useTranslation()

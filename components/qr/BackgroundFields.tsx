@@ -32,6 +32,11 @@ export interface BackgroundFieldsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes BackgroundFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BackgroundFields({
   value,
   onChange,
@@ -41,6 +46,11 @@ export function BackgroundFields({
 }: BackgroundFieldsProps) {
   const { t } = useTranslation();
   // Handle type change
+  /**
+   * Purpose: Executes handleTypeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTypeChange = (type: 'transparent' | 'solid' | 'gradient' | 'image') => {
     if (type === 'transparent') {
       onChange(createTransparentBackground());
@@ -54,6 +64,11 @@ export function BackgroundFields({
   };
 
   // Handle solid color change
+  /**
+   * Purpose: Executes handleSolidColorChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSolidColorChange = (color: string | null) => {
     if (color === null) {
       onChange(createTransparentBackground());
@@ -63,6 +78,11 @@ export function BackgroundFields({
   };
 
   // Handle gradient change
+  /**
+   * Purpose: Executes handleGradientChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleGradientChange = (gradient: {
     type: 'linear' | 'radial';
     startColor: string;
@@ -72,6 +92,11 @@ export function BackgroundFields({
   };
 
   // Handle image change
+  /**
+   * Purpose: Executes handleImageChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleImageChange = (url: string | null) => {
     if (url === null) {
       onChange(createTransparentBackground());
@@ -81,6 +106,11 @@ export function BackgroundFields({
     }
   };
 
+  /**
+   * Purpose: Executes handleImageOpacityChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleImageOpacityChange = (opacity: number) => {
     if (isImageBackground(value) && value.imageUrl) {
       onChange(createImageBackground(value.imageUrl, opacity));
@@ -219,8 +249,11 @@ export function BackgroundFields({
 }
 
 /**
- * Simple background toggle (enable/disable with default)
+ * Purpose: Simple background toggle (enable/disable with default)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function BackgroundToggle({
   enabled,
   onToggle,

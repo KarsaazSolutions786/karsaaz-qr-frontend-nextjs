@@ -18,8 +18,11 @@ export interface UseQRAPIPreviewOptions {
 }
 
 /**
- * Hook for managing QR code preview via API
+ * Purpose: Hook for managing QR code preview via API
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useQRAPIPreview(
   params?: PreviewURLParams,
   options: UseQRAPIPreviewOptions = {}

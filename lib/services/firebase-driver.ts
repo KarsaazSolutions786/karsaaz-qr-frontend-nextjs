@@ -6,16 +6,31 @@ let auth: any = null;
 let recaptchaVerifier: any = null;
 let confirmationResult: any = null;
 
+/**
+ * Purpose: Class definition for FirebaseDriver.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 class FirebaseDriver {
   private static instance: FirebaseDriver;
   private initialized = false;
 
+  /**
+   * Purpose: Retrieves instance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getInstance(): FirebaseDriver {
     if (!this.instance) this.instance = new FirebaseDriver();
     return this.instance;
   }
 
-  /** Initialize Firebase Auth (lazy - only when needed) */
+  /**
+   * Purpose: * Initialize Firebase Auth (lazy - only when needed) 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   async init(config: {
     apiKey: string;
     authDomain: string;
@@ -37,7 +52,12 @@ class FirebaseDriver {
     this.initialized = true;
   }
 
-  /** Send OTP to phone number */
+  /**
+   * Purpose: * Send OTP to phone number 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   async sendOTP(phoneNumber: string): Promise<boolean> {
     if (!auth || !recaptchaVerifier) {
       throw new Error('Firebase not initialized. Call init() first.');
@@ -48,7 +68,12 @@ class FirebaseDriver {
     return true;
   }
 
-  /** Verify OTP code and return user */
+  /**
+   * Purpose: * Verify OTP code and return user 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   async verifyOTP(code: string) {
     if (!confirmationResult) {
       throw new Error('No OTP request pending. Call sendOTP() first.');
@@ -63,7 +88,12 @@ class FirebaseDriver {
     return this.initialized;
   }
 
-  /** Reset state */
+  /**
+   * Purpose: * Reset state 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   reset(): void {
     confirmationResult = null;
   }

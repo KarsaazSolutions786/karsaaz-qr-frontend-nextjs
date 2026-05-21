@@ -29,6 +29,11 @@ interface UserBalanceModalProps {
   onSuccess?: () => void
 }
 
+/**
+ * Purpose: Executes UserBalanceModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalanceModalProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
@@ -66,6 +71,11 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
     },
   })
 
+  /**
+   * Purpose: Executes handleClose functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClose = () => {
     setAmount('')
     setReason('')
@@ -74,6 +84,11 @@ export function UserBalanceModal({ user, isOpen, onClose, onSuccess }: UserBalan
     onClose()
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)

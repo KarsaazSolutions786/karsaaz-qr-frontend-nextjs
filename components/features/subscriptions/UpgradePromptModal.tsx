@@ -45,15 +45,11 @@ const FEATURE_TO_PLAN_FEATURE: Record<string, string> = {
 }
 
 /**
- * Generic upgrade prompt modal with plan comparison.
- *
- * Shows a feature-specific message with an overview of plans that include
- * the required feature. Follows P1 PlanEnforcement pattern but adapted
- * to Next.js with shadcn/ui Dialog.
- *
- * Use via useSubscriptionAlerts().promptFeatureUpgrade() or
- * useSubscription().openUpgradeModal() for simpler cases.
+ * Purpose: Generic upgrade prompt modal with plan comparison. Shows a feature-specific message with an overview of plans that include the required feature. Follows P1 PlanEnforcement pattern but adapted to Next.js with shadcn/ui Dialog. Use via useSubscriptionAlerts().promptFeatureUpgrade() or useSubscription().openUpgradeModal() for simpler cases.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function UpgradePromptModal({
   open,
   feature,

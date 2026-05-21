@@ -10,6 +10,11 @@ import {
 } from 'date-fns'
 import type { DateRange, DateRangePreset } from '@/types/entities/analytics'
 
+/**
+ * Purpose: Retrieves presetdaterange.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function getPresetDateRange(preset: DateRangePreset): DateRange {
   const now = new Date()
   
@@ -67,10 +72,20 @@ export function getPresetDateRange(preset: DateRangePreset): DateRange {
   }
 }
 
+/**
+ * Purpose: Executes formatDateRange functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function formatDateRange(startDate: Date, endDate: Date): string {
   return `${format(startDate, 'MMM d, yyyy')} - ${format(endDate, 'MMM d, yyyy')}`
 }
 
+/**
+ * Purpose: Checks if validdaterange.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function isValidDateRange(range: DateRange): boolean {
   return (
     isValid(range.startDate) &&
@@ -79,6 +94,11 @@ export function isValidDateRange(range: DateRange): boolean {
   )
 }
 
+/**
+ * Purpose: Executes dateRangeToQueryParams functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function dateRangeToQueryParams(range: DateRange): {
   start_date: string
   end_date: string

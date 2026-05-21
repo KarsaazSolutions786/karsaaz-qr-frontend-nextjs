@@ -23,19 +23,39 @@ interface BlockSettingsModalProps {
   onClose: () => void;
 }
 
+/**
+ * Purpose: Executes BlockSettingsModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BlockSettingsModal({ block, onSave, onClose }: BlockSettingsModalProps) {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<BiolinkBlock>(block);
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateField = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  /**
+   * Purpose: Executes renderFields functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderFields = () => {
     switch (block.type) {
       case BlockType.LINK:

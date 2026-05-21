@@ -39,6 +39,11 @@ export interface RowActionsModalProps {
   onAction: (action: QRAction) => void;
 }
 
+/**
+ * Purpose: Executes RowActionsModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function RowActionsModal({
   isOpen,
   onClose,
@@ -48,6 +53,11 @@ export function RowActionsModal({
   const { t } = useTranslation();
   if (!isOpen) return null;
 
+  /**
+   * Purpose: Executes handleAction functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleAction = (action: QRAction) => {
     onAction(action);
     onClose();

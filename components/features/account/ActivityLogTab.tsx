@@ -9,6 +9,11 @@ interface ActivityLogTabProps {
   userId: number | string
 }
 
+/**
+ * Purpose: Executes parseUserAgent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function parseUserAgent(ua: string): string {
   if (!ua) return 'Unknown'
   // Simple UA parsing
@@ -19,6 +24,11 @@ function parseUserAgent(ua: string): string {
   return ua.substring(0, 30) + '...'
 }
 
+/**
+ * Purpose: Executes ActivityLogTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ActivityLogTab({ userId }: ActivityLogTabProps) {
   const { t } = useTranslation()
   const [entries, setEntries] = useState<ActivityLogEntry[]>([])

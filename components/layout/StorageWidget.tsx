@@ -8,6 +8,11 @@ interface StorageWidgetProps {
   collapsed?: boolean
 }
 
+/**
+ * Purpose: Executes StorageWidget functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function StorageWidget({ collapsed = false }: StorageWidgetProps) {
   const { t } = useTranslation()
   const {

@@ -16,6 +16,11 @@ interface QRRouteData {
   };
 }
 
+/**
+ * Purpose: Executes fetchQRData functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function fetchQRData(slug: string): Promise<QRRouteData | null> {
   try {
     // The backend uses /qrcodes/{id}/redirect but we're calling with slug
@@ -28,6 +33,11 @@ async function fetchQRData(slug: string): Promise<QRRouteData | null> {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({
   params,
 }: {
@@ -56,6 +66,11 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * Purpose: Executes UniversalQRPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function UniversalQRPage({
   params,
   searchParams,

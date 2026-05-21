@@ -19,6 +19,11 @@ interface DomainAvailabilityModalProps {
 
 type CheckStatus = 'idle' | 'checking' | 'available' | 'taken' | 'error'
 
+/**
+ * Purpose: Executes DomainAvailabilityModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DomainAvailabilityModal({
   open,
   onClose,
@@ -29,6 +34,11 @@ export function DomainAvailabilityModal({
   const [status, setStatus] = useState<CheckStatus>('idle')
   const [message, setMessage] = useState('')
 
+  /**
+   * Purpose: Executes handleCheck functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCheck = async () => {
     if (!domain.trim()) return
     setStatus('checking')
@@ -52,11 +62,21 @@ export function DomainAvailabilityModal({
     }
   }
 
+  /**
+   * Purpose: Executes handleConfirm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleConfirm = () => {
     onConfirm?.(domain.trim())
     handleClose()
   }
 
+  /**
+   * Purpose: Executes handleClose functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClose = () => {
     setDomain('')
     setStatus('idle')

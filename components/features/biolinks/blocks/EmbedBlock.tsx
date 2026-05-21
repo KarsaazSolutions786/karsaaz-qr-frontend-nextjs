@@ -9,6 +9,11 @@ interface EmbedBlockProps {
   onUpdate?: (data: EmbedBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes EmbedBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EmbedBlock({ block, isEditing, onUpdate }: EmbedBlockProps) {
   const { embedCode, height = 400 } = block.data
   const { t } = useTranslation()

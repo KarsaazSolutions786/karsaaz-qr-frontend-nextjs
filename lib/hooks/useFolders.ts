@@ -39,6 +39,11 @@ const FOLDER_COLORS = [
 const MAX_FOLDER_DEPTH = 3;
 const MAX_FOLDER_NAME_LENGTH = 50;
 
+/**
+ * Purpose: Executes useFolders functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useFolders(initialFolders: Folder[] = []) {
   const [folders, setFolders] = useState<Folder[]>(initialFolders);
   const [expandedFolderIds, setExpandedFolderIds] = useState<Set<string>>(new Set());
@@ -292,8 +297,11 @@ export function useFolders(initialFolders: Folder[] = []) {
 }
 
 /**
- * Build folder tree from flat list
+ * Purpose: Build folder tree from flat list
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function buildFolderTree(folders: Folder[], expandedIds: Set<string>): FolderTreeNode[] {
   const nodeMap = new Map<string, FolderTreeNode>();
   const rootNodes: FolderTreeNode[] = [];
@@ -322,6 +330,11 @@ function buildFolderTree(folders: Folder[], expandedIds: Set<string>): FolderTre
   });
   
   // Sort children by name
+  /**
+   * Purpose: Executes sortChildren functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const sortChildren = (node: FolderTreeNode) => {
     node.children.sort((a, b) => a.name.localeCompare(b.name));
     node.children.forEach(sortChildren);
@@ -333,11 +346,19 @@ function buildFolderTree(folders: Folder[], expandedIds: Set<string>): FolderTre
 }
 
 /**
- * Flatten folder tree to list (respecting expansion state)
+ * Purpose: Flatten folder tree to list (respecting expansion state)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function flattenFolderTree(tree: FolderTreeNode[]): FolderTreeNode[] {
   const result: FolderTreeNode[] = [];
   
+  /**
+   * Purpose: Executes traverse functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const traverse = (nodes: FolderTreeNode[]) => {
     nodes.forEach(node => {
       result.push(node);
@@ -352,8 +373,11 @@ function flattenFolderTree(tree: FolderTreeNode[]): FolderTreeNode[] {
 }
 
 /**
- * Get all descendants of a folder
+ * Purpose: Get all descendants of a folder
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getAllDescendants(folderId: string, folders: Folder[]): Folder[] {
   const descendants: Folder[] = [];
   const children = folders.filter(f => f.parentId === folderId);
@@ -367,8 +391,11 @@ function getAllDescendants(folderId: string, folders: Folder[]): Folder[] {
 }
 
 /**
- * Get max depth of descendants
+ * Purpose: Get max depth of descendants
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getMaxDescendantDepth(folder: Folder, folders: Folder[]): number {
   const children = folders.filter(f => f.parentId === folder.id);
   

@@ -41,9 +41,11 @@ export const rpcKeys = {
 // ─── useRpcQuery ─────────────────────────────────────────────────────────────
 
 /**
- * Execute a single RPC method as a TanStack query.
- * Automatically caches, deduplicates, and refetches.
+ * Purpose: Execute a single RPC method as a TanStack query. Automatically caches, deduplicates, and refetches.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function useRpcQuery<T = unknown>(
   method: string,
   params?: Record<string, unknown>,
@@ -69,9 +71,11 @@ export function useRpcQuery<T = unknown>(
 // ─── useRpcComposite ─────────────────────────────────────────────────────────
 
 /**
- * Execute a composite RPC method (server-side aggregation).
- * e.g., useRpcComposite('dashboard') → compose.dashboard
+ * Purpose: Execute a composite RPC method (server-side aggregation). e.g., useRpcComposite('dashboard') → compose.dashboard
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function useRpcComposite<T = unknown>(
   name: string,
   params?: Record<string, unknown>,
@@ -95,9 +99,11 @@ export function useRpcComposite<T = unknown>(
 // ─── useRpcBatch ─────────────────────────────────────────────────────────────
 
 /**
- * Execute multiple RPC calls in a single HTTP request.
- * Returns a Map<method, RpcResult> so each result can be accessed by method name.
+ * Purpose: Execute multiple RPC calls in a single HTTP request. Returns a Map<method, RpcResult> so each result can be accessed by method name.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function useRpcBatch(
   calls: RpcCallDef[],
   options?: Omit<UseQueryOptions<Map<string, RpcResult>, RpcError>, 'queryKey' | 'queryFn'> & {
@@ -118,14 +124,11 @@ export function useRpcBatch(
 // ─── useRpcMutation ──────────────────────────────────────────────────────────
 
 /**
- * Execute an RPC method as a mutation (for write operations).
- *
- * Usage:
- *   const del = useRpcMutation('qrcode.delete', {
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: rpcKeys.method('qrcode.list') }),
- *   });
- *   del.mutate({ id: 123 });
+ * Purpose: Execute an RPC method as a mutation (for write operations). Usage: const del = useRpcMutation('qrcode.delete', { onSuccess: () => queryClient.invalidateQueries({ queryKey: rpcKeys.method('qrcode.list') }), }); del.mutate({ id: 123 });
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function useRpcMutation<TResult = unknown, TParams = Record<string, unknown>>(
   method: string,
   options?: Omit<UseMutationOptions<TResult, RpcError, TParams>, 'mutationFn'> & {
@@ -156,8 +159,11 @@ export function useRpcMutation<TResult = unknown, TParams = Record<string, unkno
 // ─── Utility: Invalidate all RPC queries ─────────────────────────────────────
 
 /**
- * Invalidate all RPC query caches. Call on logout or user switch.
+ * Purpose: Invalidate all RPC query caches. Call on logout or user switch.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function useRpcInvalidateAll() {
   const queryClient = useQueryClient()
   return () => queryClient.invalidateQueries({ queryKey: rpcKeys.all })

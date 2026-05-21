@@ -41,6 +41,13 @@ const BUILT_IN_FONTS: FontDefinition[] = [
 
 const loadedFonts = new Set<string>()
 
+/**
+ * Purpose: Executes loadGoogleFont functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function loadGoogleFont(fontName: string, variant?: string): void {
   if (typeof window === 'undefined') return
   const key = `${fontName}:${variant || 'regular'}`
@@ -55,6 +62,13 @@ function loadGoogleFont(fontName: string, variant?: string): void {
   document.head.appendChild(link)
 }
 
+/**
+ * Purpose: Retrieves variantlabel.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function getVariantLabel(variant: string): string {
   if (variant === 'regular') return 'Regular (400)'
   const weight = variant.replace(/italic/i, '').trim()
@@ -85,6 +99,13 @@ export interface FontPickerProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes FontPicker functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export function FontPicker({
   value,
   onChange,
@@ -123,6 +144,11 @@ export function FontPicker({
 
   // Close on outside click
   React.useEffect(() => {
+    /**
+     * Purpose: Executes handler functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
     }
@@ -147,6 +173,13 @@ export function FontPicker({
     }
   }, [selectedFont, variant, onVariantChange])
 
+  /**
+   * Purpose: Executes handleSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const handleSelect = (font: FontDefinition) => {
     loadGoogleFont(font.name)
     onChange(font.name)
@@ -259,7 +292,12 @@ export function FontPicker({
   )
 }
 
-/** Individual font list item that loads the font when visible */
+/**
+ * Purpose: * Individual font list item that loads the font when visible 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function FontListItem({
   font,
   selected,

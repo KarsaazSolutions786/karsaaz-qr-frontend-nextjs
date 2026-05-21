@@ -23,6 +23,11 @@ export interface LogoUploadProps {
 const DEFAULT_ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/webp'];
 const DEFAULT_MAX_SIZE_KB = 5120; // 5MB
 
+/**
+ * Purpose: Executes LogoUpload functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LogoUpload({
   value,
   onChange,

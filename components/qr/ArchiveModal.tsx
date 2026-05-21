@@ -19,6 +19,11 @@ export interface ArchiveModalProps {
   onUnarchive?: () => Promise<void>;
 }
 
+/**
+ * Purpose: Executes ArchiveModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ArchiveModal({
   isOpen,
   onClose,
@@ -36,6 +41,11 @@ export function ArchiveModal({
   
   const isBulk = qrCodeNames.length > 1;
   
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async () => {
     setIsProcessing(true);
     setError('');
@@ -220,8 +230,11 @@ export function ArchiveModal({
 }
 
 /**
- * Compact Archive Button Component
+ * Purpose: Compact Archive Button Component
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ArchiveButton({
   isArchived,
   onClick,

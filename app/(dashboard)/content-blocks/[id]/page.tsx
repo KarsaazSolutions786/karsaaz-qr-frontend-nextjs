@@ -10,6 +10,11 @@ import { useTranslation } from '@/lib/i18n'
 import type { CreateContentBlockRequest } from '@/types/entities/content-block'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes EditContentBlockPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditContentBlockPage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
   const { id } = use(params)
@@ -40,9 +45,19 @@ export default function EditContentBlockPage({ params }: { params: Promise<{ id:
     }
   }, [block])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: keyof CreateContentBlockRequest, value: unknown) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await updateMutation.mutateAsync({ id: Number(id), data: form })

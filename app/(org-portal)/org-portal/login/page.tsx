@@ -5,6 +5,11 @@ import { useRouter } from 'next/navigation'
 import { Building2 } from 'lucide-react'
 import { useOrgPortalAuth } from '@/lib/context/OrgPortalAuthContext'
 
+/**
+ * Purpose: Executes OrgPortalLoginPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrgPortalLoginPage() {
   const { login } = useOrgPortalAuth()
   const router = useRouter()
@@ -13,6 +18,11 @@ export default function OrgPortalLoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')

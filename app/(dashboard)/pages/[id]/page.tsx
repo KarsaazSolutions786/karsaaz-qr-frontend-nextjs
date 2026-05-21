@@ -10,6 +10,11 @@ import { useTranslation } from '@/lib/i18n'
 import { envConfig } from '@/lib/config/env-config'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes slugify functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -19,6 +24,11 @@ function slugify(text: string): string {
 
 const APP_URL = envConfig.APP_URL
 
+/**
+ * Purpose: Executes EditPagePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditPagePage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
   const { id } = use(params)
@@ -48,13 +58,28 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
     }
   }, [page])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = <K extends keyof CreatePageRequest>(key: K, value: CreatePageRequest[K]) =>
     setForm(prev => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleTitleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTitleChange = (value: string) => {
     setForm(prev => ({ ...prev, title: value, slug: slugify(value) }))
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await updateMutation.mutateAsync({ id: Number(id), data: form })

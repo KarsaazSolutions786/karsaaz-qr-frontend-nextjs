@@ -10,8 +10,11 @@ export interface CanvasTextOptions {
 }
 
 /**
- * Wraps text to fit within maxWidth and returns an array of lines.
+ * Purpose: Wraps text to fit within maxWidth and returns an array of lines.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function wrapText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -37,9 +40,11 @@ function wrapText(
 }
 
 /**
- * Renders text on a canvas element with word wrapping, alignment, and rotation support.
- * Returns the canvas rendering context for chaining.
+ * Purpose: Renders text on a canvas element with word wrapping, alignment, and rotation support. Returns the canvas rendering context for chaining.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderTextOnCanvas(
   canvas: HTMLCanvasElement,
   text: string,
@@ -86,8 +91,11 @@ export function renderTextOnCanvas(
 }
 
 /**
- * Measures text dimensions without rendering.
+ * Purpose: Measures text dimensions without rendering.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function measureText(
   canvas: HTMLCanvasElement,
   text: string,

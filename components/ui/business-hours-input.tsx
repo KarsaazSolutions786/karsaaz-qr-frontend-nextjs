@@ -44,6 +44,13 @@ interface BusinessHoursInputProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes BusinessHoursInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export function BusinessHoursInput({
   value,
   onChange,
@@ -53,11 +60,21 @@ export function BusinessHoursInput({
   const { t } = useTranslation()
   const hours = value && value.length === 7 ? value : DEFAULT_HOURS
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (index: number, patch: Partial<BusinessHours>) => {
     const next = hours.map((h, i) => (i === index ? { ...h, ...patch } : h))
     onChange(next)
   }
 
+  /**
+   * Purpose: Executes addAdditionalHours functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const addAdditionalHours = (index: number) => {
     const h = hours[index]!
     const additional = h.additionalHours || []
@@ -67,6 +84,11 @@ export function BusinessHoursInput({
     })
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const removeAdditionalHours = (dayIndex: number, additionalIndex: number) => {
     const h = hours[dayIndex]!
     const additional = (h.additionalHours || []).filter(
@@ -75,6 +97,11 @@ export function BusinessHoursInput({
     update(dayIndex, { additionalHours: additional })
   }
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const updateAdditionalHours = (
     dayIndex: number,
     additionalIndex: number,
@@ -88,6 +115,11 @@ export function BusinessHoursInput({
     update(dayIndex, { additionalHours: additional })
   }
 
+  /**
+   * Purpose: Executes copyToAll functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const copyToAll = (sourceIndex: number) => {
     const source = hours[sourceIndex]!
     const next = hours.map((h) => ({
@@ -102,6 +134,11 @@ export function BusinessHoursInput({
     onChange(next)
   }
 
+  /**
+   * Purpose: Executes copyToWeekdays functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const copyToWeekdays = (sourceIndex: number) => {
     const source = hours[sourceIndex]!
     const next = hours.map((h) => {

@@ -12,6 +12,11 @@ interface PreviewHeaderProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes PreviewHeader functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PreviewHeader({
   title,
   subtitle,

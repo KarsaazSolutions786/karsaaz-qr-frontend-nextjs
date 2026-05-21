@@ -25,12 +25,18 @@ const DEFAULT_SETTINGS: BannerSettings = {
   text_color: '#FFFFFF',
 }
 
+/**
+ * Purpose: Executes BannerSettingsForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
   const { t } = useTranslation()
   const [settings, setSettings] = useState<BannerSettings>({ ...DEFAULT_SETTINGS, ...initialData })
   const queryClient = useQueryClient()
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSettings({ ...DEFAULT_SETTINGS, ...initialData })
   }, [initialData])
 
@@ -46,10 +52,20 @@ export function BannerSettingsForm({ initialData }: BannerSettingsFormProps) {
     },
   })
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = <K extends keyof BannerSettings>(field: K, value: BannerSettings[K]) => {
     setSettings((prev) => ({ ...prev, [field]: value }))
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     mutation.mutate(settings)

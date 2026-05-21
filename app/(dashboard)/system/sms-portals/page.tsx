@@ -84,6 +84,11 @@ const inputClass =
 
 // ─── Build all config keys ───────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes buildAllKeys functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function buildAllKeys(): string[] {
   return SMS_PROVIDERS.flatMap((provider) => {
     const prefix = `sms-gateways.${provider.slug}`
@@ -95,6 +100,11 @@ function buildAllKeys(): string[] {
 
 // ─── Page Component ──────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes SmsPortalsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SmsPortalsPage() {
   const { t } = useTranslation()
   const [configs, setConfigs] = useState<Record<string, string>>({})
@@ -124,6 +134,11 @@ export default function SmsPortalsPage() {
     setSaved(false)
   }, [])
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSave = async () => {
     setSaving(true)
     try {

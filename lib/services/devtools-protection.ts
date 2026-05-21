@@ -4,23 +4,43 @@
 const DEVTOOLS_THRESHOLD = 160;
 
 
+/**
+ * Purpose: Class definition for DevToolsProtection.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 class DevToolsProtection {
   private static instance: DevToolsProtection;
   private intervalId: ReturnType<typeof setInterval> | null = null;
   private initialized = false;
 
+  /**
+   * Purpose: Retrieves instance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getInstance(): DevToolsProtection {
     if (!this.instance) this.instance = new DevToolsProtection();
     return this.instance;
   }
 
+  /**
+   * Purpose: Checks if localhost.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   private isLocalhost(): boolean {
     if (typeof window === 'undefined') return true;
     const hostname = window.location.hostname;
     return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
   }
 
-  /** Initialize protection - only active on non-localhost */
+  /**
+   * Purpose: * Initialize protection - only active on non-localhost 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   init(): void {
     if (typeof window === 'undefined' || this.initialized || this.isLocalhost()) return;
     this.initialized = true;
@@ -43,7 +63,12 @@ class DevToolsProtection {
     }, 1000);
   }
 
-  /** Cleanup event listeners and intervals */
+  /**
+   * Purpose: * Cleanup event listeners and intervals 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   destroy(): void {
     if (typeof window === 'undefined') return;
     document.removeEventListener('keydown', this.handleKeyDown, true);

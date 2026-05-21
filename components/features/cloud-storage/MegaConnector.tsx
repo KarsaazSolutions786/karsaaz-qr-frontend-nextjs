@@ -10,6 +10,11 @@ interface MegaConnectorProps {
   onSuccess: () => void
 }
 
+/**
+ * Purpose: Executes MegaConnector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function MegaConnector({ onSuccess }: MegaConnectorProps) {
   const { t } = useTranslation()
   const [email, setEmail] = useState('')
@@ -18,6 +23,11 @@ export function MegaConnector({ onSuccess }: MegaConnectorProps) {
 
   const connectMega = useConnectMega()
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)

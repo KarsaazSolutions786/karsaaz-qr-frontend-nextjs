@@ -8,8 +8,11 @@
 import { FillConfig, SolidFill, GradientFill, ImageFill } from '@/types/entities/designer';
 
 /**
- * Create solid fill
+ * Purpose: Create solid fill
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createSolidFill(color: string): SolidFill {
   return {
     type: 'solid',
@@ -18,8 +21,11 @@ export function createSolidFill(color: string): SolidFill {
 }
 
 /**
- * Create gradient fill
+ * Purpose: Create gradient fill
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createGradientFill(
   startColor: string,
   endColor: string,
@@ -36,8 +42,11 @@ export function createGradientFill(
 }
 
 /**
- * Create image fill
+ * Purpose: Create image fill
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createImageFill(imageUrl: string, opacity: number = 1): ImageFill {
   return {
     type: 'image',
@@ -47,29 +56,41 @@ export function createImageFill(imageUrl: string, opacity: number = 1): ImageFil
 }
 
 /**
- * Check if fill is solid
+ * Purpose: Check if fill is solid
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isSolidFill(fill: FillConfig): fill is SolidFill {
   return fill.type === 'solid';
 }
 
 /**
- * Check if fill is gradient
+ * Purpose: Check if fill is gradient
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isGradientFill(fill: FillConfig): fill is GradientFill {
   return fill.type === 'gradient';
 }
 
 /**
- * Check if fill is image
+ * Purpose: Check if fill is image
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isImageFill(fill: FillConfig): fill is ImageFill {
   return fill.type === 'image';
 }
 
 /**
- * Get primary color from fill (for UI display)
+ * Purpose: Get primary color from fill (for UI display)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getPrimaryColor(fill: FillConfig): string {
   if (isSolidFill(fill)) {
     return fill.color;
@@ -83,8 +104,11 @@ export function getPrimaryColor(fill: FillConfig): string {
 }
 
 /**
- * Convert fill to CSS background
+ * Purpose: Convert fill to CSS background
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function fillToCSS(fill: FillConfig): string {
   if (isSolidFill(fill)) {
     return fill.color;
@@ -107,8 +131,11 @@ export function fillToCSS(fill: FillConfig): string {
 }
 
 /**
- * Convert fill to SVG definition
+ * Purpose: Convert fill to SVG definition
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function fillToSVGDefinition(fill: FillConfig, id: string): string {
   if (isSolidFill(fill)) {
     // Solid fills don't need definitions
@@ -151,8 +178,11 @@ export function fillToSVGDefinition(fill: FillConfig, id: string): string {
 }
 
 /**
- * Get SVG fill reference
+ * Purpose: Get SVG fill reference
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function fillToSVGReference(fill: FillConfig, id: string): string {
   if (isSolidFill(fill)) {
     return fill.color;
@@ -162,8 +192,11 @@ export function fillToSVGReference(fill: FillConfig, id: string): string {
 }
 
 /**
- * Validate fill configuration
+ * Purpose: Validate fill configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateFill(fill: FillConfig): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -201,15 +234,21 @@ export function validateFill(fill: FillConfig): { valid: boolean; errors: string
 }
 
 /**
- * Clone fill configuration
+ * Purpose: Clone fill configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function cloneFill(fill: FillConfig): FillConfig {
   return JSON.parse(JSON.stringify(fill));
 }
 
 /**
- * Merge fills (for partial updates)
+ * Purpose: Merge fills (for partial updates)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function mergeFill(base: FillConfig, updates: Partial<FillConfig>): FillConfig {
   return {
     ...base,
@@ -218,8 +257,11 @@ export function mergeFill(base: FillConfig, updates: Partial<FillConfig>): FillC
 }
 
 /**
- * Invert colors (for contrast)
+ * Purpose: Invert colors (for contrast)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function invertFillColors(fill: FillConfig): FillConfig {
   if (isSolidFill(fill)) {
     return createSolidFill(invertColor(fill.color));
@@ -238,8 +280,11 @@ export function invertFillColors(fill: FillConfig): FillConfig {
 }
 
 /**
- * Invert hex color
+ * Purpose: Invert hex color
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function invertColor(hex: string): string {
   const rgb = parseInt(hex.slice(1), 16);
   const r = 255 - ((rgb >> 16) & 0xff);
@@ -250,8 +295,11 @@ function invertColor(hex: string): string {
 }
 
 /**
- * Lighten/darken color
+ * Purpose: Lighten/darken color
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function adjustFillBrightness(fill: FillConfig, amount: number): FillConfig {
   if (isSolidFill(fill)) {
     return createSolidFill(adjustColorBrightness(fill.color, amount));
@@ -270,8 +318,11 @@ export function adjustFillBrightness(fill: FillConfig, amount: number): FillConf
 }
 
 /**
- * Adjust hex color brightness
+ * Purpose: Adjust hex color brightness
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function adjustColorBrightness(hex: string, amount: number): string {
   const num = parseInt(hex.slice(1), 16);
   const r = Math.max(0, Math.min(255, ((num >> 16) & 0xff) + amount));
@@ -282,8 +333,11 @@ function adjustColorBrightness(hex: string, amount: number): string {
 }
 
 /**
- * Get fill description (for UI)
+ * Purpose: Get fill description (for UI)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getFillDescription(fill: FillConfig): string {
   if (isSolidFill(fill)) {
     return `Solid color: ${fill.color}`;

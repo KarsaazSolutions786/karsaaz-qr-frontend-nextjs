@@ -20,6 +20,11 @@ interface FileUploadDesignerProps {
   }
 }
 
+/**
+ * Purpose: Retrieves fileicon.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getFileIcon(fileType?: string) {
   if (!fileType) return <File className="w-10 h-10" />
   if (fileType.startsWith('image/')) return <FileImage className="w-10 h-10" />
@@ -29,12 +34,22 @@ function getFileIcon(fileType?: string) {
   return <File className="w-10 h-10" />
 }
 
+/**
+ * Purpose: Retrieves fileextension.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getFileExtension(fileType?: string): string {
   if (!fileType) return 'FILE'
   const ext = fileType.split('/').pop()?.toUpperCase()
   return ext || 'FILE'
 }
 
+/**
+ * Purpose: Executes FileUploadDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function FileUploadDesigner({
   fileName,
   fileSize,
@@ -50,6 +65,11 @@ export default function FileUploadDesigner({
   const primaryColor = theme?.primaryColor || '#2563eb'
   const bgColor = theme?.backgroundColor || '#f8fafc'
 
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownload = () => {
     setDownloadCount(prev => prev + 1)
     if (fileUrl) {

@@ -3,6 +3,11 @@ import { rpc, RpcError } from '@/lib/api/rpc'
 import { queryKeys } from '@/lib/query/keys'
 import type { Subscription } from '@/types/entities/subscription'
 
+/**
+ * Purpose: Executes useSubscription functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useSubscription() {
   return useQuery<Subscription | null>({
     queryKey: queryKeys.subscriptions.current(),

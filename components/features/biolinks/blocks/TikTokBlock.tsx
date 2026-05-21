@@ -11,16 +11,22 @@ interface TikTokBlockProps {
 }
 
 /**
- * Extracts a TikTok video ID from various URL formats:
- * - https://www.tiktok.com/@username/video/1234567890123456789
- * - https://vm.tiktok.com/ZMXXXXXXX/
+ * Purpose: Extracts a TikTok video ID from various URL formats: - https://www.tiktok.com/@username/video/1234567890123456789 - https://vm.tiktok.com/ZMXXXXXXX/
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function extractTikTokVideoId(url: string): string | null {
   const match = url.match(/\/video\/(\d+)/)
   if (match?.[1]) return match[1]
   return null
 }
 
+/**
+ * Purpose: Executes TikTokBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function TikTokBlock({ block, isEditing, onUpdate }: TikTokBlockProps) {
   const { t } = useTranslation();
   const { url } = block.data

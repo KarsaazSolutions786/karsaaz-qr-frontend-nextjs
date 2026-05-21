@@ -10,11 +10,21 @@ interface LicenseStepProps {
   onChange: (code: string) => void
 }
 
+/**
+ * Purpose: Executes LicenseStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LicenseStep({ purchaseCode, onChange }: LicenseStepProps) {
   const { t } = useTranslation();
   const [status, setStatus] = useState<'idle' | 'validating' | 'valid' | 'invalid'>('idle')
   const [message, setMessage] = useState('')
 
+  /**
+   * Purpose: Executes validate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const validate = async () => {
     if (!purchaseCode.trim()) {
       setStatus('invalid')

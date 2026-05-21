@@ -7,6 +7,11 @@ import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { useSubscriptionStatuses } from '@/lib/hooks/queries/useAdminSubscriptions'
 import { useCreateAdminSubscription } from '@/lib/hooks/mutations/useAdminSubscriptionMutations'
 
+/**
+ * Purpose: Executes NewSubscriptionPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewSubscriptionPage() {
   const { t } = useTranslation()
   const createMutation = useCreateAdminSubscription()
@@ -20,8 +25,20 @@ export default function NewSubscriptionPage() {
     expires_at: '',
   })
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const set = (field: string, value: string) => setForm(prev => ({ ...prev, [field]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {

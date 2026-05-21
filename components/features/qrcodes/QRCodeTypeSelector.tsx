@@ -218,6 +218,11 @@ interface QRCodeTypeSelectorProps {
  * Main Component
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * Purpose: Executes QRCodeTypeSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QRCodeTypeSelector({
   value,
   onChange,
@@ -308,6 +313,13 @@ export function QRCodeTypeSelector({
  * SelectorHeader — title + right-aligned glassmorphism search (Figma match)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * Purpose: Executes SelectorHeader functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function SelectorHeader({
   keyword,
   onKeywordChange,
@@ -359,6 +371,11 @@ function SelectorHeader({
  * BentoGrid — CSS Grid with varied card spans
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * Purpose: Executes BentoGrid functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function BentoGrid({
   types,
   selectedType,
@@ -455,11 +472,25 @@ interface CardProps {
   onClick: () => void
 }
 
+/**
+ * Purpose: Executes cardBase functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 const cardBase = (isDisabled: boolean) =>
   `group cursor-pointer select-none transition-all duration-200 ease-out
    hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500
    ${isDisabled ? 'opacity-50 pointer-events-none' : ''}`
 
+/**
+ * Purpose: Executes cardStyle functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 const cardStyle = (isSelected: boolean) => ({
   background: CARD_BG,
   borderRadius: 14,
@@ -467,7 +498,12 @@ const cardStyle = (isSelected: boolean) => ({
   border: isSelected ? '1px solid rgba(173, 70, 255, 0.8)' : '1px solid rgba(0, 0, 0, 0.06)',
 })
 
-/** Renders an icon with optional colored background (Figma design) */
+/**
+ * Purpose: * Renders an icon with optional colored background (Figma design) 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function TypeIcon({ type, size = 40 }: { type: QRCodeTypeDefinition; size?: number }) {
   const bgConfig = ICON_BG[type.id]
 
@@ -510,7 +546,12 @@ function TypeIcon({ type, size = 40 }: { type: QRCodeTypeDefinition; size?: numb
   )
 }
 
-/** Chevron arrow matching Figma style */
+/**
+ * Purpose: * Chevron arrow matching Figma style 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function CardChevron() {
   return (
     <svg
@@ -536,6 +577,13 @@ function CardChevron() {
  * StandardCard — icon + name + purple chevron
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * Purpose: Executes StandardCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function StandardCard({ type, isSelected, isDisabled, onClick }: CardProps) {
   const isVcardPlus = type.id === 'vcard-plus'
 
@@ -588,6 +636,11 @@ function StandardCard({ type, isSelected, isDisabled, onClick }: CardProps) {
  * IconOnlyCard — social media compact card (icon only, no text, no chevron)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * Purpose: Executes IconOnlyCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function IconOnlyCard({ type, isSelected, isDisabled, onClick }: CardProps) {
   return (
     <div
@@ -614,6 +667,13 @@ function IconOnlyCard({ type, isSelected, isDisabled, onClick }: CardProps) {
  * CompactChevronCard — icon + chevron, no text label (call, messenger, x, snapchat)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * Purpose: Executes CompactChevronCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function CompactChevronCard({ type, isSelected, isDisabled, onClick }: CardProps) {
   return (
     <div
@@ -641,6 +701,13 @@ function CompactChevronCard({ type, isSelected, isDisabled, onClick }: CardProps
  * TallCard — restaurant menu / preview card (spans 2 rows)
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * Purpose: Executes TallCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 function TallCard({ type, isSelected, isDisabled, onClick }: CardProps) {
   return (
     <div
@@ -726,6 +793,11 @@ function TallCard({ type, isSelected, isDisabled, onClick }: CardProps) {
  * EmptyState
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/**
+ * Purpose: Executes EmptyState functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function EmptyState({ keyword }: { keyword: string }) {
   const { t } = useTranslation()
   return (

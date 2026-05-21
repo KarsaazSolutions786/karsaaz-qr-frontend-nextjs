@@ -10,6 +10,11 @@ import { useLogin, useTwoFactorLoginVerify } from '@/lib/hooks/mutations/useLogi
 import { useTranslation } from '@/lib/i18n'
 import type { LoginRequires2FAResponse } from '@/lib/api/endpoints/auth'
 
+/**
+ * Purpose: Executes LoginForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LoginForm() {
   const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
@@ -52,6 +57,11 @@ export function LoginForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [twoFactorCode, show2fa])
 
+  /**
+   * Purpose: Executes onSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const onSubmit = async (data: LoginFormData) => {
     try {
       await loginMutation.mutateAsync(data)
@@ -60,6 +70,11 @@ export function LoginForm() {
     }
   }
 
+  /**
+   * Purpose: Executes handle2faSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handle2faSubmit = async () => {
     if (!twoFactorCode || twoFactorCode.length < 6) {
       setTwoFactorError(t('Please enter the 6-digit authentication code'))

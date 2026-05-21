@@ -13,8 +13,11 @@ export interface BackgroundValidationResult {
 }
 
 /**
- * Validate background configuration
+ * Purpose: Validate background configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateBackgroundConfig(bg: BackgroundConfig): BackgroundValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -51,8 +54,11 @@ export function validateBackgroundConfig(bg: BackgroundConfig): BackgroundValida
 }
 
 /**
- * Create default background config
+ * Purpose: Create default background config
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createDefaultBackgroundConfig(): BackgroundConfig {
   return {
     type: 'solid',
@@ -61,8 +67,11 @@ export function createDefaultBackgroundConfig(): BackgroundConfig {
 }
 
 /**
- * Create transparent background
+ * Purpose: Create transparent background
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createTransparentBackground(): BackgroundConfig {
   return {
     type: 'transparent',
@@ -70,8 +79,11 @@ export function createTransparentBackground(): BackgroundConfig {
 }
 
 /**
- * Create solid background
+ * Purpose: Create solid background
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createSolidBackground(color: string): BackgroundConfig {
   return {
     type: 'solid',
@@ -80,8 +92,11 @@ export function createSolidBackground(color: string): BackgroundConfig {
 }
 
 /**
- * Create gradient background
+ * Purpose: Create gradient background
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createGradientBackground(
   startColor: string,
   endColor: string,
@@ -96,8 +111,11 @@ export function createGradientBackground(
 }
 
 /**
- * Create image background
+ * Purpose: Create image background
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createImageBackground(imageUrl: string, opacity: number = 1): BackgroundConfig {
   return {
     type: 'image',
@@ -107,36 +125,51 @@ export function createImageBackground(imageUrl: string, opacity: number = 1): Ba
 }
 
 /**
- * Check if background is transparent
+ * Purpose: Check if background is transparent
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isTransparentBackground(bg: BackgroundConfig): boolean {
   return bg.type === 'transparent';
 }
 
 /**
- * Check if background is solid
+ * Purpose: Check if background is solid
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isSolidBackground(bg: BackgroundConfig): boolean {
   return bg.type === 'solid';
 }
 
 /**
- * Check if background is gradient
+ * Purpose: Check if background is gradient
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isGradientBackground(bg: BackgroundConfig): boolean {
   return bg.type === 'gradient';
 }
 
 /**
- * Check if background is image
+ * Purpose: Check if background is image
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isImageBackground(bg: BackgroundConfig): boolean {
   return bg.type === 'image';
 }
 
 /**
- * Get background CSS
+ * Purpose: Get background CSS
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function backgroundToCSS(bg: BackgroundConfig): string {
   if (bg.type === 'transparent') {
     return 'transparent';
@@ -163,8 +196,11 @@ export function backgroundToCSS(bg: BackgroundConfig): string {
 }
 
 /**
- * Get background description (for UI)
+ * Purpose: Get background description (for UI)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getBackgroundDescription(bg: BackgroundConfig): string {
   if (bg.type === 'transparent') {
     return 'Transparent background';
@@ -188,15 +224,21 @@ export function getBackgroundDescription(bg: BackgroundConfig): string {
 }
 
 /**
- * Clone background config
+ * Purpose: Clone background config
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function cloneBackgroundConfig(bg: BackgroundConfig): BackgroundConfig {
   return JSON.parse(JSON.stringify(bg));
 }
 
 /**
- * Compress background image
+ * Purpose: Compress background image
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function compressBackgroundImage(
   dataURL: string,
   maxWidth: number = 1024,
@@ -234,8 +276,11 @@ export async function compressBackgroundImage(
 }
 
 /**
- * Get dominant color from image
+ * Purpose: Get dominant color from image
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getDominantColor(imageUrl: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -282,10 +327,18 @@ export async function getDominantColor(imageUrl: string): Promise<string> {
 }
 
 /**
- * Check if background provides good contrast
+ * Purpose: Check if background provides good contrast
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hasGoodContrast(backgroundColor: string, foregroundColor: string): boolean {
   // Simple luminance calculation
+  /**
+   * Purpose: Retrieves luminance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getLuminance = (hex: string): number => {
     const rgb = parseInt(hex.slice(1), 16);
     const r = ((rgb >> 16) & 0xff) / 255;
@@ -308,8 +361,11 @@ export function hasGoodContrast(backgroundColor: string, foregroundColor: string
 }
 
 /**
- * Suggest foreground color based on background
+ * Purpose: Suggest foreground color based on background
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function suggestForegroundColor(bg: BackgroundConfig): string {
   if (bg.type === 'solid' && bg.color) {
     return hasGoodContrast(bg.color, '#000000') ? '#000000' : '#FFFFFF';

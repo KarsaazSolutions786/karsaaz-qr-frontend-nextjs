@@ -22,6 +22,11 @@ export interface LogoFieldsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes LogoFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LogoFields({
   value,
   onChange,
@@ -31,6 +36,11 @@ export function LogoFields({
 }: LogoFieldsProps) {
   const { t } = useTranslation();
   // Handle logo URL change
+  /**
+   * Purpose: Executes handleLogoUrlChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleLogoUrlChange = (url: string | null) => {
     if (!url) {
       onChange(null);
@@ -53,6 +63,11 @@ export function LogoFields({
   };
 
   // Handle logo config change
+  /**
+   * Purpose: Executes handleLogoConfigChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleLogoConfigChange = (config: DesignerLogoConfig) => {
     onChange(config);
   };
@@ -174,8 +189,11 @@ export function LogoFields({
 }
 
 /**
- * Simplified logo toggle (enable/disable with default config)
+ * Purpose: Simplified logo toggle (enable/disable with default config)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function LogoToggle({
   enabled,
   onToggle,

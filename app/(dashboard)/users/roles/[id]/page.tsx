@@ -10,6 +10,11 @@ import { useUpdateRole } from '@/lib/hooks/mutations/useRoleMutations'
 import { PermissionsInput } from '@/components/features/roles/PermissionsInput'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes EditRolePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditRolePage() {
   const { t } = useTranslation()
   const params = useParams()
@@ -33,6 +38,11 @@ export default function EditRolePage() {
     }
   }, [role])
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)

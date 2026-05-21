@@ -9,6 +9,11 @@ interface VideoBlockProps {
   onUpdate?: (data: VideoBlockData['data']) => void
 }
 
+/**
+ * Purpose: Retrieves videoembedurl.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getVideoEmbedUrl(url: string): string | null {
   // YouTube
   const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/
@@ -27,6 +32,11 @@ function getVideoEmbedUrl(url: string): string | null {
   return null
 }
 
+/**
+ * Purpose: Executes VideoBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function VideoBlock({ block, isEditing, onUpdate }: VideoBlockProps) {
   const { url, title } = block.data
   const { t } = useTranslation()

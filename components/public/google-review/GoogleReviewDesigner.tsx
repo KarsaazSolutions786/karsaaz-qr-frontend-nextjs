@@ -20,6 +20,11 @@ interface GoogleReviewDesignerProps {
   }
 }
 
+/**
+ * Purpose: Executes GoogleReviewDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function GoogleReviewDesigner({
   businessName,
   location,
@@ -33,6 +38,11 @@ export default function GoogleReviewDesigner({
   const primaryColor = theme?.primaryColor || '#4285f4'
   const bgColor = theme?.backgroundColor || '#f8f9fa'
 
+  /**
+   * Purpose: Executes renderStars functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderStars = (rating: number, size = 'w-6 h-6') => {
     return Array.from({ length: 5 }).map((_, i) => (
       <Star

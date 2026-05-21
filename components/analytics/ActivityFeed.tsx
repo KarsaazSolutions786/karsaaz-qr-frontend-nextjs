@@ -10,6 +10,11 @@ interface ActivityFeedProps {
   isLoading?: boolean
 }
 
+/**
+ * Purpose: Executes ActivityFeed functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ActivityFeed({ scans, isLoading }: ActivityFeedProps) {
   const { t } = useTranslation()
 

@@ -9,6 +9,11 @@ interface LayoutTabProps {
   updateTheme: (updates: Partial<ThemeSettings>) => void
 }
 
+/**
+ * Purpose: Executes LayoutTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function LayoutTab({ theme, updateTheme }: LayoutTabProps) {
   const { t } = useTranslation()
 

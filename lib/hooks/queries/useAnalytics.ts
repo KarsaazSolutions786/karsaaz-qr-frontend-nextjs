@@ -11,6 +11,11 @@ import type {
 import { PaginatedResponse } from '@/types/api'
 
 // Analytics overview
+/**
+ * Purpose: Executes useAnalyticsOverview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useAnalyticsOverview(
   dateRange: DateRange,
   options?: Omit<UseQueryOptions<AnalyticsOverview>, 'queryKey' | 'queryFn'>
@@ -24,6 +29,11 @@ export function useAnalyticsOverview(
 }
 
 // QR Code specific stats
+/**
+ * Purpose: Executes useQRCodeStats functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useQRCodeStats(
   qrcodeId: number,
   dateRange: DateRange,
@@ -39,6 +49,11 @@ export function useQRCodeStats(
 }
 
 // QR Code scans list
+/**
+ * Purpose: Executes useQRCodeScans functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useQRCodeScans(
   qrcodeId: number,
   params: ScanListParams,
@@ -54,6 +69,11 @@ export function useQRCodeScans(
 }
 
 // Top QR codes
+/**
+ * Purpose: Executes useTopQRCodes functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useTopQRCodes(
   dateRange: DateRange,
   limit?: number,

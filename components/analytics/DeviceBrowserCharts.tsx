@@ -35,6 +35,11 @@ export interface DeviceBrowserChartsProps {
   totalScans: number;
 }
 
+/**
+ * Purpose: Executes DeviceBrowserCharts functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DeviceBrowserCharts({
   devices,
   browsers,
@@ -250,8 +255,11 @@ export function DeviceBrowserCharts({
 }
 
 /**
- * Compact Device Stats Component
+ * Purpose: Compact Device Stats Component
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function DeviceStatsCompact({
   devices,
   totalScans,

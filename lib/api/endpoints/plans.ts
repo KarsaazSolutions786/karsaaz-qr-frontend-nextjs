@@ -3,8 +3,13 @@ import { normalizePagination, mapSearchParams } from '../pagination'
 import type { SubscriptionPlan, CreateSubscriptionPlanRequest } from '@/types/entities/plan'
 
 /**
- * Map backend snake_case plan to frontend camelCase SubscriptionPlan.
+ * Purpose: Map backend snake_case plan to frontend camelCase SubscriptionPlan.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
  */
+
 function mapPlan(raw: Record<string, unknown>): SubscriptionPlan {
   const r = raw as Record<string, unknown>
   return {
@@ -47,8 +52,11 @@ function mapPlan(raw: Record<string, unknown>): SubscriptionPlan {
 }
 
 /**
- * Convert frontend camelCase plan data to backend snake_case for create/update.
+ * Purpose: Convert frontend camelCase plan data to backend snake_case for create/update.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function toSnakeCase(data: Partial<CreateSubscriptionPlanRequest>): Record<string, unknown> {
   const payload: Record<string, unknown> = {}
 

@@ -9,10 +9,20 @@ export interface CopyButtonProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes CopyButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CopyButton({ text, className }: CopyButtonProps) {
   const { t } = useTranslation()
   const [copied, setCopied] = React.useState(false)
 
+  /**
+   * Purpose: Executes handleCopy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(text)

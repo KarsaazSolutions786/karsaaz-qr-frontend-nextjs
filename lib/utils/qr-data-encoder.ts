@@ -1,10 +1,9 @@
 /**
- * QR Data Encoder
- *
- * Converts structured form data into QR-encodable strings based on type.
- * Field names match the Vue.js backend API schemas exactly.
- * Used for live preview rendering during the wizard flow.
+ * Purpose: QR Data Encoder Converts structured form data into QR-encodable strings based on type. Field names match the Vue.js backend API schemas exactly. Used for live preview rendering during the wizard flow.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 
 export function encodeQRData(type: string, data: Record<string, any>): string {
   if (!data || Object.keys(data).length === 0) {
@@ -230,6 +229,11 @@ export function encodeQRData(type: string, data: Record<string, any>): string {
   }
 }
 
+/**
+ * Purpose: Executes formatMailto functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatMailto(data: Record<string, any>): string {
   if (!data.email) return ''
   let mailto = `mailto:${data.email}`
@@ -241,6 +245,11 @@ function formatMailto(data: Record<string, any>): string {
   return mailto
 }
 
+/**
+ * Purpose: Executes formatWifi functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatWifi(data: Record<string, any>): string {
   const type = data.encryption || data.type || 'WPA'
   const ssid = data.ssid || data.networkName || ''
@@ -249,6 +258,11 @@ function formatWifi(data: Record<string, any>): string {
   return `WIFI:T:${type};S:${ssid};P:${password};H:${hidden};;`
 }
 
+/**
+ * Purpose: Executes formatVCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatVCard(data: Record<string, any>): string {
   const lines: string[] = ['BEGIN:VCARD', 'VERSION:3.0']
 
@@ -289,6 +303,11 @@ function formatVCard(data: Record<string, any>): string {
   return lines.join('\n')
 }
 
+/**
+ * Purpose: Executes formatCalendar functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatCalendar(data: Record<string, any>): string {
   const lines: string[] = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'BEGIN:VEVENT']
   const summary = data.event_name || data.title || data.summary || ''
@@ -312,6 +331,11 @@ function formatCalendar(data: Record<string, any>): string {
   return lines.join('\n')
 }
 
+/**
+ * Purpose: Executes formatICSDate functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatICSDate(date: string): string {
   try {
     return new Date(date).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
@@ -320,6 +344,11 @@ function formatICSDate(date: string): string {
   }
 }
 
+/**
+ * Purpose: Executes formatCrypto functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatCrypto(data: Record<string, any>): string {
   const currency = (data.currency || data.coin || 'bitcoin').toLowerCase()
   const address = data.address || ''
@@ -334,6 +363,11 @@ function formatCrypto(data: Record<string, any>): string {
   return uri
 }
 
+/**
+ * Purpose: Executes formatUPI functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatUPI(data: Record<string, any>): string {
   // schema fields: upi_id, payee_name, amount
   const pa = data.upi_id || data.vpa || data.upiId || ''

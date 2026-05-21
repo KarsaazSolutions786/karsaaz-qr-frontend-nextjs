@@ -34,8 +34,11 @@ export interface QRApiData {
 }
 
 /**
- * Convert React Hook Form data to API request format.
+ * Purpose: Convert React Hook Form data to API request format.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function adaptFormToAPI(formData: QRFormData): QRApiData {
   const apiData: QRApiData = {
     qrcode_name: formData.name,
@@ -56,8 +59,11 @@ export function adaptFormToAPI(formData: QRFormData): QRApiData {
 }
 
 /**
- * Convert API response to React Hook Form data format.
+ * Purpose: Convert API response to React Hook Form data format.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function adaptAPIToForm(apiData: QRApiData): QRFormData {
   const formData: QRFormData = {
     name: apiData.qrcode_name,

@@ -10,6 +10,11 @@ interface PluginSettingsFormProps {
   onSaved?: () => void
 }
 
+/**
+ * Purpose: Executes PluginSettingsForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PluginSettingsForm({ configs, onSaved }: PluginSettingsFormProps) {
   const { t } = useTranslation()
   const [values, setValues] = useState<Record<string, string>>(() => {
@@ -21,10 +26,20 @@ export function PluginSettingsForm({ configs, onSaved }: PluginSettingsFormProps
   })
   const [saving, setSaving] = useState(false)
 
+  /**
+   * Purpose: Executes handleChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleChange = (key: string, value: string) => {
     setValues((prev) => ({ ...prev, [key]: value }))
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -39,6 +54,11 @@ export function PluginSettingsForm({ configs, onSaved }: PluginSettingsFormProps
     }
   }
 
+  /**
+   * Purpose: Executes renderField functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderField = (config: PluginConfig) => {
     const key = config.expandedKey ?? config.key
     const value = values[key] ?? ''

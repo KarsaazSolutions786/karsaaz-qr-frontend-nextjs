@@ -3,8 +3,18 @@
 import { authAPI } from '@/lib/api/endpoints/auth'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes TwitterLoginButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TwitterLoginButton() {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes handleTwitterLogin functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTwitterLogin = () => {
     const redirectUrl = authAPI.getTwitterRedirectUrl()
     window.location.href = redirectUrl

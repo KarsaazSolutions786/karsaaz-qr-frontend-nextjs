@@ -3,6 +3,11 @@
 import { ForgotPasswordForm } from '@/components/features/auth/ForgotPasswordForm'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes ForgotPasswordPageContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function ForgotPasswordPageContent() {
   const { t } = useTranslation()
   return (

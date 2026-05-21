@@ -82,6 +82,11 @@ const SORT_OPTIONS: SortOptionItem[] = [
   },
 ];
 
+/**
+ * Purpose: Executes SortDropdown functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SortDropdown({ currentSort, onSortChange }: SortDropdownProps) {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
@@ -90,6 +95,11 @@ export function SortDropdown({ currentSort, onSortChange }: SortDropdownProps) {
   const currentOption = SORT_OPTIONS.find((opt) => opt.value === currentSort);
 
   useEffect(() => {
+    /**
+     * Purpose: Executes handleClickOutside functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -105,6 +115,11 @@ export function SortDropdown({ currentSort, onSortChange }: SortDropdownProps) {
     };
   }, [isOpen]);
 
+  /**
+   * Purpose: Executes handleSortSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSortSelect = (sort: SortOption) => {
     onSortChange(sort);
     setIsOpen(false);

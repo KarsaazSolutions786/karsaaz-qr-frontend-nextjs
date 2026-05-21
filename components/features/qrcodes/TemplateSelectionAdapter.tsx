@@ -16,15 +16,11 @@ interface TemplateSelectionAdapterProps {
 }
 
 /**
- * TemplateSelectionAdapter -- Replicates the original Lit Element project's
- * qrcg-new-qrcode-form-adapter component.
- *
- * Shows two options:
- * 1. "Create Using Template" - Links to templates page or shows inline categories
- * 2. "Create Blank QR Code" - Starts the wizard without a template
- *
- * If no templates are available at all, auto-falls through to blank creation.
+ * Purpose: TemplateSelectionAdapter -- Replicates the original Lit Element project's qrcg-new-qrcode-form-adapter component. Shows two options: 1. "Create Using Template" - Links to templates page or shows inline categories 2. "Create Blank QR Code" - Starts the wizard without a template If no templates are available at all, auto-falls through to blank creation.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function TemplateSelectionAdapter({
   onStartBlank,
   onSelectTemplate,

@@ -6,6 +6,11 @@ import { PricingPlans } from './PricingPlans'
 
 type BillingMode = 'monthly' | 'annual' | 'credit'
 
+/**
+ * Purpose: Executes PricingPageContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PricingPageContent() {
   const [billingMode, setBillingMode] = useState<BillingMode>('monthly')
 

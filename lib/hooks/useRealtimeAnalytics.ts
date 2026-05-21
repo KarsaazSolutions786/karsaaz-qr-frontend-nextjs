@@ -46,6 +46,11 @@ export interface UseRealtimeAnalyticsOptions {
   maxRecentScans?: number;
 }
 
+/**
+ * Purpose: Executes useRealtimeAnalytics functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useRealtimeAnalytics({
   qrCodeId,
   enabled = true,
@@ -261,8 +266,11 @@ export function useRealtimeAnalytics({
 }
 
 /**
- * Calculate time-based analytics
+ * Purpose: Calculate time-based analytics
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculateTimeBasedStats(scans: ScanEvent[]) {
   const hourlyStats = new Array(24).fill(0);
   const dailyStats = new Map<string, number>();

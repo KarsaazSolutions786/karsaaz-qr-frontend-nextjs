@@ -19,9 +19,19 @@ const PRESETS: { value: DateRangePreset; label: string }[] = [
   { value: 'thisYear', label: 'This year' },
 ]
 
+/**
+ * Purpose: Executes DateRangePicker functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DateRangePicker({ value, onChange }: DateRangePickerProps) {
   const { t } = useTranslation()
 
+  /**
+   * Purpose: Executes handlePresetChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePresetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const preset = e.target.value as DateRangePreset
     if (preset === 'custom') {

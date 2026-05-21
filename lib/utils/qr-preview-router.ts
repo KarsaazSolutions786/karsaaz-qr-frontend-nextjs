@@ -30,8 +30,11 @@ export const QR_TYPE_ROUTES: QRTypeRoute[] = [
 ]
 
 /**
- * Get preview route for a QR type
+ * Purpose: Get preview route for a QR type
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getPreviewRoute(qrType: string, slug: string): string | null {
   const normalizedType = qrType.toLowerCase().trim()
 
@@ -53,22 +56,31 @@ export function getPreviewRoute(qrType: string, slug: string): string | null {
 }
 
 /**
- * Check if QR type has a landing page
+ * Purpose: Check if QR type has a landing page
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hasLandingPage(qrType: string): boolean {
   return getPreviewRoute(qrType, 'test') !== null
 }
 
 /**
- * Get all supported QR types with landing pages
+ * Purpose: Get all supported QR types with landing pages
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getSupportedQRTypes(): string[] {
   return QR_TYPE_ROUTES.map(r => r.type)
 }
 
 /**
- * Check if QR type is a static redirect (URL, Email, Phone, SMS, WiFi, etc.)
+ * Purpose: Check if QR type is a static redirect (URL, Email, Phone, SMS, WiFi, etc.)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isStaticQRType(qrType: string): boolean {
   const staticTypes = [
     'url',
@@ -90,8 +102,11 @@ export function isStaticQRType(qrType: string): boolean {
 }
 
 /**
- * Build preview URL with optional preview mode
+ * Purpose: Build preview URL with optional preview mode
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function buildPreviewUrl(
   qrType: string,
   slug: string,

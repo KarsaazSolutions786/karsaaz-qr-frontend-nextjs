@@ -78,6 +78,11 @@ interface SortableBlockItemProps {
   onDelete: (blockId: string) => void;
 }
 
+/**
+ * Purpose: Executes SortableBlockItem functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: SortableBlockItemProps) {
   const { t } = useTranslation();
   const {
@@ -95,6 +100,11 @@ function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: Sort
     opacity: isDragging ? 0.5 : 1,
   };
 
+  /**
+   * Purpose: Retrieves blocklabel.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getBlockLabel = () => {
     switch (block.type) {
       case BlockType.LINK:
@@ -168,6 +178,11 @@ function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: Sort
   );
 }
 
+/**
+ * Purpose: Executes BlocksManager functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
   const { t } = useTranslation();
   const [showAddMenu, setShowAddMenu] = useState(false);
@@ -180,6 +195,11 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
     })
   );
 
+  /**
+   * Purpose: Executes handleDragEnd functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -196,6 +216,11 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
     }
   };
 
+  /**
+   * Purpose: Executes handleAddBlock functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleAddBlock = (type: BlockType) => {
     const newBlock = createBlockTemplate(type, blocks.length);
     onChange([...blocks, newBlock]);
@@ -203,12 +228,22 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
     setEditingBlock(newBlock);
   };
 
+  /**
+   * Purpose: Executes handleDeleteBlock functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDeleteBlock = (blockId: string) => {
     if (confirm(t('Are you sure you want to delete this block?'))) {
       onChange(blocks.filter((block) => block.id !== blockId));
     }
   };
 
+  /**
+   * Purpose: Executes handleToggleVisibility functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleToggleVisibility = (blockId: string) => {
     onChange(
       blocks.map((block) =>
@@ -217,6 +252,11 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
     );
   };
 
+  /**
+   * Purpose: Executes handleUpdateBlock functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUpdateBlock = (updatedBlock: BiolinkBlock) => {
     onChange(blocks.map((block) => (block.id === updatedBlock.id ? updatedBlock : block)));
     setEditingBlock(null);

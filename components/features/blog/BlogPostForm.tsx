@@ -28,6 +28,11 @@ interface BlogPostFormProps {
   submitLabel?: string
 }
 
+/**
+ * Purpose: Executes generateSlug functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generateSlug(title: string): string {
   return title
     .toLowerCase()
@@ -35,6 +40,11 @@ function generateSlug(title: string): string {
     .replace(/(^-|-$)/g, '')
 }
 
+/**
+ * Purpose: Executes BlogPostForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BlogPostForm({
   defaultValues,
   onSubmit,
@@ -74,6 +84,11 @@ export default function BlogPostForm({
     }
   }, [title, defaultValues?.slug, setValue])
 
+  /**
+   * Purpose: Executes handleImageChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && onImageUpload) onImageUpload(file)

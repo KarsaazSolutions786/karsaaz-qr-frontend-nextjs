@@ -10,16 +10,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * PayFast (South Africa) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (sandbox / live)
- * - Merchant ID
- * - Merchant Key
- * - Passphrase
- *
- * No auto-webhook; no manual webhook URL display.
+ * Purpose: PayFast (South Africa) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (sandbox / live) - Merchant ID - Merchant Key - Passphrase No auto-webhook; no manual webhook URL display.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function PayFastForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

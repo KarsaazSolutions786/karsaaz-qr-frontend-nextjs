@@ -19,8 +19,11 @@ const STICKER_CONSTRAINTS = {
 };
 
 /**
- * Validate sticker file
+ * Purpose: Validate sticker file
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateStickerFile(file: File): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -47,8 +50,11 @@ export function validateStickerFile(file: File): { valid: boolean; errors: strin
 }
 
 /**
- * Validate sticker configuration
+ * Purpose: Validate sticker configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateStickerConfig(config: StickerConfig): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
@@ -86,8 +92,11 @@ export function validateStickerConfig(config: StickerConfig): { valid: boolean; 
 }
 
 /**
- * Calculate optimal sticker size based on QR code size
+ * Purpose: Calculate optimal sticker size based on QR code size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getOptimalStickerSize(qrSize: number): number {
   // Default to 20% of QR size, but scale based on QR dimensions
   if (qrSize <= 256) return 0.25; // 25% for small QR codes
@@ -97,8 +106,11 @@ export function getOptimalStickerSize(qrSize: number): number {
 }
 
 /**
- * Calculate sticker dimensions in pixels
+ * Purpose: Calculate sticker dimensions in pixels
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculateStickerDimensions(
   stickerSize: number,
   qrSize: number
@@ -108,8 +120,11 @@ export function calculateStickerDimensions(
 }
 
 /**
- * Calculate sticker position in pixels
+ * Purpose: Calculate sticker position in pixels
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculateStickerPosition(
   position: StickerPosition,
   qrSize: number,
@@ -150,8 +165,11 @@ export function calculateStickerPosition(
 }
 
 /**
- * Get position coordinates from preset
+ * Purpose: Get position coordinates from preset
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getStickerPositionPreset(preset: string): { x: number; y: number } {
   const presets: Record<string, { x: number; y: number }> = {
     top: { x: 0.5, y: 0 },
@@ -168,8 +186,11 @@ function getStickerPositionPreset(preset: string): { x: number; y: number } {
 }
 
 /**
- * Compress sticker image
+ * Purpose: Compress sticker image
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function compressStickerImage(file: File, maxSize: number = 512): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -216,8 +237,11 @@ export async function compressStickerImage(file: File, maxSize: number = 512): P
 }
 
 /**
- * Filter stickers by category
+ * Purpose: Filter stickers by category
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function filterStickersByCategory(
   stickers: Sticker[],
   category: StickerCategory | 'all'
@@ -227,8 +251,11 @@ export function filterStickersByCategory(
 }
 
 /**
- * Filter stickers by search query
+ * Purpose: Filter stickers by search query
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function filterStickersBySearch(stickers: Sticker[], query: string): Sticker[] {
   if (!query || query.trim() === '') return stickers;
 
@@ -242,8 +269,11 @@ export function filterStickersBySearch(stickers: Sticker[], query: string): Stic
 }
 
 /**
- * Sort stickers
+ * Purpose: Sort stickers
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function sortStickers(
   stickers: Sticker[],
   sortBy: 'name' | 'category' | 'recent' = 'name'
@@ -267,8 +297,11 @@ export function sortStickers(
 }
 
 /**
- * Get category display name
+ * Purpose: Get category display name
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getCategoryDisplayName(category: StickerCategory | 'all'): string {
   const names: Record<string, string> = {
     all: 'All Stickers',
@@ -284,8 +317,11 @@ export function getCategoryDisplayName(category: StickerCategory | 'all'): strin
 }
 
 /**
- * Get category icon
+ * Purpose: Get category icon
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getCategoryIcon(category: StickerCategory | 'all'): string {
   const icons: Record<string, string> = {
     all: '🎨',
@@ -301,8 +337,11 @@ export function getCategoryIcon(category: StickerCategory | 'all'): string {
 }
 
 /**
- * Create default sticker config
+ * Purpose: Create default sticker config
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createDefaultStickerConfig(stickerId: string, stickerUrl: string): StickerConfig {
   return {
     id: stickerId,
@@ -317,8 +356,11 @@ export function createDefaultStickerConfig(stickerId: string, stickerUrl: string
 }
 
 /**
- * Estimate sticker file upload time
+ * Purpose: Estimate sticker file upload time
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function estimateUploadTime(fileSize: number): number {
   // Assume 1MB/s upload speed
   const seconds = fileSize / (1024 * 1024);
@@ -326,8 +368,11 @@ export function estimateUploadTime(fileSize: number): number {
 }
 
 /**
- * Format file size
+ * Purpose: Format file size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -335,8 +380,11 @@ export function formatFileSize(bytes: number): string {
 }
 
 /**
- * Check if sticker overlaps with QR code critical areas
+ * Purpose: Check if sticker overlaps with QR code critical areas
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function checkStickerOverlap(
   position: StickerPosition,
   size: number,

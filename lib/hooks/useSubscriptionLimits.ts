@@ -57,6 +57,11 @@ interface SubscriptionLimitsResult {
   isAccountCreditMode: boolean
 }
 
+/**
+ * Purpose: Executes useSubscriptionLimits functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function useSubscriptionLimits(): SubscriptionLimitsResult {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 

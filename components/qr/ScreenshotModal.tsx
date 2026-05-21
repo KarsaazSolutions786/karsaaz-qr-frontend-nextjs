@@ -22,6 +22,11 @@ export interface ScreenshotModalProps {
   onClose: () => void;
 }
 
+/**
+ * Purpose: Executes ScreenshotModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ScreenshotModal({
   qrCodeId: _qrCodeId,
   qrSvg,
@@ -36,6 +41,11 @@ export function ScreenshotModal({
 
   if (!open) return null;
 
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownload = async () => {
     setIsExporting(true);
     try {
@@ -196,6 +206,11 @@ export function ScreenshotModal({
 /* Helpers                                                            */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Purpose: Executes downloadBlob functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function downloadBlob(blob: Blob, filename: string) {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -206,7 +221,12 @@ function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(a.href);
 }
 
-/** Produces a minimal single-page PDF containing the image (data-url). */
+/**
+ * Purpose: * Produces a minimal single-page PDF containing the image (data-url). 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 function buildMinimalPdfWithImage(_dataUrl: string, dim: number): string {
   // Minimal PDF with an embedded page of given dimensions
   const w = dim;

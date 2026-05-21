@@ -18,6 +18,11 @@ const inspirationalPhrases = [
   },
 ];
 
+/**
+ * Purpose: Executes generateImages functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 const generateImages = (tabIndex: number, count = 24) => {
   // Create varied heights for masonry effect but with consistent width
   const heightVariations = [280, 320, 360, 240, 300, 340, 260, 380, 290, 330];
@@ -86,6 +91,11 @@ interface ImageCardProps {
 }
 
 // Individual Card Component with IntersectionObserver
+/**
+ * Purpose: Executes ImageCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 const ImageCard = ({ image, index, onImageLoad }: ImageCardProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -218,6 +228,11 @@ const ImageCard = ({ image, index, onImageLoad }: ImageCardProps) => {
   );
 };
 
+/**
+ * Purpose: Executes InspirationFeed functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function InspirationFeed() {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [images, setImages] = useState<ImageItem[]>([]);

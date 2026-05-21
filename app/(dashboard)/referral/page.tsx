@@ -5,6 +5,11 @@ import { ReferralDashboard } from '@/components/features/referral/ReferralDashbo
 import { ReferralCodeShare } from '@/components/features/referral/ReferralCodeShare'
 import { ReferralList } from '@/components/features/referral/ReferralList'
 
+/**
+ * Purpose: Executes ReferralPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ReferralPage() {
   const { t } = useTranslation()
 

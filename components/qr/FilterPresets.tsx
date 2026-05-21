@@ -20,6 +20,11 @@ export interface FilterPresetsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes FilterPresets functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FilterPresets({
   presets,
   activePresetId,
@@ -43,16 +48,31 @@ export function FilterPresets({
     );
   }
   
+  /**
+   * Purpose: Executes startEdit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const startEdit = (preset: FilterPreset) => {
     setEditingId(preset.id);
     setEditName(preset.name);
   };
   
+  /**
+   * Purpose: Executes cancelEdit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const cancelEdit = () => {
     setEditingId(null);
     setEditName('');
   };
   
+  /**
+   * Purpose: Saves the specified data.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const saveEdit = (presetId: string) => {
     if (editName.trim()) {
       onUpdatePreset(presetId, { name: editName.trim() });
@@ -60,12 +80,22 @@ export function FilterPresets({
     cancelEdit();
   };
   
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = (presetId: string, presetName: string) => {
     if (confirm(`Delete preset "${presetName}"?`)) {
       onDeletePreset(presetId);
     }
   };
   
+  /**
+   * Purpose: Executes toggleDefault functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleDefault = (preset: FilterPreset) => {
     onUpdatePreset(preset.id, { isDefault: !preset.isDefault });
   };
@@ -183,8 +213,11 @@ export function FilterPresets({
 }
 
 /**
- * Get filter summary text
+ * Purpose: Get filter summary text
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getFilterSummary(filters: Record<string, any>): string {
   const parts: string[] = [];
   
@@ -218,8 +251,11 @@ function getFilterSummary(filters: Record<string, any>): string {
 }
 
 /**
- * Format date
+ * Purpose: Format date
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function formatDate(date: Date): string {
   const now = new Date();
   const diff = now.getTime() - new Date(date).getTime();
@@ -234,8 +270,11 @@ function formatDate(date: Date): string {
 }
 
 /**
- * Compact presets dropdown
+ * Purpose: Compact presets dropdown
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function FilterPresetsDropdown({
   presets,
   activePresetId,

@@ -27,6 +27,11 @@ interface UPIDynamicDesignerProps {
 
 const QUICK_AMOUNTS = [100, 200, 500, 1000, 2000, 5000]
 
+/**
+ * Purpose: Executes UPIDynamicDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function UPIDynamicDesigner({
   merchantName,
   vpa,
@@ -62,18 +67,33 @@ export default function UPIDynamicDesigner({
     return ''
   }, [amount, note, vpa, merchantName, currency])
 
+  /**
+   * Purpose: Executes handleCopy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopy = () => {
     navigator.clipboard.writeText(vpa)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
+  /**
+   * Purpose: Executes handleProceed functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleProceed = () => {
     if (amount >= minAmount && amount <= maxAmount) {
       setStep('confirm')
     }
   }
 
+  /**
+   * Purpose: Executes handlePayWithApp functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePayWithApp = () => {
     if (upiString) {
       window.location.href = upiString

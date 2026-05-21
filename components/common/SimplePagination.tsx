@@ -22,6 +22,13 @@ export interface SimplePaginationProps {
   compact?: boolean;
 }
 
+/**
+ * Purpose: Executes SimplePagination functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const SimplePagination = ({
   currentPage,
   totalPages,
@@ -42,18 +49,33 @@ export const SimplePagination = ({
   const hasNextPage = hasMore !== undefined ? hasMore : currentPage < totalPages;
   const hasPreviousPage = currentPage > 1;
 
+  /**
+   * Purpose: Executes handlePrevious functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePrevious = () => {
     if (hasPreviousPage && !disabled && !loading) {
       onPageChange(currentPage - 1);
     }
   };
 
+  /**
+   * Purpose: Executes handleNext functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleNext = () => {
     if (hasNextPage && !disabled && !loading) {
       onPageChange(currentPage + 1);
     }
   };
 
+  /**
+   * Purpose: Executes handleLoadMore functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleLoadMore = () => {
     if (hasNextPage && !disabled && !loading) {
       onPageChange(currentPage + 1);

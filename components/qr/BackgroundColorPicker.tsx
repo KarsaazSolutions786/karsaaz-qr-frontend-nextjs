@@ -19,6 +19,11 @@ export interface BackgroundColorPickerProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes BackgroundColorPicker functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BackgroundColorPicker({
   value,
   onChange,
@@ -29,10 +34,20 @@ export function BackgroundColorPicker({
   const { t } = useTranslation();
   const isTransparent = value === null || value === 'transparent';
 
+  /**
+   * Purpose: Executes handleColorChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleColorChange = (color: string) => {
     onChange(color);
   };
 
+  /**
+   * Purpose: Executes handleTransparentToggle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTransparentToggle = () => {
     if (isTransparent) {
       onChange('#FFFFFF'); // Default to white when enabling
@@ -132,8 +147,11 @@ export const BACKGROUND_PRESETS = [
 ];
 
 /**
- * Background preset picker
+ * Purpose: Background preset picker
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function BackgroundPresetPicker({
   onChange,
   className = '',

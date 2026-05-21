@@ -24,10 +24,20 @@ const defaultDepth: DepthSettings = {
   rotateY: 0,
 };
 
+/**
+ * Purpose: Executes DepthEffects functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DepthEffects({ depth, onChange }: DepthEffectsProps) {
   const { t } = useTranslation();
   const d = depth ?? defaultDepth;
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (partial: Partial<DepthSettings>) => {
     onChange({ ...d, ...partial });
   };

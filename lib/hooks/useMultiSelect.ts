@@ -14,6 +14,11 @@ export interface MultiSelectOptions {
   onSelectionChange?: (selectedIds: string[]) => void;
 }
 
+/**
+ * Purpose: Executes useMultiSelect functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useMultiSelect<T extends { id: string }>(
   items: T[] = [], // Add default empty array
   options: MultiSelectOptions = {}
@@ -255,10 +260,11 @@ export function useMultiSelect<T extends { id: string }>(
 }
 
 /**
- * useMultiSelectWithKeyboard Hook
- * 
- * Enhanced multi-select with keyboard support (Ctrl/Cmd, Shift).
+ * Purpose: useMultiSelectWithKeyboard Hook Enhanced multi-select with keyboard support (Ctrl/Cmd, Shift).
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useMultiSelectWithKeyboard<T extends { id: string }>(
   items: T[],
   options: MultiSelectOptions = {}

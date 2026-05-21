@@ -10,9 +10,13 @@ import type JSZip from 'jszip'
 import { exportSVG } from './export-svg'
 
 /**
- * Lazily load JSZip to avoid bundling it at the top level (~100KB).
- * The library is only fetched when the user triggers a batch ZIP download.
+ * Purpose: Lazily load JSZip to avoid bundling it at the top level (~100KB). The library is only fetched when the user triggers a batch ZIP download.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 async function loadJSZip(): Promise<typeof JSZip> {
   const { default: JSZip } = await import('jszip')
   return JSZip
@@ -43,8 +47,11 @@ export interface QRCodeData {
 }
 
 /**
- * Download multiple QR codes as ZIP
+ * Purpose: Download multiple QR codes as ZIP
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function downloadQRCodesAsZip(
   qrCodes: QRCodeData[],
   options: ZipDownloadOptions = {}
@@ -109,8 +116,11 @@ export async function downloadQRCodesAsZip(
 }
 
 /**
- * Add QR code in all formats to ZIP
+ * Purpose: Add QR code in all formats to ZIP
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 async function addQRCodeAllFormats(
   zip: JSZip,
   qrCode: QRCodeData,
@@ -141,8 +151,11 @@ async function addQRCodeAllFormats(
 }
 
 /**
- * Add QR code in single format to ZIP
+ * Purpose: Add QR code in single format to ZIP
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 async function addQRCodeSingleFormat(
   zip: JSZip,
   qrCode: QRCodeData,
@@ -175,16 +188,24 @@ async function addQRCodeSingleFormat(
 }
 
 /**
- * Get SVG as blob
+ * Purpose: Get SVG as blob
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 async function getSVGBlob(svgElement: SVGElement): Promise<Blob> {
   const svgString = new XMLSerializer().serializeToString(svgElement)
   return new Blob([svgString], { type: 'image/svg+xml' })
 }
 
 /**
- * Get PNG as blob
+ * Purpose: Get PNG as blob
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 async function getPNGBlob(svgElement: SVGElement, width: number, height: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas')
@@ -225,8 +246,11 @@ async function getPNGBlob(svgElement: SVGElement, width: number, height: number)
 }
 
 /**
- * Get PDF as blob (placeholder - requires jsPDF)
+ * Purpose: Get PDF as blob (placeholder - requires jsPDF)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 async function getPDFBlob(svgElement: SVGElement): Promise<Blob> {
   // This is a simplified version - you would use the actual exportPDF utility
   const svgString = new XMLSerializer().serializeToString(svgElement)
@@ -234,8 +258,11 @@ async function getPDFBlob(svgElement: SVGElement): Promise<Blob> {
 }
 
 /**
- * Sanitize filename
+ * Purpose: Sanitize filename
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function sanitizeFilename(filename: string): string {
   return filename
     .replace(/[^a-z0-9_\-\.]/gi, '_')
@@ -245,15 +272,21 @@ function sanitizeFilename(filename: string): string {
 }
 
 /**
- * Join path segments
+ * Purpose: Join path segments
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function joinPath(...segments: string[]): string {
   return segments.filter(Boolean).join('/').replace(/\/+/g, '/')
 }
 
 /**
- * Estimate ZIP size
+ * Purpose: Estimate ZIP size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function estimateZipSize(
   qrCodeCount: number,
   format: 'svg' | 'png' | 'pdf' | 'all',
@@ -287,8 +320,11 @@ export function estimateZipSize(
 }
 
 /**
- * Format file size
+ * Purpose: Format file size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${Math.round(bytes)} B`
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
@@ -297,8 +333,13 @@ function formatFileSize(bytes: number): string {
 }
 
 /**
- * Check if browser supports ZIP creation
+ * Purpose: Check if browser supports ZIP creation
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export async function isZipSupported(): Promise<boolean> {
   try {
     await loadJSZip()
@@ -319,8 +360,11 @@ export type ZipProgressCallback = (progress: {
 }) => void
 
 /**
- * Download QR codes as ZIP with progress tracking
+ * Purpose: Download QR codes as ZIP with progress tracking
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function downloadQRCodesAsZipWithProgress(
   qrCodes: QRCodeData[],
   options: ZipDownloadOptions = {},

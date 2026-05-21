@@ -20,6 +20,11 @@ const actions = [
   { nameKey: 'System Settings', href: '/system/settings', icon: Cog6ToothIcon, adminOnly: true },
 ]
 
+/**
+ * Purpose: Executes QuickActions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QuickActions() {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)

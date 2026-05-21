@@ -5,6 +5,11 @@ import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes'
 
 const VALID_TYPES = ['paypal', 'payment-paypal']
 
+/**
+ * Purpose: Retrieves paypaldata.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 async function getPayPalData(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -23,6 +28,11 @@ async function getPayPalData(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const data = await getPayPalData(params.slug)
 
@@ -68,6 +78,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes PublicPayPalPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default async function PublicPayPalPage({ params }: { params: { slug: string } }) {
   const data = await getPayPalData(params.slug)
 

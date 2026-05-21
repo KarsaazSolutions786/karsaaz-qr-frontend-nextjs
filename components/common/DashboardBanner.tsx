@@ -8,13 +8,11 @@ import { useTranslation } from '@/lib/i18n'
 import { bannerApi, type BannerSettings } from '@/lib/api/endpoints/banner'
 
 /**
- * Shows an admin-configured announcement banner to dashboard users.
- *
- * - Fetches banner config from the backend on mount.
- * - If enabled, displays a dismissible banner at the top of the dashboard layout.
- * - Dismissal is persisted in localStorage keyed by banner content hash,
- *   so changing the banner text resets dismissal for all users.
+ * Purpose: Shows an admin-configured announcement banner to dashboard users. - Fetches banner config from the backend on mount. - If enabled, displays a dismissible banner at the top of the dashboard layout. - Dismissal is persisted in localStorage keyed by banner content hash, so changing the banner text resets dismissal for all users.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 
 function hashString(str: string): string {
   let hash = 0
@@ -53,6 +51,11 @@ const TYPE_STYLES: Record<string, { bg: string; text: string; close: string; lin
   },
 }
 
+/**
+ * Purpose: Executes DashboardBanner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function DashboardBanner() {
   const { t } = useTranslation()
   const [dismissed, setDismissed] = useState(false)
@@ -86,6 +89,11 @@ export function DashboardBanner() {
 
   const styles = (TYPE_STYLES[banner.type] ?? TYPE_STYLES.info)!
 
+  /**
+   * Purpose: Executes handleDismiss functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleDismiss = () => {
     setDismissed(true)
     if (storageKey) {

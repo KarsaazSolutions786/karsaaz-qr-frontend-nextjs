@@ -11,6 +11,11 @@ import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes PlanChangeContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function PlanChangeContent() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
@@ -34,6 +39,11 @@ function PlanChangeContent() {
     if (!newPlanId) return
     let cancelled = false
 
+    /**
+     * Purpose: Executes fetchPreview functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const fetchPreview = async () => {
       try {
         setLoading(true)
@@ -51,6 +61,11 @@ function PlanChangeContent() {
     return () => { cancelled = true }
   }, [newPlanId])
 
+  /**
+   * Purpose: Executes handleConfirm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleConfirm = async () => {
     if (!newPlanId) return
     try {
@@ -207,6 +222,11 @@ function PlanChangeContent() {
   )
 }
 
+/**
+ * Purpose: Executes PlanChangePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PlanChangePage() {
   const { t } = useTranslation()
   return (

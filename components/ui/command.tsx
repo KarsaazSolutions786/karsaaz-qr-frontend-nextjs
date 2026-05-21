@@ -23,6 +23,11 @@ const Command = React.forwardRef<
 ))
 Command.displayName = CommandPrimitive.displayName
 
+/**
+ * Purpose: Executes CommandDialog functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const CommandDialog = ({ children, ...props }: DialogProps) => {
   return (
     <Dialog {...props}>
@@ -124,6 +129,11 @@ const CommandItem = React.forwardRef<
 
 CommandItem.displayName = CommandPrimitive.Item.displayName
 
+/**
+ * Purpose: Executes CommandShortcut functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const CommandShortcut = ({
   className,
   ...props

@@ -26,8 +26,11 @@ export interface QRCodeOptions {
 }
 
 /**
- * Generate QR code matrix data
+ * Purpose: Generate QR code matrix data
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function generateQRMatrix(
   data: string,
   errorCorrectionLevel: ErrorCorrectionLevel = 'M'
@@ -47,22 +50,31 @@ export function generateQRMatrix(
 }
 
 /**
- * Get module count from QR code instance
+ * Purpose: Get module count from QR code instance
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getModuleCount(qr: QRCode): number {
   return qr.getModuleCount();
 }
 
 /**
- * Check if module is dark at given coordinates
+ * Purpose: Check if module is dark at given coordinates
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isDark(qr: QRCode, row: number, col: number): boolean {
   return qr.isDark(row, col);
 }
 
 /**
- * Calculate QR code dimensions
+ * Purpose: Calculate QR code dimensions
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculateQRDimensions(
   moduleCount: number,
   size: number,
@@ -86,8 +98,11 @@ export function calculateQRDimensions(
 }
 
 /**
- * Check if coordinates are in a corner position
+ * Purpose: Check if coordinates are in a corner position
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isCornerPosition(
   row: number,
   col: number,
@@ -117,8 +132,11 @@ export function isCornerPosition(
 }
 
 /**
- * Check if coordinates are in the logo area
+ * Purpose: Check if coordinates are in the logo area
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isInLogoArea(
   row: number,
   col: number,
@@ -135,8 +153,11 @@ export function isInLogoArea(
 }
 
 /**
- * Get neighbors for a module (used for rounded corners detection)
+ * Purpose: Get neighbors for a module (used for rounded corners detection)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getModuleNeighbors(
   qr: QRCode,
   row: number,
@@ -165,22 +186,11 @@ export function getModuleNeighbors(
 }
 
 /**
- * Get 8-bit neighbour bitmask for a module (used by line shapes and triangle-end).
- *
- * Bit layout (clockwise from top-left):
- *   1 2 3
- *   8 # 4
- *   7 6 5
- *
- * bit 0 (0x01) = top-left
- * bit 1 (0x02) = top
- * bit 2 (0x04) = top-right
- * bit 3 (0x08) = right
- * bit 4 (0x10) = bottom-right
- * bit 5 (0x20) = bottom
- * bit 6 (0x40) = bottom-left
- * bit 7 (0x80) = left
+ * Purpose: Get 8-bit neighbour bitmask for a module (used by line shapes and triangle-end). Bit layout (clockwise from top-left): 1 2 3 8 # 4 7 6 5 bit 0 (0x01) = top-left bit 1 (0x02) = top bit 2 (0x04) = top-right bit 3 (0x08) = right bit 4 (0x10) = bottom-right bit 5 (0x20) = bottom bit 6 (0x40) = bottom-left bit 7 (0x80) = left
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function getNeighbourBits(
   qr: QRCode,
   row: number,
@@ -209,16 +219,21 @@ export function getNeighbourBits(
 }
 
 /**
- * Check neighbour bitmask: returns true when all `all` bits are set
- * among the bits allowed by `any` mask.
+ * Purpose: Check neighbour bitmask: returns true when all `all` bits are set among the bits allowed by `any` mask.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function checkNeighbourBits(bits: number, all: number, any: number): boolean {
   return (bits & (all | (~any & 0xff))) === all;
 }
 
 /**
- * Convert hex color to RGB
+ * Purpose: Convert hex color to RGB
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
@@ -231,8 +246,11 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
 }
 
 /**
- * Validate QR code data
+ * Purpose: Validate QR code data
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateQRData(data: string): {
   isValid: boolean;
   error?: string;

@@ -8,6 +8,11 @@ interface EventPageProps {
   };
 }
 
+/**
+ * Purpose: Retrieves eventdata.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getEventData(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug);
@@ -23,6 +28,11 @@ async function getEventData(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: EventPageProps) {
   const event = await getEventData(params.slug);
 
@@ -50,6 +60,11 @@ export async function generateMetadata({ params }: EventPageProps) {
   };
 }
 
+/**
+ * Purpose: Executes EventPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function EventPage({ params }: EventPageProps) {
   const event = await getEventData(params.slug);
 

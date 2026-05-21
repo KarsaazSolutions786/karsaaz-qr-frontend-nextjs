@@ -19,6 +19,11 @@ export interface GoogleAuthEnhancedProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes GoogleAuthEnhanced functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GoogleAuthEnhanced({
   onSuccess,
   onError,
@@ -27,6 +32,11 @@ export function GoogleAuthEnhanced({
   className = '',
 }: GoogleAuthEnhancedProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes handleClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClick = async () => {
     if (isLoading) return
     try {

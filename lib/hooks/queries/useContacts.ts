@@ -3,6 +3,11 @@ import { contactsAPI } from '@/lib/api/endpoints/contacts'
 import { queryKeys } from '@/lib/query/keys'
 
 // Get all contacts
+/**
+ * Purpose: Executes useContacts functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useContacts(params?: { page?: number; search?: string }) {
   return useQuery({
     queryKey: queryKeys.contacts.list(params),
@@ -12,6 +17,11 @@ export function useContacts(params?: { page?: number; search?: string }) {
 }
 
 // Get single contact
+/**
+ * Purpose: Executes useContact functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useContact(id: number) {
   return useQuery({
     queryKey: queryKeys.contacts.detail(id),

@@ -27,6 +27,11 @@ export interface StickerSelectorProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerSelector({
   selectedStickerId,
   onSelect,
@@ -62,6 +67,11 @@ export function StickerSelector({
   });
 
   // Handle upload
+  /**
+   * Purpose: Executes handleUpload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUpload = async (file: File, name: string, category?: StickerCategory) => {
     await uploadSticker(file, name, category);
     setShowUploadModal(false);
@@ -211,6 +221,11 @@ export interface StickerSelectorCompactProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerSelectorCompact functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerSelectorCompact({
   selectedStickerId,
   onSelect,
@@ -222,6 +237,11 @@ export function StickerSelectorCompact({
   const [isOpen, setIsOpen] = useState(false);
   const selectedSticker = stickers.find((s) => s.id === selectedStickerId);
 
+  /**
+   * Purpose: Executes handleSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSelect = (sticker: Sticker) => {
     onSelect(sticker);
     setIsOpen(false);

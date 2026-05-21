@@ -12,10 +12,20 @@ interface CloudBackupProgressProps {
   onDismiss?: () => void
 }
 
+/**
+ * Purpose: Checks if jobinprogress.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function isJobInProgress(status: string): boolean {
   return status === 'pending' || status === 'processing' || status === 'in_progress'
 }
 
+/**
+ * Purpose: Executes formatSize functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function formatSize(bytes?: number): string {
   if (!bytes) return '\u2014'
   if (bytes < 1024) return `${bytes} B`
@@ -25,6 +35,11 @@ function formatSize(bytes?: number): string {
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`
 }
 
+/**
+ * Purpose: Executes CloudBackupProgress functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function CloudBackupProgress({
   job,
   onCancel,

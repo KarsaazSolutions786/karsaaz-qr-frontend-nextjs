@@ -16,6 +16,11 @@ interface UseTemplateButtonProps {
   children?: React.ReactNode
 }
 
+/**
+ * Purpose: Executes UseTemplateButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function UseTemplateButton({
   templateId,
   template,
@@ -43,6 +48,11 @@ export default function UseTemplateButton({
     },
   })
 
+  /**
+   * Purpose: Executes handleUseTemplate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUseTemplate = () => {
     useTemplateMutation.mutate({
       template_id: templateId,

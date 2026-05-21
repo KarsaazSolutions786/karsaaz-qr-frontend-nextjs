@@ -31,6 +31,11 @@ const CUSTOMER_TYPES: { value: CustomerType; label: string }[] = [
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
+/**
+ * Purpose: Executes BillingDetailsCollector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function BillingDetailsCollector({
   onCollected,
   children,
@@ -171,16 +176,31 @@ interface BillingFormRendererProps {
   onSubmit: (responseId: string) => void
 }
 
+/**
+ * Purpose: Executes BillingFormRenderer functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function BillingFormRenderer({ formId, onSubmit }: BillingFormRendererProps) {
   const { t } = useTranslation()
   const [fields, setFields] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  /**
+   * Purpose: Executes handleFieldChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleFieldChange = (name: string, value: string) => {
     setFields((prev) => ({ ...prev, [name]: value }))
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)

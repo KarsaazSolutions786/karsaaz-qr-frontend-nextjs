@@ -9,10 +9,11 @@
 import { useEffect, useRef, useState } from 'react';
 
 /**
- * useFocusTrap Hook
- * 
- * Traps focus within a container (useful for modals).
+ * Purpose: useFocusTrap Hook Traps focus within a container (useful for modals).
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useFocusTrap(enabled: boolean = true) {
   const containerRef = useRef<HTMLElement>(null);
   
@@ -27,6 +28,11 @@ export function useFocusTrap(enabled: boolean = true) {
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
     
+    /**
+     * Purpose: Executes handleTabKey functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleTabKey = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
       
@@ -55,14 +61,20 @@ export function useFocusTrap(enabled: boolean = true) {
 }
 
 /**
- * useAriaLive Hook
- * 
- * Announces messages to screen readers.
+ * Purpose: useAriaLive Hook Announces messages to screen readers.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useAriaLive() {
   const [message, setMessage] = useState('');
   const timeoutRef = useRef<NodeJS.Timeout>(undefined);
   
+  /**
+   * Purpose: Executes announce functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const announce = (text: string, timeout: number = 3000) => {
     setMessage(text);
     
@@ -75,6 +87,11 @@ export function useAriaLive() {
     }, timeout);
   };
   
+  /**
+   * Purpose: Executes LiveRegion functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const LiveRegion = () => (
     <div
       role="status"
@@ -90,13 +107,19 @@ export function useAriaLive() {
 }
 
 /**
- * useKeyboardNavigation Hook
- * 
- * Handles arrow key navigation for lists.
+ * Purpose: useKeyboardNavigation Hook Handles arrow key navigation for lists.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useKeyboardNavigation(itemCount: number) {
   const [activeIndex, setActiveIndex] = useState(0);
   
+  /**
+   * Purpose: Executes handleKeyDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowDown':
@@ -122,10 +145,11 @@ export function useKeyboardNavigation(itemCount: number) {
 }
 
 /**
- * VisuallyHidden Component
- * 
- * Hides content visually but keeps it accessible to screen readers.
+ * Purpose: VisuallyHidden Component Hides content visually but keeps it accessible to screen readers.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function VisuallyHidden({ 
   children,
   as: Component = 'span',
@@ -141,10 +165,11 @@ export function VisuallyHidden({
 }
 
 /**
- * SkipLink Component
- * 
- * Skip navigation link for keyboard users.
+ * Purpose: SkipLink Component Skip navigation link for keyboard users.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function SkipLink({ href = '#main-content', children = 'Skip to main content' }: {
   href?: string;
   children?: React.ReactNode;
@@ -160,10 +185,11 @@ export function SkipLink({ href = '#main-content', children = 'Skip to main cont
 }
 
 /**
- * A11yButton Component
- * 
- * Accessible button with proper ARIA attributes.
+ * Purpose: A11yButton Component Accessible button with proper ARIA attributes.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function A11yButton({
   children,
   onClick,
@@ -200,20 +226,22 @@ export function A11yButton({
 }
 
 /**
- * getFocusableElements
- * 
- * Gets all focusable elements within a container.
+ * Purpose: getFocusableElements Gets all focusable elements within a container.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getFocusableElements(container: HTMLElement): HTMLElement[] {
   const selector = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
   return Array.from(container.querySelectorAll<HTMLElement>(selector));
 }
 
 /**
- * announceToScreenReader
- * 
- * Announces a message to screen readers.
+ * Purpose: announceToScreenReader Announces a message to screen readers.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function announceToScreenReader(message: string, priority: 'polite' | 'assertive' = 'polite') {
   const liveRegion = document.createElement('div');
   liveRegion.setAttribute('role', 'status');

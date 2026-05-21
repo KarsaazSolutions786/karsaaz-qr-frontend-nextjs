@@ -27,10 +27,11 @@ export interface FIBPaymentError {
 }
 
 /**
- * Initialize a FIB (First Iraqi Bank) payment session.
- * Sends payment config to the backend, which handles the FIB API call
- * and returns payment details including QR code for the customer.
+ * Purpose: Initialize a FIB (First Iraqi Bank) payment session. Sends payment config to the backend, which handles the FIB API call and returns payment details including QR code for the customer.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function initFIBPayment(
   config: Pick<FIBPaymentConfig, 'amount' | 'currency' | 'description'>
 ): Promise<FIBPaymentResponse> {
@@ -46,9 +47,11 @@ export async function initFIBPayment(
 }
 
 /**
- * Handle a successful FIB payment callback.
- * Called after the customer completes the payment via the FIB app.
+ * Purpose: Handle a successful FIB payment callback. Called after the customer completes the payment via the FIB app.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function handleFIBSuccess(response: {
   payment_id: string
   status: string
@@ -64,8 +67,11 @@ export async function handleFIBSuccess(response: {
 }
 
 /**
- * Handle a FIB payment failure or cancellation.
+ * Purpose: Handle a FIB payment failure or cancellation.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function handleFIBFailure(error: {
   payment_id?: string
   code?: string

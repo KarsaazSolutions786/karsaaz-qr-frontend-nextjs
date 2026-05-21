@@ -34,6 +34,11 @@ export interface StepperWizardProps {
   footerClassName?: string
 }
 
+/**
+ * Purpose: Executes StepperWizard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StepperWizard({
   steps,
   currentStep,
@@ -56,6 +61,11 @@ export function StepperWizard({
   const { t } = useTranslation()
   const isLastStep = currentStep === steps.length - 1
 
+  /**
+   * Purpose: Executes handleStepClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleStepClick = (stepIndex: number) => {
     if (allowStepClick && stepIndex <= currentStep && onStepChange) {
       onStepChange(stepIndex)

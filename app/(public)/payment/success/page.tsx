@@ -12,6 +12,11 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 
 type PageState = 'loading' | 'success' | 'error'
 
+/**
+ * Purpose: Executes PaymentSuccessContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function PaymentSuccessContent() {
   const { t } = useTranslation()
   const searchParams = useSearchParams()
@@ -40,6 +45,11 @@ function PaymentSuccessContent() {
     }
   }, [state, countdown])
 
+  /**
+   * Purpose: Executes verifyPayment functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function verifyPayment() {
     try {
       const paymentGateway = searchParams?.get('payment_gateway') || ''
@@ -139,6 +149,11 @@ function PaymentSuccessContent() {
   )
 }
 
+/**
+ * Purpose: Executes PaymentSuccessPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PaymentSuccessPage() {
   const { t } = useTranslation()
   return (

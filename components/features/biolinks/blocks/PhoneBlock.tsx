@@ -9,6 +9,11 @@ interface PhoneBlockProps {
   onUpdate?: (data: PhoneBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes PhoneBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PhoneBlock({ block, isEditing, onUpdate }: PhoneBlockProps) {
   const { phone, buttonText = 'Call Now', showWhatsApp } = block.data
   const { t } = useTranslation()

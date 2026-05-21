@@ -8,6 +8,11 @@ import type { CustomCode } from '@/types/entities/custom-code'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes CustomCodesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CustomCodesPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -15,6 +20,11 @@ export default function CustomCodesPage() {
   const { data, isLoading } = useCustomCodes({ page, search: search || undefined })
   const deleteMutation = useDeleteCustomCode()
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, name: string) => {
     if (confirm(t('Are you sure you want to delete "{{name}}"?').replace('{{name}}', name))) {
       await deleteMutation.mutateAsync(id)

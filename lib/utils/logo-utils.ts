@@ -13,8 +13,11 @@ export interface LogoValidationResult {
 }
 
 /**
- * Validate logo configuration
+ * Purpose: Validate logo configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateLogoConfig(
   logo: DesignerLogoConfig,
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'
@@ -66,8 +69,11 @@ export function validateLogoConfig(
 }
 
 /**
- * Get maximum logo size based on error correction level
+ * Purpose: Get maximum logo size based on error correction level
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getMaxLogoSize(errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'): number {
   const errorCorrectionCapacity = {
     L: 0.07, // 7% recovery
@@ -81,15 +87,21 @@ export function getMaxLogoSize(errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'): num
 }
 
 /**
- * Get optimal logo size (80% of max)
+ * Purpose: Get optimal logo size (80% of max)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getOptimalLogoSize(errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'): number {
   return getMaxLogoSize(errorCorrectionLevel) * 0.8;
 }
 
 /**
- * Calculate logo pixel dimensions
+ * Purpose: Calculate logo pixel dimensions
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculateLogoPixelSize(
   qrSize: number,
   logoSize: number
@@ -99,8 +111,11 @@ export function calculateLogoPixelSize(
 }
 
 /**
- * Calculate logo clearance area (including margin)
+ * Purpose: Calculate logo clearance area (including margin)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculateLogoClearanceArea(
   qrSize: number,
   logoSize: number,
@@ -112,16 +127,22 @@ export function calculateLogoClearanceArea(
 }
 
 /**
- * Check if logo is too small to be visible
+ * Purpose: Check if logo is too small to be visible
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isLogoTooSmall(logoSize: number, qrSize: number): boolean {
   const pixels = qrSize * logoSize;
   return pixels < 50; // Less than 50 pixels
 }
 
 /**
- * Optimize logo size based on QR content complexity
+ * Purpose: Optimize logo size based on QR content complexity
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function optimizeLogoSize(
   dataLength: number,
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'
@@ -139,16 +160,22 @@ export function optimizeLogoSize(
 }
 
 /**
- * Convert data URL to blob
+ * Purpose: Convert data URL to blob
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function dataURLToBlob(dataURL: string): Promise<Blob> {
   const response = await fetch(dataURL);
   return response.blob();
 }
 
 /**
- * Compress image to target size
+ * Purpose: Compress image to target size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function compressImage(
   dataURL: string,
   maxWidth: number = 512,
@@ -186,8 +213,11 @@ export async function compressImage(
 }
 
 /**
- * Get logo file size from data URL
+ * Purpose: Get logo file size from data URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getLogoFileSize(dataURL: string): number {
   // Remove data URL prefix
   const base64 = dataURL.split(',')[1] || '';
@@ -196,8 +226,11 @@ export function getLogoFileSize(dataURL: string): number {
 }
 
 /**
- * Format file size for display
+ * Purpose: Format file size for display
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -205,8 +238,11 @@ export function formatFileSize(bytes: number): string {
 }
 
 /**
- * Detect if image has transparency
+ * Purpose: Detect if image has transparency
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function hasTransparency(dataURL: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -241,16 +277,22 @@ export async function hasTransparency(dataURL: string): Promise<boolean> {
 }
 
 /**
- * Get recommended background color based on logo transparency
+ * Purpose: Get recommended background color based on logo transparency
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getRecommendedBackgroundColor(dataURL: string): Promise<string | null> {
   const transparent = await hasTransparency(dataURL);
   return transparent ? '#FFFFFF' : null;
 }
 
 /**
- * Create default logo config
+ * Purpose: Create default logo config
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createDefaultLogoConfig(url: string): DesignerLogoConfig {
   return {
     url,
@@ -261,15 +303,21 @@ export function createDefaultLogoConfig(url: string): DesignerLogoConfig {
 }
 
 /**
- * Clone logo config
+ * Purpose: Clone logo config
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function cloneLogoConfig(logo: DesignerLogoConfig): DesignerLogoConfig {
   return JSON.parse(JSON.stringify(logo));
 }
 
 /**
- * Get logo description (for UI)
+ * Purpose: Get logo description (for UI)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getLogoDescription(logo: DesignerLogoConfig): string {
   const parts: string[] = [];
 

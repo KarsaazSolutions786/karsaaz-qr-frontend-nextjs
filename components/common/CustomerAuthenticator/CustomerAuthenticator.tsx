@@ -25,9 +25,11 @@ interface CustomerAuthenticatorProps {
 const VIEWER_AUTH_KEY = 'viewer_auth'
 
 /**
- * Multi-step auth component for public QR code pages.
- * Steps: email → name → OTP verification
+ * Purpose: Multi-step auth component for public QR code pages. Steps: email → name → OTP verification
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function CustomerAuthenticator({
   qrCodeId,
   onAuthenticated,

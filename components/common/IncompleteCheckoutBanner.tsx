@@ -6,14 +6,11 @@ import { useTranslation } from '@/lib/i18n'
 import { useCheckoutEnforcement } from '@/lib/hooks/useCheckoutEnforcement'
 
 /**
- * Persistent banner shown when a user has started checkout but did not complete it.
- *
- * Displays a "Complete Your Purchase" message with a link to resume.
- * Dismissible per session. Auto-hides after the user completes checkout
- * (enforcement result changes).
- *
- * Matches P1 CheckoutNotCompletedEnforcer behavior, adapted to a React banner.
+ * Purpose: Persistent banner shown when a user has started checkout but did not complete it. Displays a "Complete Your Purchase" message with a link to resume. Dismissible per session. Auto-hides after the user completes checkout (enforcement result changes). Matches P1 CheckoutNotCompletedEnforcer behavior, adapted to a React banner.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function IncompleteCheckoutBanner() {
   const { t } = useTranslation()
   const {

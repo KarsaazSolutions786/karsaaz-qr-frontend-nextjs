@@ -20,9 +20,11 @@ const defaultStyles: Record<HeadingLevel, string> = {
 }
 
 /**
- * Semantic heading component that ensures proper hierarchy.
- * Renders the correct h1–h6 tag based on `level` prop.
+ * Purpose: Semantic heading component that ensures proper hierarchy. Renders the correct h1–h6 tag based on `level` prop.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function PageHeading({ level, children, className, id }: PageHeadingProps) {
   const Tag = `h${level}` as const
 

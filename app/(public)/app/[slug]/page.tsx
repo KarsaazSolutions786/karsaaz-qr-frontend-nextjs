@@ -3,6 +3,11 @@ import { notFound } from 'next/navigation'
 import AppPreview from '@/components/public/app-download/AppPreview'
 import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 
+/**
+ * Purpose: Retrieves appdata.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getAppData(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -24,6 +29,11 @@ async function getAppData(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const app = await getAppData(params.slug)
 
@@ -53,6 +63,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
+/**
+ * Purpose: Executes PublicAppDownloadPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function PublicAppDownloadPage({ params }: { params: { slug: string } }) {
   const app = await getAppData(params.slug)
 

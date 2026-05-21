@@ -9,6 +9,11 @@ interface CalendarBlockProps {
   onUpdate?: (data: CalendarBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes formatEventDate functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function formatEventDate(startDate: string, endDate?: string): string {
   if (!startDate) return ''
 
@@ -38,6 +43,11 @@ function formatEventDate(startDate: string, endDate?: string): string {
   return result
 }
 
+/**
+ * Purpose: Executes generateGoogleCalendarUrl functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function generateGoogleCalendarUrl(data: CalendarBlockData['data']): string {
   const params = new URLSearchParams()
   params.set('action', 'TEMPLATE')
@@ -63,7 +73,17 @@ function generateGoogleCalendarUrl(data: CalendarBlockData['data']): string {
   return `https://calendar.google.com/calendar/render?${params.toString()}`
 }
 
+/**
+ * Purpose: Executes generateICSContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function generateICSContent(data: CalendarBlockData['data']): string {
+  /**
+   * Purpose: Executes formatDate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
 
@@ -91,6 +111,11 @@ function generateICSContent(data: CalendarBlockData['data']): string {
   return lines.join('\r\n')
 }
 
+/**
+ * Purpose: Executes CalendarBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function CalendarBlock({ block, isEditing, onUpdate }: CalendarBlockProps) {
   const { eventName, startDate, endDate, location, description } = block.data
   const { t } = useTranslation()
@@ -159,6 +184,11 @@ export default function CalendarBlock({ block, isEditing, onUpdate }: CalendarBl
     )
   }
 
+  /**
+   * Purpose: Executes handleDownloadICS functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleDownloadICS = () => {
     const icsContent = generateICSContent(block.data)
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' })

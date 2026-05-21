@@ -6,6 +6,11 @@ import Link from 'next/link'
 import { AlertTriangle, RefreshCw, Home, ArrowLeft } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes DashboardError functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function DashboardError({
   error,
   reset,

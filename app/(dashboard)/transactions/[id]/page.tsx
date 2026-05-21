@@ -7,6 +7,11 @@ import { useTransaction } from '@/lib/hooks/queries/useTransactions'
 import type { Transaction } from '@/types/entities/transaction'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes StatusBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function StatusBadge({ status }: { status?: string }) {
   const s = status?.toLowerCase() ?? ''
   const styles: Record<string, string> = {
@@ -21,6 +26,11 @@ function StatusBadge({ status }: { status?: string }) {
   )
 }
 
+/**
+ * Purpose: Executes formatAmount functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatAmount(t: Transaction): string {
   if (t.formatted_amount) return t.formatted_amount
   if (t.amount != null) {
@@ -30,6 +40,11 @@ function formatAmount(t: Transaction): string {
   return '—'
 }
 
+/**
+ * Purpose: Executes InfoRow functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex justify-between border-b border-gray-100 py-3">
@@ -39,6 +54,11 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
   )
 }
 
+/**
+ * Purpose: Executes TransactionDetailPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TransactionDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
   const { id } = use(params)

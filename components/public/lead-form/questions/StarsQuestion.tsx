@@ -10,6 +10,11 @@ interface StarsQuestionProps {
   maxStars?: number;
 }
 
+/**
+ * Purpose: Executes StarsQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function StarsQuestion({
   value,
   onChange,

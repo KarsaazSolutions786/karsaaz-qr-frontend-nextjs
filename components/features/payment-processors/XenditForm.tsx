@@ -9,16 +9,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Xendit (Southeast Asia) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Public Key
- * - Secret Key
- * - Webhook Verification Token
- *
- * Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
- * Xendit requires callback URL set in Dashboard > Settings > Callbacks.
+ * Purpose: Xendit (Southeast Asia) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Public Key - Secret Key - Webhook Verification Token Manual webhook URL is shown (showWebhookUrl on PROCESSORS). Xendit requires callback URL set in Dashboard > Settings > Callbacks.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function XenditForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

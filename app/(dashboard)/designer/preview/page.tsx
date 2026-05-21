@@ -11,16 +11,31 @@ import { Download, Printer, X } from 'lucide-react';
 import { useTranslation } from '@/lib/i18n';
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes PreviewContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function PreviewContent() {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
   const router = useRouter();
   const src = searchParams.get('src');
 
+  /**
+   * Purpose: Executes handleClose functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClose = () => {
     router.back();
   };
 
+  /**
+   * Purpose: Executes handleDownload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownload = async () => {
     if (!src) return;
 
@@ -48,6 +63,11 @@ function PreviewContent() {
     }
   };
 
+  /**
+   * Purpose: Executes handlePrint functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePrint = () => {
     if (!src) return;
 
@@ -175,6 +195,11 @@ function PreviewContent() {
   );
 }
 
+/**
+ * Purpose: Executes PreviewPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PreviewPage() {
   return (
     <Suspense

@@ -9,10 +9,20 @@ interface SoundCloudBlockProps {
   onUpdate?: (data: SoundCloudBlockData['data']) => void
 }
 
+/**
+ * Purpose: Checks if validsoundcloudurl.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function isValidSoundCloudUrl(url: string): boolean {
   return /^https?:\/\/(www\.)?soundcloud\.com\/.+/.test(url)
 }
 
+/**
+ * Purpose: Executes SoundCloudBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function SoundCloudBlock({ block, isEditing, onUpdate }: SoundCloudBlockProps) {
   const { url, color = '#ff5500', autoplay = false } = block.data
   const { t } = useTranslation()

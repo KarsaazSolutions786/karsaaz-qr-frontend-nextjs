@@ -45,6 +45,11 @@ export interface FolderTreeProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes FolderTree functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FolderTree({
   folders,
   selectedFolderId,
@@ -60,6 +65,11 @@ export function FolderTree({
   const [draggedFolderId, setDraggedFolderId] = useState<string | null>(null);
   const [dropTargetId, setDropTargetId] = useState<string | null>(null);
   
+  /**
+   * Purpose: Executes handleDragStart functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragStart = (e: React.DragEvent, folderId: string) => {
     if (!dragEnabled) return;
     
@@ -68,6 +78,11 @@ export function FolderTree({
     e.dataTransfer.setData('folderId', folderId);
   };
   
+  /**
+   * Purpose: Executes handleDragOver functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragOver = (e: React.DragEvent, folderId: string | null) => {
     if (!dragEnabled || !draggedFolderId) return;
     
@@ -76,10 +91,20 @@ export function FolderTree({
     setDropTargetId(folderId);
   };
   
+  /**
+   * Purpose: Executes handleDragLeave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragLeave = () => {
     setDropTargetId(null);
   };
   
+  /**
+   * Purpose: Executes handleDrop functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDrop = (e: React.DragEvent, targetFolderId: string | null) => {
     if (!dragEnabled || !draggedFolderId) return;
     
@@ -93,6 +118,11 @@ export function FolderTree({
     setDropTargetId(null);
   };
   
+  /**
+   * Purpose: Executes handleDragEnd functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragEnd = () => {
     setDraggedFolderId(null);
     setDropTargetId(null);
@@ -161,6 +191,11 @@ interface FolderTreeItemProps {
   dragEnabled?: boolean;
 }
 
+/**
+ * Purpose: Executes FolderTreeItem functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function FolderTreeItem({
   folder,
   isSelected,

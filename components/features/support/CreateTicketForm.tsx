@@ -24,6 +24,11 @@ interface CreateTicketFormProps {
   defaultName?: string
 }
 
+/**
+ * Purpose: Executes CreateTicketForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CreateTicketForm({
   onSubmit,
   isLoading,

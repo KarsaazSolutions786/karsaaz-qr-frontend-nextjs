@@ -14,6 +14,11 @@ interface CheckboxQuestionProps {
   error?: string
 }
 
+/**
+ * Purpose: Executes CheckboxQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CheckboxQuestion({
   id,
   label,
@@ -24,6 +29,11 @@ export default function CheckboxQuestion({
   required,
   error,
 }: CheckboxQuestionProps) {
+  /**
+   * Purpose: Executes handleToggle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleToggle = (option: string) => {
     const next = value.includes(option)
       ? value.filter((v) => v !== option)

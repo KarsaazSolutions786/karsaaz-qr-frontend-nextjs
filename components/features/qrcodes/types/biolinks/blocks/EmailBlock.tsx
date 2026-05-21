@@ -13,6 +13,13 @@ interface EmailBlockProps {
   isDragging?: boolean;
 }
 
+/**
+ * Purpose: Executes EmailBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const EmailBlock = ({
   block,
   onEdit,

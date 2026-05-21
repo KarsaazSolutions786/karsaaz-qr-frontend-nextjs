@@ -11,12 +11,22 @@ interface LogoPickerProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes LogoPicker functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LogoPicker({ value, onChange, accept = 'image/*', className }: LogoPickerProps) {
   const { t } = useTranslation()
   const [tab, setTab] = React.useState<'upload' | 'url'>('upload')
   const [urlInput, setUrlInput] = React.useState('')
   const fileRef = React.useRef<HTMLInputElement>(null)
 
+  /**
+   * Purpose: Executes handleFile functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
@@ -27,6 +37,11 @@ export function LogoPicker({ value, onChange, accept = 'image/*', className }: L
     reader.readAsDataURL(file)
   }
 
+  /**
+   * Purpose: Executes handleUrlApply functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleUrlApply = () => {
     if (urlInput.trim()) onChange(urlInput.trim())
   }

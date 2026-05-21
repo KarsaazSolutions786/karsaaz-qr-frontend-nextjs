@@ -13,6 +13,11 @@ interface AppLogoProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes AppLogo functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AppLogo({ src, fallbackText = 'K', size = 'md', className }: AppLogoProps) {
   const { t } = useTranslation()
   const [hasError, setHasError] = useState(false)

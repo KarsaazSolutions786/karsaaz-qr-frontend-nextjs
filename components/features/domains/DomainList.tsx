@@ -20,6 +20,11 @@ const availabilityColors: Record<string, string> = {
   private: 'bg-gray-100 text-gray-800',
 }
 
+/**
+ * Purpose: Executes DomainList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DomainList({ domains, onEdit, onDelete }: DomainListProps) {
   const { t } = useTranslation()
 

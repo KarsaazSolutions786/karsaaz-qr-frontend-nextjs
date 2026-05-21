@@ -7,6 +7,11 @@ interface ResumeDisplayProps {
   data: any;
 }
 
+/**
+ * Purpose: Executes ResumeDisplay functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ResumeDisplay({ data }: ResumeDisplayProps) {
   const { t } = useTranslation();
   if (!data) {

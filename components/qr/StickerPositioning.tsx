@@ -19,6 +19,11 @@ export interface StickerPositioningProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerPositioning functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerPositioning({
   position,
   onChange,
@@ -31,6 +36,11 @@ export function StickerPositioning({
   const [showCustom, setShowCustom] = useState(position.preset === 'custom');
 
   // Handle preset selection
+  /**
+   * Purpose: Executes handlePresetSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePresetSelect = (preset: StickerPositionPreset) => {
     if (preset === 'custom') {
       setShowCustom(true);
@@ -48,6 +58,11 @@ export function StickerPositioning({
   };
 
   // Handle custom position change
+  /**
+   * Purpose: Executes handleCustomChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCustomChange = (axis: 'x' | 'y', value: number) => {
     onChange({
       preset: 'custom',
@@ -239,6 +254,11 @@ interface PositionButtonProps {
   onClick: () => void;
 }
 
+/**
+ * Purpose: Executes PositionButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function PositionButton({ preset: _preset, label, icon, isSelected, onClick }: PositionButtonProps) {
   return (
     <button
@@ -266,6 +286,11 @@ export interface StickerPositioningCompactProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerPositioningCompact functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerPositioningCompact({
   position,
   onChange,

@@ -20,6 +20,11 @@ const MetricCard = memo(function MetricCard({
 }: MetricCardProps) {
   const { t } = useTranslation()
 
+  /**
+   * Purpose: Executes formatChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatChange = (val: number) => {
     const sign = val >= 0 ? '+' : ''
     return `${sign}${val.toFixed(1)}%`

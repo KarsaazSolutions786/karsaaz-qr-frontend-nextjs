@@ -19,6 +19,11 @@ import { useTranslation } from '@/lib/i18n'
 import { exportAnalyticsCsv } from '@/lib/utils/export-analytics-csv'
 
 // Lazy-load recharts-based chart components to reduce main bundle size
+/**
+ * Purpose: Executes ChartSkeleton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 const ChartSkeleton = () => <div className="animate-pulse h-64 bg-muted rounded" />
 
 const PieChart = dynamic(() => import('@/components/analytics/charts/PieChart'), {
@@ -50,6 +55,11 @@ const ScansPerOSChart = dynamic(
   { loading: ChartSkeleton, ssr: false }
 )
 
+/**
+ * Purpose: Executes QRCodeAnalyticsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function QRCodeAnalyticsPage() {
   const { t } = useTranslation()
   const params = useParams()

@@ -9,11 +9,21 @@ interface PricingBlockProps {
   onUpdate?: (data: PricingBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes PricingBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function PricingBlock({ block, isEditing, onUpdate }: PricingBlockProps) {
   const { t } = useTranslation();
   const { title, plans } = block.data
 
   if (isEditing) {
+    /**
+     * Purpose: Executes addPlan functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const addPlan = () => {
       onUpdate?.({
         ...block.data,
@@ -33,10 +43,20 @@ export default function PricingBlock({ block, isEditing, onUpdate }: PricingBloc
       })
     }
 
+    /**
+     * Purpose: Deletes the specified resource.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const removePlan = (index: number) => {
       onUpdate?.({ ...block.data, plans: plans.filter((_, i) => i !== index) })
     }
 
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const updatePlan = (index: number, field: string, value: string | boolean | string[]) => {
       const updated = plans.map((plan, i) =>
         i === index ? { ...plan, [field]: value } : plan

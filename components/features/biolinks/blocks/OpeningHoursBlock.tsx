@@ -11,11 +11,21 @@ interface OpeningHoursBlockProps {
 
 const DEFAULT_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
+/**
+ * Purpose: Executes OpeningHoursBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function OpeningHoursBlock({ block, isEditing, onUpdate }: OpeningHoursBlockProps) {
   const { title, hours } = block.data
   const { t } = useTranslation()
 
   if (isEditing) {
+    /**
+     * Purpose: Initializes the service or component.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const initHours = () => {
       onUpdate?.({
         ...block.data,
@@ -23,6 +33,11 @@ export default function OpeningHoursBlock({ block, isEditing, onUpdate }: Openin
       })
     }
 
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const updateHour = (index: number, field: string, value: string | boolean) => {
       const newHours = hours.map((h, i) =>
         i === index ? { day: h.day, open: h.open, close: h.close, closed: h.closed, [field]: value } : h

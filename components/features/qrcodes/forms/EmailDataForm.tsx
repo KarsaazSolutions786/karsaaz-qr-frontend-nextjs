@@ -17,6 +17,11 @@ interface EmailDataFormProps {
   onChange?: (data: Partial<EmailDataFormData>) => void
 }
 
+/**
+ * Purpose: Executes EmailDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function EmailDataForm({ defaultValues, onChange }: EmailDataFormProps) {
   const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<EmailDataFormData>({

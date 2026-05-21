@@ -10,10 +10,20 @@ interface BackgroundTabProps {
   updateTheme: (updates: Partial<ThemeSettings>) => void
 }
 
+/**
+ * Purpose: Executes BackgroundTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function BackgroundTab({ theme, updateTheme }: BackgroundTabProps) {
   const { t } = useTranslation()
   const [backgroundMode, setBackgroundMode] = useState<'color' | 'gradient' | 'image'>('color')
 
+  /**
+   * Purpose: Executes applyGradient functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const applyGradient = (colors: string[]) => {
     updateTheme({
       backgroundGradient: {

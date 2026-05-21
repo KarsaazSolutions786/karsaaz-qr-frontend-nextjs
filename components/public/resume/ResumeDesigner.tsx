@@ -45,6 +45,11 @@ interface ResumeDesignerProps {
   }>
 }
 
+/**
+ * Purpose: Executes ResumeDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ResumeDesigner({
   name,
   title,
@@ -61,9 +66,19 @@ export default function ResumeDesigner({
   education = [],
 }: ResumeDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Executes formatDate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatDate = (date: string) =>
     new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 
+  /**
+   * Purpose: Executes renderSkillLevel functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderSkillLevel = (level: number) => (
     <div className="flex gap-1">
       {[1, 2, 3, 4, 5].map(i => (

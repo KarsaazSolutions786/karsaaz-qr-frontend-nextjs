@@ -16,6 +16,11 @@ import type { Translation } from '@/types/entities/translation'
 import { useTranslation as useI18n } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes TranslationsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TranslationsPage() {
   const router = useRouter()
   const [page, setPage] = useState(1)
@@ -35,12 +40,22 @@ export default function TranslationsPage() {
       .catch(() => setCanAutoTranslate(false))
   }, [])
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, name: string) => {
     if (confirm(t('Are you sure you want to delete') + ` "${name}"?`)) {
       await deleteMutation.mutateAsync(id)
     }
   }
 
+  /**
+   * Purpose: Executes handleAutoTranslate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleAutoTranslate = (id: number) => {
     if (!canAutoTranslate) {
       if (confirm(t('Google Translate API key is not configured. Go to System Settings to configure it?'))) {

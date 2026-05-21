@@ -10,14 +10,11 @@ import { useTranslation } from '@/lib/i18n'
 import { CreatePasswordModal } from './CreatePasswordModal'
 
 /**
- * LoginPreferenceToggle — allows authenticated users to switch between
- * passwordless (email+OTP) and traditional (email+password) login.
- *
- * Matches original legacy behaviour from qrcg-my-account.js:
- *   - Shows toggle only when passwordless feature is enabled globally
- *   - Switching to traditional opens CreatePasswordModal (set a password)
- *   - Switching to passwordless sends PUT with preference='enabled'
+ * Purpose: LoginPreferenceToggle — allows authenticated users to switch between passwordless (email+OTP) and traditional (email+password) login. Matches original legacy behaviour from qrcg-my-account.js: - Shows toggle only when passwordless feature is enabled globally - Switching to traditional opens CreatePasswordModal (set a password) - Switching to passwordless sends PUT with preference='enabled'
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function LoginPreferenceToggle() {
   const { t } = useTranslation()
   const [showCreatePasswordModal, setShowCreatePasswordModal] = useState(false)
@@ -48,6 +45,11 @@ export function LoginPreferenceToggle() {
 
   const isPasswordless = prefData?.preference === 'enabled'
 
+  /**
+   * Purpose: Executes handleToggle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleToggle = () => {
     if (isPasswordless) {
       // Switching FROM passwordless TO traditional — need to set a password
@@ -65,6 +67,11 @@ export function LoginPreferenceToggle() {
     }
   }
 
+  /**
+   * Purpose: Executes handleCreatePasswordSuccess functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCreatePasswordSuccess = () => {
     setShowCreatePasswordModal(false)
     refetchPreference()

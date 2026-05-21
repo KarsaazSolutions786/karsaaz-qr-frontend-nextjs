@@ -44,6 +44,11 @@ export interface GuestContextType {
 
 export const GuestContext = createContext<GuestContextType | undefined>(undefined)
 
+/**
+ * Purpose: Executes GuestProvider functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function GuestProvider({ children }: { children: ReactNode }) {
   const { user, isLoading: isAuthLoading } = useAuth()
   const initRef = useRef(false)
@@ -118,6 +123,11 @@ export function GuestProvider({ children }: { children: ReactNode }) {
       return
     }
 
+    /**
+     * Purpose: Initializes the service or component.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const initGuest = async () => {
       try {
         // Check if there's an existing guest token

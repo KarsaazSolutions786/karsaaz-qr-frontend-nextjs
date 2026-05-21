@@ -6,6 +6,11 @@ import { useBiolinks } from '@/lib/hooks/queries/useBiolinks'
 import { useDeleteBiolink } from '@/lib/hooks/mutations/useBiolinkMutations'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes BiolinksPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BiolinksPage() {
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
@@ -13,6 +18,11 @@ export default function BiolinksPage() {
   const { data, isLoading } = useBiolinks({ search: search || undefined })
   const deleteMutation = useDeleteBiolink()
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, slug: string) => {
     if (confirm(t('Delete biolink "{{slug}}"? This action cannot be undone.').replace('{{slug}}', slug))) {
       await deleteMutation.mutateAsync(id)

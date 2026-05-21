@@ -20,6 +20,11 @@ const QR_TYPE_META: Record<string, { icon: string; label: string; description: s
   calendar: { icon: '📅', label: 'Calendar', description: 'Calendar event' },
 }
 
+/**
+ * Purpose: Executes GuestHomePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function GuestHomePage() {
   const { t } = useTranslation()
   const { guestConfig, sessionLimits, isGuestLoading, isGuest } = useGuest()

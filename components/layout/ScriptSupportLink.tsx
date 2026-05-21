@@ -16,6 +16,11 @@ export interface ScriptSupportLinkProps {
   label?: string
 }
 
+/**
+ * Purpose: Executes ScriptSupportLink functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ScriptSupportLink({
   href = '/support-tickets',
   label,

@@ -4,15 +4,21 @@
  */
 
 /**
- * Capitalize first letter of each word
+ * Purpose: Capitalize first letter of each word
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function capitalize(str: string): string {
   return str.replace(/\b\w/g, m => m.toUpperCase())
 }
 
 /**
- * Convert string to kebab-case
+ * Purpose: Convert string to kebab-case
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function kebabCase(str: string, forceLowerCase = true): string {
   if (!str || (typeof str === 'string' && str.trim().length === 0)) return ''
   if (forceLowerCase) str = str.toLowerCase()
@@ -20,8 +26,11 @@ export function kebabCase(str: string, forceLowerCase = true): string {
 }
 
 /**
- * Convert string to slug
+ * Purpose: Convert string to slug
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function slugify(str: string): string {
   if (!str || (typeof str === 'string' && str.trim().length === 0)) return ''
   str = str.replace(/[[\]{}#~/.|<>,&"'?`\-=+]/g, ' ')
@@ -30,15 +39,21 @@ export function slugify(str: string): string {
 }
 
 /**
- * Convert string to StudlyCase/PascalCase
+ * Purpose: Convert string to StudlyCase/PascalCase
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function studlyCase(str: string): string {
   return titleCase(str).replace(/ /g, '')
 }
 
 /**
- * Convert string to Title Case
+ * Purpose: Convert string to Title Case
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function titleCase(str: string): string {
   return capitalize(
     str
@@ -49,30 +64,42 @@ export function titleCase(str: string): string {
 }
 
 /**
- * Uppercase first character
+ * Purpose: Uppercase first character
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function ucfirst(str: string): string {
   return (str[0] ?? '').toUpperCase() + str.substring(1)
 }
 
 /**
- * Uppercase first character of each word
+ * Purpose: Uppercase first character of each word
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function ucwords(str: string): string {
   return str.split(' ').map(ucfirst).join(' ')
 }
 
 /**
- * Truncate string with ellipsis
+ * Purpose: Truncate string with ellipsis
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function truncate(str: string, length: number, ending = '...'): string {
   if (str.length <= length) return str
   return str.substring(0, length - ending.length) + ending
 }
 
 /**
- * Get initials from name
+ * Purpose: Get initials from name
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function getInitials(name: string, maxLength = 2): string {
   if (!name) return ''
   return name
@@ -85,8 +112,11 @@ export function getInitials(name: string, maxLength = 2): string {
 }
 
 /**
- * Format number with separators
+ * Purpose: Format number with separators
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function numberFormat(
   number: number,
   decimals?: number,
@@ -114,8 +144,11 @@ export function numberFormat(
 }
 
 /**
- * Format bytes to human readable string
+ * Purpose: Format bytes to human readable string
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function formatBytes(bytes: number, decimals = 2): string {
   if (bytes === 0) return '0 Bytes'
   const k = 1024
@@ -126,8 +159,11 @@ export function formatBytes(bytes: number, decimals = 2): string {
 }
 
 /**
- * Format duration in seconds to human readable string
+ * Purpose: Format duration in seconds to human readable string
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function formatDuration(seconds: number): string {
   if (seconds < 60) return `${seconds}s`
   if (seconds < 3600) {
@@ -141,8 +177,11 @@ export function formatDuration(seconds: number): string {
 }
 
 /**
- * Convert 2D array to CSV string
+ * Purpose: Convert 2D array to CSV string
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function arrayToCsv(data: string[][]): string {
   return data
     .map(row =>

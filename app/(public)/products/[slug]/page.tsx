@@ -11,6 +11,11 @@ interface ProductCataloguePageProps {
 
 const VALID_CATALOGUE_TYPES = ['product-catalogue', 'products', 'catalog', 'catalogue']
 
+/**
+ * Purpose: Retrieves cataloguedata.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getCatalogueData(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -31,6 +36,13 @@ async function getCatalogueData(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export async function generateMetadata({ params }: ProductCataloguePageProps): Promise<Metadata> {
   const data = await getCatalogueData(params.slug)
 
@@ -62,6 +74,13 @@ export async function generateMetadata({ params }: ProductCataloguePageProps): P
   }
 }
 
+/**
+ * Purpose: Executes ProductCataloguePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export default async function ProductCataloguePage({ params }: ProductCataloguePageProps) {
   const data = await getCatalogueData(params.slug)
 

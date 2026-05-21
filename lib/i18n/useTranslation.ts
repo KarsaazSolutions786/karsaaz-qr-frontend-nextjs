@@ -4,12 +4,11 @@ import { useContext } from 'react'
 import { TranslationContext, type TranslationContextValue } from './TranslationProvider'
 
 /**
- * Hook to access translation functions and locale info.
- *
- * @example
- * const { t, locale, dir, isRtl, setLocale } = useTranslation()
- * return <h1>{t('Welcome')}</h1>
+ * Purpose: Hook to access translation functions and locale info. const { t, locale, dir, isRtl, setLocale } = useTranslation() return <h1>{t('Welcome')}</h1>
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useTranslation(): TranslationContextValue {
   const context = useContext(TranslationContext)
   if (!context) {

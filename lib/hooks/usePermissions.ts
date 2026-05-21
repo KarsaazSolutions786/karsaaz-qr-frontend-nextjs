@@ -18,6 +18,11 @@ import {
   verified,
 } from '@/lib/utils/permissions'
 
+/**
+ * Purpose: Executes usePermissions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function usePermissions() {
   const { user } = useAuth()
 

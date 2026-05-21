@@ -30,10 +30,20 @@ const defaultShadow: ShadowSettings = {
   opacity: 25,
 };
 
+/**
+ * Purpose: Executes ShadowEffects functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ShadowEffects({ shadow, onChange }: ShadowEffectsProps) {
   const { t } = useTranslation();
   const s = shadow ?? defaultShadow;
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (partial: Partial<ShadowSettings>) => {
     onChange({ ...s, ...partial });
   };

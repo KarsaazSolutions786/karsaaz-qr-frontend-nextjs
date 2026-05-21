@@ -18,6 +18,11 @@ interface FileUploadData {
   }
 }
 
+/**
+ * Purpose: Retrieves fileuploaddata.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getFileUploadData(slug: string): Promise<FileUploadData | null> {
   try {
     const qrData = await getQRCodeRedirect(slug)
@@ -35,6 +40,11 @@ async function getFileUploadData(slug: string): Promise<FileUploadData | null> {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({
   params,
 }: {
@@ -61,6 +71,11 @@ export async function generateMetadata({
   }
 }
 
+/**
+ * Purpose: Executes FileUploadPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function FileUploadPage({
   params,
 }: {

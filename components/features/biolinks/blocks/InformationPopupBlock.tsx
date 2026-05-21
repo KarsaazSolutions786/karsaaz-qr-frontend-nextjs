@@ -10,6 +10,11 @@ interface InformationPopupBlockProps {
   onUpdate?: (data: InformationPopupBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes InformationPopupBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function InformationPopupBlock({
   block,
   isEditing,

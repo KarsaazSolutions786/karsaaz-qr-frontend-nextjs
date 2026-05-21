@@ -10,10 +10,20 @@ interface ReportAbuseProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes ReportAbuse functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ReportAbuse({ qrId, className }: ReportAbuseProps) {
   const { t } = useTranslation()
   const [state, setState] = useState<'idle' | 'confirm' | 'sending' | 'done' | 'error'>('idle')
 
+  /**
+   * Purpose: Executes handleReport functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleReport = async () => {
     setState('sending')
     try {

@@ -3,6 +3,11 @@ import { usersAPI } from '@/lib/api/endpoints/users'
 import { queryKeys } from '@/lib/query/keys'
 
 // Get all users
+/**
+ * Purpose: Executes useUsers functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useUsers(params?: { page?: number; per_page?: number; search?: string; paying?: 'paying' | 'non-paying'; number_of_qrcodes?: string; role_id?: string; status?: string; plan_id?: string; date_from?: string; date_to?: string }) {
   return useQuery({
     queryKey: queryKeys.users.list(params),
@@ -12,6 +17,11 @@ export function useUsers(params?: { page?: number; per_page?: number; search?: s
 }
 
 // Get single user
+/**
+ * Purpose: Executes useUser functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useUser(id: string) {
   return useQuery({
     queryKey: queryKeys.users.detail(id),
@@ -21,6 +31,11 @@ export function useUser(id: string) {
 }
 
 // Get sub-users for a parent user
+/**
+ * Purpose: Executes useSubUsers functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useSubUsers(parentId: number | undefined) {
   return useQuery({
     queryKey: queryKeys.users.subUsers(parentId!),
@@ -31,6 +46,11 @@ export function useSubUsers(parentId: number | undefined) {
 }
 
 // Invite sub-user mutation
+/**
+ * Purpose: Executes useInviteSubUser functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useInviteSubUser(parentId: number) {
   const queryClient = useQueryClient()
   return useMutation({
@@ -43,6 +63,11 @@ export function useInviteSubUser(parentId: number) {
 }
 
 // Delete sub-user mutation
+/**
+ * Purpose: Executes useDeleteSubUser functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDeleteSubUser(parentId: number) {
   const queryClient = useQueryClient()
   return useMutation({

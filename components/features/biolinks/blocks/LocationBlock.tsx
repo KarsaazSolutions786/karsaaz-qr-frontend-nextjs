@@ -9,6 +9,11 @@ interface LocationBlockProps {
   onUpdate?: (data: LocationBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes LocationBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function LocationBlock({ block, isEditing, onUpdate }: LocationBlockProps) {
   const { address, mapUrl } = block.data
   const { t } = useTranslation()

@@ -9,19 +9,39 @@ interface ListBlockProps {
   onUpdate?: (data: ListBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes ListBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ListBlock({ block, isEditing, onUpdate }: ListBlockProps) {
   const { title, items } = block.data
   const { t } = useTranslation()
 
   if (isEditing) {
+    /**
+     * Purpose: Executes addItem functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const addItem = () => {
       onUpdate?.({ ...block.data, items: [...items, { text: '', icon: '•' }] })
     }
 
+    /**
+     * Purpose: Deletes the specified resource.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const removeItem = (index: number) => {
       onUpdate?.({ ...block.data, items: items.filter((_, i) => i !== index) })
     }
 
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const updateItem = (index: number, field: 'text' | 'icon', value: string) => {
       const newItems = items.map((item, i) =>
         i === index ? { text: item.text, icon: item.icon, [field]: value } : item

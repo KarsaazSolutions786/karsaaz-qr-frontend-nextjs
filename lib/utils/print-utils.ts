@@ -64,8 +64,11 @@ const DEFAULT_PRINT_OPTIONS: Required<Omit<PrintOptions, 'title' | 'description'
 };
 
 /**
- * Print QR code with options
+ * Purpose: Print QR code with options
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function printQRCode(
   svgElement: SVGElement,
   options: PrintOptions = {},
@@ -112,8 +115,11 @@ export async function printQRCode(
 }
 
 /**
- * Build HTML for print window
+ * Purpose: Build HTML for print window
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function buildPrintHTML(
   svgContent: string,
   options: Required<Omit<PrintOptions, 'title' | 'description'>>,
@@ -151,8 +157,11 @@ function buildPrintHTML(
 }
 
 /**
- * Generate print styles
+ * Purpose: Generate print styles
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function generatePrintStyles(options: Required<Omit<PrintOptions, 'title' | 'description'>>): string {
   const { pageSize, orientation, margins, qrSize, centerOnPage, printInColor, printBackground } = options;
   
@@ -233,8 +242,11 @@ function generatePrintStyles(options: Required<Omit<PrintOptions, 'title' | 'des
 }
 
 /**
- * Build metadata HTML
+ * Purpose: Build metadata HTML
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function buildMetadataHTML(metadata: PrintMetadata, options: Required<Omit<PrintOptions, 'title' | 'description'>>): string {
   const { showDate } = options;
   const parts: string[] = [];
@@ -263,8 +275,11 @@ function buildMetadataHTML(metadata: PrintMetadata, options: Required<Omit<Print
 }
 
 /**
- * Escape HTML special characters
+ * Purpose: Escape HTML special characters
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function escapeHTML(str: string): string {
   const div = document.createElement('div');
   div.textContent = str;
@@ -272,8 +287,11 @@ function escapeHTML(str: string): string {
 }
 
 /**
- * Print preview (show in new window without triggering print dialog)
+ * Purpose: Print preview (show in new window without triggering print dialog)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function printPreview(
   svgElement: SVGElement,
   options: PrintOptions = {},
@@ -300,8 +318,11 @@ export async function printPreview(
 }
 
 /**
- * Print multiple QR codes on one page
+ * Purpose: Print multiple QR codes on one page
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function printMultipleQRCodes(
   svgElements: SVGElement[],
   options: PrintOptions & {
@@ -352,8 +373,11 @@ export async function printMultipleQRCodes(
 }
 
 /**
- * Build HTML for multiple QR codes
+ * Purpose: Build HTML for multiple QR codes
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function buildMultiplePrintHTML(
   svgContents: string[],
   options: Required<Omit<PrintOptions, 'title' | 'description'>> & {
@@ -426,8 +450,11 @@ function buildMultiplePrintHTML(
 }
 
 /**
- * Get print page dimensions in pixels (at 96 DPI)
+ * Purpose: Get print page dimensions in pixels (at 96 DPI)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getPrintPageDimensions(
   pageSize: 'a4' | 'letter' | 'legal' | 'a3' | 'a5',
   orientation: 'portrait' | 'landscape'
@@ -441,6 +468,11 @@ export function getPrintPageDimensions(
   };
   
   const size = sizes[pageSize];
+  /**
+   * Purpose: Executes mmToPx functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const mmToPx = (mm: number) => Math.round((mm / 25.4) * 96); // Convert mm to pixels at 96 DPI
   
   if (orientation === 'landscape') {
@@ -457,20 +489,31 @@ export function getPrintPageDimensions(
 }
 
 /**
- * Check if browser supports printing
+ * Purpose: Check if browser supports printing
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isPrintSupported(): boolean {
   return typeof window !== 'undefined' && 'print' in window;
 }
 
 /**
- * Detect if user is printing (print media query)
+ * Purpose: Detect if user is printing (print media query)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function onPrintStateChange(callback: (isPrinting: boolean) => void): () => void {
   if (typeof window === 'undefined') return () => {};
   
   const mediaQuery = window.matchMedia('print');
   
+  /**
+   * Purpose: Executes handler functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handler = (e: MediaQueryListEvent | MediaQueryList) => {
     callback(e.matches);
   };

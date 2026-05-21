@@ -10,17 +10,11 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Paddle (Billing) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (Sandbox / Live)
- * - Seller ID
- * - API Key
- * - Client Side Token
- * - Webhook Secret
- *
- * Webhook IS auto-registered after save.
+ * Purpose: Paddle (Billing) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (Sandbox / Live) - Seller ID - API Key - Client Side Token - Webhook Secret Webhook IS auto-registered after save.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function PaddleBillingForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

@@ -23,11 +23,21 @@ const NAV = [
   { href: '/organization/api-docs', label: 'API Docs', icon: BookOpen },
 ]
 
+/**
+ * Purpose: Executes OrganizationLayout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrganizationLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const orgId = searchParams.get('org')
 
+  /**
+   * Purpose: Executes withOrg functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const withOrg = (href: string) => (orgId ? `${href}?org=${orgId}` : href)
 
   return (

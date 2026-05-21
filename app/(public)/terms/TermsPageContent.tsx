@@ -3,6 +3,11 @@
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes TermsPageContent functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function TermsPageContent() {
   const { t } = useTranslation()
 

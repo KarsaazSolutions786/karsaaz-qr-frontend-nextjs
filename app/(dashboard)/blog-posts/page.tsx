@@ -10,6 +10,11 @@ import type { BlogPost } from '@/types/entities/blog-post'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes BlogPostsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BlogPostsPage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -18,10 +23,20 @@ export default function BlogPostsPage() {
   const { data, isLoading } = useBlogPosts({ page, search: search || undefined })
   const deleteMutation = useDeleteBlogPost()
 
+  /**
+   * Purpose: Executes handleEdit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleEdit = (post: BlogPost) => {
     router.push(`/blog-posts/${post.id}`)
   }
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (post: BlogPost) => {
     if (confirm(t('Are you sure you want to delete "{{title}}"?').replace('{{title}}', post.title))) {
       await deleteMutation.mutateAsync(post.id)

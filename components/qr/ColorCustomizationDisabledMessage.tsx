@@ -15,6 +15,11 @@ export interface ColorCustomizationDisabledMessageProps {
   upgradeUrl?: string
 }
 
+/**
+ * Purpose: Executes ColorCustomizationDisabledMessage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ColorCustomizationDisabledMessage({
   upgradeUrl = '/plans',
 }: ColorCustomizationDisabledMessageProps) {

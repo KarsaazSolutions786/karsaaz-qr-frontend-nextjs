@@ -17,6 +17,11 @@ const statusConfig: Record<DomainStatus, { label: string; variant: 'default' | '
   failed: { label: 'Error', variant: 'destructive' },
 }
 
+/**
+ * Purpose: Executes MyDomainsList functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function MyDomainsList({ onEdit, compact = true }: MyDomainsListProps) {
   const { t } = useTranslation()
   const { data, isLoading } = useDomains()
@@ -24,11 +29,21 @@ export function MyDomainsList({ onEdit, compact = true }: MyDomainsListProps) {
   const testMutation = useTestDomainConnection()
   const domains = data?.data ?? []
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (domain: Domain) => {
     if (!confirm(t('Delete domain "{{domain}}"? This cannot be undone.').replace('{{domain}}', domain.domain))) return
     await deleteMutation.mutateAsync(domain.id)
   }
 
+  /**
+   * Purpose: Executes handleTest functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTest = async (domain: Domain) => {
     await testMutation.mutateAsync(domain.id)
   }

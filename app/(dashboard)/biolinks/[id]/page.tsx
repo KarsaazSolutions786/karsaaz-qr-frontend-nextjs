@@ -10,6 +10,11 @@ import BiolinkPreview from '@/components/features/biolinks/editor/BiolinkPreview
 import type { BlockData } from '@/types/entities/biolink'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes EditBiolinkPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditBiolinkPage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -35,6 +40,11 @@ export default function EditBiolinkPage() {
     }
   }, [biolink])
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async (isPublished: boolean) => {
     if (!title || !slug) {
       toast.error(t('Please enter both a title and slug for the biolink.'))
@@ -57,6 +67,11 @@ export default function EditBiolinkPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async () => {
     if (confirm('Delete this biolink? This action cannot be undone.')) {
       try {

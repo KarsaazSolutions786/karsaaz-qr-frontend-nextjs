@@ -25,10 +25,20 @@ const FIELD_TYPES: FormField['type'][] = [
   'checkbox',
 ];
 
+/**
+ * Purpose: Executes FormBuilder functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FormBuilder({ fields, onChange }: FormBuilderProps) {
   const { t } = useTranslation();
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  /**
+   * Purpose: Executes addField functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addField = () => {
     const newField: FormField = {
       id: `field_${Date.now()}`,
@@ -40,15 +50,30 @@ export function FormBuilder({ fields, onChange }: FormBuilderProps) {
     setEditingId(newField.id);
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateField = (id: string, updates: Partial<FormField>) => {
     onChange(fields.map((f) => (f.id === id ? { ...f, ...updates } : f)));
   };
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeField = (id: string) => {
     onChange(fields.filter((f) => f.id !== id));
     if (editingId === id) setEditingId(null);
   };
 
+  /**
+   * Purpose: Executes moveField functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const moveField = (index: number, direction: -1 | 1) => {
     const target = index + direction;
     if (target < 0 || target >= fields.length) return;

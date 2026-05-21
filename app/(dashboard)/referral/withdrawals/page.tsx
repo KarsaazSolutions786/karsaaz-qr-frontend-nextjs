@@ -5,6 +5,11 @@ import { useTranslation } from '@/lib/i18n'
 import { WithdrawalRequestForm } from '@/components/features/referral/WithdrawalRequestForm'
 import { WithdrawalHistory } from '@/components/features/referral/WithdrawalHistory'
 
+/**
+ * Purpose: Executes WithdrawalsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function WithdrawalsPage() {
   const { t } = useTranslation()
   const [refreshKey, setRefreshKey] = useState(0)

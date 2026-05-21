@@ -27,12 +27,27 @@ const tabs: DesignerTab[] = [
   { id: 'seo', label: 'SEO', icon: '🔍' },
 ]
 
+/**
+ * Purpose: Executes WebsiteBuilderDesigner functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function WebsiteBuilderDesigner({ design, onChange }: WebsiteBuilderDesignerProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateDesign = (updates: Partial<WebsiteBuilderDesignSettings>) => {
     onChange({ ...design, ...updates })
   }
 
+  /**
+   * Purpose: Executes renderSeoContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderSeoContent = () => (
     <div className="space-y-6 mt-4 pt-4 border-t">
       <h4 className="font-medium text-gray-900">{t('SEO Settings')}</h4>

@@ -19,6 +19,11 @@ export interface MenuInputProps {
 }
 
 let menuItemCounter = 0
+/**
+ * Purpose: Executes generateId functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generateId() {
   return `menu-${Date.now()}-${++menuItemCounter}`
 }
@@ -37,6 +42,11 @@ interface MenuItemRowProps {
   isLast: boolean
 }
 
+/**
+ * Purpose: Executes MenuItemRow functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function MenuItemRow({
   item, depth, maxDepth, disabled, onUpdate, onRemove, onAddChild, onMoveUp, onMoveDown, isFirst, isLast,
 }: MenuItemRowProps) {
@@ -130,6 +140,11 @@ const MenuInput = React.forwardRef<HTMLDivElement, MenuInputProps>(
       [controlledItems, onChange]
     )
 
+    /**
+     * Purpose: Executes deepUpdate functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const deepUpdate = (list: MenuItem[], id: string, label: string): MenuItem[] =>
       list.map((item) =>
         item.id === id
@@ -139,11 +154,21 @@ const MenuInput = React.forwardRef<HTMLDivElement, MenuInputProps>(
           : item
       )
 
+    /**
+     * Purpose: Executes deepRemove functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const deepRemove = (list: MenuItem[], id: string): MenuItem[] =>
       list.filter((item) => item.id !== id).map((item) =>
         item.children ? { ...item, children: deepRemove(item.children, id) } : item
       )
 
+    /**
+     * Purpose: Executes deepAddChild functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const deepAddChild = (list: MenuItem[], parentId: string): MenuItem[] =>
       list.map((item) =>
         item.id === parentId
@@ -153,6 +178,11 @@ const MenuInput = React.forwardRef<HTMLDivElement, MenuInputProps>(
           : item
       )
 
+    /**
+     * Purpose: Executes deepSwap functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const deepSwap = (list: MenuItem[], id: string, direction: -1 | 1): MenuItem[] => {
       const idx = list.findIndex((item) => item.id === id)
       if (idx >= 0) {

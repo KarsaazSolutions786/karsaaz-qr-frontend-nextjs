@@ -7,6 +7,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes StatusBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function StatusBadge({ active }: { active: boolean }) {
   const { t } = useTranslation()
   return (
@@ -20,6 +25,11 @@ function StatusBadge({ active }: { active: boolean }) {
   )
 }
 
+/**
+ * Purpose: Executes PromoCodesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PromoCodesPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -36,6 +46,11 @@ export default function PromoCodesPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['promo-codes'] }),
   })
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, code: string) => {
     if (!confirm(t('Delete promo code "{{code}}"? This cannot be undone.').replace('{{code}}', code))) return
     await deleteMutation.mutateAsync(id)

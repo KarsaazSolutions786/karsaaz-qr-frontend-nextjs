@@ -10,6 +10,11 @@ interface CreatePasswordModalProps {
   onSuccess: () => void;
 }
 
+/**
+ * Purpose: Executes CreatePasswordModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CreatePasswordModal({ open, onClose, onSuccess }: CreatePasswordModalProps) {
   const { t } = useTranslation();
   const [password, setPassword] = useState('');
@@ -17,6 +22,11 @@ export function CreatePasswordModal({ open, onClose, onSuccess }: CreatePassword
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});

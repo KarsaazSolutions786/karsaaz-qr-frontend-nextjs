@@ -11,8 +11,11 @@ export const bulkOperationsKeys = {
 }
 
 /**
- * Hook to fetch all bulk import URL instances
+ * Purpose: Hook to fetch all bulk import URL instances
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useBulkImportInstances() {
   return useQuery({
     queryKey: bulkOperationsKeys.importInstances(),
@@ -22,8 +25,11 @@ export function useBulkImportInstances() {
 }
 
 /**
- * Hook to fetch a single bulk import URL instance
+ * Purpose: Hook to fetch a single bulk import URL instance
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useBulkImportInstance(id: string | undefined) {
   return useQuery({
     queryKey: bulkOperationsKeys.importInstance(id || ''),
@@ -34,11 +40,19 @@ export function useBulkImportInstance(id: string | undefined) {
 }
 
 /**
- * Hook for bulk operation mutations
+ * Purpose: Hook for bulk operation mutations
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function useBulkOperationsMutations() {
   const queryClient = useQueryClient()
 
+  /**
+   * Purpose: Executes invalidateInstances functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const invalidateInstances = () => {
     queryClient.invalidateQueries({ queryKey: bulkOperationsKeys.importInstances() })
   }

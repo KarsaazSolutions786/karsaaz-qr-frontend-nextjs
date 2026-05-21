@@ -7,6 +7,11 @@ import { toast } from 'sonner'
 import { Wallet, ArrowDownLeft, ArrowUpRight, CreditCard } from 'lucide-react'
 import { creditPackageAPI, orgUsageAPI, type CreditPackage } from '@/lib/api/endpoints/organization'
 
+/**
+ * Purpose: Executes BillingPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function BillingPage() {
   const params = useSearchParams()
   const orgId = Number(params.get('org') ?? 0)
@@ -26,6 +31,11 @@ export default function BillingPage() {
       .finally(() => setLoading(false))
   }, [orgId])
 
+  /**
+   * Purpose: Executes handlePurchase functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handlePurchase = async (pkg: CreditPackage) => {
     setPurchasing(pkg.id)
     try {

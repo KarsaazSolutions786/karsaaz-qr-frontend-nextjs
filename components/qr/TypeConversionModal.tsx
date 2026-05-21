@@ -15,6 +15,11 @@ export interface TypeConversionModalProps {
 const STATIC_TYPES = ['url', 'text', 'email', 'phone', 'sms', 'wifi', 'vcard', 'location'];
 const DYNAMIC_TYPES = ['dynamic_url', 'dynamic_vcard', 'dynamic_pdf', 'dynamic_menu', 'dynamic_landing'];
 
+/**
+ * Purpose: Retrieves compatibletypes.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getCompatibleTypes(currentType: string): string[] {
   if (DYNAMIC_TYPES.includes(currentType)) {
     return DYNAMIC_TYPES.filter((t) => t !== currentType);
@@ -22,6 +27,11 @@ function getCompatibleTypes(currentType: string): string[] {
   return STATIC_TYPES.filter((t) => t !== currentType);
 }
 
+/**
+ * Purpose: Executes formatTypeName functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatTypeName(type: string): string {
   return type
     .replace(/^dynamic_/, '')
@@ -29,6 +39,11 @@ function formatTypeName(type: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+/**
+ * Purpose: Executes TypeConversionModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TypeConversionModal({
   qrCodeId: _qrCodeId,
   currentType,
@@ -46,6 +61,11 @@ export function TypeConversionModal({
   const canConvert = selectedType !== '' && selectedType !== currentType;
   const isDynamic = DYNAMIC_TYPES.includes(currentType);
 
+  /**
+   * Purpose: Executes handleConvert functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleConvert = async () => {
     if (!canConvert) return;
     setIsConverting(true);

@@ -8,6 +8,11 @@ const LABEL = 'block text-sm font-semibold text-gray-700 mb-1'
 const ERROR = 'mt-1 text-xs text-red-500'
 type BrazilPIXDataFormData = z.infer<typeof brazilPixDataSchema>
 interface BrazilPIXDataFormProps { defaultValues?: Partial<BrazilPIXDataFormData>; onChange?: (data: Partial<BrazilPIXDataFormData>) => void }
+/**
+ * Purpose: Executes BrazilPIXDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BrazilPIXDataForm({ defaultValues, onChange }: BrazilPIXDataFormProps) {
   const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<BrazilPIXDataFormData>({ schema: brazilPixDataSchema, defaultValues, onChange })

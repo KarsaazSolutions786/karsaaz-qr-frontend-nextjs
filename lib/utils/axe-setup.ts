@@ -1,11 +1,9 @@
 /**
- * Axe-core development setup.
- * Import this in your root layout/app component during development
- * to get real-time accessibility violation reports in the browser console.
- *
- * Usage:
- *   import '@/lib/utils/axe-setup';
+ * Purpose: Axe-core development setup. Import this in your root layout/app component during development to get real-time accessibility violation reports in the browser console. Usage: import '@/lib/utils/axe-setup';
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 
 async function initAxe() {
   if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {

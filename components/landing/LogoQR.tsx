@@ -5,6 +5,11 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+/**
+ * Purpose: Executes LogoQR functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function LogoQR() {
   const router = useRouter();
   

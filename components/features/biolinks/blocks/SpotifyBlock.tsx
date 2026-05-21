@@ -10,13 +10,11 @@ interface SpotifyBlockProps {
 }
 
 /**
- * Extracts Spotify embed URI from various URL formats:
- * - https://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6
- * - https://open.spotify.com/album/1DFixLWuPkv3KT3TnV35m3
- * - https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M
- * - https://open.spotify.com/episode/...
- * - https://open.spotify.com/show/...
+ * Purpose: Extracts Spotify embed URI from various URL formats: - https://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6 - https://open.spotify.com/album/1DFixLWuPkv3KT3TnV35m3 - https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M - https://open.spotify.com/episode/... - https://open.spotify.com/show/...
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 function extractSpotifyEmbedPath(url: string): string | null {
   const match = url.match(
     /open\.spotify\.com\/(track|album|playlist|episode|show)\/([a-zA-Z0-9]+)/
@@ -27,6 +25,11 @@ function extractSpotifyEmbedPath(url: string): string | null {
   return null
 }
 
+/**
+ * Purpose: Executes SpotifyBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function SpotifyBlock({ block, isEditing, onUpdate }: SpotifyBlockProps) {
   const { url, theme = 'light', compact = false } = block.data
   const { t } = useTranslation()

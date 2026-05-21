@@ -20,12 +20,22 @@ export interface ShareModalProps {
   onClose: () => void;
 }
 
+/**
+ * Purpose: Executes ShareModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ShareModal({ url, title, open, onClose }: ShareModalProps) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   if (!open) return null;
 
+  /**
+   * Purpose: Executes handleCopyLink functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);

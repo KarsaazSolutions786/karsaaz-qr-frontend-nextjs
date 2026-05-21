@@ -36,6 +36,11 @@ interface QrTypeNameProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes QrTypeName functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QrTypeName({ type, showIcon = true, className }: QrTypeNameProps) {
   const { t } = useTranslation()
   const config = typeConfig[type] ?? { label: type, icon: QrCode }

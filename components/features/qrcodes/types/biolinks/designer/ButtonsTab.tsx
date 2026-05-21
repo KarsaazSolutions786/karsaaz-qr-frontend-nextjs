@@ -9,6 +9,11 @@ interface ButtonsTabProps {
   updateTheme: (updates: Partial<ThemeSettings>) => void
 }
 
+/**
+ * Purpose: Executes ButtonsTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function ButtonsTab({ theme, updateTheme }: ButtonsTabProps) {
   const { t } = useTranslation()
 

@@ -4,6 +4,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { qrcodesAPI, ChangeQRTypeRequest } from '@/lib/api/endpoints/qrcodes'
 import { queryKeys } from '@/lib/query/keys'
 
+/**
+ * Purpose: Executes useChangeQRType functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useChangeQRType(id: string) {
   const queryClient = useQueryClient()
 

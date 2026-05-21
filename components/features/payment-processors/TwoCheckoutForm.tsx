@@ -10,17 +10,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * 2Checkout (Verifone) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (test / production)
- * - Seller ID
- * - Publishable Key
- * - Private Key
- *
- * Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
- * P1 also has plan ID mapping but that is handled separately via system configs.
+ * Purpose: 2Checkout (Verifone) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (test / production) - Seller ID - Publishable Key - Private Key Manual webhook URL is shown (showWebhookUrl on PROCESSORS). P1 also has plan ID mapping but that is handled separately via system configs.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function TwoCheckoutForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

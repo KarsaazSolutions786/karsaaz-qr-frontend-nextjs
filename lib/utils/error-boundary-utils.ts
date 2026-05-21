@@ -7,7 +7,12 @@
 
 export type ErrorCategory = 'network' | 'auth' | 'validation' | 'unknown'
 
-/** Categorize an error into a known bucket */
+/**
+ * Purpose: * Categorize an error into a known bucket 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function categorizeError(error: unknown): ErrorCategory {
   if (!error) return 'unknown'
 
@@ -55,7 +60,12 @@ export function categorizeError(error: unknown): ErrorCategory {
   return 'unknown'
 }
 
-/** Determine whether the error is worth retrying */
+/**
+ * Purpose: * Determine whether the error is worth retrying 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 export function isRetryableError(error: unknown): boolean {
   const category = categorizeError(error)
   // Network errors are typically transient and retryable
@@ -67,14 +77,21 @@ export function isRetryableError(error: unknown): boolean {
 }
 
 /**
- * Install global handlers for uncaught errors and unhandled rejections.
- * Call once at app startup (e.g., in a root layout or entry point).
+ * Purpose: Install global handlers for uncaught errors and unhandled rejections. Call once at app startup (e.g., in a root layout or entry point).
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function setupGlobalErrorHandlers(
   onError?: (category: ErrorCategory, error: unknown) => void
 ): () => void {
   if (typeof window === 'undefined') return () => {}
 
+  /**
+   * Purpose: Executes handleError functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleError = (event: ErrorEvent) => {
     const category = categorizeError(event.error ?? event.message)
     console.error(
@@ -85,6 +102,11 @@ export function setupGlobalErrorHandlers(
     onError?.(category, event.error ?? event.message)
   }
 
+  /**
+   * Purpose: Executes handleRejection functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRejection = (event: PromiseRejectionEvent) => {
     const category = categorizeError(event.reason)
     console.error(`[GlobalErrorHandler:unhandledrejection] category=${category}`, event.reason)

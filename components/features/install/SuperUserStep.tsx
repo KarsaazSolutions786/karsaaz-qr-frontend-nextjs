@@ -26,10 +26,20 @@ interface SuperUserStepProps {
   onChange: (config: SuperUserConfig) => void
 }
 
+/**
+ * Purpose: Executes SuperUserStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SuperUserStep({ config, onChange }: SuperUserStepProps) {
   const { t } = useTranslation();
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = (field: keyof SuperUserConfig, value: string) => {
     const next = { ...config, [field]: value }
     onChange(next)

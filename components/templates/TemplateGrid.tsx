@@ -17,6 +17,11 @@ interface TemplateGridProps {
   emptyMessage?: string
 }
 
+/**
+ * Purpose: Executes TemplateGrid functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TemplateGrid({
   templates,
   onUseTemplate,

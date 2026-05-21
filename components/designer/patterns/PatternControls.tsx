@@ -14,6 +14,11 @@ interface PatternControlsProps {
   onCustomImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
+/**
+ * Purpose: Executes PatternControls functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function PatternControls({
   pattern,
   onUpdate,

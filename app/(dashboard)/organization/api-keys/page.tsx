@@ -14,6 +14,11 @@ const SCOPE_OPTIONS = [
   { value: 'account.read', label: 'Read Account' },
 ]
 
+/**
+ * Purpose: Executes ApiKeysPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function ApiKeysPage() {
   const params = useSearchParams()
   const orgId = Number(params.get('org') ?? 0)
@@ -49,6 +54,11 @@ export default function ApiKeysPage() {
       .finally(() => setLoading(false))
   }, [orgId])
 
+  /**
+   * Purpose: Executes handleCreate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     setCreating(true)
@@ -71,6 +81,11 @@ export default function ApiKeysPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleRevoke functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleRevoke = async (keyId: number) => {
     if (!confirm('Revoke this API key? This cannot be undone.')) return
     try {
@@ -82,6 +97,11 @@ export default function ApiKeysPage() {
     }
   }
 
+  /**
+   * Purpose: Executes copyToken functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copyToken = () => {
     if (!newKeyToken) return
     navigator.clipboard.writeText(newKeyToken)
@@ -89,6 +109,11 @@ export default function ApiKeysPage() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  /**
+   * Purpose: Executes toggleScope functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const toggleScope = (scope: string) => {
     setForm(prev => ({
       ...prev,
@@ -102,6 +127,11 @@ export default function ApiKeysPage() {
     return <p className="text-gray-500">Select an organization first.</p>
   }
 
+  /**
+   * Purpose: Executes formatLimit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const formatLimit = (n: number) => (n === -1 ? 'Unlimited' : n.toLocaleString())
 
   return (

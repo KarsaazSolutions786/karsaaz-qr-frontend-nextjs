@@ -3,6 +3,11 @@ import { biolinksAPI } from '@/lib/api/endpoints/biolinks'
 import { queryKeys } from '@/lib/query/keys'
 import type { Biolink } from '@/types/entities/biolink'
 
+/**
+ * Purpose: Executes useBiolinks functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useBiolinks(params?: {
   page?: number
   perPage?: number
@@ -14,6 +19,11 @@ export function useBiolinks(params?: {
   })
 }
 
+/**
+ * Purpose: Executes useBiolink functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useBiolink(
   id: number,
   options?: Omit<UseQueryOptions<Biolink>, 'queryKey' | 'queryFn'>
@@ -26,6 +36,11 @@ export function useBiolink(
   })
 }
 
+/**
+ * Purpose: Executes useBiolinkBySlug functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useBiolinkBySlug(slug: string) {
   return useQuery({
     queryKey: queryKeys.biolinks.bySlug(slug),

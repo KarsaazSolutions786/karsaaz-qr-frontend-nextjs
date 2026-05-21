@@ -18,6 +18,11 @@ interface FolderSelectModalProps {
   onClose: () => void
 }
 
+/**
+ * Purpose: Executes FolderSelectModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FolderSelectModal({
   selectedIds,
   multi = true,
@@ -41,6 +46,11 @@ export function FolderSelectModal({
       .finally(() => setLoading(false))
   }, [user?.id])
 
+  /**
+   * Purpose: Executes toggleFolder functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function toggleFolder(id: string) {
     setSelected(prev => {
       const next = new Set(prev)
@@ -54,6 +64,11 @@ export function FolderSelectModal({
     })
   }
 
+  /**
+   * Purpose: Executes handleCreateFolder functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleCreateFolder() {
     if (!newFolderName.trim() || !user?.id) return
     setCreating(true)
@@ -69,6 +84,11 @@ export function FolderSelectModal({
     }
   }
 
+  /**
+   * Purpose: Executes handleDeleteFolder functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   async function handleDeleteFolder(folderId: number) {
     if (!user?.id) return
     if (!confirm(t('Delete this folder?'))) return

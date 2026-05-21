@@ -16,6 +16,11 @@ interface Props {
   onSelect: (endpoint: PlaygroundEndpoint) => void
 }
 
+/**
+ * Purpose: Executes EndpointSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function EndpointSelector({ sections, selectedEndpoint, onSelect }: Props) {
   return (
     <div className="h-full overflow-y-auto py-2">

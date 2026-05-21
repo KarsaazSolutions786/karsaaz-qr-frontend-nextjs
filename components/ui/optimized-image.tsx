@@ -9,11 +9,11 @@ interface OptimizedImageProps extends Omit<ImageProps, 'onError'> {
 }
 
 /**
- * Wrapper around next/image with sensible defaults:
- * - Lazy loading by default
- * - Fallback on error
- * - Blur placeholder for known dimensions
+ * Purpose: Wrapper around next/image with sensible defaults: - Lazy loading by default - Fallback on error - Blur placeholder for known dimensions
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function OptimizedImage({
   className,
   fallbackSrc = '/images/placeholder.png',

@@ -7,17 +7,11 @@ import { useTranslation } from '@/lib/i18n'
 import { useSubscription } from '@/lib/hooks/useSubscription'
 
 /**
- * Dashboard banner showing subscription status warnings.
- *
- * States:
- * - Expired: red banner prompting upgrade
- * - Expiring within 7 days: amber banner prompting renewal
- * - Trial: blue banner showing days left
- * - No plan / free (no subscription): subtle gray banner
- * - Active (healthy): hidden
- *
- * Dismissible per session via local state.
+ * Purpose: Dashboard banner showing subscription status warnings. States: - Expired: red banner prompting upgrade - Expiring within 7 days: amber banner prompting renewal - Trial: blue banner showing days left - No plan / free (no subscription): subtle gray banner - Active (healthy): hidden Dismissible per session via local state.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function SubscriptionBanner() {
   const { t } = useTranslation()
   const [dismissed, setDismissed] = useState(false)

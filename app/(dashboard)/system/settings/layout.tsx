@@ -20,6 +20,11 @@ const SETTINGS_TABS = [
   { label: 'Design Assets', href: '/system/settings/design-assets' },
 ]
 
+/**
+ * Purpose: Executes SettingsLayout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation()
   const pathname = usePathname()

@@ -16,6 +16,11 @@ interface BusinessProfileDataFormProps {
   defaultValues?: Partial<BusinessProfileData>
   onChange?: (data: Partial<BusinessProfileData>) => void
 }
+/**
+ * Purpose: Executes BusinessProfileDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BusinessProfileDataForm({ defaultValues, onChange }: BusinessProfileDataFormProps) {
   const { t } = useTranslation()
   const {

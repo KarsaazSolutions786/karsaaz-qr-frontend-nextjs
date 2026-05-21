@@ -36,6 +36,11 @@ export interface PINProtectionOptions {
   expiresAt?: Date
 }
 
+/**
+ * Purpose: Executes useQRActions functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useQRActions() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -538,8 +543,11 @@ export function useQRActions() {
 }
 
 /**
- * Validate PIN format
+ * Purpose: Validate PIN format
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validatePIN(pin: string): { valid: boolean; error?: string } {
   if (!pin) {
     return { valid: false, error: 'PIN is required' }

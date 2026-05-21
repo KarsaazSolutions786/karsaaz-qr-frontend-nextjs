@@ -12,6 +12,11 @@ interface FeatureGateProps {
   showUpgradePrompt?: boolean;
 }
 
+/**
+ * Purpose: Executes FeatureGate functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function FeatureGate({
   feature,
   plan,

@@ -9,6 +9,11 @@ interface DividerBlockProps {
   onUpdate?: (data: DividerBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes DividerBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function DividerBlock({ block, isEditing, onUpdate }: DividerBlockProps) {
   const { style = 'solid', color = '#e5e7eb' } = block.data
   const { t } = useTranslation()

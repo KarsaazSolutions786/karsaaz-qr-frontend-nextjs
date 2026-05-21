@@ -16,6 +16,11 @@ const BASE_URL = '/api/cloud-storage'
 
 // ==================== CONNECTIONS ====================
 
+/**
+ * Purpose: Executes fetchConnections functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function fetchConnections(): Promise<CloudConnection[]> {
   const response = await fetch(`${BASE_URL}/connections`)
   if (!response.ok) {
@@ -24,6 +29,11 @@ export async function fetchConnections(): Promise<CloudConnection[]> {
   return response.json()
 }
 
+/**
+ * Purpose: Deletes the specified resource.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function deleteConnection(id: string): Promise<void> {
   const response = await fetch(`${BASE_URL}/connections/${id}`, {
     method: 'DELETE',
@@ -33,6 +43,11 @@ export async function deleteConnection(id: string): Promise<void> {
   }
 }
 
+/**
+ * Purpose: Executes testConnection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function testConnection(id: string): Promise<{ success: boolean; message?: string }> {
   const response = await fetch(`${BASE_URL}/connections/${id}/test`, {
     method: 'POST',
@@ -45,6 +60,11 @@ export async function testConnection(id: string): Promise<{ success: boolean; me
 
 // ==================== OAUTH PROVIDERS ====================
 
+/**
+ * Purpose: Retrieves authurl.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function getAuthUrl(provider: CloudProviderType): Promise<{ url: string }> {
   const response = await fetch(`${BASE_URL}/${provider}/auth-url`, {
     method: 'POST',
@@ -55,6 +75,11 @@ export async function getAuthUrl(provider: CloudProviderType): Promise<{ url: st
   return response.json()
 }
 
+/**
+ * Purpose: Executes handleOAuthCallback functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function handleOAuthCallback(
   provider: CloudProviderType,
   code: string
@@ -70,6 +95,11 @@ export async function handleOAuthCallback(
   return response.json()
 }
 
+/**
+ * Purpose: Executes refreshProviderToken functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function refreshProviderToken(provider: CloudProviderType): Promise<void> {
   const response = await fetch(`${BASE_URL}/${provider}/refresh`, {
     method: 'POST',
@@ -81,6 +111,11 @@ export async function refreshProviderToken(provider: CloudProviderType): Promise
 
 // ==================== MEGA ====================
 
+/**
+ * Purpose: Executes connectMega functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function connectMega(credentials: MegaCredentials): Promise<CloudConnection> {
   const response = await fetch(`${BASE_URL}/mega/connect`, {
     method: 'POST',
@@ -94,6 +129,11 @@ export async function connectMega(credentials: MegaCredentials): Promise<CloudCo
   return response.json()
 }
 
+/**
+ * Purpose: Executes testMegaConnection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function testMegaConnection(): Promise<{ success: boolean; message?: string }> {
   const response = await fetch(`${BASE_URL}/mega/test`, {
     method: 'POST',
@@ -106,6 +146,11 @@ export async function testMegaConnection(): Promise<{ success: boolean; message?
 
 // ==================== BACKUP JOBS ====================
 
+/**
+ * Purpose: Executes createBackupJob functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function createBackupJob(data: CreateBackupRequest): Promise<BackupJob> {
   const response = await fetch(`${BASE_URL}/backup`, {
     method: 'POST',
@@ -118,6 +163,11 @@ export async function createBackupJob(data: CreateBackupRequest): Promise<Backup
   return response.json()
 }
 
+/**
+ * Purpose: Executes fetchBackupJobs functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function fetchBackupJobs(): Promise<BackupJob[]> {
   const response = await fetch(`${BASE_URL}/backup-jobs`)
   if (!response.ok) {
@@ -126,6 +176,11 @@ export async function fetchBackupJobs(): Promise<BackupJob[]> {
   return response.json()
 }
 
+/**
+ * Purpose: Executes fetchBackupJob functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function fetchBackupJob(id: string): Promise<BackupJob> {
   const response = await fetch(`${BASE_URL}/backup-jobs/${id}`)
   if (!response.ok) {
@@ -134,6 +189,11 @@ export async function fetchBackupJob(id: string): Promise<BackupJob> {
   return response.json()
 }
 
+/**
+ * Purpose: Executes cancelBackupJob functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function cancelBackupJob(id: string): Promise<void> {
   const response = await fetch(`${BASE_URL}/backup-jobs/${id}`, {
     method: 'DELETE',
@@ -145,6 +205,11 @@ export async function cancelBackupJob(id: string): Promise<void> {
 
 // ==================== BACKUP HISTORY ====================
 
+/**
+ * Purpose: Executes fetchBackupHistory functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function fetchBackupHistory(connectionId?: string): Promise<BackupHistoryItem[]> {
   const url = connectionId
     ? `${BASE_URL}/backup-history?connection_id=${connectionId}`
@@ -156,6 +221,11 @@ export async function fetchBackupHistory(connectionId?: string): Promise<BackupH
   return response.json()
 }
 
+/**
+ * Purpose: Executes downloadBackup functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function downloadBackup(id: string): Promise<{ url: string }> {
   const response = await fetch(`${BASE_URL}/backup-history/${id}/download`)
   if (!response.ok) {
@@ -168,6 +238,11 @@ export async function downloadBackup(id: string): Promise<{ url: string }> {
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
+/**
+ * Purpose: Executes useCloudConnections functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useCloudConnections() {
   return useQuery({
     queryKey: ['cloud-connections'],
@@ -175,6 +250,11 @@ export function useCloudConnections() {
   })
 }
 
+/**
+ * Purpose: Executes useDeleteConnection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDeleteConnection() {
   const queryClient = useQueryClient()
 
@@ -186,12 +266,22 @@ export function useDeleteConnection() {
   })
 }
 
+/**
+ * Purpose: Executes useTestConnection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useTestConnection() {
   return useMutation({
     mutationFn: testConnection,
   })
 }
 
+/**
+ * Purpose: Executes useConnectMega functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useConnectMega() {
   const queryClient = useQueryClient()
 
@@ -203,6 +293,11 @@ export function useConnectMega() {
   })
 }
 
+/**
+ * Purpose: Executes useBackupJobs functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useBackupJobs() {
   return useQuery({
     queryKey: ['backup-jobs'],
@@ -217,6 +312,11 @@ export function useBackupJobs() {
   })
 }
 
+/**
+ * Purpose: Executes useCreateBackup functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useCreateBackup() {
   const queryClient = useQueryClient()
 
@@ -228,6 +328,11 @@ export function useCreateBackup() {
   })
 }
 
+/**
+ * Purpose: Executes useCancelBackup functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useCancelBackup() {
   const queryClient = useQueryClient()
 
@@ -239,6 +344,11 @@ export function useCancelBackup() {
   })
 }
 
+/**
+ * Purpose: Executes useBackupHistory functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useBackupHistory(connectionId?: string) {
   return useQuery({
     queryKey: ['backup-history', connectionId],

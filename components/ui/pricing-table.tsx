@@ -26,6 +26,11 @@ export interface PricingTableProps {
   className?: string
 }
 
+/**
+ * Purpose: Executes PricingTable functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PricingTable({ plans, onSelect, currentPlanId, className }: PricingTableProps) {
   const { t } = useTranslation()
   return (

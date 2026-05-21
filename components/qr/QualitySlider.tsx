@@ -52,6 +52,11 @@ const QUALITY_PRESETS: QualityPreset[] = [
   },
 ];
 
+/**
+ * Purpose: Executes QualitySlider functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function QualitySlider({
   value,
   onChange,
@@ -70,6 +75,11 @@ export function QualitySlider({
   const percentage = Math.round(value * 100);
   
   // Get quality description
+  /**
+   * Purpose: Retrieves qualitylabel.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getQualityLabel = (val: number): string => {
     if (val >= 0.95) return 'Maximum';
     if (val >= 0.85) return 'High';
@@ -79,6 +89,11 @@ export function QualitySlider({
   };
   
   // Get color based on quality
+  /**
+   * Purpose: Retrieves qualitycolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getQualityColor = (val: number): string => {
     if (val >= 0.85) return 'text-green-600';
     if (val >= 0.65) return 'text-blue-600';
@@ -87,6 +102,11 @@ export function QualitySlider({
   };
   
   // Handle preset click
+  /**
+   * Purpose: Executes handlePresetClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePresetClick = (presetValue: number) => {
     onChange(presetValue);
   };
@@ -214,8 +234,11 @@ export function QualitySlider({
 }
 
 /**
- * Compact quality slider (no presets)
+ * Purpose: Compact quality slider (no presets)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function QualitySliderCompact({
   value,
   onChange,
@@ -235,8 +258,11 @@ export function QualitySliderCompact({
 }
 
 /**
- * Quality slider with file size estimate
+ * Purpose: Quality slider with file size estimate
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function QualitySliderWithEstimate({
   value,
   onChange,
@@ -250,6 +276,11 @@ export function QualitySliderWithEstimate({
   const compressionFactor = 1 - (value * 0.5); // 50% reduction at max quality
   const estimatedSize = baseFileSize * (1 - compressionFactor);
   
+  /**
+   * Purpose: Executes formatSize functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatSize = (bytes: number): string => {
     if (bytes < 1024) return `${Math.round(bytes)} B`;
     if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
@@ -278,8 +309,11 @@ export function QualitySliderWithEstimate({
 }
 
 /**
- * Get quality recommendation based on use case
+ * Purpose: Get quality recommendation based on use case
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getQualityRecommendation(useCase: 'web' | 'print' | 'share' | 'archive'): {
   quality: number;
   reason: string;

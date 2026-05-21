@@ -35,8 +35,11 @@ const DEFAULT_DESIGN: QRDesignOptions = {
 };
 
 /**
- * Generate QR code as SVG
+ * Purpose: Generate QR code as SVG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function generateQRSVG(
   data: string,
   options: QRDesignOptions = {}
@@ -64,8 +67,11 @@ export async function generateQRSVG(
 }
 
 /**
- * Generate QR code as PNG data URL
+ * Purpose: Generate QR code as PNG data URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function generateQRPNG(
   data: string,
   options: QRDesignOptions = {}
@@ -92,8 +98,11 @@ export async function generateQRPNG(
 }
 
 /**
- * Generate QR code based on type
+ * Purpose: Generate QR code based on type
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function generateQRCode(
   params: QRGenerationParams
 ): Promise<string> {
@@ -108,8 +117,11 @@ export async function generateQRCode(
 }
 
 /**
- * Validate QR data
+ * Purpose: Validate QR data
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateQRData(data: string): {
   valid: boolean;
   error?: string;

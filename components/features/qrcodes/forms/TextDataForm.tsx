@@ -16,6 +16,11 @@ interface TextDataFormProps {
   onChange?: (data: Partial<TextDataFormData>) => void
 }
 
+/**
+ * Purpose: Executes TextDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function TextDataForm({ defaultValues, onChange }: TextDataFormProps) {
   const { t } = useTranslation()
   const { register, formState: { errors } } = useQRFormWatch<TextDataFormData>({

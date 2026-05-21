@@ -32,6 +32,11 @@ interface FormBuilderProps {
 }
 
 // Sortable field wrapper for the canvas
+/**
+ * Purpose: Executes SortableField functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function SortableField({
   field,
   isSelected,
@@ -120,6 +125,11 @@ function SortableField({
   )
 }
 
+/**
+ * Purpose: Executes FormBuilder functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function FormBuilder({ initialConfig, onSave }: FormBuilderProps) {
   const { t } = useTranslation();
   const [fields, setFields] = useState<FormField[]>(initialConfig?.fields || [])
@@ -344,6 +354,11 @@ export default function FormBuilder({ initialConfig, onSave }: FormBuilderProps)
 }
 
 // Inline preview form component
+/**
+ * Purpose: Executes PreviewForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function PreviewForm({
   fields,
   settings,
@@ -363,6 +378,11 @@ function PreviewForm({
     )
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitted(true)

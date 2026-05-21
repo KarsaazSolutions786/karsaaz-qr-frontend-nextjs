@@ -20,6 +20,11 @@ interface Message {
   timestamp: Date;
 }
 
+/**
+ * Purpose: Executes Chatbot functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
@@ -33,6 +38,11 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
   const [escalation, setEscalation] = useState<string | null>(null);
   const router = useRouter();
 
+  /**
+   * Purpose: Executes scrollToBottom functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -45,6 +55,11 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
     // Do not add any message on open; message will be added after Cloudflare success
   }, [isOpen]);
 
+  /**
+   * Purpose: Executes cloudflareTrustHandler functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const cloudflareTrustHandler = async (turnstileToken: string) => {
     try {
       const res = await fetch("/api/verify-turnstile", {
@@ -62,10 +77,20 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
     }
   };
 
+  /**
+   * Purpose: Checks if validemail.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const isValidEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
+  /**
+   * Purpose: Executes handleEmailSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValidEmail(email)) return;
@@ -91,6 +116,11 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
     }
   };
 
+  /**
+   * Purpose: Executes handleFAQClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleFAQClick = (faqText: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -187,6 +217,11 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
   };
 
 
+  /**
+   * Purpose: Executes handleSendMessage functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !isEmailSubmitted) return;
 
@@ -269,6 +304,11 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
     }
   };
 
+  /**
+   * Purpose: Executes handleKeyPress functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -278,6 +318,11 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
     }
   };
 
+  /**
+   * Purpose: Executes formatTime functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("en-US", {
       hour: "numeric",
@@ -286,6 +331,11 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
     });
   };
 
+  /**
+   * Purpose: Executes renderMessageText functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const renderMessageText = (text: string) => {
     const splitRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
     const urlStartRegex = /^(https?:\/\/|www\.)/i;
@@ -321,6 +371,11 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
     );
   };
 
+  /**
+   * Purpose: Executes streamBotResponse functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const streamBotResponse = async (fullText: string, options?: { showFaqOnComplete?: boolean }) => {
     // Hide FAQs while streaming
     setShowFAQ(false);

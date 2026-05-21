@@ -73,22 +73,47 @@ interface ResumePreviewProps {
   data: ResumeData;
 }
 
+/**
+ * Purpose: Executes ResumePreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ResumePreview({ data }: ResumePreviewProps) {
   const { t } = useTranslation();
   const { personalInfo, workExperience, education, skills, certifications, languages } = data;
 
+  /**
+   * Purpose: Executes handleDownloadPDF functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownloadPDF = () => {
     window.print();
   };
 
+  /**
+   * Purpose: Executes handlePrint functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePrint = () => {
     window.print();
   };
 
+  /**
+   * Purpose: Executes formatDate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   };
 
+  /**
+   * Purpose: Retrieves skillsbycategory.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getSkillsByCategory = () => {
     const categories: Record<string, Skill[]> = {};
     skills.forEach(skill => {
@@ -100,6 +125,11 @@ export default function ResumePreview({ data }: ResumePreviewProps) {
     return categories;
   };
 
+  /**
+   * Purpose: Executes renderSkillLevel functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderSkillLevel = (level: number) => {
     return (
       <div className="flex gap-1">

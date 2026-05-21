@@ -95,6 +95,11 @@ const apiResources: ApiResource[] = [
   },
 ]
 
+/**
+ * Purpose: Executes ApiDocsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function ApiDocsPage() {
   const { t } = useTranslation()
   return (

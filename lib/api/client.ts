@@ -10,6 +10,11 @@ import { envConfig } from '@/lib/config/env-config'
 // API Base URL Configuration
 // Priority: 1. window.BACKEND_URL (runtime injection)
 //           2. envConfig.API_URL (centralized env config — single source of truth)
+/**
+ * Purpose: Retrieves apibaseurl.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const getApiBaseURL = () => {
   if (typeof window !== 'undefined' && (window as any).BACKEND_URL) {
     return `${(window as any).BACKEND_URL}/api`
@@ -27,6 +32,11 @@ export const API_TIMEOUTS = {
 } as const
 
 // Route-specific timeout mapping
+/**
+ * Purpose: Retrieves timeoutforurl.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const getTimeoutForUrl = (url?: string): number => {
   if (!url) return API_TIMEOUTS.DEFAULT
   if (/\/(login|register|logout|verify-otp|forgot-password|reset-password)/.test(url))
@@ -38,6 +48,11 @@ const getTimeoutForUrl = (url?: string): number => {
 }
 
 // Check if on slow connection and double timeout
+/**
+ * Purpose: Executes adjustForSlowConnection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const adjustForSlowConnection = (timeout: number): number => {
   if (typeof navigator === 'undefined') return timeout
   const conn = (navigator as any).connection
@@ -208,6 +223,13 @@ export const isAxiosError = axios.isAxiosError
 const MAX_RETRIES = 3
 const RETRY_DELAY_BASE = 1000
 
+/**
+ * Purpose: Executes apiWithRetry functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
+ */
 export async function apiWithRetry<T>(fn: () => Promise<T>, retries = MAX_RETRIES): Promise<T> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {

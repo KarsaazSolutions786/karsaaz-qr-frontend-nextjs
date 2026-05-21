@@ -23,6 +23,11 @@ interface BusinessCardProps {
   };
 }
 
+/**
+ * Purpose: Executes BusinessCard functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BusinessCard({ profile }: BusinessCardProps) {
   const { t } = useTranslation();
   const primaryColor = profile.theme?.primaryColor || '#2563eb';
@@ -36,6 +41,11 @@ export default function BusinessCard({ profile }: BusinessCardProps) {
     profile.country,
   ].filter(Boolean).join(', ');
 
+  /**
+   * Purpose: Executes handleDownloadVCard functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDownloadVCard = () => {
     const vCard = [
       'BEGIN:VCARD',

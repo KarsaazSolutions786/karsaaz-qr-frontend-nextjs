@@ -20,23 +20,43 @@ const socialPlatforms = [
   { value: 'website', label: 'Website', icon: '🌐' },
 ]
 
+/**
+ * Purpose: Executes SocialLinksBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SocialLinksBlock({ block, isEditing, onUpdate }: SocialLinksBlockProps) {
   const { links } = block.data
   const { t } = useTranslation()
 
   if (isEditing) {
+    /**
+     * Purpose: Executes addLink functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const addLink = () => {
       onUpdate?.({
         links: [...links, { platform: 'twitter', url: '', icon: '𝕏' }],
       })
     }
 
+    /**
+     * Purpose: Deletes the specified resource.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const removeLink = (index: number) => {
       onUpdate?.({
         links: links.filter((_, i) => i !== index),
       })
     }
 
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const updateLink = (index: number, field: string, value: string) => {
       const newLinks = [...links]
       const currentLink = newLinks[index]

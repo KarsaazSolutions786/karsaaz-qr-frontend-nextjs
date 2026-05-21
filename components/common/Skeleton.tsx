@@ -16,6 +16,11 @@ export interface SkeletonProps {
   animation?: 'pulse' | 'wave' | 'none';
 }
 
+/**
+ * Purpose: Executes Skeleton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Skeleton({
   width,
   height,
@@ -50,8 +55,11 @@ export function Skeleton({
 }
 
 /**
- * QR Code Card Skeleton
+ * Purpose: QR Code Card Skeleton
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function QRCodeCardSkeleton() {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
@@ -67,8 +75,11 @@ export function QRCodeCardSkeleton() {
 }
 
 /**
- * Table Row Skeleton
+ * Purpose: Table Row Skeleton
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function TableRowSkeleton({ columns = 4 }: { columns?: number }) {
   return (
     <div className="flex items-center gap-4 p-4 border-b border-gray-200">
@@ -80,8 +91,11 @@ export function TableRowSkeleton({ columns = 4 }: { columns?: number }) {
 }
 
 /**
- * List Item Skeleton
+ * Purpose: List Item Skeleton
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function ListItemSkeleton() {
   return (
     <div className="flex items-center gap-4 p-4 border-b border-gray-200">
@@ -96,8 +110,11 @@ export function ListItemSkeleton() {
 }
 
 /**
- * Dashboard Widget Skeleton
+ * Purpose: Dashboard Widget Skeleton
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function DashboardWidgetSkeleton() {
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -111,8 +128,11 @@ export function DashboardWidgetSkeleton() {
 }
 
 /**
- * Form Skeleton
+ * Purpose: Form Skeleton
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function FormSkeleton({ fields = 4 }: { fields?: number }) {
   return (
     <div className="space-y-4">
@@ -131,8 +151,11 @@ export function FormSkeleton({ fields = 4 }: { fields?: number }) {
 }
 
 /**
- * Page Skeleton
+ * Purpose: Page Skeleton
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function PageSkeleton() {
   return (
     <div className="p-6 space-y-6">

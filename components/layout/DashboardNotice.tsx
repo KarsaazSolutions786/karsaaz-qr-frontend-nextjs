@@ -40,6 +40,11 @@ const typeConfig: Record<
   },
 }
 
+/**
+ * Purpose: Executes DashboardNotice functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DashboardNotice({ title, message, type }: DashboardNoticeProps) {
   const config = typeConfig[type]
 

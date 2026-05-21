@@ -8,6 +8,11 @@ import apiClient from '@/lib/api/client'
 import type { CreateTranslationRequest } from '@/types/entities/translation'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes NewTranslationPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewTranslationPage() {
   const router = useRouter()
   const createMutation = useCreateTranslation()
@@ -22,9 +27,19 @@ export default function NewTranslationPage() {
   const [flagFile, setFlagFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: keyof CreateTranslationRequest, value: unknown) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     let flagFileId: number | undefined

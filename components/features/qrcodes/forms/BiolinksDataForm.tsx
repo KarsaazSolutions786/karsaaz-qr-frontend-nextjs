@@ -12,6 +12,11 @@ interface BiolinksDataFormProps {
   defaultValues?: Partial<BiolinksData>
   onChange?: (data: Partial<BiolinksData>) => void
 }
+/**
+ * Purpose: Executes BiolinksDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BiolinksDataForm({ defaultValues, onChange }: BiolinksDataFormProps) {
   const { t } = useTranslation()
   const {

@@ -18,6 +18,11 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes EditDomainPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditDomainPage() {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
@@ -30,11 +35,21 @@ export default function EditDomainPage() {
   const [connectivity, setConnectivity] = useState<DomainConnectivity | null>(null)
   const [showAvailabilityModal, setShowAvailabilityModal] = useState(false)
 
+  /**
+   * Purpose: Executes handleTest functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTest = async () => {
     const result = await testMutation.mutateAsync(id)
     setConnectivity(result)
   }
 
+  /**
+   * Purpose: Executes handleAvailabilityChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleAvailabilityChange = async (availability: DomainAvailability) => {
     await availabilityMutation.mutateAsync({ id, availability })
     toast.success(t('Availability changed successfully'))
@@ -42,6 +57,11 @@ export default function EditDomainPage() {
     refetch()
   }
 
+  /**
+   * Purpose: Executes handleSetDefault functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSetDefault = async () => {
     if (!confirm(t('Are you sure you want to set this domain as the default domain for all new QR codes?'))) return
     await setDefaultMutation.mutateAsync(id)

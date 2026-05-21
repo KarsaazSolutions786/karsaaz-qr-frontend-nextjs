@@ -8,6 +8,11 @@ import { useApproveTransaction, useRejectTransaction } from '@/lib/hooks/mutatio
 import type { Transaction } from '@/types/entities/transaction'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes StatusBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function StatusBadge({ status }: { status?: string }) {
   const s = status?.toLowerCase() ?? ''
   const styles: Record<string, string> = {
@@ -22,6 +27,11 @@ function StatusBadge({ status }: { status?: string }) {
   )
 }
 
+/**
+ * Purpose: Executes formatAmount functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function formatAmount(transaction: Transaction): string {
   if (transaction.formatted_amount) return transaction.formatted_amount
   if (transaction.amount != null) {
@@ -33,6 +43,11 @@ function formatAmount(transaction: Transaction): string {
   return '—'
 }
 
+/**
+ * Purpose: Retrieves userdisplay.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getUserDisplay(transaction: Transaction): string {
   // Backend returns user via nested subscription.user — check nested paths first.
   // Fallback chain: user_name > nested subscription user > userId > dash
@@ -46,6 +61,11 @@ function getUserDisplay(transaction: Transaction): string {
   )
 }
 
+/**
+ * Purpose: Retrieves descriptiondisplay.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getDescriptionDisplay(transaction: Transaction): string {
   return (
     transaction.subscription_plan_name ||
@@ -54,6 +74,11 @@ function getDescriptionDisplay(transaction: Transaction): string {
   )
 }
 
+/**
+ * Purpose: Executes TransactionsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function TransactionsPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -62,18 +87,33 @@ export default function TransactionsPage() {
   const approveMutation = useApproveTransaction()
   const rejectMutation = useRejectTransaction()
 
+  /**
+   * Purpose: Executes handleApprove functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleApprove = async (id: string) => {
     if (!confirm(t('Approve this transaction?'))) return
     await approveMutation.mutateAsync(Number(id))
     toast.success(t('Transaction approved successfully.'))
   }
 
+  /**
+   * Purpose: Executes handleReject functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleReject = async (id: string) => {
     if (!confirm(t('Reject this transaction?'))) return
     await rejectMutation.mutateAsync(Number(id))
     toast.success(t('Transaction rejected successfully.'))
   }
 
+  /**
+   * Purpose: Executes handleOpenProof functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleOpenProof = (transaction: Transaction) => {
     const proof = transaction.payment_proof
     if (proof) {

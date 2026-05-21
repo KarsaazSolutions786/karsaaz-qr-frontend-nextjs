@@ -79,6 +79,11 @@ const iconVariants: Record<string, React.ReactNode> = {
   ),
 }
 
+/**
+ * Purpose: Executes Toast functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function Toast({
   id: _id,
   title,
@@ -117,6 +122,11 @@ export function Toast({
   )
 }
 
+/**
+ * Purpose: Executes ToastViewport functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ToastViewport({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation()
 
@@ -130,6 +140,11 @@ export function ToastViewport({ children }: { children: React.ReactNode }) {
   )
 }
 
+/**
+ * Purpose: Executes ToastContextProvider functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ToastContextProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<ToastProps[]>([])
 
@@ -175,6 +190,11 @@ export function ToastContextProvider({ children }: { children: React.ReactNode }
   )
 }
 
+/**
+ * Purpose: Retrieves defaultduration.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function getDefaultDuration(variant?: string): number {
   switch (variant) {
     case 'error':
@@ -188,6 +208,11 @@ function getDefaultDuration(variant?: string): number {
   }
 }
 
+/**
+ * Purpose: Executes useToastContext functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useToastContext() {
   const context = React.useContext(ToastProvider)
   if (!context) {

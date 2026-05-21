@@ -11,21 +11,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * Alipay China payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (sandbox / live)
- * - App ID
- * - App Secret Cert (textarea)
- * - App Public Certificate (textarea)
- * - AliPay Public Cert (textarea)
- * - AliPay Root Cert (textarea)
- * - App Auth Token (optional)
- *
- * P1 uses file upload for certs, but the system configs API stores text values.
- * We render textarea fields so admins can paste certificate contents directly,
- * matching the PROCESSORS definition on the page.
+ * Purpose: Alipay China payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (sandbox / live) - App ID - App Secret Cert (textarea) - App Public Certificate (textarea) - AliPay Public Cert (textarea) - AliPay Root Cert (textarea) - App Auth Token (optional) P1 uses file upload for certs, but the system configs API stores text values. We render textarea fields so admins can paste certificate contents directly, matching the PROCESSORS definition on the page.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function AlipayForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

@@ -9,6 +9,11 @@ interface UPIBlockProps {
   onUpdate?: (data: UPIBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes buildUpiUrl functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function buildUpiUrl(vpa: string, name?: string, amount?: number, note?: string): string {
   const params = new URLSearchParams()
   params.set('pa', vpa)
@@ -18,6 +23,11 @@ function buildUpiUrl(vpa: string, name?: string, amount?: number, note?: string)
   return `upi://pay?${params.toString()}`
 }
 
+/**
+ * Purpose: Executes UPIBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function UPIBlock({ block, isEditing, onUpdate }: UPIBlockProps) {
   const { t } = useTranslation();
   const { vpa, amount, name, note } = block.data

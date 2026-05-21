@@ -32,6 +32,11 @@ const PLACEHOLDER_JSON = JSON.stringify(
   2
 )
 
+/**
+ * Purpose: Executes MenuManagementPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function MenuManagementPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
@@ -45,6 +50,11 @@ export default function MenuManagementPage() {
     if (configs) setForm({ ...configs })
   }, [configs])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: string, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }))
     setErrors((prev) => {
@@ -54,6 +64,11 @@ export default function MenuManagementPage() {
     })
   }
 
+  /**
+   * Purpose: Executes validateJson functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const validateJson = (key: string, value: string): boolean => {
     if (!value.trim()) return true
     try {
@@ -69,6 +84,11 @@ export default function MenuManagementPage() {
     }
   }
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave = async () => {
     let valid = true
     for (const tab of MENU_TABS) {

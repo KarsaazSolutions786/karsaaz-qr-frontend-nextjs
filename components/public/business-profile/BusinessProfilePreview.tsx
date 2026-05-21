@@ -79,6 +79,11 @@ interface BusinessProfilePreviewProps {
   profile: BusinessProfileData
 }
 
+/**
+ * Purpose: Executes BusinessProfilePreview functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BusinessProfilePreview({ profile }: BusinessProfilePreviewProps) {
   const { t } = useTranslation()
   const primaryColor = profile.theme?.primaryColor || '#2563eb'

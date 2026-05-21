@@ -8,6 +8,11 @@ import { useTranslations } from '@/lib/hooks/queries/useTranslations'
 import { useTranslation } from '@/lib/i18n'
 import type { CreateContentBlockRequest } from '@/types/entities/content-block'
 
+/**
+ * Purpose: Executes NewContentBlockPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewContentBlockPage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -22,9 +27,19 @@ export default function NewContentBlockPage() {
     translationId: undefined,
   })
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: keyof CreateContentBlockRequest, value: unknown) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await createMutation.mutateAsync(form)

@@ -100,6 +100,11 @@ interface Step1DataEntryProps {
   onChange: (data: Record<string, any>) => void
 }
 
+/**
+ * Purpose: Executes Step1DataEntry functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function Step1DataEntry({ qrType, data, onChange }: Step1DataEntryProps) {
   const { t } = useTranslation()
   const typeInfo = QR_TYPES.find(tp => tp.id === qrType)
@@ -113,6 +118,11 @@ export default function Step1DataEntry({ qrType, data, onChange }: Step1DataEntr
     [onChange]
   )
 
+  /**
+   * Purpose: Executes renderDataForm functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderDataForm = () => {
     const commonProps = {
       defaultValues: data as any,

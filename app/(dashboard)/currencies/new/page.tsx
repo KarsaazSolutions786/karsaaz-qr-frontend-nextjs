@@ -19,6 +19,11 @@ const DECIMAL_SEPARATOR_OPTIONS = [
 const inputClass =
   'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm'
 
+/**
+ * Purpose: Executes NewCurrencyPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewCurrencyPage() {
   const { t } = useTranslation()
   const createMutation = useCreateCurrency()
@@ -33,8 +38,20 @@ export default function NewCurrencyPage() {
     symbolPosition: 'before',
   })
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
   const set = (field: string, value: unknown) => setForm(prev => ({ ...prev, [field]: value }))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {

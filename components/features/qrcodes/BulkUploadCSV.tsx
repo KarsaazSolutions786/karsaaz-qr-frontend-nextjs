@@ -7,10 +7,20 @@ interface BulkUploadCSVProps {
   onUpload: (data: any[]) => void
 }
 
+/**
+ * Purpose: Executes BulkUploadCSV functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BulkUploadCSV({ onUpload }: BulkUploadCSVProps) {
   const { t } = useTranslation()
   const [isDragging, setIsDragging] = useState(false)
 
+  /**
+   * Purpose: Executes handleFileUpload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFileUpload = (file: File) => {
     const reader = new FileReader()
     reader.onload = (e) => {
@@ -25,6 +35,11 @@ export function BulkUploadCSV({ onUpload }: BulkUploadCSVProps) {
     reader.readAsText(file)
   }
 
+  /**
+   * Purpose: Executes handleDrop functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
@@ -35,6 +50,11 @@ export function BulkUploadCSV({ onUpload }: BulkUploadCSVProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleFileSelect functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {

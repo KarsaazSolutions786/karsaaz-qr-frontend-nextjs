@@ -30,6 +30,11 @@ export interface FillTypeFieldsProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes FillTypeFields functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function FillTypeFields({
   value,
   onChange,
@@ -40,6 +45,11 @@ export function FillTypeFields({
 }: FillTypeFieldsProps) {
   const { t } = useTranslation();
   // Handle fill type change
+  /**
+   * Purpose: Executes handleTypeChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTypeChange = (type: 'solid' | 'gradient' | 'image') => {
     if (type === 'solid') {
       onChange(createSolidFill('#000000'));
@@ -51,11 +61,21 @@ export function FillTypeFields({
   };
 
   // Handle solid color change
+  /**
+   * Purpose: Executes handleSolidColorChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSolidColorChange = (color: string) => {
     onChange(createSolidFill(color));
   };
 
   // Handle gradient change
+  /**
+   * Purpose: Executes handleGradientChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleGradientChange = (gradient: {
     type: 'linear' | 'radial';
     startColor: string;
@@ -66,12 +86,22 @@ export function FillTypeFields({
   };
 
   // Handle image change
+  /**
+   * Purpose: Executes handleImageUrlChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isImageFill(value)) {
       onChange(createImageFill(e.target.value, value.opacity));
     }
   };
 
+  /**
+   * Purpose: Executes handleImageOpacityChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleImageOpacityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isImageFill(value)) {
       onChange(createImageFill(value.imageUrl, parseFloat(e.target.value)));
@@ -201,8 +231,11 @@ export function FillTypeFields({
 }
 
 /**
- * Simplified fill selector (just type buttons with current value preview)
+ * Purpose: Simplified fill selector (just type buttons with current value preview)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function SimpleFillSelector({
   value,
   onChange: _onChange,

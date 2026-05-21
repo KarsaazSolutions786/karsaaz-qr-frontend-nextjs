@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   description: 'Create your Karsaaz QR account',
 }
 
+/**
+ * Purpose: Executes SignupPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SignupPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">

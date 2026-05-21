@@ -48,6 +48,11 @@ export interface UseAIDesignReturn {
   reset: () => void;
 }
 
+/**
+ * Purpose: Executes useAIDesign functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useAIDesign(options: UseAIDesignOptions = {}): UseAIDesignReturn {
   const { onSuccess, onError, baseConfig } = options;
 
@@ -277,6 +282,11 @@ export interface AIDesignButtonProps {
   variant?: 'primary' | 'secondary' | 'minimal';
 }
 
+/**
+ * Purpose: Executes AIDesignButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AIDesignButton({
   onClick,
   isGenerating = false,
@@ -333,6 +343,11 @@ export interface AIDesignLoadingProps {
   progress?: number; // 0-100
 }
 
+/**
+ * Purpose: Executes AIDesignLoading functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AIDesignLoading({ message = 'Generating your design...', progress }: AIDesignLoadingProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12">

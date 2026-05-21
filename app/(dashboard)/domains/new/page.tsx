@@ -5,6 +5,11 @@ import { useCreateDomain } from '@/lib/hooks/mutations/useDomainMutations'
 import { DomainForm } from '@/components/features/domains/DomainForm'
 import Link from 'next/link'
 
+/**
+ * Purpose: Executes NewDomainPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewDomainPage() {
   const { t } = useTranslation()
   const createMutation = useCreateDomain()

@@ -9,6 +9,11 @@ interface HostedAccountUpgradeProps {
   onUpgradeClick?: () => void
 }
 
+/**
+ * Purpose: Executes HostedAccountUpgrade functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function HostedAccountUpgrade({ currentPlan, onUpgradeClick }: HostedAccountUpgradeProps) {
   const { t } = useTranslation()
   const [dismissed, setDismissed] = useState(false)

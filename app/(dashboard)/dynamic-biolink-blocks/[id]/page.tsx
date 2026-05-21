@@ -25,6 +25,11 @@ interface FieldFormState {
   uploading: boolean
 }
 
+/**
+ * Purpose: Executes emptyField functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 const emptyField = (): FieldFormState => ({
   name: '',
   placeholder: '',
@@ -33,6 +38,11 @@ const emptyField = (): FieldFormState => ({
   uploading: false,
 })
 
+/**
+ * Purpose: Executes EditDynamicBiolinkBlockPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function EditDynamicBiolinkBlockPage({ params }: { params: Promise<{ id: string }> }) {
   const { t } = useTranslation()
   const { id } = use(params)
@@ -60,9 +70,19 @@ export default function EditDynamicBiolinkBlockPage({ params }: { params: Promis
     }
   }, [block])
 
+  /**
+   * Purpose: Sets fieldval.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const setFieldVal = <K extends keyof FieldFormState>(key: K, value: FieldFormState[K]) =>
     setFieldForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes addField functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addField = async () => {
     if (!fieldForm.name.trim()) return
     let iconId: number | undefined
@@ -90,8 +110,18 @@ export default function EditDynamicBiolinkBlockPage({ params }: { params: Promis
     setShowFieldModal(false)
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeField = (idx: number) => setFields((prev) => prev.filter((_, i) => i !== idx))
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     let iconId: number | undefined

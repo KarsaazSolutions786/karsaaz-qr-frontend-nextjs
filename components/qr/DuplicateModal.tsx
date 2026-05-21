@@ -22,6 +22,11 @@ export interface DuplicateModalProps {
   }) => Promise<void>;
 }
 
+/**
+ * Purpose: Executes DuplicateModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DuplicateModal({
   isOpen,
   onClose,
@@ -38,6 +43,11 @@ export function DuplicateModal({
   
   if (!isOpen) return null;
   
+  /**
+   * Purpose: Executes handleDuplicate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDuplicate = async () => {
     setIsDuplicating(true);
     setError('');

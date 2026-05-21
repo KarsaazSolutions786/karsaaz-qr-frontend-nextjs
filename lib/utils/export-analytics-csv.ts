@@ -9,6 +9,11 @@ import type { QRCodeStats } from '@/types/entities/analytics'
 
 // ---------- Helpers ----------
 
+/**
+ * Purpose: Executes escapeCsvCell functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function escapeCsvCell(val: string | number | null | undefined): string {
   const str = String(val ?? '')
   if (str.includes(',') || str.includes('"') || str.includes('\n')) {
@@ -17,6 +22,11 @@ function escapeCsvCell(val: string | number | null | undefined): string {
   return str
 }
 
+/**
+ * Purpose: Executes row functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function row(...cells: (string | number | null | undefined)[]): string {
   return cells.map(escapeCsvCell).join(',')
 }
@@ -24,8 +34,11 @@ function row(...cells: (string | number | null | undefined)[]): string {
 // ---------- Export ----------
 
 /**
- * Builds a CSV string containing all analytics data grouped by section.
+ * Purpose: Builds a CSV string containing all analytics data grouped by section.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function buildAnalyticsCsv(stats: QRCodeStats): string {
   const lines: string[] = []
 
@@ -85,8 +98,11 @@ export function buildAnalyticsCsv(stats: QRCodeStats): string {
 }
 
 /**
- * Exports analytics stats as a CSV file download.
+ * Purpose: Exports analytics stats as a CSV file download.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function exportAnalyticsCsv(stats: QRCodeStats): void {
   const csv = buildAnalyticsCsv(stats)
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })

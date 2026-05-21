@@ -25,6 +25,11 @@ export interface LocationMapProps {
   showList?: boolean;
 }
 
+/**
+ * Purpose: Executes LocationMap functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function LocationMap({
   locations,
   totalScans,
@@ -154,8 +159,11 @@ export function LocationMap({
 }
 
 /**
- * Get country flag emoji (simplified)
+ * Purpose: Get country flag emoji (simplified)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function getCountryFlag(countryCode: string): string {
   const flags: Record<string, string> = {
     US: '🇺🇸',

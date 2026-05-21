@@ -9,11 +9,21 @@ interface AvatarUploadProps {
   user: User
 }
 
+/**
+ * Purpose: Executes AvatarUpload functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AvatarUpload({ user }: AvatarUploadProps) {
   const { t } = useTranslation()
   const [preview, setPreview] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
+  /**
+   * Purpose: Executes handleFileChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && file.type.startsWith('image/')) {
@@ -68,6 +78,11 @@ interface ProfileTabProps {
   user: User
 }
 
+/**
+ * Purpose: Executes ProfileTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ProfileTab({ user }: ProfileTabProps) {
   const { t } = useTranslation()
   return (

@@ -4,8 +4,11 @@
  */
 
 /**
- * Check if a value is empty
+ * Purpose: Check if a value is empty
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function isEmpty(subject: unknown): boolean {
   if (subject instanceof File) {
     return false
@@ -38,39 +41,59 @@ export function isEmpty(subject: unknown): boolean {
   return false
 }
 
+/**
+ * Purpose: Checks if notempty.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export const isNotEmpty = <T>(v: T | null | undefined): v is T => !isEmpty(v)
 
 /**
- * Check if value is null or undefined
+ * Purpose: Check if value is null or undefined
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function nullOrUndefined(value: unknown): value is null | undefined {
   return value === null || value === undefined
 }
 
 /**
- * Check if value is a function
+ * Purpose: Check if value is a function
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function isFunction(param: unknown): param is (...args: unknown[]) => unknown {
   return typeof param === 'function'
 }
 
 /**
- * Check if value is primitive
+ * Purpose: Check if value is primitive
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function isPrimitive(val: unknown): boolean {
   return val !== Object(val)
 }
 
 /**
- * Check if value is an array
+ * Purpose: Check if value is an array
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function isArray(value: unknown): value is unknown[] {
   return Array.isArray(value)
 }
 
 /**
- * Parse boolean value from various types
+ * Purpose: Parse boolean value from various types
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function parseBooleanValue(value: unknown): boolean {
   if (typeof value === 'boolean') return value
   if (typeof value === 'number') return value !== 0
@@ -82,8 +105,11 @@ export function parseBooleanValue(value: unknown): boolean {
 }
 
 /**
- * Parse number value with default
+ * Purpose: Parse number value with default
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function parseNumberValue(value: unknown, defaultValue = 0): number {
   if (typeof value === 'number') return value
   if (typeof value === 'string' && !isNaN(+value)) return +value
@@ -91,8 +117,11 @@ export function parseNumberValue(value: unknown, defaultValue = 0): number {
 }
 
 /**
- * Validate email address
+ * Purpose: Validate email address
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function isEmail(value: string): boolean {
   return !!String(value)
     .toLowerCase()

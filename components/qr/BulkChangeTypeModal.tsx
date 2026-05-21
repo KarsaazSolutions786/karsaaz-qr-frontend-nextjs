@@ -34,6 +34,11 @@ const DYNAMIC_TYPES = [
   'dynamic_landing',
 ]
 
+/**
+ * Purpose: Executes formatTypeName functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function formatTypeName(type: string): string {
   return type
     .replace(/^dynamic_/, 'Dynamic ')
@@ -48,6 +53,11 @@ interface BulkChangeTypeModalProps {
   onComplete: () => void
 }
 
+/**
+ * Purpose: Executes BulkChangeTypeModal functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function BulkChangeTypeModal({
   open,
   onClose,
@@ -59,6 +69,11 @@ export function BulkChangeTypeModal({
   const [isProcessing, setIsProcessing] = useState(false)
   const [processedCount, setProcessedCount] = useState(0)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const handleSubmit = async () => {
     if (!selectedType || selectedIds.length === 0) return
 

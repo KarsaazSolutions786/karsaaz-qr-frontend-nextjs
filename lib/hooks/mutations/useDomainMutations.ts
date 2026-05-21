@@ -5,6 +5,11 @@ import { queryKeys } from '@/lib/query/keys'
 import type { CreateDomainRequest, UpdateDomainRequest } from '@/lib/api/endpoints/domains'
 import type { DomainStatus, DomainAvailability } from '@/types/entities/domain'
 
+/**
+ * Purpose: Executes useCreateDomain functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useCreateDomain() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -17,6 +22,11 @@ export function useCreateDomain() {
   })
 }
 
+/**
+ * Purpose: Executes useUpdateDomain functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useUpdateDomain() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -29,6 +39,11 @@ export function useUpdateDomain() {
   })
 }
 
+/**
+ * Purpose: Executes useDeleteDomain functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDeleteDomain() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -39,6 +54,11 @@ export function useDeleteDomain() {
   })
 }
 
+/**
+ * Purpose: Executes useTestDomainConnection functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useTestDomainConnection() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -49,6 +69,11 @@ export function useTestDomainConnection() {
   })
 }
 
+/**
+ * Purpose: Executes useChangeDomainStatus functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useChangeDomainStatus() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -61,6 +86,11 @@ export function useChangeDomainStatus() {
   })
 }
 
+/**
+ * Purpose: Executes useChangeDomainAvailability functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function useChangeDomainAvailability() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -78,6 +108,11 @@ export function useChangeDomainAvailability() {
   })
 }
 
+/**
+ * Purpose: Executes useSetDefaultDomain functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export function useSetDefaultDomain() {
   const queryClient = useQueryClient()
   return useMutation({

@@ -16,6 +16,11 @@ interface SelectQuestionProps {
   error?: string
 }
 
+/**
+ * Purpose: Executes SelectQuestion functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function SelectQuestion({
   id,
   label,

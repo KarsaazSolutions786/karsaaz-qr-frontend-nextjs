@@ -1,16 +1,31 @@
 // iframe Detector Service (T018)
 // Per research.md R10: Check framing, blur overlay, respect config
 
+/**
+ * Purpose: Class definition for IframeDetector.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 class IframeDetector {
   private static instance: IframeDetector
   private overlayElement: HTMLElement | null = null
 
+  /**
+   * Purpose: Retrieves instance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getInstance(): IframeDetector {
     if (!this.instance) this.instance = new IframeDetector()
     return this.instance
   }
 
-  /** Check if page is loaded inside an iframe with hostname mismatch */
+  /**
+   * Purpose: * Check if page is loaded inside an iframe with hostname mismatch 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   isFramed(): boolean {
     if (typeof window === 'undefined') return false
     try {
@@ -24,7 +39,12 @@ class IframeDetector {
     }
   }
 
-  /** Initialize detection and show overlay if framed */
+  /**
+   * Purpose: * Initialize detection and show overlay if framed 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   init(allowIframeEmbed = false): void {
     if (typeof window === 'undefined' || allowIframeEmbed) return
     if (!this.isFramed()) return
@@ -69,7 +89,12 @@ class IframeDetector {
     document.body.appendChild(this.overlayElement)
   }
 
-  /** Cleanup overlay */
+  /**
+   * Purpose: * Cleanup overlay 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   destroy(): void {
     if (typeof window === 'undefined') return
     document.body.style.filter = ''

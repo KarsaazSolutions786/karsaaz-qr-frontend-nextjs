@@ -4,6 +4,11 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
+/**
+ * Purpose: Executes Pricing functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function Pricing() {
   const [isYearly, setIsYearly] = useState(false);
   const router = useRouter();

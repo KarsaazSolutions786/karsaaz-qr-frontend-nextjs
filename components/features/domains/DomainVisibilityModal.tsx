@@ -13,11 +13,11 @@ interface DomainVisibilityModalProps {
 }
 
 /**
- * Modal for changing domain availability between public (all users)
- * and private (domain owner only). Maps to the P1
- * `qrcg-domain-change-availability-modal` that calls
- * PUT /domains/{id}/update-availability.
+ * Purpose: Modal for changing domain availability between public (all users) and private (domain owner only). Maps to the P1 `qrcg-domain-change-availability-modal` that calls PUT /domains/{id}/update-availability.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
  */
+
 export function DomainVisibilityModal({
   domain,
   open,

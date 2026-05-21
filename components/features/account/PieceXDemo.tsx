@@ -37,6 +37,11 @@ const DEMO_ITEMS: MarketplaceItem[] = [
   },
 ]
 
+/**
+ * Purpose: Executes PieceXDemo functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PieceXDemo() {
   const { t } = useTranslation()
   const [selectedCategory, setSelectedCategory] = useState<string>('All')

@@ -68,6 +68,11 @@ interface PaymentGatewayFormProps {
   isSubmitting?: boolean
 }
 
+/**
+ * Purpose: Executes renderProcessorForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function renderProcessorForm(
   slug: string,
   settings: Record<string, string>,
@@ -124,6 +129,11 @@ function renderProcessorForm(
   }
 }
 
+/**
+ * Purpose: Executes PaymentGatewayForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PaymentGatewayForm({
   initialData,
   onSubmit,
@@ -151,6 +161,11 @@ export default function PaymentGatewayForm({
   const settings = watch('settings')
   const slug = watch('slug')
 
+  /**
+   * Purpose: Executes handleSettingChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSettingChange = (key: string, value: string) => {
     setValue('settings', { ...settings, [key]: value })
   }

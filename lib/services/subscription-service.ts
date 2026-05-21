@@ -96,6 +96,11 @@ export const useSubscriptionStore = create<SubscriptionStore>()(
           });
 
           // Get the latest status for each subscription
+          /**
+           * Purpose: Retrieves lateststatus.
+           * Owner/Author: Syed Ashhad
+           * Created/Updated: February 2026
+           */
           const getLatestStatus = (sub: any) => {
             const statuses = sub.statuses || [];
             if (statuses.length === 0) return null;
@@ -109,6 +114,11 @@ export const useSubscriptionStore = create<SubscriptionStore>()(
           };
 
           // Check if subscription is a trial plan
+          /**
+           * Purpose: Checks if trial.
+           * Owner/Author: Syed Ashhad
+           * Created/Updated: February 2026
+           */
           const isTrial = (sub: any) => sub.subscription_plan?.is_trial === true;
 
           // Priority for displaying subscription:

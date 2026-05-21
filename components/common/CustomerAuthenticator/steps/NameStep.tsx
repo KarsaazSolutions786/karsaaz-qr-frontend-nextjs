@@ -12,11 +12,21 @@ interface NameStepProps {
   loading: boolean
 }
 
+/**
+ * Purpose: Executes NameStep functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function NameStep({ email, onSubmit, onBack, loading }: NameStepProps) {
   const { t } = useTranslation()
   const [name, setName] = useState('')
   const [validationError, setValidationError] = useState<string | null>(null)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     const trimmed = name.trim()

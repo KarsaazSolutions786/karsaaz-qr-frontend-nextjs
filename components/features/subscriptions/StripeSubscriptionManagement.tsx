@@ -19,6 +19,11 @@ const STATUS_COLORS: Record<string, string> = {
   past_due: 'bg-red-100 text-red-700',
 }
 
+/**
+ * Purpose: Executes StripeSubscriptionManagement functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StripeSubscriptionManagement() {
   const { t } = useTranslation()
   const [subscription, setSubscription] = useState<StripeSubscription | null>(null)
@@ -31,6 +36,11 @@ export function StripeSubscriptionManagement() {
     loadSubscription()
   }, [])
 
+  /**
+   * Purpose: Executes loadSubscription functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function loadSubscription() {
     setLoading(true)
     try {
@@ -43,6 +53,11 @@ export function StripeSubscriptionManagement() {
     }
   }
 
+  /**
+   * Purpose: Executes handlePause functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handlePause() {
     setActionLoading(true)
     try {
@@ -56,6 +71,11 @@ export function StripeSubscriptionManagement() {
     }
   }
 
+  /**
+   * Purpose: Executes handleResume functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleResume() {
     setActionLoading(true)
     try {
@@ -69,6 +89,11 @@ export function StripeSubscriptionManagement() {
     }
   }
 
+  /**
+   * Purpose: Executes formatDate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function formatDate(dateStr?: string) {
     if (!dateStr) return '—'
     return new Date(dateStr).toLocaleDateString('en-US', {
@@ -76,6 +101,11 @@ export function StripeSubscriptionManagement() {
     })
   }
 
+  /**
+   * Purpose: Executes formatAmount functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function formatAmount(amount?: number, interval?: string) {
     if (!amount) return '—'
     return `$${(amount / 100).toFixed(2)}/${interval || 'month'}`

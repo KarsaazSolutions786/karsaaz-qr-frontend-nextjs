@@ -22,6 +22,11 @@ interface UsageStats {
   rate_limit_per_minute: number
 }
 
+/**
+ * Purpose: Executes OrgPortalApiKeysPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function OrgPortalApiKeysPage() {
   const [keys, setKeys] = useState<ApiKey[]>([])
   const [loading, setLoading] = useState(true)
@@ -43,6 +48,11 @@ export default function OrgPortalApiKeysPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  /**
+   * Purpose: Executes handleRegenerate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const handleRegenerate = async (keyId: number) => {
     if (!confirm('Regenerate this key? The old key will stop working immediately.')) return
     setRegenerating(keyId)
@@ -62,6 +72,11 @@ export default function OrgPortalApiKeysPage() {
     }
   }
 
+  /**
+   * Purpose: Executes copyToken functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const copyToken = (token: string) => {
     navigator.clipboard.writeText(token).then(() => {
       setCopied(true)
@@ -69,7 +84,17 @@ export default function OrgPortalApiKeysPage() {
     })
   }
 
+  /**
+   * Purpose: Executes formatDate functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const formatDate = (d: string | null) => (d ? new Date(d).toLocaleDateString() : '—')
+  /**
+   * Purpose: Executes formatLimit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
   const formatLimit = (n: number) => (n === -1 ? 'Unlimited' : n.toLocaleString())
 
   if (loading) {

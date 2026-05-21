@@ -8,9 +8,11 @@ interface SrOnlyProps {
 }
 
 /**
- * Visually hidden text that remains accessible to screen readers.
- * Uses Tailwind's sr-only utility.
+ * Purpose: Visually hidden text that remains accessible to screen readers. Uses Tailwind's sr-only utility.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function SrOnly({ children, className, as: Tag = 'span' }: SrOnlyProps) {
   return <Tag className={cn('sr-only', className)}>{children}</Tag>
 }

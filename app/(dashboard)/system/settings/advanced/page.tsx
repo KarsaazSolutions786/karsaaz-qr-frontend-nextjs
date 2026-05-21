@@ -39,6 +39,11 @@ const CONFIG_KEYS = [
   'bulk_operation.max_rows',
 ]
 
+/**
+ * Purpose: Executes AdvancedSettingsPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function AdvancedSettingsPage() {
   const { t } = useTranslation()
   const { data: configs, isLoading } = useSystemConfigs(CONFIG_KEYS)
@@ -50,9 +55,19 @@ export default function AdvancedSettingsPage() {
     if (configs) setForm({ ...configs })
   }, [configs])
 
+  /**
+   * Purpose: Sets .
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const set = (key: string, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }))
 
+  /**
+   * Purpose: Executes handleSave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSave= async () => {
     await saveMutation.mutateAsync(
       CONFIG_KEYS.map((key) => ({ key, value: form[key] ?? '' }))

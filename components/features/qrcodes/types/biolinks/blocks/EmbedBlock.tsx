@@ -13,6 +13,13 @@ interface EmbedBlockProps {
   isDragging?: boolean;
 }
 
+/**
+ * Purpose: Executes EmbedBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: May 2026
+ */
 export const EmbedBlock = ({
   block,
   onEdit,

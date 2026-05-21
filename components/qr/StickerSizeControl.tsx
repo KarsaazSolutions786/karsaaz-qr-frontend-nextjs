@@ -22,6 +22,11 @@ export interface StickerSizeControlProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerSizeControl functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerSizeControl({
   size,
   rotation = 0,
@@ -188,6 +193,11 @@ export interface StickerSizeControlCompactProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes StickerSizeControlCompact functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerSizeControlCompact({
   size,
   onSizeChange,
@@ -221,6 +231,11 @@ export interface StickerSizeControlAdvancedProps extends StickerSizeControlProps
   presets?: Array<{ label: string; size: number; rotation?: number; opacity?: number }>;
 }
 
+/**
+ * Purpose: Executes StickerSizeControlAdvanced functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function StickerSizeControlAdvanced({
   size,
   rotation = 0,
@@ -236,6 +251,11 @@ export function StickerSizeControlAdvanced({
   ...props
 }: StickerSizeControlAdvancedProps) {
   const { t } = useTranslation();
+  /**
+   * Purpose: Executes handlePresetClick functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handlePresetClick = (preset: typeof presets[0]) => {
     onSizeChange(preset.size);
     if (preset.rotation !== undefined && onRotationChange) {

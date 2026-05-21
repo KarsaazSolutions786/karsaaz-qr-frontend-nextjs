@@ -22,6 +22,11 @@ export interface SelectOptionGroup {
 
 export type SelectOption = SelectOptionBase | SelectOptionGroup
 
+/**
+ * Purpose: Checks if optiongroup.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function isOptionGroup(option: SelectOption): option is SelectOptionGroup {
   return 'options' in option
 }
@@ -76,6 +81,11 @@ export interface EnhancedSearchableSelectProps<T extends SelectOptionBase = Sele
   renderSelectedTag?: (option: T, onRemove: () => void) => React.ReactNode
 }
 
+/**
+ * Purpose: Executes EnhancedSearchableSelect functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function EnhancedSearchableSelect<T extends SelectOptionBase = SelectOptionBase>({
   options,
   value,
@@ -159,6 +169,11 @@ export function EnhancedSearchableSelect<T extends SelectOptionBase = SelectOpti
 
   // Handle click outside
   React.useEffect(() => {
+    /**
+     * Purpose: Executes handleClickOutside functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsOpen(false)
@@ -178,6 +193,11 @@ export function EnhancedSearchableSelect<T extends SelectOptionBase = SelectOpti
   React.useEffect(() => {
     if (!loadOptions || !isOpen) return
 
+    /**
+     * Purpose: Executes fetchOptions functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const fetchOptions = async () => {
       setIsLoadingAsync(true)
       try {
@@ -315,6 +335,11 @@ export function EnhancedSearchableSelect<T extends SelectOptionBase = SelectOpti
 
   const showLoading = isLoading || isLoadingAsync || isCreating
 
+  /**
+   * Purpose: Executes renderDisplayValue functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderDisplayValue = () => {
     if (selectedOptions.length === 0) {
       return (
@@ -369,6 +394,11 @@ export function EnhancedSearchableSelect<T extends SelectOptionBase = SelectOpti
     )
   }
 
+  /**
+   * Purpose: Executes renderOptionContent functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderOptionContent = (opt: T, isSelected: boolean, isHighlighted: boolean) => {
     if (renderOption) {
       return renderOption(opt, isSelected, isHighlighted)

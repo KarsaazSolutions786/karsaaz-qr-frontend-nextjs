@@ -2,6 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { systemConfigsAPI, SystemConfig } from '@/lib/api/endpoints/system-configs'
 import { queryKeys } from '@/lib/query/keys'
 
+/**
+ * Purpose: Executes useSaveSystemConfigs functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useSaveSystemConfigs(keys?: string[]) {
   const queryClient = useQueryClient()
   return useMutation({

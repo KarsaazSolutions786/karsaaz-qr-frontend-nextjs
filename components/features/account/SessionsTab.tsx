@@ -10,6 +10,11 @@ interface SessionsTabProps {
   userId: number | string
 }
 
+/**
+ * Purpose: Executes parseDevice functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function parseDevice(ua: string): string {
   if (!ua) return 'Unknown device'
   const parts: string[] = []
@@ -27,6 +32,11 @@ function parseDevice(ua: string): string {
   return parts.length > 0 ? parts.join(' · ') : ua.substring(0, 40)
 }
 
+/**
+ * Purpose: Executes SessionsTab functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SessionsTab({ userId }: SessionsTabProps) {
   const { t } = useTranslation()
   const [sessions, setSessions] = useState<UserSession[]>([])
@@ -54,6 +64,11 @@ export function SessionsTab({ userId }: SessionsTabProps) {
     fetchSessions()
   }
 
+  /**
+   * Purpose: Executes handleRevoke functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRevoke = async (sessionId: string) => {
     try {
       setLoading(true)
@@ -68,6 +83,11 @@ export function SessionsTab({ userId }: SessionsTabProps) {
     }
   }
 
+  /**
+   * Purpose: Executes handleRevokeAll functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleRevokeAll = async () => {
     try {
       setLoading(true)

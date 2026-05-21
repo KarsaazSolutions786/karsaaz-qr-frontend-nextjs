@@ -5,10 +5,20 @@ import { useCreateBlogPost } from '@/lib/hooks/mutations/useBlogPostMutations'
 import BlogPostForm, { type BlogPostFormData } from '@/components/features/blog/BlogPostForm'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes NewBlogPostPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewBlogPostPage() {
   const { t } = useTranslation()
   const createMutation = useCreateBlogPost()
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (data: BlogPostFormData) => {
     await createMutation.mutateAsync({
       title: data.title,

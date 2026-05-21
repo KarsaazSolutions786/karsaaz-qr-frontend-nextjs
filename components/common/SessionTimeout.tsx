@@ -7,6 +7,11 @@ import { useAuth } from '@/lib/context/AuthContext'
 const TIMEOUT_MS = 30 * 60 * 1000 // 30 minutes
 const WARNING_MS = 5 * 60 * 1000 // 5 minutes before timeout
 
+/**
+ * Purpose: Executes SessionTimeout functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SessionTimeout() {
   const { t } = useTranslation()
   const { user, logout } = useAuth()
@@ -17,6 +22,11 @@ export function SessionTimeout() {
   useEffect(() => {
     if (!user) return
 
+    /**
+     * Purpose: Executes resetTimers functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const resetTimers = () => {
       clearTimeout(timeoutRef.current)
       clearTimeout(warningRef.current)

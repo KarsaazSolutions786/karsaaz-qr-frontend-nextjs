@@ -9,6 +9,11 @@ interface StepProps {
   onHover: (index: number) => void;
 }
 
+/**
+ * Purpose: Executes Step functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 const Step = ({ number, title, description, isActive, onHover }: StepProps) => {
   return (
     <div
@@ -54,6 +59,11 @@ const Step = ({ number, title, description, isActive, onHover }: StepProps) => {
   );
 };
 
+/**
+ * Purpose: Executes HowItWorks functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function HowItWorks() {
   const [activeStep, setActiveStep] = useState(0);
 

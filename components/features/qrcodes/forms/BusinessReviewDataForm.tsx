@@ -35,6 +35,11 @@ const PLATFORM_OPTIONS = [
   { value: 'Other', label: 'Other' },
 ]
 
+/**
+ * Purpose: Executes BusinessReviewDataForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function BusinessReviewDataForm({ defaultValues, onChange }: BusinessReviewDataFormProps) {
   const { t } = useTranslation()
   const {
@@ -53,18 +58,33 @@ export function BusinessReviewDataForm({ defaultValues, onChange }: BusinessRevi
     (defaultValues as any)?.platforms || []
   )
 
+  /**
+   * Purpose: Executes addPlatform functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const addPlatform = () => {
     const updated = [...platforms, { platform: 'Google', url: '' }]
     setPlatforms(updated)
     onChange?.({ ...(defaultValues as any), platforms: updated })
   }
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const removePlatform = (index: number) => {
     const updated = platforms.filter((_, i) => i !== index)
     setPlatforms(updated)
     onChange?.({ ...(defaultValues as any), platforms: updated })
   }
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const updatePlatform = (index: number, field: keyof PlatformEntry, value: string) => {
     const updated = platforms.map((p, i) => (i === index ? { ...p, [field]: value } : p))
     setPlatforms(updated)

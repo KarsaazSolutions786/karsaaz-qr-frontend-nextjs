@@ -5,7 +5,12 @@
 import apiClient from '@/lib/api/client'
 import { envConfig } from '@/lib/config/env-config'
 
-/** Generate a cryptographically random OAuth state parameter for CSRF protection */
+/**
+ * Purpose: * Generate a cryptographically random OAuth state parameter for CSRF protection 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 function generateOAuthState(): string {
   const state = crypto.randomUUID()
   if (typeof window !== 'undefined') {
@@ -14,12 +19,22 @@ function generateOAuthState(): string {
   return state
 }
 
-/** Generate OAuth state and store it — exported for use by auth API redirect helpers */
+/**
+ * Purpose: * Generate OAuth state and store it — exported for use by auth API redirect helpers 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 export function generateOAuthStateForRedirect(): string {
   return generateOAuthState()
 }
 
-/** Validate OAuth state parameter against stored value. Returns true if valid. */
+/**
+ * Purpose: * Validate OAuth state parameter against stored value. Returns true if valid. 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
+
 export function validateOAuthState(stateParam: string | null): boolean {
   if (typeof window === 'undefined') return true
   const storedState = sessionStorage.getItem('oauth_state')
@@ -49,21 +64,41 @@ interface OAuthCallbackResponse {
   token: string
 }
 
+/**
+ * Purpose: Class definition for AuthWorkflowEngine.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 class AuthWorkflowEngine {
   private static instance: AuthWorkflowEngine
   private providers: Map<OAuthProviderName, OAuthProviderConfig> = new Map()
 
+  /**
+   * Purpose: Retrieves instance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getInstance(): AuthWorkflowEngine {
     if (!this.instance) this.instance = new AuthWorkflowEngine()
     return this.instance
   }
 
-  /** Register an OAuth provider with its configuration */
+  /**
+   * Purpose: * Register an OAuth provider with its configuration 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   registerProvider(name: OAuthProviderName, config: OAuthProviderConfig): void {
     this.providers.set(name, config)
   }
 
-  /** Get all registered and enabled providers */
+  /**
+   * Purpose: * Get all registered and enabled providers 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   getEnabledProviders(): RegisteredProvider[] {
     const enabled: RegisteredProvider[] = []
     this.providers.forEach((config, name) => {
@@ -74,12 +109,22 @@ class AuthWorkflowEngine {
     return enabled
   }
 
-  /** Get a specific provider config */
+  /**
+   * Purpose: * Get a specific provider config 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   getProvider(name: OAuthProviderName): OAuthProviderConfig | undefined {
     return this.providers.get(name)
   }
 
-  /** Initiate OAuth flow by redirecting to the provider's authorize URL */
+  /**
+   * Purpose: * Initiate OAuth flow by redirecting to the provider's authorize URL 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   initiateOAuth(provider: OAuthProviderName): void {
     const apiBase = envConfig.API_URL
     const state = generateOAuthState()
@@ -97,7 +142,14 @@ class AuthWorkflowEngine {
     }
   }
 
-  /** Handle OAuth callback — exchange authorization code for user/token */
+  /**
+   * Purpose: * Handle OAuth callback — exchange authorization code for user/token 
+   * Owner/Author: Syed Ashhad
+   * Created: February 2026
+   * Last Editor: Syed Ashhad
+   * Last Updated: March 2026
+   */
+  
   async handleCallback(provider: OAuthProviderName, code: string): Promise<OAuthCallbackResponse> {
     const response = await apiClient.post<OAuthCallbackResponse>(
       `/auth-workflow/${provider}/callback`,

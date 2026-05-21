@@ -9,12 +9,22 @@ import { supportTicketsAPI } from '@/lib/api/endpoints/support-tickets'
 import CreateTicketForm from '@/components/features/support/CreateTicketForm'
 import type { CreateTicketPayload } from '@/types/entities/support-ticket'
 
+/**
+ * Purpose: Executes NewTicketPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function NewTicketPage() {
   const { t } = useTranslation()
   const router = useRouter()
   const { user } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async (data: CreateTicketPayload) => {
     try {
       setIsLoading(true)

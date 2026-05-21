@@ -12,6 +12,11 @@ import { CompleteStep } from '@/components/features/install/CompleteStep'
 import apiClient from '@/lib/api/client'
 import { useTranslation } from '@/lib/i18n'
 
+/**
+ * Purpose: Executes InstallPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function InstallPage() {
   const { t } = useTranslation()
   const [currentStep, setCurrentStep] = useState(0)
@@ -70,18 +75,33 @@ export default function InstallPage() {
     defaultLanguage: 'en',
   })
 
+  /**
+   * Purpose: Executes handleNext functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep((s) => s + 1)
     }
   }
 
+  /**
+   * Purpose: Executes handleBack functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleBack = () => {
     if (currentStep > 0) {
       setCurrentStep((s) => s - 1)
     }
   }
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
@@ -103,6 +123,11 @@ export default function InstallPage() {
   const isLastContentStep = currentStep === steps.length - 2
   const isCompleteStep = currentStep === steps.length - 1
 
+  /**
+   * Purpose: Executes renderStep functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderStep = () => {
     switch (currentStep) {
       case 0: return <IntroductionStep />

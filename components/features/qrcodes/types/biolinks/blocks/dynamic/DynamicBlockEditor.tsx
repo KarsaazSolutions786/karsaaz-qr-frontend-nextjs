@@ -14,10 +14,20 @@ interface DynamicBlockEditorProps {
   onChange: (block: DynamicBlockData) => void
 }
 
+/**
+ * Purpose: Executes DynamicBlockEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DynamicBlockEditor({ definition, block, onChange }: DynamicBlockEditorProps) {
   const { t } = useTranslation()
   const sortedFields = [...definition.fields].sort((a, b) => a.sort_order - b.sort_order)
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateFieldValue = (fieldName: string, value: string) => {
     onChange({
       ...block,
@@ -28,6 +38,11 @@ export function DynamicBlockEditor({ definition, block, onChange }: DynamicBlock
     })
   }
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateStyle = (styleName: string, value: string) => {
     onChange({
       ...block,
@@ -38,6 +53,11 @@ export function DynamicBlockEditor({ definition, block, onChange }: DynamicBlock
     })
   }
 
+  /**
+   * Purpose: Executes renderField functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const renderField = (field: DynamicBlockField) => {
     const value = block.field_values[field.name] || ''
     const label = field.label || field.name

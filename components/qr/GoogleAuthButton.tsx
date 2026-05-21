@@ -17,6 +17,11 @@ export interface GoogleAuthButtonProps {
   className?: string;
 }
 
+/**
+ * Purpose: Executes GoogleAuthButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GoogleAuthButton({
   onError,
   text = 'signin_with',
@@ -26,6 +31,11 @@ export function GoogleAuthButton({
   const [isLoading, setIsLoading] = useState(false);
   const { redirectToGoogle } = useGoogleLogin();
 
+  /**
+   * Purpose: Executes handleGoogleAuth functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleGoogleAuth = async () => {
     setIsLoading(true);
     try {

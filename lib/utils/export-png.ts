@@ -18,8 +18,11 @@ export interface PNGExportOptions {
 }
 
 /**
- * Export SVG to PNG
+ * Purpose: Export SVG to PNG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function exportPNG(svg: string, options: PNGExportOptions = {}): Promise<void> {
   const {
     filename = 'qr-code.png',
@@ -46,8 +49,11 @@ export async function exportPNG(svg: string, options: PNGExportOptions = {}): Pr
 }
 
 /**
- * Convert SVG to Canvas
+ * Purpose: Convert SVG to Canvas
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function svgToCanvas(
   svg: string,
   options: {
@@ -109,8 +115,11 @@ export async function svgToCanvas(
 }
 
 /**
- * Convert canvas to blob
+ * Purpose: Convert canvas to blob
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function canvasToBlob(
   canvas: HTMLCanvasElement,
   type: string = 'image/png',
@@ -132,8 +141,11 @@ export async function canvasToBlob(
 }
 
 /**
- * Get PNG as data URL
+ * Purpose: Get PNG as data URL
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getPNGDataURL(svg: string, options: PNGExportOptions = {}): Promise<string> {
   const {
     width = 1000,
@@ -154,8 +166,11 @@ export async function getPNGDataURL(svg: string, options: PNGExportOptions = {})
 }
 
 /**
- * Get PNG as blob
+ * Purpose: Get PNG as blob
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function getPNGBlob(svg: string, options: PNGExportOptions = {}): Promise<Blob> {
   const {
     width = 1000,
@@ -177,8 +192,11 @@ export async function getPNGBlob(svg: string, options: PNGExportOptions = {}): P
 }
 
 /**
- * Download blob as file
+ * Purpose: Download blob as file
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -191,8 +209,11 @@ function downloadBlob(blob: Blob, filename: string): void {
 }
 
 /**
- * Calculate dimensions maintaining aspect ratio
+ * Purpose: Calculate dimensions maintaining aspect ratio
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function calculateDimensions(
   svg: string,
   targetWidth?: number,
@@ -238,16 +259,22 @@ export function calculateDimensions(
 }
 
 /**
- * Get PNG file size estimate
+ * Purpose: Get PNG file size estimate
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function estimatePNGSize(svg: string, options: PNGExportOptions = {}): Promise<number> {
   const blob = await getPNGBlob(svg, options);
   return blob.size;
 }
 
 /**
- * Format PNG file size
+ * Purpose: Format PNG file size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function formatPNGSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -255,8 +282,11 @@ export function formatPNGSize(bytes: number): string {
 }
 
 /**
- * Export to multiple PNG sizes
+ * Purpose: Export to multiple PNG sizes
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function exportPNGMultipleSizes(
   svg: string,
   sizes: Array<{ width: number; height: number; filename: string }>,
@@ -285,8 +315,11 @@ export const PNG_SIZE_PRESETS = {
 };
 
 /**
- * Export with device pixel ratio for retina displays
+ * Purpose: Export with device pixel ratio for retina displays
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function exportPNGRetina(
   svg: string,
   width: number,
@@ -304,8 +337,11 @@ export async function exportPNGRetina(
 }
 
 /**
- * Copy PNG to clipboard
+ * Purpose: Copy PNG to clipboard
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export async function copyPNGToClipboard(svg: string, options: PNGExportOptions = {}): Promise<void> {
   try {
     const blob = await getPNGBlob(svg, options);

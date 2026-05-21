@@ -4,6 +4,11 @@ import { useState } from 'react'
 import { useTranslation } from '@/lib/i18n'
 import { useReferralCode } from '@/lib/hooks/queries/useReferrals'
 
+/**
+ * Purpose: Executes ReferralCodeShare functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function ReferralCodeShare() {
   const { t } = useTranslation()
   const [copied, setCopied] = useState(false)
@@ -15,6 +20,11 @@ export function ReferralCodeShare() {
       ? `${window.location.origin}/register?ref=${code}`
       : ''
 
+  /**
+   * Purpose: Executes handleCopy functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCopy = async () => {
     if (!referralLink) return
     try {

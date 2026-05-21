@@ -16,6 +16,11 @@ interface GalleryInputProps {
   onChange: (value: GalleryImage[]) => void;
 }
 
+/**
+ * Purpose: Executes GalleryInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GalleryInput({ value, onChange }: GalleryInputProps) {
   const { t } = useTranslation();
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -23,6 +28,11 @@ export function GalleryInput({ value, onChange }: GalleryInputProps) {
   const [uploadUrl, setUploadUrl] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  /**
+   * Purpose: Executes addImageFromUrl functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const addImageFromUrl = () => {
     if (!uploadUrl.trim()) return;
     const newImage = createGalleryImage(uploadUrl, value.length);
@@ -31,10 +41,20 @@ export function GalleryInput({ value, onChange }: GalleryInputProps) {
     setEditingId(newImage.id);
   };
 
+  /**
+   * Purpose: Deletes the specified resource.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const removeImage = (id: string) => {
     onChange(value.filter((img) => img.id !== id));
   };
 
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const updateImage = (id: string, updates: Partial<GalleryImage>) => {
     onChange(
       value.map((image) =>
@@ -43,10 +63,20 @@ export function GalleryInput({ value, onChange }: GalleryInputProps) {
     );
   };
 
+  /**
+   * Purpose: Executes handleDragStart functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
   };
 
+  /**
+   * Purpose: Executes handleDragOver functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault();
     if (draggedIndex === null || draggedIndex === index) return;
@@ -67,10 +97,20 @@ export function GalleryInput({ value, onChange }: GalleryInputProps) {
     setDraggedIndex(index);
   };
 
+  /**
+   * Purpose: Executes handleDragEnd functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragEnd = () => {
     setDraggedIndex(null);
   };
 
+  /**
+   * Purpose: Executes handleFileUpload functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;

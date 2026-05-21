@@ -8,6 +8,11 @@ import type { Currency } from '@/types/entities/currency'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
+/**
+ * Purpose: Executes CurrenciesPage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function CurrenciesPage() {
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
@@ -16,12 +21,22 @@ export default function CurrenciesPage() {
   const deleteMutation = useDeleteCurrency()
   const toggleMutation = useToggleCurrencyEnabled()
 
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDelete = async (id: number, name: string) => {
     if (confirm(t('Are you sure you want to delete "{{name}}"?').replace('{{name}}', name))) {
       await deleteMutation.mutateAsync(id)
     }
   }
 
+  /**
+   * Purpose: Executes handleToggleEnabled functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleToggleEnabled = async (id: number) => {
     await toggleMutation.mutateAsync(id)
   }

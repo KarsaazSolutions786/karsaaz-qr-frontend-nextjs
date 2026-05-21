@@ -2,6 +2,11 @@ import { notFound } from 'next/navigation';
 import ResumeDisplay from '@/components/public/resume/ResumeDisplay';
 import { getQRCodeRedirect, trackQRView } from '@/lib/api/public-qrcodes';
 
+/**
+ * Purpose: Retrieves resumedata.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 async function getResumeData(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug);
@@ -27,6 +32,11 @@ async function getResumeData(slug: string) {
   }
 }
 
+/**
+ * Purpose: Executes generateMetadata functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const data = await getResumeData(params.slug);
 
@@ -54,6 +64,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
+/**
+ * Purpose: Executes ResumePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default async function ResumePage({ params }: { params: { slug: string } }) {
   const data = await getResumeData(params.slug);
 

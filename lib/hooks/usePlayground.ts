@@ -16,6 +16,11 @@ export interface HistoryEntry {
   response: PlaygroundResponse
 }
 
+/**
+ * Purpose: Executes usePlayground functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export function usePlayground(sections: PlaygroundSection[], basePath: string) {
   const [selectedEndpoint, setSelectedEndpoint] = useState<PlaygroundEndpoint | null>(
     sections[0]?.endpoints[0] ?? null

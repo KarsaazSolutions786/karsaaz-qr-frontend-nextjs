@@ -4,6 +4,11 @@ import { usersAPI } from '@/lib/api/endpoints/users'
 import { queryKeys } from '@/lib/query/keys'
 import type { User } from '@/types/entities/user'
 
+/**
+ * Purpose: Executes useCreateUser functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useCreateUser() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -17,6 +22,11 @@ export function useCreateUser() {
   })
 }
 
+/**
+ * Purpose: Executes useUpdateUser functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useUpdateUser() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -29,6 +39,11 @@ export function useUpdateUser() {
   })
 }
 
+/**
+ * Purpose: Executes useDeleteUser functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useDeleteUser() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -39,6 +54,11 @@ export function useDeleteUser() {
   })
 }
 
+/**
+ * Purpose: Executes useActAsUser functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useActAsUser() {
   const router = useRouter()
   return useMutation({
@@ -63,6 +83,11 @@ export function useActAsUser() {
   })
 }
 
+/**
+ * Purpose: Executes useVerifyUserEmail functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useVerifyUserEmail() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -73,6 +98,11 @@ export function useVerifyUserEmail() {
   })
 }
 
+/**
+ * Purpose: Executes useResetUserScansLimit functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useResetUserScansLimit() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -83,6 +113,11 @@ export function useResetUserScansLimit() {
   })
 }
 
+/**
+ * Purpose: Executes useResetUserRole functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useResetUserRole() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -93,6 +128,11 @@ export function useResetUserRole() {
   })
 }
 
+/**
+ * Purpose: Executes useGenerateMagicUrl functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useGenerateMagicUrl() {
   return useMutation({
     mutationFn: (id: number) => usersAPI.generateMagicUrl(id),

@@ -21,6 +21,11 @@ const tokenSchema = z.object({
 type EmailFormData = z.infer<typeof emailSchema>
 type TokenFormData = z.infer<typeof tokenSchema>
 
+/**
+ * Purpose: Executes PasswordlessLoginButton functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PasswordlessLoginButton() {
   const { t } = useTranslation()
   const [step, setStep] = useState<'email' | 'token'>('email')
@@ -36,6 +41,11 @@ export function PasswordlessLoginButton() {
     resolver: zodResolver(tokenSchema),
   })
 
+  /**
+   * Purpose: Executes handleEmailSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleEmailSubmit = async (data: EmailFormData) => {
     try {
       await initMutation.mutateAsync(data)
@@ -46,6 +56,11 @@ export function PasswordlessLoginButton() {
     }
   }
 
+  /**
+   * Purpose: Executes handleTokenSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleTokenSubmit = async (data: TokenFormData) => {
     try {
       await verifyMutation.mutateAsync({ email, otp: data.otp })

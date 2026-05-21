@@ -24,10 +24,20 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 // ---------------------------------------------------------------------------
 // CSV parsing (handles quoted fields with commas and newlines within quotes)
 // ---------------------------------------------------------------------------
+/**
+ * Purpose: Executes parseCSV functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function parseCSV(text: string): { headers: string[]; rows: string[][] } {
   const lines = text.trim().split('\n')
   if (lines.length === 0) return { headers: [], rows: [] }
 
+  /**
+   * Purpose: Executes parseLine functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: March 2026
+   */
   const parseLine = (line: string): string[] => {
     const result: string[] = []
     let current = ''
@@ -210,6 +220,11 @@ const BULK_SUPPORTED_TYPES = QR_TYPES.filter(t => TYPE_FIELD_MAP[t.id])
 // ---------------------------------------------------------------------------
 // Sample CSV template generator
 // ---------------------------------------------------------------------------
+/**
+ * Purpose: Executes generateSampleCSV functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function generateSampleCSV(typeId: string): string {
   const config = TYPE_FIELD_MAP[typeId]
   if (!config) return 'name,data\nMy QR Code,https://example.com'
@@ -258,6 +273,11 @@ interface ParsedRow {
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
+/**
+ * Purpose: Executes BulkCreatePage functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BulkCreatePage() {
   const { t } = useTranslation()
   const router = useRouter()
@@ -874,6 +894,11 @@ export default function BulkCreatePage() {
 // ---------------------------------------------------------------------------
 // Row status sub-component
 // ---------------------------------------------------------------------------
+/**
+ * Purpose: Executes RowStatus functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function RowStatus({ row }: { row: ParsedRow }) {
   const { t } = useTranslation()
   if (row.error) {

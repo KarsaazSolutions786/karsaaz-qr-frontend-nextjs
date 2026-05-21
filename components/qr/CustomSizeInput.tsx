@@ -38,6 +38,11 @@ const SIZE_LIMITS = {
   },
 };
 
+/**
+ * Purpose: Executes CustomSizeInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function CustomSizeInput({
   width,
   height,
@@ -65,6 +70,11 @@ export function CustomSizeInput({
   }, [width, height]);
   
   // Validate size
+  /**
+   * Purpose: Executes validateSize functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const validateSize = (w: number, h: number): { errors: ValidationError[]; warnings: string[] } => {
     const newErrors: ValidationError[] = [];
     const newWarnings: string[] = [];
@@ -121,6 +131,11 @@ export function CustomSizeInput({
   };
   
   // Handle width change
+  /**
+   * Purpose: Executes handleWidthChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleWidthChange = (newWidth: string) => {
     const w = parseInt(newWidth, 10);
     if (isNaN(w) || w < 0) return;
@@ -139,6 +154,11 @@ export function CustomSizeInput({
   };
   
   // Handle height change
+  /**
+   * Purpose: Executes handleHeightChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleHeightChange = (newHeight: string) => {
     const h = parseInt(newHeight, 10);
     if (isNaN(h) || h < 0) return;
@@ -157,6 +177,11 @@ export function CustomSizeInput({
   };
   
   // Toggle aspect ratio lock
+  /**
+   * Purpose: Executes toggleAspectRatio functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleAspectRatio = () => {
     setMaintainAspectRatio(!maintainAspectRatio);
     if (!maintainAspectRatio) {
@@ -165,6 +190,11 @@ export function CustomSizeInput({
   };
   
   // Convert units if needed
+  /**
+   * Purpose: Executes displayValue functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const displayValue = (pixels: number): number => {
     switch (unit) {
       case 'in':
@@ -390,8 +420,11 @@ export function CustomSizeInput({
 }
 
 /**
- * Format file size
+ * Purpose: Format file size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${Math.round(bytes)} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
@@ -399,8 +432,11 @@ function formatFileSize(bytes: number): string {
 }
 
 /**
- * Validate custom size
+ * Purpose: Validate custom size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateCustomSize(
   width: number,
   height: number,

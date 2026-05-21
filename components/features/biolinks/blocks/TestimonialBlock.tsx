@@ -9,6 +9,11 @@ interface TestimonialBlockProps {
   onUpdate?: (data: TestimonialBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes StarRating functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function StarRating({ rating, onChange }: { rating: number; onChange?: (r: number) => void }) {
   return (
     <div className="flex gap-0.5">
@@ -29,11 +34,21 @@ function StarRating({ rating, onChange }: { rating: number; onChange?: (r: numbe
   )
 }
 
+/**
+ * Purpose: Executes TestimonialBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function TestimonialBlock({ block, isEditing, onUpdate }: TestimonialBlockProps) {
   const { t } = useTranslation();
   const { testimonials } = block.data
 
   if (isEditing) {
+    /**
+     * Purpose: Executes addTestimonial functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const addTestimonial = () => {
       onUpdate?.({
         ...block.data,
@@ -44,6 +59,11 @@ export default function TestimonialBlock({ block, isEditing, onUpdate }: Testimo
       })
     }
 
+    /**
+     * Purpose: Deletes the specified resource.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const removeTestimonial = (index: number) => {
       onUpdate?.({
         ...block.data,
@@ -51,6 +71,11 @@ export default function TestimonialBlock({ block, isEditing, onUpdate }: Testimo
       })
     }
 
+    /**
+     * Purpose: Updates the configuration or state.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: March 2026
+     */
     const updateTestimonial = (
       index: number,
       field: string,

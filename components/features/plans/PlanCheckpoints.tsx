@@ -14,10 +14,20 @@ interface PlanCheckpointsProps {
   onChange: (checkpoints: Checkpoint[]) => void
 }
 
+/**
+ * Purpose: Executes generateId functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function generateId() {
   return 'cp-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7)
 }
 
+/**
+ * Purpose: Executes PlanCheckpoints functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PlanCheckpoints({ checkpoints, onChange }: PlanCheckpointsProps) {
   const { t } = useTranslation()
   const [newText, setNewText] = useState('')
@@ -56,6 +66,11 @@ export function PlanCheckpoints({ checkpoints, onChange }: PlanCheckpointsProps)
     [checkpoints, onChange]
   )
 
+  /**
+   * Purpose: Executes handleKeyDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault()

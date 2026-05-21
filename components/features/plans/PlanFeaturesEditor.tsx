@@ -8,6 +8,11 @@ interface PlanFeaturesEditorProps {
   onChange: (features: string[]) => void
 }
 
+/**
+ * Purpose: Executes PlanFeaturesEditor functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PlanFeaturesEditor({ features, onChange }: PlanFeaturesEditorProps) {
   const { t } = useTranslation()
   const [newFeature, setNewFeature] = useState('')
@@ -52,6 +57,11 @@ export function PlanFeaturesEditor({ features, onChange }: PlanFeaturesEditorPro
     else if (editingIndex === target) setEditingIndex(index)
   }, [features, onChange, editingIndex])
 
+  /**
+   * Purpose: Executes handleKeyDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault()

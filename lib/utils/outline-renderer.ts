@@ -14,8 +14,11 @@ export interface OutlineRenderContext {
 }
 
 /**
- * Add outline to QR code SVG
+ * Purpose: Add outline to QR code SVG
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderOutline(ctx: OutlineRenderContext): string {
   if (!ctx.outline.enabled || !ctx.outline.color || !ctx.outline.width) {
     return ctx.svg;
@@ -50,8 +53,11 @@ export function renderOutline(ctx: OutlineRenderContext): string {
 }
 
 /**
- * Add rounded outline
+ * Purpose: Add rounded outline
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderRoundedOutline(ctx: OutlineRenderContext, borderRadius: number): string {
   if (!ctx.outline.enabled || !ctx.outline.color || !ctx.outline.width) {
     return ctx.svg;
@@ -87,8 +93,11 @@ export function renderRoundedOutline(ctx: OutlineRenderContext, borderRadius: nu
 }
 
 /**
- * Add circular outline
+ * Purpose: Add circular outline
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderCircularOutline(ctx: OutlineRenderContext): string {
   if (!ctx.outline.enabled || !ctx.outline.color || !ctx.outline.width) {
     return ctx.svg;
@@ -124,8 +133,11 @@ export function renderCircularOutline(ctx: OutlineRenderContext): string {
 }
 
 /**
- * Add dashed outline
+ * Purpose: Add dashed outline
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderDashedOutline(
   ctx: OutlineRenderContext,
   dashArray: string = '10,5'
@@ -163,8 +175,11 @@ export function renderDashedOutline(
 }
 
 /**
- * Add double outline (inner + outer)
+ * Purpose: Add double outline (inner + outer)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function renderDoubleOutline(
   ctx: OutlineRenderContext,
   innerWidth: number,
@@ -220,8 +235,11 @@ export function renderDoubleOutline(
 }
 
 /**
- * Validate outline configuration
+ * Purpose: Validate outline configuration
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function validateOutlineConfig(outline: OutlineConfig): {
   valid: boolean;
   errors: string[];
@@ -245,8 +263,11 @@ export function validateOutlineConfig(outline: OutlineConfig): {
 }
 
 /**
- * Create default outline config
+ * Purpose: Create default outline config
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createDefaultOutlineConfig(): OutlineConfig {
   return {
     enabled: false,
@@ -254,8 +275,11 @@ export function createDefaultOutlineConfig(): OutlineConfig {
 }
 
 /**
- * Create enabled outline config
+ * Purpose: Create enabled outline config
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function createEnabledOutlineConfig(
   color: string = '#000000',
   width: number = 4
@@ -268,8 +292,11 @@ export function createEnabledOutlineConfig(
 }
 
 /**
- * Get outline description (for UI)
+ * Purpose: Get outline description (for UI)
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getOutlineDescription(outline: OutlineConfig): string {
   if (!outline.enabled) {
     return 'No outline';
@@ -282,8 +309,11 @@ export function getOutlineDescription(outline: OutlineConfig): string {
 }
 
 /**
- * Calculate optimal outline width based on QR size
+ * Purpose: Calculate optimal outline width based on QR size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getOptimalOutlineWidth(qrSize: number): number {
   if (qrSize <= 256) return 2;
   if (qrSize <= 512) return 4;
@@ -292,16 +322,22 @@ export function getOptimalOutlineWidth(qrSize: number): number {
 }
 
 /**
- * Check if outline is too thick
+ * Purpose: Check if outline is too thick
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function isOutlineTooThick(width: number, qrSize: number): boolean {
   const ratio = width / qrSize;
   return ratio > 0.05; // More than 5% of QR size
 }
 
 /**
- * Adjust outline for QR size
+ * Purpose: Adjust outline for QR size
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function adjustOutlineForSize(outline: OutlineConfig, qrSize: number): OutlineConfig {
   if (!outline.enabled || !outline.width) {
     return outline;
@@ -318,15 +354,21 @@ export function adjustOutlineForSize(outline: OutlineConfig, qrSize: number): Ou
 }
 
 /**
- * Clone outline config
+ * Purpose: Clone outline config
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function cloneOutlineConfig(outline: OutlineConfig): OutlineConfig {
   return JSON.parse(JSON.stringify(outline));
 }
 
 /**
- * Merge outline configs
+ * Purpose: Merge outline configs
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function mergeOutlineConfig(
   base: OutlineConfig,
   updates: Partial<OutlineConfig>

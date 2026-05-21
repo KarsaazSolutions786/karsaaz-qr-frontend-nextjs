@@ -21,6 +21,11 @@ interface PaymentFormProps {
   isProcessing?: boolean;
 }
 
+/**
+ * Purpose: Executes PaymentForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function PaymentForm({
   merchantName,
   vpa,
@@ -38,6 +43,11 @@ export default function PaymentForm({
   const [note, setNote] = useState<string>(transactionNote || '');
   const [errors, setErrors] = useState<{ amount?: string; note?: string }>({});
 
+  /**
+   * Purpose: Executes validateAmount functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const validateAmount = (value: string): boolean => {
     const numValue = parseFloat(value);
     
@@ -60,6 +70,11 @@ export default function PaymentForm({
     return true;
   };
 
+  /**
+   * Purpose: Executes validateNote functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const validateNote = (value: string): boolean => {
     if (value.length > 200) {
       setErrors(prev => ({ ...prev, note: 'Note cannot exceed 200 characters' }));
@@ -70,6 +85,11 @@ export default function PaymentForm({
     return true;
   };
 
+  /**
+   * Purpose: Executes handleAmountChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setAmount(value);
@@ -81,12 +101,22 @@ export default function PaymentForm({
     }
   };
 
+  /**
+   * Purpose: Executes handleNoteChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleNoteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setNote(value);
     validateNote(value);
   };
 
+  /**
+   * Purpose: Executes handleSubmit functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     

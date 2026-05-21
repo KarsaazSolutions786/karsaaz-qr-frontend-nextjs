@@ -10,6 +10,11 @@ interface CountdownBlockProps {
   onUpdate?: (data: CountdownBlockData['data']) => void
 }
 
+/**
+ * Purpose: Executes calculateTimeLeft functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 function calculateTimeLeft(targetDate: string): {
   days: number
   hours: number
@@ -32,6 +37,11 @@ function calculateTimeLeft(targetDate: string): {
   }
 }
 
+/**
+ * Purpose: Executes CountdownBlock functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: March 2026
+ */
 export default function CountdownBlock({ block, isEditing, onUpdate }: CountdownBlockProps) {
   const { t } = useTranslation();
   const { title, targetDate, expiredMessage = 'Event has ended', style = 'cards' } = block.data

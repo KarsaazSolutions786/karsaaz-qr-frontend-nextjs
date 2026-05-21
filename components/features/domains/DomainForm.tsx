@@ -23,6 +23,11 @@ interface DomainFormProps {
   isLoading?: boolean
 }
 
+/**
+ * Purpose: Executes DomainForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function DomainForm({ defaultValues, onSubmit, isLoading }: DomainFormProps) {
   const { t } = useTranslation()
   const {

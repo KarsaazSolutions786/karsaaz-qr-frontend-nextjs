@@ -31,25 +31,50 @@ export interface CheckoutEnforcer {
   getRedirectUrl(): string
 }
 
-/** Redirects to /checkout if subscription checkout is incomplete */
+/**
+ * Purpose: * Redirects to /checkout if subscription checkout is incomplete 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 class CheckoutNotCompletedEnforcer implements CheckoutEnforcer {
   name = 'checkout-not-completed'
 
+  /**
+   * Purpose: Executes shouldEnforce functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   shouldEnforce(_user: UserContext, subscription: SubscriptionContext): boolean {
     // Enforce if user has a subscription but checkout was not completed
     if (!subscription.plan) return false
     return !subscription.checkoutCompleted
   }
 
+  /**
+   * Purpose: Retrieves redirecturl.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   getRedirectUrl(): string {
     return '/checkout'
   }
 }
 
-/** Redirects to /plans if user has no active plan */
+/**
+ * Purpose: * Redirects to /plans if user has no active plan 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 class NoPlanEnforcer implements CheckoutEnforcer {
   name = 'no-plan'
 
+  /**
+   * Purpose: Executes shouldEnforce functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   shouldEnforce(user: UserContext, subscription: SubscriptionContext): boolean {
     // Don't enforce if user already has an active plan
     const activeStatuses = ['active', 'trial']
@@ -72,32 +97,62 @@ class NoPlanEnforcer implements CheckoutEnforcer {
     return true
   }
 
+  /**
+   * Purpose: Retrieves redirecturl.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   getRedirectUrl(): string {
     return '/plans'
   }
 }
 
-/** Manages a chain of enforcers, runs them in order, returns first redirect or null */
+/**
+ * Purpose: * Manages a chain of enforcers, runs them in order, returns first redirect or null 
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
+
 class CheckoutEnforcementManager {
   private static instance: CheckoutEnforcementManager
   private enforcers: CheckoutEnforcer[] = []
 
+  /**
+   * Purpose: Retrieves instance.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   static getInstance(): CheckoutEnforcementManager {
     if (!this.instance) this.instance = new CheckoutEnforcementManager()
     return this.instance
   }
 
-  /** Register an enforcer to the chain */
+  /**
+   * Purpose: * Register an enforcer to the chain 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   addEnforcer(enforcer: CheckoutEnforcer): void {
     this.enforcers.push(enforcer)
   }
 
-  /** Remove an enforcer by name */
+  /**
+   * Purpose: * Remove an enforcer by name 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   removeEnforcer(name: string): void {
     this.enforcers = this.enforcers.filter(e => e.name !== name)
   }
 
-  /** Run all enforcers in order, return first enforcement result or null */
+  /**
+   * Purpose: * Run all enforcers in order, return first enforcement result or null 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   enforce(user: UserContext, subscription: SubscriptionContext): EnforcementResult {
     // Super admins bypass all enforcement
     if (this.isSuperAdmin(user)) {
@@ -117,11 +172,21 @@ class CheckoutEnforcementManager {
     return { shouldRedirect: false, redirectUrl: null }
   }
 
-  /** Get all registered enforcers */
+  /**
+   * Purpose: * Get all registered enforcers 
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
+  
   getEnforcers(): CheckoutEnforcer[] {
     return [...this.enforcers]
   }
 
+  /**
+   * Purpose: Checks if superadmin.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   private isSuperAdmin(user: UserContext): boolean {
     return Array.isArray(user.roles) && user.roles.some(r => !!r.super_admin)
   }

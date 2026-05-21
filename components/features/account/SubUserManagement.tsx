@@ -40,6 +40,11 @@ const STATUS_BADGE: Record<string, string> = {
   disabled: 'bg-gray-100 text-gray-500',
 }
 
+/**
+ * Purpose: Executes SubUserManagement functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, onRemove: onRemoveProp, maxUsers, userId }: SubUserManagementProps) {
   const { t } = useTranslation()
   const [showInvite, setShowInvite] = useState(false)
@@ -78,6 +83,11 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
 
   const canInvite = !maxUsers || users.length < maxUsers
 
+  /**
+   * Purpose: Executes handleInvite functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleInvite(e: React.FormEvent) {
     e.preventDefault()
     if (!inviteEmail.trim()) return
@@ -92,6 +102,11 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
     }
   }
 
+  /**
+   * Purpose: Executes handleRemove functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   async function handleRemove(userId: number | string) {
     if (!confirm(t('Remove this user? They will lose all access.'))) return
     setRemoving(userId)
@@ -102,6 +117,11 @@ export function SubUserManagement({ users: usersProp, onInvite: onInviteProp, on
     }
   }
 
+  /**
+   * Purpose: Retrieves initials.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   function getInitials(name?: string, email?: string) {
     const src = name || email || '?'
     return src

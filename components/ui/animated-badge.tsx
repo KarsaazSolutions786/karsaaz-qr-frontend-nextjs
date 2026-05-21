@@ -24,6 +24,11 @@ const colorMap: Record<BadgeColor, { bg: string; ping: string }> = {
   gray: { bg: 'bg-gray-500', ping: 'bg-gray-400' },
 }
 
+/**
+ * Purpose: Executes AnimatedBadge functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AnimatedBadge({
   count = 0,
   variant = 'count',

@@ -23,6 +23,11 @@ const CATEGORIES = [
 
 type CategoryFilter = 'all' | BioLinkTemplate['category']
 
+/**
+ * Purpose: Executes BlockTemplateSelector functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export default function BlockTemplateSelector({ onSelect, className }: BlockTemplateSelectorProps) {
   const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('all')

@@ -21,9 +21,11 @@ interface CustomerAuthModalProps {
 }
 
 /**
- * Modal wrapper for the CustomerAuthenticator.
- * Uses shadcn/ui Dialog (Radix) for consistent modal behavior.
+ * Purpose: Modal wrapper for the CustomerAuthenticator. Uses shadcn/ui Dialog (Radix) for consistent modal behavior.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function CustomerAuthModal({
   open,
   onOpenChange,
@@ -35,6 +37,11 @@ export function CustomerAuthModal({
   const { t } = useTranslation()
   const resolvedTitle = title ?? t('Verify your identity')
   const resolvedDescription = description ?? t('Please verify your identity to continue viewing this content.')
+  /**
+   * Purpose: Executes handleCancel functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleCancel = () => {
     onOpenChange(false)
   }

@@ -36,6 +36,11 @@ interface CertificateUploadProps {
   description?: string
 }
 
+/**
+ * Purpose: Executes CertificateUpload functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 function CertificateUpload({
   label,
   name,
@@ -50,11 +55,21 @@ function CertificateUpload({
   const inputRef = useRef<HTMLInputElement>(null)
   const [isDragging, setIsDragging] = useState(false)
 
+  /**
+   * Purpose: Executes handleFileChange functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null
     onChange(file)
   }
 
+  /**
+   * Purpose: Executes handleDrop functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(false)
@@ -65,15 +80,30 @@ function CertificateUpload({
     }
   }
 
+  /**
+   * Purpose: Executes handleDragOver functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(true)
   }
 
+  /**
+   * Purpose: Executes handleDragLeave functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleDragLeave = () => {
     setIsDragging(false)
   }
 
+  /**
+   * Purpose: Executes handleClear functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleClear = () => {
     onChange(null)
     if (inputRef.current) {
@@ -136,6 +166,11 @@ function CertificateUpload({
   )
 }
 
+/**
+ * Purpose: Executes AlipayChineseForm functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function AlipayChineseForm({
   config,
   onChange,
@@ -143,10 +178,20 @@ export function AlipayChineseForm({
   disabled = false,
 }: AlipayChineseFormProps) {
   const { t } = useTranslation()
+  /**
+   * Purpose: Updates the configuration or state.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const update = <K extends keyof AlipayChineseConfig>(field: K, value: AlipayChineseConfig[K]) => {
     onChange({ ...config, [field]: value })
   }
 
+  /**
+   * Purpose: Executes fieldName functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const fieldName = (name: string) => `${fieldPrefix}[${name}]`
 
   return (
@@ -386,6 +431,11 @@ export function AlipayChineseForm({
 }
 
 // Default configuration factory
+/**
+ * Purpose: Executes createDefaultAlipayChineseConfig functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function createDefaultAlipayChineseConfig(): AlipayChineseConfig {
   return {
     mode: 'sandbox',

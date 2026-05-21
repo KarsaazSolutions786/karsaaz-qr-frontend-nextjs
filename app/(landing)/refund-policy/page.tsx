@@ -1,3 +1,8 @@
+/**
+ * Purpose: Executes RefundPolicy functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: April 2026
+ */
 export default function RefundPolicy() {
   return (
     <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

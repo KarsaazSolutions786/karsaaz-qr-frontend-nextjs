@@ -5,6 +5,11 @@ import { queryKeys } from '@/lib/query/keys'
 import type { ReferralStats } from '@/types/entities/referral'
 
 // List referred users with pagination (keep REST — paginated results don't fit RPC batch well)
+/**
+ * Purpose: Executes useReferrals functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useReferrals(params?: { page?: number; search?: string }) {
   return useQuery({
     queryKey: queryKeys.referrals.list(params),
@@ -15,6 +20,11 @@ export function useReferrals(params?: { page?: number; search?: string }) {
 
 // Get referral statistics — uses a batch of referral.stats + referral.commissionSummary
 // to get all fields (including available_balance) in a single HTTP request.
+/**
+ * Purpose: Executes useReferralStats functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useReferralStats() {
   return useQuery<ReferralStats>({
     queryKey: queryKeys.referrals.stats(),
@@ -39,6 +49,11 @@ export function useReferralStats() {
 }
 
 // Get user's referral code — piggybacks on referral.stats (which already includes referral_code)
+/**
+ * Purpose: Executes useReferralCode functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useReferralCode() {
   return useQuery<{ referral_code: string }>({
     queryKey: queryKeys.referrals.code(),

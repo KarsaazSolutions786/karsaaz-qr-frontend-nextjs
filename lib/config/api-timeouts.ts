@@ -36,9 +36,11 @@ const OPERATION_MAP: Record<string, TimeoutPreset> = {
 }
 
 /**
- * Get the timeout (ms) for a named operation.
- * Falls back to DEFAULT if no match is found.
+ * Purpose: Get the timeout (ms) for a named operation. Falls back to DEFAULT if no match is found.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
  */
+
 export function getTimeout(operation: string): number {
   const normalized = operation.toLowerCase().trim()
 

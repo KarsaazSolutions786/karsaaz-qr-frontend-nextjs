@@ -96,6 +96,11 @@ const GRADIENT_PRESETS: GradientValue[] = [
 ]
 
 // Convert gradient value to CSS string
+/**
+ * Purpose: Executes gradientToCSS functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function gradientToCSS(gradient: GradientValue): string {
   const sortedStops = [...gradient.stops].sort((a, b) => a.position - b.position)
   const stopsStr = sortedStops.map(s => `${s.color} ${s.position}%`).join(', ')
@@ -107,6 +112,11 @@ export function gradientToCSS(gradient: GradientValue): string {
 }
 
 // Parse CSS gradient string to GradientValue
+/**
+ * Purpose: Executes parseGradientCSS functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function parseGradientCSS(css: string): GradientValue | null {
   try {
     const isRadial = css.startsWith('radial-gradient')
@@ -155,6 +165,11 @@ export function parseGradientCSS(css: string): GradientValue | null {
 }
 
 // Default gradient value
+/**
+ * Purpose: Executes createDefaultGradient functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function createDefaultGradient(): GradientValue {
   return {
     type: 'linear',
@@ -166,6 +181,11 @@ export function createDefaultGradient(): GradientValue {
   }
 }
 
+/**
+ * Purpose: Executes GradientPicker functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function GradientPicker({
   value,
   onChange,
@@ -238,6 +258,11 @@ export function GradientPicker({
   )
 
   // Handle slider drag
+  /**
+   * Purpose: Executes handleSliderMouseDown functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleSliderMouseDown = (e: React.MouseEvent, index: number) => {
     e.preventDefault()
     setActiveStopIndex(index)
@@ -247,6 +272,11 @@ export function GradientPicker({
   useEffect(() => {
     if (!isDragging) return
 
+    /**
+     * Purpose: Executes handleMouseMove functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleMouseMove = (e: MouseEvent) => {
       if (!sliderRef.current) return
 
@@ -257,6 +287,11 @@ export function GradientPicker({
       updateStop(activeStopIndex, { position })
     }
 
+    /**
+     * Purpose: Executes handleMouseUp functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const handleMouseUp = () => {
       setIsDragging(false)
     }
@@ -281,6 +316,11 @@ export function GradientPicker({
 
   // Randomize gradient
   const randomize = useCallback(() => {
+    /**
+     * Purpose: Executes randomColor functionality.
+     * Owner/Author: Syed Ashhad
+     * Created/Updated: February 2026
+     */
     const randomColor = () =>
       '#' +
       Math.floor(Math.random() * 16777215)

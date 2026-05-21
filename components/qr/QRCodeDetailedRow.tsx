@@ -31,11 +31,21 @@ export const QRCodeDetailedRow = memo(function QRCodeDetailedRow({
   const [isActionsOpen, setIsActionsOpen] = useState(false)
   const [showQuickActions, setShowQuickActions] = useState(false)
 
+  /**
+   * Purpose: Executes handleAction functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const handleAction = (action: QRAction) => {
     onAction(action, qrcode)
     setIsActionsOpen(false)
   }
 
+  /**
+   * Purpose: Retrieves typelabel.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getTypeLabel = (type: string) => {
     const typeMap: Record<string, string> = {
       url: 'URL',
@@ -50,6 +60,11 @@ export const QRCodeDetailedRow = memo(function QRCodeDetailedRow({
     return typeMap[type] || type.toUpperCase()
   }
 
+  /**
+   * Purpose: Retrieves typebadgecolor.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const getTypeBadgeColor = (type: string) => {
     const colorMap: Record<string, string> = {
       url: 'bg-blue-100 text-blue-700',

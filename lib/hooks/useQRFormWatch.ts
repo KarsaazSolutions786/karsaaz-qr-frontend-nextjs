@@ -30,6 +30,11 @@ interface UseQRFormWatchOptions<T extends FieldValues> {
   formOptions?: Omit<UseFormProps<T>, 'resolver' | 'defaultValues'>
 }
 
+/**
+ * Purpose: Executes useQRFormWatch functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function useQRFormWatch<T extends FieldValues>({
   schema,
   defaultValues,

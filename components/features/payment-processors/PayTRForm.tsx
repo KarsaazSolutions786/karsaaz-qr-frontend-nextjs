@@ -10,16 +10,13 @@ import PaymentProcessorFormBase, {
 } from '../payment-gateway/PaymentProcessorFormBase'
 
 /**
- * PayTR (Turkey) payment processor configuration form.
- *
- * Fields (matching P1 + PROCESSORS definition):
- * - Mode (test / production)
- * - Merchant ID
- * - Merchant Key
- * - Merchant Salt
- *
- * Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
+ * Purpose: PayTR (Turkey) payment processor configuration form. Fields (matching P1 + PROCESSORS definition): - Mode (test / production) - Merchant ID - Merchant Key - Merchant Salt Manual webhook URL is shown (showWebhookUrl on PROCESSORS).
+ * Owner/Author: Syed Ashhad
+ * Created: February 2026
+ * Last Editor: Syed Ashhad
+ * Last Updated: March 2026
  */
+
 export function PayTRForm({ settings, onChange }: ProcessorFormProps) {
   const { t } = useTranslation()
 

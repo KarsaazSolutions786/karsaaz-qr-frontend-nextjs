@@ -9,14 +9,29 @@ interface PermissionsInputProps {
   onChange: (ids: number[]) => void
 }
 
+/**
+ * Purpose: Executes PermissionsInput functionality.
+ * Owner/Author: Syed Ashhad
+ * Created/Updated: February 2026
+ */
 export function PermissionsInput({ value, onChange }: PermissionsInputProps) {
   const { t } = useTranslation()
   const { data: groups, isLoading } = usePermissions()
 
+  /**
+   * Purpose: Executes toggle functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggle = (id: number) => {
     onChange(value.includes(id) ? value.filter((v) => v !== id) : [...value, id])
   }
 
+  /**
+   * Purpose: Executes toggleGroup functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: February 2026
+   */
   const toggleGroup = (groupIds: number[]) => {
     const allSelected = groupIds.every((id) => value.includes(id))
     if (allSelected) {
