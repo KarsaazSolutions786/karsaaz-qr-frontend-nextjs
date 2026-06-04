@@ -69,10 +69,9 @@ export function WizardNavigation({
         }
       }
 
-      if (e.key === 'Escape' && canGoBack && onBack && !isLoading) {
-        e.preventDefault()
-        onBack()
-      }
+      // BUG-30: Escape must NOT navigate wizard steps — it was disruptively
+      // sending users to the previous step (and conflicting with modals/inputs).
+      // Escape is left to the browser / modals to handle.
     }
 
     window.addEventListener('keydown', handleKeyDown)
