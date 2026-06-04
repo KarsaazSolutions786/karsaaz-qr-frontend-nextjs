@@ -52,6 +52,8 @@ import { foldersAPI } from '@/lib/api/endpoints/folders'
 import { useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
 import { FolderSelectModal } from '@/components/common/FolderSelectModal'
+import { DeleteFolderDialog } from '@/components/qr/DeleteFolderDialog'
+import type { Folder as FolderEntity, FolderContentAction } from '@/lib/api/endpoints/folders'
 import { useSubscriptionLimits } from '@/lib/hooks/useSubscriptionLimits'
 import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
 import { BulkChangeTypeModal } from '@/components/qr/BulkChangeTypeModal'
@@ -140,6 +142,7 @@ export default function QRCodesPage() {
   const [showFolders, setShowFolders] = useState(false)
   const [newFolderName, setNewFolderName] = useState('')
   const [folderLoading, setFolderLoading] = useState(false)
+  const [folderToDelete, setFolderToDelete] = useState<FolderEntity | null>(null)
   const [folderModalQRIds, setFolderModalQRIds] = useState<string[] | null>(null)
   const [showChangeTypeModal, setShowChangeTypeModal] = useState(false)
   const [showChangeOwnerModal, setShowChangeOwnerModal] = useState(false)
@@ -334,17 +337,15 @@ export default function QRCodesPage() {
    * Owner/Author: Syed Ashhad
    * Created/Updated: March 2026
    */
-  const handleDeleteFolder = async (folderId: number) => {
-    if (!user?.id) return
-    if (
-      !confirm(
-        t('Are you sure you want to delete this folder? QR codes inside will be moved to root.')
-      )
-    )
-      return
+  const handleConfirmDeleteFolder = async (
+    action: FolderContentAction,
+    targetFolderId?: number
+  ) => {
+    if (!user?.id || !folderToDelete) return
+    const folderId = folderToDelete.id
     setFolderLoading(true)
     try {
-      await foldersAPI.delete(user.id, folderId)
+      await foldersAPI.delete(user.id, folderId, { contentAction: action, targetFolderId })
       if (selectedFolder === String(folderId)) {
         updateUrl({ folder: null, page: null })
       }
@@ -352,8 +353,17 @@ export default function QRCodesPage() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.qrcodes.list({} as Record<string, unknown>),
       })
+      toast.success(
+        action === 'delete_all'
+          ? t('Folder and its QR codes deleted.')
+          : action === 'move'
+            ? t('Folder deleted. QR codes moved.')
+            : t('Folder deleted. QR codes kept.')
+      )
+      setFolderToDelete(null)
     } catch (err) {
       console.error('Failed to delete folder:', err)
+      toast.error(t('Failed to delete folder. Please try again.'))
     } finally {
       setFolderLoading(false)
     }
@@ -667,7 +677,7 @@ export default function QRCodesPage() {
                     <button
                       onClick={e => {
                         e.stopPropagation()
-                        handleDeleteFolder(folder.id)
+                        setFolderToDelete(folder)
                       }}
                       className="p-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity"
                       title={t('Delete folder')}
@@ -877,6 +887,16 @@ export default function QRCodesPage() {
           deselectAll()
           queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.all() })
         }}
+      />
+
+      {/* Folder deletion flow — choose what happens to the QR codes inside */}
+      <DeleteFolderDialog
+        isOpen={!!folderToDelete}
+        folder={folderToDelete}
+        folders={foldersData || []}
+        loading={folderLoading}
+        onClose={() => setFolderToDelete(null)}
+        onConfirm={handleConfirmDeleteFolder}
       />
     </div>
   )

@@ -49,7 +49,22 @@ export const foldersAPI = {
   },
 
   // Delete folder — DELETE /folders/{userId}/{folderId}
-  delete: async (userId: number | string, folderId: number | string): Promise<void> => {
-    await apiClient.delete(`/folders/${userId}/${folderId}`)
+  // content_action decides what happens to the QR codes inside:
+  //   'delete_all' → soft-delete them too (recoverable from trash)
+  //   'move'       → reassign them to targetFolderId
+  //   'unassign'   → detach them, keeping the QR codes (default, safest)
+  delete: async (
+    userId: number | string,
+    folderId: number | string,
+    options?: { contentAction?: FolderContentAction; targetFolderId?: number | string }
+  ): Promise<void> => {
+    await apiClient.delete(`/folders/${userId}/${folderId}`, {
+      data: {
+        content_action: options?.contentAction ?? 'unassign',
+        ...(options?.targetFolderId ? { target_folder_id: options.targetFolderId } : {}),
+      },
+    })
   },
 }
+
+export type FolderContentAction = 'delete_all' | 'move' | 'unassign'
