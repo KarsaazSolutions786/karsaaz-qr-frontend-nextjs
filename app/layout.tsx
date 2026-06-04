@@ -14,6 +14,11 @@ export const metadata: Metadata = {
     undefined,
     '/'
   ),
+  icons: {
+    icon: [{ url: '/favicon.svg', type: 'image/svg+xml' }],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
 }
 
 /**

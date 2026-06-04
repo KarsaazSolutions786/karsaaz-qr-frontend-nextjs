@@ -32,7 +32,7 @@ export interface BackupJob {
   id: string
   connection_id: string
   provider: CloudProviderType
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled'
+  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled'
   progress: number
   total_files: number
   processed_files: number

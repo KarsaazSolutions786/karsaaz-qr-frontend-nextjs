@@ -1,15 +1,15 @@
-'use client';
+'use client'
 
-import { AlertCircle } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
+import { AlertCircle } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface UsageProgressProps {
-  used: number;
-  total: number;
-  type: string;
-  label?: string;
-  showWarning?: boolean;
-  warningThreshold?: number;
+  used: number
+  total: number
+  type: string
+  label?: string
+  showWarning?: boolean
+  warningThreshold?: number
 }
 
 /**
@@ -25,11 +25,15 @@ export default function UsageProgress({
   showWarning = true,
   warningThreshold = 80,
 }: UsageProgressProps) {
-  const { t } = useTranslation();
-  const isUnlimited = total === -1;
-  const percentage = isUnlimited ? 0 : (used / total) * 100;
-  const isNearLimit = percentage >= warningThreshold;
-  const isAtLimit = percentage >= 100;
+  const { t } = useTranslation()
+  // Unlimited is represented as -1, 0, or null across plans (matches
+  // useSubscriptionLimits which treats `<= 0` as unlimited). Treating only -1 as
+  // unlimited made unlimited (PRO) plans stored as 0 divide-by-zero → Infinity%,
+  // so they wrongly showed "You've reached your limit" (QR-02).
+  const isUnlimited = total == null || total <= 0
+  const percentage = isUnlimited ? 0 : (used / total) * 100
+  const isNearLimit = percentage >= warningThreshold
+  const isAtLimit = percentage >= 100
 
   /**
    * Purpose: Retrieves progresscolor.
@@ -37,10 +41,10 @@ export default function UsageProgress({
    * Created/Updated: February 2026
    */
   const getProgressColor = () => {
-    if (isAtLimit) return 'bg-red-600';
-    if (isNearLimit) return 'bg-yellow-500';
-    return 'bg-blue-600';
-  };
+    if (isAtLimit) return 'bg-red-600'
+    if (isNearLimit) return 'bg-yellow-500'
+    return 'bg-blue-600'
+  }
 
   /**
    * Purpose: Retrieves backgroundcolor.
@@ -48,17 +52,15 @@ export default function UsageProgress({
    * Created/Updated: February 2026
    */
   const getBackgroundColor = () => {
-    if (isAtLimit) return 'bg-red-100';
-    if (isNearLimit) return 'bg-yellow-100';
-    return 'bg-gray-200';
-  };
+    if (isAtLimit) return 'bg-red-100'
+    if (isNearLimit) return 'bg-yellow-100'
+    return 'bg-gray-200'
+  }
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700">
-          {label || type}
-        </span>
+        <span className="text-sm font-medium text-gray-700">{label || type}</span>
         <span className="text-sm text-gray-600">
           {isUnlimited ? (
             <span className="text-green-600 font-semibold">{t('Unlimited')}</span>
@@ -96,5 +98,5 @@ export default function UsageProgress({
         </>
       )}
     </div>
-  );
+  )
 }

@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import React from "react";
-import { motion } from "framer-motion";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import React from 'react'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 
 /**
  * Purpose: Executes LogoQR functionality.
@@ -11,8 +11,8 @@ import { useRouter } from "next/navigation";
  * Created/Updated: April 2026
  */
 export default function LogoQR() {
-  const router = useRouter();
-  
+  const router = useRouter()
+
   return (
     <section className="relative py-8 md:py-12 px-4 md:px-6 overflow-hidden">
       <div className="max-w-7xl mx-auto">
@@ -23,7 +23,7 @@ export default function LogoQR() {
           transition={{ duration: 0.8 }}
           className="relative rounded-2xl md:rounded-3xl px-6 md:px-16 py-6 md:py-2 overflow-hidden"
           style={{
-            background: "linear-gradient(180deg, #8073E0 0%, #B048B0 70.6%)",
+            background: 'linear-gradient(180deg, #8073E0 0%, #B048B0 70.6%)',
           }}
         >
           {/* Background Pattern/Texture (color overlay) */}
@@ -55,14 +55,15 @@ export default function LogoQR() {
               </h1>
 
               <p className="text-sm md:text-base lg:text-lg mb-6 md:mb-10 text-white/90 leading-relaxed max-w-md mx-auto lg:mx-0">
-                Turn your logo into a stylish QR with a unique dot pattern —
-                on-brand and scan-perfect.
+                Turn your logo into a stylish QR with a unique dot pattern — on-brand and
+                scan-perfect.
               </p>
 
               <motion.button
+                type="button"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => router.push("/guest/create")}
+                onClick={() => router.push('/guest/create')}
                 className="bg-white text-purple-600 font-medium text-sm md:text-base px-6 md:px-8 py-2.5 md:py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 Try Karsaaz QR
@@ -82,7 +83,7 @@ export default function LogoQR() {
                 transition={{
                   duration: 0.6,
                   delay: 0.6,
-                  type: "spring",
+                  type: 'spring',
                   stiffness: 100,
                 }}
                 className="flex items-center justify-center"
@@ -107,6 +108,5 @@ export default function LogoQR() {
         </motion.div>
       </div>
     </section>
-  );
+  )
 }
-

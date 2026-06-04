@@ -52,7 +52,9 @@ export function StripeCustomerPortal() {
     setPortalLoading(true)
     try {
       const { data } = await getCustomerPortalUrl()
-      if (data?.url) window.open(data.url, '_blank')
+      // Backend returns { success, portal_url }. Accept `url` too for safety.
+      const url = (data as any)?.portal_url || (data as any)?.url
+      if (url) window.open(url, '_blank')
     } catch {
       // Portal not available
     } finally {
@@ -119,7 +121,9 @@ export function StripeCustomerPortal() {
 
       {/* Payment Methods */}
       <div className="px-6 py-4">
-        <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">{t('Payment Methods')}</h4>
+        <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+          {t('Payment Methods')}
+        </h4>
 
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-gray-400">
@@ -130,7 +134,7 @@ export function StripeCustomerPortal() {
           <p className="text-sm text-gray-500">{t('No payment methods on file.')}</p>
         ) : (
           <div className="space-y-2">
-            {paymentMethods.map((pm) => (
+            {paymentMethods.map(pm => (
               <div
                 key={pm.id}
                 className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100"

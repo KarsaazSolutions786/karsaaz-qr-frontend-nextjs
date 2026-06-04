@@ -63,6 +63,19 @@ function CreateQRCodeInner() {
   const [selectedType, setSelectedType] = useState(typeParam)
   const [showWizard, setShowWizard] = useState(!!typeParam)
 
+  // BUG-42/51: Keep local selection in sync with the URL ?type= param.
+  // When the user navigates BACK (browser back or programmatic), the URL
+  // param changes but React state was previously initialised only once,
+  // leaving the wizard mounted and blocking re-selection of another type.
+  // Mirroring the param here returns the user to the type grid so they can
+  // freely pick a different QR type after going back.
+  useEffect(() => {
+    setSelectedType(typeParam)
+    setShowWizard(!!typeParam)
+    if (typeParam && mode !== 'blank') setMode('blank')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typeParam])
+
   // Subscription quota check (also handles credit-mode generic check)
   const {
     canCreateQR,

@@ -7,6 +7,7 @@ import { useSubscription } from '@/lib/hooks/useSubscription'
 import { authAPI } from '@/lib/api/endpoints/auth'
 import { User } from '@/types/entities/user'
 import { useTranslation } from '@/lib/i18n'
+import { ConfirmationModal } from '@/components/ui/confirmation-modal'
 
 interface SubscriptionCardProps {
   user: User
@@ -19,7 +20,10 @@ interface SubscriptionCardProps {
  * Last Editor: Syed Ashhad
  * Last Updated: March 2026
  */
-function formatNumber(value: number | null | undefined, translate?: (key: string) => string): string {
+function formatNumber(
+  value: number | null | undefined,
+  translate?: (key: string) => string
+): string {
   if (value === null || value === undefined) return '0'
   if (value === -1) return translate ? translate('Unlimited') : 'Unlimited'
   return String(value)
@@ -34,34 +38,31 @@ export function SubscriptionCard({ user }: SubscriptionCardProps) {
   const { t } = useTranslation()
   const router = useRouter()
   const [cancelLoading, setCancelLoading] = useState(false)
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
 
-  const {
-    plan,
-    remainingDays,
-    isOnTrial,
-    features,
-    usage,
-    status,
-    invalidateSubscription,
-  } = useSubscription()
+  const { plan, remainingDays, isOnTrial, features, usage, status, invalidateSubscription } =
+    useSubscription()
 
   const isSuperAdmin = Boolean(user.roles?.[0]?.super_admin)
 
   const planName = plan?.name || (isOnTrial ? t('Trial') : t('No Plan'))
 
   const remainingDaysDisplay = (() => {
-    if (isNaN(remainingDays) || remainingDays === null || remainingDays === undefined) return t('N/A')
+    if (isNaN(remainingDays) || remainingDays === null || remainingDays === undefined)
+      return t('N/A')
     if (remainingDays > 365) return t('Unlimited')
     return Math.max(0, remainingDays)
   })()
 
   const allowedDynamic = features.max_dynamic_qrcodes
   const usedDynamic = usage.dynamicQrcodes
-  const remainingDynamic = allowedDynamic === -1 ? t('Unlimited') : Math.max(0, allowedDynamic - usedDynamic)
+  const remainingDynamic =
+    allowedDynamic === -1 ? t('Unlimited') : Math.max(0, allowedDynamic - usedDynamic)
   const allowedScans = features.max_scans_per_month
   const usedScans = usage.scansThisMonth
 
-  const remainingScans = allowedScans === -1 ? t('Unlimited') : Math.max(0, allowedScans - usedScans)
+  const remainingScans =
+    allowedScans === -1 ? t('Unlimited') : Math.max(0, allowedScans - usedScans)
 
   const isCanceled = status === 'expired'
 
@@ -71,7 +72,7 @@ export function SubscriptionCard({ user }: SubscriptionCardProps) {
    * Created/Updated: February 2026
    */
   const handleCancelSubscription = async () => {
-    if (!confirm(t('Are you sure you want to cancel your subscription?'))) return
+    setShowCancelConfirm(false)
     setCancelLoading(true)
     try {
       await authAPI.cancelSubscription()
@@ -120,7 +121,9 @@ export function SubscriptionCard({ user }: SubscriptionCardProps) {
         {/* Row 2 */}
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="text-sm text-gray-500 mb-1">{t('Allowed Dynamic QR Codes')}</div>
-          <div className="text-lg font-semibold text-gray-900">{formatNumber(allowedDynamic, t)}</div>
+          <div className="text-lg font-semibold text-gray-900">
+            {formatNumber(allowedDynamic, t)}
+          </div>
         </div>
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="text-sm text-gray-500 mb-1">{t('Used Dynamic QR Codes')}</div>
@@ -142,7 +145,9 @@ export function SubscriptionCard({ user }: SubscriptionCardProps) {
         </div>
         <div className="bg-gray-50 rounded-lg p-4">
           <div className="text-sm text-gray-500 mb-1">{t('Max Invited Users')}</div>
-          <div className="text-lg font-semibold text-gray-900">{formatNumber(features.max_invited_users, t)}</div>
+          <div className="text-lg font-semibold text-gray-900">
+            {formatNumber(features.max_invited_users, t)}
+          </div>
         </div>
       </div>
 
@@ -152,7 +157,7 @@ export function SubscriptionCard({ user }: SubscriptionCardProps) {
           {!isCanceled && (
             <button
               type="button"
-              onClick={handleCancelSubscription}
+              onClick={() => setShowCancelConfirm(true)}
               disabled={cancelLoading}
               className="inline-flex items-center rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
             >
@@ -168,6 +173,21 @@ export function SubscriptionCard({ user }: SubscriptionCardProps) {
           </button>
         </div>
       )}
+
+      {/* BUG-20: Confirmation before cancelling the subscription */}
+      <ConfirmationModal
+        isOpen={showCancelConfirm}
+        onClose={() => setShowCancelConfirm(false)}
+        onConfirm={handleCancelSubscription}
+        type="danger"
+        title={t('Cancel Subscription?')}
+        message={t(
+          'This will cancel your subscription. You will lose access to premium features, unlimited QR code creation, and advanced analytics at the end of your billing period. This cannot be undone.'
+        )}
+        confirmText={t('Yes, Cancel Subscription')}
+        cancelText={t('Keep Subscription')}
+        isLoading={cancelLoading}
+      />
     </div>
   )
 }

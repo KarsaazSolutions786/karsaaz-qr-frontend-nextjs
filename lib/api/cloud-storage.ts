@@ -305,7 +305,7 @@ export function useBackupJobs() {
     refetchInterval: query => {
       // Refetch every 5 seconds if there are running jobs
       const hasRunningJobs = query.state.data?.some(
-        (job: BackupJob) => job.status === 'running' || job.status === 'pending'
+        (job: BackupJob) => job.status === 'processing' || job.status === 'pending'
       )
       return hasRunningJobs ? 5000 : false
     },

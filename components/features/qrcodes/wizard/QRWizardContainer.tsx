@@ -14,6 +14,7 @@ import Step4Download from './Step4Download'
 import { toast } from 'sonner'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
 import { transformDesignToBackend, transformDesignFromBackend } from '@/lib/qr/design-transformer'
+import { validateQRData } from '@/lib/qr/validate-qr-data'
 import { useTranslation } from '@/lib/i18n'
 
 interface QRWizardContainerProps {
@@ -100,7 +101,7 @@ export default function QRWizardContainer({
   const [savedQRId, setSavedQRId] = useState<string | null>(qrcodeId || null)
   const savedQRIdRef = useRef<string | null>(qrcodeId || null) // sync ref to avoid stale closures
   const isCreatingRef = useRef(false) // guard against concurrent create calls
-  const isSavingRef = useRef(false)   // sync guard for handleNext (state lags one render)
+  const isSavingRef = useRef(false) // sync guard for handleNext (state lags one render)
   const [isSaved, setIsSaved] = useState(mode === 'edit')
   const [isSaving, setIsSaving] = useState(false)
 
@@ -129,15 +130,29 @@ export default function QRWizardContainer({
         return true
       }
 
-      // Data step -- ensure at least some data is entered with non-empty values
+      // Data step -- run per-type required-field + format validation
       if (currentStepId === 'data') {
-        const hasData =
-          formData &&
-          Object.keys(formData).length > 0 &&
-          Object.values(formData).some(v => v !== '' && v !== null && v !== undefined)
-        if (!hasData) {
+        const result = validateQRData(qrType, formData)
+        if (!result.valid) {
           toast.error(t('Validation Error'), {
-            description: t('Please enter the QR code data before continuing.'),
+            description: t(result.error || 'Please enter the QR code data before continuing.'),
+          })
+          return false
+        }
+        return true
+      }
+
+      // Design step -- if "Create With AI" is enabled, require a non-empty prompt
+      // (BUG-32). Saving with AI on but an empty/whitespace prompt produces
+      // undefined backend behavior, so block it with a friendly message.
+      if (currentStepId === 'design') {
+        const aiEnabled = (design as any)?.isAi
+        const aiPrompt = ((design as any)?.aiPrompt || '').trim()
+        if (aiEnabled && !aiPrompt) {
+          toast.error(t('Validation Error'), {
+            description: t(
+              'Please describe your design before continuing, or turn off Create With AI.'
+            ),
           })
           return false
         }
@@ -145,7 +160,7 @@ export default function QRWizardContainer({
       }
       return true
     },
-    [WIZARD_STEPS, qrType, formData]
+    [WIZARD_STEPS, qrType, formData, design]
   )
 
   /** Navigate to a specific step (validates if moving forward) */
@@ -319,6 +334,12 @@ export default function QRWizardContainer({
     if (isSavingRef.current) return
     const currentStepId = WIZARD_STEPS[wizard.currentStep]?.id
 
+    // Validate the current step BEFORE any API call. Previously the save ran
+    // first and validation only happened inside nextStep(), so empty/invalid
+    // input produced a server 422 (and could consume quota). Validate up front.
+    const isValid = await validateStep(wizard.currentStep)
+    if (!isValid) return
+
     // Type step — no save needed, just advance
     if (currentStepId === 'type') {
       wizard.nextStep()
@@ -354,7 +375,7 @@ export default function QRWizardContainer({
     setIsSaving(false)
 
     wizard.nextStep()
-  }, [wizard, saveQRCode, WIZARD_STEPS])
+  }, [wizard, saveQRCode, WIZARD_STEPS, validateStep])
 
   /** "Done" / Submit handler — finishes and navigates away */
   const handleSubmit = useCallback(async () => {
@@ -510,7 +531,7 @@ export default function QRWizardContainer({
         isSubmitting={isSaving}
         isValidating={wizard.isValidating}
         showProgress={true}
-        showHeader={false}
+        showHeader={true}
         allowStepClick={true}
       >
         {renderStepContent()}

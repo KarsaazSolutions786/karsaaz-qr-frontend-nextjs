@@ -1,5 +1,6 @@
 'use client'
 
+import { Loader2 } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 import { Subscription } from '@/types/entities/subscription'
 import { useCancelSubscription } from '@/lib/hooks/mutations/useCancelSubscription'
@@ -52,14 +53,13 @@ export function CancelSubscriptionDialog({
         <h3 className="text-center text-lg font-semibold text-gray-900">
           {t('Cancel Subscription?')}
         </h3>
-        
+
         <div className="mt-4 space-y-3 text-sm text-gray-600">
           <p>
-            {t('Your subscription will remain active until')} <strong>{formatDate(subscription.currentPeriodEnd)}</strong>.
+            {t('Your subscription will remain active until')}{' '}
+            <strong>{formatDate(subscription.currentPeriodEnd)}</strong>.
           </p>
-          <p>
-            {t("After that date, you'll lose access to:")}
-          </p>
+          <p>{t("After that date, you'll lose access to:")}</p>
           <ul className="ml-6 list-disc space-y-1">
             <li>{t('Premium features')}</li>
             <li>{t('Unlimited QR code creation')}</li>
@@ -67,7 +67,8 @@ export function CancelSubscriptionDialog({
             <li>{t('Custom branding options')}</li>
           </ul>
           <p className="font-medium text-gray-700">
-            {t('You can reactivate your subscription at any time before')} {formatDate(subscription.currentPeriodEnd)}.
+            {t('You can reactivate your subscription at any time before')}{' '}
+            {formatDate(subscription.currentPeriodEnd)}.
           </p>
         </div>
 
@@ -75,9 +76,16 @@ export function CancelSubscriptionDialog({
           <button
             onClick={handleCancel}
             disabled={cancelMutation.isPending}
-            className="flex-1 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="relative flex-1 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {cancelMutation.isPending ? t('Canceling...') : t('Yes, Cancel Subscription')}
+            {cancelMutation.isPending && (
+              <span className="absolute inset-0 flex items-center justify-center">
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </span>
+            )}
+            <span className={cancelMutation.isPending ? 'invisible' : undefined}>
+              {t('Yes, Cancel Subscription')}
+            </span>
           </button>
 
           <button

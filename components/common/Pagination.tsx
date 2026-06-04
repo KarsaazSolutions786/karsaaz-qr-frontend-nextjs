@@ -1,32 +1,32 @@
-'use client';
+'use client'
 
-import React from 'react';
+import React from 'react'
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
   MoreHorizontal,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useTranslation } from '@/lib/i18n';
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useTranslation } from '@/lib/i18n'
 
 export interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  totalItems?: number;
-  pageSize?: number;
-  onPageChange: (page: number) => void;
-  onPageSizeChange?: (pageSize: number) => void;
-  pageSizeOptions?: number[];
-  showFirstLast?: boolean;
-  showPageNumbers?: boolean;
-  maxVisiblePages?: number;
-  showTotalItems?: boolean;
-  showPageSize?: boolean;
-  className?: string;
-  compact?: boolean;
-  disabled?: boolean;
+  currentPage: number
+  totalPages: number
+  totalItems?: number
+  pageSize?: number
+  onPageChange: (page: number) => void
+  onPageSizeChange?: (pageSize: number) => void
+  pageSizeOptions?: number[]
+  showFirstLast?: boolean
+  showPageNumbers?: boolean
+  maxVisiblePages?: number
+  showTotalItems?: boolean
+  showPageSize?: boolean
+  className?: string
+  compact?: boolean
+  disabled?: boolean
 }
 
 /**
@@ -53,9 +53,9 @@ export const Pagination = ({
   compact = false,
   disabled = false,
 }: PaginationProps) => {
-  const { t } = useTranslation();
-  const hasNextPage = currentPage < totalPages;
-  const hasPreviousPage = currentPage > 1;
+  const { t } = useTranslation()
+  const hasNextPage = currentPage < totalPages
+  const hasPreviousPage = currentPage > 1
 
   /**
    * Purpose: Executes handlePageChange functionality.
@@ -63,9 +63,9 @@ export const Pagination = ({
    * Created/Updated: February 2026
    */
   const handlePageChange = (page: number) => {
-    if (page < 1 || page > totalPages || page === currentPage || disabled) return;
-    onPageChange(page);
-  };
+    if (page < 1 || page > totalPages || page === currentPage || disabled) return
+    onPageChange(page)
+  }
 
   /**
    * Purpose: Retrieves pagenumbers.
@@ -74,45 +74,49 @@ export const Pagination = ({
    */
   const getPageNumbers = (): (number | 'ellipsis')[] => {
     if (totalPages <= maxVisiblePages) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1);
+      return Array.from({ length: totalPages }, (_, i) => i + 1)
     }
 
-    const pages: (number | 'ellipsis')[] = [];
-    const sidePages = Math.floor((maxVisiblePages - 3) / 2);
+    const pages: (number | 'ellipsis')[] = []
+    const sidePages = Math.floor((maxVisiblePages - 3) / 2)
 
     // Always show first page
-    pages.push(1);
+    pages.push(1)
 
     if (currentPage <= sidePages + 2) {
       // Near the start
       for (let i = 2; i <= maxVisiblePages - 2; i++) {
-        pages.push(i);
+        pages.push(i)
       }
-      pages.push('ellipsis');
+      pages.push('ellipsis')
     } else if (currentPage >= totalPages - sidePages - 1) {
       // Near the end
-      pages.push('ellipsis');
+      pages.push('ellipsis')
       for (let i = totalPages - (maxVisiblePages - 3); i < totalPages; i++) {
-        pages.push(i);
+        pages.push(i)
       }
     } else {
       // In the middle
-      pages.push('ellipsis');
+      pages.push('ellipsis')
       for (let i = currentPage - sidePages; i <= currentPage + sidePages; i++) {
-        pages.push(i);
+        pages.push(i)
       }
-      pages.push('ellipsis');
+      pages.push('ellipsis')
     }
 
     // Always show last page
-    pages.push(totalPages);
+    pages.push(totalPages)
 
-    return pages;
-  };
+    return pages
+  }
 
-  const pageNumbers = showPageNumbers ? getPageNumbers() : [];
+  const pageNumbers = showPageNumbers ? getPageNumbers() : []
 
-  if (totalPages <= 1 && !showTotalItems) return null;
+  // QR-03: never render pagination when there are no records, and never when
+  // everything fits on a single page (≤ 1 page). This guards every caller,
+  // including lists that show "0" items.
+  if (totalItems === 0) return null
+  if (totalPages <= 1) return null
 
   return (
     <div
@@ -136,7 +140,8 @@ export const Pagination = ({
             <span className="font-medium text-foreground">
               {Math.min(currentPage * pageSize, totalItems)}
             </span>{' '}
-            {t('of')} <span className="font-medium text-foreground">{totalItems}</span> {t('results')}
+            {t('of')} <span className="font-medium text-foreground">{totalItems}</span>{' '}
+            {t('results')}
           </div>
         )}
 
@@ -148,7 +153,7 @@ export const Pagination = ({
             <select
               id="page-size"
               value={pageSize}
-              onChange={(e) => onPageSizeChange(Number(e.target.value))}
+              onChange={e => onPageSizeChange(Number(e.target.value))}
               disabled={disabled}
               className={cn(
                 'rounded-md border border-input bg-background px-2 py-1 text-sm',
@@ -157,7 +162,7 @@ export const Pagination = ({
               )}
               aria-label="Items per page"
             >
-              {pageSizeOptions.map((option) => (
+              {pageSizeOptions.map(option => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -219,10 +224,10 @@ export const Pagination = ({
                   >
                     <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                   </div>
-                );
+                )
               }
 
-              const isCurrentPage = page === currentPage;
+              const isCurrentPage = page === currentPage
 
               return (
                 <button
@@ -243,7 +248,7 @@ export const Pagination = ({
                 >
                   {page}
                 </button>
-              );
+              )
             })}
           </div>
         )}
@@ -296,7 +301,7 @@ export const Pagination = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Pagination;
+export default Pagination

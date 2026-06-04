@@ -21,8 +21,8 @@ export function SubscriptionDetails({ subscription }: SubscriptionDetailsProps) 
   const { t } = useTranslation()
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const { data: plansData } = usePlans()
-  
-  const rawPlan = plansData?.data?.find((p) => p.id === Number(subscription.planId))
+
+  const rawPlan = plansData?.data?.find(p => p.id === Number(subscription.planId))
   const plan = rawPlan ? mapSubscriptionPlanToPlan(rawPlan) : undefined
 
   /**
@@ -56,7 +56,9 @@ export function SubscriptionDetails({ subscription }: SubscriptionDetailsProps) 
                 {plan?.name || t('Unknown')} {t('Plan')}
               </h2>
               <div className="mt-2 flex items-center gap-2">
-                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getStatusColor(subscription.status)}`}>
+                <span
+                  className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${getStatusColor(subscription.status)}`}
+                >
                   {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
                 </span>
                 {subscription.cancelAtPeriodEnd && (
@@ -78,7 +80,8 @@ export function SubscriptionDetails({ subscription }: SubscriptionDetailsProps) 
             <div>
               <dt className="text-sm font-medium text-gray-500">{t('Current Period')}</dt>
               <dd className="mt-1 text-sm text-gray-900">
-                {formatDate(subscription.currentPeriodStart)} - {formatDate(subscription.currentPeriodEnd)}
+                {formatDate(subscription.currentPeriodStart)} -{' '}
+                {formatDate(subscription.currentPeriodEnd)}
               </dd>
             </div>
             <div>
@@ -98,7 +101,7 @@ export function SubscriptionDetails({ subscription }: SubscriptionDetailsProps) 
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-center text-sm text-gray-600">
                     <span className="mr-2 text-green-500">✓</span>
-                    {feature}
+                    {t(feature)}
                   </li>
                 ))}
               </ul>
@@ -114,9 +117,7 @@ export function SubscriptionDetails({ subscription }: SubscriptionDetailsProps) 
                 {t('Cancel Subscription')}
               </button>
             ) : (
-              <button
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-              >
+              <button className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
                 {t('Reactivate Subscription')}
               </button>
             )}
@@ -129,9 +130,7 @@ export function SubscriptionDetails({ subscription }: SubscriptionDetailsProps) 
         {/* Billing History */}
         <div className="rounded-lg border border-gray-200 bg-white p-6">
           <h3 className="text-lg font-semibold text-gray-900">{t('Billing History')}</h3>
-          <p className="mt-1 text-sm text-gray-600">
-            {t('View and download your past invoices')}
-          </p>
+          <p className="mt-1 text-sm text-gray-600">{t('View and download your past invoices')}</p>
           <div className="mt-4">
             <p className="text-sm text-gray-500">{t('No invoices yet')}</p>
           </div>

@@ -32,7 +32,12 @@ interface SubuserInviteModalProps {
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
-export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }: SubuserInviteModalProps) {
+export function SubuserInviteModal({
+  parentUserId,
+  isOpen,
+  onClose,
+  onSuccess,
+}: SubuserInviteModalProps) {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { data: rolesData } = useRoles()
@@ -60,7 +65,9 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
     onError: (err: any) => {
       const msg =
         err?.response?.data?.message ||
-        Object.values(err?.response?.data?.errors || {}).flat().join(' ') ||
+        Object.values(err?.response?.data?.errors || {})
+          .flat()
+          .join(' ') ||
         t('Failed to send invitation.')
       setError(msg as string)
     },
@@ -89,8 +96,22 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
     e.preventDefault()
     setError(null)
 
-    if (!email) {
+    if (!name.trim()) {
+      setError(t('Name is required.'))
+      return
+    }
+
+    const trimmedEmail = email.trim()
+
+    if (!trimmedEmail) {
       setError(t('Email is required.'))
+      return
+    }
+
+    // Basic email format validation before hitting the API.
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailPattern.test(trimmedEmail)) {
+      setError(t('Please enter a valid email address.'))
       return
     }
 
@@ -98,7 +119,7 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+    <Dialog open={isOpen} onOpenChange={open => !open && handleClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('Invite Sub-User')}</DialogTitle>
@@ -124,7 +145,7 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
               type="text"
               placeholder={t('Sub-user name')}
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               required
             />
           </div>
@@ -139,7 +160,7 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
               type="email"
               placeholder="user@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               required
             />
           </div>
@@ -152,11 +173,11 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
             <select
               id="invite-role"
               value={roleId}
-              onChange={(e) => setRoleId(e.target.value)}
+              onChange={e => setRoleId(e.target.value)}
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               <option value="">{t('Select a role')}</option>
-              {roles.map((role) => (
+              {roles.map(role => (
                 <option key={role.id} value={role.id}>
                   {role.name}
                 </option>
@@ -173,7 +194,7 @@ export function SubuserInviteModal({ parentUserId, isOpen, onClose, onSuccess }:
               id="invite-message"
               placeholder={t('Add a personal message to the invitation...')}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={e => setMessage(e.target.value)}
               rows={3}
             />
           </div>

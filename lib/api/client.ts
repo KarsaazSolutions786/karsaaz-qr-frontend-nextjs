@@ -149,7 +149,7 @@ apiClient.interceptors.response.use(
       const message = retryAfter
         ? `Too many requests. Please wait ${retryAfter} seconds and try again.`
         : 'Too many requests. Please wait and try again.'
-      toast.error(message)
+      toast.error(message, { id: 'api-rate-limit' })
       return Promise.reject(error)
     }
 
@@ -173,19 +173,29 @@ apiClient.interceptors.response.use(
           if (firstField !== undefined) {
             const fieldErrors = errors[firstField]
             const firstError = Array.isArray(fieldErrors) ? fieldErrors[0] : fieldErrors
-            userMessage = translateMessage(String(firstError)) || 'Please check your input and try again.'
+            userMessage =
+              translateMessage(String(firstError)) || 'Please check your input and try again.'
           } else {
             userMessage = 'Please check your input and try again.'
           }
         } else if (data?.error_code || data?.code) {
-          userMessage = processApiError(data as { error_code?: string; code?: string; message?: string })
+          userMessage = processApiError(
+            data as { error_code?: string; code?: string; message?: string }
+          )
+        } else if (status >= 500) {
+          // Never surface raw server-side exception messages to users.
+          userMessage = getHttpStatusMessage(status)
         } else if (data?.message) {
           userMessage = translateMessage(String(data.message))
         } else {
           userMessage = getHttpStatusMessage(status)
         }
 
-        toast.error(userMessage)
+        // Dedupe: key the toast id by the resolved message so identical errors
+        // from several simultaneous failed requests (e.g. a page-load race)
+        // collapse into one instead of stacking. Distinct messages still show
+        // separately. Mirrors the network-error id pattern.
+        toast.error(userMessage, { id: `api-error-${userMessage}` })
       }
     } else if (!originalRequest._silent && !error.response) {
       // Network error — no response received.

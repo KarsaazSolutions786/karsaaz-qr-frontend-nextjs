@@ -298,6 +298,15 @@ export function translateMessage(message: string | null | undefined): string {
   const lowerMessage = message.toLowerCase()
 
   const patterns: Record<string, string> = {
+    // Hide raw backend/ORM internals from users.
+    'qr code not found': ERROR_MESSAGES.QRCODE_NOT_FOUND,
+    'no query results for model': ERROR_MESSAGES.NOT_FOUND,
+    sqlstate: ERROR_MESSAGES.SERVER_ERROR,
+    'undefined index': ERROR_MESSAGES.SERVER_ERROR,
+    'call to a member function': ERROR_MESSAGES.SERVER_ERROR,
+    'internal server error': ERROR_MESSAGES.SERVER_ERROR,
+    'the given data was invalid': ERROR_MESSAGES.VALIDATION_ERROR,
+    unprocessable: ERROR_MESSAGES.VALIDATION_ERROR,
     'validation failed': ERROR_MESSAGES.VALIDATION_ERROR,
     unauthorized: ERROR_MESSAGES.UNAUTHORIZED,
     forbidden: ERROR_MESSAGES.FORBIDDEN,

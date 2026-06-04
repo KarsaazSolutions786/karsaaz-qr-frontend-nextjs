@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { useMutation } from '@tanstack/react-query'
 import { authAPI } from '@/lib/api/endpoints/auth'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -21,6 +22,7 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
   const [password, setPassword] = useState('')
   const [confirmText, setConfirmText] = useState('')
   const [error, setError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<{ confirmText?: string; password?: string }>({})
   const { logout } = useAuth()
 
   const deleteAccountMutation = useMutation({
@@ -32,8 +34,8 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
     onError: (err: any) => {
       setError(
         err?.response?.data?.message ||
-        err?.message ||
-        t('Failed to delete account. Please check your password and try again.')
+          err?.message ||
+          t('Failed to delete account. Please check your password and try again.')
       )
     },
   })
@@ -47,13 +49,18 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
     e.preventDefault()
     setError('')
 
-    if (confirmText !== 'DELETE') {
-      setError(t('Please type DELETE to confirm.'))
-      return
+    const errors: { confirmText?: string; password?: string } = {}
+    if (!confirmText) {
+      errors.confirmText = t('Please type DELETE to confirm.')
+    } else if (confirmText !== 'DELETE') {
+      errors.confirmText = t('The confirmation text does not match. Please type DELETE exactly.')
+    }
+    if (!password) {
+      errors.password = t('Password is required.')
     }
 
-    if (!password) {
-      setError(t('Password is required.'))
+    setFieldErrors(errors)
+    if (Object.keys(errors).length > 0) {
       return
     }
 
@@ -69,6 +76,7 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
     setPassword('')
     setConfirmText('')
     setError('')
+    setFieldErrors({})
     onClose()
   }
 
@@ -80,8 +88,18 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
       <div className="relative z-10 w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
         <div className="flex items-center gap-3 mb-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-            <svg className="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            <svg
+              className="h-5 w-5 text-red-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+              />
             </svg>
           </div>
           <div>
@@ -102,7 +120,7 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
           </ul>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div>
             <label htmlFor="delete-confirm" className="block text-sm font-medium text-gray-700">
               {t('Type')} <span className="font-bold text-red-600">DELETE</span> {t('to confirm')}
@@ -111,11 +129,14 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
               id="delete-confirm"
               type="text"
               value={confirmText}
-              onChange={(e) => setConfirmText(e.target.value)}
+              onChange={e => setConfirmText(e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-red-500 focus:outline-none focus:ring-red-500"
               placeholder="DELETE"
               autoComplete="off"
             />
+            {fieldErrors.confirmText && (
+              <p className="mt-1 text-xs text-red-600">{fieldErrors.confirmText}</p>
+            )}
           </div>
 
           <div>
@@ -126,10 +147,13 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
               id="delete-password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-red-500 focus:outline-none focus:ring-red-500"
               autoComplete="current-password"
             />
+            {fieldErrors.password && (
+              <p className="mt-1 text-xs text-red-600">{fieldErrors.password}</p>
+            )}
           </div>
 
           {error && (
@@ -149,14 +173,17 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
             </button>
             <button
               type="submit"
-              disabled={
-                deleteAccountMutation.isPending ||
-                confirmText !== 'DELETE' ||
-                !password
-              }
-              className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={deleteAccountMutation.isPending}
+              className="relative rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {deleteAccountMutation.isPending ? t('Deleting...') : t('Delete My Account')}
+              {deleteAccountMutation.isPending && (
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </span>
+              )}
+              <span className={deleteAccountMutation.isPending ? 'invisible' : undefined}>
+                {t('Delete My Account')}
+              </span>
             </button>
           </div>
         </form>

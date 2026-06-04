@@ -26,10 +26,6 @@ function PaymentSuccessContent() {
   const [countdown, setCountdown] = useState(5)
 
   useEffect(() => {
-    verifyPayment()
-  }, [])
-
-  useEffect(() => {
     if (state !== 'loading' && countdown > 0) {
       const timer = setTimeout(() => setCountdown(c => c - 1), 1000)
       return () => clearTimeout(timer)
@@ -80,6 +76,11 @@ function PaymentSuccessContent() {
             queryClient.setQueryData(queryKeys.auth.currentUser(), userData)
             queryClient.invalidateQueries({ queryKey: queryKeys.auth.currentUser() })
           }
+          // BUG-53: refresh subscription + QR usage so the dashboard shows the
+          // new plan's quota/remaining instead of stale pre-purchase values.
+          queryClient.invalidateQueries({ queryKey: queryKeys.subscriptions.current() })
+          queryClient.invalidateQueries({ queryKey: queryKeys.subscriptions.all() })
+          queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.all() })
         } catch (refreshError) {
           console.error('Failed to refresh user data:', refreshError)
           // Fallback to API response data if available
@@ -102,6 +103,13 @@ function PaymentSuccessContent() {
     }
   }
 
+  // Run once on mount — declared after verifyPayment so it isn't accessed before
+  // its declaration (React Compiler lint rule).
+  useEffect(() => {
+    verifyPayment()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
@@ -116,14 +124,25 @@ function PaymentSuccessContent() {
         {state === 'success' && (
           <>
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-              <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg
+                className="w-10 h-10 text-green-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Payment Successful!')}</h1>
             <p className="text-gray-600 mb-6">{message}</p>
-            <p className="text-sm text-gray-400">{t('Redirecting you to your dashboard in')} {countdown} {t('seconds...')}</p>
-            <Link href="/qrcodes/new" className="mt-4 inline-block text-purple-600 hover:text-purple-700 font-medium">
+            <p className="text-sm text-gray-400">
+              {t('Redirecting you to your dashboard in')} {countdown} {t('seconds...')}
+            </p>
+            <Link
+              href="/qrcodes/new"
+              className="mt-4 inline-block text-purple-600 hover:text-purple-700 font-medium"
+            >
               {t('Go to Dashboard Now')} →
             </Link>
           </>
@@ -132,13 +151,21 @@ function PaymentSuccessContent() {
         {state === 'error' && (
           <>
             <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg
+                className="w-10 h-10 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2.5}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Payment Error')}</h1>
             <p className="text-gray-600 mb-6">{message}</p>
-            <p className="text-sm text-gray-400 mb-4">{t('Redirecting in')} {countdown} {t('seconds...')}</p>
+            <p className="text-sm text-gray-400 mb-4">
+              {t('Redirecting in')} {countdown} {t('seconds...')}
+            </p>
             <Link href="/login" className="text-purple-600 hover:text-purple-700 font-medium">
               {t('Go to Login')} →
             </Link>
@@ -157,14 +184,16 @@ function PaymentSuccessContent() {
 export default function PaymentSuccessPage() {
   const { t } = useTranslation()
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
-          <LottieLoader size={120} className="mx-auto mb-6" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Loading...')}</h1>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
+            <LottieLoader size={120} className="mx-auto mb-6" />
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('Loading...')}</h1>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <PaymentSuccessContent />
     </Suspense>
   )

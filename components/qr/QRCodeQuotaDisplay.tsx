@@ -1,20 +1,20 @@
 /**
  * QRCodeQuotaDisplay Component
- * 
+ *
  * Displays QR code usage quota with progress bar.
  */
 
-'use client';
+'use client'
 
-import React from 'react';
-import { AlertTriangle, TrendingUp, CheckCircle } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
+import React from 'react'
+import { AlertTriangle, TrendingUp, CheckCircle } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface QRCodeQuotaDisplayProps {
-  used: number;
-  total: number;
-  plan: string;
-  onUpgrade?: () => void;
+  used: number
+  total: number
+  plan: string
+  onUpgrade?: () => void
 }
 
 /**
@@ -22,16 +22,16 @@ export interface QRCodeQuotaDisplayProps {
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
-export function QRCodeQuotaDisplay({
-  used,
-  total,
-  plan,
-  onUpgrade,
-}: QRCodeQuotaDisplayProps) {
-  const { t } = useTranslation();
-  const percentage = total > 0 ? (used / total) * 100 : 0;
-  const isNearLimit = percentage >= 80;
-  const isAtLimit = percentage >= 100;
+export function QRCodeQuotaDisplay({ used, total, plan, onUpgrade }: QRCodeQuotaDisplayProps) {
+  const { t } = useTranslation()
+  // Unlimited when total is -1 or null/undefined.
+  const isUnlimited = total === -1 || total === null || total === undefined
+  // Clamp percentage to [0,100] and guard against div-by-zero / negatives.
+  const percentage = isUnlimited || total <= 0 ? 0 : Math.min(100, Math.round((used / total) * 100))
+  // Never show negative remaining.
+  const remaining = isUnlimited ? 0 : Math.max(0, total - used)
+  const isNearLimit = !isUnlimited && percentage >= 80
+  const isAtLimit = !isUnlimited && percentage >= 100
 
   /**
    * Purpose: Retrieves progresscolor.
@@ -39,10 +39,10 @@ export function QRCodeQuotaDisplay({
    * Created/Updated: February 2026
    */
   const getProgressColor = () => {
-    if (isAtLimit) return 'bg-red-600';
-    if (isNearLimit) return 'bg-orange-500';
-    return 'bg-blue-600';
-  };
+    if (isAtLimit) return 'bg-red-600'
+    if (isNearLimit) return 'bg-orange-500'
+    return 'bg-blue-600'
+  }
 
   /**
    * Purpose: Retrieves backgroundcolor.
@@ -50,10 +50,10 @@ export function QRCodeQuotaDisplay({
    * Created/Updated: February 2026
    */
   const getBackgroundColor = () => {
-    if (isAtLimit) return 'bg-red-100';
-    if (isNearLimit) return 'bg-orange-100';
-    return 'bg-blue-100';
-  };
+    if (isAtLimit) return 'bg-red-100'
+    if (isNearLimit) return 'bg-orange-100'
+    return 'bg-blue-100'
+  }
 
   /**
    * Purpose: Retrieves textcolor.
@@ -61,10 +61,10 @@ export function QRCodeQuotaDisplay({
    * Created/Updated: February 2026
    */
   const getTextColor = () => {
-    if (isAtLimit) return 'text-red-700';
-    if (isNearLimit) return 'text-orange-700';
-    return 'text-blue-700';
-  };
+    if (isAtLimit) return 'text-red-700'
+    if (isNearLimit) return 'text-orange-700'
+    return 'text-blue-700'
+  }
 
   /**
    * Purpose: Retrieves icon.
@@ -72,10 +72,10 @@ export function QRCodeQuotaDisplay({
    * Created/Updated: February 2026
    */
   const getIcon = () => {
-    if (isAtLimit) return <AlertTriangle className="w-5 h-5 text-red-600" />;
-    if (isNearLimit) return <TrendingUp className="w-5 h-5 text-orange-600" />;
-    return <CheckCircle className="w-5 h-5 text-blue-600" />;
-  };
+    if (isAtLimit) return <AlertTriangle className="w-5 h-5 text-red-600" />
+    if (isNearLimit) return <TrendingUp className="w-5 h-5 text-orange-600" />
+    return <CheckCircle className="w-5 h-5 text-blue-600" />
+  }
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
@@ -83,36 +83,42 @@ export function QRCodeQuotaDisplay({
         <div className="flex items-center gap-2">
           {getIcon()}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900">
-              {t('QR Code Usage')}
-            </h3>
-            <p className="text-xs text-gray-500 capitalize">{plan} {t('Plan')}</p>
+            <h3 className="text-sm font-semibold text-gray-900">{t('QR Code Usage')}</h3>
+            <p className="text-xs text-gray-500 capitalize">
+              {plan} {t('Plan')}
+            </p>
           </div>
         </div>
         <div className={`text-sm font-bold ${getTextColor()}`}>
-          {used} / {total}
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="relative">
-        <div className={`h-2 ${getBackgroundColor()} rounded-full overflow-hidden`}>
-          <div
-            className={`h-full ${getProgressColor()} transition-all duration-500 ease-out`}
-            style={{ width: `${Math.min(percentage, 100)}%` }}
-          />
-        </div>
-        <div className="mt-2 flex items-center justify-between text-xs">
-          <span className="text-gray-600">
-            {Math.round(percentage)}% {t('used')}
-          </span>
-          {total > 0 && (
-            <span className="text-gray-600">
-              {total - used} {t('remaining')}
-            </span>
+          {isUnlimited ? (
+            <span className="text-green-600">{t('Unlimited')}</span>
+          ) : (
+            <>
+              {used} / {total}
+            </>
           )}
         </div>
       </div>
+
+      {/* Progress Bar — hidden for unlimited plans */}
+      {!isUnlimited && (
+        <div className="relative">
+          <div className={`h-2 ${getBackgroundColor()} rounded-full overflow-hidden`}>
+            <div
+              className={`h-full ${getProgressColor()} transition-all duration-500 ease-out`}
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
+          <div className="mt-2 flex items-center justify-between text-xs">
+            <span className="text-gray-600">
+              {percentage}% {t('used')}
+            </span>
+            <span className="text-gray-600">
+              {remaining} {t('remaining')}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Warning/Upgrade Message */}
       {isAtLimit && (
@@ -144,9 +150,7 @@ export function QRCodeQuotaDisplay({
           <div className="flex items-start gap-2">
             <TrendingUp className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-orange-800">
-                {t('Approaching limit')}
-              </p>
+              <p className="text-xs font-medium text-orange-800">{t('Approaching limit')}</p>
               <p className="text-xs text-orange-700 mt-1">
                 {t('Consider upgrading to avoid running out of QR codes')}
               </p>
@@ -163,5 +167,5 @@ export function QRCodeQuotaDisplay({
         </div>
       )}
     </div>
-  );
+  )
 }

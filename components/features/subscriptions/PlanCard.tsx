@@ -110,7 +110,9 @@ export const PlanCard = memo(function PlanCard({ plan, current = false }: PlanCa
         {plan.features.map((feature, index) => (
           <li key={index} className="flex items-start">
             <span className="text-green-500 mr-3">✓</span>
-            <span className="text-sm text-gray-700">{feature}</span>
+            {/* Backend stores features as i18n keys (e.g. "qrcode.copy", "shape.none");
+                translate them so users see human-readable text, not raw keys. */}
+            <span className="text-sm text-gray-700">{t(feature)}</span>
           </li>
         ))}
       </ul>

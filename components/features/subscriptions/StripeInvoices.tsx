@@ -39,7 +39,11 @@ export function StripeInvoices() {
     setLoading(true)
     try {
       const { data } = await getInvoices(limit)
-      setInvoices(Array.isArray(data) ? data : [])
+      // Backend wraps the list as { success, invoices: [...] }. The raw axios
+      // body is returned here, so unwrap `invoices` before rendering.
+      const payload = data as unknown as { invoices?: StripeInvoice[] } | StripeInvoice[]
+      const list = Array.isArray(payload) ? payload : (payload?.invoices ?? [])
+      setInvoices(Array.isArray(list) ? list : [])
     } catch {
       setInvoices([])
     } finally {
@@ -52,9 +56,13 @@ export function StripeInvoices() {
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
-  function formatDate(dateStr: string) {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      year: 'numeric', month: 'short', day: 'numeric',
+  function formatDate(dateVal: string | number) {
+    // Raw Stripe invoices expose `created` as a UNIX epoch (seconds).
+    const date = typeof dateVal === 'number' ? new Date(dateVal * 1000) : new Date(dateVal)
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     })
   }
 
@@ -79,11 +87,13 @@ export function StripeInvoices() {
           <label className="text-xs text-gray-500">{t('Show:')}</label>
           <select
             value={limit}
-            onChange={(e) => setLimit(Number(e.target.value))}
+            onChange={e => setLimit(Number(e.target.value))}
             className="text-sm border border-gray-200 rounded-lg px-2 py-1 text-gray-700"
           >
-            {LIMIT_OPTIONS.map((n) => (
-              <option key={n} value={n}>{n}</option>
+            {LIMIT_OPTIONS.map(n => (
+              <option key={n} value={n}>
+                {n}
+              </option>
             ))}
           </select>
         </div>
@@ -103,55 +113,64 @@ export function StripeInvoices() {
           </div>
         ) : (
           <div className="space-y-2">
-            {invoices.map((inv) => (
-              <div
-                key={inv.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100"
-              >
-                <div className="flex items-center gap-4 min-w-0">
-                  <FileText className="w-5 h-5 text-gray-400 flex-shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {inv.number || inv.id}
-                    </p>
-                    <p className="text-xs text-gray-500">{formatDate(inv.date)}</p>
+            {invoices.map(inv => {
+              // Map raw Stripe invoice fields with sensible fallbacks.
+              const invDate = (inv as any).created ?? inv.date
+              const invAmount = (inv as any).amount_paid ?? (inv as any).total ?? inv.amount ?? 0
+              const pdfUrl = inv.pdf_url || (inv as any).invoice_pdf
+              const hostedUrl = inv.hosted_invoice_url
+              return (
+                <div
+                  key={inv.id}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-100"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <FileText className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {inv.number || inv.id}
+                      </p>
+                      <p className="text-xs text-gray-500">{formatDate(invDate)}</p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <span className="text-sm font-semibold text-gray-900">
-                    {formatAmount(inv.amount, inv.currency)}
-                  </span>
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${STATUS_STYLES[inv.status] || 'bg-gray-100 text-gray-600'}`}>
-                    {inv.status}
-                  </span>
-                  <div className="flex gap-1">
-                    {inv.pdf_url && (
-                      <a
-                        href={inv.pdf_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 text-gray-400 hover:text-purple-600"
-                        title={t('Download PDF')}
-                      >
-                        <Download className="w-4 h-4" />
-                      </a>
-                    )}
-                    {inv.hosted_invoice_url && (
-                      <a
-                        href={inv.hosted_invoice_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 text-gray-400 hover:text-blue-600"
-                        title={t('View')}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </a>
-                    )}
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <span className="text-sm font-semibold text-gray-900">
+                      {formatAmount(invAmount, inv.currency)}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${STATUS_STYLES[inv.status] || 'bg-gray-100 text-gray-600'}`}
+                    >
+                      {inv.status}
+                    </span>
+                    <div className="flex gap-1">
+                      {pdfUrl && (
+                        <a
+                          href={pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 text-gray-400 hover:text-purple-600"
+                          title={t('Download PDF')}
+                        >
+                          <Download className="w-4 h-4" />
+                        </a>
+                      )}
+                      {hostedUrl && (
+                        <a
+                          href={hostedUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 text-gray-400 hover:text-blue-600"
+                          title={t('View')}
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

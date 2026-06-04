@@ -387,6 +387,11 @@ function BentoGrid({
   onTypeClick: (id: string) => void
   isTypeDisabled: (id: string) => boolean
 }) {
+  // BUG-31: previously each icon used a staggered opacity 0->1 entrance. A
+  // language switch re-renders this tree (the `t` context value changes); when
+  // the entrance replayed and got interrupted, icons could get stuck faded.
+  // Render icons at full opacity (no JS-gated entrance) so they can never get
+  // stuck; layout/exit animations for filtering are kept below.
   return (
     <div
       className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-x-3.5 gap-y-2.5"
@@ -395,7 +400,7 @@ function BentoGrid({
       aria-label="QR code types"
     >
       <AnimatePresence mode="popLayout">
-        {types.map((type, i) => {
+        {types.map(type => {
           const isWide = WIDE_TYPES.has(type.id)
           const isTall = TALL_TYPES.has(type.id)
           const isIconOnly = ICON_ONLY_TYPES.has(type.id) || SMS_ICON_ONLY.has(type.id)
@@ -406,12 +411,11 @@ function BentoGrid({
             <motion.div
               key={type.id}
               layout
-              initial={{ opacity: 0, y: 12, scale: 0.97 }}
+              initial={false}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{
                 duration: 0.25,
-                delay: Math.min(i * 0.02, 0.25),
                 ease: 'easeOut',
               }}
               className={
@@ -499,7 +503,7 @@ const cardStyle = (isSelected: boolean) => ({
 })
 
 /**
- * Purpose: * Renders an icon with optional colored background (Figma design) 
+ * Purpose: * Renders an icon with optional colored background (Figma design)
  * Owner/Author: Syed Ashhad
  * Created/Updated: March 2026
  */
@@ -547,7 +551,7 @@ function TypeIcon({ type, size = 40 }: { type: QRCodeTypeDefinition; size?: numb
 }
 
 /**
- * Purpose: * Chevron arrow matching Figma style 
+ * Purpose: * Chevron arrow matching Figma style
  * Owner/Author: Syed Ashhad
  * Created/Updated: March 2026
  */
