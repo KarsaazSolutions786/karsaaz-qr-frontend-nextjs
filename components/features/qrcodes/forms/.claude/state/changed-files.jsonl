@@ -1,0 +1,37 @@
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/lib/qr/validate-qr-data.ts","action":"Write","timestamp":"2026-06-04T10:28:51Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/qrcodes/wizard/QRWizardContainer.tsx","action":"Edit","timestamp":"2026-06-04T10:29:05Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/wizard/WizardNavigation.tsx","action":"Edit","timestamp":"2026-06-04T10:31:13Z","important":false}
+{"file":"C:/Dev/karsaaz qr/Plans.md","action":"Edit","timestamp":"2026-06-04T10:31:50Z","important":true}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/landing/FAQ.tsx","action":"Edit","timestamp":"2026-06-04T10:51:48Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/landing/LogoQR.tsx","action":"Edit","timestamp":"2026-06-04T10:52:05Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/landing/LandingNavbar.tsx","action":"Edit","timestamp":"2026-06-04T10:52:19Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/landing/Hero.tsx","action":"Edit","timestamp":"2026-06-04T10:53:18Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/app/layout.tsx","action":"Edit","timestamp":"2026-06-04T10:54:04Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/landing/Pricing.tsx","action":"Edit","timestamp":"2026-06-04T10:55:15Z","important":false}
+{"file":"C:/Dev/karsaaz qr/qr-code-backend/app/Http/Controllers/Traits/StripePaymentTrait.php","action":"Edit","timestamp":"2026-06-04T11:02:46Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/subscriptions/StripeInvoices.tsx","action":"Edit","timestamp":"2026-06-04T11:03:18Z","important":false}
+{"file":"C:/Dev/karsaaz qr/qr-code-backend/app/Http/Controllers/TwoFactorAuthController.php","action":"Edit","timestamp":"2026-06-04T11:03:54Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/subscriptions/StripeCustomerPortal.tsx","action":"Edit","timestamp":"2026-06-04T11:04:17Z","important":false}
+{"file":"C:/Dev/karsaaz qr/qr-code-backend/app/Support/PaymentProcessors/StripePaymentProcessor.php","action":"Edit","timestamp":"2026-06-04T11:04:41Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/users/SubuserInviteModal.tsx","action":"Edit","timestamp":"2026-06-04T11:06:16Z","important":false}
+{"file":"C:/Dev/karsaaz qr/qr-code-backend/app/Notifications/Dynamic/InviteUser.php","action":"Edit","timestamp":"2026-06-04T11:07:05Z","important":false}
+{"file":"C:/Dev/karsaaz qr/qr-code-backend/app/Exceptions/Handler.php","action":"Edit","timestamp":"2026-06-04T11:13:02Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/lib/utils/error-message-mapper.ts","action":"Edit","timestamp":"2026-06-04T11:13:30Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/lib/api/client.ts","action":"Edit","timestamp":"2026-06-04T11:13:53Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/qr/QRCodeQuotaDisplay.tsx","action":"Edit","timestamp":"2026-06-04T11:14:21Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/ui/button.tsx","action":"Edit","timestamp":"2026-06-04T11:14:45Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/app/(public)/payment/success/page.tsx","action":"Edit","timestamp":"2026-06-04T11:15:19Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/account/SubscriptionCard.tsx","action":"Edit","timestamp":"2026-06-04T11:15:36Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/common/Pagination.tsx","action":"Edit","timestamp":"2026-06-04T11:15:59Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/auth/CreatePasswordModal.tsx","action":"Edit","timestamp":"2026-06-04T11:17:06Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/auth/DeleteAccountDialog.tsx","action":"Edit","timestamp":"2026-06-04T11:17:36Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/app/(auth)/layout.tsx","action":"Edit","timestamp":"2026-06-04T11:19:08Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/app/guest/layout.tsx","action":"Edit","timestamp":"2026-06-04T11:19:35Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/subscriptions/ExpiringSubscriptionModal.tsx","action":"Edit","timestamp":"2026-06-04T11:20:07Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/subscriptions/SubscriptionAlertProvider.tsx","action":"Edit","timestamp":"2026-06-04T11:20:50Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/lib/providers.tsx","action":"Edit","timestamp":"2026-06-04T11:21:23Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/subscriptions/CancelSubscriptionDialog.tsx","action":"Edit","timestamp":"2026-06-04T11:21:46Z","important":false}
+{"file":"C:/Dev/karsaaz qr/qr-code-backend/app/Http/Controllers/Traits/QRCodeCrudTrait.php","action":"Edit","timestamp":"2026-06-04T11:27:21Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/app/(dashboard)/qrcodes/new/page.tsx","action":"Edit","timestamp":"2026-06-04T11:28:04Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/qrcodes/QRCodeTypeSelector.tsx","action":"Edit","timestamp":"2026-06-04T11:28:44Z","important":false}
+{"file":"C:/Dev/karsaaz qr/karsaaz Qr React js/components/features/qrcodes/wizard/QRDesignStudio.tsx","action":"Edit","timestamp":"2026-06-04T11:29:53Z","important":false}

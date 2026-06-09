@@ -1,0 +1,15 @@
+{"file":"C:/Dev/karsaaz qr/qr-code-backend/app/Http/Middleware/TieredRateLimiting.php","action":"Edit","timestamp":"2026-06-04T07:58:27Z","important":false}
+{"file":"lib/api/cloud-storage.ts","action":"Edit","timestamp":"2026-06-04T08:26:38Z","important":false}
+{"file":"types/entities/cloud-storage.ts","action":"Edit","timestamp":"2026-06-04T08:26:50Z","important":false}
+{"file":"components/features/subscriptions/PlanCard.tsx","action":"Edit","timestamp":"2026-06-04T10:19:35Z","important":false}
+{"file":"components/features/subscriptions/SubscriptionDetails.tsx","action":"Edit","timestamp":"2026-06-04T10:20:11Z","important":false}
+{"file":"C:/Dev/karsaaz qr/Plans.md","action":"Edit","timestamp":"2026-06-04T10:20:41Z","important":true}
+{"file":"C:/Users/PC/.claude/projects/C--Dev-karsaaz-qr/memory/web-qr-bug-backlog.md","action":"Write","timestamp":"2026-06-04T10:22:48Z","important":false}
+{"file":"C:/Users/PC/.claude/projects/C--Dev-karsaaz-qr/memory/MEMORY.md","action":"Edit","timestamp":"2026-06-04T10:23:02Z","important":false}
+{"file":"components/landing/Hero.tsx","action":"Edit","timestamp":"2026-06-04T11:33:53Z","important":false}
+{"file":"components/common/UsageProgress.tsx","action":"Edit","timestamp":"2026-06-04T11:37:40Z","important":false}
+{"file":"components/features/qrcodes/QRCodeTypeSelector.tsx","action":"Edit","timestamp":"2026-06-04T11:48:42Z","important":false}
+{"file":"app/(public)/payment/success/page.tsx","action":"Edit","timestamp":"2026-06-04T11:58:51Z","important":false}
+{"file":"lib/api/endpoints/folders.ts","action":"Edit","timestamp":"2026-06-04T12:29:30Z","important":false}
+{"file":"components/qr/DeleteFolderDialog.tsx","action":"Write","timestamp":"2026-06-04T12:30:09Z","important":false}
+{"file":"app/(dashboard)/qrcodes/page.tsx","action":"Edit","timestamp":"2026-06-04T12:30:40Z","important":false}
