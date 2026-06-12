@@ -8,11 +8,28 @@ import { exportEPS } from '@/lib/utils/export-eps'
 import { DesignerConfig } from '@/types/entities/designer'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Download, FileText, Printer, Loader2, Lock } from 'lucide-react'
+import { Download, FileText, Printer, Loader2, Lock, Plus } from 'lucide-react'
 import { useSubscription } from '@/lib/hooks/useSubscription'
 import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
 import SaveAsTemplateButton from '@/components/templates/SaveAsTemplateButton'
 import { useTranslation } from '@/lib/i18n'
+import { useFolders, useCreateFolder } from '@/lib/hooks/queries/useFolders'
+import { FolderModal } from '@/components/qr/FolderModal'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+
+const FOLDER_COLORS = [
+  { name: 'Blue', value: '#1E40AF' },
+  { name: 'Red', value: '#991B1B' },
+  { name: 'Green', value: '#065F46' },
+  { name: 'Purple', value: '#5B21B6' },
+  { name: 'Yellow', value: '#854D0E' },
+]
 
 const ALL_SIZE_OPTIONS = [
   { value: '512', label: '512px' },
@@ -27,7 +44,7 @@ interface Step4DownloadProps {
   design: Partial<DesignerConfig>
   settings: {
     name: string
-    folderId: string | null
+    folderId: string | number | null
     pinProtected: boolean
     pin: string | null
     hasExpiration: boolean
@@ -56,25 +73,29 @@ export default function Step4Download({
   const [isDownloading, setIsDownloading] = useState(false)
 
   // Subscription-based download restrictions
-  const {
-    plan,
-    isOnTrial,
-    showUpgradeModal,
-    upgradeReason,
-    openUpgradeModal,
-    closeUpgradeModal,
-  } = useSubscription()
+  const { plan, isOnTrial, showUpgradeModal, upgradeReason, openUpgradeModal, closeUpgradeModal } =
+    useSubscription()
   const isFreePlan = !plan || isOnTrial || plan.is_trial || parseFloat(plan.price || '0') === 0
 
   const [downloadSize, setDownloadSize] = useState('512')
+  const { data: folders = [] } = useFolders()
+  const createFolderMutation = useCreateFolder()
+  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false)
 
-  const handleSizeSelect = useCallback((value: string) => {
-    if (isFreePlan && value !== '512') {
-      openUpgradeModal(t('Higher resolution downloads require a paid plan. Upgrade to unlock 1024px, 2048px, and 4K.'))
-      return
-    }
-    setDownloadSize(value)
-  }, [isFreePlan, openUpgradeModal])
+  const handleSizeSelect = useCallback(
+    (value: string) => {
+      if (isFreePlan && value !== '512') {
+        openUpgradeModal(
+          t(
+            'Higher resolution downloads require a paid plan. Upgrade to unlock 1024px, 2048px, and 4K.'
+          )
+        )
+        return
+      }
+      setDownloadSize(value)
+    },
+    [isFreePlan, openUpgradeModal]
+  )
 
   const hasPreviewData =
     Object.keys(qrData).length > 0 &&
@@ -86,7 +107,9 @@ export default function Step4Download({
 
       // Enforce format restrictions for free/trial plans
       if (isFreePlan && (format === 'svg' || format === 'pdf' || format === 'eps')) {
-        openUpgradeModal(`${format.toUpperCase()} ${t('download requires a paid plan. Upgrade to unlock all formats.')}`)
+        openUpgradeModal(
+          `${format.toUpperCase()} ${t('download requires a paid plan. Upgrade to unlock all formats.')}`
+        )
         return
       }
 
@@ -183,7 +206,9 @@ export default function Step4Download({
 
       {/* Name input */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Give it a name')}</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t('Give it a name')}
+        </label>
         <Input
           value={settings.name || ''}
           onChange={e => onSettingsChange({ name: e.target.value })}
@@ -191,6 +216,61 @@ export default function Step4Download({
           className="text-sm border-gray-300 rounded-lg"
         />
       </div>
+
+      {/* Folder selector */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">{t('Select Folder')}</label>
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <Select
+              value={settings.folderId ? String(settings.folderId) : 'no-folder'}
+              onValueChange={value => {
+                onSettingsChange({ folderId: value === 'no-folder' ? null : Number(value) })
+              }}
+            >
+              <SelectTrigger className="w-full text-sm border-gray-300 rounded-lg bg-white h-10 px-3 py-2 text-left">
+                <SelectValue placeholder={t('No Folder (All QR Codes)')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="no-folder">{t('No Folder (All QR Codes)')}</SelectItem>
+                {folders.map(folder => (
+                  <SelectItem key={folder.id} value={String(folder.id)}>
+                    {folder.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setIsFolderModalOpen(true)}
+            className="h-10 px-3 border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center"
+            title={t('Create New Folder')}
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+
+      <FolderModal
+        isOpen={isFolderModalOpen}
+        onClose={() => setIsFolderModalOpen(false)}
+        mode="create"
+        colors={FOLDER_COLORS}
+        onSave={async data => {
+          try {
+            const newFolder = await createFolderMutation.mutateAsync({ folder_name: data.name })
+            const folderId = newFolder?.id || (newFolder as any)?.data?.id
+            if (folderId) {
+              onSettingsChange({ folderId: Number(folderId) })
+              toast.success(t('Folder created successfully!'))
+            }
+          } catch {
+            toast.error(t('Failed to create folder.'))
+          }
+        }}
+      />
 
       {/* Size selector (for PNG) */}
       <div className="mb-6">

@@ -28,6 +28,7 @@ function CreateQRCodeInner() {
   const searchParams = useSearchParams()
   const typeParam = searchParams?.get('type') || ''
   const templateIdParam = searchParams?.get('template_id') || ''
+  const folderIdParam = searchParams?.get('folder_id') || ''
   const { isGuest, guestConfig } = useGuest()
 
   // Filter allowed QR types for guests based on admin config
@@ -222,7 +223,10 @@ function CreateQRCodeInner() {
         {mode === 'blank' && (
           <>
             {shouldShowWizard ? (
-              <QRWizardContainer mode="create" initialData={{ type: selectedType, data: {} }} />
+              <QRWizardContainer
+                mode="create"
+                initialData={{ type: selectedType, data: {}, folderId: folderIdParam || null }}
+              />
             ) : (
               <QRCodeTypeSelector
                 value={selectedType}

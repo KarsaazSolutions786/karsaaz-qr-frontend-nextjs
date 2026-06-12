@@ -594,7 +594,9 @@ export default function QRCodesPage() {
               if (!canCreateQR) {
                 setShowQuotaModal(true)
               } else {
-                router.push('/qrcodes/new')
+                router.push(
+                  selectedFolder ? `/qrcodes/new?folder_id=${selectedFolder}` : '/qrcodes/new'
+                )
               }
             }}
             className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
@@ -763,7 +765,13 @@ export default function QRCodesPage() {
 
           {/* Empty States */}
           {!isLoading && !hasQRCodes && !search && (
-            <NoQRCodesEmptyState onCreate={() => router.push('/qrcodes/new')} />
+            <NoQRCodesEmptyState
+              onCreate={() =>
+                router.push(
+                  selectedFolder ? `/qrcodes/new?folder_id=${selectedFolder}` : '/qrcodes/new'
+                )
+              }
+            />
           )}
 
           {!isLoading && !hasQRCodes && search && <NoSearchResultsEmptyState query={search} />}
