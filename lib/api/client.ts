@@ -162,6 +162,32 @@ apiClient.interceptors.response.use(
       const silentUrls = ['/config', '/subscriptions/current', '/domains']
       const isSilentUrl = silentUrls.some(u => originalRequest.url?.includes(u))
 
+      // #region agent log c1a312
+      if (status >= 400) {
+        fetch('http://127.0.0.1:7388/ingest/d44d0a6b-175d-4286-ae9d-6aa965b972d2', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Debug-Session-Id': 'c1a312',
+          },
+          body: JSON.stringify({
+            sessionId: 'c1a312',
+            location: 'client.ts:responseInterceptor',
+            message: 'api_client_error',
+            hypothesisId:
+              status === 401 ? 'H1' : status >= 500 ? 'H2' : status === 429 ? 'H4' : 'H3',
+            data: {
+              status,
+              url: originalRequest.url,
+              method: originalRequest.method,
+              code: data?.code ?? data?.error_code ?? null,
+              apiMessage: typeof data?.message === 'string' ? data.message.slice(0, 120) : null,
+            },
+            timestamp: Date.now(),
+          }),
+        }).catch(() => {})
+      }
+      // #endregion
       if (!isSilentUrl && status !== 401) {
         let userMessage: string
 
