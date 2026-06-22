@@ -30,7 +30,7 @@ export function useVerifyOTP() {
       if (response.token && typeof window !== 'undefined') {
         // Token is stored in httpOnly cookie by backend
         localStorage.setItem('logged_in', 'true')
-        localStorage.removeItem('token') // Clean up legacy token
+        localStorage.setItem('token', response.token)
       }
 
       // Redirect based on user's role home_page

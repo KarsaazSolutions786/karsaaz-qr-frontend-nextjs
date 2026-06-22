@@ -22,7 +22,8 @@ export function useRegister() {
       // T269: Include referral code if present
       const referralCode = getStoredReferralCode()
       // Include guest session token for guest→user data migration
-      const guestToken = typeof window !== 'undefined' ? localStorage.getItem('guest_session_token') : null
+      const guestToken =
+        typeof window !== 'undefined' ? localStorage.getItem('guest_session_token') : null
       return authAPI.register({
         name: data.name,
         email: data.email,
@@ -38,7 +39,7 @@ export function useRegister() {
       // Token is stored in httpOnly cookie by backend.
       if (response.token && typeof window !== 'undefined') {
         localStorage.setItem('logged_in', 'true')
-        localStorage.removeItem('token') // Clean up legacy token
+        localStorage.setItem('token', response.token)
         localStorage.removeItem('guest_session_token') // Clear guest session after signup
         localStorage.removeItem('guest_action_count')
       }

@@ -8,6 +8,7 @@ import {
 } from '@/lib/hooks/mutations/usePasswordlessAuth'
 import { useTranslation } from '@/lib/i18n'
 import { CreatePasswordModal } from './CreatePasswordModal'
+import { ConfirmCurrentPasswordModal } from './ConfirmCurrentPasswordModal'
 
 /**
  * Purpose: LoginPreferenceToggle — allows authenticated users to switch between passwordless (email+OTP) and traditional (email+password) login. Matches original legacy behaviour from qrcg-my-account.js: - Shows toggle only when passwordless feature is enabled globally - Switching to traditional opens CreatePasswordModal (set a password) - Switching to passwordless sends PUT with preference='enabled'
@@ -18,6 +19,7 @@ import { CreatePasswordModal } from './CreatePasswordModal'
 export function LoginPreferenceToggle() {
   const { t } = useTranslation()
   const [showCreatePasswordModal, setShowCreatePasswordModal] = useState(false)
+  const [showConfirmPasswordModal, setShowConfirmPasswordModal] = useState(false)
 
   // 1. Check if passwordless is globally enabled
   const { data: statusData, isLoading: statusLoading } = usePasswordlessStatus()
@@ -34,9 +36,7 @@ export function LoginPreferenceToggle() {
 
   // Don't render if passwordless is not enabled globally
   if (statusLoading || prefLoading) {
-    return (
-      <div className="animate-pulse h-12 bg-gray-100 rounded-md" />
-    )
+    return <div className="animate-pulse h-12 bg-gray-100 rounded-md" />
   }
 
   if (!statusData?.enabled) {
@@ -55,15 +55,8 @@ export function LoginPreferenceToggle() {
       // Switching FROM passwordless TO traditional — need to set a password
       setShowCreatePasswordModal(true)
     } else {
-      // Switching FROM traditional TO passwordless — just enable it
-      setPreferenceMutation.mutate(
-        { preference: 'enabled' },
-        {
-          onSuccess: () => {
-            refetchPreference()
-          },
-        }
-      )
+      // Switching FROM traditional TO passwordless — confirm current password first
+      setShowConfirmPasswordModal(true)
     }
   }
 
@@ -111,9 +104,7 @@ export function LoginPreferenceToggle() {
       <div className="mt-1 flex items-center gap-2">
         <span
           className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-            isPasswordless
-              ? 'bg-blue-100 text-blue-800'
-              : 'bg-gray-100 text-gray-800'
+            isPasswordless ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
           }`}
         >
           {isPasswordless ? t('Passwordless (Email OTP)') : t('Password Login')}
@@ -134,6 +125,15 @@ export function LoginPreferenceToggle() {
         open={showCreatePasswordModal}
         onClose={() => setShowCreatePasswordModal(false)}
         onSuccess={handleCreatePasswordSuccess}
+      />
+
+      <ConfirmCurrentPasswordModal
+        open={showConfirmPasswordModal}
+        onClose={() => setShowConfirmPasswordModal(false)}
+        onSuccess={() => {
+          setShowConfirmPasswordModal(false)
+          refetchPreference()
+        }}
       />
     </>
   )

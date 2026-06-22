@@ -148,11 +148,16 @@ export const usersAPI = {
    */
   setPasswordlessPreference: async (
     userId: number,
-    preference: 'enabled' | 'disabled'
+    preference: 'enabled' | 'disabled',
+    password?: string,
+    password_confirmation?: string
   ): Promise<{ success: boolean; preference: string; message: string }> => {
-    const response = await apiClient.put(`/users/${userId}/passwordless-preference`, {
-      preference,
-    })
+    const body: Record<string, string> = { preference }
+    if (password) {
+      body.password = password
+      body.password_confirmation = password_confirmation ?? password
+    }
+    const response = await apiClient.put(`/users/${userId}/passwordless-preference`, body)
     return response.data
   },
 }

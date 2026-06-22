@@ -11,7 +11,7 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   images: {
-    domains: ['app.karsaazqr.com', 'localhost', '127.0.0.1', 'picsum.photos'],
+    domains: ['app.karsaazqr.com', 'www.karsaazqr.com', 'karsaazqr.com', 'localhost', '127.0.0.1', 'picsum.photos'],
     formats: ['image/avif', 'image/webp'],
   },
   env: {
@@ -28,6 +28,15 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
+  async redirects() {
+    return [
+      {
+        source: '/privacy',
+        destination: '/privacy-policy',
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       {
@@ -38,6 +47,9 @@ const nextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-XSS-Protection', value: '1; mode=block' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          ...(process.env.NODE_ENV === 'production'
+            ? [{ key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' }]
+            : []),
           {
             key: 'Content-Security-Policy',
             value: [

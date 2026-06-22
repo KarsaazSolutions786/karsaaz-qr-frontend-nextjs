@@ -235,15 +235,11 @@ async function _rpcFetch(
     'Content-Type': 'application/json',
   }
 
-  // For admin act-as (impersonation) sessions, attach Bearer token.
-  // Normal auth uses httpOnly cookies (withCredentials: true in fetch → credentials: 'include').
+  // Bearer token from localStorage (primary auth for cross-origin dev); cookie as fallback.
   if (!isPublic && typeof window !== 'undefined') {
-    const mainUser = localStorage.getItem('mainUser')
-    if (mainUser) {
-      const token = localStorage.getItem('token')
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`
-      }
+    const token = localStorage.getItem('token')
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
     }
   }
 

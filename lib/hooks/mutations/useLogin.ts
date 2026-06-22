@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 import { rpcClearCache } from '@/lib/api/rpc'
 
 /**
- * Purpose: * Determine where to send the user after login 
+ * Purpose: * Determine where to send the user after login
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
@@ -72,7 +72,7 @@ export function useLogin() {
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(loginResponse.user))
         localStorage.setItem('logged_in', 'true')
-        localStorage.removeItem('token') // Clean up legacy token
+        localStorage.setItem('token', loginResponse.token)
 
         // Smart Cache Clear: Only clear if switching users to preserve performance
         if (lastUserId && lastUserId !== newUserId) {
@@ -133,7 +133,7 @@ export function useTwoFactorLoginVerify() {
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(response.user))
         localStorage.setItem('logged_in', 'true')
-        localStorage.removeItem('token')
+        localStorage.setItem('token', response.token)
 
         // Smart Cache Clear: Only clear if switching users to preserve performance
         if (lastUserId && lastUserId !== newUserId) {

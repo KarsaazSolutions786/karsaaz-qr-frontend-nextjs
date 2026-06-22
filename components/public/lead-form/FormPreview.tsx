@@ -1,18 +1,18 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { CheckCircle2, Shield } from 'lucide-react';
-import PreviewHeader from '@/components/public/shared/PreviewHeader';
-import PreviewFooter from '@/components/public/shared/PreviewFooter';
-import SocialShare from '@/components/public/shared/SocialShare';
-import QRCodeBadge from '@/components/public/shared/QRCodeBadge';
-import FormDisplay from './FormDisplay';
-import { LeadForm } from '@/types/entities/lead-form';
-import { isSafeUrl } from '@/lib/utils/dom-safety';
-import { useTranslation } from '@/lib/i18n';
+import { useState } from 'react'
+import { CheckCircle2, Shield } from 'lucide-react'
+import PreviewHeader from '@/components/public/shared/PreviewHeader'
+import PreviewFooter from '@/components/public/shared/PreviewFooter'
+import SocialShare from '@/components/public/shared/SocialShare'
+import QRCodeBadge from '@/components/public/shared/QRCodeBadge'
+import FormDisplay from './FormDisplay'
+import { LeadForm } from '@/types/entities/lead-form'
+import { isSafeUrl } from '@/lib/utils/dom-safety'
+import { useTranslation } from '@/lib/i18n'
 
 interface FormPreviewProps {
-  form: LeadForm;
+  form: LeadForm
 }
 
 /**
@@ -21,9 +21,9 @@ interface FormPreviewProps {
  * Created/Updated: February 2026
  */
 export default function FormPreview({ form }: FormPreviewProps) {
-  const { t } = useTranslation();
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const { t } = useTranslation()
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : ''
 
   /**
    * Purpose: Executes handleSubmitSuccess functionality.
@@ -31,18 +31,18 @@ export default function FormPreview({ form }: FormPreviewProps) {
    * Created/Updated: February 2026
    */
   const handleSubmitSuccess = () => {
-    setIsSubmitted(true);
-    
+    setIsSubmitted(true)
+
     // Scroll to top to show success message
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
     // Redirect if configured
     if (form.settings.redirectUrl && isSafeUrl(form.settings.redirectUrl)) {
       setTimeout(() => {
-        window.location.href = form.settings.redirectUrl!;
-      }, 2000);
+        window.location.href = form.settings.redirectUrl!
+      }, 2000)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex flex-col">
@@ -68,19 +68,17 @@ export default function FormPreview({ form }: FormPreviewProps) {
               <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
                 <CheckCircle2 className="w-12 h-12 text-green-600" />
               </div>
-              
+
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 {form.settings.successMessage || 'Thank You!'}
               </h2>
-              
+
               <p className="text-lg text-gray-600 mb-8 max-w-md mx-auto">
                 {t("Your submission has been received. We'll get back to you soon.")}
               </p>
 
               {form.settings.redirectUrl && (
-                <p className="text-sm text-gray-500">
-                  {t('Redirecting you shortly...')}
-                </p>
+                <p className="text-sm text-gray-500">{t('Redirecting you shortly...')}</p>
               )}
             </div>
           ) : (
@@ -90,11 +88,9 @@ export default function FormPreview({ form }: FormPreviewProps) {
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl shadow-xl p-8 md:p-12 text-white">
                 <h1 className="text-4xl font-bold mb-4">{form.name}</h1>
                 {form.description && (
-                  <p className="text-xl text-blue-50 leading-relaxed">
-                    {form.description}
-                  </p>
+                  <p className="text-xl text-blue-50 leading-relaxed">{form.description}</p>
                 )}
-                
+
                 {/* Trust Indicators */}
                 <div className="mt-8 flex items-center gap-2 text-blue-100">
                   <Shield className="w-5 h-5" />
@@ -112,14 +108,14 @@ export default function FormPreview({ form }: FormPreviewProps) {
                 <p>
                   {t('By submitting this form, you agree to our')}{' '}
                   <a
-                    href="/privacy"
+                    href="/privacy-policy"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:text-blue-700 underline"
                   >
                     {t('Privacy Policy')}
-                  </a>
-                  {' '}{t('and')}{' '}
+                  </a>{' '}
+                  {t('and')}{' '}
                   <a
                     href="/terms"
                     target="_blank"
@@ -135,9 +131,12 @@ export default function FormPreview({ form }: FormPreviewProps) {
               {form.responseCount > 0 && (
                 <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 text-center">
                   <p className="text-gray-700">
-                    <span className="font-bold text-blue-600 text-2xl">{form.responseCount.toLocaleString()}</span>
+                    <span className="font-bold text-blue-600 text-2xl">
+                      {form.responseCount.toLocaleString()}
+                    </span>
                     <span className="text-gray-600 ml-2">
-                      {form.responseCount === 1 ? 'person has' : 'people have'} already submitted this form
+                      {form.responseCount === 1 ? 'person has' : 'people have'} already submitted
+                      this form
                     </span>
                   </p>
                 </div>
@@ -147,14 +146,14 @@ export default function FormPreview({ form }: FormPreviewProps) {
         </div>
       </main>
 
-      <PreviewFooter 
+      <PreviewFooter
         showCTA={!isSubmitted}
         customLinks={[
-          { label: 'Privacy Policy', href: '/privacy' },
+          { label: 'Privacy Policy', href: '/privacy-policy' },
           { label: 'Terms of Service', href: '/terms' },
         ]}
       />
       <QRCodeBadge variant="branded" position="bottom-right" />
     </div>
-  );
+  )
 }

@@ -1,34 +1,28 @@
-'use client'
-
-import { useState } from 'react'
-import Hero from '@/components/landing/Hero'
+import HeroSection from '@/components/landing/HeroSection'
 import HowItWorks from '@/components/landing/HowItWorks'
 import InspirationFeed from '@/components/landing/InspirationFeed'
 import LogoQR from '@/components/landing/LogoQR'
+import FAQStatic from '@/components/landing/FAQStatic'
 import FAQ from '@/components/landing/FAQ'
+import PricingStatic from '@/components/landing/PricingStatic'
 import Pricing from '@/components/landing/Pricing'
-import ChatbotButton from '@/components/landing/chatbot/ChatbotButton'
-import Chatbot from '@/components/landing/chatbot/Chatbot'
+import HomePageChatbot from '@/components/landing/HomePageChatbot'
+import { LandingStaticHide } from '@/components/landing/LandingStaticHide'
 
-/**
- * Purpose: Executes HomePage functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: April 2026
- */
 export default function HomePage() {
-  const [activeType, setActiveType] = useState('PDF')
-  const [isChatbotOpen, setIsChatbotOpen] = useState(false)
-
   return (
     <>
-      <Hero activeType={activeType} setActiveType={setActiveType} />
+      <HeroSection />
       <HowItWorks />
       <InspirationFeed />
       <LogoQR />
+      <FAQStatic />
+      <LandingStaticHide targetId="faq-ssr" />
       <FAQ />
+      <PricingStatic />
+      <LandingStaticHide targetId="pricing-ssr" />
       <Pricing />
-      <ChatbotButton onClick={() => setIsChatbotOpen(true)} />
-      <Chatbot isOpen={isChatbotOpen} onClose={() => setIsChatbotOpen(false)} />
+      <HomePageChatbot />
     </>
   )
 }

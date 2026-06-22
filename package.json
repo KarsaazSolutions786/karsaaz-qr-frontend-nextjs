@@ -4,7 +4,7 @@
   "description": "Karsaaz QR Code Frontend - Next.js Migration",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

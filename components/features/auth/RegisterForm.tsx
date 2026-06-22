@@ -188,7 +188,7 @@ export function RegisterForm({
             </a>{' '}
             {t('and')}{' '}
             <a
-              href="/privacy"
+              href="/privacy-policy"
               target="_blank"
               className="font-medium text-blue-600 hover:text-blue-500"
             >
@@ -204,7 +204,8 @@ export function RegisterForm({
       {registerMutation.isError && (
         <div role="alert" className="rounded-md bg-red-50 p-4">
           <p className="text-sm text-red-800">
-            {(registerMutation.error as any)?.response?.data?.message || t('Registration failed. Please try again.')}
+            {(registerMutation.error as any)?.response?.data?.message ||
+              t('Registration failed. Please try again.')}
           </p>
         </div>
       )}
@@ -214,7 +215,9 @@ export function RegisterForm({
         disabled={isSubmitting || registerMutation.isPending}
         className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isSubmitting || registerMutation.isPending ? t('Creating account...') : t('Create account')}
+        {isSubmitting || registerMutation.isPending
+          ? t('Creating account...')
+          : t('Create account')}
       </button>
 
       <p className="text-center text-sm text-gray-600">

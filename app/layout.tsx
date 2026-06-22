@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { Providers } from '@/lib/providers'
 import { generateOGMetadata } from '@/lib/utils/og-metadata'
 import { WebsiteAnnouncementBanner } from '@/components/common/WebsiteBanner'
+import { CookieConsentBanner } from '@/components/common/CookieConsentBanner'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <Providers>
           <WebsiteAnnouncementBanner />
+          <CookieConsentBanner />
           {children}
         </Providers>
       </body>

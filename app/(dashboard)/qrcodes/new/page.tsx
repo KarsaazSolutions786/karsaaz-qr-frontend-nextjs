@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useState, useCallback, useEffect, useMemo } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
 import { QRWizardContainer } from '@/components/features/qrcodes/wizard'
 import { TemplateSelectionAdapter } from '@/components/features/qrcodes/TemplateSelectionAdapter'
@@ -25,6 +25,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 function CreateQRCodeInner() {
   const { t } = useTranslation()
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const typeParam = searchParams?.get('type') || ''
   const templateIdParam = searchParams?.get('template_id') || ''
@@ -71,11 +72,11 @@ function CreateQRCodeInner() {
   // Mirroring the param here returns the user to the type grid so they can
   // freely pick a different QR type after going back.
   useEffect(() => {
+    if (pathname !== '/qrcodes/new') return
     setSelectedType(typeParam)
     setShowWizard(!!typeParam)
     if (typeParam && mode !== 'blank') setMode('blank')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typeParam])
+  }, [typeParam, pathname, mode])
 
   // Subscription quota check (also handles credit-mode generic check)
   const {

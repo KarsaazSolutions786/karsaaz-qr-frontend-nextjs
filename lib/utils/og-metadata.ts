@@ -1,14 +1,15 @@
 import type { Metadata } from 'next'
 import { envConfig } from '@/lib/config/env-config'
 
-const SITE_URL = envConfig.APP_URL
 const SITE_NAME = 'Karsaaz QR'
 
-/**
- * Purpose: Generate Open Graph metadata for any page. Merge the result into your page's metadata export.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+function getCanonicalSiteUrl(): string {
+  return (
+    process.env.NEXT_PUBLIC_CANONICAL_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    envConfig.APP_URL
+  ).replace(/\/$/, '')
+}
 
 export function generateOGMetadata(
   title: string,
@@ -16,15 +17,21 @@ export function generateOGMetadata(
   image?: string,
   path = '/'
 ): Metadata {
-  const ogImage = image || `${SITE_URL}/og-default.png`
+  const siteUrl = getCanonicalSiteUrl()
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const ogImage = image || `${siteUrl}/og-default.png`
 
   return {
     title,
     description,
+    metadataBase: new URL(siteUrl),
+    alternates: {
+      canonical: `${siteUrl}${normalizedPath}`,
+    },
     openGraph: {
       title,
       description,
-      url: `${SITE_URL}${path}`,
+      url: `${siteUrl}${normalizedPath}`,
       siteName: SITE_NAME,
       type: 'website',
       images: [

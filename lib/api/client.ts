@@ -72,25 +72,38 @@ const apiClient: AxiosInstance = axios.create({
   withCredentials: true, // Send cookies with requests
 })
 
-// Request interceptor: Attach JWT token (act-as fallback) and smart timeout.
+// Request interceptor: Attach JWT Bearer token and smart timeout.
 //
-// Normal auth: The httpOnly `auth_token` cookie is sent automatically by the browser
-// because `withCredentials: true` is set. No Bearer header is needed.
-//
-// Act-as (admin impersonation): The impersonation token IS stored in localStorage
-// and sent as a Bearer header to override the admin's cookie on the backend.
+// Primary auth: Bearer token from localStorage (works across localhost/LAN origins).
+// Fallback: httpOnly `auth_token` cookie when same-site (withCredentials: true).
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Only attach Bearer token during admin act-as (impersonation) sessions.
-    // For normal auth, the httpOnly cookie handles authentication automatically.
     if (typeof window !== 'undefined') {
-      const mainUser = localStorage.getItem('mainUser')
-      if (mainUser) {
-        const token = localStorage.getItem('token')
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`
-        }
+      const token = localStorage.getItem('token')
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
       }
+      // #region agent log d9e0a1
+      if (process.env.NODE_ENV === 'development' && config.url && !config.url.includes('/login')) {
+        fetch('http://127.0.0.1:7388/ingest/d44d0a6b-175d-4286-ae9d-6aa965b972d2', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'd9e0a1' },
+          body: JSON.stringify({
+            sessionId: 'd9e0a1',
+            runId: 'post-fix',
+            location: 'client.ts:requestInterceptor',
+            message: 'api_request_auth',
+            hypothesisId: 'H1',
+            data: {
+              url: config.url,
+              hasBearer: !!token,
+              hasLoggedIn: !!localStorage.getItem('logged_in'),
+            },
+            timestamp: Date.now(),
+          }),
+        }).catch(() => {})
+      }
+      // #endregion
     }
 
     // Let browser set Content-Type with boundary for FormData uploads
@@ -162,16 +175,16 @@ apiClient.interceptors.response.use(
       const silentUrls = ['/config', '/subscriptions/current', '/domains']
       const isSilentUrl = silentUrls.some(u => originalRequest.url?.includes(u))
 
-      // #region agent log c1a312
+      // #region agent log d9e0a1
       if (status >= 400) {
         fetch('http://127.0.0.1:7388/ingest/d44d0a6b-175d-4286-ae9d-6aa965b972d2', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-Debug-Session-Id': 'c1a312',
+            'X-Debug-Session-Id': 'd9e0a1',
           },
           body: JSON.stringify({
-            sessionId: 'c1a312',
+            sessionId: 'd9e0a1',
             location: 'client.ts:responseInterceptor',
             message: 'api_client_error',
             hypothesisId:

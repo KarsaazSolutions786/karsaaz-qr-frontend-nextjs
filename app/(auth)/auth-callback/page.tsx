@@ -6,7 +6,11 @@ import { useAuth } from '@/lib/hooks/useAuth'
 import { useTranslation } from '@/lib/i18n'
 import { Suspense } from 'react'
 import { User } from '@/types/entities/user'
-import { authWorkflowEngine, validateOAuthState, type OAuthProviderName } from '@/lib/services/auth-workflow'
+import {
+  authWorkflowEngine,
+  validateOAuthState,
+  type OAuthProviderName,
+} from '@/lib/services/auth-workflow'
 import Link from 'next/link'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
@@ -47,17 +51,22 @@ function AuthCallbackContent() {
         // SECURITY: Block any legacy flow that passes a raw token in the URL.
         // Tokens in URLs are logged by servers/proxies and leak via Referer headers.
         if (tokenParam) {
-          console.error('[Security] Raw token in URL detected — blocked to prevent credential exposure')
+          console.error(
+            '[Security] Raw token in URL detected — blocked to prevent credential exposure'
+          )
           router.replace('/login?error=invalid_callback')
           return
         }
 
         let userData: User
 
+        let authToken: string | null = null
+
         if (code && provider) {
-          // OAuth code exchange flow (token is set as httpOnly cookie by backend)
+          // OAuth code exchange flow — persist Bearer token for cross-origin dev
           const result = await authWorkflowEngine.handleCallback(provider, code)
           userData = result.user as unknown as User
+          authToken = result.token
         } else if (userParam && provider) {
           // Cookie-based redirect flow: backend set httpOnly auth_token cookie and
           // passed a non-sensitive base64 user payload in the URL (no token in URL).
@@ -77,7 +86,9 @@ function AuthCallbackContent() {
         if (typeof window !== 'undefined') {
           localStorage.setItem('user', JSON.stringify(userData))
           localStorage.setItem('logged_in', 'true')
-          localStorage.removeItem('token') // Clean up legacy token
+          if (authToken) {
+            localStorage.setItem('token', authToken)
+          }
         }
         setUser(userData)
 

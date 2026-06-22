@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useMemo, useRef } from 'react'
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { StepperWizard, Step } from '@/components/wizard/StepperWizard'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
@@ -104,6 +104,19 @@ export default function QRWizardContainer({
   const isSavingRef = useRef(false) // sync guard for handleNext (state lags one render)
   const [isSaved, setIsSaved] = useState(mode === 'edit')
   const [isSaving, setIsSaving] = useState(false)
+
+  useEffect(() => {
+    const onSubmit = (event: Event) => {
+      const target = event.target
+      if (!(target instanceof Element)) return
+      if (target.closest('[data-qr-wizard]')) {
+        event.preventDefault()
+        event.stopImmediatePropagation()
+      }
+    }
+    document.addEventListener('submit', onSubmit, true)
+    return () => document.removeEventListener('submit', onSubmit, true)
+  }, [])
 
   // Wizard navigation state (inline — replaces old useWizardState hook)
   const hasPreselectedType = !!initialData?.type
@@ -294,12 +307,6 @@ export default function QRWizardContainer({
           const newId = result.id
           savedQRIdRef.current = newId // update ref synchronously
           setSavedQRId(newId)
-
-          // Update browser URL without triggering a navigation/re-render (skip for guests)
-          if (mode === 'create' && typeof window !== 'undefined' && !isGuest) {
-            window.history.replaceState(null, '', `/qrcodes/${newId}/edit`)
-          }
-
           // Full redirect only when explicitly requested (e.g. from handleSubmit)
           if (shouldRedirect && mode === 'create' && !isGuest) {
             router.replace(`/qrcodes/${newId}/edit`)
@@ -518,7 +525,7 @@ export default function QRWizardContainer({
   }
 
   return (
-    <div>
+    <div data-qr-wizard>
       <StepperWizard
         steps={WIZARD_STEPS}
         currentStep={wizard.currentStep}

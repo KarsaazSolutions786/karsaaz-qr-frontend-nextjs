@@ -177,7 +177,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (typeof window !== 'undefined') {
         localStorage.setItem('user', JSON.stringify(data.user))
         localStorage.setItem('logged_in', 'true')
-        localStorage.removeItem('token')
+        localStorage.setItem('token', data.token)
 
         // Smart Cache Clear: Only clear if switching users to preserve performance
         if (lastUserId && lastUserId !== newUserId) {

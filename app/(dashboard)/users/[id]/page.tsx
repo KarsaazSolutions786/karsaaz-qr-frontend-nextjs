@@ -12,6 +12,7 @@ import { useUpdateUser, useVerifyUserEmail } from '@/lib/hooks/mutations/useUser
 import { usersAPI } from '@/lib/api/endpoints/users'
 import { queryKeys } from '@/lib/query/keys'
 import { SubuserInviteModal } from '@/components/features/users/SubuserInviteModal'
+import { AdminSetUserPasswordModal } from '@/components/features/users/AdminSetUserPasswordModal'
 import { SubuserPermissionsForm } from '@/components/features/users/SubuserPermissionsForm'
 import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth'
 import { useTranslation } from '@/lib/i18n'
@@ -49,10 +50,18 @@ export default function EditUserPage() {
   const [passwordlessSaving, setPasswordlessSaving] = useState(false)
   const [passwordlessError, setPasswordlessError] = useState<string | null>(null)
   const [passwordlessSaved, setPasswordlessSaved] = useState(false)
+  const [showAdminSetPasswordModal, setShowAdminSetPasswordModal] = useState(false)
 
   const setPasswordlessPrefMutation = useMutation({
-    mutationFn: ({ pref }: { pref: 'enabled' | 'disabled' }) =>
-      usersAPI.setPasswordlessPreference(Number(userId), pref),
+    mutationFn: ({
+      pref,
+      password,
+      password_confirmation,
+    }: {
+      pref: 'enabled' | 'disabled'
+      password?: string
+      password_confirmation?: string
+    }) => usersAPI.setPasswordlessPreference(Number(userId), pref, password, password_confirmation),
   })
 
   // Sub-users (only for non-sub users that have sub accounts)
@@ -103,8 +112,9 @@ export default function EditUserPage() {
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
-  const set = (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setForm((prev) => ({ ...prev, [key]: e.target.value }))
+  const set =
+    (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+      setForm(prev => ({ ...prev, [key]: e.target.value }))
 
   /**
    * Purpose: Executes handleSubmit functionality.
@@ -138,7 +148,9 @@ export default function EditUserPage() {
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
-        Object.values(err?.response?.data?.errors || {}).flat().join(' ') ||
+        Object.values(err?.response?.data?.errors || {})
+          .flat()
+          .join(' ') ||
         'Failed to save changes.'
       setError(msg as string)
     }
@@ -150,7 +162,7 @@ export default function EditUserPage() {
    * Created/Updated: February 2026
    */
   const handleVerifyEmail = async () => {
-    if (confirm('Mark this user\'s email as verified?')) {
+    if (confirm("Mark this user's email as verified?")) {
       await verifyEmailMutation.mutateAsync(Number(userId))
     }
   }
@@ -162,14 +174,12 @@ export default function EditUserPage() {
    */
   const handlePasswordlessToggle = async () => {
     const newPref = passwordlessPref === 'enabled' ? 'disabled' : 'enabled'
-    if (
-      newPref === 'disabled' &&
-      !confirm(
-        'Disable passwordless login for this user? They will need to use "Forgot Password" to set a password before they can log in traditionally.'
-      )
-    ) {
+
+    if (newPref === 'disabled') {
+      setShowAdminSetPasswordModal(true)
       return
     }
+
     setPasswordlessError(null)
     setPasswordlessSaving(true)
     try {
@@ -186,6 +196,13 @@ export default function EditUserPage() {
     } finally {
       setPasswordlessSaving(false)
     }
+  }
+
+  const handleAdminSetPasswordSuccess = () => {
+    setShowAdminSetPasswordModal(false)
+    setPasswordlessPref('disabled')
+    setPasswordlessSaved(true)
+    setTimeout(() => setPasswordlessSaved(false), 3000)
   }
 
   if (userLoading) {
@@ -269,7 +286,9 @@ export default function EditUserPage() {
 
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Full Name')}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              {t('Full Name')}
+            </label>
             <input
               type="text"
               value={form.name}
@@ -295,7 +314,9 @@ export default function EditUserPage() {
 
           {/* Mobile */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Mobile Number')}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              {t('Mobile Number')}
+            </label>
             <input
               type="tel"
               value={form.mobile_number}
@@ -307,7 +328,9 @@ export default function EditUserPage() {
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('New Password')}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              {t('New Password')}
+            </label>
             <input
               type="password"
               value={form.password}
@@ -320,7 +343,9 @@ export default function EditUserPage() {
           {/* Password Confirmation */}
           {form.password && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Confirm New Password')}</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                {t('Confirm New Password')}
+              </label>
               <input
                 type="password"
                 value={form.password_confirmation}
@@ -334,7 +359,9 @@ export default function EditUserPage() {
           {user.is_sub ? (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Role')}</label>
-              <p className="text-sm text-gray-500 italic">{t('Sub User — role is managed by the parent account.')}</p>
+              <p className="text-sm text-gray-500 italic">
+                {t('Sub User — role is managed by the parent account.')}
+              </p>
             </div>
           ) : (
             <div>
@@ -345,7 +372,7 @@ export default function EditUserPage() {
                 className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">— Select a role —</option>
-                {rolesData?.data?.map((role) => (
+                {rolesData?.data?.map(role => (
                   <option key={role.id} value={role.id}>
                     {role.name}
                   </option>
@@ -440,69 +467,86 @@ export default function EditUserPage() {
         </div>
       )}
 
+      {isPasswordlessGloballyEnabled && (
+        <AdminSetUserPasswordModal
+          open={showAdminSetPasswordModal}
+          userId={Number(userId)}
+          onClose={() => setShowAdminSetPasswordModal(false)}
+          onSuccess={handleAdminSetPasswordSuccess}
+        />
+      )}
+
       {/* Sub-users section (only for non-sub users) */}
       {!user.is_sub && (
         <>
-        <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <div>
-              <h2 className="text-base font-semibold text-gray-900">{t('Sub Users')}</h2>
-              <p className="mt-0.5 text-sm text-gray-500">{t('Users associated with this account.')}</p>
+          <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+            <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+              <div>
+                <h2 className="text-base font-semibold text-gray-900">{t('Sub Users')}</h2>
+                <p className="mt-0.5 text-sm text-gray-500">
+                  {t('Users associated with this account.')}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowInviteModal(true)}
+                className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-500"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                {t('Invite Sub-User')}
+              </button>
             </div>
-            <button
-              onClick={() => setShowInviteModal(true)}
-              className="inline-flex items-center gap-1.5 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-500"
-            >
-              <UserPlus className="w-3.5 h-3.5" />
-              {t('Invite Sub-User')}
-            </button>
+            <div className="px-6 py-4">
+              {!subUsers || (Array.isArray(subUsers) && subUsers.length === 0) ? (
+                <p className="text-sm text-gray-500 italic">{t('No sub users found.')}</p>
+              ) : (
+                <ul className="divide-y divide-gray-100">
+                  {(Array.isArray(subUsers) ? subUsers : (subUsers as any)?.data || []).map(
+                    (sub: any) => (
+                      <li key={sub.id} className="flex items-center justify-between py-3">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {sub.name || sub.email}
+                          </p>
+                          <p className="text-xs text-gray-500">{sub.email}</p>
+                        </div>
+                        <Link
+                          href={`/users/${sub.id}`}
+                          className="text-xs text-blue-600 hover:text-blue-800"
+                        >
+                          {t('Edit')}
+                        </Link>
+                      </li>
+                    )
+                  )}
+                </ul>
+              )}
+            </div>
           </div>
-          <div className="px-6 py-4">
-            {!subUsers || (Array.isArray(subUsers) && subUsers.length === 0) ? (
-              <p className="text-sm text-gray-500 italic">{t('No sub users found.')}</p>
-            ) : (
-              <ul className="divide-y divide-gray-100">
-                {(Array.isArray(subUsers) ? subUsers : (subUsers as any)?.data || []).map((sub: any) => (
-                  <li key={sub.id} className="flex items-center justify-between py-3">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{sub.name || sub.email}</p>
-                      <p className="text-xs text-gray-500">{sub.email}</p>
-                    </div>
-                    <Link
-                      href={`/users/${sub.id}`}
-                      className="text-xs text-blue-600 hover:text-blue-800"
-                    >
-                      {t('Edit')}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
 
-        {/* Permissions */}
-        <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-base font-semibold text-gray-900">{t('Sub-User Permissions')}</h2>
-            <p className="mt-0.5 text-sm text-gray-500">{t('Configure default permissions for sub-users.')}</p>
+          {/* Permissions */}
+          <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-base font-semibold text-gray-900">{t('Sub-User Permissions')}</h2>
+              <p className="mt-0.5 text-sm text-gray-500">
+                {t('Configure default permissions for sub-users.')}
+              </p>
+            </div>
+            <div className="px-6 py-4">
+              <SubuserPermissionsForm
+                userId={userId}
+                permissions={subuserPermissions}
+                onChange={setSubuserPermissions}
+              />
+            </div>
           </div>
-          <div className="px-6 py-4">
-            <SubuserPermissionsForm
-              userId={userId}
-              permissions={subuserPermissions}
-              onChange={setSubuserPermissions}
-            />
-          </div>
-        </div>
 
-        {/* Invite Modal */}
-        <SubuserInviteModal
-          parentUserId={userId}
-          isOpen={showInviteModal}
-          onClose={() => setShowInviteModal(false)}
-        />
-      </>
+          {/* Invite Modal */}
+          <SubuserInviteModal
+            parentUserId={userId}
+            isOpen={showInviteModal}
+            onClose={() => setShowInviteModal(false)}
+          />
+        </>
       )}
     </div>
   )
@@ -518,9 +562,12 @@ function StorageSection({ userId }: { userId: string }) {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['admin', 'user-storage', userId],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/admin/users/${userId}/storage`, {
-        credentials: 'include',
-      })
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/admin/users/${userId}/storage`,
+        {
+          credentials: 'include',
+        }
+      )
       if (!res.ok) return null
       return (await res.json()).data
     },
@@ -537,10 +584,13 @@ function StorageSection({ userId }: { userId: string }) {
   const handleRecalculate = async () => {
     setIsRecalculating(true)
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/admin/users/${userId}/storage/recalculate`, {
-        method: 'POST',
-        credentials: 'include',
-      })
+      await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/admin/users/${userId}/storage/recalculate`,
+        {
+          method: 'POST',
+          credentials: 'include',
+        }
+      )
       refetch()
     } finally {
       setIsRecalculating(false)
@@ -550,7 +600,8 @@ function StorageSection({ userId }: { userId: string }) {
   if (isLoading) return null
   if (!data) return null
 
-  const barColor = data.percentage >= 95 ? 'bg-red-500' : data.percentage >= 80 ? 'bg-yellow-500' : 'bg-blue-500'
+  const barColor =
+    data.percentage >= 95 ? 'bg-red-500' : data.percentage >= 80 ? 'bg-yellow-500' : 'bg-blue-500'
 
   return (
     <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
@@ -559,7 +610,9 @@ function StorageSection({ userId }: { userId: string }) {
       </div>
       <div className="px-6 py-4 space-y-3">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">{data.used_formatted} / {data.quota_formatted}</span>
+          <span className="text-gray-600">
+            {data.used_formatted} / {data.quota_formatted}
+          </span>
           <span className="text-gray-500">{Math.round(data.percentage)}%</span>
         </div>
         <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -569,7 +622,9 @@ function StorageSection({ userId }: { userId: string }) {
           />
         </div>
         <div className="flex items-center justify-between text-xs text-gray-500">
-          <span>{data.files_count ?? 0} {t('files')}</span>
+          <span>
+            {data.files_count ?? 0} {t('files')}
+          </span>
           <button
             onClick={handleRecalculate}
             disabled={isRecalculating}

@@ -99,7 +99,7 @@ export function GoogleLoginButton() {
           localStorage.setItem('user', JSON.stringify(loginResult.user))
           // Token is stored in httpOnly cookie by backend
           localStorage.setItem('logged_in', 'true')
-          localStorage.removeItem('token') // Clean up legacy token
+          localStorage.setItem('token', loginResult.token)
         }
         queryClient.setQueryData(queryKeys.auth.currentUser(), loginResult.user)
 

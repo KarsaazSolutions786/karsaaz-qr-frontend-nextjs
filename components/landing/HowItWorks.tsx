@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import Image from "next/image";
+'use client'
+
+import React, { useState } from 'react'
+import Image from 'next/image'
 
 interface StepProps {
-  number: number;
-  title: string;
-  description: string;
-  isActive: boolean;
-  onHover: (index: number) => void;
+  number: number
+  title: string
+  description: string
+  isActive: boolean
+  onHover: (index: number) => void
 }
 
 /**
@@ -23,7 +25,7 @@ const Step = ({ number, title, description, isActive, onHover }: StepProps) => {
       <div className="flex flex-col items-center mr-6">
         <div
           className={`flex-shrink-0 w-6 h-6 rounded-full transition-all duration-300 ${
-            isActive ? "bg-purple-600 scale-110" : "bg-slate-400"
+            isActive ? 'bg-purple-600 scale-110' : 'bg-slate-400'
           }`}
         ></div>
       </div>
@@ -31,16 +33,16 @@ const Step = ({ number, title, description, isActive, onHover }: StepProps) => {
         <h3
           className={`text-2xl font-bold transition-all duration-300 ${
             isActive
-              ? "text-transparent bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text"
-              : "text-gray-700"
+              ? 'text-transparent bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text'
+              : 'text-gray-700'
           }`}
           style={
             isActive
               ? {
                   background:
-                    "linear-gradient(90.77deg, #B048B0 9.76%, #A550B9 31.16%, #8073E0 98.02%)",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
+                    'linear-gradient(90.77deg, #B048B0 9.76%, #A550B9 31.16%, #8073E0 98.02%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
                 }
               : {}
           }
@@ -49,15 +51,15 @@ const Step = ({ number, title, description, isActive, onHover }: StepProps) => {
         </h3>
         <p
           className={`mt-2 text-lg transition-all duration-300 ${
-            isActive ? "text-gray-800" : "text-gray-600"
+            isActive ? 'text-gray-800' : 'text-gray-600'
           }`}
         >
           {description}
         </p>
       </div>
     </div>
-  );
-};
+  )
+}
 
 /**
  * Purpose: Executes HowItWorks functionality.
@@ -65,36 +67,33 @@ const Step = ({ number, title, description, isActive, onHover }: StepProps) => {
  * Created/Updated: April 2026
  */
 export default function HowItWorks() {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(0)
 
   const steps = [
     {
-      title: "Register via Site",
-      description: "Register to Karsaaz QR with google or Email.",
-      image: "/img/laptop/MacBook Air (15 inch) (3).png",
+      title: 'Register via Site',
+      description: 'Register to Karsaaz QR with google or Email.',
+      image: '/img/laptop/MacBook Air (15 inch) (3).png',
     },
     {
-      title: "Choose the type",
-      description: "Choose the type of QR code you want to create.",
-      image: "/img/laptop/MacBook Air (15 inch) (2).png",
+      title: 'Choose the type',
+      description: 'Choose the type of QR code you want to create.',
+      image: '/img/laptop/MacBook Air (15 inch) (2).png',
     },
     {
-      title: "Create QR Code",
-      description: "Create your QR code with the details.",
-      image: "/img/laptop/MacBook Air (15 inch) (1).png",
+      title: 'Create QR Code',
+      description: 'Create your QR code with the details.',
+      image: '/img/laptop/MacBook Air (15 inch) (1).png',
     },
     {
-      title: "Customise and Download",
-      description: "Customise your QR code and Download it.",
-      image: "/img/laptop/MacBook Air (15 inch) (1).png",
+      title: 'Customise and Download',
+      description: 'Customise your QR code and Download it.',
+      image: '/img/laptop/MacBook Air (15 inch) (1).png',
     },
-  ];
+  ]
 
   return (
-    <section
-      id="how-to"
-      className="py-20 bg-gradient-to-br from-gray-50 to-white"
-    >
+    <section id="how-to" className="py-20 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-16 items-center">
           {/* Left Column: Steps */}
@@ -102,14 +101,14 @@ export default function HowItWorks() {
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight leading-tight">
               Quick Steps To Generate QR
               <br />
-              <span className="text-gray-600">using</span>{" "}
+              <span className="text-gray-600">using</span>{' '}
               <span
                 className="text-transparent bg-clip-text"
                 style={{
                   background:
-                    "linear-gradient(90.77deg, #B048B0 9.76%, #A550B9 31.16%, #8073E0 98.02%)",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
+                    'linear-gradient(90.77deg, #B048B0 9.76%, #A550B9 31.16%, #8073E0 98.02%)',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
                 }}
               >
                 Karsaaz QR
@@ -142,8 +141,8 @@ export default function HowItWorks() {
                   key={index}
                   className={`absolute inset-0 transition-all duration-700 ease-in-out transform ${
                     activeStep === index
-                      ? "opacity-100 scale-100 translate-y-0"
-                      : "opacity-0 scale-95 translate-y-4"
+                      ? 'opacity-100 scale-100 translate-y-0'
+                      : 'opacity-0 scale-95 translate-y-4'
                   }`}
                 >
                   <Image
@@ -160,6 +159,5 @@ export default function HowItWorks() {
         </div>
       </div>
     </section>
-  );
+  )
 }
-

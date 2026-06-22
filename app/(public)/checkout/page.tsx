@@ -209,7 +209,9 @@ function CheckoutContent() {
             <dl className="space-y-3">
               <div className="flex justify-between py-2 border-b border-gray-100">
                 <dt className="text-gray-600">{t('Plan')}</dt>
-                <dd className="font-medium text-gray-900">{selectedPlan.name} {t('Plan')}</dd>
+                <dd className="font-medium text-gray-900">
+                  {selectedPlan.name} {t('Plan')}
+                </dd>
               </div>
 
               {selectedPlan.limits.maxQRCodes !== null && (
@@ -244,7 +246,8 @@ function CheckoutContent() {
               <div className="flex justify-between pt-4 border-t-2 border-gray-200">
                 <dt className="text-lg font-bold text-gray-900">{t('Total')}</dt>
                 <dd className="text-lg font-bold text-gray-900">
-                  {currencySymbol}{price}
+                  {currencySymbol}
+                  {price}
                   <span className="text-sm font-normal text-gray-500">
                     /{selectedPlan.frequency === 'yearly' ? 'year' : 'month'}
                   </span>
@@ -261,7 +264,9 @@ function CheckoutContent() {
                 <div className="text-sm">
                   <p className="font-medium text-blue-800">{t('Development Mode')}</p>
                   <p className="text-blue-600 mt-1">
-                    {t('Using fallback payment processors. Configure your backend payment processors for production.')}
+                    {t(
+                      'Using fallback payment processors. Configure your backend payment processors for production.'
+                    )}
                   </p>
                 </div>
               </div>
@@ -271,9 +276,11 @@ function CheckoutContent() {
           {/* Payment Method Selection */}
           {processors.length > 0 && (
             <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('Select Payment Method')}</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                {t('Select Payment Method')}
+              </h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {processors.map((proc) => (
+                {processors.map(proc => (
                   <button
                     key={proc.slug}
                     type="button"
@@ -378,7 +385,8 @@ function CheckoutContent() {
               ) : (
                 <span className="flex items-center justify-center gap-2">
                   <Shield className="w-5 h-5" />
-                  {t('Pay')} {currencySymbol}{price}
+                  {t('Pay')} {currencySymbol}
+                  {price}
                 </span>
               )}
             </button>
@@ -392,7 +400,9 @@ function CheckoutContent() {
                 <div className="text-sm">
                   <p className="font-medium text-red-800">{t('Payment Failed')}</p>
                   <p className="text-red-600 mt-1">
-                    {t('Unable to process payment. Please try again or choose a different payment method.')}
+                    {t(
+                      'Unable to process payment. Please try again or choose a different payment method.'
+                    )}
                   </p>
                 </div>
               </div>
@@ -402,7 +412,9 @@ function CheckoutContent() {
           {/* Security Notice */}
           <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
             <Shield className="w-4 h-4" />
-            <span>{t('Secure payment powered by')} {selectedProcessor || t('trusted providers')}</span>
+            <span>
+              {t('Secure payment powered by')} {selectedProcessor || t('trusted providers')}
+            </span>
           </div>
 
           {/* Terms */}
@@ -412,7 +424,7 @@ function CheckoutContent() {
               {t('Terms of Service')}
             </Link>{' '}
             {t('and')}{' '}
-            <Link href="/privacy" className="text-primary-600 hover:underline">
+            <Link href="/privacy-policy" className="text-primary-600 hover:underline">
               {t('Privacy Policy')}
             </Link>
             {t('. You can cancel at any time.')}

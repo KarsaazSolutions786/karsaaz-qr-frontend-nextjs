@@ -1,39 +1,51 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { AUTH_COOKIE_NAME, isProtectedRoute, isPublicRoute } from '@/lib/config/protected-routes'
 
-/**
- * Purpose: Executes middleware functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-export function middleware(_request: NextRequest) {
-  // Note: Token is stored in localStorage (client-side), not in cookies
-  // Middleware can't access localStorage, so we skip auth checks here
-  // Client-side route protection is handled by:
-  // - (dashboard)/layout.tsx - protects dashboard routes
-  // - (auth)/layout.tsx - redirects if already logged in
-  
-  const response = NextResponse.next()
-
-  // Dynamic security headers
+function applySecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
   response.headers.set('X-XSS-Protection', '1; mode=block')
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
-
+  if (process.env.NODE_ENV === 'production') {
+    response.headers.set(
+      'Strict-Transport-Security',
+      'max-age=31536000; includeSubDomains; preload'
+    )
+  }
   return response
+}
+
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  if (/\.[a-zA-Z0-9]+$/.test(pathname)) {
+    return applySecurityHeaders(NextResponse.next())
+  }
+
+  const hasAuthCookie = Boolean(request.cookies.get(AUTH_COOKIE_NAME)?.value)
+  const isPublic = isPublicRoute(pathname)
+
+  if (!isPublic && isProtectedRoute(pathname) && !hasAuthCookie) {
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = '/login'
+    loginUrl.searchParams.set('from', pathname)
+    return applySecurityHeaders(NextResponse.redirect(loginUrl))
+  }
+
+  if (hasAuthCookie && (pathname === '/login' || pathname === '/register')) {
+    const home = request.nextUrl.clone()
+    home.pathname = '/qrcodes/new'
+    home.search = ''
+    return applySecurityHeaders(NextResponse.redirect(home))
+  }
+
+  return applySecurityHeaders(NextResponse.next())
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico|woff2?)$).*)',
   ],
 }

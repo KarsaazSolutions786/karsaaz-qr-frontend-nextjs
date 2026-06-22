@@ -14,7 +14,7 @@ import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 
 /**
- * Purpose: * Determine where to send the user after login 
+ * Purpose: * Determine where to send the user after login
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
@@ -96,7 +96,7 @@ export function usePasswordlessVerify() {
         localStorage.setItem('user', JSON.stringify(response.user))
         // Token is stored in httpOnly cookie by backend
         localStorage.setItem('logged_in', 'true')
-        localStorage.removeItem('token') // Clean up legacy token
+        localStorage.setItem('token', response.token)
       }
       queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
 
