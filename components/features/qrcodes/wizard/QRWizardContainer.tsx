@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
+import { useState, useCallback, useMemo, useRef, useEffect, Suspense } from 'react'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { StepperWizard, Step } from '@/components/wizard/StepperWizard'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
@@ -9,8 +10,19 @@ import { useGuest } from '@/lib/hooks/useGuest'
 import { DEFAULT_DESIGNER_CONFIG, DesignerConfig } from '@/types/entities/designer'
 import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
 import Step1DataEntry from './Step1DataEntry'
-import QRDesignStudio from './QRDesignStudio'
 import Step4Download from './Step4Download'
+import { WizardDesignSkeleton } from './WizardStepSkeleton'
+import type {
+  QRCodeEditPayload,
+  QRCodeSaveResult,
+  QRWizardFormDataState,
+  QRWizardSettings,
+} from '@/types/qr-wizard'
+import type { WebpageDesignData } from './PageDesignPanel'
+
+const QRDesignStudio = dynamic(() => import('./QRDesignStudio'), {
+  loading: () => <WizardDesignSkeleton />,
+})
 import { toast } from 'sonner'
 import { CheckCircle2, AlertCircle } from 'lucide-react'
 import { transformDesignToBackend, transformDesignFromBackend } from '@/lib/qr/design-transformer'
@@ -20,8 +32,8 @@ import { useTranslation } from '@/lib/i18n'
 interface QRWizardContainerProps {
   mode?: 'create' | 'edit'
   qrcodeId?: string
-  initialData?: any
-  onSuccess?: (qrcode: any) => void
+  initialData?: QRCodeEditPayload
+  onSuccess?: (qrcode: QRCodeSaveResult) => void
   onCancel?: () => void
 }
 
@@ -61,7 +73,7 @@ export default function QRWizardContainer({
   const [qrType, setQrType] = useState<string>(initialData?.type || '')
 
   // Form data state
-  const [formData, setFormData] = useState<Record<string, any>>(initialData?.data || {})
+  const [formData, setFormData] = useState<QRWizardFormDataState>(initialData?.data ?? {})
 
   // Design state — use real DesignerConfig
   // Transform from backend format when loading existing QR code
@@ -78,19 +90,19 @@ export default function QRWizardContainer({
   })
 
   // Settings state (name, folder, pin, expiration, tags)
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<QRWizardSettings>({
     name: initialData?.name || '',
-    folderId: (initialData?.folderId as string | null) ?? null,
+    folderId: initialData?.folderId ?? null,
     pinProtected: !!initialData?.password,
-    pin: (initialData?.password as string | null) ?? null,
+    pin: initialData?.password ?? null,
     hasExpiration: !!initialData?.expiresAt,
-    expiresAt: (initialData?.expiresAt as string | null) ?? null,
-    tags: (initialData?.tags as string[]) ?? [],
+    expiresAt: initialData?.expiresAt ?? null,
+    tags: initialData?.tags ?? [],
   })
 
   // Webpage design state (for dynamic types with landing pages)
-  const [webpageDesign, setWebpageDesign] = useState(
-    initialData?.webpageDesign || {
+  const [webpageDesign, setWebpageDesign] = useState<WebpageDesignData>(
+    initialData?.webpageDesign ?? {
       backgroundColor: '#FFFFFF',
       fontFamily: 'Raleway',
       headerImageUrl: '',
@@ -100,8 +112,8 @@ export default function QRWizardContainer({
   // Saved state tracking
   const [savedQRId, setSavedQRId] = useState<string | null>(qrcodeId || null)
   const savedQRIdRef = useRef<string | null>(qrcodeId || null) // sync ref to avoid stale closures
-  const isCreatingRef = useRef(false) // guard against concurrent create calls
-  const isSavingRef = useRef(false) // sync guard for handleNext (state lags one render)
+  // Single save guard covering both handleNext and handleSubmit (prevents duplicate API calls)
+  const saveStateRef = useRef<'idle' | 'saving'>('idle')
   const [isSaved, setIsSaved] = useState(mode === 'edit')
   const [isSaving, setIsSaving] = useState(false)
 
@@ -159,8 +171,8 @@ export default function QRWizardContainer({
       // (BUG-32). Saving with AI on but an empty/whitespace prompt produces
       // undefined backend behavior, so block it with a friendly message.
       if (currentStepId === 'design') {
-        const aiEnabled = (design as any)?.isAi
-        const aiPrompt = ((design as any)?.aiPrompt || '').trim()
+        const aiEnabled = design.isAi
+        const aiPrompt = (design.aiPrompt || '').trim()
         if (aiEnabled && !aiPrompt) {
           toast.error(t('Validation Error'), {
             description: t(
@@ -173,7 +185,7 @@ export default function QRWizardContainer({
       }
       return true
     },
-    [WIZARD_STEPS, qrType, formData, design]
+    [WIZARD_STEPS, qrType, formData, design, t]
   )
 
   /** Navigate to a specific step (validates if moving forward) */
@@ -260,61 +272,37 @@ export default function QRWizardContainer({
 
       if (currentId) {
         // Already exists — update (guests can't update, only authenticated users)
-        if (isGuest) return { id: currentId }
+        if (isGuest) return { id: currentId } as QRCodeSaveResult
         const result = await qrcodesAPI.update(currentId, payload)
-        return result
+        return result as QRCodeSaveResult
       } else {
-        // Guard: prevent concurrent create calls (double-click, fast step transitions)
-        if (isCreatingRef.current) {
-          // A create is already in flight — wait for it by returning a pending promise
-          // that resolves once the ref is set
-          return new Promise<any>(resolve => {
-            const check = setInterval(() => {
-              if (savedQRIdRef.current) {
-                clearInterval(check)
-                resolve({ id: savedQRIdRef.current })
-              }
-            }, 100)
-            // Safety timeout after 10s
-            setTimeout(() => {
-              clearInterval(check)
-              resolve({ id: savedQRIdRef.current })
-            }, 10000)
+        let result: QRCodeSaveResult
+
+        if (isGuest) {
+          // Guest mode — use guest API endpoint
+          result = await guestAPI.createQrcode({
+            name: payload.name,
+            type: payload.type,
+            data: payload.data,
+            design: payload.design,
+            is_static: true,
           })
+          // Track guest action for signup prompt
+          incrementActionCount()
+          // Refresh session limits
+          refreshSession()
+        } else {
+          // Authenticated mode — use regular API endpoint
+          result = await qrcodesAPI.create(payload)
         }
-
-        isCreatingRef.current = true
-        try {
-          let result: any
-
-          if (isGuest) {
-            // Guest mode — use guest API endpoint
-            result = await guestAPI.createQrcode({
-              name: payload.name,
-              type: payload.type,
-              data: payload.data,
-              design: payload.design,
-              is_static: true,
-            })
-            // Track guest action for signup prompt
-            incrementActionCount()
-            // Refresh session limits
-            refreshSession()
-          } else {
-            // Authenticated mode — use regular API endpoint
-            result = await qrcodesAPI.create(payload)
-          }
-          const newId = result.id
-          savedQRIdRef.current = newId // update ref synchronously
-          setSavedQRId(newId)
-          // Full redirect only when explicitly requested (e.g. from handleSubmit)
-          if (shouldRedirect && mode === 'create' && !isGuest) {
-            router.replace(`/qrcodes/${newId}/edit`)
-          }
-          return result
-        } finally {
-          isCreatingRef.current = false
+        const newId = result.id
+        savedQRIdRef.current = newId // update ref synchronously
+        setSavedQRId(newId)
+        // Full redirect only when explicitly requested (e.g. from handleSubmit)
+        if (shouldRedirect && mode === 'create' && !isGuest) {
+          router.replace(`/qrcodes/${newId}/edit`)
         }
+        return result
       }
     },
     [
@@ -337,13 +325,9 @@ export default function QRWizardContainer({
 
   /** Custom "Next" handler — auto-saves on every step change (except Type step) */
   const handleNext = useCallback(async () => {
-    // Sync guard: isSaving state lags one render cycle; ref is synchronous.
-    if (isSavingRef.current) return
+    if (saveStateRef.current === 'saving') return
     const currentStepId = WIZARD_STEPS[wizard.currentStep]?.id
 
-    // Validate the current step BEFORE any API call. Previously the save ran
-    // first and validation only happened inside nextStep(), so empty/invalid
-    // input produced a server 422 (and could consume quota). Validate up front.
     const isValid = await validateStep(wizard.currentStep)
     if (!isValid) return
 
@@ -353,54 +337,49 @@ export default function QRWizardContainer({
       return
     }
 
-    // For all other steps, save when navigating forward
-    isSavingRef.current = true
+    saveStateRef.current = 'saving'
     setIsSaving(true)
     try {
-      // First save: create QR and track ID, but DON'T redirect yet
-      // (redirect happens only in handleSubmit when wizard completes)
-      await saveQRCode(false) // never redirect mid-wizard — breaks step state
+      await saveQRCode(false)
       setIsSaved(true)
 
-      // Only show toast on Design → Download transition
       if (currentStepId === 'design') {
         toast.success(t('QR Code Saved'), {
           description: t('Your QR code has been saved. You can now download it.'),
           icon: <CheckCircle2 className="w-5 h-5 text-green-600" />,
         })
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : undefined
       toast.error(t('Save Failed'), {
-        description: error?.message || t('Failed to save QR code. Please try again.'),
+        description: msg || t('Failed to save QR code. Please try again.'),
         icon: <AlertCircle className="w-5 h-5 text-red-600" />,
       })
-      isSavingRef.current = false
+      saveStateRef.current = 'idle'
       setIsSaving(false)
-      return // don't advance
+      return
     }
-    isSavingRef.current = false
+    saveStateRef.current = 'idle'
     setIsSaving(false)
 
     wizard.nextStep()
-  }, [wizard, saveQRCode, WIZARD_STEPS, validateStep])
+  }, [wizard, saveQRCode, WIZARD_STEPS, validateStep, t])
 
   /** "Done" / Submit handler — finishes and navigates away */
   const handleSubmit = useCallback(async () => {
-    // Use ref for current saved ID (avoids stale closure)
+    if (saveStateRef.current === 'saving') return
     const currentId = savedQRIdRef.current
 
-    // Ensure QR is saved before finishing
     if (!currentId) {
+      saveStateRef.current = 'saving'
       setIsSaving(true)
       try {
-        // Don't redirect on submit - we'll navigate to detail page instead
         const result = await saveQRCode(false)
         setIsSaved(true)
         wizard.reset()
         if (onSuccess) {
           onSuccess(result)
         } else if (isGuest) {
-          // Guests stay on creation page — reset wizard for new QR
           toast.success(t('QR Code Created!'), {
             description: t('Your QR code is ready. Create another or sign up to save permanently.'),
             icon: <CheckCircle2 className="w-5 h-5 text-green-600" />,
@@ -409,12 +388,14 @@ export default function QRWizardContainer({
         } else {
           router.push(`/qrcodes/${result.id || savedQRIdRef.current}`)
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const msg = error instanceof Error ? error.message : undefined
         toast.error(t('Save Failed'), {
-          description: error?.message || t('Failed to save QR code.'),
+          description: msg || t('Failed to save QR code.'),
           icon: <AlertCircle className="w-5 h-5 text-red-600" />,
         })
       }
+      saveStateRef.current = 'idle'
       setIsSaving(false)
       return
     }
@@ -445,7 +426,7 @@ export default function QRWizardContainer({
     setIsSaved(false)
   }, [])
 
-  const handleDataChange = useCallback((data: Record<string, any>) => {
+  const handleDataChange = useCallback((data: QRWizardFormDataState) => {
     setFormData(data)
     setIsSaved(false)
   }, [])
@@ -455,12 +436,12 @@ export default function QRWizardContainer({
     setIsSaved(false)
   }, [])
 
-  const handleWebpageDesignChange = useCallback((newWebpageDesign: any) => {
+  const handleWebpageDesignChange = useCallback((newWebpageDesign: WebpageDesignData) => {
     setWebpageDesign(newWebpageDesign)
     setIsSaved(false)
   }, [])
 
-  const handleSettingsChange = useCallback((newSettings: any) => {
+  const handleSettingsChange = useCallback((newSettings: Partial<QRWizardSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }))
     setIsSaved(false)
   }, [])
@@ -490,21 +471,23 @@ export default function QRWizardContainer({
 
       case 'design':
         return (
-          <QRDesignStudio
-            qrType={qrType}
-            qrTypeLabel={qrType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-            qrData={formData}
-            design={design}
-            onChange={handleDesignChange}
-            settings={settings}
-            onSettingsChange={handleSettingsChange}
-            onBack={() => wizard.previousStep()}
-            isSaving={isSaving}
-            isSaved={isSaved}
-            savedQRId={savedQRId}
-            webpageDesign={webpageDesign}
-            onWebpageDesignChange={handleWebpageDesignChange}
-          />
+          <Suspense fallback={<WizardDesignSkeleton />}>
+            <QRDesignStudio
+              qrType={qrType}
+              qrTypeLabel={qrType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              qrData={formData}
+              design={design}
+              onChange={handleDesignChange}
+              settings={settings}
+              onSettingsChange={handleSettingsChange}
+              onBack={() => wizard.previousStep()}
+              isSaving={isSaving}
+              isSaved={isSaved}
+              savedQRId={savedQRId}
+              webpageDesign={webpageDesign}
+              onWebpageDesignChange={handleWebpageDesignChange}
+            />
+          </Suspense>
         )
 
       case 'download':
@@ -514,7 +497,7 @@ export default function QRWizardContainer({
             qrData={formData}
             design={design}
             settings={settings}
-            onSettingsChange={(newSettings: any) => handleSettingsChange(newSettings)}
+            onSettingsChange={handleSettingsChange}
             savedQRId={savedQRId}
           />
         )

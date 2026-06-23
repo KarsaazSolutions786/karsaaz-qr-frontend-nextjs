@@ -1,4 +1,29 @@
 import { z } from 'zod'
+import {
+  urlDataSchema,
+  textDataSchema,
+  emailDataSchema,
+  smsDataSchema,
+  phoneDataSchema,
+  wifiDataSchema,
+  vcardDataSchema,
+  whatsappDataSchema,
+  locationDataSchema,
+  eventDataSchema,
+} from './qr-schemas'
+
+export {
+  urlDataSchema,
+  textDataSchema,
+  emailDataSchema,
+  smsDataSchema,
+  phoneDataSchema,
+  wifiDataSchema,
+  vcardDataSchema,
+  whatsappDataSchema,
+  locationDataSchema,
+  eventDataSchema,
+}
 
 // Base QR code schema
 export const qrCodeBaseSchema = z.object({
@@ -23,11 +48,6 @@ export const qrCustomizationSchema = z.object({
 })
 
 // URL QR code
-export const urlDataSchema = z.object({
-  url: z.string().url('Invalid URL'),
-  expires_at: z.string().optional(),
-})
-
 export const createURLQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('url'),
   data: urlDataSchema,
@@ -35,21 +55,6 @@ export const createURLQRCodeSchema = qrCodeBaseSchema.extend({
 })
 
 // VCard QR code
-export const vcardDataSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  phones: z.string().optional(),
-  emails: z.string().email('Invalid email').optional().or(z.literal('')),
-  website_list: z.string().url('Invalid URL').optional().or(z.literal('')),
-  company: z.string().optional(),
-  job: z.string().optional(),
-  street: z.string().optional(),
-  city: z.string().optional(),
-  zip: z.string().optional(),
-  state: z.string().optional(),
-  country: z.string().optional(),
-})
-
 export const createVCardQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('vcard'),
   data: vcardDataSchema,
@@ -57,13 +62,6 @@ export const createVCardQRCodeSchema = qrCodeBaseSchema.extend({
 })
 
 // WiFi QR code
-export const wifiDataSchema = z.object({
-  ssid: z.string().min(1, 'Network name is required'),
-  password: z.string().optional().default(''),
-  type: z.enum(['nopass', 'WPA', 'WEP']).default('nopass'),
-  hidden: z.boolean().default(false),
-})
-
 export const createWiFiQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('wifi'),
   data: wifiDataSchema,
@@ -71,10 +69,6 @@ export const createWiFiQRCodeSchema = qrCodeBaseSchema.extend({
 })
 
 // Text QR code
-export const textDataSchema = z.object({
-  text: z.string().min(1, 'Text is required').max(500, 'Text must be less than 500 characters'),
-})
-
 export const createTextQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('text'),
   data: textDataSchema,
@@ -82,12 +76,6 @@ export const createTextQRCodeSchema = qrCodeBaseSchema.extend({
 })
 
 // Email QR code
-export const emailDataSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  subject: z.string().optional(),
-  message: z.string().optional(),
-})
-
 export const createEmailQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('email'),
   data: emailDataSchema,
@@ -95,11 +83,6 @@ export const createEmailQRCodeSchema = qrCodeBaseSchema.extend({
 })
 
 // SMS QR code
-export const smsDataSchema = z.object({
-  phone: z.string().min(1, 'Phone number is required'),
-  message: z.string().optional(),
-})
-
 export const createSMSQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('sms'),
   data: smsDataSchema,
@@ -107,10 +90,6 @@ export const createSMSQRCodeSchema = qrCodeBaseSchema.extend({
 })
 
 // Phone QR code
-export const phoneDataSchema = z.object({
-  phone: z.string().min(1, 'Phone number is required'),
-})
-
 export const createPhoneQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('phone'),
   data: phoneDataSchema,
@@ -118,13 +97,6 @@ export const createPhoneQRCodeSchema = qrCodeBaseSchema.extend({
 })
 
 // Location QR code
-export const locationDataSchema = z.object({
-  latitude: z.number().min(-90).max(90),
-  longitude: z.number().min(-180).max(180),
-  address: z.string().optional(),
-  application: z.enum(['default', 'google_maps', 'waze']).default('default'),
-})
-
 export const createLocationQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('location'),
   data: locationDataSchema,
@@ -170,12 +142,6 @@ export const createAppStoreQRCodeSchema = qrCodeBaseSchema.extend({
 })
 
 // WhatsApp QR code
-export const whatsappDataSchema = z.object({
-  mobile_number: z.string().optional(),
-  message: z.string().optional(),
-  expires_at: z.string().optional(),
-})
-
 export const createWhatsAppQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('whatsapp'),
   data: whatsappDataSchema,
@@ -574,21 +540,6 @@ export const createLeadFormQRCodeSchema = qrCodeBaseSchema.extend({
 })
 
 // Event QR code
-export const eventDataSchema = z.object({
-  event_name: z.string().min(1, 'Event name is required'),
-  organizer_name: z.string().optional(),
-  description: z.string().optional(),
-  registration_url: z.string().url('Invalid URL').optional().or(z.literal('')),
-  contact_name: z.string().optional(),
-  contact_mobile: z.string().optional(),
-  contact_email: z.string().email('Invalid email').optional().or(z.literal('')),
-  location: z.string().optional(),
-  location_url: z.string().optional(),
-  timezone: z.string().optional(),
-  socialProfiles: z.string().optional(),
-  expires_at: z.string().optional(),
-})
-
 export const createEventQRCodeSchema = qrCodeBaseSchema.extend({
   type: z.literal('event'),
   data: eventDataSchema,

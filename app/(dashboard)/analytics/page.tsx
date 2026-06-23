@@ -15,6 +15,7 @@ import type { DateRange } from '@/types/entities/analytics'
 import type { ChartDatePreset } from '@/lib/hooks/useAnalyticsCharts'
 import { chartPresetToDateRange } from '@/lib/hooks/useAnalyticsCharts'
 import { useTranslation } from '@/lib/i18n'
+import { PageQueryError } from '@/components/common/PageQueryError'
 
 /**
  * Purpose: Executes ChartSkeleton functionality.
@@ -24,7 +25,10 @@ import { useTranslation } from '@/lib/i18n'
 const ChartSkeleton = () => <div className="animate-pulse h-64 bg-gray-100 rounded-lg" />
 
 const ScansPerDayChart = dynamic(
-  () => import('@/components/analytics/ScansPerDayChart').then(mod => ({ default: mod.ScansPerDayChart })),
+  () =>
+    import('@/components/analytics/ScansPerDayChart').then(mod => ({
+      default: mod.ScansPerDayChart,
+    })),
   { loading: ChartSkeleton, ssr: false }
 )
 
@@ -46,7 +50,12 @@ export default function AnalyticsPage() {
   const dayChartDateRange = useMemo(() => chartPresetToDateRange(dayChartPreset), [dayChartPreset])
 
   // Fetch all QR codes sorted by scans (up to 100) to compute aggregates
-  const { data: allQRData, isLoading: qrLoading } = useQRCodes({
+  const {
+    data: allQRData,
+    isLoading: qrLoading,
+    error: qrError,
+    refetch: refetchQR,
+  } = useQRCodes({
     page: 1,
     perPage: 100,
     sortBy: 'scans',
@@ -63,11 +72,9 @@ export default function AnalyticsPage() {
   const topQRId = topQR ? parseInt(topQR.id, 10) : 0
 
   // Fetch detailed stats for the top QR code to power charts
-  const { data: topStats, isLoading: topStatsLoading } = useQRCodeStats(
-    topQRId,
-    dateRange,
-    { enabled: !!topQRId }
-  )
+  const { data: topStats, isLoading: topStatsLoading } = useQRCodeStats(topQRId, dateRange, {
+    enabled: !!topQRId,
+  })
   const { data: dayStats, isLoading: dayStatsLoading } = useQRCodeStats(
     topQRId,
     dayChartDateRange,
@@ -77,6 +84,18 @@ export default function AnalyticsPage() {
   // Top 10 QR codes for the leaderboard
   const topTen = qrcodes.slice(0, 10)
   const maxScans = topTen[0]?.scans ?? 1
+
+  if (qrError) {
+    return (
+      <div className="space-y-6">
+        <PageQueryError
+          error={qrError}
+          title={t('Failed to load analytics')}
+          onRetry={() => refetchQR()}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -270,4 +289,3 @@ export default function AnalyticsPage() {
     </div>
   )
 }
-

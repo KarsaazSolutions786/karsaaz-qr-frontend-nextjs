@@ -3,6 +3,8 @@
 import { Suspense, useState, useCallback, useEffect, useMemo } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { QRCodeTypeSelector } from '@/components/features/qrcodes/QRCodeTypeSelector'
+import { ErrorBoundary } from '@/components/common/ErrorBoundary'
+import { QRCreationErrorFallback } from '@/components/features/qrcodes/wizard/QRCreationErrorFallback'
 import { QRWizardContainer } from '@/components/features/qrcodes/wizard'
 import { TemplateSelectionAdapter } from '@/components/features/qrcodes/TemplateSelectionAdapter'
 import { useSubscriptionLimits } from '@/lib/hooks/useSubscriptionLimits'
@@ -224,10 +226,12 @@ function CreateQRCodeInner() {
         {mode === 'blank' && (
           <>
             {shouldShowWizard ? (
-              <QRWizardContainer
-                mode="create"
-                initialData={{ type: selectedType, data: {}, folderId: folderIdParam || null }}
-              />
+              <ErrorBoundary fallback={<QRCreationErrorFallback />}>
+                <QRWizardContainer
+                  mode="create"
+                  initialData={{ type: selectedType, data: {}, folderId: folderIdParam || null }}
+                />
+              </ErrorBoundary>
             ) : (
               <QRCodeTypeSelector
                 value={selectedType}

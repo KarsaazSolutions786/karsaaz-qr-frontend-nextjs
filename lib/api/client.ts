@@ -83,27 +83,6 @@ apiClient.interceptors.request.use(
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
-      // #region agent log d9e0a1
-      if (process.env.NODE_ENV === 'development' && config.url && !config.url.includes('/login')) {
-        fetch('http://127.0.0.1:7388/ingest/d44d0a6b-175d-4286-ae9d-6aa965b972d2', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'd9e0a1' },
-          body: JSON.stringify({
-            sessionId: 'd9e0a1',
-            runId: 'post-fix',
-            location: 'client.ts:requestInterceptor',
-            message: 'api_request_auth',
-            hypothesisId: 'H1',
-            data: {
-              url: config.url,
-              hasBearer: !!token,
-              hasLoggedIn: !!localStorage.getItem('logged_in'),
-            },
-            timestamp: Date.now(),
-          }),
-        }).catch(() => {})
-      }
-      // #endregion
     }
 
     // Let browser set Content-Type with boundary for FormData uploads
@@ -174,38 +153,10 @@ apiClient.interceptors.response.use(
       // Skip toast for 404 on non-critical endpoints (config, subscriptions/current)
       const silentUrls = ['/config', '/subscriptions/current', '/domains']
       const isSilentUrl = silentUrls.some(u => originalRequest.url?.includes(u))
-
-      // #region agent log d9e0a1
-      if (status >= 400) {
-        fetch('http://127.0.0.1:7388/ingest/d44d0a6b-175d-4286-ae9d-6aa965b972d2', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Debug-Session-Id': 'd9e0a1',
-          },
-          body: JSON.stringify({
-            sessionId: 'd9e0a1',
-            location: 'client.ts:responseInterceptor',
-            message: 'api_client_error',
-            hypothesisId:
-              status === 401 ? 'H1' : status >= 500 ? 'H2' : status === 429 ? 'H4' : 'H3',
-            data: {
-              status,
-              url: originalRequest.url,
-              method: originalRequest.method,
-              code: data?.code ?? data?.error_code ?? null,
-              apiMessage: typeof data?.message === 'string' ? data.message.slice(0, 120) : null,
-            },
-            timestamp: Date.now(),
-          }),
-        }).catch(() => {})
-      }
-      // #endregion
       if (!isSilentUrl && status !== 401) {
         let userMessage: string
 
         if (status === 422 && data?.errors) {
-          // Validation errors — show first field error
           const errors = data.errors as Record<string, unknown>
           const fields = Object.keys(errors)
           const firstField = fields[0]
@@ -222,7 +173,6 @@ apiClient.interceptors.response.use(
             data as { error_code?: string; code?: string; message?: string }
           )
         } else if (status >= 500) {
-          // Never surface raw server-side exception messages to users.
           userMessage = getHttpStatusMessage(status)
         } else if (data?.message) {
           userMessage = translateMessage(String(data.message))
@@ -230,15 +180,9 @@ apiClient.interceptors.response.use(
           userMessage = getHttpStatusMessage(status)
         }
 
-        // Dedupe: key the toast id by the resolved message so identical errors
-        // from several simultaneous failed requests (e.g. a page-load race)
-        // collapse into one instead of stacking. Distinct messages still show
-        // separately. Mirrors the network-error id pattern.
         toast.error(userMessage, { id: `api-error-${userMessage}` })
       }
     } else if (!originalRequest._silent && !error.response) {
-      // Network error — no response received.
-      // Use toast IDs to deduplicate when multiple requests fail at once (e.g., page load race).
       if (error.code === 'ECONNABORTED') {
         toast.error('Request timed out. Please check your connection and try again.', {
           id: 'api-timeout',
@@ -250,7 +194,6 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // Log in dev
     if (process.env.NODE_ENV === 'development') {
       console.error('[API Response Error]', {
         status: error.response?.status,
@@ -265,20 +208,11 @@ apiClient.interceptors.response.use(
 
 export default apiClient
 
-// Re-export axios type guard for convenience
 export const isAxiosError = axios.isAxiosError
 
-// Retry with exponential backoff (T020 — 3 retries: 1s, 2s, 4s)
 const MAX_RETRIES = 3
 const RETRY_DELAY_BASE = 1000
 
-/**
- * Purpose: Executes apiWithRetry functionality.
- * Owner/Author: Syed Ashhad
- * Created: February 2026
- * Last Editor: Syed Ashhad
- * Last Updated: March 2026
- */
 export async function apiWithRetry<T>(fn: () => Promise<T>, retries = MAX_RETRIES): Promise<T> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {

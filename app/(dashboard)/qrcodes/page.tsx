@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
+import { PageQueryError } from '@/components/common/PageQueryError'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { useMultiSelect } from '@/lib/hooks/useMultiSelect'
 import { useQRActions } from '@/lib/hooks/useQRActions'
@@ -257,7 +258,7 @@ export default function QRCodesPage() {
   const { sortBy: sortField, sortOrder } = useMemo(() => parseSortOption(sortBy), [sortBy])
   const filterParams = useMemo(() => buildApiFilters(filters), [filters])
 
-  const { data, isLoading, isFetching, error } = useQRCodes({
+  const { data, isLoading, isFetching, error, refetch } = useQRCodes({
     page: urlPage,
     perPage: 12,
     search: search || undefined,
@@ -469,6 +470,7 @@ export default function QRCodesPage() {
       bulkDeleteQRCodes,
       deselectAll,
       isAdmin,
+      t,
     ]
   )
 
@@ -526,11 +528,19 @@ export default function QRCodesPage() {
           break
       }
     },
-    [router, archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode, downloadQRCode]
+    [router, archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode, downloadQRCode, t]
   )
 
   if (error) {
-    console.error('QR Codes fetch error:', error)
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PageQueryError
+          error={error}
+          title={t('Failed to load QR codes')}
+          onRetry={() => refetch()}
+        />
+      </div>
+    )
   }
 
   return (

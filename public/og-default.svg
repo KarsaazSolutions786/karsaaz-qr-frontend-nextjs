@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5f3ff"/>
+      <stop offset="100%" stop-color="#ede9fe"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="500" y="140" width="200" height="200" rx="24" fill="#7169DF"/>
+  <rect x="530" y="170" width="50" height="50" rx="6" fill="#fff"/>
+  <rect x="620" y="170" width="50" height="50" rx="6" fill="#fff"/>
+  <rect x="530" y="260" width="50" height="50" rx="6" fill="#fff"/>
+  <rect x="590" y="230" width="20" height="20" fill="#9D95FF"/>
+  <rect x="620" y="260" width="20" height="20" fill="#9D95FF"/>
+  <rect x="650" y="230" width="20" height="20" fill="#9D95FF"/>
+  <rect x="590" y="290" width="20" height="20" fill="#9D95FF"/>
+  <rect x="650" y="290" width="20" height="20" fill="#9D95FF"/>
+  <text x="600" y="400" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="700" fill="#1f2937">Karsaaz QR</text>
+  <text x="600" y="460" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#4b5563">Create, manage and track QR codes</text>
+</svg>

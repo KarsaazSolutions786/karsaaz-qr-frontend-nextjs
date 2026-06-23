@@ -1,7 +1,7 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { useTranslation } from '@/lib/i18n'
-import { vcardDataSchema } from '@/lib/validations/qrcode'
+import { vcardDataSchema } from '@/lib/validations/qr-schemas'
 import { z } from 'zod'
 
 const INPUT =

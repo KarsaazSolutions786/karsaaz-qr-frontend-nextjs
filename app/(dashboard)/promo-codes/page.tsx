@@ -6,6 +6,7 @@ import { promoCodesAPI, type PromoCode } from '@/lib/api/endpoints/promo-codes'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { PageQueryError } from '@/components/common/PageQueryError'
 
 /**
  * Purpose: Executes StatusBadge functionality.
@@ -36,7 +37,7 @@ export default function PromoCodesPage() {
   const [search, setSearch] = useState('')
   const queryClient = useQueryClient()
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['promo-codes', page, search],
     queryFn: () => promoCodesAPI.list({ page, search: search || undefined }),
   })
@@ -51,8 +52,23 @@ export default function PromoCodesPage() {
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
+  if (error) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PageQueryError
+          error={error}
+          title={t('Failed to load promo codes')}
+          onRetry={() => refetch()}
+        />
+      </div>
+    )
+  }
+
   const handleDelete = async (id: number, code: string) => {
-    if (!confirm(t('Delete promo code "{{code}}"? This cannot be undone.').replace('{{code}}', code))) return
+    if (
+      !confirm(t('Delete promo code "{{code}}"? This cannot be undone.').replace('{{code}}', code))
+    )
+      return
     await deleteMutation.mutateAsync(id)
   }
 
@@ -62,7 +78,9 @@ export default function PromoCodesPage() {
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('Promo Codes')}</h1>
-          <p className="mt-2 text-sm text-gray-600">{t('Manage discount codes for subscriptions')}</p>
+          <p className="mt-2 text-sm text-gray-600">
+            {t('Manage discount codes for subscriptions')}
+          </p>
         </div>
         <div className="mt-4 sm:mt-0">
           <Link

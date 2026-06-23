@@ -7,14 +7,16 @@
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --cache",
     "test": "vitest",
     "test:watch": "vitest watch",
     "test:coverage": "vitest --coverage",
     "test:e2e": "playwright test",
     "type-check": "tsc --noEmit",
     "analyze": "npx cross-env ANALYZE=true next build",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lint:scoped": "eslint app components lib --cache",
+    "lint:ci": "eslint app components lib --cache --max-warnings 9999"
   },
   "repository": {
     "type": "git",

@@ -9,6 +9,7 @@ import { leadFormsAPI } from '@/lib/api/endpoints/lead-forms'
 import { queryKeys } from '@/lib/query/keys'
 import type { LeadFormResponse, LeadFormResponseField } from '@/types/entities/lead-form'
 import { useTranslation } from '@/lib/i18n'
+import { PageQueryError } from '@/components/common/PageQueryError'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 import {
   ChevronLeftIcon,
@@ -98,7 +99,12 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
   const qrCodeId = params.id
 
   // Fetch QR code details to get the lead form info
-  const { data: qrcode, isLoading: qrLoading } = useQRCode(qrCodeId)
+  const {
+    data: qrcode,
+    isLoading: qrLoading,
+    error: qrError,
+    refetch: refetchQR,
+  } = useQRCode(qrCodeId)
 
   // Extract lead form id from QR code data.
   // The data.formId or data.lead_form_id field should contain the associated lead form id.
@@ -113,7 +119,12 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
   const [page, setPage] = useState(1)
 
   // Fetch responses
-  const { data: responsesData, isLoading: responsesLoading } = useQuery({
+  const {
+    data: responsesData,
+    isLoading: responsesLoading,
+    error: responsesError,
+    refetch: refetchResponses,
+  } = useQuery({
     queryKey: queryKeys.leadForms.responses(leadFormId ?? undefined, { page }),
     queryFn: () => leadFormsAPI.getResponses(leadFormId!, { page }),
     enabled: !!leadFormId,
@@ -137,9 +148,7 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
     // Keyword filter
     if (keyword.trim()) {
       const re = new RegExp(keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
-      results = results.filter(r =>
-        getFields(r).some(f => re.test(String(f.value ?? '')))
-      )
+      results = results.filter(r => getFields(r).some(f => re.test(String(f.value ?? ''))))
     }
 
     // Date range filter
@@ -173,12 +182,7 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
         const match = fields.find(f => f.question === col)
         return match ? match.value : null
       })
-      return [
-        ...fieldValues,
-        new Date(r.createdAt).toLocaleString(),
-        r.ipAddress,
-        r.source,
-      ]
+      return [...fieldValues, new Date(r.createdAt).toLocaleString(), r.ipAddress, r.source]
     })
     const csvLines = [
       headers.map(h => escapeCsvCell(h)).join(','),
@@ -202,6 +206,30 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
 
   const isLoading = qrLoading || responsesLoading
 
+  if (qrError) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PageQueryError
+          error={qrError}
+          title={t('Failed to load QR code')}
+          onRetry={() => refetchQR()}
+        />
+      </div>
+    )
+  }
+
+  if (responsesError) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PageQueryError
+          error={responsesError}
+          title={t('Failed to load responses')}
+          onRetry={() => refetchResponses()}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Back link and header */}
@@ -220,7 +248,8 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
               {qrcode ? qrcode.name : t('Loading...')}
               {allResponses.length > 0 && (
                 <span className="ml-2 text-gray-400">
-                  ({allResponses.length} response{allResponses.length !== 1 ? 's' : ''} on this page)
+                  ({allResponses.length} response{allResponses.length !== 1 ? 's' : ''} on this
+                  page)
                 </span>
               )}
             </p>
@@ -243,7 +272,9 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
           <TableCellsIcon className="mx-auto h-12 w-12 text-gray-300" />
           <h3 className="mt-3 text-sm font-medium text-gray-900">{t('No lead form found')}</h3>
           <p className="mt-1 text-sm text-gray-500">
-            {t('This QR code does not have a lead form associated with it. Form responses are only available for lead-form type QR codes.')}
+            {t(
+              'This QR code does not have a lead form associated with it. Form responses are only available for lead-form type QR codes.'
+            )}
           </p>
           <Link
             href={`/qrcodes/${qrCodeId}`}
@@ -341,7 +372,9 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
               <TableCellsIcon className="mx-auto h-12 w-12 text-gray-300" />
               <h3 className="mt-3 text-sm font-medium text-gray-900">{t('No responses yet')}</h3>
               <p className="mt-1 text-sm text-gray-500">
-                {t('When users submit the form linked to this QR code, their responses will appear here.')}
+                {t(
+                  'When users submit the form linked to this QR code, their responses will appear here.'
+                )}
               </p>
             </div>
           )}
@@ -397,9 +430,11 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
                                   className="px-4 py-3 text-sm text-gray-900 max-w-[200px] truncate"
                                   title={String(val ?? '')}
                                 >
-                                  {val !== null && val !== undefined && val !== ''
-                                    ? String(val)
-                                    : <span className="text-gray-400 italic">--</span>}
+                                  {val !== null && val !== undefined && val !== '' ? (
+                                    String(val)
+                                  ) : (
+                                    <span className="text-gray-400 italic">--</span>
+                                  )}
                                 </td>
                               )
                             })}
@@ -439,9 +474,7 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
                   </button>
                   <span className="text-sm text-gray-600">
                     {t('Page')} {page} {t('of')} {pagination.lastPage}
-                    <span className="ml-2 text-gray-400">
-                      ({pagination.total} total)
-                    </span>
+                    <span className="ml-2 text-gray-400">({pagination.total} total)</span>
                   </span>
                   <button
                     onClick={() => setPage(p => p + 1)}

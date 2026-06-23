@@ -7,7 +7,7 @@
  * Renders the advanced shape selector grid and all shape-specific
  * customization controls (text, colors, sticker-specific fields).
  *
- * Used by both QRDesignStudio and Step2Designer to avoid duplication.
+ * Used by QRDesignStudio.
  */
 
 import React, { useState, useCallback, useMemo } from 'react'
@@ -38,13 +38,36 @@ const FONT_FAMILIES = [
 ]
 
 const REVIEW_COLLECTOR_LOGOS = [
-  'airbnb', 'ebay', 'linkedin', 'tripadvisor', 'yelp',
-  'aliexpress', 'facebook', 'pinterest', 'trustpilot',
-  'amazon', 'foursquare', 'skype', 'twitch', 'youtube',
-  'appstore', 'google-maps', 'snapchat', 'twitter', 'zoom',
-  'bitcoin', 'google', 'telegram', 'wechat',
-  'booking', 'googleplay', 'tiktok', 'whatsapp',
-  'discord', 'instagram', 'trendyol',
+  'airbnb',
+  'ebay',
+  'linkedin',
+  'tripadvisor',
+  'yelp',
+  'aliexpress',
+  'facebook',
+  'pinterest',
+  'trustpilot',
+  'amazon',
+  'foursquare',
+  'skype',
+  'twitch',
+  'youtube',
+  'appstore',
+  'google-maps',
+  'snapchat',
+  'twitter',
+  'zoom',
+  'bitcoin',
+  'google',
+  'telegram',
+  'wechat',
+  'booking',
+  'googleplay',
+  'tiktok',
+  'whatsapp',
+  'discord',
+  'instagram',
+  'trendyol',
 ]
 
 const STICKER_TEXT_PRESETS = [
@@ -96,7 +119,7 @@ export interface StickerEditorProps {
 /* ------------------------------------------------------------------ */
 
 /**
- * Purpose: * Simple color picker fallback 
+ * Purpose: * Simple color picker fallback
  * Owner/Author: Syed Ashhad
  * Created/Updated: March 2026
  */
@@ -167,8 +190,7 @@ export function StickerEditor({
 
   const hasSticker = config.advancedShape && config.advancedShape !== 'none'
   const isFrameSticker =
-    config.advancedShape?.startsWith('rect-frame') ||
-    config.advancedShape?.includes('frame')
+    config.advancedShape?.startsWith('rect-frame') || config.advancedShape?.includes('frame')
   const isFourCorners = config.advancedShape?.startsWith('four-corners')
   const isHealthcare = config.advancedShape === 'healthcare'
   const isReviewCollector = config.advancedShape === 'review-collector'
@@ -190,12 +212,7 @@ export function StickerEditor({
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {t('Select Sticker')}
         </label>
-        <div
-          className={cn(
-            'grid gap-2',
-            isCompact ? 'grid-cols-7' : 'grid-cols-3 sm:grid-cols-4'
-          )}
-        >
+        <div className={cn('grid gap-2', isCompact ? 'grid-cols-7' : 'grid-cols-3 sm:grid-cols-4')}>
           {advancedShapes.map(shape => (
             <button
               key={shape.value}
@@ -216,16 +233,17 @@ export function StickerEditor({
                   : 'border-gray-200 hover:border-gray-300',
                 isPremiumLocked && shape.value !== 'none' && 'opacity-60 cursor-not-allowed'
               )}
-              title={isPremiumLocked && shape.value !== 'none' ? `${shape.label} (${t('requires paid plan')})` : shape.label}
+              title={
+                isPremiumLocked && shape.value !== 'none'
+                  ? `${shape.label} (${t('requires paid plan')})`
+                  : shape.label
+              }
             >
               {shape.image ? (
                 <img
                   src={shape.image}
                   alt={shape.label}
-                  className={cn(
-                    'object-contain',
-                    isCompact ? 'w-full h-full' : 'w-14 h-14'
-                  )}
+                  className={cn('object-contain', isCompact ? 'w-full h-full' : 'w-14 h-14')}
                 />
               ) : (
                 <span
@@ -251,9 +269,7 @@ export function StickerEditor({
               <span className="text-sm text-gray-700">{t('Drop Shadow')}</span>
               <Switch
                 checked={config.advancedShapeDropShadow || false}
-                onCheckedChange={checked =>
-                  onChange('advancedShapeDropShadow', checked)
-                }
+                onCheckedChange={checked => onChange('advancedShapeDropShadow', checked)}
               />
             </div>
           )}
@@ -369,9 +385,7 @@ export function StickerEditor({
           {/* --- Text controls (for stickers with text, except coupon) --- */}
           {hasTextControls && (
             <div className="space-y-3 border-t border-gray-200 pt-4">
-              <h4 className="text-sm font-semibold text-gray-900">
-                {t('Sticker Text')}
-              </h4>
+              <h4 className="text-sm font-semibold text-gray-900">{t('Sticker Text')}</h4>
 
               {/* Text input with preset suggestions */}
               <div className="relative">
@@ -392,12 +406,7 @@ export function StickerEditor({
                     )}
                     title={t('Text presets')}
                   >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -411,10 +420,7 @@ export function StickerEditor({
                 {/* Text preset dropdown */}
                 {showTextPresets && (
                   <>
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setShowTextPresets(false)}
-                    />
+                    <div className="fixed inset-0 z-10" onClick={() => setShowTextPresets(false)} />
                     <div className="absolute z-20 mt-1 right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1 max-h-56 overflow-auto">
                       {STICKER_TEXT_PRESETS.map(text => (
                         <button
@@ -478,9 +484,7 @@ export function StickerEditor({
                   max="3"
                   step="0.1"
                   value={config.textSize || 1}
-                  onChange={e =>
-                    onChange('textSize', parseFloat(e.target.value))
-                  }
+                  onChange={e => onChange('textSize', parseFloat(e.target.value))}
                   className="w-full accent-purple-500"
                 />
                 <div className="flex justify-between text-[10px] text-gray-400 mt-0.5">

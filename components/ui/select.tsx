@@ -3,20 +3,22 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 
-// Context for managing select state
 interface SelectContextValue {
   value?: string
   onValueChange?: (value: string) => void
   open: boolean
   setOpen: (open: boolean) => void
+  labels: Record<string, React.ReactNode>
+  registerLabel: (itemValue: string, label: React.ReactNode) => void
 }
 
 const SelectContext = React.createContext<SelectContextValue>({
   open: false,
   setOpen: () => {},
+  labels: {},
+  registerLabel: () => {},
 })
 
-// Root Select component
 interface SelectProps {
   children: React.ReactNode
   value?: string
@@ -24,32 +26,44 @@ interface SelectProps {
   onValueChange?: (value: string) => void
 }
 
-/**
- * Purpose: Executes Select functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 function Select({ children, value, defaultValue, onValueChange }: SelectProps) {
   const [open, setOpen] = React.useState(false)
   const [internalValue, setInternalValue] = React.useState(defaultValue || '')
+  const [labels, setLabels] = React.useState<Record<string, React.ReactNode>>({})
+
+  const registerLabel = React.useCallback((itemValue: string, label: React.ReactNode) => {
+    setLabels(prev => {
+      if (prev[itemValue] === label) return prev
+      return { ...prev, [itemValue]: label }
+    })
+  }, [])
 
   const currentValue = value !== undefined ? value : internalValue
-  const handleValueChange = React.useCallback((newValue: string) => {
-    if (value === undefined) setInternalValue(newValue)
-    onValueChange?.(newValue)
-    setOpen(false)
-  }, [value, onValueChange])
+  const handleValueChange = React.useCallback(
+    (newValue: string) => {
+      if (value === undefined) setInternalValue(newValue)
+      onValueChange?.(newValue)
+      setOpen(false)
+    },
+    [value, onValueChange]
+  )
 
   return (
-    <SelectContext.Provider value={{ value: currentValue, onValueChange: handleValueChange, open, setOpen }}>
-      <div className="relative">
-        {children}
-      </div>
+    <SelectContext.Provider
+      value={{
+        value: currentValue,
+        onValueChange: handleValueChange,
+        open,
+        setOpen,
+        labels,
+        registerLabel,
+      }}
+    >
+      <div className="relative">{children}</div>
     </SelectContext.Provider>
   )
 }
 
-// SelectTrigger
 interface SelectTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
 const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
@@ -77,50 +91,53 @@ const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
 )
 SelectTrigger.displayName = 'SelectTrigger'
 
-// SelectValue
 interface SelectValueProps extends React.HTMLAttributes<HTMLSpanElement> {
   placeholder?: string
 }
 
 const SelectValue = React.forwardRef<HTMLSpanElement, SelectValueProps>(
-  ({ className, placeholder, ...props }, ref) => {
-    const { value } = React.useContext(SelectContext)
+  ({ className, placeholder, children, ...props }, ref) => {
+    const { value, labels } = React.useContext(SelectContext)
+    const display =
+      (value && labels[value] !== undefined ? labels[value] : undefined) ??
+      children ??
+      placeholder ??
+      value
 
     return (
-      <span ref={ref} className={cn('block truncate', !value && 'text-muted-foreground', className)} {...props}>
-        {value || placeholder}
+      <span
+        ref={ref}
+        className={cn('block truncate', !display && 'text-muted-foreground', className)}
+        {...props}
+      >
+        {display}
       </span>
     )
   }
 )
 SelectValue.displayName = 'SelectValue'
 
-// SelectContent
 const SelectContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => {
     const { open } = React.useContext(SelectContext)
-
-    if (!open) return null
 
     return (
       <div
         ref={ref}
         className={cn(
           'absolute z-50 mt-1 min-w-[8rem] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md',
+          !open && 'hidden',
           className
         )}
         {...props}
       >
-        <div className="p-1">
-          {children}
-        </div>
+        <div className="p-1">{children}</div>
       </div>
     )
   }
 )
 SelectContent.displayName = 'SelectContent'
 
-// SelectItem
 interface SelectItemProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string
   disabled?: boolean
@@ -128,8 +145,12 @@ interface SelectItemProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
   ({ className, children, value: itemValue, disabled, ...props }, ref) => {
-    const { value, onValueChange } = React.useContext(SelectContext)
+    const { value, onValueChange, registerLabel } = React.useContext(SelectContext)
     const isSelected = value === itemValue
+
+    React.useLayoutEffect(() => {
+      registerLabel(itemValue, children)
+    }, [itemValue, children, registerLabel])
 
     return (
       <div
@@ -146,7 +167,12 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
         {isSelected && (
           <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </span>
         )}

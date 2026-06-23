@@ -1,7 +1,7 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { useTranslation } from '@/lib/i18n'
-import { whatsappDataSchema } from '@/lib/validations/qrcode'
+import { whatsappDataSchema } from '@/lib/validations/qr-schemas'
 import { z } from 'zod'
 
 const INPUT =
@@ -49,7 +49,8 @@ export function WhatsAppDataForm({ defaultValues, onChange }: WhatsAppDataFormPr
       </div>
       <div>
         <label htmlFor="message" className={LABEL}>
-          {t('Pre-filled Message')} <span className="text-gray-400 font-normal">({t('optional')})</span>
+          {t('Pre-filled Message')}{' '}
+          <span className="text-gray-400 font-normal">({t('optional')})</span>
         </label>
         <textarea
           {...register('message')}

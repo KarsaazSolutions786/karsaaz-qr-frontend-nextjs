@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { Trash2, RotateCcw, Settings, AlertTriangle, Clock } from 'lucide-react'
+import { Trash2, RotateCcw, Settings, Clock } from 'lucide-react'
 import {
   useTrashList,
   useTrashSettings,
@@ -14,6 +14,7 @@ import {
   useDestroyManyTrashedQRCodes,
   useEmptyTrash,
 } from '@/lib/hooks/queries/useTrash'
+import { PageQueryError } from '@/components/common/PageQueryError'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { useMultiSelect } from '@/lib/hooks/useMultiSelect'
 import { MultiSelectToolbar, type BulkAction } from '@/components/qr/MultiSelectToolbar'
@@ -58,19 +59,7 @@ export default function TrashPage() {
     }
   }
 
-  const sortParam = useMemo(() => {
-    const map: Record<SortOption, string> = {
-      'date-desc': 'deleted_at',
-      'date-asc': 'deleted_at',
-      'name-asc': 'name',
-      'name-desc': 'name',
-      'scans-desc': 'scans',
-      'scans-asc': 'scans',
-    }
-    return map[sortBy] || 'deleted_at'
-  }, [sortBy])
-
-  const { data, isLoading, error } = useTrashList({
+  const { data, isLoading, error, refetch } = useTrashList({
     search: search || undefined,
     page,
     per_page: 24,
@@ -168,12 +157,16 @@ export default function TrashPage() {
     ? settings.trash_auto_delete_days === 7
       ? t('7 days')
       : settings.trash_auto_delete_days === 30
-      ? t('30 days')
-      : `${settings.trash_auto_delete_days} ${t('days')}`
+        ? t('30 days')
+        : `${settings.trash_auto_delete_days} ${t('days')}`
     : null
 
   if (error) {
-    console.error('Trash fetch error:', error)
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PageQueryError error={error} title={t('Failed to load trash')} onRetry={() => refetch()} />
+      </div>
+    )
   }
 
   return (
@@ -191,9 +184,7 @@ export default function TrashPage() {
                 {data?.trash_count !== undefined
                   ? `${data.trash_count} ${t('item(s) in trash')}`
                   : t('Deleted QR codes that can be restored or permanently deleted')}
-                {data?.trash_limit
-                  ? ` · ${t('Limit')}: ${data.trash_limit}`
-                  : ''}
+                {data?.trash_limit ? ` · ${t('Limit')}: ${data.trash_limit}` : ''}
               </p>
             </div>
           </div>
@@ -222,8 +213,8 @@ export default function TrashPage() {
               {emptyTrash.isPending
                 ? t('Emptying...')
                 : confirmEmpty
-                ? t('Click again to confirm')
-                : t('Empty Trash')}
+                  ? t('Click again to confirm')
+                  : t('Empty Trash')}
             </button>
           )}
         </div>
@@ -235,7 +226,8 @@ export default function TrashPage() {
           <div className="flex items-start gap-3">
             <Clock className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
             <p className="text-sm text-amber-800">
-              {t('Items in trash are automatically permanently deleted after')} <strong>{autoDeleteLabel}</strong>.{' '}
+              {t('Items in trash are automatically permanently deleted after')}{' '}
+              <strong>{autoDeleteLabel}</strong>.{' '}
               <Link href="/trash/settings" className="underline hover:text-amber-900">
                 {t('Change settings')}
               </Link>
@@ -287,7 +279,9 @@ export default function TrashPage() {
           <Trash2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('Trash is empty')}</h3>
           <p className="text-gray-500 mb-6">
-            {t('When you delete QR codes, they will appear here so you can restore or permanently delete them.')}
+            {t(
+              'When you delete QR codes, they will appear here so you can restore or permanently delete them.'
+            )}
           </p>
           <Link
             href="/qrcodes"
@@ -350,10 +344,10 @@ export default function TrashPage() {
                       onChange={() => toggleItem(qrcode.id)}
                       className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    {qrcode.filePath && (
+                    {qrcode.svgUrl && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={qrcode.filePath}
+                        src={qrcode.svgUrl}
                         alt={qrcode.name}
                         className="w-10 h-10 rounded object-contain border border-gray-200"
                       />
@@ -391,10 +385,7 @@ export default function TrashPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {qrcodes.map(qrcode => (
                 <div key={qrcode.id} className="relative group">
-                  <QRCodeMinimalCard
-                    qrcode={qrcode}
-                    onSelect={() => {}}
-                  />
+                  <QRCodeMinimalCard qrcode={qrcode} onSelect={() => {}} />
                   <div className="mt-2 flex gap-1.5">
                     <button
                       onClick={() => handleRestore(qrcode.id)}

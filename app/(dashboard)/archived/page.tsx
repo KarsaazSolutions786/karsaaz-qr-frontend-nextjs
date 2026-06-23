@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Archive, Filter, FolderTree as FolderTreeIcon, Folder as FolderIcon } from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
+import { PageQueryError } from '@/components/common/PageQueryError'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
 import { useMultiSelect } from '@/lib/hooks/useMultiSelect'
 import { useFilters } from '@/lib/hooks/useFilters'
@@ -72,7 +73,7 @@ export default function ArchivedQRCodesPage() {
   const filterParams = useMemo(() => buildApiFilters(filters), [filters])
 
   // Fetch QR codes with archived filter + sort + filters
-  const { data, isLoading, error } = useQRCodes({
+  const { data, isLoading, error, refetch } = useQRCodes({
     page,
     search: search || undefined,
     folderId: selectedFolder || undefined,
@@ -147,6 +148,7 @@ export default function ArchivedQRCodesPage() {
       bulkUnarchiveQRCodes,
       bulkDeleteQRCodes,
       deselectAll,
+      t,
     ]
   )
 
@@ -172,7 +174,7 @@ export default function ArchivedQRCodesPage() {
           break
       }
     },
-    [unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode]
+    [unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode, t]
   )
 
   /**
@@ -186,7 +188,15 @@ export default function ArchivedQRCodesPage() {
   }
 
   if (error) {
-    console.error('Archived QR Codes fetch error:', error)
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <PageQueryError
+          error={error}
+          title={t('Failed to load archived QR codes')}
+          onRetry={() => refetch()}
+        />
+      </div>
+    )
   }
 
   return (
@@ -200,7 +210,9 @@ export default function ArchivedQRCodesPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">{t('Archived QR Codes')}</h1>
-              <p className="mt-2 text-sm text-gray-600">{t('View and manage your archived QR codes')}</p>
+              <p className="mt-2 text-sm text-gray-600">
+                {t('View and manage your archived QR codes')}
+              </p>
             </div>
           </div>
         </div>
@@ -311,9 +323,13 @@ export default function ArchivedQRCodesPage() {
             <div className="flex items-start gap-3">
               <Archive className="w-5 h-5 text-blue-600 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-blue-900">{t('These QR codes are archived')}</p>
+                <p className="text-sm font-medium text-blue-900">
+                  {t('These QR codes are archived')}
+                </p>
                 <p className="text-sm text-blue-700 mt-1">
-                  {t('Archived QR codes are hidden from your active list but can be unarchived at any time. They continue to work and track scans.')}
+                  {t(
+                    'Archived QR codes are hidden from your active list but can be unarchived at any time. They continue to work and track scans.'
+                  )}
                 </p>
               </div>
             </div>
@@ -332,7 +348,9 @@ export default function ArchivedQRCodesPage() {
           {!isLoading && !hasQRCodes && !search && (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <Archive className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('No archived QR codes')}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t('No archived QR codes')}
+              </h3>
               <p className="text-gray-600 mb-6">
                 {t("You haven't archived any QR codes yet. Archived items will appear here.")}
               </p>

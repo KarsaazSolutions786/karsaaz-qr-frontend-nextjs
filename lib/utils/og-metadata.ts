@@ -4,11 +4,15 @@ import { envConfig } from '@/lib/config/env-config'
 const SITE_NAME = 'Karsaaz QR'
 
 function getCanonicalSiteUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_CANONICAL_URL ||
-    process.env.NEXT_PUBLIC_APP_URL ||
-    envConfig.APP_URL
-  ).replace(/\/$/, '')
+  const fromEnv =
+    process.env.NEXT_PUBLIC_CANONICAL_URL || process.env.NEXT_PUBLIC_APP_URL || envConfig.APP_URL
+
+  // Production OG images should resolve on the marketing www host, not app subdomain
+  if (!process.env.NEXT_PUBLIC_CANONICAL_URL && /app\.karsaazqr\.com/i.test(fromEnv)) {
+    return 'https://www.karsaazqr.com'
+  }
+
+  return fromEnv.replace(/\/$/, '')
 }
 
 export function generateOGMetadata(
@@ -19,7 +23,7 @@ export function generateOGMetadata(
 ): Metadata {
   const siteUrl = getCanonicalSiteUrl()
   const normalizedPath = path.startsWith('/') ? path : `/${path}`
-  const ogImage = image || `${siteUrl}/og-default.png`
+  const ogImage = image || `${siteUrl}/og-default.svg`
 
   return {
     title,

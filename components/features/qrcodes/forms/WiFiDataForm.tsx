@@ -1,7 +1,7 @@
 'use client'
 import { useQRFormWatch } from '@/lib/hooks/useQRFormWatch'
 import { useTranslation } from '@/lib/i18n'
-import { wifiDataSchema } from '@/lib/validations/qrcode'
+import { wifiDataSchema } from '@/lib/validations/qr-schemas'
 import { z } from 'zod'
 const INPUT =
   'mt-1.5 block w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-white shadow-sm transition placeholder:text-gray-400 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100'

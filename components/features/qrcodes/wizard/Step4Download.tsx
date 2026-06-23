@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useMemo } from 'react'
 import { toast } from 'sonner'
 import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
 import { exportPDF } from '@/lib/utils/export-pdf'
@@ -81,6 +81,10 @@ export default function Step4Download({
   const { data: folders = [] } = useFolders()
   const createFolderMutation = useCreateFolder()
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false)
+  const selectedFolderName = useMemo(() => {
+    if (!settings.folderId) return null
+    return folders.find(f => String(f.id) === String(settings.folderId))?.name ?? null
+  }, [folders, settings.folderId])
 
   const handleSizeSelect = useCallback(
     (value: string) => {
@@ -229,7 +233,9 @@ export default function Step4Download({
               }}
             >
               <SelectTrigger className="w-full text-sm border-gray-300 rounded-lg bg-white h-10 px-3 py-2 text-left">
-                <SelectValue placeholder={t('No Folder (All QR Codes)')} />
+                <SelectValue placeholder={t('No Folder (All QR Codes)')}>
+                  {selectedFolderName}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="no-folder">{t('No Folder (All QR Codes)')}</SelectItem>

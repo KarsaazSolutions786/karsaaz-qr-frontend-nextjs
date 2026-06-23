@@ -323,7 +323,7 @@ export function transformDesignFromBackend(
     // Size
     errorCorrectionLevel: d.errorCorrection || 'M',
     margin: d.margin ?? 4,
-    // UI Aliases for backward compatibility with Step3Designer/QRCodePreview
+    // UI aliases for QRCodePreview compatibility
     style:
       d.module === 'square'
         ? 'squares'

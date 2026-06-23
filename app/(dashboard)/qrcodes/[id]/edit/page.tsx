@@ -1,11 +1,14 @@
 'use client'
 
 import { useQRCode } from '@/lib/hooks/queries/useQRCode'
+import { ErrorBoundary } from '@/components/common/ErrorBoundary'
+import { QRCreationErrorFallback } from '@/components/features/qrcodes/wizard/QRCreationErrorFallback'
 import { QRWizardContainer } from '@/components/features/qrcodes/wizard'
 import { useTranslation } from '@/lib/i18n'
 import { BarChart3, ArrowLeft } from 'lucide-react'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 import Link from 'next/link'
+import { PageQueryError } from '@/components/common/PageQueryError'
 
 /**
  * Purpose: Edit QR Code Page - Uses multi-step wizard in edit mode Features: - Pre-loads existing QR code data - Same wizard flow as creation - All 4 steps available for editing - Updates existing QR code on save - Quick link to analytics from header
@@ -15,7 +18,7 @@ import Link from 'next/link'
 
 export default function EditQRCodePage({ params }: { params: { id: string } }) {
   const { t } = useTranslation()
-  const { data: qrcode, isLoading } = useQRCode(params.id)
+  const { data: qrcode, isLoading, error, refetch } = useQRCode(params.id)
 
   if (isLoading) {
     return (
@@ -24,6 +27,18 @@ export default function EditQRCodePage({ params }: { params: { id: string } }) {
           <LottieLoader size={80} className="mx-auto" />
           <p className="mt-4 text-gray-600">{t('Loading QR Code...')}</p>
         </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8">
+        <PageQueryError
+          error={error}
+          title={t('Failed to load QR code')}
+          onRetry={() => refetch()}
+        />
       </div>
     )
   }
@@ -63,11 +78,9 @@ export default function EditQRCodePage({ params }: { params: { id: string } }) {
         </Link>
       </div>
 
-      <QRWizardContainer
-        mode="edit"
-        qrcodeId={params.id}
-        initialData={qrcode}
-      />
+      <ErrorBoundary fallback={<QRCreationErrorFallback />}>
+        <QRWizardContainer mode="edit" qrcodeId={params.id} initialData={qrcode} />
+      </ErrorBoundary>
     </div>
   )
 }

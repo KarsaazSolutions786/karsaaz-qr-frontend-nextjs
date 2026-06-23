@@ -127,9 +127,11 @@ export function TermsPageContent() {
 
           <h2>{t('12. Contact')}</h2>
           <p>
-            {t(
-              'If you have questions about these Terms, please contact us through the support channels available in the Service dashboard.'
-            )}
+            {t('If you have questions about these Terms, please contact us at')}{' '}
+            <a href="mailto:info@karsaazqr.com" className="text-blue-600 hover:underline">
+              info@karsaazqr.com
+            </a>
+            .
           </p>
         </div>
       </div>
