@@ -72,6 +72,8 @@ export interface BackupJob {
   started_at?: string
   completed_at?: string
   error_message?: string
+  is_stale?: boolean
+  stale_message?: string
   created_at: string
   updated_at?: string
 }

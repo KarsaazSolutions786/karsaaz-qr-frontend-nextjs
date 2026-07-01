@@ -27,7 +27,7 @@ export function BulkCreateButton({ onClick, disabled = false }: BulkCreateButton
       onClick={onClick}
       disabled={disabled}
       className={`
-        group relative inline-flex items-center gap-2 px-5 py-2.5 
+        group relative shrink-0 overflow-hidden inline-flex items-center gap-2 px-5 py-2.5 
         bg-gradient-to-r from-purple-600 to-blue-600 
         text-white font-semibold rounded-lg 
         shadow-lg shadow-purple-500/30
@@ -52,7 +52,7 @@ export function BulkCreateButton({ onClick, disabled = false }: BulkCreateButton
       
       {/* Shine Effect */}
       {!disabled && (
-        <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+        <div className="pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
       )}
     </button>
   );

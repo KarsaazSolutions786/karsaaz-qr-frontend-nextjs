@@ -10,6 +10,7 @@ export const PUBLIC_ROUTE_PREFIXES: string[] = [
   '/',
   '/login',
   '/register',
+  '/signup',
   '/forgot-password',
   '/reset-password',
   '/verify-email',
@@ -87,3 +88,4 @@ export function isProtectedRoute(pathname: string): boolean {
     prefix => pathname === prefix || pathname.startsWith(prefix + '/')
   )
 }
+

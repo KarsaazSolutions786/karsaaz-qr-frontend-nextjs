@@ -1,13 +1,11 @@
 /**
  * Shared Laravel pagination normalization.
  *
- * The Laravel backend returns LengthAwarePaginator with flat snake_case keys:
- *   { data, current_page, last_page, per_page, total, from, to, ... }
- *
- * Our frontend components expect a nested camelCase format:
- *   { data, pagination: { currentPage, lastPage, perPage, total } }
- *
- * This module provides the normalizer and common types.
+ * Supported backend shapes:
+ * - Flat Laravel: { data, current_page, last_page, per_page, total }
+ * - Nested meta:  { data, meta: { current_page, last_page, per_page, total } }
+ * - Nested pagination (snake_case): { data, pagination: { current_page, ... } }
+ * - Already normalized: { data, pagination: { currentPage, lastPage, ... } }
  */
 
 /** Raw Laravel LengthAwarePaginator JSON shape */
@@ -34,35 +32,68 @@ export interface PaginatedResponse<T> {
   pagination: NormalizedPagination
 }
 
-/**
- * Purpose: Normalize a raw Laravel paginated response into frontend format. Handles both Laravel paginator format and already-normalized format.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+function readPaginationFields(source: Record<string, unknown> | null | undefined): NormalizedPagination | null {
+  if (!source || typeof source !== 'object') return null
+
+  const total = Number(source.total ?? source.total_count ?? 0)
+  const perPage = Number(source.per_page ?? source.page_size ?? 10) || 10
+  const currentPage = Number(source.current_page ?? source.currentPage ?? 1) || 1
+  let lastPage = Number(source.last_page ?? source.lastPage ?? source.total_pages ?? 0)
+
+  if (!lastPage || Number.isNaN(lastPage)) {
+    lastPage = total > 0 ? Math.max(1, Math.ceil(total / perPage)) : 1
+  }
+
+  return { total, perPage, currentPage, lastPage }
+}
 
 export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
-  // Already normalized (has nested pagination object)
+  if (!raw) {
+    return { data: [], pagination: { total: 0, perPage: 10, currentPage: 1, lastPage: 1 } }
+  }
+
+  // Already normalized camelCase
   if (raw?.pagination?.lastPage != null) {
     return raw as PaginatedResponse<T>
   }
 
-  // Laravel format (flat snake_case)
+  // Nested pagination snake_case (Flutter / docs)
+  const nestedPagination = readPaginationFields(raw.pagination)
+  if (nestedPagination && (raw.pagination?.current_page != null || raw.pagination?.last_page != null)) {
+    return {
+      data: Array.isArray(raw.data) ? raw.data : [],
+      pagination: nestedPagination,
+    }
+  }
+
+  // meta wrapper (v1 / playground style)
+  const metaPagination = readPaginationFields(raw.meta)
+  if (metaPagination && (raw.meta?.current_page != null || raw.meta?.last_page != null)) {
+    return {
+      data: Array.isArray(raw.data) ? raw.data : [],
+      pagination: metaPagination,
+    }
+  }
+
+  // { success, data: { data: [], current_page, ... } }
+  if (raw?.data && typeof raw.data === 'object' && !Array.isArray(raw.data)) {
+    const inner = raw.data as Record<string, unknown>
+    const innerPagination = readPaginationFields(inner)
+    if (innerPagination && (inner.current_page != null || inner.last_page != null)) {
+      return {
+        data: Array.isArray(inner.data) ? (inner.data as T[]) : [],
+        pagination: innerPagination,
+      }
+    }
+  }
+
+  // Flat Laravel paginator at top level
+  const flatPagination = readPaginationFields(raw)
   return {
     data: Array.isArray(raw?.data) ? raw.data : [],
-    pagination: {
-      total: raw?.total ?? 0,
-      perPage: raw?.per_page ?? 10,
-      currentPage: raw?.current_page ?? 1,
-      lastPage: raw?.last_page ?? 1,
-    },
+    pagination: flatPagination ?? { total: 0, perPage: 10, currentPage: 1, lastPage: 1 },
   }
 }
-
-/**
- * Purpose: Map frontend search params to backend format. Backend uses 'keyword' for text search, not 'search'.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function mapSearchParams(params?: {
   page?: number
@@ -75,7 +106,6 @@ export function mapSearchParams(params?: {
 
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null || value === '') continue
-    // Map 'search' to 'keyword' for backend compatibility
     if (key === 'search') {
       mapped.keyword = value
     } else {

@@ -178,6 +178,7 @@ export const Pagination = ({
         {/* First page button */}
         {showFirstLast && !compact && (
           <button
+            type="button"
             onClick={() => handlePageChange(1)}
             disabled={!hasPreviousPage || disabled}
             className={cn(
@@ -196,6 +197,7 @@ export const Pagination = ({
 
         {/* Previous page button */}
         <button
+          type="button"
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={!hasPreviousPage || disabled}
           className={cn(
@@ -231,6 +233,7 @@ export const Pagination = ({
 
               return (
                 <button
+                  type="button"
                   key={page}
                   onClick={() => handlePageChange(page)}
                   disabled={disabled}
@@ -266,6 +269,7 @@ export const Pagination = ({
 
         {/* Next page button */}
         <button
+          type="button"
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={!hasNextPage || disabled}
           className={cn(
@@ -284,6 +288,7 @@ export const Pagination = ({
         {/* Last page button */}
         {showFirstLast && !compact && (
           <button
+            type="button"
             onClick={() => handlePageChange(totalPages)}
             disabled={!hasNextPage || disabled}
             className={cn(

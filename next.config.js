@@ -17,6 +17,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    NEXT_PUBLIC_CANONICAL_URL: process.env.NEXT_PUBLIC_CANONICAL_URL || '',
   },
   experimental: {
     missingSuspenseWithCSRBailout: false,
@@ -30,6 +31,11 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: '/og-default.png',
+        destination: '/og-default.svg',
+        permanent: true,
+      },
       {
         source: '/privacy',
         destination: '/privacy-policy',
@@ -47,6 +53,8 @@ const nextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'X-XSS-Protection', value: '1; mode=block' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+          { key: 'Cross-Origin-Resource-Policy', value: 'same-origin' },
           ...(process.env.NODE_ENV === 'production'
             ? [{ key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' }]
             : []),
@@ -75,3 +83,5 @@ const nextConfig = {
 }
 
 module.exports = withBundleAnalyzer(nextConfig)
+
+

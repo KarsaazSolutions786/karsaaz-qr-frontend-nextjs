@@ -575,6 +575,7 @@ const QRTypeContent = ({ activeType }: { activeType: string }) => {
               width={500}
               height={400}
               className="object-contain rounded-2xl shadow-2xl transition-all duration-700"
+              sizes="(max-width: 768px) 100vw, 500px"
               priority
             />
           </div>
@@ -583,3 +584,5 @@ const QRTypeContent = ({ activeType }: { activeType: string }) => {
     </div>
   )
 }
+
+

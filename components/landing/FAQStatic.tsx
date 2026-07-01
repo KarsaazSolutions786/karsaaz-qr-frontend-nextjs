@@ -25,25 +25,41 @@ const FAQ_ITEMS: Array<{ q: string; a: string }> = [
   },
 ]
 
-/** SSR FAQ with answers in HTML (audit F-09). Hidden after client FAQ hydrates. */
+/** SSR FAQ with answers in HTML (audit F-21). Hidden after client FAQ hydrates. */
 export default function FAQStatic() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQ_ITEMS.map(item => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  }
+
   return (
-    <section id="faq-ssr" className="py-20 px-6 bg-gray-50" aria-label="Frequently asked questions">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
-          Frequently Asked Questions
-        </h2>
-        <div className="space-y-4">
-          {FAQ_ITEMS.map((item, i) => (
-            <details key={i} className="rounded-2xl border border-gray-200 bg-white p-4">
-              <summary className="cursor-pointer text-lg font-medium text-gray-800">
-                {item.q}
-              </summary>
-              <p className="mt-3 text-gray-700 leading-relaxed">{item.a}</p>
-            </details>
-          ))}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <section id="faq-ssr" className="py-20 px-6 bg-gray-50" aria-label="Frequently asked questions">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-4">
+            {FAQ_ITEMS.map((item, i) => (
+              <details key={i} className="rounded-2xl border border-gray-200 bg-white p-4">
+                <summary className="cursor-pointer text-lg font-medium text-gray-800">
+                  {item.q}
+                </summary>
+                <p className="mt-3 text-gray-700 leading-relaxed">{item.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }

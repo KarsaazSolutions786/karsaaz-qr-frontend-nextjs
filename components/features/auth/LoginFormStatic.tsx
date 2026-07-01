@@ -1,10 +1,5 @@
 import Link from 'next/link'
 
-/**
- * Server-rendered login form skeleton for crawlers, no-JS users, and accessibility.
- * Audit F-01: login page must include form elements in initial HTML.
- * Hidden after client hydration by LoginHydrationBridge.
- */
 export function LoginFormStatic() {
   return (
     <div
@@ -22,6 +17,7 @@ export function LoginFormStatic() {
             name="email"
             type="email"
             autoComplete="email"
+            maxLength={255}
             required
             placeholder="you@example.com"
             className="block w-full rounded-lg border border-gray-200 bg-white/90 px-4 py-2 text-sm text-gray-800"
@@ -36,6 +32,7 @@ export function LoginFormStatic() {
             name="password"
             type="password"
             autoComplete="current-password"
+            maxLength={128}
             required
             className="block w-full rounded-lg border border-gray-200 bg-white/90 px-4 py-2 text-sm text-gray-800"
           />

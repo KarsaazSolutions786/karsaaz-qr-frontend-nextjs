@@ -21,6 +21,15 @@ function isJobInProgress(status: string): boolean {
   return status === 'pending' || status === 'processing' || status === 'in_progress'
 }
 
+function isJobStale(job: BackupJob): boolean {
+  if (job.is_stale) return true
+  if (!isJobInProgress(job.status)) return false
+  const ref = job.started_at || job.created_at
+  if (!ref) return false
+  const ageMin = (Date.now() - new Date(ref).getTime()) / 60000
+  return ageMin >= 30 && (job.processed_qr_codes ?? 0) === 0
+}
+
 /**
  * Purpose: Executes formatSize functionality.
  * Owner/Author: Syed Ashhad
@@ -30,8 +39,7 @@ function formatSize(bytes?: number): string {
   if (!bytes) return '\u2014'
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  if (bytes < 1024 * 1024 * 1024)
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`
 }
 
@@ -48,7 +56,8 @@ export function CloudBackupProgress({
 }: CloudBackupProgressProps) {
   const { t } = useTranslation()
   const progressPercent = job.progress ?? job.progress_percentage ?? 0
-  const inProgress = isJobInProgress(job.status)
+  const stale = isJobStale(job)
+  const inProgress = isJobInProgress(job.status) && !stale
 
   const statusLabels: Record<string, string> = {
     pending: t('Preparing backup...'),
@@ -64,17 +73,11 @@ export function CloudBackupProgress({
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {inProgress && (
-            <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
-          )}
-          {job.status === 'completed' && (
-            <CheckCircle className="h-5 w-5 text-green-600" />
-          )}
+          {inProgress && <Loader2 className="h-5 w-5 animate-spin text-blue-600" />}
+          {job.status === 'completed' && <CheckCircle className="h-5 w-5 text-green-600" />}
           {(job.status === 'failed' || job.status === 'cancelled') && (
             <XCircle
-              className={`h-5 w-5 ${
-                job.status === 'failed' ? 'text-red-600' : 'text-amber-600'
-              }`}
+              className={`h-5 w-5 ${job.status === 'failed' ? 'text-red-600' : 'text-amber-600'}`}
             />
           )}
           <span className="font-medium text-gray-900">
@@ -92,15 +95,21 @@ export function CloudBackupProgress({
             </button>
           )}
           {!inProgress && onDismiss && (
-            <button
-              onClick={onDismiss}
-              className="text-sm text-gray-500 hover:text-gray-700"
-            >
+            <button onClick={onDismiss} className="text-sm text-gray-500 hover:text-gray-700">
               {t('Dismiss')}
             </button>
           )}
         </div>
       </div>
+
+      {stale && (
+        <p className="mt-2 text-sm text-amber-700">
+          {job.stale_message ||
+            t(
+              'Backup is still waiting for the server worker. Please try again later or contact support.'
+            )}
+        </p>
+      )}
 
       {/* Progress bar */}
       {inProgress && (

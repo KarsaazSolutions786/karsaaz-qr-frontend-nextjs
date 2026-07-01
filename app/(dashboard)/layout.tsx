@@ -78,7 +78,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const subs: any[] = user?.subscriptions ?? []
     if (!subs.length) return false
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const sorted = [...subs].sort(
       (a: any, b: any) =>
         new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
@@ -235,9 +235,12 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isLoading && !isGuestLoading && !user && !isGuest) {
-      router.push('/login')
+      const returnPath = pathname
+        ? `${pathname}${searchParams?.toString() ? `?${searchParams}` : ''}`
+        : '/qrcodes/new'
+      router.push(`/login?returnUrl=${encodeURIComponent(returnPath)}`)
     }
-  }, [user, isLoading, isGuest, isGuestLoading, router])
+  }, [user, isLoading, isGuest, isGuestLoading, router, pathname, searchParams])
 
   // Admin route guard: redirect non-admin users and guests away from admin-only pages
   useEffect(() => {
@@ -249,7 +252,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
     if (isGuest || !user || !isSuperAdmin(user)) router.replace('/qrcodes/new')
   }, [user, isLoading, isGuest, pathname, router])
 
-  if (!mounted || isLoading || isGuestLoading) {
+  if (!mounted || isLoading || isGuestLoading || (!user && !isGuest)) {
     return (
       <div className="flex h-screen karsaaz-bg dark:bg-gray-900">
         <div className="flex-1 flex items-center justify-center">
@@ -258,8 +261,6 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
       </div>
     )
   }
-
-  if (!user && !isGuest) return null
 
   return (
     <div className="flex h-screen karsaaz-bg dark:bg-gray-900">

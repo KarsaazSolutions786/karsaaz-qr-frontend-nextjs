@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { getPlainEmailLinkInnerHtml } from '@/components/common/PlainEmailLink'
 import { useTranslation } from '@/lib/i18n'
 
 /**
@@ -128,10 +129,15 @@ export function TermsPageContent() {
           <h2>{t('12. Contact')}</h2>
           <p>
             {t('If you have questions about these Terms, please contact us at')}{' '}
-            <a href="mailto:info@karsaazqr.com" className="text-blue-600 hover:underline">
-              info@karsaazqr.com
-            </a>
-            .
+            <span
+              dangerouslySetInnerHTML={{
+                __html: getPlainEmailLinkInnerHtml(
+                  'info@karsaazqr.com',
+                  'text-blue-600 hover:underline'
+                ),
+              }}
+            />
+            <noscript>info@karsaazqr.com</noscript>.
           </p>
         </div>
       </div>

@@ -32,7 +32,7 @@ export function ForgotPasswordForm() {
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       await forgotPasswordMutation.mutateAsync(data)
-    } catch (error) {
+    } catch {
       // Error handled by mutation
     }
   }
@@ -42,7 +42,7 @@ export function ForgotPasswordForm() {
       <div className="text-center space-y-4">
         <div className="rounded-md bg-green-50 p-4">
           <p className="text-sm text-green-800">
-            {t('Password reset instructions sent! Check your email.')}
+            {t('If your email is registered, you will receive a password reset link.')}
           </p>
         </div>
         <Link
@@ -70,7 +70,11 @@ export function ForgotPasswordForm() {
           aria-describedby={errors.email ? 'email-error' : undefined}
           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
-        {errors.email && <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+        {errors.email && (
+          <p id="email-error" role="alert" className="mt-1 text-sm text-red-600">
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
       {forgotPasswordMutation.isError && (

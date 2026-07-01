@@ -25,6 +25,7 @@ export interface ListQRCodesParams {
   scansMax?: number // Maximum scan count
   sortBy?: 'createdAt' | 'updatedAt' | 'name' | 'scans'
   sortOrder?: 'asc' | 'desc'
+  hasLogo?: boolean
 }
 
 /**
@@ -119,6 +120,7 @@ export const qrcodesAPI = {
   list: async (params: ListQRCodesParams = {}, signal?: AbortSignal) => {
     try {
       const {
+        page,
         sortBy,
         sortOrder,
         perPage,
@@ -131,24 +133,52 @@ export const qrcodesAPI = {
         createdTo,
         updatedFrom,
         updatedTo,
+        hasLogo,
         ...restParams
       } = params
 
+      const sortColumnMap = {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
+        name: 'name',
+        scans: 'scans_count',
+      };
+      const sortColumn = sortBy ? sortColumnMap[sortBy] : undefined;
+
+      const rawStatus = restParams.status;
+      const statusParam =
+        rawStatus === 'active'
+          ? 'enabled'
+          : rawStatus === 'inactive'
+            ? 'disabled'
+            : rawStatus;
+
+      const restWithoutStatus = { ...restParams };
+      delete restWithoutStatus.status;
+
       // Build query params using backend's expected param names
       const queryParams: Record<string, unknown> = {
-        ...restParams, // page, type, status, tags, etc.
-        page_size: perPage, // backend uses page_size
-        keyword: search, // backend uses keyword
-        folder_id: folderId, // backend uses folder_id
-        // Convert sortBy+sortOrder to Vue-compatible sort param (-field = desc)
-        sort: sortBy ? (sortOrder === 'desc' ? `-${sortBy}` : sortBy) : undefined,
-        ...(scansMin != null ? { scans_min: scansMin } : {}),
-        ...(scansMax != null ? { scans_max: scansMax } : {}),
+        ...restWithoutStatus,
+        page,
+        page_size: perPage,
+        keyword: search,
+        folder_id: folderId,
+        sort: sortColumn && sortOrder ? `${sortColumn},${sortOrder}` : undefined,
+        ...(statusParam ? { status: statusParam } : {}),
+        ...(scansMin != null || scansMax != null
+          ? {
+              scans_count: JSON.stringify({
+                ...(scansMin != null ? { from: scansMin } : {}),
+                ...(scansMax != null ? { to: scansMax } : {}),
+              }),
+            }
+          : {}),
         ...(createdFrom ? { created_from: createdFrom } : {}),
         ...(createdTo ? { created_to: createdTo } : {}),
         ...(updatedFrom ? { updated_from: updatedFrom } : {}),
         ...(updatedTo ? { updated_to: updatedTo } : {}),
-      }
+        ...(hasLogo ? { has_logo: 'true' } : {}),
+      };
 
       // Only include search_archived if explicitly set
       if (search_archived !== undefined) {

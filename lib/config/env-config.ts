@@ -8,6 +8,8 @@ interface EnvConfig {
   API_URL: string
   /** Frontend app URL */
   APP_URL: string
+  /** Marketing/canonical site URL for OG tags and public pages */
+  CANONICAL_URL: string
   /** Google OAuth client ID */
   GOOGLE_CLIENT_ID: string
   /** Stripe publishable key */
@@ -37,10 +39,24 @@ function parseBool(value: string | undefined, fallback: boolean): boolean {
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
+function resolveCanonicalUrl(appUrl: string): string {
+  const explicit = process.env.NEXT_PUBLIC_CANONICAL_URL
+  if (explicit) return explicit
+
+  if (/app\.karsaazqr\.com/i.test(appUrl)) {
+    return 'https://www.karsaazqr.com'
+  }
+
+  return appUrl
+}
+
 function buildEnvConfig(): EnvConfig {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
   return {
     API_URL: process.env.NEXT_PUBLIC_API_URL || 'https://app.karsaazqr.com',
-    APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+    APP_URL: appUrl,
+    CANONICAL_URL: resolveCanonicalUrl(appUrl),
     GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '',
     STRIPE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
     ENABLE_PASSWORDLESS_AUTH: parseBool(process.env.NEXT_PUBLIC_ENABLE_PASSWORDLESS_AUTH, false),
@@ -90,3 +106,4 @@ export function validateEnv(): string[] {
 
 /** Frozen, typed environment configuration */
 export const envConfig: Readonly<EnvConfig> = Object.freeze(buildEnvConfig())
+

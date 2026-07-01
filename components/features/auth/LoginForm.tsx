@@ -10,6 +10,22 @@ import { useLogin, useTwoFactorLoginVerify } from '@/lib/hooks/mutations/useLogi
 import { useTranslation } from '@/lib/i18n'
 import type { LoginRequires2FAResponse } from '@/lib/api/endpoints/auth'
 
+const GENERIC_LOGIN_ERROR = 'Invalid email or password. Please try again.'
+
+function normalizeLoginError(message: string | undefined): string {
+  if (!message) return GENERIC_LOGIN_ERROR
+  const lower = message.toLowerCase()
+  if (
+    lower.includes('credential') ||
+    (lower.includes('password') && lower.includes('incorrect')) ||
+    lower.includes('invalid email') ||
+    lower.includes('provided credentials')
+  ) {
+    return GENERIC_LOGIN_ERROR
+  }
+  return message
+}
+
 /**
  * Purpose: Executes LoginForm functionality.
  * Owner/Author: Syed Ashhad
@@ -264,11 +280,7 @@ export function LoginForm() {
                     | string
                     | undefined) ?? null)
                 : null
-              return (
-                firstValidationError ||
-                data?.message ||
-                t('Invalid email or password. Please try again.')
-              )
+              return normalizeLoginError(firstValidationError || data?.message) || t(GENERIC_LOGIN_ERROR)
             })()}
           </p>
         </div>
@@ -290,3 +302,5 @@ export function LoginForm() {
     </form>
   )
 }
+
+

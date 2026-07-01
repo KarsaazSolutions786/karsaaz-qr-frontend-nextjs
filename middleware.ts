@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import {
+  APP_MARKETING_HOST,
+  buildWwwMarketingRedirectUrl,
+  shouldRedirectAppHostToWww,
+} from '@/lib/config/app-subdomain-marketing-redirect'
+
 import { AUTH_COOKIE_NAME, isProtectedRoute, isPublicRoute } from '@/lib/config/protected-routes'
 
 function applySecurityHeaders(response: NextResponse): NextResponse {
@@ -7,6 +13,8 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
   response.headers.set('X-XSS-Protection', '1; mode=block')
+  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin')
+  response.headers.set('Cross-Origin-Resource-Policy', 'same-origin')
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
   if (process.env.NODE_ENV === 'production') {
     response.headers.set(
@@ -20,6 +28,12 @@ function applySecurityHeaders(response: NextResponse): NextResponse {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  const host = request.headers.get('host')?.split(':')[0]?.toLowerCase() ?? ''
+  if (host === APP_MARKETING_HOST && shouldRedirectAppHostToWww(pathname)) {
+    const target = buildWwwMarketingRedirectUrl(pathname, request.nextUrl.search)
+    return applySecurityHeaders(NextResponse.redirect(target, 301))
+  }
+
   if (/\.[a-zA-Z0-9]+$/.test(pathname)) {
     return applySecurityHeaders(NextResponse.next())
   }
@@ -30,11 +44,11 @@ export function middleware(request: NextRequest) {
   if (!isPublic && isProtectedRoute(pathname) && !hasAuthCookie) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
-    loginUrl.searchParams.set('from', pathname)
+    loginUrl.searchParams.set('returnUrl', pathname)
     return applySecurityHeaders(NextResponse.redirect(loginUrl))
   }
 
-  if (hasAuthCookie && (pathname === '/login' || pathname === '/register')) {
+  if (hasAuthCookie && (pathname === '/login' || pathname === '/register' || pathname === '/signup')) {
     const home = request.nextUrl.clone()
     home.pathname = '/qrcodes/new'
     home.search = ''
@@ -49,3 +63,4 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico|woff2?)$).*)',
   ],
 }
+

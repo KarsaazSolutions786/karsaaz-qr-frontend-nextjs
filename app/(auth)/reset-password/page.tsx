@@ -1,10 +1,15 @@
 import { Metadata } from 'next'
+import { generateOGMetadata } from '@/lib/utils/og-metadata'
 import { Suspense } from 'react'
 import { ResetPasswordPageContent } from './ResetPasswordPageContent'
 
 export const metadata: Metadata = {
-  title: 'Reset Password - Karsaaz QR',
-  description: 'Reset your password',
+  ...generateOGMetadata(
+    'Reset Password - Karsaaz QR',
+    'Reset your Karsaaz QR password',
+    undefined,
+    '/reset-password'
+  ),
 }
 
 // Mark as dynamic since it uses searchParams

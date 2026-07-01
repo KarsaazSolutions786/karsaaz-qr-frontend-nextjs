@@ -12,6 +12,8 @@ import Turnstile from "react-cloudflare-turnstile";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { botAPI } from "@/lib/landing/api";
+import { usePlans } from "@/lib/hooks/queries/usePlans";
+import { buildChatbotPricingText } from "@/lib/utils/pricing-display";
 
 interface Message {
   id: string;
@@ -37,6 +39,10 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
   const [token, setToken] = useState<string | null>(null);
   const [escalation, setEscalation] = useState<string | null>(null);
   const router = useRouter();
+  const { data: plansData } = usePlans();
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_SITE_KEY ?? "";
+  const skipTurnstileVerification =
+    !turnstileSiteKey && process.env.NODE_ENV === "development";
 
   /**
    * Purpose: Executes scrollToBottom functionality.
@@ -50,6 +56,13 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    if (isOpen && skipTurnstileVerification && !token) {
+      setToken("dev-skip");
+      setShowEmailForm(true);
+    }
+  }, [isOpen, skipTurnstileVerification, token]);
 
   useEffect(() => {
     // Do not add any message on open; message will be added after Cloudflare success
@@ -169,41 +182,7 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
           break;
 
         case "What pricing plans and benefits does Karsaaz QR offer?":
-          botResponse = `Karsaaz QR offers three flexible subscription plans designed to fit every use case:
-          Basic Plan
-          ● $9/month or $7/month (billed annually at $90/year)
-          ● 50 QR Codes per month
-          ● Basic QR Code types
-          ● Standard templates
-          ● Basic analytics
-          ● Email support
-          
-          Standard Plan
-          ● $19/month or $15/month (billed annually at $190/year)
-          ● 500 QR Codes per month
-          ● All QR Code types
-          ● Premium templates
-          ● Advanced analytics & custom branding
-          ● Priority support
-          ● Bulk QR generation
-          
-          Premium Plan
-          ● $39/month or $32/month (billed annually at $390/year)
-          ● Unlimited QR Codes
-          ● All QR Code types
-          ● Custom templates
-          ● Advanced analytics & insights
-          ● White-label solution & API access
-          ● Dedicated account manager
-          ● Custom integrations
-          
-          All plans include:
-          ● Secure cloud infrastructure
-          ● Real-time analytics dashboard
-          ● GDPR & PECA 2025 compliance
-          ● Upgrade/downgrade flexibility with no hidden fees
-          
-          Karsaaz QR ensures that whether you’re a freelancer, brand, or enterprise, you get scalable tools and professional-grade performance with every plan.`;
+          botResponse = buildChatbotPricingText(plansData?.data ?? []);
           break;
 
         default:
@@ -488,8 +467,9 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
                   Please complete the verification to continue.
                 </p>
 
+                {turnstileSiteKey ? (
                 <Turnstile
-                  turnstileSiteKey={process.env.NEXT_PUBLIC_CLOUDFLARE_SITE_KEY ?? ""}
+                  turnstileSiteKey={turnstileSiteKey}
                   callback={async (token) => {
                     // console.log("Turnstile token received:", token); // Add this line to check the token
                     const isValid = await cloudflareTrustHandler(token);
@@ -500,6 +480,11 @@ export default function Chatbot({ isOpen, onClose }: { isOpen: boolean; onClose:
                     }
                   }}
                 />
+                ) : (
+                  <p className="text-sm text-amber-700">
+                    Chat verification is not configured. Set NEXT_PUBLIC_CLOUDFLARE_SITE_KEY to enable the assistant.
+                  </p>
+                )}
               </div>
             </div>
           )}

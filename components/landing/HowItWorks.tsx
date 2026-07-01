@@ -11,11 +11,6 @@ interface StepProps {
   onHover: (index: number) => void
 }
 
-/**
- * Purpose: Executes Step functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: April 2026
- */
 const Step = ({ number, title, description, isActive, onHover }: StepProps) => {
   return (
     <div
@@ -61,11 +56,6 @@ const Step = ({ number, title, description, isActive, onHover }: StepProps) => {
   )
 }
 
-/**
- * Purpose: Executes HowItWorks functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: April 2026
- */
 export default function HowItWorks() {
   const [activeStep, setActiveStep] = useState(0)
 
@@ -96,7 +86,6 @@ export default function HowItWorks() {
     <section id="how-to" className="py-20 bg-gradient-to-br from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-2 gap-16 items-center">
-          {/* Left Column: Steps */}
           <div className="space-y-8">
             <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight leading-tight">
               Quick Steps To Generate QR
@@ -129,12 +118,7 @@ export default function HowItWorks() {
             </div>
           </div>
 
-          {/* Right Column: Interactive Laptop Image */}
           <div className="relative flex justify-center items-center h-[800px] hidden md:flex">
-            {/* Background Gradient */}
-            {/* <div className="absolute inset-0 bg-gradient-to-br from-purple-100/50 to-blue-100/50 rounded-3xl blur-3xl opacity-30"></div> */}
-
-            {/* Laptop Images with Transition */}
             <div className="relative w-full h-full flex items-center justify-center">
               {steps.map((step, index) => (
                 <div
@@ -150,6 +134,7 @@ export default function HowItWorks() {
                     alt={`${step.title} - Karsaaz QR Interface`}
                     fill
                     className="object-contain"
+                    sizes="(max-width: 768px) 0px, 50vw"
                     priority={index === 0}
                   />
                 </div>

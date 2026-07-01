@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslation } from '@/lib/i18n';
+import { getAppSiteUrl } from '@/lib/utils/site-url';
 
 interface QRCodeBadgeProps {
   variant?: 'default' | 'minimal' | 'branded';
@@ -21,7 +22,7 @@ export default function QRCodeBadge({
   position = 'bottom-right',
   showLogo = true,
   text,
-  link = 'https://app.karsaazqr.com',
+  link = getAppSiteUrl(),
   className = '',
 }: QRCodeBadgeProps) {
   const { t } = useTranslation();
@@ -65,3 +66,4 @@ export default function QRCodeBadge({
     </a>
   );
 }
+

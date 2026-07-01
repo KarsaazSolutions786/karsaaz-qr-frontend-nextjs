@@ -1,27 +1,8 @@
 import Link from 'next/link'
+import { SSR_PRICING_FALLBACK } from '@/lib/utils/pricing-display'
 
 /** SSR pricing cards (audit F-08). Hidden after client Pricing hydrates. */
-const PLANS = [
-  {
-    name: 'Trial',
-    price: '$0',
-    period: 'Free',
-    features: ['50 MB storage', 'Limited QR codes', 'Basic analytics'],
-  },
-  {
-    name: 'Starter',
-    price: '$12',
-    period: '/year',
-    features: ['500 MB storage', 'More QR codes', 'Custom designs'],
-  },
-  {
-    name: 'Pro',
-    price: '$24',
-    period: '/year',
-    features: ['5 GB storage', 'Unlimited dynamic QR', 'Advanced analytics', 'Priority support'],
-    popular: true,
-  },
-]
+const PLANS = [...SSR_PRICING_FALLBACK]
 
 export default function PricingStatic() {
   return (

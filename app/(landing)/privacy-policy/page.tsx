@@ -3,11 +3,14 @@
  * Owner/Author: Syed Ashhad
  * Created/Updated: April 2026
  */
+import { PlainEmailLink } from '@/components/common/PlainEmailLink'
+
 export default function PrivacyPolicy() {
   return (
     <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8 md:p-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Privacy Policy</h1>
+        <p className="text-sm text-gray-500 mb-8">Last updated: June 22, 2026 · Version 2.1</p>
 
         <div className="prose prose-lg max-w-none text-gray-700 space-y-6">
           <section>
@@ -383,9 +386,10 @@ export default function PrivacyPolicy() {
             </p>
             <p className="mt-4">
               <strong>Email:</strong>{' '}
-              <a href="mailto:info@karsaazqr.com" className="text-purple-700 hover:underline">
-                info@karsaazqr.com
-              </a>{' '}
+              <PlainEmailLink
+                email="info@karsaazqr.com"
+                className="text-purple-700 hover:underline"
+              />{' '}
               or{' '}
               <a href="mailto:privacy@karsaazqr.com" className="text-purple-700 hover:underline">
                 privacy@karsaazqr.com

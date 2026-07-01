@@ -16,8 +16,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Accept build-time API URLs (baked into the client bundle by Next.js)
 ARG NEXT_PUBLIC_API_URL=https://app.karsaazqr.com
 ARG NEXT_PUBLIC_APP_URL=https://app.karsaazqr.com
+ARG NEXT_PUBLIC_CANONICAL_URL=https://www.karsaazqr.com
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+ENV NEXT_PUBLIC_CANONICAL_URL=${NEXT_PUBLIC_CANONICAL_URL}
 
 RUN npm run build
 
@@ -39,3 +41,4 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
+

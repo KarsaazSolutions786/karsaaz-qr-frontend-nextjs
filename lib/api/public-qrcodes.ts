@@ -35,7 +35,7 @@ const getApiBaseURL = () => `${getAppBaseURL()}/api`
  */
 
 export async function getQRCodeRedirect(id: string) {
-  const response = await fetch(`${getApiBaseURL()}/qrcodes/${id}/redirect`, {
+  const response = await fetch(`${getApiBaseURL()}/public/qrcodes/${id}`, {
     method: 'GET',
     headers: {
       Accept: 'application/json',

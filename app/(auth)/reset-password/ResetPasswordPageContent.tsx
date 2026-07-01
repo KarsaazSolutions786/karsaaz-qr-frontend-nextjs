@@ -32,7 +32,7 @@ export function ResetPasswordPageContent({ token, email }: { token: string; emai
             {t('Reset your password')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            {t('Enter your new password below')}
+            {t('Enter your new password below. Reset links expire after 60 minutes.')}
           </p>
         </div>
 

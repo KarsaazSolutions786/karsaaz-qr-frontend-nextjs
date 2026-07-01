@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from '@/lib/i18n';
+import { getAppSiteUrl } from '@/lib/utils/site-url';
 
 interface PreviewLayoutProps {
   children: React.ReactNode;
@@ -85,7 +86,7 @@ export default function PreviewLayout({
                     {t('Create your own QR codes with advanced features')}
                   </p>
                   <a
-                    href="https://app.karsaazqr.com"
+                    href={getAppSiteUrl()}
                     className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     {t('Get Started Free')}
@@ -103,3 +104,4 @@ export default function PreviewLayout({
     </html>
   );
 }
+

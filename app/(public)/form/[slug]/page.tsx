@@ -11,14 +11,35 @@ import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
 async function getLeadForm(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
-    
+
     // Validate type is 'lead-form', 'form', or 'contact-form'
     const validTypes = ['lead-form', 'form', 'contact-form']
     if (!validTypes.includes(qrData.type)) {
       return null
     }
 
-    return qrData.data
+    const data = qrData.data as Record<string, unknown>
+    if (!data?.fields || !Array.isArray(data.fields)) {
+      return null
+    }
+
+    return {
+      id: Number(data.lead_form_id ?? 0),
+      name: String(data.name ?? data.form_name ?? 'Lead Form'),
+      description: (data.description as string | null) ?? null,
+      slug: slug,
+      fields: data.fields,
+      settings: (data.settings as Record<string, unknown>) ?? {
+        submitButtonText: 'Submit',
+        successMessage: 'Thank you!',
+        allowDuplicates: true,
+      },
+      isActive: true,
+      responseCount: 0,
+      userId: 0,
+      createdAt: '',
+      updatedAt: '',
+    }
   } catch (error) {
     console.error('Failed to fetch lead form:', error)
     return null
@@ -30,7 +51,11 @@ async function getLeadForm(slug: string) {
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}): Promise<Metadata> {
   const form = await getLeadForm(params.slug)
 
   if (!form) {

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from '@/lib/i18n';
+import { getAppSiteUrl } from '@/lib/utils/site-url';
 
 interface PreviewFooterProps {
   showCTA?: boolean;
@@ -20,7 +21,7 @@ interface PreviewFooterProps {
 export default function PreviewFooter({
   showCTA = true,
   ctaText: ctaTextProp,
-  ctaLink = 'https://app.karsaazqr.com',
+  ctaLink = getAppSiteUrl(),
   showBranding = true,
   customLinks,
   className = '',
@@ -90,3 +91,4 @@ export default function PreviewFooter({
     </footer>
   );
 }
+

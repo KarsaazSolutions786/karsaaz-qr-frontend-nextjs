@@ -14,7 +14,8 @@ Create a `.env` file based on `.env.example`. Required variables:
 | Variable              | Description                       | Example                     |
 | --------------------- | --------------------------------- | --------------------------- |
 | `NEXT_PUBLIC_API_URL` | Backend API base URL              | `https://api.karsaazqr.com` |
-| `NEXT_PUBLIC_APP_URL` | Frontend app URL                  | `https://app.karsaazqr.com` |
+| `NEXT_PUBLIC_APP_URL` | Frontend app URL (dashboard)      | `https://app.karsaazqr.com` |
+| `NEXT_PUBLIC_CANONICAL_URL` | Marketing/canonical URL (OG tags) | `https://www.karsaazqr.com` |
 | `ANALYZE`             | Enable bundle analyzer (optional) | `true`                      |
 
 ## Local Development
@@ -49,7 +50,8 @@ npm start        # Start production server
 Add these in **Settings → Environment Variables**:
 
 - `NEXT_PUBLIC_API_URL` — Backend API URL (per environment)
-- `NEXT_PUBLIC_APP_URL` — Frontend URL (per environment)
+- `NEXT_PUBLIC_APP_URL` — Frontend/dashboard URL (per environment)
+- `NEXT_PUBLIC_CANONICAL_URL` — Marketing site URL for OG tags and canonical links (use `https://www.karsaazqr.com` when `www` serves the Next.js app)
 
 ### Branch Deployments
 
@@ -72,6 +74,7 @@ docker build -t karsaaz-qr-frontend .
 docker run -p 3000:3000 \
   -e NEXT_PUBLIC_API_URL=https://api.karsaazqr.com \
   -e NEXT_PUBLIC_APP_URL=https://app.karsaazqr.com \
+  -e NEXT_PUBLIC_CANONICAL_URL=https://www.karsaazqr.com \
   karsaaz-qr-frontend
 ```
 
@@ -84,9 +87,11 @@ docker-compose up -d
 ## Post-Deployment Checklist
 
 - [ ] Verify environment variables are set correctly
+- [ ] Confirm `www` pages emit `og:url` / `og:image` on `https://www.karsaazqr.com` (not `app` subdomain)
 - [ ] Test authentication flow (login/signup/password reset)
 - [ ] Verify API connectivity (QR code creation, listing)
 - [ ] Check image optimization is working
 - [ ] Confirm security headers via browser DevTools
 - [ ] Test payment/subscription flows
 - [ ] Verify email delivery (verification, password reset)
+

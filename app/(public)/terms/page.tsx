@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
 import { TermsPageContent } from './TermsPageContent'
+import { TermsPageStatic } from './TermsPageStatic'
+import { TermsHydrationBridge } from './TermsHydrationBridge'
 import { generateOGMetadata } from '@/lib/utils/og-metadata'
 
 export const metadata: Metadata = {
@@ -17,5 +19,13 @@ export const metadata: Metadata = {
  * Created/Updated: February 2026
  */
 export default function TermsPage() {
-  return <TermsPageContent />
+  return (
+    <div className="relative min-h-screen">
+      <TermsPageStatic />
+      <div className="absolute inset-0">
+        <TermsHydrationBridge />
+        <TermsPageContent />
+      </div>
+    </div>
+  )
 }

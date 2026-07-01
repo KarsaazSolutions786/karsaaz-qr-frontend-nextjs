@@ -1,17 +1,23 @@
 import { Metadata } from 'next'
+import { generateOGMetadata } from '@/lib/utils/og-metadata'
 import { Suspense } from 'react'
 import { LoginTypeSelector } from '@/components/features/auth/LoginTypeSelector'
 import { LoginFormStatic } from '@/components/features/auth/LoginFormStatic'
 import { LoginHydrationBridge } from '@/components/features/auth/LoginHydrationBridge'
 
 export const metadata: Metadata = {
-  title: 'Sign In - Karsaaz QR',
-  description: 'Sign in to your Karsaaz QR account',
+  ...generateOGMetadata(
+    'Sign In - Karsaaz QR',
+    'Sign in to your Karsaaz QR account',
+    undefined,
+    '/login'
+  ),
 }
 
 export default function LoginPage() {
   return (
     <div
+      id="main-content"
       className="relative flex min-h-screen items-center justify-center overflow-hidden"
       style={{
         backgroundImage:
@@ -53,20 +59,18 @@ export default function LoginPage() {
         <img src="/images/auth/ellipse-inner.svg" alt="" className="block h-full w-full" />
       </div>
 
-      <div className="relative z-10 w-[447px] max-w-[calc(100%-32px)]">
+      <div className="relative z-10 w-[447px] max-w-[calc(100%-32px)] grid [&>*]:col-start-1 [&>*]:row-start-1">
         <LoginFormStatic />
-        <div className="absolute inset-0">
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center rounded-[23px] bg-white/30 p-12 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)]">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/30 border-t-white" />
-              </div>
-            }
-          >
-            <LoginHydrationBridge />
-            <LoginTypeSelector />
-          </Suspense>
-        </div>
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center rounded-[23px] bg-white/30 p-12 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)]">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-white/30 border-t-white" />
+            </div>
+          }
+        >
+          <LoginHydrationBridge />
+          <LoginTypeSelector />
+        </Suspense>
       </div>
     </div>
   )

@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 // Login schema
 export const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().trim().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),
   rememberMe: z.boolean().optional(),
 })
@@ -12,8 +12,8 @@ export type LoginFormData = z.infer<typeof loginSchema>
 // Register schema — matches original backend expectations
 export const registerSchema = z
   .object({
-    name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
-    email: z.string().email('Invalid email address'),
+    name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
+    email: z.string().trim().email('Invalid email address'),
     password: z
       .string()
       .min(8, 'Password must be at least 8 characters')
@@ -41,7 +41,7 @@ export type OTPVerificationFormData = z.infer<typeof otpVerificationSchema>
 
 // Forgot password schema
 export const forgotPasswordSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().trim().email('Invalid email address'),
 })
 
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>
@@ -49,7 +49,7 @@ export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>
 // Reset password schema — backend requires email + password_confirmation
 export const resetPasswordSchema = z.object({
   token: z.string().min(1, 'Reset token is required'),
-  email: z.string().email('Invalid email address'),
+  email: z.string().trim().email('Invalid email address'),
   password: z
     .string()
     .min(8, 'Password must be at least 8 characters')
@@ -66,7 +66,7 @@ export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>
 
 // Update profile schema
 export const updateProfileSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters').optional(),
+  name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters').optional(),
   email: z.string().email('Invalid email address'),
   avatar: z.string().url('Avatar must be a valid URL').optional(),
 })
@@ -93,3 +93,5 @@ export const passwordlessFallbackPasswordSchema = z.object({
 })
 
 export type PasswordlessFallbackPasswordFormData = z.infer<typeof passwordlessFallbackPasswordSchema>
+
+

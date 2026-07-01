@@ -1,40 +1,37 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import AppPreview from '@/components/public/app-download/AppPreview'
+import AppStoreRedirect from '@/components/public/app-download/AppStoreRedirect'
 import { getQRCodeRedirect } from '@/lib/api/public-qrcodes'
+import { isAppDownloadType, normalizeAppDownloadData } from '@/lib/utils/normalize-app-download'
 
-/**
- * Purpose: Retrieves appdata.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 async function getAppData(slug: string) {
   try {
     const qrData = await getQRCodeRedirect(slug)
-    
+
     if (!qrData || !qrData.data) {
       return null
     }
-    
-    // Validate type is app-download, app, or download
-    const validTypes = ['app-download', 'app', 'download']
-    if (!validTypes.includes(qrData.data.type)) {
+
+    if (!isAppDownloadType(qrData.type)) {
       return null
     }
-    
-    return qrData.data
+
+    return normalizeAppDownloadData(
+      qrData.data as Record<string, unknown>,
+      qrData.name as string | undefined
+    )
   } catch (error) {
     console.error('Failed to fetch app data:', error)
     return null
   }
 }
 
-/**
- * Purpose: Executes generateMetadata functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}): Promise<Metadata> {
   const app = await getAppData(params.slug)
 
   if (!app) {
@@ -46,7 +43,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   return {
     title: `${app.appName || 'App'} - Download Now`,
-    description: app.description || `Download ${app.appName} on iOS and Android. ${app.shortDescription || ''}`,
+    description:
+      app.description ||
+      `Download ${app.appName} on iOS and Android. ${app.shortDescription || ''}`,
     openGraph: {
       title: app.appName,
       description: app.description || app.shortDescription,
@@ -63,11 +62,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-/**
- * Purpose: Executes PublicAppDownloadPage functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export default async function PublicAppDownloadPage({ params }: { params: { slug: string } }) {
   const app = await getAppData(params.slug)
 
@@ -75,5 +69,10 @@ export default async function PublicAppDownloadPage({ params }: { params: { slug
     notFound()
   }
 
-  return <AppPreview app={app} />
+  return (
+    <>
+      <AppStoreRedirect app={app} />
+      <AppPreview app={app} />
+    </>
+  )
 }

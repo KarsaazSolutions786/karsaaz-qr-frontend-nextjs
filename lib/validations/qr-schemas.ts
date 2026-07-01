@@ -3,6 +3,7 @@
  */
 
 import { z } from 'zod'
+import { isPublicHttpUrl } from '@/lib/utils/safe-url'
 
 const URL_RE = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i
 const WHATSAPP_PHONE_RE = /^\+\d{8,15}$/
@@ -15,6 +16,7 @@ const flexibleUrl = z
   .string()
   .min(1, 'Please enter a URL.')
   .refine(v => URL_RE.test(v.trim()), 'Please enter a valid URL (e.g. https://example.com).')
+  .refine(v => isPublicHttpUrl(v.trim()), 'This URL is not allowed.')
 
 export const urlDataSchema = z.object({
   url: flexibleUrl,
@@ -150,3 +152,4 @@ export function validateWizardQRData(qrType: string, data: Record<string, unknow
 
   return result.error.errors[0]?.message ?? 'Please fill in the required fields before continuing.'
 }
+

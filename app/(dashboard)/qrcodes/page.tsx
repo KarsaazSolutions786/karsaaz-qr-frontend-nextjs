@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import {
   Plus,
   Filter,
@@ -69,6 +69,7 @@ import { useGuest } from '@/lib/hooks/useGuest'
 export default function QRCodesPage() {
   const { t } = useTranslation()
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const { isGuest } = useGuest()
 
@@ -87,7 +88,13 @@ export default function QRCodesPage() {
   /** Push updated params to the URL without a full navigation */
   const updateUrl = useCallback(
     (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString())
+      if ('page' in updates && updates.page === null) {
+        setListPage(1)
+        listPageRef.current = 1
+      }
+      const params = new URLSearchParams(
+        typeof window !== 'undefined' ? window.location.search : searchParams.toString()
+      )
       Object.entries(updates).forEach(([k, v]) => {
         if (v === null || v === '' || v === 'all' || v === 'date-desc') {
           params.delete(k)
@@ -95,16 +102,40 @@ export default function QRCodesPage() {
           params.set(k, v)
         }
       })
-      // Use replace so each keystroke doesn't push a new history entry
-      router.replace(`?${params.toString()}`, { scroll: false })
+      const qs = params.toString()
+      const href = qs ? `${pathname}?${qs}` : pathname
+      router.replace(href, { scroll: false })
     },
-    [router, searchParams]
+    [router, searchParams, pathname]
   )
 
   // Derive state directly from URL params
   const search = sp('q')
-  const urlPage = parseInt(sp('page', '1'), 10) || 1
+  const urlPage = Math.max(1, parseInt(sp('page', '1'), 10) || 1)
+  const [listPage, setListPage] = useState(urlPage)
   const sortBy = sp('sort', 'date-desc') as SortOption
+
+  // Sync from URL only on mount and browser back/forward — never overwrite an in-flight page click
+  const listPageRef = useRef(listPage)
+  listPageRef.current = listPage
+
+  useEffect(() => {
+    setListPage(urlPage)
+    listPageRef.current = urlPage
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const onPopState = () => {
+      const fromUrl = Math.max(
+        1,
+        parseInt(new URLSearchParams(window.location.search).get('page') || '1', 10) || 1
+      )
+      setListPage(fromUrl)
+      listPageRef.current = fromUrl
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
 
   const selectedFolder = searchParams.get('folder') // null = all folders
   const selectedDomain = sp('domain')
@@ -148,13 +179,14 @@ export default function QRCodesPage() {
   const [showChangeTypeModal, setShowChangeTypeModal] = useState(false)
   const [showChangeOwnerModal, setShowChangeOwnerModal] = useState(false)
 
-  // Load view mode from localStorage
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('qr-list-view-mode') as 'grid' | 'list' | 'minimal') || 'grid'
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>('grid')
+
+  useEffect(() => {
+    const stored = localStorage.getItem('qr-list-view-mode')
+    if (stored === 'grid' || stored === 'list' || stored === 'minimal') {
+      setViewMode(stored)
     }
-    return 'grid'
-  })
+  }, [])
 
   // Persist view mode to localStorage
   /**
@@ -173,9 +205,19 @@ export default function QRCodesPage() {
 
   const setPage = useCallback(
     (p: number) => {
-      updateUrl({ page: p === 1 ? null : String(p) })
+      const next = Math.max(1, p)
+      listPageRef.current = next
+      setListPage(next)
+
+      const params = new URLSearchParams(window.location.search)
+      if (next === 1) params.delete('page')
+      else params.set('page', String(next))
+      const qs = params.toString()
+      const href = qs ? `${pathname}?${qs}` : pathname
+      window.history.replaceState(window.history.state, '', href)
+      router.replace(href, { scroll: false })
     },
-    [updateUrl]
+    [router, pathname]
   )
 
   const handleSearch = useCallback(
@@ -195,71 +237,71 @@ export default function QRCodesPage() {
   const handleFiltersChange = useCallback(
     (newFilters: Partial<typeof filters>) => {
       updateUrl({
-        q: newFilters.search !== undefined ? newFilters.search || null : null,
+        q: 'search' in newFilters ? newFilters.search || null : searchParams.get('q'),
         type:
-          newFilters.type !== undefined
+          'type' in newFilters
             ? newFilters.type === 'all'
               ? null
-              : newFilters.type
+              : (newFilters.type ?? null)
             : searchParams.get('type'),
         status:
-          newFilters.status !== undefined
+          'status' in newFilters
             ? newFilters.status === 'all'
               ? null
-              : newFilters.status
+              : (newFilters.status ?? null)
             : searchParams.get('status'),
         dateRange:
-          newFilters.dateRange !== undefined
+          'dateRange' in newFilters
             ? newFilters.dateRange === 'all'
               ? null
               : (newFilters.dateRange as string)
             : searchParams.get('dateRange'),
-        dateFrom: (newFilters.dateFrom !== undefined
+        dateFrom: ('dateFrom' in newFilters
           ? newFilters.dateFrom
             ? newFilters.dateFrom.toISOString().split('T')[0]
             : null
-          : (searchParams.get('dateFrom') ?? null)) as string | null,
-        dateTo: (newFilters.dateTo !== undefined
+          : searchParams.get('dateFrom')) as string | null,
+        dateTo: ('dateTo' in newFilters
           ? newFilters.dateTo
             ? newFilters.dateTo.toISOString().split('T')[0]
             : null
-          : (searchParams.get('dateTo') ?? null)) as string | null,
-        scansMin: (newFilters.scanCountMin != null
-          ? String(newFilters.scanCountMin)
-          : newFilters.scanCountMin === undefined
-            ? searchParams.get('scansMin')
-            : null) as string | null,
-        scansMax: (newFilters.scanCountMax != null
-          ? String(newFilters.scanCountMax)
-          : newFilters.scanCountMax === undefined
-            ? searchParams.get('scansMax')
-            : null) as string | null,
-        hasLogo: (newFilters.hasLogo
-          ? 'true'
-          : newFilters.hasLogo === undefined
-            ? searchParams.get('hasLogo')
-            : null) as string | null,
-        hasSticker: (newFilters.hasSticker
-          ? 'true'
-          : newFilters.hasSticker === undefined
-            ? searchParams.get('hasSticker')
-            : null) as string | null,
-        page: null, // always reset to page 1 when filters change
+          : searchParams.get('dateTo')) as string | null,
+        scansMin: ('scanCountMin' in newFilters
+          ? newFilters.scanCountMin != null
+            ? String(newFilters.scanCountMin)
+            : null
+          : searchParams.get('scansMin')) as string | null,
+        scansMax: ('scanCountMax' in newFilters
+          ? newFilters.scanCountMax != null
+            ? String(newFilters.scanCountMax)
+            : null
+          : searchParams.get('scansMax')) as string | null,
+        hasLogo: ('hasLogo' in newFilters
+          ? newFilters.hasLogo
+            ? 'true'
+            : null
+          : searchParams.get('hasLogo')) as string | null,
+        hasSticker: ('hasSticker' in newFilters
+          ? newFilters.hasSticker
+            ? 'true'
+            : null
+          : searchParams.get('hasSticker')) as string | null,
+        page: null,
       })
     },
     [updateUrl, searchParams]
   )
 
   const handleResetFilters = useCallback(() => {
-    router.replace('?', { scroll: false })
-  }, [router])
+    router.replace(pathname, { scroll: false })
+  }, [router, pathname])
 
   // ─── API params ────────────────────────────────────────────────────────────
   const { sortBy: sortField, sortOrder } = useMemo(() => parseSortOption(sortBy), [sortBy])
   const filterParams = useMemo(() => buildApiFilters(filters), [filters])
 
   const { data, isLoading, isFetching, error, refetch } = useQRCodes({
-    page: urlPage,
+    page: listPage,
     perPage: 12,
     search: search || undefined,
     folderId: selectedFolder || undefined,
@@ -289,20 +331,19 @@ export default function QRCodesPage() {
     setShowUpgradeModal: setShowQuotaModal,
   } = useSubscriptionLimits()
 
-  // Scroll to top of main content when page changes
-  const isFirstRender = useRef(true)
+  // Scroll to top only after the new page data has loaded
+  const prevPageRef = useRef(listPage)
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
+    if (prevPageRef.current === listPage) return
+    if (data?.pagination?.currentPage !== listPage) return
+    prevPageRef.current = listPage
     const main = document.getElementById('main-content')
     if (main) {
       main.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
-  }, [urlPage])
+  }, [listPage, data?.pagination?.currentPage])
 
   const plan = subscription?.plan?.name || currentUser?.plan?.name || 'free'
   const qrCodesUsed = data?.pagination?.total || 0
@@ -570,19 +611,21 @@ export default function QRCodesPage() {
             </div>
           )}
         </div>
-        <div className="mt-4 sm:mt-0 flex items-center gap-3">
+        <div className="mt-4 sm:mt-0 flex flex-wrap items-center justify-end gap-2 sm:gap-3">
           {!isGuest && (
             <>
               <button
+                type="button"
                 onClick={() => setShowFolders(!showFolders)}
-                className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="relative z-10 shrink-0 inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 <FolderTreeIcon className="w-4 h-4 mr-2" />
                 {t('Folders')}
               </button>
               <button
+                type="button"
                 onClick={() => setShowFilters(true)}
-                className="inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="relative z-10 shrink-0 inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 <Filter className="w-4 h-4 mr-2" />
                 {t('Filters')}
@@ -600,6 +643,7 @@ export default function QRCodesPage() {
             </>
           )}
           <button
+            type="button"
             onClick={() => {
               if (!canCreateQR) {
                 setShowQuotaModal(true)
@@ -609,7 +653,7 @@ export default function QRCodesPage() {
                 )
               }
             }}
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="relative z-10 shrink-0 inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
           >
             <Plus className="w-4 h-4 mr-2" />
             {t('Create QR Code')}
@@ -634,8 +678,8 @@ export default function QRCodesPage() {
       <div className="mt-8 flex gap-6">
         {/* Folders Sidebar */}
         {showFolders && (
-          <div className="w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="w-full sm:w-64 flex-shrink-0">
+            <div className="sticky top-4 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-900">{t('Folders')}</h3>
                 <button
@@ -648,6 +692,7 @@ export default function QRCodesPage() {
 
               {/* "All QR Codes" option */}
               <button
+                type="button"
                 onClick={() => {
                   updateUrl({ folder: null, page: null })
                 }}
@@ -666,6 +711,15 @@ export default function QRCodesPage() {
                 {(foldersData || []).map(folder => (
                   <div
                     key={folder.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => updateUrl({ folder: String(folder.id), page: null })}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        updateUrl({ folder: String(folder.id), page: null })
+                      }
+                    }}
                     className={`group flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
                       selectedFolder === String(folder.id)
                         ? 'bg-blue-50 text-blue-700'
@@ -673,25 +727,19 @@ export default function QRCodesPage() {
                     }`}
                   >
                     <Folder className="w-4 h-4 flex-shrink-0" />
-                    <button
-                      onClick={() => {
-                        updateUrl({ folder: String(folder.id), page: null })
-                      }}
-                      className="flex-1 text-left font-medium truncate"
-                    >
-                      {folder.name}
-                    </button>
+                    <span className="flex-1 text-left font-medium truncate">{folder.name}</span>
                     {folder.qrcode_count > 0 && (
-                      <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
+                      <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded flex-shrink-0">
                         {folder.qrcode_count}
                       </span>
                     )}
                     <button
+                      type="button"
                       onClick={e => {
                         e.stopPropagation()
                         setFolderToDelete(folder)
                       }}
-                      className="p-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity"
+                      className="p-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity flex-shrink-0"
                       title={t('Delete folder')}
                     >
                       <TrashIcon className="w-3.5 h-3.5" />
@@ -838,7 +886,7 @@ export default function QRCodesPage() {
           {data?.pagination && data.pagination.total > data.pagination.perPage && (
             <div className="mt-8">
               <Pagination
-                currentPage={urlPage}
+                currentPage={listPage}
                 totalPages={data.pagination.lastPage}
                 pageSize={data.pagination.perPage}
                 totalItems={data.pagination.total}

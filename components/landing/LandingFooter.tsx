@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
+import { PlainEmailLink } from "@/components/common/PlainEmailLink";
+import { companyAddress } from "@/lib/config/company";
 
 /**
  * Purpose: Executes Footer functionality.
@@ -162,9 +164,9 @@ export default function Footer() {
             <div className="flex items-start gap-2 text-gray-300 font-['Poppins'] text-[14px] leading-relaxed justify-center sm:justify-start">
               <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0" />
               <span>
-                85 Great Portland Street, First Floor,
+                {companyAddress.line1}
                 <br />
-                London, W1W 7LT, United Kingdom
+                {companyAddress.line2}
               </span>
             </div>
           </div>
@@ -196,12 +198,7 @@ export default function Footer() {
           <div className="sm:w-max text-center sm:text-left">
             <div className="flex items-start gap-2 text-gray-300 font-['Poppins'] text-[14px] leading-relaxed justify-center sm:justify-start">
               <Mail className="w-5 h-5 mt-0.5 flex-shrink-0" />
-              <a
-                href="mailto:info@karsaazQR.com"
-                className="hover:text-purple-600 transition-colors"
-              >
-                info@karsaazQR.com
-              </a>
+              <PlainEmailLink email="info@karsaazqr.com" className="hover:text-purple-600 transition-colors" />
             </div>
           </div>
         </div>

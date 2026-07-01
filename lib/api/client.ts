@@ -62,6 +62,22 @@ const adjustForSlowConnection = (timeout: number): number => {
   return timeout
 }
 
+const AUTH_REQUEST_PATTERN = /\/(login|register|logout|verify-otp|forgot-password|reset-password)(\/|$|\?)/
+
+function handleUnauthorizedResponse(config?: InternalAxiosRequestConfig): void {
+  if (typeof window === 'undefined') return
+  const url = config?.url ?? ''
+  if (AUTH_REQUEST_PATTERN.test(url)) return
+
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  localStorage.removeItem('logged_in')
+
+  if (!window.location.pathname.startsWith('/login')) {
+    window.location.href = '/login'
+  }
+}
+
 const apiClient: AxiosInstance = axios.create({
   baseURL: getApiBaseURL(),
   timeout: API_TIMEOUTS.DEFAULT,
@@ -133,6 +149,11 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean
       _silent?: boolean
+    }
+
+    if (error.response?.status === 401) {
+      handleUnauthorizedResponse(originalRequest)
+      return Promise.reject(error)
     }
 
     // Handle 429 Too Many Requests — show rate-limit toast
