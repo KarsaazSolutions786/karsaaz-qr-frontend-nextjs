@@ -29,13 +29,6 @@ export interface PaginationProps {
   disabled?: boolean
 }
 
-/**
- * Purpose: Executes Pagination functionality.
- * Owner/Author: Syed Ashhad
- * Created: February 2026
- * Last Editor: Syed Ashhad
- * Last Updated: May 2026
- */
 export const Pagination = ({
   currentPage,
   totalPages,
@@ -54,69 +47,56 @@ export const Pagination = ({
   disabled = false,
 }: PaginationProps) => {
   const { t } = useTranslation()
-  const hasNextPage = currentPage < totalPages
-  const hasPreviousPage = currentPage > 1
+  const activePage = Math.max(1, Number(currentPage) || 1)
+  const lastPage = Math.max(1, Number(totalPages) || 1)
+  const itemsPerPage = Math.max(1, Number(pageSize) || 10)
+  const totalCount = Math.max(0, Number(totalItems) || 0)
+  const rangeStart = totalCount === 0 ? 0 : (activePage - 1) * itemsPerPage + 1
+  const rangeEnd = Math.min(activePage * itemsPerPage, totalCount)
+  const hasNextPage = activePage < lastPage
+  const hasPreviousPage = activePage > 1
 
-  /**
-   * Purpose: Executes handlePageChange functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: February 2026
-   */
-  const handlePageChange = (page: number) => {
-    if (page < 1 || page > totalPages || page === currentPage || disabled) return
-    onPageChange(page)
+  const handlePageChange = (next: number) => {
+    if (next < 1 || next > lastPage || next === activePage || disabled) return
+    onPageChange(next)
   }
 
-  /**
-   * Purpose: Retrieves pagenumbers.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: February 2026
-   */
   const getPageNumbers = (): (number | 'ellipsis')[] => {
-    if (totalPages <= maxVisiblePages) {
-      return Array.from({ length: totalPages }, (_, i) => i + 1)
+    if (lastPage <= maxVisiblePages) {
+      return Array.from({ length: lastPage }, (_, i) => i + 1)
     }
 
-    const pages: (number | 'ellipsis')[] = []
+    const items: (number | 'ellipsis')[] = []
     const sidePages = Math.floor((maxVisiblePages - 3) / 2)
 
-    // Always show first page
-    pages.push(1)
+    items.push(1)
 
-    if (currentPage <= sidePages + 2) {
-      // Near the start
+    if (activePage <= sidePages + 2) {
       for (let i = 2; i <= maxVisiblePages - 2; i++) {
-        pages.push(i)
+        items.push(i)
       }
-      pages.push('ellipsis')
-    } else if (currentPage >= totalPages - sidePages - 1) {
-      // Near the end
-      pages.push('ellipsis')
-      for (let i = totalPages - (maxVisiblePages - 3); i < totalPages; i++) {
-        pages.push(i)
+      items.push('ellipsis')
+    } else if (activePage >= lastPage - sidePages - 1) {
+      items.push('ellipsis')
+      for (let i = lastPage - (maxVisiblePages - 3); i < lastPage; i++) {
+        items.push(i)
       }
     } else {
-      // In the middle
-      pages.push('ellipsis')
-      for (let i = currentPage - sidePages; i <= currentPage + sidePages; i++) {
-        pages.push(i)
+      items.push('ellipsis')
+      for (let i = activePage - sidePages; i <= activePage + sidePages; i++) {
+        items.push(i)
       }
-      pages.push('ellipsis')
+      items.push('ellipsis')
     }
 
-    // Always show last page
-    pages.push(totalPages)
-
-    return pages
+    items.push(lastPage)
+    return items
   }
 
   const pageNumbers = showPageNumbers ? getPageNumbers() : []
 
-  // QR-03: never render pagination when there are no records, and never when
-  // everything fits on a single page (≤ 1 page). This guards every caller,
-  // including lists that show "0" items.
   if (totalItems === 0) return null
-  if (totalPages <= 1) return null
+  if (lastPage <= 1) return null
 
   return (
     <div
@@ -128,20 +108,12 @@ export const Pagination = ({
       role="navigation"
       aria-label="Pagination"
     >
-      {/* Left section - Items info and page size selector */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
         {showTotalItems && totalItems !== undefined && (
           <div className="text-sm text-muted-foreground" role="status" aria-live="polite">
-            {t('Showing')}{' '}
-            <span className="font-medium text-foreground">
-              {totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1}
-            </span>{' '}
-            {t('to')}{' '}
-            <span className="font-medium text-foreground">
-              {Math.min(currentPage * pageSize, totalItems)}
-            </span>{' '}
-            {t('of')} <span className="font-medium text-foreground">{totalItems}</span>{' '}
-            {t('results')}
+            {t('Showing')} <span className="font-medium text-foreground">{rangeStart}</span>{' '}
+            {t('to')} <span className="font-medium text-foreground">{rangeEnd}</span> {t('of')}{' '}
+            <span className="font-medium text-foreground">{totalItems}</span> {t('results')}
           </div>
         )}
 
@@ -173,9 +145,7 @@ export const Pagination = ({
         )}
       </div>
 
-      {/* Right section - Navigation controls */}
       <div className="flex items-center justify-center gap-1 sm:gap-2">
-        {/* First page button */}
         {showFirstLast && !compact && (
           <button
             type="button"
@@ -195,10 +165,9 @@ export const Pagination = ({
           </button>
         )}
 
-        {/* Previous page button */}
         <button
           type="button"
-          onClick={() => handlePageChange(currentPage - 1)}
+          onClick={() => handlePageChange(activePage - 1)}
           disabled={!hasPreviousPage || disabled}
           className={cn(
             'inline-flex h-9 items-center justify-center rounded-md px-3',
@@ -213,11 +182,10 @@ export const Pagination = ({
           {!compact && <span className="ml-1 hidden sm:inline">{t('Previous')}</span>}
         </button>
 
-        {/* Page numbers */}
         {showPageNumbers && !compact && (
           <div className="hidden items-center gap-1 md:flex" role="group" aria-label="Page numbers">
-            {pageNumbers.map((page, index) => {
-              if (page === 'ellipsis') {
+            {pageNumbers.map((pageNum, index) => {
+              if (pageNum === 'ellipsis') {
                 return (
                   <div
                     key={`ellipsis-${index}`}
@@ -229,13 +197,13 @@ export const Pagination = ({
                 )
               }
 
-              const isCurrentPage = page === currentPage
+              const isCurrentPage = pageNum === activePage
 
               return (
                 <button
                   type="button"
-                  key={page}
-                  onClick={() => handlePageChange(page)}
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
                   disabled={disabled}
                   className={cn(
                     'inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium',
@@ -246,31 +214,29 @@ export const Pagination = ({
                       ? 'border-primary bg-primary text-primary-foreground hover:bg-primary/90'
                       : 'bg-background hover:bg-accent hover:text-accent-foreground'
                   )}
-                  aria-label={`Go to page ${page}`}
+                  aria-label={`Go to page ${pageNum}`}
                   aria-current={isCurrentPage ? 'page' : undefined}
                 >
-                  {page}
+                  {pageNum}
                 </button>
               )
             })}
           </div>
         )}
 
-        {/* Mobile page indicator */}
         {showPageNumbers && (
           <div
             className="inline-flex h-9 items-center justify-center px-3 text-sm font-medium md:hidden"
             role="status"
             aria-live="polite"
           >
-            {t('Page')} {currentPage} {t('of')} {totalPages}
+            {t('Page')} {activePage} {t('of')} {lastPage}
           </div>
         )}
 
-        {/* Next page button */}
         <button
           type="button"
-          onClick={() => handlePageChange(currentPage + 1)}
+          onClick={() => handlePageChange(activePage + 1)}
           disabled={!hasNextPage || disabled}
           className={cn(
             'inline-flex h-9 items-center justify-center rounded-md px-3',
@@ -285,11 +251,10 @@ export const Pagination = ({
           <ChevronRight className="h-4 w-4" />
         </button>
 
-        {/* Last page button */}
         {showFirstLast && !compact && (
           <button
             type="button"
-            onClick={() => handlePageChange(totalPages)}
+            onClick={() => handlePageChange(lastPage)}
             disabled={!hasNextPage || disabled}
             className={cn(
               'inline-flex h-9 w-9 items-center justify-center rounded-md',

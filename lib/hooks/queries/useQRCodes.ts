@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { qrcodesAPI, ListQRCodesParams } from '@/lib/api/endpoints/qrcodes'
 import { guestAPI } from '@/lib/api/endpoints/guest'
 import { queryKeys } from '@/lib/query/keys'
@@ -15,8 +15,15 @@ export function useQRCodes(params: ListQRCodesParams = {}) {
   const { isGuest } = useGuest()
 
   return useQuery({
-    queryKey: isGuest ? ['guest-qrcodes', 'list'] : queryKeys.qrcodes.list(params as Record<string, unknown>),
-    queryFn: async ({ signal }): Promise<{ data: any[]; pagination: { currentPage: number; lastPage: number; perPage: number; total: number } }> => {
+    queryKey: isGuest
+      ? ['guest-qrcodes', 'list']
+      : queryKeys.qrcodes.list(params as Record<string, unknown>),
+    queryFn: async ({
+      signal,
+    }): Promise<{
+      data: any[]
+      pagination: { currentPage: number; lastPage: number; perPage: number; total: number }
+    }> => {
       if (isGuest) {
         const qrcodes = await guestAPI.listQrcodes()
         return {
@@ -44,7 +51,6 @@ export function useQRCodes(params: ListQRCodesParams = {}) {
       return qrcodesAPI.list(params, signal) as any
     },
     staleTime: 30 * 1000,
-    placeholderData: keepPreviousData,
     retry: (failureCount, error: any) => {
       const status = error?.response?.status
       if (status === 429 || (status >= 400 && status < 500)) return false

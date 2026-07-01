@@ -181,8 +181,14 @@ export const qrcodesAPI = {
         queryParams.search_archived = search_archived
       }
 
+      const cleanParams = Object.fromEntries(
+        Object.entries({ ...queryParams, page: page ?? 1 }).filter(
+          ([, v]) => v !== undefined && v !== null && v !== ''
+        )
+      )
+
       const response = await apiClient.get('/qrcodes', {
-        params: queryParams,
+        params: cleanParams,
         signal, // abort in-flight request when page changes
       })
 

@@ -32,6 +32,17 @@ export interface PaginatedResponse<T> {
   pagination: NormalizedPagination
 }
 
+function sanitizePagination(p: NormalizedPagination): NormalizedPagination {
+  const total = Math.max(0, Number(p.total) || 0)
+  const perPage = Math.max(1, Number(p.perPage) || 10)
+  const currentPage = Math.max(1, Number(p.currentPage) || 1)
+  let lastPage = Math.max(1, Number(p.lastPage) || 1)
+  if (total > 0) {
+    lastPage = Math.max(lastPage, Math.ceil(total / perPage))
+  }
+  return { total, perPage, currentPage, lastPage }
+}
+
 function readPaginationFields(
   source: Record<string, unknown> | null | undefined
 ): NormalizedPagination | null {
@@ -51,12 +62,21 @@ function readPaginationFields(
 
 export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
   if (!raw) {
-    return { data: [], pagination: { total: 0, perPage: 10, currentPage: 1, lastPage: 1 } }
+    return {
+      data: [],
+      pagination: sanitizePagination({ total: 0, perPage: 10, currentPage: 1, lastPage: 1 }),
+    }
   }
 
   // Already normalized camelCase
-  if (raw?.pagination?.lastPage != null) {
-    return raw as PaginatedResponse<T>
+  if (raw?.pagination?.lastPage != null || raw?.pagination?.last_page != null) {
+    const nested = readPaginationFields(raw.pagination)
+    if (nested) {
+      return {
+        data: Array.isArray(raw.data) ? raw.data : [],
+        pagination: sanitizePagination(nested),
+      }
+    }
   }
 
   // Nested pagination snake_case (Flutter / docs)
@@ -67,7 +87,7 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
   ) {
     return {
       data: Array.isArray(raw.data) ? raw.data : [],
-      pagination: nestedPagination,
+      pagination: sanitizePagination(nestedPagination),
     }
   }
 
@@ -76,7 +96,7 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
   if (metaPagination && (raw.meta?.current_page != null || raw.meta?.last_page != null)) {
     return {
       data: Array.isArray(raw.data) ? raw.data : [],
-      pagination: metaPagination,
+      pagination: sanitizePagination(metaPagination),
     }
   }
 
@@ -87,7 +107,7 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
     if (innerPagination && (inner.current_page != null || inner.last_page != null)) {
       return {
         data: Array.isArray(inner.data) ? (inner.data as T[]) : [],
-        pagination: innerPagination,
+        pagination: sanitizePagination(innerPagination),
       }
     }
   }
@@ -96,7 +116,9 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
   const flatPagination = readPaginationFields(raw)
   return {
     data: Array.isArray(raw?.data) ? raw.data : [],
-    pagination: flatPagination ?? { total: 0, perPage: 10, currentPage: 1, lastPage: 1 },
+    pagination: sanitizePagination(
+      flatPagination ?? { total: 0, perPage: 10, currentPage: 1, lastPage: 1 }
+    ),
   }
 }
 

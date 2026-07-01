@@ -85,12 +85,45 @@ export default function QRCodesPage() {
     [searchParams]
   )
 
+  const [page, setPageState] = useState(1)
+
+  useEffect(() => {
+    const fromUrl = Math.max(
+      1,
+      parseInt(new URLSearchParams(window.location.search).get('page') || '1', 10) || 1
+    )
+    setPageState(fromUrl)
+  }, [])
+
+  useEffect(() => {
+    const onPopState = () => {
+      const fromUrl = Math.max(
+        1,
+        parseInt(new URLSearchParams(window.location.search).get('page') || '1', 10) || 1
+      )
+      setPageState(fromUrl)
+    }
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
+
+  const syncPageToUrl = useCallback(
+    (next: number) => {
+      const params = new URLSearchParams(window.location.search)
+      if (next === 1) params.delete('page')
+      else params.set('page', String(next))
+      const qs = params.toString()
+      const href = qs ? `${pathname}?${qs}` : pathname
+      window.history.replaceState(null, '', href)
+    },
+    [pathname]
+  )
   /** Push updated params to the URL without a full navigation */
   const updateUrl = useCallback(
     (updates: Record<string, string | null>) => {
       if ('page' in updates && updates.page === null) {
-        setListPage(1)
-        listPageRef.current = 1
+        setPageState(1)
+        syncPageToUrl(1)
       }
       const params = new URLSearchParams(
         typeof window !== 'undefined' ? window.location.search : searchParams.toString()
@@ -106,36 +139,11 @@ export default function QRCodesPage() {
       const href = qs ? `${pathname}?${qs}` : pathname
       router.replace(href, { scroll: false })
     },
-    [router, searchParams, pathname]
+    [router, searchParams, pathname, syncPageToUrl]
   )
 
-  // Derive state directly from URL params
   const search = sp('q')
-  const urlPage = Math.max(1, parseInt(sp('page', '1'), 10) || 1)
-  const [listPage, setListPage] = useState(urlPage)
   const sortBy = sp('sort', 'date-desc') as SortOption
-
-  // Sync from URL only on mount and browser back/forward — never overwrite an in-flight page click
-  const listPageRef = useRef(listPage)
-  listPageRef.current = listPage
-
-  useEffect(() => {
-    setListPage(urlPage)
-    listPageRef.current = urlPage
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    const onPopState = () => {
-      const fromUrl = Math.max(
-        1,
-        parseInt(new URLSearchParams(window.location.search).get('page') || '1', 10) || 1
-      )
-      setListPage(fromUrl)
-      listPageRef.current = fromUrl
-    }
-    window.addEventListener('popstate', onPopState)
-    return () => window.removeEventListener('popstate', onPopState)
-  }, [])
 
   const selectedFolder = searchParams.get('folder') // null = all folders
   const selectedDomain = sp('domain')
@@ -205,19 +213,11 @@ export default function QRCodesPage() {
 
   const setPage = useCallback(
     (p: number) => {
-      const next = Math.max(1, p)
-      listPageRef.current = next
-      setListPage(next)
-
-      const params = new URLSearchParams(window.location.search)
-      if (next === 1) params.delete('page')
-      else params.set('page', String(next))
-      const qs = params.toString()
-      const href = qs ? `${pathname}?${qs}` : pathname
-      window.history.replaceState(window.history.state, '', href)
-      router.replace(href, { scroll: false })
+      const next = Math.max(1, Number(p) || 1)
+      setPageState(next)
+      syncPageToUrl(next)
     },
-    [router, pathname]
+    [syncPageToUrl]
   )
 
   const handleSearch = useCallback(
@@ -300,16 +300,21 @@ export default function QRCodesPage() {
   const { sortBy: sortField, sortOrder } = useMemo(() => parseSortOption(sortBy), [sortBy])
   const filterParams = useMemo(() => buildApiFilters(filters), [filters])
 
-  const { data, isLoading, isFetching, error, refetch } = useQRCodes({
-    page: listPage,
-    perPage: 12,
-    search: search || undefined,
-    folderId: selectedFolder || undefined,
-    domainId: selectedDomain || undefined,
-    sortBy: sortField,
-    sortOrder,
-    ...filterParams,
-  })
+  const qrListParams = useMemo(
+    () => ({
+      page,
+      perPage: 12,
+      search: search || undefined,
+      folderId: selectedFolder || undefined,
+      domainId: selectedDomain || undefined,
+      sortBy: sortField,
+      sortOrder,
+      ...filterParams,
+    }),
+    [page, search, selectedFolder, selectedDomain, sortField, sortOrder, filterParams]
+  )
+
+  const { data, isLoading, isFetching, error, refetch } = useQRCodes(qrListParams)
 
   // Real user/subscription data
   const { user } = useAuth()
@@ -332,18 +337,18 @@ export default function QRCodesPage() {
   } = useSubscriptionLimits()
 
   // Scroll to top only after the new page data has loaded
-  const prevPageRef = useRef(listPage)
+  const prevPageRef = useRef(page)
   useEffect(() => {
-    if (prevPageRef.current === listPage) return
-    if (data?.pagination?.currentPage !== listPage) return
-    prevPageRef.current = listPage
+    if (prevPageRef.current === page) return
+    if (data?.pagination?.currentPage !== page) return
+    prevPageRef.current = page
     const main = document.getElementById('main-content')
     if (main) {
       main.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
-  }, [listPage, data?.pagination?.currentPage])
+  }, [page, data?.pagination?.currentPage])
 
   const plan = subscription?.plan?.name || currentUser?.plan?.name || 'free'
   const qrCodesUsed = data?.pagination?.total || 0
@@ -351,6 +356,17 @@ export default function QRCodesPage() {
   const isOnTrial = plan === 'trial' || subscription?.on_trial === true
   const trialEndsAt = subscription?.trial_ends_at || ''
 
+  const paginationMeta = useMemo(() => {
+    const total = Math.max(0, Number(data?.pagination?.total) || 0)
+    const perPage = Math.max(1, Number(data?.pagination?.perPage) || 12)
+    const currentPage = Math.max(1, Number(page) || 1)
+    const fromApi = Math.max(1, Number(data?.pagination?.lastPage) || 1)
+    const computed = total > 0 ? Math.max(1, Math.ceil(total / perPage)) : 1
+    const lastPage = Math.max(fromApi, computed)
+    return { currentPage, lastPage, perPage, total }
+  }, [page, data?.pagination?.lastPage, data?.pagination?.perPage, data?.pagination?.total])
+
+  const showListLoading = isLoading || (isFetching && (data?.pagination?.currentPage ?? 0) !== page)
   const qrcodes = data?.data || []
   const hasQRCodes = qrcodes.length > 0
 
@@ -813,7 +829,7 @@ export default function QRCodesPage() {
           </div>
 
           {/* Loading State */}
-          {isLoading && (
+          {showListLoading && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
                 <QRCodeCardSkeleton key={i} />
@@ -822,7 +838,7 @@ export default function QRCodesPage() {
           )}
 
           {/* Empty States */}
-          {!isLoading && !hasQRCodes && !search && (
+          {!showListLoading && !hasQRCodes && !search && (
             <NoQRCodesEmptyState
               onCreate={() =>
                 router.push(
@@ -832,10 +848,12 @@ export default function QRCodesPage() {
             />
           )}
 
-          {!isLoading && !hasQRCodes && search && <NoSearchResultsEmptyState query={search} />}
+          {!showListLoading && !hasQRCodes && search && (
+            <NoSearchResultsEmptyState query={search} />
+          )}
 
           {/* QR Codes List */}
-          {!isLoading && hasQRCodes && (
+          {!showListLoading && hasQRCodes && (
             <div
               className={`transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
             >
@@ -883,13 +901,13 @@ export default function QRCodesPage() {
           )}
 
           {/* Pagination - rendered outside isLoading block so it stays visible during page changes */}
-          {data?.pagination && data.pagination.total > data.pagination.perPage && (
+          {paginationMeta.total > paginationMeta.perPage && (
             <div className="mt-8">
               <Pagination
-                currentPage={listPage}
-                totalPages={data.pagination.lastPage}
-                pageSize={data.pagination.perPage}
-                totalItems={data.pagination.total}
+                currentPage={paginationMeta.currentPage}
+                totalPages={paginationMeta.lastPage}
+                pageSize={paginationMeta.perPage}
+                totalItems={paginationMeta.total}
                 onPageChange={setPage}
                 showPageSize={false}
               />
