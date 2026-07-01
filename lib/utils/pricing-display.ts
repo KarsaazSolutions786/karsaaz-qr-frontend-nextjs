@@ -27,7 +27,13 @@ export const SSR_PRICING_FALLBACK: SsrPricingPlan[] = [
     name: 'Pro',
     price: '$24',
     period: '/year',
-    features: ['5 GB storage', '17 dynamic QR codes', '17,000 scans', 'Advanced analytics', 'Priority support'],
+    features: [
+      '5 GB storage',
+      '17 dynamic QR codes',
+      '17,000 scans',
+      'Advanced analytics',
+      'Priority support',
+    ],
   },
 ]
 
@@ -58,8 +64,7 @@ export function buildChatbotPricingText(plans: SubscriptionPlan[]): string {
 
   for (const plan of toShow) {
     const price = Number(plan.price)
-    const monthly =
-      plan.frequency === 'yearly' ? Math.round((price / 12) * 100) / 100 : price
+    const monthly = plan.frequency === 'yearly' ? Math.round((price / 12) * 100) / 100 : price
 
     lines.push('', `${plan.name} Plan`)
     if (plan.frequency === 'yearly') {

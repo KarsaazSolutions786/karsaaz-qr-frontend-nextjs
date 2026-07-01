@@ -48,7 +48,10 @@ export function middleware(request: NextRequest) {
     return applySecurityHeaders(NextResponse.redirect(loginUrl))
   }
 
-  if (hasAuthCookie && (pathname === '/login' || pathname === '/register' || pathname === '/signup')) {
+  if (
+    hasAuthCookie &&
+    (pathname === '/login' || pathname === '/register' || pathname === '/signup')
+  ) {
     const home = request.nextUrl.clone()
     home.pathname = '/qrcodes/new'
     home.search = ''
@@ -63,4 +66,3 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico|woff2?)$).*)',
   ],
 }
-

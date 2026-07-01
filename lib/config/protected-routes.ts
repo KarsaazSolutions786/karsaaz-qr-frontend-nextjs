@@ -88,4 +88,3 @@ export function isProtectedRoute(pathname: string): boolean {
     prefix => pathname === prefix || pathname.startsWith(prefix + '/')
   )
 }
-

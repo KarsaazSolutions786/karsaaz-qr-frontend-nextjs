@@ -1,15 +1,15 @@
-'use client';
+'use client'
 
-import { useTranslation } from '@/lib/i18n';
-import { getAppSiteUrl } from '@/lib/utils/site-url';
+import { useTranslation } from '@/lib/i18n'
+import { getAppSiteUrl } from '@/lib/utils/site-url'
 
 interface QRCodeBadgeProps {
-  variant?: 'default' | 'minimal' | 'branded';
-  position?: 'bottom-right' | 'bottom-left' | 'bottom-center' | 'top-right' | 'top-left';
-  showLogo?: boolean;
-  text?: string;
-  link?: string;
-  className?: string;
+  variant?: 'default' | 'minimal' | 'branded'
+  position?: 'bottom-right' | 'bottom-left' | 'bottom-center' | 'top-right' | 'top-left'
+  showLogo?: boolean
+  text?: string
+  link?: string
+  className?: string
 }
 
 /**
@@ -25,21 +25,21 @@ export default function QRCodeBadge({
   link = getAppSiteUrl(),
   className = '',
 }: QRCodeBadgeProps) {
-  const { t } = useTranslation();
-  const resolvedText = text || t('Powered by Karsaaz QR');
+  const { t } = useTranslation()
+  const resolvedText = text || t('Powered by Karsaaz QR')
   const positionClasses = {
     'bottom-right': 'bottom-4 right-4',
     'bottom-left': 'bottom-4 left-4',
     'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2',
     'top-right': 'top-4 right-4',
     'top-left': 'top-4 left-4',
-  };
+  }
 
   const variantClasses = {
     default: 'bg-white text-gray-700 border border-gray-200 shadow-md',
     minimal: 'bg-gray-900/80 text-white backdrop-blur-sm',
     branded: 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg',
-  };
+  }
 
   return (
     <a
@@ -59,11 +59,10 @@ export default function QRCodeBadge({
     >
       {showLogo && (
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm13-2h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/>
+          <path d="M3 11h8V3H3v8zm2-6h4v4H5V5zm8-2v8h8V3h-8zm6 6h-4V5h4v4zM3 21h8v-8H3v8zm2-6h4v4H5v-4zm13-2h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3z" />
         </svg>
       )}
       <span>{resolvedText}</span>
     </a>
-  );
+  )
 }
-

@@ -12,7 +12,11 @@ export type LoginFormData = z.infer<typeof loginSchema>
 // Register schema — matches original backend expectations
 export const registerSchema = z
   .object({
-    name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
+    name: z
+      .string()
+      .trim()
+      .min(1, 'Name is required')
+      .max(100, 'Name must be less than 100 characters'),
     email: z.string().trim().email('Invalid email address'),
     password: z
       .string()
@@ -25,7 +29,7 @@ export const registerSchema = z
       errorMap: () => ({ message: 'You must accept the terms and conditions' }),
     }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine(data => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   })
@@ -47,26 +51,33 @@ export const forgotPasswordSchema = z.object({
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>
 
 // Reset password schema — backend requires email + password_confirmation
-export const resetPasswordSchema = z.object({
-  token: z.string().min(1, 'Reset token is required'),
-  email: z.string().trim().email('Invalid email address'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
-  path: ['confirmPassword'],
-})
+export const resetPasswordSchema = z
+  .object({
+    token: z.string().min(1, 'Reset token is required'),
+    email: z.string().trim().email('Invalid email address'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+      .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+      .regex(/[0-9]/, 'Password must contain at least one number'),
+    confirmPassword: z.string(),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
 
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>
 
 // Update profile schema
 export const updateProfileSchema = z.object({
-  name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters').optional(),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Name is required')
+    .max(100, 'Name must be less than 100 characters')
+    .optional(),
   email: z.string().email('Invalid email address'),
   avatar: z.string().url('Avatar must be a valid URL').optional(),
 })
@@ -82,7 +93,10 @@ export type PasswordlessEmailFormData = z.infer<typeof passwordlessEmailSchema>
 
 // Passwordless auth — OTP verification step (6-digit code, matches backend size:6)
 export const passwordlessOtpSchema = z.object({
-  otp: z.string().length(6, 'Code must be 6 digits').regex(/^[0-9]{6}$/, 'Code must be 6 digits'),
+  otp: z
+    .string()
+    .length(6, 'Code must be 6 digits')
+    .regex(/^[0-9]{6}$/, 'Code must be 6 digits'),
 })
 
 export type PasswordlessOtpFormData = z.infer<typeof passwordlessOtpSchema>
@@ -92,6 +106,6 @@ export const passwordlessFallbackPasswordSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 })
 
-export type PasswordlessFallbackPasswordFormData = z.infer<typeof passwordlessFallbackPasswordSchema>
-
-
+export type PasswordlessFallbackPasswordFormData = z.infer<
+  typeof passwordlessFallbackPasswordSchema
+>

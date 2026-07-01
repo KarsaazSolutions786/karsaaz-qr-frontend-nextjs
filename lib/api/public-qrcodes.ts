@@ -110,7 +110,6 @@ function simpleHash(str: string): string {
  * Created/Updated: February 2026
  */
 
-
 export async function getBusinessProfileData(slug: string) {
   const response = await fetch(`${getApiBaseURL()}/qrcodes/${slug}/redirect`)
   if (!response.ok) throw new Error('Failed to fetch business profile')

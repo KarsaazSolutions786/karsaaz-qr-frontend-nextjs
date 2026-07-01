@@ -1,18 +1,18 @@
 /**
  * BulkCreateButton Component
- * 
+ *
  * Prominent button for bulk QR code creation.
  */
 
-'use client';
+'use client'
 
-import React from 'react';
-import { FolderPlus, Sparkles } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
+import React from 'react'
+import { FolderPlus, Sparkles } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 export interface BulkCreateButtonProps {
-  onClick: () => void;
-  disabled?: boolean;
+  onClick: () => void
+  disabled?: boolean
 }
 
 /**
@@ -21,7 +21,7 @@ export interface BulkCreateButtonProps {
  * Created/Updated: February 2026
  */
 export function BulkCreateButton({ onClick, disabled = false }: BulkCreateButtonProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <button
       onClick={onClick}
@@ -47,13 +47,13 @@ export function BulkCreateButton({ onClick, disabled = false }: BulkCreateButton
           <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse" />
         )}
       </div>
-      
+
       <span className="text-sm sm:text-base">{t('Bulk Create')}</span>
-      
+
       {/* Shine Effect */}
       {!disabled && (
         <div className="pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
       )}
     </button>
-  );
+  )
 }

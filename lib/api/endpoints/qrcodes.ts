@@ -142,19 +142,15 @@ export const qrcodesAPI = {
         updatedAt: 'updated_at',
         name: 'name',
         scans: 'scans_count',
-      };
-      const sortColumn = sortBy ? sortColumnMap[sortBy] : undefined;
+      }
+      const sortColumn = sortBy ? sortColumnMap[sortBy] : undefined
 
-      const rawStatus = restParams.status;
+      const rawStatus = restParams.status
       const statusParam =
-        rawStatus === 'active'
-          ? 'enabled'
-          : rawStatus === 'inactive'
-            ? 'disabled'
-            : rawStatus;
+        rawStatus === 'active' ? 'enabled' : rawStatus === 'inactive' ? 'disabled' : rawStatus
 
-      const restWithoutStatus = { ...restParams };
-      delete restWithoutStatus.status;
+      const restWithoutStatus = { ...restParams }
+      delete restWithoutStatus.status
 
       // Build query params using backend's expected param names
       const queryParams: Record<string, unknown> = {
@@ -178,7 +174,7 @@ export const qrcodesAPI = {
         ...(updatedFrom ? { updated_from: updatedFrom } : {}),
         ...(updatedTo ? { updated_to: updatedTo } : {}),
         ...(hasLogo ? { has_logo: 'true' } : {}),
-      };
+      }
 
       // Only include search_archived if explicitly set
       if (search_archived !== undefined) {

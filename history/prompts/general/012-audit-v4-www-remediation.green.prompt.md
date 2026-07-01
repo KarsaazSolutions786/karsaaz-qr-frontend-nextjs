@@ -26,7 +26,7 @@ TESTS_YAML:
 
 ## Prompt
 
-read this and start working accordingly in detail 
+read this and start working accordingly in detail
 
 C:\Dev\karsaaz qr\Bugs\KarsaazQR_Audit_www_v4.docx
 

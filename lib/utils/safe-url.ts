@@ -1,9 +1,4 @@
-const BLOCKED_HOSTS = new Set([
-  'localhost',
-  '127.0.0.1',
-  '0.0.0.0',
-  '::1',
-])
+const BLOCKED_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1'])
 
 function isPrivateIpv4(host: string): boolean {
   const parts = host.split('.').map(Number)

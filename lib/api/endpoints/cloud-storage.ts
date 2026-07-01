@@ -2,7 +2,7 @@ import apiClient from '@/lib/api/client'
 
 /**
  * Cloud Storage API Endpoints
- * 
+ *
  * Matches backend routes in: routes/api.php (cloud-storage prefix)
  * Providers: Google Drive, Dropbox, OneDrive, MEGA
  */
@@ -15,7 +15,7 @@ export type CloudProvider = 'google_drive' | 'dropbox' | 'onedrive' | 'mega'
  * Backend connection status fields:
  * - is_active: Whether the connection is currently active
  * - is_token_expired: Whether OAuth token has expired (OAuth providers only)
- * 
+ *
  * The frontend derives display status from these:
  * - "connected" when is_active && !is_token_expired
  * - "expired" when is_token_expired
@@ -125,7 +125,9 @@ export const cloudStorageAPI = {
 
   /** List all connected cloud storage providers */
   getConnections: async (): Promise<CloudConnection[]> => {
-    const response = await apiClient.get<CloudConnection[] | { data: CloudConnection[] }>('/cloud-storage/connections')
+    const response = await apiClient.get<CloudConnection[] | { data: CloudConnection[] }>(
+      '/cloud-storage/connections'
+    )
     const body = response.data
     return Array.isArray(body) ? body : ((body as { data: CloudConnection[] }).data ?? [])
   },
@@ -142,21 +144,26 @@ export const cloudStorageAPI = {
   },
 
   /** Update a cloud storage connection */
-  updateConnection: async (id: string, data: {
-    provider?: string
-    name?: string
-    access_key?: string
-    secret_key?: string
-    bucket?: string
-    region?: string
-  }) => {
+  updateConnection: async (
+    id: string,
+    data: {
+      provider?: string
+      name?: string
+      access_key?: string
+      secret_key?: string
+      bucket?: string
+      region?: string
+    }
+  ) => {
     const response = await apiClient.put(`/cloud-storage/connections/${id}`, data)
     return response.data
   },
 
   /** Test an existing connection */
   testConnection: async (id: string) => {
-    const response = await apiClient.post<TestConnectionResult>(`/cloud-storage/connections/${id}/test`)
+    const response = await apiClient.post<TestConnectionResult>(
+      `/cloud-storage/connections/${id}/test`
+    )
     return response.data
   },
 
@@ -164,7 +171,9 @@ export const cloudStorageAPI = {
 
   /** Get OAuth authorization URL for a provider */
   getAuthUrl: async (provider: Exclude<CloudProvider, 'mega'>): Promise<AuthUrlResponse> => {
-    const response = await apiClient.post<AuthUrlResponse | { data: AuthUrlResponse }>(`/cloud-storage/${provider}/auth-url`)
+    const response = await apiClient.post<AuthUrlResponse | { data: AuthUrlResponse }>(
+      `/cloud-storage/${provider}/auth-url`
+    )
     const body = response.data
     // Handle both { url: "..." } and { data: { url: "..." } } formats
     if ('data' in body && body.data && 'url' in body.data) {
@@ -175,7 +184,10 @@ export const cloudStorageAPI = {
 
   /** Handle OAuth callback after user authorizes */
   handleCallback: async (provider: Exclude<CloudProvider, 'mega'>, data: OAuthCallbackData) => {
-    const response = await apiClient.post<CloudConnection>(`/cloud-storage/${provider}/callback`, data)
+    const response = await apiClient.post<CloudConnection>(
+      `/cloud-storage/${provider}/callback`,
+      data
+    )
     return response.data
   },
 
@@ -189,7 +201,10 @@ export const cloudStorageAPI = {
 
   /** Connect to MEGA using email/password */
   connectMega: async (credentials: MegaCredentials) => {
-    const response = await apiClient.post<CloudConnection>('/cloud-storage/mega/connect', credentials)
+    const response = await apiClient.post<CloudConnection>(
+      '/cloud-storage/mega/connect',
+      credentials
+    )
     return response.data
   },
 
@@ -203,14 +218,18 @@ export const cloudStorageAPI = {
 
   /** List all backup jobs */
   getBackupJobs: async (): Promise<BackupJob[]> => {
-    const response = await apiClient.get<BackupJob[] | { data: BackupJob[] }>('/cloud-storage/backup-jobs')
+    const response = await apiClient.get<BackupJob[] | { data: BackupJob[] }>(
+      '/cloud-storage/backup-jobs'
+    )
     const body = response.data
     return Array.isArray(body) ? body : ((body as { data: BackupJob[] }).data ?? [])
   },
 
   /** Get a single backup job */
   getBackupJob: async (id: string): Promise<BackupJob> => {
-    const response = await apiClient.get<BackupJob | { data: BackupJob }>(`/cloud-storage/backup-jobs/${id}`)
+    const response = await apiClient.get<BackupJob | { data: BackupJob }>(
+      `/cloud-storage/backup-jobs/${id}`
+    )
     const body = response.data
     // Handle both { ...job } and { data: { ...job } } formats
     if ('data' in body && body.data && typeof body.data === 'object') {
@@ -221,7 +240,10 @@ export const cloudStorageAPI = {
 
   /** Start a new backup */
   createBackup: async (data: CreateBackupData): Promise<BackupJob> => {
-    const response = await apiClient.post<BackupJob | { data: BackupJob } | { id: string }>('/cloud-storage/backup', data)
+    const response = await apiClient.post<BackupJob | { data: BackupJob } | { id: string }>(
+      '/cloud-storage/backup',
+      data
+    )
     const body = response.data
     // Handle { data: { id: ... } }, { id: ... }, or full job response
     if ('data' in body && body.data && typeof body.data === 'object') {

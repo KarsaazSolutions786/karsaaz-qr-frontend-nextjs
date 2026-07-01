@@ -106,4 +106,3 @@ export function validateEnv(): string[] {
 
 /** Frozen, typed environment configuration */
 export const envConfig: Readonly<EnvConfig> = Object.freeze(buildEnvConfig())
-

@@ -584,5 +584,3 @@ const QRTypeContent = ({ activeType }: { activeType: string }) => {
     </div>
   )
 }
-
-

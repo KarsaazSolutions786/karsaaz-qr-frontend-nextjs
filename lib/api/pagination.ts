@@ -32,7 +32,9 @@ export interface PaginatedResponse<T> {
   pagination: NormalizedPagination
 }
 
-function readPaginationFields(source: Record<string, unknown> | null | undefined): NormalizedPagination | null {
+function readPaginationFields(
+  source: Record<string, unknown> | null | undefined
+): NormalizedPagination | null {
   if (!source || typeof source !== 'object') return null
 
   const total = Number(source.total ?? source.total_count ?? 0)
@@ -59,7 +61,10 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
 
   // Nested pagination snake_case (Flutter / docs)
   const nestedPagination = readPaginationFields(raw.pagination)
-  if (nestedPagination && (raw.pagination?.current_page != null || raw.pagination?.last_page != null)) {
+  if (
+    nestedPagination &&
+    (raw.pagination?.current_page != null || raw.pagination?.last_page != null)
+  ) {
     return {
       data: Array.isArray(raw.data) ? raw.data : [],
       pagination: nestedPagination,

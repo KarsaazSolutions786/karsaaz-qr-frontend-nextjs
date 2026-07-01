@@ -152,4 +152,3 @@ export function validateWizardQRData(qrType: string, data: Record<string, unknow
 
   return result.error.errors[0]?.message ?? 'Please fill in the required fields before continuing.'
 }
-

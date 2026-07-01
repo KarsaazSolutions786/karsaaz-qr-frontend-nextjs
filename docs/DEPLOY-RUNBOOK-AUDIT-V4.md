@@ -11,23 +11,23 @@ Complete dry-run and production deployment guide for the **www SEO / security au
 
 ### Frontend (`karsaaz Qr React js/`)
 
-| Area | Changes |
-|------|---------|
-| SEO / OG | `NEXT_PUBLIC_CANONICAL_URL`, `getCanonicalSiteUrl()`, OG on auth/legal/guest/create |
-| Routes | `/register` alias, `/signup` redirect in middleware |
-| SSR audit | Login, signup, `/qrcodes/new` static shells + hydration bridges |
-| Security | SSRF URL validation (`safe-url.ts`, `qr-schemas.ts`), COOP/CORP headers |
-| Auth UX | Unified error messages, email trim, maxlength on SSR forms |
-| Performance | Hero `sizes`, lazy chatbot, FAQ JSON-LD |
-| Legal | Privacy policy date v2.1 |
+| Area        | Changes                                                                             |
+| ----------- | ----------------------------------------------------------------------------------- |
+| SEO / OG    | `NEXT_PUBLIC_CANONICAL_URL`, `getCanonicalSiteUrl()`, OG on auth/legal/guest/create |
+| Routes      | `/register` alias, `/signup` redirect in middleware                                 |
+| SSR audit   | Login, signup, `/qrcodes/new` static shells + hydration bridges                     |
+| Security    | SSRF URL validation (`safe-url.ts`, `qr-schemas.ts`), COOP/CORP headers             |
+| Auth UX     | Unified error messages, email trim, maxlength on SSR forms                          |
+| Performance | Hero `sizes`, lazy chatbot, FAQ JSON-LD                                             |
+| Legal       | Privacy policy date v2.1                                                            |
 
 ### Backend (`qr-code-backend/`)
 
-| Area | Changes |
-|------|---------|
-| SEO | Remove `localhost:8000` from generator navbar; `FRONTEND_CUSTOM_URL` links |
+| Area | Changes                                                                      |
+| ---- | ---------------------------------------------------------------------------- |
+| SEO  | Remove `localhost:8000` from generator navbar; `FRONTEND_CUSTOM_URL` links   |
 | Auth | Email trim, unified forgot-password response, login message anti-enumeration |
-| SSRF | `SafeUrlValidator` + `UrlRule` blocks private/localhost URLs |
+| SSRF | `SafeUrlValidator` + `UrlRule` blocks private/localhost URLs                 |
 
 ### Deferred (post-deploy)
 
@@ -67,19 +67,19 @@ php artisan view:cache
 
 ### Next.js
 
-| Variable | Production value |
-|----------|------------------|
-| `NEXT_PUBLIC_API_URL` | `https://api.karsaazqr.com` |
-| `NEXT_PUBLIC_APP_URL` | `https://app.karsaazqr.com` |
+| Variable                    | Production value            |
+| --------------------------- | --------------------------- |
+| `NEXT_PUBLIC_API_URL`       | `https://api.karsaazqr.com` |
+| `NEXT_PUBLIC_APP_URL`       | `https://app.karsaazqr.com` |
 | `NEXT_PUBLIC_CANONICAL_URL` | `https://www.karsaazqr.com` |
 
 ### Laravel
 
-| Variable | Production value |
-|----------|------------------|
+| Variable              | Production value            |
+| --------------------- | --------------------------- |
 | `FRONTEND_CUSTOM_URL` | `https://www.karsaazqr.com` |
-| `APP_DEBUG` | `false` |
-| `FORCE_HTTPS` | `true` |
+| `APP_DEBUG`           | `false`                     |
+| `FORCE_HTTPS`         | `true`                      |
 
 ---
 

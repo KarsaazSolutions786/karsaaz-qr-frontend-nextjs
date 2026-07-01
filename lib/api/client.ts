@@ -62,7 +62,8 @@ const adjustForSlowConnection = (timeout: number): number => {
   return timeout
 }
 
-const AUTH_REQUEST_PATTERN = /\/(login|register|logout|verify-otp|forgot-password|reset-password)(\/|$|\?)/
+const AUTH_REQUEST_PATTERN =
+  /\/(login|register|logout|verify-otp|forgot-password|reset-password)(\/|$|\?)/
 
 function handleUnauthorizedResponse(config?: InternalAxiosRequestConfig): void {
   if (typeof window === 'undefined') return

@@ -11,12 +11,12 @@
 
 Create a `.env` file based on `.env.example`. Required variables:
 
-| Variable              | Description                       | Example                     |
-| --------------------- | --------------------------------- | --------------------------- |
-| `NEXT_PUBLIC_API_URL` | Backend API base URL              | `https://api.karsaazqr.com` |
-| `NEXT_PUBLIC_APP_URL` | Frontend app URL (dashboard)      | `https://app.karsaazqr.com` |
+| Variable                    | Description                       | Example                     |
+| --------------------------- | --------------------------------- | --------------------------- |
+| `NEXT_PUBLIC_API_URL`       | Backend API base URL              | `https://api.karsaazqr.com` |
+| `NEXT_PUBLIC_APP_URL`       | Frontend app URL (dashboard)      | `https://app.karsaazqr.com` |
 | `NEXT_PUBLIC_CANONICAL_URL` | Marketing/canonical URL (OG tags) | `https://www.karsaazqr.com` |
-| `ANALYZE`             | Enable bundle analyzer (optional) | `true`                      |
+| `ANALYZE`                   | Enable bundle analyzer (optional) | `true`                      |
 
 ## Local Development
 
@@ -94,4 +94,3 @@ docker-compose up -d
 - [ ] Confirm security headers via browser DevTools
 - [ ] Test payment/subscription flows
 - [ ] Verify email delivery (verification, password reset)
-

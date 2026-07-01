@@ -36,19 +36,17 @@ TESTS_YAML:
 It was discovered directly from the live HTML of www.karsaazqr.com pages, not from any assumption or prior knowledge.
 
 Specifically, these are the exact sources:
+
 1. From the homepage og:image meta tag — when I fetched https://www.karsaazqr.com/, the raw HTML returned:
 
 meta-og:image: https://app.karsaazqr.com/og-default.png
 meta-og:url: https://app.karsaazqr.com/
-That's what the www server itself is serving in its own HTML head.
-2. From www.karsaazqr.com/login — the fetched HTML returned the same:
+That's what the www server itself is serving in its own HTML head. 2. From www.karsaazqr.com/login — the fetched HTML returned the same:
 
 meta-og:url: https://app.karsaazqr.com/
-meta-og:image: https://app.karsaazqr.com/og-default.png
-3. From www.karsaazqr.com/terms — the og:url tag read:
+meta-og:image: https://app.karsaazqr.com/og-default.png 3. From www.karsaazqr.com/terms — the og:url tag read:
 
-meta-og:url: https://app.karsaazqr.com/terms
-4. From earlier search results — when I searched site:app.karsaazqr.com to unlock web_fetch permissions, Google returned indexed pages at app.karsaazqr.com/facebookmessenger-qr-code-generator, which I then fetched. That page is what revealed the localhost:8000 hardcoded navbar links.
+meta-og:url: https://app.karsaazqr.com/terms 4. From earlier search results — when I searched site:app.karsaazqr.com to unlock web_fetch permissions, Google returned indexed pages at app.karsaazqr.com/facebookmessenger-qr-code-generator, which I then fetched. That page is what revealed the localhost:8000 hardcoded navbar links.
 
 In summary: Every app.karsaazqr.com finding came from one of:
 

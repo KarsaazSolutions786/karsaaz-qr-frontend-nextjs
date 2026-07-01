@@ -7,7 +7,12 @@ export function SignupFormStatic() {
       <p className="mb-6 text-center text-sm text-gray-600">
         Sign up free to create and manage QR codes
       </p>
-      <form action="/register" method="get" aria-label="Create Karsaaz QR account" className="space-y-4">
+      <form
+        action="/register"
+        method="get"
+        aria-label="Create Karsaaz QR account"
+        className="space-y-4"
+      >
         <div>
           <label htmlFor="ssr-signup-name" className="block text-sm font-medium text-gray-700">
             Full name

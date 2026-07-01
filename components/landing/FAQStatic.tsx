@@ -43,7 +43,11 @@ export default function FAQStatic() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <section id="faq-ssr" className="py-20 px-6 bg-gray-50" aria-label="Frequently asked questions">
+      <section
+        id="faq-ssr"
+        className="py-20 px-6 bg-gray-50"
+        aria-label="Frequently asked questions"
+      >
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
             Frequently Asked Questions

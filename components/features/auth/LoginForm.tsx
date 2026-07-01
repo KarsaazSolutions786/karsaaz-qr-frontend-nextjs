@@ -280,7 +280,9 @@ export function LoginForm() {
                     | string
                     | undefined) ?? null)
                 : null
-              return normalizeLoginError(firstValidationError || data?.message) || t(GENERIC_LOGIN_ERROR)
+              return (
+                normalizeLoginError(firstValidationError || data?.message) || t(GENERIC_LOGIN_ERROR)
+              )
             })()}
           </p>
         </div>
@@ -302,5 +304,3 @@ export function LoginForm() {
     </form>
   )
 }
-
-
