@@ -139,7 +139,7 @@ export default function SystemDomainsPage() {
         <div className="mt-4 sm:mt-0">
           <button
             onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 transition-all"
           >
             <svg className="-ml-0.5 mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -164,7 +164,7 @@ export default function SystemDomainsPage() {
                 value={newDomain}
                 onChange={(e) => setNewDomain(e.target.value)}
                 placeholder="example.com"
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
             </div>
             <div className="mt-5 flex justify-end space-x-3">
@@ -177,7 +177,7 @@ export default function SystemDomainsPage() {
               <button
                 onClick={handleAdd}
                 disabled={!newDomain.trim() || saving}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
               >
                 {saving ? t('Adding...') : t('Add Domain')}
               </button>
@@ -210,7 +210,7 @@ export default function SystemDomainsPage() {
                   key={value}
                   className={`flex cursor-pointer items-center gap-3 rounded-lg border p-3 transition-colors ${
                     selectedAvailability === value
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-primary-500 bg-primary-50/50'
                       : 'border-gray-200 hover:bg-gray-50'
                   }`}
                 >
@@ -220,7 +220,7 @@ export default function SystemDomainsPage() {
                     value={value}
                     checked={selectedAvailability === value}
                     onChange={() => setSelectedAvailability(value)}
-                    className="text-blue-600 focus:ring-blue-500"
+                    className="text-primary-600 focus:ring-primary-500"
                   />
                   <div>
                     <span className="text-sm font-medium text-gray-900">
@@ -244,7 +244,7 @@ export default function SystemDomainsPage() {
                 type="button"
                 onClick={handleUpdateAvailability}
                 disabled={updatingAvailability}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 disabled:opacity-50 transition-all"
               >
                 {updatingAvailability ? t('Saving...') : t('Update Availability')}
               </button>
@@ -264,7 +264,7 @@ export default function SystemDomainsPage() {
             <div className="mt-6">
               <button
                 onClick={() => setShowAddModal(true)}
-                className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+                className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 transition-all"
               >
                 {t('Add Your First Domain')}
               </button>
@@ -296,7 +296,7 @@ export default function SystemDomainsPage() {
                         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
                           domain.availability === 'private'
                             ? 'bg-gray-100 text-gray-800'
-                            : 'bg-blue-100 text-blue-800'
+                            : 'bg-primary-100 text-primary-800'
                         }`}>
                           {domain.availability ?? 'public'}
                         </span>
@@ -324,7 +324,7 @@ export default function SystemDomainsPage() {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => openAvailabilityModal(domain)}
-                            className="font-medium text-blue-600 hover:text-blue-500"
+                            className="font-medium text-primary-600 hover:text-primary-500"
                             title={t('Change availability')}
                           >
                             {t('Availability')}

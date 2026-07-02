@@ -233,7 +233,7 @@ export default function ArchivedQRCodesPage() {
           </button>
           <Link
             href="/qrcodes"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             {t('View Active QR Codes')}
           </Link>
@@ -319,14 +319,14 @@ export default function ArchivedQRCodesPage() {
           </div>
 
           {/* Info Banner */}
-          <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="mb-6 bg-[#D3BBFF]/15 border border-[#D3BBFF] rounded-lg p-4">
             <div className="flex items-start gap-3">
-              <Archive className="w-5 h-5 text-blue-600 mt-0.5" />
+              <Archive className="w-5 h-5 text-primary-600 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-blue-900">
+                <p className="text-sm font-medium text-primary-900">
                   {t('These QR codes are archived')}
                 </p>
-                <p className="text-sm text-blue-700 mt-1">
+                <p className="text-sm text-primary-700 mt-1">
                   {t(
                     'Archived QR codes are hidden from your active list but can be unarchived at any time. They continue to work and track scans.'
                   )}
@@ -356,7 +356,7 @@ export default function ArchivedQRCodesPage() {
               </p>
               <Link
                 href="/qrcodes"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white rounded-md hover:brightness-105 transition-all"
               >
                 {t('View Active QR Codes')}
               </Link>

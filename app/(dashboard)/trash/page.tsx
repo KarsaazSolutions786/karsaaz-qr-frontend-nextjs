@@ -285,7 +285,7 @@ export default function TrashPage() {
           </p>
           <Link
             href="/qrcodes"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white rounded-md hover:brightness-105 transition-all"
           >
             {t('View Active QR Codes')}
           </Link>
@@ -342,7 +342,7 @@ export default function TrashPage() {
                       type="checkbox"
                       checked={selectedItems.some(i => i.id === qrcode.id)}
                       onChange={() => toggleItem(qrcode.id)}
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                     {qrcode.svgUrl && (
                       // eslint-disable-next-line @next/next/no-img-element

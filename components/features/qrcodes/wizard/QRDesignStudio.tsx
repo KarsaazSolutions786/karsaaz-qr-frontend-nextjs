@@ -67,6 +67,44 @@ const TABS: { id: TabId; label: string; emoji: string }[] = [
   { id: 'sticker', label: 'Sticker', emoji: '🎴' },
 ]
 
+const TAB_ICONS: Record<TabId, React.ReactNode> = {
+  color: (
+    <svg width="20" height="20" viewBox="0 0 24 24" className="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="11" fill="white" stroke="#E889FF" strokeWidth="1.5" />
+      <g transform="translate(12, 12) scale(0.8)">
+        <path d="M0 0 L0 -10 A10 10 0 0 1 7.07 -7.07 Z" fill="#FF3366" />
+        <path d="M0 0 L7.07 -7.07 A10 10 0 0 1 10 0 Z" fill="#FF9933" />
+        <path d="M0 0 L10 0 A10 10 0 0 1 7.07 7.07 Z" fill="#FFCC00" />
+        <path d="M0 0 L7.07 7.07 A10 10 0 0 1 0 10 Z" fill="#33CC66" />
+        <path d="M0 0 L0 10 A10 10 0 0 1 -7.07 7.07 Z" fill="#3399FF" />
+        <path d="M0 0 L-7.07 7.07 A10 10 0 0 1 -10 0 Z" fill="#9933FF" />
+        <path d="M0 0 L-10 0 A10 10 0 0 1 -7.07 -7.07 Z" fill="#FF33CC" />
+        <path d="M0 0 L-7.07 -7.07 A10 10 0 0 1 0 -10 Z" fill="#FF3399" />
+      </g>
+    </svg>
+  ),
+  look: (
+    <svg width="20" height="20" viewBox="0 0 24 24" className="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="10" fill="#E889FF" />
+      <rect x="7" y="7" width="4" height="4" stroke="white" strokeWidth="1.5" fill="none" />
+      <rect x="13" y="7" width="4" height="4" stroke="white" strokeWidth="1.5" fill="none" />
+      <rect x="7" y="13" width="4" height="4" stroke="white" strokeWidth="1.5" fill="none" />
+      <rect x="14" y="14" width="2" height="2" fill="white" />
+      <rect x="11" y="11" width="2" height="2" fill="white" />
+    </svg>
+  ),
+  sticker: (
+    <svg width="20" height="20" viewBox="0 0 24 24" className="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="5" y="3" width="14" height="18" rx="2" stroke="#B91C1C" strokeWidth="1.5" fill="none" />
+      <rect x="8" y="6" width="3" height="3" stroke="#B91C1C" strokeWidth="1" fill="none" />
+      <rect x="13" y="6" width="3" height="3" stroke="#B91C1C" strokeWidth="1" fill="none" />
+      <rect x="8" y="12" width="3" height="3" stroke="#B91C1C" strokeWidth="1" fill="none" />
+      <rect x="13" y="12" width="2" height="2" fill="#B91C1C" />
+      <line x1="8" y1="17" x2="16" y2="17" stroke="#B91C1C" strokeWidth="1.5" />
+    </svg>
+  ),
+}
+
 export default function QRDesignStudio({
   qrType,
   qrTypeLabel,
@@ -218,14 +256,14 @@ export default function QRDesignStudio({
                   key={tab.id}
                   onClick={() => scrollToTab(tab.id)}
                   className={cn(
-                    'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap',
+                    'flex items-center gap-2.5 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all whitespace-nowrap border',
                     activeTab === tab.id
-                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                      : 'text-gray-500 hover:text-gray-700'
+                      ? 'bg-[#FDF2FF] text-[#B36AC5] border-[#F3C4FF] shadow-sm'
+                      : 'bg-[#F9FAFB] text-gray-700 border-gray-200 hover:bg-gray-50'
                   )}
                 >
                   {t(tab.label)}
-                  <span className="text-base">{tab.emoji}</span>
+                  <span className="flex-shrink-0">{TAB_ICONS[tab.id]}</span>
                 </button>
               ))}
             </div>

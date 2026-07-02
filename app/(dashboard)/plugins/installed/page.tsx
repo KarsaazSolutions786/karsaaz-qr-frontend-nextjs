@@ -44,7 +44,7 @@ export default function PluginsInstalledPage() {
         <div className="mt-4 sm:mt-0">
           <Link
             href="/plugins/available"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all"
           >
             {t('Browse Plugins')}
           </Link>
@@ -78,7 +78,7 @@ export default function PluginsInstalledPage() {
             <div className="mt-6">
               <Link
                 href="/plugins/available"
-                className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+                className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 transition-all"
               >
                 {t('Browse Available Plugins')}
               </Link>
@@ -114,7 +114,7 @@ export default function PluginsInstalledPage() {
                       {plugin.show_settings_link !== false && (
                         <Link
                           href={`/plugins/${plugin.slug}`}
-                          className="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-500"
+                          className="inline-flex items-center gap-1 font-medium text-primary-600 hover:text-primary-500"
                         >
                           <Settings className="h-3.5 w-3.5" />
                           {t('Settings')}

@@ -80,7 +80,7 @@ const SMS_PROVIDERS: SmsProviderDef[] = [
 ]
 
 const inputClass =
-  'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+  'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500'
 
 // ─── Build all config keys ───────────────────────────────────────────────────
 
@@ -200,8 +200,8 @@ export default function SmsPortalsPage() {
                         isEnabled ? '0' : '1'
                       )
                     }
-                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
-                      isEnabled ? 'bg-indigo-600' : 'bg-gray-200'
+                    className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
+                      isEnabled ? 'bg-primary-600' : 'bg-gray-200'
                     }`}
                     aria-label={
                       isEnabled
@@ -252,7 +252,7 @@ export default function SmsPortalsPage() {
 
                   {/* RBSoft-specific help text */}
                   {provider.id === 'rbsoft-sms-portal' && (
-                    <div className="mt-4 rounded-md bg-blue-50 p-3 text-sm text-blue-700">
+                    <div className="mt-4 rounded-md bg-[#D3BBFF]/15 p-3 text-sm text-primary-700">
                       <p className="font-medium">{t('RBSoft Configuration')}</p>
                       <p className="mt-1 text-xs">
                         {t(
@@ -278,7 +278,7 @@ export default function SmsPortalsPage() {
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50"
+          className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
         >
           {saving ? t('Saving...') : t('Save Settings')}
         </button>

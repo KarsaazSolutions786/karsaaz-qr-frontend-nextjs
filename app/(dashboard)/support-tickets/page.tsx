@@ -59,7 +59,7 @@ export default function SupportTicketsPage() {
         <div className="mt-4 sm:mt-0">
           <Link
             href="/support-tickets/new"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             {t('New Ticket')}
           </Link>
@@ -72,7 +72,7 @@ export default function SupportTicketsPage() {
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
         >
           <option value="all">{t('All')}</option>
           <option value="OPEN">{t('Open')}</option>

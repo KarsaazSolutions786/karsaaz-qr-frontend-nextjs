@@ -46,7 +46,7 @@ export default function DynamicBiolinkBlocksPage() {
           <p className="mt-2 text-sm text-gray-600">{t('Reusable block templates for biolink pages')}</p>
         </div>
         <Link href="/dynamic-biolink-blocks/new"
-          className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">
+          className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all">
           {t('+ New Block')}
         </Link>
       </div>
@@ -59,7 +59,7 @@ export default function DynamicBiolinkBlocksPage() {
         ) : blocks.length === 0 ? (
           <div className="flex h-48 flex-col items-center justify-center gap-2 text-gray-500">
             <p className="text-lg font-medium">{t('No dynamic blocks yet')}</p>
-            <Link href="/dynamic-biolink-blocks/new" className="text-sm text-blue-600 hover:underline">{t('Create your first block')}</Link>
+            <Link href="/dynamic-biolink-blocks/new" className="text-sm text-primary-600 hover:underline">{t('Create your first block')}</Link>
           </div>
         ) : (
           <table className="min-w-full divide-y divide-gray-200">
@@ -78,7 +78,7 @@ export default function DynamicBiolinkBlocksPage() {
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
                     <div className="flex items-center justify-end gap-2">
                       <Link href={`/dynamic-biolink-blocks/${block.id}`}
-                        className="rounded px-2 py-1 text-blue-600 hover:bg-blue-50">{t('Edit')}</Link>
+                        className="rounded px-2 py-1 text-primary-600 hover:bg-primary-50">{t('Edit')}</Link>
                       <button onClick={() => handleDelete(block.id)}
                         disabled={deleteTarget === block.id}
                         className="rounded px-2 py-1 text-red-600 hover:bg-red-50 disabled:opacity-50">

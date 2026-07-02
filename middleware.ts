@@ -42,6 +42,13 @@ export function middleware(request: NextRequest) {
   const isPublic = isPublicRoute(pathname)
 
   if (!isPublic && isProtectedRoute(pathname) && !hasAuthCookie) {
+    // In local development, cross-origin cookies between localhost and the backend IP (e.g. 192.168.x.x)
+    // are blocked by browsers. We bypass the middleware redirect in development;
+    // client-side DashboardLayout will protect the route if the user is not authenticated.
+    if (process.env.NODE_ENV === 'development') {
+      return applySecurityHeaders(NextResponse.next())
+    }
+
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
     loginUrl.searchParams.set('returnUrl', pathname)

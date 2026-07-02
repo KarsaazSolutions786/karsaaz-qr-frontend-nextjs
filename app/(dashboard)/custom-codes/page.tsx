@@ -41,7 +41,7 @@ export default function CustomCodesPage() {
         <div className="mt-4 sm:mt-0">
           <Link
             href="/custom-codes/new"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             {t('Create Custom Code')}
           </Link>
@@ -55,7 +55,7 @@ export default function CustomCodesPage() {
             placeholder={t('Search custom codes…')}
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-            className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:max-w-md"
+            className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-md"
           />
         </div>
 
@@ -101,7 +101,7 @@ export default function CustomCodesPage() {
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                         <Link
                           href={`/custom-codes/${code.id}`}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
+                          className="text-primary-600 hover:text-primary-900 mr-4"
                         >
                           {t('Edit')}
                         </Link>
@@ -163,7 +163,7 @@ export default function CustomCodesPage() {
             <div className="mt-6">
               <Link
                 href="/custom-codes/new"
-                className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+                className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
               >
                 {t('Create Custom Code')}
               </Link>

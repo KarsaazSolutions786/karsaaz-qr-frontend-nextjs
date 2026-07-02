@@ -49,7 +49,7 @@ function CopyModal({
             <select
               value={sourceId}
               onChange={(e) => setSourceId(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm"
             >
               <option value="">{t('Select source...')}</option>
               {translations.map((tr) => (
@@ -62,7 +62,7 @@ function CopyModal({
             <select
               value={destId}
               onChange={(e) => setDestId(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm"
             >
               <option value="">{t('Select destination...')}</option>
               {translations.map((tr) => (
@@ -81,7 +81,7 @@ function CopyModal({
           <button
             onClick={() => sourceId && destId && onCopy(Number(sourceId), Number(destId))}
             disabled={!sourceId || !destId || isPending}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white hover:brightness-105 disabled:opacity-50 transition-all"
           >
             {isPending ? t('Copying...') : t('Copy')}
           </button>
@@ -187,7 +187,7 @@ function ContentBlocksPageInner() {
         <div className="mt-4 sm:mt-0">
           <Link
             href="/content-blocks/new"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             {t('Create Block')}
           </Link>
@@ -199,7 +199,7 @@ function ContentBlocksPageInner() {
         <select
           value={translationId ?? ''}
           onChange={(e) => setTranslationFilter(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none"
+          className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
         >
           <option value="">{t('All Languages')}</option>
           {allTranslations.map((tr) => (
@@ -224,7 +224,7 @@ function ContentBlocksPageInner() {
           placeholder={t('Search by title or position...')}
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-          className="block rounded-md border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none sm:w-72"
+          className="block rounded-md border border-gray-300 px-4 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:w-72"
         />
       </div>
 
@@ -252,7 +252,7 @@ function ContentBlocksPageInner() {
                     <tr key={block.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">{block.title}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        <span className="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold leading-5 text-blue-800">{block.position}</span>
+                        <span className="inline-flex rounded-full bg-primary-100 px-2 text-xs font-semibold leading-5 text-primary-800">{block.position}</span>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {block.translation?.name ?? t('English (default)')}
@@ -264,7 +264,7 @@ function ContentBlocksPageInner() {
                           : '—'}
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
-                        <Link href={`/content-blocks/${block.id}`} className="text-blue-600 hover:text-blue-900 mr-4">{t('Edit')}</Link>
+                        <Link href={`/content-blocks/${block.id}`} className="text-primary-600 hover:text-primary-900 mr-4">{t('Edit')}</Link>
                         <button
                           onClick={() => handleDelete(block.id, block.title)}
                           className="text-red-600 hover:text-red-900"
@@ -293,7 +293,7 @@ function ContentBlocksPageInner() {
             <h3 className="text-sm font-medium text-gray-900">{t('No content blocks')}</h3>
             <p className="mt-1 text-sm text-gray-500">{t('Get started by creating a content block')}</p>
             <div className="mt-6">
-              <Link href="/content-blocks/new" className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700">{t('Create Block')}</Link>
+              <Link href="/content-blocks/new" className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all">{t('Create Block')}</Link>
             </div>
           </div>
         )}

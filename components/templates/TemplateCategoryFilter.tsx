@@ -16,6 +16,7 @@ export interface TemplateCategoryFilterProps {
   selectedCategoryId?: number
   onCategoryChange: (categoryId?: number) => void
   templateCounts?: Record<number, number>
+  className?: string
 }
 
 /**
@@ -28,13 +29,14 @@ export default function TemplateCategoryFilter({
   selectedCategoryId,
   onCategoryChange,
   templateCounts = {},
+  className = '',
 }: TemplateCategoryFilterProps) {
   const { t } = useTranslation()
   const totalCount = Object.values(templateCounts).reduce((sum, count) => sum + count, 0)
   const isAllSelected = selectedCategoryId === undefined
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div className={`bg-white rounded-lg border border-gray-200 overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
         <h3 className="text-sm font-semibold text-gray-900">{t('Categories')}</h3>

@@ -66,7 +66,7 @@ function MagicUrlModal({ url, onClose }: { url: string; onClose: () => void }) {
           />
           <button
             onClick={handleCopy}
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white rounded-md hover:brightness-105 transition-all"
           >
             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
             {copied ? t('Copied!') : t('Copy')}
@@ -126,7 +126,7 @@ function FilterModal({
                 value={min}
                 onChange={e => setMin(e.target.value)}
                 placeholder="0"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
             </div>
             <div>
@@ -137,7 +137,7 @@ function FilterModal({
                 value={max}
                 onChange={e => setMax(e.target.value)}
                 placeholder={t('No limit')}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ function FilterModal({
           </button>
           <button
             onClick={() => onApply({ minQRCodes: min, maxQRCodes: max })}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            className="px-4 py-2 text-sm font-medium text-white bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] rounded-md hover:brightness-105 transition-all"
           >
             {t('Apply')}
           </button>
@@ -334,7 +334,7 @@ export function UserListContent({ paying }: UserListContentProps) {
         <div className="mt-4 sm:mt-0">
           <Link
             href="/users/new"
-            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+            className="inline-flex items-center gap-2 rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             <Plus className="w-4 h-4" />
             {t('Create User')}
@@ -351,7 +351,7 @@ export function UserListContent({ paying }: UserListContentProps) {
               href={tab.href}
               className={`pb-3 px-1 border-b-2 text-sm font-medium transition-colors ${
                 tab.active
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-primary-500 text-primary-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -371,20 +371,20 @@ export function UserListContent({ paying }: UserListContentProps) {
             setSearch(e.target.value)
             setPage(1)
           }}
-          className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:max-w-sm text-sm"
+          className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-sm text-sm"
         />
         <button
           onClick={() => setShowFilterModal(true)}
           className={`inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium shadow-sm ${
             hasActiveFilters
-              ? 'border-blue-300 bg-blue-50 text-blue-700'
+              ? 'border-primary-300 bg-primary-50 text-primary-700'
               : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
           }`}
         >
           <Filter className="w-4 h-4" />
           {t('Filters')}
           {hasActiveFilters && (
-            <span className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-xs">
+            <span className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full bg-primary-600 text-white text-xs">
               1
             </span>
           )}
@@ -480,7 +480,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                         {user.mobile_number || '—'}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
-                        <span className="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800">
+                        <span className="inline-flex rounded-full bg-primary-100 px-2 py-0.5 text-xs font-semibold text-primary-800">
                           {user.roles?.[0]?.name || user.role || '—'}
                         </span>
                       </td>
@@ -599,7 +599,7 @@ export function UserListContent({ paying }: UserListContentProps) {
                   <select
                     value={perPage}
                     onChange={e => handlePerPageChange(Number(e.target.value))}
-                    className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                   >
                     {[10, 15, 25, 50, 100].map(n => (
                       <option key={n} value={n}>

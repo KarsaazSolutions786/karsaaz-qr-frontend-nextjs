@@ -70,7 +70,7 @@ export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSet
                   {...register(`${key}.enabled`)}
                   className="peer sr-only"
                 />
-                <div className="h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-all peer-checked:bg-indigo-600 peer-checked:after:translate-x-full peer-focus:ring-2 peer-focus:ring-indigo-500 peer-focus:ring-offset-2" />
+                <div className="h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-all peer-checked:bg-primary-600 peer-checked:after:translate-x-full peer-focus:ring-2 peer-focus:ring-primary-500 peer-focus:ring-offset-2" />
               </label>
             </div>
 
@@ -86,7 +86,7 @@ export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSet
                       type="text"
                       {...register('auth0.domain')}
                       placeholder="your-tenant.auth0.com"
-                      className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                      className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                     />
                   </div>
                 )}
@@ -98,7 +98,7 @@ export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSet
                     type="text"
                     {...register(`${key}.client_id`)}
                     placeholder={`${label} Client ID`}
-                    className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                    className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                   />
                 </div>
                 <div>
@@ -109,7 +109,7 @@ export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSet
                     type="password"
                     {...register(`${key}.client_secret`)}
                     placeholder="••••••••••••"
-                    className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                    className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                   />
                 </div>
               </div>
@@ -122,7 +122,7 @@ export function AuthSettingsForm({ defaultValues, onSubmit, isLoading }: AuthSet
         <button
           type="submit"
           disabled={isLoading}
-          className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all"
         >
           {isLoading ? t('Saving...') : t('Save Auth Settings')}
         </button>

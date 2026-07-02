@@ -58,7 +58,7 @@ export function QuickActions() {
       {/* FAB button */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white shadow-lg transition-all hover:scale-105 hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
         aria-label="Quick actions"
       >
         {open ? <XMarkIcon className="h-6 w-6" /> : <PlusIcon className="h-6 w-6" />}

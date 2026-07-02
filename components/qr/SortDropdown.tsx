@@ -140,7 +140,7 @@ export function SortDropdown({ currentSort, onSortChange }: SortDropdownProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+        <div className="absolute left-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
           <div className="py-1">
             {SORT_OPTIONS.map((option) => (
               <button

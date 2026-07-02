@@ -79,7 +79,7 @@ export default function CreditPricingPage() {
             placeholder="10"
             value={dynamicPrice}
             onChange={(e) => setDynamicPrice(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
           <p className="mt-1 text-xs text-gray-500">{t('Credits deducted per dynamic QR code generated.')}</p>
         </div>
@@ -95,7 +95,7 @@ export default function CreditPricingPage() {
             placeholder="1"
             value={staticPrice}
             onChange={(e) => setStaticPrice(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
           <p className="mt-1 text-xs text-gray-500">{t('Credits deducted per static QR code generated.')}</p>
         </div>
@@ -104,7 +104,7 @@ export default function CreditPricingPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 disabled:opacity-50 transition-all"
           >
             {saving ? t('Saving...') : t('Save')}
           </button>

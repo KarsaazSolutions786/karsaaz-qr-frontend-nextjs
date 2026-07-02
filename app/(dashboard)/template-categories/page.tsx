@@ -37,7 +37,7 @@ export default function TemplateCategoriesPage() {
         </div>
         <Link
           href="/template-categories/new"
-          className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 transition-all"
         >
           {t('Create Category')}
         </Link>
@@ -78,7 +78,7 @@ export default function TemplateCategoriesPage() {
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{cat.sort_order ?? '\u2014'}</td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
-                    <Link href={`/template-categories/${cat.id}`} className="mr-3 font-medium text-indigo-600 hover:text-indigo-500">
+                    <Link href={`/template-categories/${cat.id}`} className="mr-3 font-medium text-primary-600 hover:text-primary-500">
                       {t('Edit')}
                     </Link>
                     <button onClick={() => handleDelete(cat.id)} className="font-medium text-red-600 hover:text-red-500">

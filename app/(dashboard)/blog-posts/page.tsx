@@ -53,7 +53,7 @@ export default function BlogPostsPage() {
         <div className="mt-4 sm:mt-0">
           <Link
             href="/blog-posts/new"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             {t('New Post')}
           </Link>
@@ -67,7 +67,7 @@ export default function BlogPostsPage() {
             placeholder={t('Search by title')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:max-w-md"
+            className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-md"
           />
         </div>
 
@@ -126,7 +126,7 @@ export default function BlogPostsPage() {
             <div className="mt-6">
               <Link
                 href="/blog-posts/new"
-                className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+                className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
               >
                 {t('New Post')}
               </Link>

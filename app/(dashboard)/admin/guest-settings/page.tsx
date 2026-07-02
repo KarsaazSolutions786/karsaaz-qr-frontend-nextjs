@@ -21,7 +21,7 @@ const ALL_DESIGN_FEATURES = [
 ]
 
 const inputClass =
-  'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white'
+  'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white'
 
 /**
  * Purpose: Executes Toggle functionality.
@@ -35,7 +35,7 @@ function Toggle({ enabled, onChange }: { enabled: boolean; onChange: (v: boolean
       role="switch"
       aria-checked={enabled}
       onClick={() => onChange(!enabled)}
-      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${enabled ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-600'}`}
+      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${enabled ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-600'}`}
     >
       <span
         className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${enabled ? 'translate-x-5' : 'translate-x-0'}`}
@@ -184,7 +184,7 @@ export default function AdminGuestSettingsPage() {
       {summary && (
         <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
-            { value: summary.total_sessions, label: t('Total Sessions'), color: 'text-indigo-600' },
+            { value: summary.total_sessions, label: t('Total Sessions'), color: 'text-primary-600' },
             { value: summary.active_sessions, label: t('Active'), color: 'text-green-600' },
             { value: `${summary.conversion_rate}%`, label: t('Conversion'), color: 'text-purple-600' },
             { value: summary.converted_sessions, label: t('Converted'), color: 'text-amber-600' },
@@ -238,7 +238,7 @@ export default function AdminGuestSettingsPage() {
                         type="checkbox"
                         checked={config.allowed_qr_types.includes(type.id)}
                         onChange={() => toggleArrayItem('allowed_qr_types', type.id)}
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                       />
                       {type.name}
                     </label>
@@ -260,7 +260,7 @@ export default function AdminGuestSettingsPage() {
                         checked={config.allowed_qr_types.includes(type.id)}
                         onChange={() => toggleArrayItem('allowed_qr_types', type.id)}
                         disabled={!config.allow_dynamic_qrcodes}
-                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 disabled:opacity-50"
+                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 disabled:opacity-50"
                       />
                       {type.name}
                     </label>
@@ -402,7 +402,7 @@ export default function AdminGuestSettingsPage() {
                     type="checkbox"
                     checked={config.allowed_export_formats.includes(fmt)}
                     onChange={() => toggleArrayItem('allowed_export_formats', fmt)}
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="uppercase">{fmt}</span>
                 </label>
@@ -424,7 +424,7 @@ export default function AdminGuestSettingsPage() {
                     type="checkbox"
                     checked={config.allowed_design_features.includes(feat.id)}
                     onChange={() => toggleArrayItem('allowed_design_features', feat.id)}
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                   />
                   {feat.label}
                 </label>
@@ -515,7 +515,7 @@ export default function AdminGuestSettingsPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all"
           >
             {isSaving ? t('Saving...') : t('Save Settings')}
           </button>

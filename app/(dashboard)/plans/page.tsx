@@ -59,7 +59,7 @@ export default function PlansPage() {
         <div className="mt-4 sm:mt-0">
           <Link
             href="/plans/new"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             {t('Create Plan')}
           </Link>
@@ -85,7 +85,7 @@ export default function PlansPage() {
             placeholder={t('Search plans...')}
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:max-w-md"
+            className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-md"
           />
         </div>
 
@@ -148,7 +148,7 @@ export default function PlansPage() {
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
                         <span
                           className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                            plan.isTrial ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
+                            plan.isTrial ? 'bg-primary-100 text-primary-800' : 'bg-gray-100 text-gray-600'
                           }`}
                         >
                           {plan.isTrial ? t('YES') : t('NO')}
@@ -157,13 +157,13 @@ export default function PlansPage() {
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                         <Link
                           href={`/plans/${plan.id}`}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
+                          className="text-primary-600 hover:text-primary-900 mr-4"
                         >
                           {t('Edit')}
                         </Link>
                         <button
                           onClick={() => handleDuplicate(plan.id)}
-                          className="text-indigo-600 hover:text-indigo-900 mr-4"
+                          className="text-primary-600 hover:text-primary-900 mr-4"
                           disabled={duplicateMutation.isPending}
                         >
                           {t('Duplicate')}
@@ -226,7 +226,7 @@ export default function PlansPage() {
             <div className="mt-6">
               <Link
                 href="/plans/new"
-                className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+                className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
               >
                 {t('Create Plan')}
               </Link>

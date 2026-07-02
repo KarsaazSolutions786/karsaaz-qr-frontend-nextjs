@@ -112,7 +112,7 @@ export default function NewUserPage() {
               value={form.name}
               onChange={set('name')}
               placeholder="John Doe"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
 
@@ -127,7 +127,7 @@ export default function NewUserPage() {
               value={form.email}
               onChange={set('email')}
               placeholder="user@example.com"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
 
@@ -141,7 +141,7 @@ export default function NewUserPage() {
               value={form.mobile_number}
               onChange={set('mobile_number')}
               placeholder="+1 555 000 0000"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
 
@@ -156,7 +156,7 @@ export default function NewUserPage() {
               value={form.password}
               onChange={set('password')}
               placeholder="Min. 8 characters"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
 
@@ -171,7 +171,7 @@ export default function NewUserPage() {
               value={form.password_confirmation}
               onChange={set('password_confirmation')}
               placeholder="Repeat password"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
 
@@ -183,7 +183,7 @@ export default function NewUserPage() {
             <select
               value={form.role_id}
               onChange={set('role_id')}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             >
               <option value="">— Select a role —</option>
               {rolesData?.data?.map((role) => (
@@ -205,7 +205,7 @@ export default function NewUserPage() {
             <button
               type="submit"
               disabled={createMutation.isPending}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] rounded-md hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {createMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
               {t('Create User')}

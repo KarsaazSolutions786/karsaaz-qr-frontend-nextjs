@@ -27,9 +27,9 @@ export function BulkCreateButton({ onClick, disabled = false }: BulkCreateButton
       onClick={onClick}
       disabled={disabled}
       className={`
-        group relative shrink-0 overflow-hidden inline-flex items-center gap-2 px-5 py-2.5 
+        group relative shrink-0 overflow-hidden inline-flex items-center gap-2 px-4 py-2 
         bg-gradient-to-r from-purple-600 to-blue-600 
-        text-white font-semibold rounded-lg 
+        text-white font-semibold rounded-md 
         shadow-lg shadow-purple-500/30
         transition-all duration-200
         ${
@@ -42,17 +42,17 @@ export function BulkCreateButton({ onClick, disabled = false }: BulkCreateButton
     >
       {/* Animated Sparkle */}
       <div className="relative">
-        <FolderPlus className="w-5 h-5" />
+        <FolderPlus className="w-4 h-4" />
         {!disabled && (
-          <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse" />
+          <Sparkles className="absolute -top-1 -right-1 w-2.5 h-2.5 text-yellow-300 animate-pulse" />
         )}
       </div>
 
-      <span className="text-sm sm:text-base">{t('Bulk Create')}</span>
+      <span className="text-sm">{t('Bulk Create')}</span>
 
       {/* Shine Effect */}
       {!disabled && (
-        <div className="pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+        <div className="pointer-events-none absolute inset-0 rounded-md bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
       )}
     </button>
   )

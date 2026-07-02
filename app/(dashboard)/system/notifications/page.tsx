@@ -119,7 +119,7 @@ const NOTIFICATION_EVENTS: NotificationEventConfig[] = [
 ]
 
 const inputClass =
-  'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+  'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500'
 
 // ─── Build all config keys needed ────────────────────────────────────────────
 
@@ -240,7 +240,7 @@ export default function SystemNotificationsPage() {
                 onClick={() => setActiveTab(evt.key)}
                 className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   activeTab === evt.key
-                    ? 'bg-indigo-50 text-indigo-700'
+                    ? 'bg-primary-50 text-primary-700'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
@@ -277,7 +277,7 @@ export default function SystemNotificationsPage() {
                     updateConfig(`${prefix}_enabled`, isEnabled ? '0' : '1')
                   }
                   className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
-                    isEnabled ? 'bg-indigo-600' : 'bg-gray-200'
+                    isEnabled ? 'bg-primary-600' : 'bg-gray-200'
                   }`}
                   aria-label={isEnabled ? t('Disable notification') : t('Enable notification')}
                 >
@@ -293,11 +293,11 @@ export default function SystemNotificationsPage() {
             <div className="px-6 py-5 space-y-5">
               {/* Template Variables Help */}
               {activeEvent.variables && activeEvent.variables.length > 0 && (
-                <div className="rounded-md bg-blue-50 p-4">
-                  <h3 className="text-sm font-medium text-blue-800">
+                <div className="rounded-md bg-[#D3BBFF]/15 p-4">
+                  <h3 className="text-sm font-medium text-primary-800">
                     {t('Available Template Variables')}
                   </h3>
-                  <p className="mt-1 text-xs text-blue-600">
+                  <p className="mt-1 text-xs text-primary-600">
                     {t(
                       'Use these variables in Email Body and SMS Body. They will be replaced with actual values when the notification is sent.'
                     )}
@@ -305,10 +305,10 @@ export default function SystemNotificationsPage() {
                   <div className="mt-3 space-y-1.5">
                     {activeEvent.variables.map((v) => (
                       <div key={v.name} className="flex items-start gap-2 text-sm">
-                        <code className="inline-block rounded bg-blue-100 px-1.5 py-0.5 font-mono text-xs text-blue-900">
+                        <code className="inline-block rounded bg-primary-100 px-1.5 py-0.5 font-mono text-xs text-primary-900">
                           {`{{${v.name}}}`}
                         </code>
-                        <span className="text-blue-700">{v.description}</span>
+                        <span className="text-primary-700">{v.description}</span>
                       </div>
                     ))}
                   </div>
@@ -363,7 +363,7 @@ export default function SystemNotificationsPage() {
                     }
                     className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
                       configs[`${prefix}_send_to_owner`] === '1'
-                        ? 'bg-indigo-600'
+                        ? 'bg-primary-600'
                         : 'bg-gray-200'
                     }`}
                   >
@@ -421,7 +421,7 @@ export default function SystemNotificationsPage() {
                       }
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
                         configs[`${prefix}_${field.key}`] === '1'
-                          ? 'bg-indigo-600'
+                          ? 'bg-primary-600'
                           : 'bg-gray-200'
                       }`}
                     >
@@ -517,7 +517,7 @@ export default function SystemNotificationsPage() {
           type="button"
           onClick={handleSave}
           disabled={saving}
-          className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50"
+          className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
         >
           {saving ? t('Saving...') : t('Save Settings')}
         </button>

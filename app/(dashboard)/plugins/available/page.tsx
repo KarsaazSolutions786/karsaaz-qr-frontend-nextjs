@@ -96,7 +96,7 @@ export default function PluginsAvailablePage() {
             placeholder={t('Search plugins...')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 text-sm shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 py-2 pl-10 pr-3 text-sm shadow-sm placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
         </div>
       </div>
@@ -120,7 +120,7 @@ export default function PluginsAvailablePage() {
                 {plugin.tags && plugin.tags.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-1">
                     {plugin.tags.map((tag) => (
-                      <span key={tag} className="rounded bg-blue-50 px-1.5 py-0.5 text-xs text-blue-600">
+                      <span key={tag} className="rounded bg-primary-50 px-1.5 py-0.5 text-xs text-primary-600">
                         {tag}
                       </span>
                     ))}
@@ -142,7 +142,7 @@ export default function PluginsAvailablePage() {
                     href="https://karsaazqr.com/plugins"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center rounded-md bg-blue-600 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+                    className="inline-flex w-full items-center justify-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 transition-all"
                   >
                     {plugin.price ? t('Buy') + ` \u2014 ${plugin.price}` : t('Get Plugin')}
                   </a>

@@ -89,7 +89,7 @@ export function StepperWizard({
           {/* Purple progress bar at very top */}
           <div className="absolute inset-x-0 top-0 h-1 bg-gray-100">
             <div
-              className="h-full bg-gradient-to-r from-purple-500 to-purple-600 transition-all duration-500 ease-out"
+              className="h-full bg-[#AF47AF] transition-all duration-500 ease-out"
               style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
             />
           </div>
@@ -117,9 +117,9 @@ export function StepperWizard({
                           className={cn(
                             'flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-200',
                             isCompleted
-                              ? 'border-purple-600 bg-purple-600 text-white'
+                              ? 'border-[#AF47AF] bg-[#AF47AF] text-white'
                               : isActive
-                                ? 'border-purple-600 bg-white text-purple-600 shadow-md shadow-purple-100'
+                                ? 'border-[#AF47AF] bg-white text-[#AF47AF] shadow-md shadow-[#AF47AF]/10'
                                 : 'border-gray-200 bg-gray-50 text-gray-400'
                           )}
                         >
@@ -136,7 +136,7 @@ export function StepperWizard({
                             className={cn(
                               'text-xs font-semibold',
                               isActive
-                                ? 'text-purple-700'
+                                ? 'text-[#AF47AF]'
                                 : isCompleted
                                   ? 'text-gray-600'
                                   : 'text-gray-400'
@@ -157,7 +157,7 @@ export function StepperWizard({
                         <div
                           className={cn(
                             'h-0.5 flex-1 rounded-full transition-all duration-300',
-                            index < currentStep ? 'bg-purple-600' : 'bg-gray-200'
+                            index < currentStep ? 'bg-[#AF47AF]' : 'bg-gray-200'
                           )}
                           aria-hidden="true"
                         />

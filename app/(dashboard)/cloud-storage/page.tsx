@@ -191,7 +191,7 @@ function BackupModal({
         <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('Start Backup')}</h3>
 
         {/* Info about what's being backed up */}
-        <div className="mb-4 p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+        <div className="mb-4 p-3 bg-[#D3BBFF]/15 rounded-lg text-sm text-primary-700">
           {qrCodeCount
             ? t('Backing up {{count}} selected QR codes').replace('{{count}}', String(qrCodeCount))
             : t('Backing up all QR codes')}
@@ -203,7 +203,7 @@ function BackupModal({
           <select
             value={selectedConnection}
             onChange={(e) => setSelectedConnection(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           >
             {activeConnections.map((c) => (
               <option key={c.id} value={c.id}>
@@ -219,7 +219,7 @@ function BackupModal({
           <select
             value={format}
             onChange={(e) => setFormat(e.target.value as 'json' | 'zip')}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           >
             <option value="json">{t('JSON (data only)')}</option>
             <option value="zip">{t('ZIP Archive (bundled)')}</option>
@@ -233,7 +233,7 @@ function BackupModal({
               type="checkbox"
               checked={includeDesigns}
               onChange={(e) => setIncludeDesigns(e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
             <span className="text-sm text-gray-700">{t('Include QR code designs')}</span>
           </label>
@@ -242,7 +242,7 @@ function BackupModal({
               type="checkbox"
               checked={includeAnalytics}
               onChange={(e) => setIncludeAnalytics(e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
             <span className="text-sm text-gray-700">{t('Include analytics data')}</span>
           </label>
@@ -251,7 +251,7 @@ function BackupModal({
               type="checkbox"
               checked={includeImages}
               onChange={(e) => setIncludeImages(e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
             <div>
               <span className="text-sm text-gray-700">{t('Include QR code images (SVG + PNG)')}</span>
@@ -277,7 +277,7 @@ function BackupModal({
               includeImages,
             })}
             disabled={isStarting || !selectedConnection}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] rounded-md hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {isStarting && <Loader2 className="w-4 h-4 animate-spin" />}
             {t('Start Backup')}
@@ -321,7 +321,7 @@ function MegaConnectModal({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t('your@email.com')}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
         </div>
 
@@ -332,7 +332,7 @@ function MegaConnectModal({
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder={t('Enter your MEGA password')}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
         </div>
 
@@ -347,7 +347,7 @@ function MegaConnectModal({
           <button
             onClick={() => onConnect(email, password)}
             disabled={isConnecting || !email || !password}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] rounded-md hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {isConnecting && <Loader2 className="w-4 h-4 animate-spin" />}
             {t('Connect')}
@@ -398,7 +398,7 @@ function BackupProgress({
     <div className="bg-white border border-gray-200 rounded-lg p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          {isInProgress && <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />}
+          {isInProgress && <Loader2 className="w-5 h-5 text-primary-600 animate-spin" />}
           {job.status === 'completed' && <CheckCircle className="w-5 h-5 text-green-600" />}
           {job.status === 'failed' && <XCircle className="w-5 h-5 text-red-600" />}
           {job.status === 'cancelled' && <XCircle className="w-5 h-5 text-amber-600" />}
@@ -427,7 +427,7 @@ function BackupProgress({
         <>
           <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-primary-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -572,8 +572,8 @@ export default function CloudStoragePage() {
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Cloud className="w-6 h-6 text-blue-600" />
+            <div className="p-2 bg-primary-100 rounded-lg">
+              <Cloud className="w-6 h-6 text-primary-600" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">{t('Cloud Storage')}</h1>
@@ -586,7 +586,7 @@ export default function CloudStoragePage() {
         {activeTab === 'history' && connectedProviders.length > 0 && (
           <button
             onClick={() => setShowBackupModal(true)}
-            className="mt-4 sm:mt-0 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+            className="mt-4 sm:mt-0 inline-flex items-center gap-2 px-4 py-2 bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white rounded-md hover:brightness-105 text-sm font-medium transition-all"
           >
             <Upload className="w-4 h-4" />
             {t('Start Backup Now')}
@@ -601,13 +601,13 @@ export default function CloudStoragePage() {
             onClick={() => setActiveTab('connections')}
             className={`pb-3 px-1 border-b-2 text-sm font-medium transition-colors ${
               activeTab === 'connections'
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
             {t('Connections')}
             {connectedProviders.length > 0 && (
-              <span className="ml-2 bg-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full">
+              <span className="ml-2 bg-primary-100 text-primary-700 text-xs font-medium px-2 py-0.5 rounded-full">
                 {connectedProviders.length}
               </span>
             )}
@@ -616,7 +616,7 @@ export default function CloudStoragePage() {
             onClick={() => setActiveTab('history')}
             className={`pb-3 px-1 border-b-2 text-sm font-medium transition-colors ${
               activeTab === 'history'
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
@@ -732,7 +732,7 @@ export default function CloudStoragePage() {
                             <button
                               onClick={() => refreshToken.mutate(provider.id as Exclude<CloudProvider, 'mega'>)}
                               disabled={refreshToken.isPending}
-                              className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 disabled:opacity-50"
+                              className="inline-flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700 disabled:opacity-50"
                             >
                               <RefreshCw className="w-4 h-4" />
                               {t('Refresh')}
@@ -772,7 +772,7 @@ export default function CloudStoragePage() {
                         <button
                           onClick={() => handleConnect(provider)}
                           disabled={isOAuthProcessing || connectMega.isPending}
-                          className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                          className="inline-flex items-center gap-2 rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
                         >
                           {(isOAuthProcessing || connectMega.isPending) ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -791,11 +791,11 @@ export default function CloudStoragePage() {
 
           {/* No providers connected message */}
           {!connectionsLoading && connectedProviders.length === 0 && (
-            <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="mt-4 bg-[#D3BBFF]/15 border border-[#D3BBFF] rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <HardDrive className="w-5 h-5 text-blue-600 mt-0.5" />
+                <HardDrive className="w-5 h-5 text-primary-600 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-blue-900">
+                  <p className="text-sm font-medium text-primary-900">
                     {t('No cloud storage connected')}
                   </p>
                   <p className="text-sm text-blue-700 mt-1">
@@ -847,7 +847,7 @@ export default function CloudStoragePage() {
                 {connectedProviders.length > 0 && (
                   <button
                     onClick={() => setShowBackupModal(true)}
-                    className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+                    className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white rounded-md hover:brightness-105 text-sm font-medium transition-all"
                   >
                     <Upload className="w-4 h-4" />
                     {t('Start Backup Now')}
@@ -882,8 +882,8 @@ export default function CloudStoragePage() {
                               </div>
                             )}
                             {backupInProgress && (
-                              <div className="p-2 bg-blue-100 rounded-lg">
-                                <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                              <div className="p-2 bg-primary-100 rounded-lg">
+                                <Loader2 className="w-5 h-5 text-primary-600 animate-spin" />
                               </div>
                             )}
                           </div>
@@ -899,7 +899,7 @@ export default function CloudStoragePage() {
                                     ? 'bg-red-100 text-red-700'
                                     : backup.status === 'cancelled'
                                     ? 'bg-amber-100 text-amber-700'
-                                    : 'bg-blue-100 text-blue-700'
+                                    : 'bg-primary-100 text-primary-700'
                                 }`}
                               >
                                 {backup.status === 'completed' && t('Completed')}

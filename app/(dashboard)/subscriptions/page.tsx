@@ -21,7 +21,7 @@ function StatusBadge({ status }: { status?: string }) {
     cancelled: 'bg-red-100 text-red-800',
     expired: 'bg-gray-100 text-gray-600',
     pending: 'bg-yellow-100 text-yellow-800',
-    trialing: 'bg-blue-100 text-blue-800',
+    trialing: 'bg-primary-100 text-primary-800',
   }
   return (
     <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${styles[s] ?? 'bg-gray-100 text-gray-700'}`}>
@@ -71,7 +71,7 @@ export default function SubscriptionsPage() {
           </button>
           <Link
             href="/subscriptions/new"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             {t('+ Create')}
           </Link>
@@ -85,7 +85,7 @@ export default function SubscriptionsPage() {
           placeholder={t('Search by user name, email, or plan…')}
           value={keyword}
           onChange={(e) => { setKeyword(e.target.value); setPage(1) }}
-          className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:max-w-md sm:text-sm"
+          className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-primary-500 focus:outline-none sm:max-w-md sm:text-sm"
         />
       </div>
 
@@ -119,7 +119,7 @@ export default function SubscriptionsPage() {
                     <td className="whitespace-nowrap px-3 py-4 text-sm">
                       <Link
                         href={`/users/${sub.user_id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                        className="text-primary-600 hover:text-primary-800 hover:underline"
                       >
                         {sub.user_name || '—'}
                       </Link>
@@ -127,7 +127,7 @@ export default function SubscriptionsPage() {
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       <Link
                         href={`/users/${sub.user_id}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                        className="text-primary-600 hover:text-primary-800 hover:underline"
                       >
                         {sub.user_email || '—'}
                       </Link>
@@ -145,7 +145,7 @@ export default function SubscriptionsPage() {
                       {sub.created_at ? new Date(sub.created_at).toLocaleDateString() : '—'}
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
-                      <Link href={`/subscriptions/${sub.id}`} className="text-blue-600 hover:text-blue-900">
+                      <Link href={`/subscriptions/${sub.id}`} className="text-primary-600 hover:text-primary-900">
                         {t('Edit')}
                       </Link>
                     </td>
@@ -184,7 +184,7 @@ export default function SubscriptionsPage() {
           </svg>
           <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No subscriptions')}</h3>
           <p className="mt-1 text-sm text-gray-500">{t('Get started by creating a subscription.')}</p>
-          <Link href="/subscriptions/new" className="mt-6 inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+          <Link href="/subscriptions/new" className="mt-6 inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white hover:brightness-105 transition-all">
             {t('+ Create')}
           </Link>
         </div>

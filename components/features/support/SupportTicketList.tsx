@@ -5,7 +5,7 @@ import type { SupportTicket } from '@/types/entities/support-ticket'
 import { useTranslation } from '@/lib/i18n'
 
 const STATUS_BADGES: Record<SupportTicket['status'], { label: string; className: string }> = {
-  OPEN: { label: 'Open', className: 'bg-blue-100 text-blue-800' },
+  OPEN: { label: 'Open', className: 'bg-primary-100 text-primary-800' },
   IN_PROGRESS: { label: 'In Progress', className: 'bg-yellow-100 text-yellow-800' },
   RESOLVED: { label: 'Resolved', className: 'bg-green-100 text-green-800' },
   CLOSED: { label: 'Closed', className: 'bg-gray-100 text-gray-800' },
@@ -49,7 +49,7 @@ export default function SupportTicketList({ tickets }: SupportTicketListProps) {
         <div className="mt-6">
           <Link
             href="/support-tickets/new"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             {t('New Ticket')}
           </Link>
@@ -99,7 +99,7 @@ export default function SupportTicketList({ tickets }: SupportTicketListProps) {
                 <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
                   <Link
                     href={`/support-tickets/${ticket.id}`}
-                    className="text-blue-600 hover:text-blue-900"
+                    className="text-primary-600 hover:text-primary-900"
                   >
                     {t('View')}
                   </Link>

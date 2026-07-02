@@ -261,7 +261,7 @@ export default function TemplateList({
                     <div className="flex items-center justify-end space-x-2">
                       <button
                         onClick={() => onUseTemplate?.(template)}
-                        className="px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded hover:bg-primary-700 transition-colors"
+                        className="px-3 py-1.5 bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white text-xs font-medium rounded hover:brightness-105 transition-all"
                       >
                         {t('Use')}
                       </button>
@@ -380,7 +380,7 @@ export default function TemplateList({
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => onUseTemplate?.(template)}
-                      className="flex-1 px-3 py-1.5 bg-primary-600 text-white text-xs font-medium rounded hover:bg-primary-700 transition-colors"
+                      className="flex-1 px-3 py-1.5 bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white text-xs font-medium rounded hover:brightness-105 transition-all"
                     >
                       {t('Use Template')}
                     </button>

@@ -28,6 +28,7 @@ import { CheckCircle2, AlertCircle } from 'lucide-react'
 import { transformDesignToBackend, transformDesignFromBackend } from '@/lib/qr/design-transformer'
 import { validateQRData } from '@/lib/qr/validate-qr-data'
 import { useTranslation } from '@/lib/i18n'
+import { findQrCodeType } from '@/lib/constants/qr-types'
 
 interface QRWizardContainerProps {
   mode?: 'create' | 'edit'
@@ -474,7 +475,7 @@ export default function QRWizardContainer({
           <Suspense fallback={<WizardDesignSkeleton />}>
             <QRDesignStudio
               qrType={qrType}
-              qrTypeLabel={qrType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              qrTypeLabel={findQrCodeType(qrType)?.name || qrType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
               qrData={formData}
               design={design}
               onChange={handleDesignChange}

@@ -67,7 +67,7 @@ export default function OrganizationLayout({ children }: { children: React.React
                   href={withOrg(href)}
                   className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                     active
-                      ? 'bg-indigo-50 text-indigo-700'
+                      ? 'bg-primary-50 text-primary-700'
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`}
                 >

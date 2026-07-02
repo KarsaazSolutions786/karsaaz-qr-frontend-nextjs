@@ -620,7 +620,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="h-6 w-6 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-4 border-solid border-primary-600 border-r-transparent" />
       </div>
     )
   }
@@ -647,9 +647,9 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
 
       {/* Offline payments note */}
       {processor.id === 'offline-payments' && (
-        <div className="rounded-md bg-blue-50 p-4 text-sm text-blue-800">
+        <div className="rounded-md bg-[#D3BBFF]/15 p-4 text-sm text-primary-800">
           {t('After approving offline payments, review them in the')}{' '}
-          <Link href="/transactions" className="underline hover:text-blue-600">
+          <Link href="/transactions" className="underline hover:text-primary-600">
             {t('Transactions')}
           </Link>{' '}
           {t('section.')}
@@ -698,7 +698,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
                   value={v}
                   checked={(values[enabledKey] ?? 'disabled') === v}
                   onChange={e => set(enabledKey, e.target.value)}
-                  className="text-blue-600"
+                  className="text-primary-600 focus:ring-primary-500"
                 />
                 {v.charAt(0).toUpperCase() + v.slice(1)}
               </label>
@@ -714,7 +714,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
             value={values[displayNameKey] ?? ''}
             onChange={e => set(displayNameKey, e.target.value)}
             placeholder={processor.name}
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm"
           />
         </div>
 
@@ -733,13 +733,13 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
                   value={values[field.key] ?? ''}
                   onChange={e => set(field.key, e.target.value)}
                   placeholder={field.placeholder}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
               ) : field.type === 'select' ? (
                 <select
                   value={values[field.key] ?? field.options?.[0]?.value ?? ''}
                   onChange={e => set(field.key, e.target.value)}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm"
                 >
                   {field.options?.map(opt => (
                     <option key={opt.value} value={opt.value}>
@@ -753,7 +753,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
                   value={values[field.key] ?? ''}
                   onChange={e => set(field.key, e.target.value)}
                   placeholder={field.placeholder}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm"
                 />
               )}
             </div>
@@ -768,7 +768,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
             value={values[payButtonTextKey] ?? ''}
             onChange={e => set(payButtonTextKey, e.target.value)}
             placeholder="Pay Now"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm"
           />
         </div>
 
@@ -779,7 +779,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
             type="number"
             value={values[sortOrderKey] ?? '0'}
             onChange={e => set(sortOrderKey, e.target.value)}
-            className="mt-1 block w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:text-sm"
+            className="mt-1 block w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 sm:text-sm"
           />
         </div>
       </div>
@@ -789,7 +789,7 @@ function ProcessorForm({ processor }: { processor: ProcessorDef }) {
         <button
           type="submit"
           disabled={saveMutation.isPending}
-          className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+          className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
         >
           {saveMutation.isPending ? t('Saving...') : t('Save')}
         </button>
@@ -861,7 +861,7 @@ function PaymentProcessorsPageInner() {
                   onClick={() => switchTab(p.id)}
                   className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors ${
                     activeProcessor.id === p.id
-                      ? 'bg-blue-50 text-blue-700'
+                      ? 'bg-primary-50 text-primary-700'
                       : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`}
                 >

@@ -93,7 +93,7 @@ export default function OrganizationPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary-600 border-t-transparent" />
       </div>
     )
   }
@@ -134,7 +134,7 @@ export default function OrganizationPage() {
                 </span>
                 <button
                   onClick={() => copyToClipboard(credentials.email, 'email')}
-                  className="shrink-0 text-gray-400 hover:text-indigo-600"
+                  className="shrink-0 text-gray-400 hover:text-primary-600"
                   title="Copy email"
                 >
                   {copied === 'email' ? (
@@ -157,7 +157,7 @@ export default function OrganizationPage() {
                 </span>
                 <button
                   onClick={() => setShowPassword(v => !v)}
-                  className="shrink-0 text-gray-400 hover:text-indigo-600"
+                  className="shrink-0 text-gray-400 hover:text-primary-600"
                   title={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -181,7 +181,7 @@ export default function OrganizationPage() {
                 setCredentials(null)
                 toast.success('Organization created!')
               }}
-              className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
+              className="w-full rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] py-2.5 text-sm font-semibold text-white hover:brightness-105 transition-all"
             >
               I've saved these credentials — Close
             </button>
@@ -197,7 +197,7 @@ export default function OrganizationPage() {
         </div>
         <button
           onClick={() => setShowForm(v => !v)}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          className="flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 transition-all"
         >
           <Plus className="h-4 w-4" />
           New Organization
@@ -214,13 +214,13 @@ export default function OrganizationPage() {
               value={newOrgName}
               onChange={e => setNewOrgName(e.target.value)}
               placeholder="e.g. Acme Corp"
-              className="flex-1 rounded-lg border px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="flex-1 rounded-lg border px-4 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               required
             />
             <button
               type="submit"
               disabled={creating}
-              className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-5 py-2 text-sm font-medium text-white hover:brightness-105 disabled:opacity-50 transition-all"
             >
               {creating ? 'Creating…' : 'Create'}
             </button>
@@ -252,8 +252,8 @@ export default function OrganizationPage() {
             >
               <div className="mb-4 flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100">
-                    <Building2 className="h-5 w-5 text-indigo-600" />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100">
+                    <Building2 className="h-5 w-5 text-primary-600" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">{org.name}</h3>
@@ -276,7 +276,7 @@ export default function OrganizationPage() {
               {/* Stats row */}
               <div className="mb-4 flex gap-4 text-center">
                 <div className="flex-1 rounded-lg bg-gray-50 py-2">
-                  <Wallet className="mx-auto mb-1 h-4 w-4 text-indigo-500" />
+                  <Wallet className="mx-auto mb-1 h-4 w-4 text-primary-500" />
                   <div className="text-sm font-bold text-gray-900">{org.credits?.balance ?? 0}</div>
                   <div className="text-xs text-gray-400">Credits</div>
                 </div>

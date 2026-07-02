@@ -122,7 +122,7 @@ export default function QRCodeTemplatesPage() {
               onClick={() => setViewMode('grid')}
               className={`px-3 py-2 text-sm font-medium rounded-l-md border ${
                 viewMode === 'grid'
-                  ? 'bg-blue-600 text-white border-blue-600'
+                  ? 'bg-primary-600 text-white border-primary-600'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
               }`}
             >
@@ -132,7 +132,7 @@ export default function QRCodeTemplatesPage() {
               onClick={() => setViewMode('list')}
               className={`px-3 py-2 text-sm font-medium rounded-r-md border-t border-r border-b ${
                 viewMode === 'list'
-                  ? 'bg-blue-600 text-white border-blue-600'
+                  ? 'bg-primary-600 text-white border-primary-600'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
               }`}
             >
@@ -144,14 +144,12 @@ export default function QRCodeTemplatesPage() {
 
       <div className="flex gap-6">
         <aside className="hidden lg:block w-64 flex-shrink-0">
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="font-semibold text-gray-900 mb-4">{t('Categories')}</h3>
-            <TemplateCategoryFilter
-              categories={categories || []}
-              selectedCategoryId={filters.category_id}
-              onCategoryChange={handleCategoryChange}
-            />
-          </div>
+          <TemplateCategoryFilter
+            categories={categories || []}
+            selectedCategoryId={filters.category_id}
+            onCategoryChange={handleCategoryChange}
+            className="min-h-[380px]"
+          />
         </aside>
 
         <div className="flex-1">

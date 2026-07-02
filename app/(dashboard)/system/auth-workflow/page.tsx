@@ -115,7 +115,7 @@ export default function AuthWorkflowPage() {
               <button
                 type="button"
                 onClick={() => toggle(option.key)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${settings[option.key] ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${settings[option.key] ? 'bg-primary-600' : 'bg-gray-200'}`}
               >
                 <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${settings[option.key] ? 'translate-x-5' : 'translate-x-0'}`} />
               </button>
@@ -131,7 +131,7 @@ export default function AuthWorkflowPage() {
         <button
           type="button"
           onClick={handleSave}
-          className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 transition-all"
         >
           {t('Save Settings')}
         </button>
@@ -144,7 +144,7 @@ export default function AuthWorkflowPage() {
         <div className="mt-6">
           {providerLoading ? (
             <div className="flex items-center gap-2 text-sm text-gray-400 py-8">
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-200 border-t-indigo-600" />
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-200 border-t-primary-600" />
               {t('Loading provider settings...')}
             </div>
           ) : (

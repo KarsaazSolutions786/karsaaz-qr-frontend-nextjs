@@ -136,7 +136,7 @@ const TemplateCard = memo(function TemplateCard({
         {/* Use Template Button */}
         <button
           onClick={() => onUseTemplate?.(template)}
-          className="w-full px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-md hover:bg-primary-700 active:bg-primary-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          className="w-full px-4 py-2 bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white text-sm font-medium rounded-md hover:brightness-105 transition-all focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
         >
           {t('Use Template')}
         </button>

@@ -567,7 +567,7 @@ export default function QRCodesPage() {
                 <Filter className="w-4 h-4 mr-2" />
                 {t('Filters')}
                 {activeFilterCount > 0 && (
-                  <span className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold">
+                  <span className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#AF47AF] text-white text-xs font-bold">
                     {activeFilterCount}
                   </span>
                 )}
@@ -588,7 +588,7 @@ export default function QRCodesPage() {
                 router.push('/qrcodes/new')
               }
             }}
-            className="relative z-10 shrink-0 inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+            className="relative z-10 shrink-0 inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
           >
             <Plus className="w-4 h-4 mr-2" />
             {t('Create QR Code')}
@@ -631,7 +631,7 @@ export default function QRCodesPage() {
                   onChange={e => {
                     updateUrl({ domain: e.target.value || null, page: null })
                   }}
-                  className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+                  className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                 >
                   <option value="">{t('All Domains')}</option>
                   {domains.map(d => (
