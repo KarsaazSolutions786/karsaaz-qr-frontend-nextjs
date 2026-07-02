@@ -1,20 +1,28 @@
 version: '3.8'
 
+# Production build — host runs this; juniors open http://<HOST_IP>:3005 in browser.
+# Set BACKEND_URL to your LAN API (no /api suffix). Rebuild if you change NEXT_PUBLIC_*.
+
 services:
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3005}
+        NEXT_PUBLIC_CANONICAL_URL: ${NEXT_PUBLIC_CANONICAL_URL:-http://localhost:3005}
     ports:
-      - "${FRONTEND_PORT:-3000}:3000"
+      - "${FRONTEND_PORT:-3005}:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000/api}
-      - NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
-      - NODE_ENV=production
+      BACKEND_URL: ${BACKEND_URL:-http://host.docker.internal:8000}
+      NODE_ENV: production
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 60s

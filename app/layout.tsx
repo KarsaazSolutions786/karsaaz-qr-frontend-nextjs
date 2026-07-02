@@ -4,6 +4,7 @@ import { Providers } from '@/lib/providers'
 import { generateOGMetadata } from '@/lib/utils/og-metadata'
 import { WebsiteAnnouncementBanner } from '@/components/common/WebsiteBanner'
 import { CookieConsentBanner } from '@/components/common/CookieConsentBanner'
+import { RuntimeBackendScript } from '@/components/RuntimeBackendConfig'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -30,7 +31,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
-      <head />
+      <head>
+        <RuntimeBackendScript />
+      </head>
       <body className={inter.className} suppressHydrationWarning>
         <a
           href="#main-content"

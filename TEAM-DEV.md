@@ -1,60 +1,82 @@
 # Team dev — frontend on your laptop, backend on host machine
 
-Use this when **you clone the frontend** and the **API runs on someone else's PC** on the LAN.
+API runs on the **host PC** (team lead). You run the **frontend** on your laptop.
 
-## Your setup (junior dev laptop)
+## Option A — Docker (recommended, no Node install issues)
 
-1. **Pull latest code** (needs CSP fix in `next.config.js` from 2026-07-02+)
-2. Copy env file:
-   ```powershell
+1. `git pull` latest `production_v2`
+2. ```powershell
    cd "karsaaz Qr React js"
    copy .env.team.example .env
    ```
-3. Edit `.env` — set `NEXT_PUBLIC_API_URL` to the host's LAN IP:
+3. Edit `.env` — **only change this line** (host gives you the IP):
 
    ```env
    NEXT_PUBLIC_API_URL=http://192.168.80.1:8000
    ```
 
-   Ask the host for their IP (`ipconfig` on their Windows PC).
+   **No `/api` at the end.**
 
-4. Install and run:
+4. Start:
+
    ```powershell
-   npm install
-   npm run dev
+   .\scripts\docker-dev.ps1
    ```
-5. Open **on your laptop**: `http://localhost:3005`  
-   Do **not** open the host's IP in the browser for the UI — only the API uses that IP.
 
-## Why CSP errors happen
+   Or: `docker compose -f docker-compose.dev.yml up`
 
-The browser blocks API calls based on **your local Next.js app's** Content-Security-Policy, not the remote backend.
+5. Open: **http://localhost:3005**
 
-If you see `blocked:csp` when calling `http://192.168.x.x:8000`:
+First start takes a few minutes (`npm install` inside container). Later starts are faster.
 
-| Cause                               | Fix                                                       |
-| ----------------------------------- | --------------------------------------------------------- |
-| Old code without CSP LAN fix        | `git pull` latest `next.config.js`                        |
-| Wrong `.env`                        | `NEXT_PUBLIC_API_URL=http://HOST_IP:8000` (not localhost) |
-| Did not restart after `.env` change | Stop `npm run dev` and start again                        |
-| Backend unreachable                 | See host checklist below                                  |
-
-## Host machine checklist (person running the API)
-
-1. Backend running: `.\scripts\start-backend.ps1` from repo root
-2. Test locally: `curl http://127.0.0.1:8000/api/health`
-3. Test from LAN IP: `curl http://192.168.80.1:8000/api/health` (use real IP)
-4. **Windows Firewall** — allow inbound TCP port **8000**
-5. Same Wi‑Fi / LAN as junior devs (no guest network isolation)
-
-Host does **not** need to share frontend — only API URL `http://<LAN_IP>:8000`.
-
-## Verify from junior laptop
+## Option B — npm on your laptop (no Docker)
 
 ```powershell
-curl http://192.168.80.1:8000/api/health
+npm install
+npm run dev
 ```
 
-Should return JSON with `"status":"healthy"`. If this fails, it is network/firewall — not CSP.
+Same `.env` as above. Open http://localhost:3005
 
-If curl works but browser shows CSP error, restart `npm run dev` after updating `.env` and pulling latest code.
+---
+
+## What was wrong with old Docker setup
+
+- `docker-compose.yml` used `http://localhost:8000/api` (wrong — extra `/api`, and localhost = your laptop not the host)
+- `NEXT_PUBLIC_*` in production Docker is **baked at build** — changing env after build did nothing
+- Port was 3000 but dev uses **3005**
+
+Fixed: `docker-compose.dev.yml` for juniors, fixed `docker-compose.yml` for host production build, runtime `BACKEND_URL` injection.
+
+---
+
+## Host (person running the API)
+
+```powershell
+.\scripts\start-backend.ps1          # from monorepo root
+.\scripts\show-team-dev-urls.ps1       # prints IPs to share
+```
+
+Share: `NEXT_PUBLIC_API_URL=http://<LAN_IP>:8000`
+
+Firewall: allow TCP **8000**. Same Wi‑Fi as juniors.
+
+Optional — host runs frontend Docker for everyone:
+
+```powershell
+cd "karsaaz Qr React js"
+$env:BACKEND_URL="http://192.168.80.1:8000"
+docker compose up --build
+```
+
+Juniors open `http://<HOST_IP>:3005` in browser (no Docker on their side).
+
+---
+
+## Troubleshooting
+
+| Problem                | Fix                                                   |
+| ---------------------- | ----------------------------------------------------- |
+| `blocked:csp`          | `git pull`, correct `.env`, restart docker/npm        |
+| `curl` to API fails    | Firewall / wrong IP / backend not running on host     |
+| Docker slow on Windows | Normal first `npm install`; use Option B if preferred |

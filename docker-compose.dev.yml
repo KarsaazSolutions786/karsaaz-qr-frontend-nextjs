@@ -1,0 +1,24 @@
+# Team local dev — frontend in Docker, API on host machine (LAN IP).
+# Juniors: copy .env.team.example -> .env, set HOST IP, then:
+#   docker compose -f docker-compose.dev.yml up
+
+services:
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "${FRONTEND_PORT:-3005}:3005"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    command: sh -c "npm install --legacy-peer-deps && npm run dev"
+    restart: unless-stopped
+
+volumes:
+  frontend_node_modules:
