@@ -189,8 +189,14 @@ function CreateQRCodeInner() {
 
   return (
     <div
-      className="min-h-full"
-      style={{ background: 'linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%)' }}
+      className="min-h-screen w-full relative"
+      style={{
+        backgroundImage: "url('/images/bg-full.png')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+      }}
     >
       <div className="px-4 py-6 sm:px-6 lg:px-8">
         {/* Mode: Applying template (loading) */}

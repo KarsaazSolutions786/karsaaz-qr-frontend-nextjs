@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/lib/i18n'
 import type { NavItem, FigmaNavItem, FigmaNavSection } from '@/lib/config/nav-config'
-import { ChevronRightIcon, ArrowRightOnRectangleIcon } from '@/lib/config/nav-config'
+import { ChevronRightIcon } from '@/lib/config/nav-config'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import StorageWidget from './StorageWidget'
 
@@ -106,7 +106,7 @@ export function DashboardSidebar({
           onClick={() => setSidebarCollapsed(prev => !prev)}
           className={`hidden lg:flex absolute items-center justify-center transition-colors ${
             sidebarCollapsed
-              ? 'left-1/2 -translate-x-1/2 top-[88px] h-[30px] w-[26px] rounded-[5px]'
+              ? 'left-1/2 ml-6 top-[45px] h-[30px] w-[26px] rounded-[5px]'
               : 'right-5 top-[77px] h-[30px] w-[26px] rounded-[5px]'
           }`}
           aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -203,8 +203,10 @@ export function DashboardSidebar({
                       className={`h-5 w-5 ${sectionActive ? 'text-[#8f55a6]' : 'text-[#9b6fb5]'}`}
                     />
                     <span className="flex-1 truncate text-left">{t(item.label)}</span>
+
                     <ChevronRightIcon
-                      className={`h-3.5 w-3.5 transition-transform ${expanded ? 'rotate-90' : ''}`}
+                      strokeWidth={6}
+                      className={`h-3.5 w-3.5 transition-transform text-[#AE83F9] ${expanded ? 'rotate-90' : ''}`}
                     />
                   </button>
 
@@ -282,24 +284,44 @@ export function DashboardSidebar({
       <div className="relative z-10 px-3 pb-4">
         <button
           type="button"
-          onClick={isGuest ? () => { window.location.href = '/login' } : handleLogout}
+          onClick={
+            isGuest
+              ? () => {
+                  window.location.href = '/login'
+                }
+              : handleLogout
+          }
           disabled={!isGuest && isLoggingOut}
           className={`
-            flex h-[50px] w-full items-center rounded-[12px] border border-[#bd6bff52]
-            backdrop-blur-[1.6px] bg-white text-[#6d6d6d]
-            transition-colors hover:bg-[#f7f1fb] disabled:opacity-60
-            ${sidebarCollapsed ? 'justify-center px-0' : 'justify-start gap-3 px-4'}
-          `}
+    relative flex h-[50px] w-full items-center rounded-[12px]
+    border border-[#bd6bff52]
+    backdrop-blur-[1.6px] bg-white text-[#6d6d6d]
+    transition-colors hover:bg-[#f7f1fb] disabled:opacity-60
+    ${sidebarCollapsed ? 'justify-center px-0' : 'px-4'}
+  `}
         >
-          {isGuest ? (
-            <ArrowLeftOnRectangleIcon className="h-5 w-5 text-[#6366f1]" />
+          {sidebarCollapsed ? (
+            isGuest ? (
+              <ArrowLeftOnRectangleIcon className="h-5 w-5 text-[#6366f1]" />
+            ) : (
+              <ArrowLeftOnRectangleIcon className="h-5 w-5 text-[#e04f6b]" />
+            )
           ) : (
-            <ArrowRightOnRectangleIcon className="h-5 w-5 text-[#e04f6b]" />
-          )}
-          {!sidebarCollapsed && (
-            <span className="text-[16px] font-medium">
-              {isGuest ? t('Sign In') : isLoggingOut ? t('Logging out...') : t('Logout')}
-            </span>
+            <>
+              {/* Icon fixed on the left */}
+              <span className="absolute left-4 top-1/2 -translate-y-1/2">
+                {isGuest ? (
+                  <ArrowLeftOnRectangleIcon className="h-5 w-5 text-[#6366f1]" />
+                ) : (
+                  <ArrowLeftOnRectangleIcon className="h-5 w-5 text-[#e04f6b]" />
+                )}
+              </span>
+
+              {/* Perfectly centered text */}
+              <span className="absolute left-1/2 -translate-x-1/2 text-[16px] font-medium">
+                {isGuest ? t('Sign In') : isLoggingOut ? t('Logging out...') : t('Logout')}
+              </span>
+            </>
           )}
         </button>
       </div>

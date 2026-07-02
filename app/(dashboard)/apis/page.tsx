@@ -1008,7 +1008,10 @@ export default function ApisPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-96 items-center justify-center">
+        {/* Original spinner:
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+        */}
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#B36AC5] border-t-transparent" />
       </div>
     )
   }
@@ -1094,6 +1097,7 @@ export default function ApisPage() {
             {/* Plan limits banner */}
             <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
               <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                {/* Original stats:
                 <p className="text-2xl font-bold text-blue-600">
                   {(limits.monthly_requests_used ?? 0).toLocaleString()}
                   <span className="text-sm font-normal text-gray-400">
@@ -1112,6 +1116,25 @@ export default function ApisPage() {
                             ? 'bg-amber-400'
                             : 'bg-blue-500'
                       }`}
+                */}
+                <p className="text-2xl font-bold text-[#B36AC5]">
+                  {(limits.monthly_requests_used ?? 0).toLocaleString()}
+                  <span className="text-sm font-normal text-gray-400">
+                    {' '}
+                    / {formatLimit(limits.api_monthly_requests)}
+                  </span>
+                </p>
+                <p className="mt-0.5 text-xs text-gray-500">{t('Monthly Requests')}</p>
+                {limits.api_monthly_requests !== -1 && (
+                  <div className="mt-2 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        (limits.monthly_requests_used ?? 0) / limits.api_monthly_requests > 0.9
+                          ? 'bg-red-500'
+                          : (limits.monthly_requests_used ?? 0) / limits.api_monthly_requests > 0.7
+                            ? 'bg-amber-400'
+                            : 'bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)]'
+                      }`}
                       style={{
                         width: `${Math.min(
                           100,
@@ -1122,6 +1145,7 @@ export default function ApisPage() {
                   </div>
                 )}
               </div>
+              {/* Original rate limits & active keys:
               <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
                 <p className="text-2xl font-bold text-blue-600">
                   {limits.api_rate_limit_per_minute}
@@ -1130,6 +1154,17 @@ export default function ApisPage() {
               </div>
               <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm sm:col-span-1 col-span-2">
                 <p className="text-2xl font-bold text-blue-600">{data!.data.length} / 5</p>
+                <p className="mt-0.5 text-xs text-gray-500">{t('Active Keys')}</p>
+              </div>
+              */}
+              <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm">
+                <p className="text-2xl font-bold text-[#B36AC5]">
+                  {limits.api_rate_limit_per_minute}
+                </p>
+                <p className="mt-0.5 text-xs text-gray-500">{t('Requests / min')}</p>
+              </div>
+              <div className="rounded-lg border border-gray-200 bg-white p-4 text-center shadow-sm sm:col-span-1 col-span-2">
+                <p className="text-2xl font-bold text-[#B36AC5]">{data!.data.length} / 5</p>
                 <p className="mt-0.5 text-xs text-gray-500">{t('Active Keys')}</p>
               </div>
             </div>
@@ -1180,6 +1215,7 @@ export default function ApisPage() {
                   if (newKeyName.trim()) createMutation.mutate(newKeyName.trim())
                 }}
               >
+                {/* Original form elements:
                 <input
                   type="text"
                   required
@@ -1193,6 +1229,23 @@ export default function ApisPage() {
                   type="submit"
                   disabled={createMutation.isPending || !newKeyName.trim()}
                   className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {createMutation.isPending ? t('Creating…') : t('Generate')}
+                </button>
+                */}
+                <input
+                  type="text"
+                  required
+                  maxLength={80}
+                  placeholder={t('Key name, e.g. "My App"')}
+                  value={newKeyName}
+                  onChange={e => setNewKeyName(e.target.value)}
+                  className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-[#B36AC5] focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={createMutation.isPending || !newKeyName.trim()}
+                  className="rounded-md bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {createMutation.isPending ? t('Creating…') : t('Generate')}
                 </button>

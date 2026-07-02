@@ -211,7 +211,10 @@ export const Pagination = ({
                     'focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
                     'disabled:cursor-not-allowed disabled:opacity-50',
                     isCurrentPage
+                      ? /* Original page active style:
                       ? 'border-primary bg-primary text-primary-foreground hover:bg-primary/90'
+                      */
+                        'border-transparent bg-[radial-gradient(ellipse_at_center,_#E889FF_0%,_#B36AC5_100%)] text-white'
                       : 'bg-background hover:bg-accent hover:text-accent-foreground'
                   )}
                   aria-label={`Go to page ${pageNum}`}

@@ -28,6 +28,7 @@
 .text-primary-accessible {
   color: #6b52b8;
 }
+
 .text-accent-accessible {
   color: #6b4a78;
 }
@@ -37,6 +38,7 @@
   background: linear-gradient(152deg, rgba(250, 241, 255, 1) 0%, rgba(238, 238, 238, 1) 100%);
   position: relative;
 }
+
 .karsaaz-bg::after {
   content: '';
   position: fixed;
@@ -68,6 +70,7 @@
       opacity: 0;
       transform: translateY(10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -79,6 +82,7 @@
       opacity: 0;
       transform: translateX(-20px);
     }
+
     to {
       opacity: 1;
       transform: translateX(0);
@@ -90,6 +94,7 @@
       opacity: 0;
       transform: scale(0.95);
     }
+
     to {
       opacity: 1;
       transform: scale(1);
@@ -115,65 +120,134 @@
   margin-left: -12px;
   width: auto;
 }
+
 .my-masonry-grid_column {
   padding-left: 12px;
   background-clip: padding-box;
 }
+
 .my-masonry-grid_column > div {
   margin-bottom: 12px;
 }
 
 /* Landing page animations */
 @keyframes fade-in-1 {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 @keyframes fade-in-2 {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 @keyframes fade-in-3 {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 @keyframes fade-in-4 {
-  0% { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 .animate-fade-in-1 {
   animation: fade-in-1 0.8s ease forwards;
   animation-delay: 0.3s;
 }
+
 .animate-fade-in-2 {
   animation: fade-in-2 0.8s ease forwards;
   animation-delay: 0.6s;
 }
+
 .animate-fade-in-3 {
   animation: fade-in-3 0.8s ease forwards;
   animation-delay: 0.9s;
 }
+
 .animate-fade-in-4 {
   animation: fade-in-4 0.8s ease forwards;
   animation-delay: 1.2s;
 }
+
 @keyframes fade-slide-left {
-  0% { opacity: 0; transform: translateX(-30px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
+
 @keyframes fade-slide-right {
-  0% { opacity: 0; transform: translateX(30px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
+
 @keyframes fade-slide-up {
-  0% { opacity: 0; transform: translateY(30px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 .animate-fade-slide-left {
   animation: fade-slide-left 0.8s ease forwards;
 }
+
 .animate-fade-slide-right {
   animation: fade-slide-right 0.8s ease forwards;
 }
+
 .animate-fade-slide-up {
   animation: fade-slide-up 0.8s ease forwards;
+}
+
+/* Scoped hover border style for QR Type Selector cards */
+[aria-label='QR code types'] [role='option']:hover {
+  border-color: #ad46ffcc !important;
 }

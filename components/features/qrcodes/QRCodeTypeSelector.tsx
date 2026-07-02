@@ -618,9 +618,7 @@ function StandardCard({ type, isSelected, isDisabled, onClick }: CardProps) {
               fontSize: 18,
               fontFamily: 'Inter, sans-serif',
             }}
-          >
-            +
-          </span>
+          ></span>
         )}
       </div>
 
@@ -749,42 +747,20 @@ function TallCard({ type, isSelected, isDisabled, onClick }: CardProps) {
         <CardChevron />
       </div>
 
-      {/* Preview area — rotated menu cards (Figma node 3115:4525) */}
-      <div className="flex-1 flex items-center justify-center relative min-h-0 mt-1">
+      {/* Preview area — Restaurant Menu */}
+      <div className="flex-1 relative overflow-hidden mt-2">
         <div
-          className="rounded-md overflow-hidden opacity-50"
+          className="absolute left-1/2 -translate-x-1/2"
           style={{
-            width: 78,
-            height: 137,
-            transform: 'rotate(-15deg)',
-            position: 'absolute',
-            left: '15%',
+            bottom: -20, // increase this to crop more of the bottom
           }}
         >
           <Image
-            src="/icons/qr-types/restaurant-menu-preview.png"
-            alt=""
-            fill
-            className="object-cover"
-            unoptimized
-          />
-        </div>
-        <div
-          className="rounded-md overflow-hidden opacity-50"
-          style={{
-            width: 78,
-            height: 137,
-            transform: 'rotate(15deg)',
-            position: 'absolute',
-            right: '15%',
-          }}
-        >
-          <Image
-            src="/icons/qr-types/restaurant-menu-preview.png"
-            alt=""
-            fill
-            className="object-cover"
-            style={{ objectPosition: 'right center' }}
+            src="/icons/qr-types/Restaurant menu.png"
+            alt="Restaurant Menu Preview"
+            width={170}
+            height={140}
+            className="object-contain opacity-50"
             unoptimized
           />
         </div>

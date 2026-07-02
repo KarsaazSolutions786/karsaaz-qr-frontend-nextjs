@@ -104,14 +104,14 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'restaurant-menu',
     name: 'Restaurant Menu',
     cat: 'dynamic',
-    icon: '/icons/qr-types/restaurant.png',
+    icon: '/icons/qr-types/restaurant-icon.png',
     description: 'Digital restaurant menu',
   },
   {
     id: 'vcard-plus',
     name: 'VCard Plus',
     cat: 'dynamic',
-    icon: '/icons/qr-types/vcard-figma.svg',
+    icon: '/icons/qr-types/Vcardplus.svg',
     description: 'Enhanced digital business card',
   },
   {
@@ -307,7 +307,7 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
     id: 'viber',
     name: 'Viber Chat',
     cat: 'static',
-    icon: '/icons/qr-types/viber-figma.svg',
+    icon: '/icons/qr-types/viberchaticon.png',
     description: 'Start Viber conversation',
   },
   {
