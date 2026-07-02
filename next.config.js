@@ -31,8 +31,9 @@ function buildConnectSrc() {
     if (origin) sources.add(origin);
   });
 
-  if (process.env.NODE_ENV === 'development') {
-    // Allow API calls to any LAN IP:port (team dev via shared machine IP).
+  // Allow API calls to any LAN IP:port (team dev via shared machine IP).
+  // NEXT_PUBLIC_ALLOW_LAN=true extends this to production builds run on a dev box.
+  if (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ALLOW_LAN === 'true') {
     sources.add('http:');
     sources.add('https:');
     sources.add('ws:');
