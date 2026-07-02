@@ -2,12 +2,51 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
+function originFromEnv(url) {
+  if (!url) return null;
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+}
+
+/** Build connect-src so junior devs on LAN IPs (e.g. 192.168.x.x) are not CSP-blocked in dev. */
+function buildConnectSrc() {
+  const sources = new Set(["'self'"]);
+
+  [
+    process.env.NEXT_PUBLIC_API_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
+    'http://localhost:8000',
+    'https://localhost:8000',
+    'http://127.0.0.1:8000',
+    'https://127.0.0.1:8000',
+    'https://app.karsaazqr.com',
+    'https://crmapp.karsaazebs.com',
+    'https://accounts.google.com',
+    'https://www.google.com',
+  ].forEach((value) => {
+    const origin = originFromEnv(value) || value;
+    if (origin) sources.add(origin);
+  });
+
+  if (process.env.NODE_ENV === 'development') {
+    // Allow API calls to any LAN IP:port (team dev via shared machine IP).
+    sources.add('http:');
+    sources.add('https:');
+    sources.add('ws:');
+    sources.add('wss:');
+  }
+
+  return Array.from(sources).join(' ');
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   swcMinify: true,
-  // Skip lint/type-check during Docker builds — errors are pre-existing in dev
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   images: {
@@ -62,12 +101,11 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              // unsafe-eval needed in dev for webpack HMR; excluded in production for security
               `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === 'development' ? "'unsafe-eval'" : ''} https://accounts.google.com https://www.google.com https://www.gstatic.com https://cdn.jsdelivr.net https://challenges.cloudflare.com`,
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com",
               "img-src 'self' data: blob: https: http:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              `connect-src 'self' https://app.karsaazqr.com https://crmapp.karsaazebs.com https://accounts.google.com https://www.google.com http://localhost:8000 https://localhost:8000 http://127.0.0.1:8000 https://127.0.0.1:8000 ${process.env.NODE_ENV === 'development' ? 'ws://localhost:3000 ws://127.0.0.1:3000' : ''}`,
+              `connect-src ${buildConnectSrc()}`,
               "frame-src 'self' blob: https://accounts.google.com https://www.google.com https://www.paypal.com https://challenges.cloudflare.com",
               "worker-src 'self' blob:",
               "manifest-src 'self'",
@@ -83,5 +121,3 @@ const nextConfig = {
 }
 
 module.exports = withBundleAnalyzer(nextConfig)
-
-

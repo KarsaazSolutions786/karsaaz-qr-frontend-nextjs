@@ -5,6 +5,21 @@ export interface SystemConfig {
   value: string | null
 }
 
+function decodeBase64Log(data: string): string {
+  if (!data) return ''
+  try {
+    const binary = atob(data)
+    const bytes = Uint8Array.from(binary, char => char.charCodeAt(0))
+    return new TextDecoder('utf-8').decode(bytes)
+  } catch {
+    try {
+      return atob(data)
+    } catch {
+      return ''
+    }
+  }
+}
+
 export const systemConfigsAPI = {
   /**
    * Fetch system configs by keys
@@ -82,9 +97,7 @@ export const systemConfigsAPI = {
    * Clear application cache
    * POST /api/system/clear-cache/{type}
    */
-  clearCache: async (
-    type: string
-  ): Promise<{ success: boolean; message?: string }> => {
+  clearCache: async (type: string): Promise<{ success: boolean; message?: string }> => {
     const response = await apiClient.post<{
       success: boolean
       message?: string
@@ -96,9 +109,7 @@ export const systemConfigsAPI = {
    * Rebuild application cache
    * POST /api/system/rebuild-cache/{type}
    */
-  rebuildCache: async (
-    type: string
-  ): Promise<{ success: boolean; message?: string }> => {
+  rebuildCache: async (type: string): Promise<{ success: boolean; message?: string }> => {
     const response = await apiClient.post<{
       success: boolean
       message?: string
@@ -115,15 +126,18 @@ export const systemConfigsAPI = {
     content: string
     size: number
   }> => {
-    const response = await apiClient.get<{ data: string; size: string }>(
-      '/system/logs'
-    )
+    const response = await apiClient.get<{ data: string; size: string }>('/system/logs')
     const { data, size } = response.data
     // Decode base64 log content
-    const content = data ? atob(data) : ''
+    const content = decodeBase64Log(data)
     // Parse formatted size string (e.g. "58.11 MB") to bytes
     const sizeStr = size || '0 B'
-    const units: Record<string, number> = { B: 1, KB: 1024, MB: 1024 * 1024, GB: 1024 * 1024 * 1024 }
+    const units: Record<string, number> = {
+      B: 1,
+      KB: 1024,
+      MB: 1024 * 1024,
+      GB: 1024 * 1024 * 1024,
+    }
     const match = sizeStr.match(/([\d.]+)\s*(B|KB|MB|GB)/)
     const sizeBytes = match ? parseFloat(match[1]!) * (units[match[2]!] || 1) : 0
     return { content, size: sizeBytes }

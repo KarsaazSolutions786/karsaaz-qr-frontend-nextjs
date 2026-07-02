@@ -39,6 +39,7 @@ export default function GuestCreateClient() {
     guestConfig,
     sessionLimits,
     isGuestLoading,
+    guestInitError,
     isGuest,
     incrementActionCount,
     refreshSession,
@@ -205,6 +206,15 @@ export default function GuestCreateClient() {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <Loader size="lg" />
+      </div>
+    )
+  }
+
+  if (guestInitError) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center text-center">
+        <p className="mb-4 text-gray-600 dark:text-gray-400">{t(guestInitError)}</p>
+        <Button onClick={() => window.location.reload()}>{t('Try Again')}</Button>
       </div>
     )
   }

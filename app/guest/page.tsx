@@ -6,6 +6,7 @@ import { useGuest } from '@/lib/hooks/useGuest'
 import { GuestLimitsBanner } from '@/components/guest/GuestLimitsBanner'
 import { GuestSignupPrompt } from '@/components/guest/GuestSignupPrompt'
 import { Loader } from '@/components/ui/loader'
+import { Button } from '@/components/ui/button'
 import { useTranslation } from '@/lib/i18n'
 
 const QR_TYPE_META: Record<string, { icon: string; label: string; description: string }> = {
@@ -27,7 +28,7 @@ const QR_TYPE_META: Record<string, { icon: string; label: string; description: s
  */
 export default function GuestHomePage() {
   const { t } = useTranslation()
-  const { guestConfig, sessionLimits, isGuestLoading, isGuest } = useGuest()
+  const { guestConfig, sessionLimits, isGuestLoading, guestInitError, isGuest } = useGuest()
 
   const allowedTypes = useMemo(() => {
     if (!guestConfig?.allowed_qr_types) return []
@@ -38,6 +39,15 @@ export default function GuestHomePage() {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
         <Loader size="lg" />
+      </div>
+    )
+  }
+
+  if (guestInitError) {
+    return (
+      <div className="flex min-h-[50vh] flex-col items-center justify-center text-center">
+        <p className="mb-4 text-gray-600 dark:text-gray-400">{t(guestInitError)}</p>
+        <Button onClick={() => window.location.reload()}>{t('Try Again')}</Button>
       </div>
     )
   }
@@ -81,7 +91,9 @@ export default function GuestHomePage() {
           {t('Create QR Codes — No Signup Required')}
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          {t('Choose a QR code type below to get started. Sign up later to save and manage your codes.')}
+          {t(
+            'Choose a QR code type below to get started. Sign up later to save and manage your codes.'
+          )}
         </p>
       </div>
 
@@ -100,9 +112,7 @@ export default function GuestHomePage() {
               <h3 className="mb-1 text-lg font-semibold text-gray-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
                 {t(meta.label)}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t(meta.description)}
-              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t(meta.description)}</p>
             </Link>
           )
         })}

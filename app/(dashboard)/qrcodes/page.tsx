@@ -5,14 +5,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { toast } from 'sonner'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import {
-  Plus,
-  Filter,
-  FolderTree as FolderTreeIcon,
-  Folder,
-  Trash2 as TrashIcon,
-  X,
-} from 'lucide-react'
+import { Plus, Filter, Trash2 as TrashIcon } from 'lucide-react'
 import { useQRCodes } from '@/lib/hooks/queries/useQRCodes'
 import { PageQueryError } from '@/components/common/PageQueryError'
 import { DebouncedSearch } from '@/components/common/DebouncedSearch'
@@ -33,7 +26,6 @@ import { QRCodeCard } from '@/components/features/qrcodes/QRCodeCard'
 import { Pagination } from '@/components/common/Pagination'
 import { useCurrentUser } from '@/lib/hooks/queries/useCurrentUser'
 import { useSubscription } from '@/lib/hooks/queries/useSubscription'
-import { useFolders } from '@/lib/hooks/queries/useFolders'
 import { useDomains } from '@/lib/hooks/queries/useDomains'
 import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
 import {
@@ -49,12 +41,9 @@ import {
 import { useTranslation } from '@/lib/i18n'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
-import { foldersAPI } from '@/lib/api/endpoints/folders'
 import { useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
 import { FolderSelectModal } from '@/components/common/FolderSelectModal'
-import { DeleteFolderDialog } from '@/components/qr/DeleteFolderDialog'
-import type { Folder as FolderEntity, FolderContentAction } from '@/lib/api/endpoints/folders'
 import { useSubscriptionLimits } from '@/lib/hooks/useSubscriptionLimits'
 import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
 import { BulkChangeTypeModal } from '@/components/qr/BulkChangeTypeModal'
@@ -85,15 +74,13 @@ export default function QRCodesPage() {
     [searchParams]
   )
 
-  const [page, setPageState] = useState(1)
-
-  useEffect(() => {
-    const fromUrl = Math.max(
+  const [page, setPageState] = useState(() => {
+    if (typeof window === 'undefined') return 1
+    return Math.max(
       1,
       parseInt(new URLSearchParams(window.location.search).get('page') || '1', 10) || 1
     )
-    setPageState(fromUrl)
-  }, [])
+  })
 
   useEffect(() => {
     const onPopState = () => {
@@ -145,7 +132,6 @@ export default function QRCodesPage() {
   const search = sp('q')
   const sortBy = sp('sort', 'date-desc') as SortOption
 
-  const selectedFolder = searchParams.get('folder') // null = all folders
   const selectedDomain = sp('domain')
 
   // ─── Filter state (also URL-backed) ────────────────────────────────────────
@@ -162,7 +148,7 @@ export default function QRCodesPage() {
       hasLogo: searchParams.get('hasLogo') ? true : undefined,
       hasSticker: searchParams.get('hasSticker') ? true : undefined,
     }),
-    [searchParams]
+    [searchParams, sp]
   )
 
   const activeFilterCount = useMemo(() => {
@@ -179,22 +165,16 @@ export default function QRCodesPage() {
 
   // ─── UI-only state (not persisted in URL) ──────────────────────────────────
   const [showFilters, setShowFilters] = useState(false)
-  const [showFolders, setShowFolders] = useState(false)
-  const [newFolderName, setNewFolderName] = useState('')
-  const [folderLoading, setFolderLoading] = useState(false)
-  const [folderToDelete, setFolderToDelete] = useState<FolderEntity | null>(null)
   const [folderModalQRIds, setFolderModalQRIds] = useState<string[] | null>(null)
   const [showChangeTypeModal, setShowChangeTypeModal] = useState(false)
   const [showChangeOwnerModal, setShowChangeOwnerModal] = useState(false)
 
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>('grid')
-
-  useEffect(() => {
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
+    if (typeof window === 'undefined') return 'grid'
     const stored = localStorage.getItem('qr-list-view-mode')
-    if (stored === 'grid' || stored === 'list' || stored === 'minimal') {
-      setViewMode(stored)
-    }
-  }, [])
+    if (stored === 'grid' || stored === 'list' || stored === 'minimal') return stored
+    return 'grid'
+  })
 
   // Persist view mode to localStorage
   /**
@@ -305,13 +285,12 @@ export default function QRCodesPage() {
       page,
       perPage: 12,
       search: search || undefined,
-      folderId: selectedFolder || undefined,
       domainId: selectedDomain || undefined,
       sortBy: sortField,
       sortOrder,
       ...filterParams,
     }),
-    [page, search, selectedFolder, selectedDomain, sortField, sortOrder, filterParams]
+    [page, search, selectedDomain, sortField, sortOrder, filterParams]
   )
 
   const { data, isLoading, isFetching, error, refetch } = useQRCodes(qrListParams)
@@ -321,7 +300,6 @@ export default function QRCodesPage() {
   const isAdmin = isSuperAdmin(user)
   const { data: currentUser } = useCurrentUser()
   const { data: subscription } = useSubscription()
-  const { data: foldersData } = useFolders()
   const queryClient = useQueryClient()
   const { data: domainsData } = useDomains(undefined, { enabled: isAdmin })
   const domains = domainsData?.data ?? []
@@ -369,63 +347,6 @@ export default function QRCodesPage() {
   const showListLoading = isLoading || (isFetching && (data?.pagination?.currentPage ?? 0) !== page)
   const qrcodes = data?.data || []
   const hasQRCodes = qrcodes.length > 0
-
-  // Folder actions
-  /**
-   * Purpose: Executes handleCreateFolder functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: March 2026
-   */
-  const handleCreateFolder = async () => {
-    if (!newFolderName.trim() || !user?.id) return
-    setFolderLoading(true)
-    try {
-      await foldersAPI.create(user.id, { folder_name: newFolderName.trim() })
-      setNewFolderName('')
-      queryClient.invalidateQueries({ queryKey: queryKeys.folders.all() })
-    } catch (err) {
-      console.error('Failed to create folder:', err)
-    } finally {
-      setFolderLoading(false)
-    }
-  }
-
-  /**
-   * Purpose: Executes handleDeleteFolder functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: March 2026
-   */
-  const handleConfirmDeleteFolder = async (
-    action: FolderContentAction,
-    targetFolderId?: number
-  ) => {
-    if (!user?.id || !folderToDelete) return
-    const folderId = folderToDelete.id
-    setFolderLoading(true)
-    try {
-      await foldersAPI.delete(user.id, folderId, { contentAction: action, targetFolderId })
-      if (selectedFolder === String(folderId)) {
-        updateUrl({ folder: null, page: null })
-      }
-      queryClient.invalidateQueries({ queryKey: queryKeys.folders.all() })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.qrcodes.list({} as Record<string, unknown>),
-      })
-      toast.success(
-        action === 'delete_all'
-          ? t('Folder and its QR codes deleted.')
-          : action === 'move'
-            ? t('Folder deleted. QR codes moved.')
-            : t('Folder deleted. QR codes kept.')
-      )
-      setFolderToDelete(null)
-    } catch (err) {
-      console.error('Failed to delete folder:', err)
-      toast.error(t('Failed to delete folder. Please try again.'))
-    } finally {
-      setFolderLoading(false)
-    }
-  }
 
   const { selectedItems, selectedIds, deselectAll, toggleItem } = useMultiSelect(qrcodes)
 
@@ -632,10 +553,10 @@ export default function QRCodesPage() {
             <>
               <button
                 type="button"
-                onClick={() => setShowFolders(!showFolders)}
+                onClick={() => router.push('/qrcodes/folders')}
                 className="relative z-10 shrink-0 inline-flex items-center rounded-md bg-white border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
-                <FolderTreeIcon className="w-4 h-4 mr-2" />
+                <FolderInput className="w-4 h-4 mr-2" />
                 {t('Folders')}
               </button>
               <button
@@ -664,9 +585,7 @@ export default function QRCodesPage() {
               if (!canCreateQR) {
                 setShowQuotaModal(true)
               } else {
-                router.push(
-                  selectedFolder ? `/qrcodes/new?folder_id=${selectedFolder}` : '/qrcodes/new'
-                )
+                router.push('/qrcodes/new')
               }
             }}
             className="relative z-10 shrink-0 inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
@@ -691,229 +610,119 @@ export default function QRCodesPage() {
         </div>
       )}
 
-      <div className="mt-8 flex gap-6">
-        {/* Folders Sidebar */}
-        {showFolders && (
-          <div className="w-full sm:w-64 flex-shrink-0">
-            <div className="sticky top-4 bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900">{t('Folders')}</h3>
-                <button
-                  onClick={() => setShowFolders(false)}
-                  className="p-1 text-gray-400 hover:text-gray-600 rounded"
+      <div className="mt-8">
+        {/* Search and Toolbar */}
+        <div className="mb-6 space-y-4">
+          <DebouncedSearch
+            onSearch={handleSearch}
+            placeholder={t('Search QR codes...')}
+            delay={300}
+            minLength={0}
+            initialValue={search}
+          />
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <SortDropdown currentSort={sortBy} onSortChange={handleSortChange} />
+              {/* T184: Domain filter */}
+              {domains.length > 0 && (
+                <select
+                  value={selectedDomain}
+                  onChange={e => {
+                    updateUrl({ domain: e.target.value || null, page: null })
+                  }}
+                  className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
                 >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* "All QR Codes" option */}
-              <button
-                type="button"
-                onClick={() => {
-                  updateUrl({ folder: null, page: null })
-                }}
-                className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors mb-1 ${
-                  selectedFolder === null
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                <Folder className="w-4 h-4" />
-                <span className="flex-1 text-left">{t('All QR Codes')}</span>
-              </button>
-
-              {/* Folder list */}
-              <div className="space-y-1">
-                {(foldersData || []).map(folder => (
-                  <div
-                    key={folder.id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => updateUrl({ folder: String(folder.id), page: null })}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        updateUrl({ folder: String(folder.id), page: null })
-                      }
-                    }}
-                    className={`group flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors cursor-pointer ${
-                      selectedFolder === String(folder.id)
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Folder className="w-4 h-4 flex-shrink-0" />
-                    <span className="flex-1 text-left font-medium truncate">{folder.name}</span>
-                    {folder.qrcode_count > 0 && (
-                      <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded flex-shrink-0">
-                        {folder.qrcode_count}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={e => {
-                        e.stopPropagation()
-                        setFolderToDelete(folder)
-                      }}
-                      className="p-1 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity flex-shrink-0"
-                      title={t('Delete folder')}
-                    >
-                      <TrashIcon className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Create folder input */}
-              <div className="mt-4 pt-4 border-t border-gray-200">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newFolderName}
-                    onChange={e => setNewFolderName(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') handleCreateFolder()
-                    }}
-                    placeholder={t('New folder name')}
-                    disabled={folderLoading}
-                    className="flex-1 rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
-                  />
-                  <button
-                    onClick={handleCreateFolder}
-                    disabled={folderLoading || !newFolderName.trim()}
-                    className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
+                  <option value="">{t('All Domains')}</option>
+                  {domains.map(d => (
+                    <option key={d.id} value={d.id}>
+                      {d.domain}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
+            <ViewModeToggle currentMode={viewMode} onModeChange={handleViewModeChange} />
+          </div>
+        </div>
+
+        {/* Loading State */}
+        {showListLoading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <QRCodeCardSkeleton key={i} />
+            ))}
           </div>
         )}
 
-        {/* Main Content */}
-        <div className="flex-1">
-          {/* Search and Toolbar */}
-          <div className="mb-6 space-y-4">
-            <DebouncedSearch
-              onSearch={handleSearch}
-              placeholder={t('Search QR codes...')}
-              delay={300}
-              minLength={0}
-              initialValue={search}
-            />
+        {/* Empty States */}
+        {!showListLoading && !hasQRCodes && !search && (
+          <NoQRCodesEmptyState onCreate={() => router.push('/qrcodes/new')} />
+        )}
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <SortDropdown currentSort={sortBy} onSortChange={handleSortChange} />
-                {/* T184: Domain filter */}
-                {domains.length > 0 && (
-                  <select
-                    value={selectedDomain}
-                    onChange={e => {
-                      updateUrl({ domain: e.target.value || null, page: null })
-                    }}
-                    className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-                  >
-                    <option value="">{t('All Domains')}</option>
-                    {domains.map(d => (
-                      <option key={d.id} value={d.id}>
-                        {d.domain}
-                      </option>
-                    ))}
-                  </select>
-                )}
+        {!showListLoading && !hasQRCodes && search && <NoSearchResultsEmptyState query={search} />}
+
+        {/* QR Codes List */}
+        {!showListLoading && hasQRCodes && (
+          <div
+            className={`transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
+          >
+            {/* Grid View */}
+            {viewMode === 'grid' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {qrcodes.map(qrcode => (
+                  <QRCodeCard
+                    key={qrcode.id}
+                    qrcode={qrcode}
+                    onAction={action => handleRowAction(action, qrcode.id)}
+                  />
+                ))}
               </div>
-              <ViewModeToggle currentMode={viewMode} onModeChange={handleViewModeChange} />
-            </div>
+            )}
+
+            {/* List View */}
+            {viewMode === 'list' && (
+              <div className="space-y-2">
+                {qrcodes.map(qrcode => (
+                  <QRCodeDetailedRow
+                    key={qrcode.id}
+                    qrcode={qrcode}
+                    isSelected={selectedItems.some(item => item.id === qrcode.id)}
+                    onToggleSelect={() => toggleItem(qrcode.id)}
+                    onAction={action => handleRowAction(action, qrcode.id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Minimal View */}
+            {viewMode === 'minimal' && (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {qrcodes.map(qrcode => (
+                  <QRCodeMinimalCard
+                    key={qrcode.id}
+                    qrcode={qrcode}
+                    onSelect={() => router.push(`/qrcodes/${qrcode.id}`)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
+        )}
 
-          {/* Loading State */}
-          {showListLoading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <QRCodeCardSkeleton key={i} />
-              ))}
-            </div>
-          )}
-
-          {/* Empty States */}
-          {!showListLoading && !hasQRCodes && !search && (
-            <NoQRCodesEmptyState
-              onCreate={() =>
-                router.push(
-                  selectedFolder ? `/qrcodes/new?folder_id=${selectedFolder}` : '/qrcodes/new'
-                )
-              }
+        {/* Pagination - rendered outside isLoading block so it stays visible during page changes */}
+        {paginationMeta.total > paginationMeta.perPage && (
+          <div className="mt-8">
+            <Pagination
+              currentPage={paginationMeta.currentPage}
+              totalPages={paginationMeta.lastPage}
+              pageSize={paginationMeta.perPage}
+              totalItems={paginationMeta.total}
+              onPageChange={setPage}
+              showPageSize={false}
             />
-          )}
-
-          {!showListLoading && !hasQRCodes && search && (
-            <NoSearchResultsEmptyState query={search} />
-          )}
-
-          {/* QR Codes List */}
-          {!showListLoading && hasQRCodes && (
-            <div
-              className={`transition-opacity duration-200 ${isFetching ? 'opacity-50 pointer-events-none' : ''}`}
-            >
-              {/* Grid View */}
-              {viewMode === 'grid' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {qrcodes.map(qrcode => (
-                    <QRCodeCard
-                      key={qrcode.id}
-                      qrcode={qrcode}
-                      onAction={action => handleRowAction(action, qrcode.id)}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* List View */}
-              {viewMode === 'list' && (
-                <div className="space-y-2">
-                  {qrcodes.map(qrcode => (
-                    <QRCodeDetailedRow
-                      key={qrcode.id}
-                      qrcode={qrcode}
-                      isSelected={selectedItems.some(item => item.id === qrcode.id)}
-                      onToggleSelect={() => toggleItem(qrcode.id)}
-                      onAction={action => handleRowAction(action, qrcode.id)}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* Minimal View */}
-              {viewMode === 'minimal' && (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {qrcodes.map(qrcode => (
-                    <QRCodeMinimalCard
-                      key={qrcode.id}
-                      qrcode={qrcode}
-                      onSelect={() => router.push(`/qrcodes/${qrcode.id}`)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Pagination - rendered outside isLoading block so it stays visible during page changes */}
-          {paginationMeta.total > paginationMeta.perPage && (
-            <div className="mt-8">
-              <Pagination
-                currentPage={paginationMeta.currentPage}
-                totalPages={paginationMeta.lastPage}
-                pageSize={paginationMeta.perPage}
-                totalItems={paginationMeta.total}
-                onPageChange={setPage}
-                showPageSize={false}
-              />
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Filter Modal */}
@@ -971,16 +780,6 @@ export default function QRCodesPage() {
           deselectAll()
           queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.all() })
         }}
-      />
-
-      {/* Folder deletion flow — choose what happens to the QR codes inside */}
-      <DeleteFolderDialog
-        isOpen={!!folderToDelete}
-        folder={folderToDelete}
-        folders={foldersData || []}
-        loading={folderLoading}
-        onClose={() => setFolderToDelete(null)}
-        onConfirm={handleConfirmDeleteFolder}
       />
     </div>
   )

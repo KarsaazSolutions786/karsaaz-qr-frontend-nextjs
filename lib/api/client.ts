@@ -69,6 +69,7 @@ function handleUnauthorizedResponse(config?: InternalAxiosRequestConfig): void {
   if (typeof window === 'undefined') return
   const url = config?.url ?? ''
   if (AUTH_REQUEST_PATTERN.test(url)) return
+  if (/\/guest(\/|$|\?)/.test(url)) return
 
   localStorage.removeItem('token')
   localStorage.removeItem('user')
@@ -157,13 +158,15 @@ apiClient.interceptors.response.use(
       return Promise.reject(error)
     }
 
-    // Handle 429 Too Many Requests — show rate-limit toast
+    // Handle 429 Too Many Requests — show rate-limit toast (unless silenced)
     if (error.response?.status === 429) {
-      const retryAfter = error.response.headers?.['retry-after']
-      const message = retryAfter
-        ? `Too many requests. Please wait ${retryAfter} seconds and try again.`
-        : 'Too many requests. Please wait and try again.'
-      toast.error(message, { id: 'api-rate-limit' })
+      if (!originalRequest._silent) {
+        const retryAfter = error.response.headers?.['retry-after']
+        const message = retryAfter
+          ? `Too many requests. Please wait ${retryAfter} seconds and try again.`
+          : 'Too many requests. Please wait and try again.'
+        toast.error(message, { id: 'api-rate-limit' })
+      }
       return Promise.reject(error)
     }
 

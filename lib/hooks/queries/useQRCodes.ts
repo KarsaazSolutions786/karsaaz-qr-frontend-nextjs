@@ -12,7 +12,7 @@ import { useGuest } from '@/lib/hooks/useGuest'
  * Created/Updated: February 2026
  */
 export function useQRCodes(params: ListQRCodesParams = {}) {
-  const { isGuest } = useGuest()
+  const { isGuest, isGuestLoading } = useGuest()
 
   return useQuery({
     queryKey: isGuest
@@ -50,6 +50,11 @@ export function useQRCodes(params: ListQRCodesParams = {}) {
       }
       return qrcodesAPI.list(params, signal) as any
     },
+    enabled:
+      !isGuestLoading &&
+      (isGuest ||
+        (typeof window !== 'undefined' &&
+          !!(localStorage.getItem('logged_in') || localStorage.getItem('token')))),
     staleTime: 30 * 1000,
     retry: (failureCount, error: any) => {
       const status = error?.response?.status
@@ -85,6 +90,11 @@ export function useQRLinkSettings(qrCodeId: string | undefined, options?: { enab
     queryKey: ['qrcodes', qrCodeId, 'link-settings'],
     queryFn: () => qrcodesAPI.getLinkSettings(qrCodeId!),
     enabled: (options?.enabled ?? true) && !!qrCodeId,
+    enabled:
+      !isGuestLoading &&
+      (isGuest ||
+        (typeof window !== 'undefined' &&
+          !!(localStorage.getItem('logged_in') || localStorage.getItem('token')))),
     staleTime: 30 * 1000, // 30 seconds
   })
 }

@@ -1,14 +1,7 @@
 'use client'
 
-import React, {
-  createContext,
-  ReactNode,
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useMemo,
-} from 'react'
+import React, { createContext, ReactNode, useState, useEffect, useCallback, useMemo } from 'react'
+import { usePathname } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
 import {
   guestAPI,
@@ -28,6 +21,8 @@ export interface GuestContextType {
   sessionLimits: GuestSessionInfo['limits'] | null
   /** True while guest session is being initialized */
   isGuestLoading: boolean
+  /** Set when guest session could not be created (e.g. rate limited) */
+  guestInitError: string | null
   /** Number of QR codes created in this guest session (for signup prompt) */
   guestActionCount: number
   /** Whether to show the signup prompt */
@@ -44,6 +39,93 @@ export interface GuestContextType {
 
 export const GuestContext = createContext<GuestContextType | undefined>(undefined)
 
+const GUEST_ROUTE_PREFIX = '/guest'
+
+function isGuestRoute(pathname: string | null): boolean {
+  return Boolean(pathname && pathname.startsWith(GUEST_ROUTE_PREFIX))
+}
+
+type GuestInitResult = {
+  session: GuestSession | null
+  limits: GuestSessionInfo['limits'] | null
+  config: GuestConfiguration | null
+  error: string | null
+}
+
+let guestInitPromise: Promise<GuestInitResult> | null = null
+
+/** Test-only: clears cached init promise between vitest cases. */
+export function resetGuestInitStateForTests(): void {
+  guestInitPromise = null
+}
+
+async function initializeGuestSession(): Promise<GuestInitResult> {
+  if (guestInitPromise) return guestInitPromise
+
+  guestInitPromise = (async (): Promise<GuestInitResult> => {
+    const existingToken =
+      typeof window !== 'undefined' ? localStorage.getItem('guest_session_token') : null
+
+    if (existingToken) {
+      try {
+        const info = await guestAPI.getSession()
+        return {
+          session: info.session,
+          limits: info.limits,
+          config: info.configuration,
+          error: null,
+        }
+      } catch (err: unknown) {
+        const status = (err as { response?: { status?: number } })?.response?.status
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('guest_session_token')
+          localStorage.removeItem('guest_action_count')
+        }
+        if (status === 429) {
+          return {
+            session: null,
+            limits: null,
+            config: null,
+            error: 'Too many requests. Please wait a moment and refresh the page.',
+          }
+        }
+      }
+    }
+
+    try {
+      const config = (await guestAPI.getConfiguration()) as GuestConfiguration
+      if (!config.is_guest_mode_enabled) {
+        return { session: null, limits: null, config, error: null }
+      }
+
+      const info = (await guestAPI.createSession('web')) as GuestSessionInfo
+      if (typeof window !== 'undefined' && info.session?.session_token) {
+        localStorage.setItem('guest_session_token', info.session.session_token)
+      }
+
+      return {
+        session: info.session,
+        limits: info.limits,
+        config: info.configuration ?? config,
+        error: null,
+      }
+    } catch (err: unknown) {
+      const status = (err as { response?: { status?: number } })?.response?.status
+      if (status === 429) {
+        return {
+          session: null,
+          limits: null,
+          config: null,
+          error: 'Too many requests. Please wait a moment and refresh the page.',
+        }
+      }
+      return { session: null, limits: null, config: null, error: null }
+    }
+  })()
+
+  return guestInitPromise
+}
+
 /**
  * Purpose: Executes GuestProvider functionality.
  * Owner/Author: Syed Ashhad
@@ -51,12 +133,13 @@ export const GuestContext = createContext<GuestContextType | undefined>(undefine
  */
 export function GuestProvider({ children }: { children: ReactNode }) {
   const { user, isLoading: isAuthLoading } = useAuth()
-  const initRef = useRef(false)
+  const pathname = usePathname()
 
   const [guestSession, setGuestSession] = useState<GuestSession | null>(null)
   const [guestConfig, setGuestConfig] = useState<GuestConfiguration | null>(null)
   const [sessionLimits, setSessionLimits] = useState<GuestSessionInfo['limits'] | null>(null)
   const [isGuestLoading, setIsGuestLoading] = useState(true)
+  const [guestInitError, setGuestInitError] = useState<string | null>(null)
   const [guestActionCount, setGuestActionCount] = useState<number>(() => {
     if (typeof window !== 'undefined') {
       return parseInt(localStorage.getItem('guest_action_count') || '0', 10)
@@ -92,6 +175,7 @@ export function GuestProvider({ children }: { children: ReactNode }) {
       setGuestSession(info.session)
       setSessionLimits(info.limits)
       setGuestConfig(info.configuration)
+      setGuestInitError(null)
     } catch {
       // Session may have expired
     }
@@ -103,8 +187,10 @@ export function GuestProvider({ children }: { children: ReactNode }) {
     } catch {
       // Ignore — session may already be gone
     }
+    guestInitPromise = null
     setGuestSession(null)
     setSessionLimits(null)
+    setGuestInitError(null)
     setGuestActionCount(0)
     if (typeof window !== 'undefined') {
       localStorage.removeItem('guest_session_token')
@@ -112,73 +198,53 @@ export function GuestProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Initialize guest session if user is not logged in
+  // Initialize guest session only on guest routes (or when reusing an existing token)
   useEffect(() => {
-    if (isAuthLoading || initRef.current) return
-    initRef.current = true
+    if (isAuthLoading) return
 
-    // If a user is logged in, guest mode is not needed
+    let cancelled = false
+
     if (user) {
-      setIsGuestLoading(false)
-      return
-    }
-
-    /**
-     * Purpose: Initializes the service or component.
-     * Owner/Author: Syed Ashhad
-     * Created/Updated: March 2026
-     */
-    const initGuest = async () => {
-      try {
-        // Check if there's an existing guest token
-        const existingToken = typeof window !== 'undefined'
-          ? localStorage.getItem('guest_session_token')
-          : null
-
-        if (existingToken) {
-          // Validate existing session
-          try {
-            const info = await guestAPI.getSession()
-            setGuestSession(info.session)
-            setSessionLimits(info.limits)
-            setGuestConfig(info.configuration)
-            setIsGuestLoading(false)
-            return
-          } catch {
-            // Token is invalid or expired — clear and try to create new
-            localStorage.removeItem('guest_session_token')
-            localStorage.removeItem('guest_action_count')
-          }
-        }
-
-        // Check if guest mode is enabled
-        const config = await guestAPI.getConfiguration() as GuestConfiguration
-        setGuestConfig(config)
-
-        if (!config.is_guest_mode_enabled) {
-          setIsGuestLoading(false)
-          return
-        }
-
-        // Auto-create a guest session
-        const info = await guestAPI.createSession('web') as GuestSessionInfo
-        if (typeof window !== 'undefined' && info.session?.session_token) {
-          localStorage.setItem('guest_session_token', info.session.session_token)
-        }
-        setGuestSession(info.session)
-        setSessionLimits(info.limits)
-        if (info.configuration) {
-          setGuestConfig(info.configuration)
-        }
-      } catch {
-        // Guest mode is not available — that's fine, user can still sign up
-      } finally {
-        setIsGuestLoading(false)
+      queueMicrotask(() => {
+        if (!cancelled) setIsGuestLoading(false)
+      })
+      return () => {
+        cancelled = true
       }
     }
 
-    initGuest()
-  }, [user, isAuthLoading])
+    const existingToken =
+      typeof window !== 'undefined' ? localStorage.getItem('guest_session_token') : null
+    const shouldInit = Boolean(existingToken) || isGuestRoute(pathname)
+
+    if (!shouldInit) {
+      queueMicrotask(() => {
+        if (!cancelled) setIsGuestLoading(false)
+      })
+      return () => {
+        cancelled = true
+      }
+    }
+    queueMicrotask(() => {
+      if (!cancelled) setIsGuestLoading(true)
+    })
+
+    initializeGuestSession()
+      .then(result => {
+        if (cancelled) return
+        setGuestSession(result.session)
+        setSessionLimits(result.limits)
+        setGuestConfig(result.config)
+        setGuestInitError(result.error)
+      })
+      .finally(() => {
+        if (!cancelled) setIsGuestLoading(false)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [user, isAuthLoading, pathname])
 
   const contextValue = useMemo<GuestContextType>(
     () => ({
@@ -187,6 +253,7 @@ export function GuestProvider({ children }: { children: ReactNode }) {
       guestConfig,
       sessionLimits,
       isGuestLoading,
+      guestInitError,
       guestActionCount,
       shouldShowSignupPrompt,
       incrementActionCount,
@@ -200,6 +267,7 @@ export function GuestProvider({ children }: { children: ReactNode }) {
       guestConfig,
       sessionLimits,
       isGuestLoading,
+      guestInitError,
       guestActionCount,
       shouldShowSignupPrompt,
       incrementActionCount,

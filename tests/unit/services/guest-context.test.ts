@@ -18,13 +18,18 @@ vi.mock('@/lib/hooks/useAuth', () => ({
   useAuth: () => mockUseAuth(),
 }))
 
+const mockUsePathname = vi.fn(() => '/guest/create')
+vi.mock('next/navigation', () => ({
+  usePathname: () => mockUsePathname(),
+}))
+
 // guestAPI mock
 const mockGetConfiguration = vi.fn()
 const mockCreateSession = vi.fn()
 const mockGetSession = vi.fn()
 const mockEndSession = vi.fn()
 
-vi.mock('@/lib/api/endpoints/guest', async (importOriginal) => {
+vi.mock('@/lib/api/endpoints/guest', async importOriginal => {
   const actual = await importOriginal<typeof import('@/lib/api/endpoints/guest')>()
   return {
     ...actual,
@@ -40,14 +45,18 @@ vi.mock('@/lib/api/endpoints/guest', async (importOriginal) => {
   }
 })
 
-import { GuestProvider } from '@/lib/context/GuestContext'
+import { GuestProvider, resetGuestInitStateForTests } from '@/lib/context/GuestContext'
 import { useGuest } from '@/lib/hooks/useGuest'
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
+function GuestTestWrapper({ children }: { children: React.ReactNode }) {
+  return React.createElement(GuestProvider, null, children)
+}
+GuestTestWrapper.displayName = 'GuestTestWrapper'
+
 function makeWrapper() {
-  return ({ children }: { children: React.ReactNode }) =>
-    React.createElement(GuestProvider, null, children)
+  return GuestTestWrapper
 }
 
 const mockLocalStorage: Record<string, string> = {}
@@ -71,6 +80,8 @@ function setupLocalStorage(initial: Record<string, string> = {}) {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  resetGuestInitStateForTests()
+  mockUsePathname.mockReturnValue('/guest/create')
   setupLocalStorage()
 })
 
@@ -111,9 +122,9 @@ describe('GuestProvider', () => {
       mockUseAuth.mockReturnValue({ user: null, isLoading: false })
       mockGetConfiguration.mockResolvedValue({ is_guest_mode_enabled: true })
       mockCreateSession.mockResolvedValue({
-        id: 1,
-        session_token: 'new-token',
-        platform: 'web',
+        session: { id: 1, session_token: 'new-token', platform: 'web' },
+        limits: { qrcodes: { used: 0, max: 5, remaining: 5 } },
+        configuration: { is_guest_mode_enabled: true },
       })
       mockGetSession.mockResolvedValue({
         session: { id: 1, session_token: 'new-token' },
@@ -134,9 +145,9 @@ describe('GuestProvider', () => {
       mockUseAuth.mockReturnValue({ user: null, isLoading: false })
       mockGetConfiguration.mockResolvedValue({ is_guest_mode_enabled: true })
       mockCreateSession.mockResolvedValue({
-        id: 1,
-        session_token: 'new-token-xyz',
-        platform: 'web',
+        session: { id: 1, session_token: 'new-token-xyz', platform: 'web' },
+        limits: {},
+        configuration: { is_guest_mode_enabled: true },
       })
       mockGetSession.mockResolvedValue({
         session: { id: 1 },
@@ -147,10 +158,7 @@ describe('GuestProvider', () => {
       renderHook(() => useGuest(), { wrapper: makeWrapper() })
 
       await waitFor(() => {
-        expect(localStorage.setItem).toHaveBeenCalledWith(
-          'guest_session_token',
-          'new-token-xyz'
-        )
+        expect(localStorage.setItem).toHaveBeenCalledWith('guest_session_token', 'new-token-xyz')
       })
     })
 

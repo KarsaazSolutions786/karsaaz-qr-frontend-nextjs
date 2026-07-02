@@ -94,6 +94,8 @@ export interface GuestAnalytics {
  * Owner/Author: Syed Ashhad
  * Created/Updated: March 2026
  */
+type GuestRequestConfig = { headers?: Record<string, string>; _silent?: boolean }
+
 function getGuestHeaders(): Record<string, string> {
   if (typeof window === 'undefined') return {}
   const token = localStorage.getItem('guest_session_token')
@@ -105,13 +107,19 @@ function getGuestHeaders(): Record<string, string> {
 export const guestAPI = {
   // Configuration (public, no token needed)
   getConfiguration: async () => {
-    const response = await apiClient.get<{ data: GuestConfiguration }>('/guest/configuration')
+    const response = await apiClient.get<{ data: GuestConfiguration }>('/guest/configuration', {
+      _silent: true,
+    } as GuestRequestConfig)
     return (response.data as any).data ?? response.data
   },
 
   // Session management
   createSession: async (platform: 'web' | 'ios' | 'android' = 'web') => {
-    const response = await apiClient.post<{ data: GuestSessionInfo }>('/guest/session', { platform })
+    const response = await apiClient.post<{ data: GuestSessionInfo }>(
+      '/guest/session',
+      { platform },
+      { _silent: true } as GuestRequestConfig
+    )
     const info = (response.data as any).data ?? response.data
     return info
   },
@@ -119,7 +127,8 @@ export const guestAPI = {
   getSession: async (): Promise<GuestSessionInfo> => {
     const response = await apiClient.get<{ data: GuestSessionInfo }>('/guest/session', {
       headers: getGuestHeaders(),
-    })
+      _silent: true,
+    } as GuestRequestConfig)
     return (response.data as any).data ?? response.data
   },
 
@@ -168,7 +177,11 @@ export const guestAPI = {
     return response.data
   },
 
-  previewQrcode: async (data: { type: string; data: Record<string, any>; design?: Record<string, any> }) => {
+  previewQrcode: async (data: {
+    type: string
+    data: Record<string, any>
+    design?: Record<string, any>
+  }) => {
     const response = await apiClient.post('/guest/qrcodes/preview', data, {
       headers: getGuestHeaders(),
       responseType: 'blob',
