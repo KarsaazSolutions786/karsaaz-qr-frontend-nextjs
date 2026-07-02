@@ -23,17 +23,26 @@ async function getLeadForm(slug: string) {
       return null
     }
 
+    const rawSettings = (data.settings as Record<string, any>) || {}
+    const settings = {
+      submitButtonText: String(rawSettings.submitButtonText ?? 'Submit'),
+      successMessage: String(rawSettings.successMessage ?? 'Thank you!'),
+      redirectUrl: rawSettings.redirectUrl ? String(rawSettings.redirectUrl) : undefined,
+      sendEmail: Boolean(rawSettings.sendEmail ?? false),
+      emailRecipients: Array.isArray(rawSettings.emailRecipients)
+        ? rawSettings.emailRecipients.map(String)
+        : undefined,
+      allowDuplicates: Boolean(rawSettings.allowDuplicates ?? true),
+      captchaEnabled: Boolean(rawSettings.captchaEnabled ?? false),
+    }
+
     return {
       id: Number(data.lead_form_id ?? 0),
       name: String(data.name ?? data.form_name ?? 'Lead Form'),
       description: (data.description as string | null) ?? null,
       slug: slug,
       fields: data.fields,
-      settings: (data.settings as Record<string, unknown>) ?? {
-        submitButtonText: 'Submit',
-        successMessage: 'Thank you!',
-        allowDuplicates: true,
-      },
+      settings: settings,
       isActive: true,
       responseCount: 0,
       userId: 0,

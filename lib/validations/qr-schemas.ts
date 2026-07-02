@@ -55,25 +55,20 @@ export const wifiDataSchema = z.object({
   hidden: z.boolean().default(false),
 })
 
-export const vcardDataSchema = z
-  .object({
-    firstName: z.string().optional().default(''),
-    lastName: z.string().optional().default(''),
-    phones: z.string().optional(),
-    emails: z.string().email('Invalid email').optional().or(z.literal('')),
-    website_list: z.string().optional(),
-    company: z.string().optional(),
-    job: z.string().optional(),
-    street: z.string().optional(),
-    city: z.string().optional(),
-    zip: z.string().optional(),
-    state: z.string().optional(),
-    country: z.string().optional(),
-  })
-  .refine(d => Boolean(d.firstName?.trim() || d.lastName?.trim()), {
-    message: 'Please enter at least a first or last name.',
-    path: ['firstName'],
-  })
+export const vcardDataSchema = z.object({
+  firstName: z.string().min(1, 'First name is required.').trim(),
+  lastName: z.string().min(1, 'Last name is required.').trim(),
+  phones: z.string().optional(),
+  emails: z.string().email('Invalid email').optional().or(z.literal('')),
+  website_list: z.string().optional(),
+  company: z.string().optional(),
+  job: z.string().optional(),
+  street: z.string().optional(),
+  city: z.string().optional(),
+  zip: z.string().optional(),
+  state: z.string().optional(),
+  country: z.string().optional(),
+})
 
 export const whatsappDataSchema = z.object({
   mobile_number: z

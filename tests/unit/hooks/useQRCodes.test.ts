@@ -39,6 +39,13 @@ vi.mock('@/lib/query/keys', () => ({
   },
 }))
 
+vi.mock('@/lib/hooks/useGuest', () => ({
+  useGuest: () => ({
+    isGuest: false,
+    isGuestLoading: false,
+  }),
+}))
+
 import { useQRCodes, useQRCodeAnalytics, useQRLinkSettings } from '@/lib/hooks/queries/useQRCodes'
 
 // ---- Helpers ----
@@ -73,6 +80,7 @@ const mockQRCodesResponse = {
 describe('useQRCodes', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    localStorage.setItem('token', 'test-token')
   })
 
   it('should fetch QR codes with default params', async () => {
@@ -84,7 +92,7 @@ describe('useQRCodes', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(mockList).toHaveBeenCalledWith({})
+    expect(mockList).toHaveBeenCalledWith({}, expect.any(AbortSignal))
     expect(result.current.data).toEqual(mockQRCodesResponse)
   })
 
@@ -98,7 +106,7 @@ describe('useQRCodes', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(mockList).toHaveBeenCalledWith({ page: 2, perPage: 20 })
+    expect(mockList).toHaveBeenCalledWith({ page: 2, perPage: 20 }, expect.any(AbortSignal))
   })
 
   it('should pass search filter to API', async () => {
@@ -111,7 +119,10 @@ describe('useQRCodes', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(mockList).toHaveBeenCalledWith({ search: 'test-query', page: 1 })
+    expect(mockList).toHaveBeenCalledWith(
+      { search: 'test-query', page: 1 },
+      expect.any(AbortSignal)
+    )
   })
 
   it('should pass sort params to API', async () => {
@@ -124,7 +135,10 @@ describe('useQRCodes', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(mockList).toHaveBeenCalledWith({ sortBy: 'createdAt', sortOrder: 'desc' })
+    expect(mockList).toHaveBeenCalledWith(
+      { sortBy: 'createdAt', sortOrder: 'desc' },
+      expect.any(AbortSignal)
+    )
   })
 
   it('should pass folder filter to API', async () => {
@@ -137,7 +151,7 @@ describe('useQRCodes', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
-    expect(mockList).toHaveBeenCalledWith({ folderId: 'folder-123' })
+    expect(mockList).toHaveBeenCalledWith({ folderId: 'folder-123' }, expect.any(AbortSignal))
   })
 
   it('should use placeholderData: keepPreviousData for smooth pagination', async () => {
@@ -171,7 +185,9 @@ describe('useQRCodes', () => {
   })
 
   it('should handle API error gracefully', async () => {
-    mockList.mockRejectedValueOnce(new Error('Server Error'))
+    mockList.mockRejectedValueOnce(
+      Object.assign(new Error('Server Error'), { response: { status: 400 } })
+    )
 
     const { result } = renderHook(() => useQRCodes(), {
       wrapper: createQueryWrapper(),
@@ -234,6 +250,7 @@ describe('useQRCodeAnalytics', () => {
 describe('useQRLinkSettings', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    localStorage.setItem('token', 'test-token')
   })
 
   it('should fetch link settings for a given QR code', async () => {

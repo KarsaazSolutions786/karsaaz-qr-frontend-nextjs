@@ -29,7 +29,7 @@ vi.mock('@/lib/api/client', () => {
       response: { use: vi.fn() },
     },
   }
-  return { default: client, isAxiosError: vi.fn((e) => !!e?.isAxiosError) }
+  return { default: client, isAxiosError: vi.fn(e => !!e?.isAxiosError) }
 })
 
 // Mock next/navigation to prevent errors from hooks that rely on it
@@ -99,10 +99,10 @@ describe('authAPI.login', () => {
 
     await authAPI.login({ email: 'test@example.com', password: 'password123' })
 
-    expect(apiClient.post).toHaveBeenCalledWith(
-      '/login',
-      { email: 'test@example.com', password: 'password123' }
-    )
+    expect(apiClient.post).toHaveBeenCalledWith('/login', {
+      email: 'test@example.com',
+      password: 'password123',
+    })
   })
 
   it('returns user and token on success', async () => {
@@ -427,7 +427,7 @@ describe('authAPI.googleTokenLogin', () => {
       makeResponse({ user: MOCK_USER, token: MOCK_TOKEN })
     )
 
-    const result = await authAPI.googleTokenLogin({ credential: 'token' }) as any
+    const result = (await authAPI.googleTokenLogin({ credential: 'token' })) as any
 
     expect(result.user).toEqual(MOCK_USER)
     expect(result.token).toBe(MOCK_TOKEN)
@@ -438,7 +438,7 @@ describe('authAPI.googleTokenLogin', () => {
       makeResponse({ requires_2fa: true, two_factor_token: 'tfa-token-abc' })
     )
 
-    const result = await authAPI.googleTokenLogin({ credential: 'token' }) as any
+    const result = (await authAPI.googleTokenLogin({ credential: 'token' })) as any
 
     expect(result.requires_2fa).toBe(true)
     expect(result.two_factor_token).toBeDefined()
@@ -548,10 +548,12 @@ describe('qrcodesAPI', () => {
       const calls = vi.mocked(apiClient.get).mock.calls
       expect(calls.length).toBeGreaterThan(0)
 
-      const [url, config] = calls[0]
+      const [url, config] = calls[0] || []
       const urlHasPage = typeof url === 'string' && url.includes('page')
-      const configHasPage = config?.params?.page === 2 || config?.params?.page_size === 10 ||
-                            config?.params?.perPage === 10
+      const configHasPage =
+        config?.params?.page === 2 ||
+        config?.params?.page_size === 10 ||
+        config?.params?.perPage === 10
       // At least one of the two shapes must encode the page parameter
       expect(urlHasPage || configHasPage).toBe(true)
     }
@@ -604,9 +606,7 @@ describe('qrcodesAPI', () => {
       const fn = qrcodesAPI.remove ?? qrcodesAPI.delete
       await fn('42')
 
-      expect(apiClient.delete).toHaveBeenCalledWith(
-        expect.stringContaining('/qrcodes/42')
-      )
+      expect(apiClient.delete).toHaveBeenCalledWith(expect.stringContaining('/qrcodes/42'))
     }
   })
 
@@ -644,7 +644,7 @@ describe('apiClient request shape invariants', () => {
 
     // The payload passed to post is a plain object (not FormData),
     // confirming JSON serialisation path is used.
-    const payload = vi.mocked(apiClient.post).mock.calls[0][1]
+    const payload = vi.mocked(apiClient.post).mock.calls[0]?.[1]
     expect(payload).not.toBeInstanceOf(FormData)
     expect(typeof payload).toBe('object')
   })
@@ -662,7 +662,7 @@ describe('apiClient request shape invariants', () => {
       terms_consent: true,
     })
 
-    const payload = vi.mocked(apiClient.post).mock.calls[0][1] as any
+    const payload = vi.mocked(apiClient.post).mock.calls[0]?.[1] as any
     expect(payload).toHaveProperty('name')
     expect(payload).toHaveProperty('email')
     expect(payload).toHaveProperty('password')

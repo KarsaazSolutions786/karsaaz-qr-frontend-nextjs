@@ -106,7 +106,7 @@ describe('guestAPI', () => {
       await guestAPI.createSession()
 
       // createSession's config carries only _silent — no guest token header
-      const callArgs = mockPost.mock.calls[0]
+      const callArgs = mockPost.mock.calls[0] || []
       expect(callArgs[2]).toEqual({ _silent: true })
       expect(callArgs[2]).not.toHaveProperty('headers')
     })

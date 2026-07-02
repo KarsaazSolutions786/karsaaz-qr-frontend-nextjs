@@ -1,6 +1,6 @@
 'use client'
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { qrcodesAPI, ListQRCodesParams } from '@/lib/api/endpoints/qrcodes'
 import { guestAPI } from '@/lib/api/endpoints/guest'
 import { queryKeys } from '@/lib/query/keys'
@@ -50,6 +50,7 @@ export function useQRCodes(params: ListQRCodesParams = {}) {
       }
       return qrcodesAPI.list(params, signal) as any
     },
+    placeholderData: keepPreviousData,
     enabled:
       !isGuestLoading &&
       (isGuest ||
@@ -86,15 +87,17 @@ export function useQRCodeAnalytics(qrCodeId: number | string | undefined) {
  * Created/Updated: February 2026
  */
 export function useQRLinkSettings(qrCodeId: string | undefined, options?: { enabled?: boolean }) {
+  const { isGuest, isGuestLoading } = useGuest()
   return useQuery({
     queryKey: ['qrcodes', qrCodeId, 'link-settings'],
     queryFn: () => qrcodesAPI.getLinkSettings(qrCodeId!),
-    enabled: (options?.enabled ?? true) && !!qrCodeId,
     enabled:
+      (options?.enabled ?? true) &&
+      !!qrCodeId &&
       !isGuestLoading &&
-      (isGuest ||
-        (typeof window !== 'undefined' &&
-          !!(localStorage.getItem('logged_in') || localStorage.getItem('token')))),
+      !isGuest &&
+      typeof window !== 'undefined' &&
+      !!(localStorage.getItem('logged_in') || localStorage.getItem('token')),
     staleTime: 30 * 1000, // 30 seconds
   })
 }

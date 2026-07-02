@@ -2,7 +2,15 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Star, StarHalf, Download, Shield, Smartphone, ChevronLeft, ChevronRight } from 'lucide-react'
+import {
+  Star,
+  StarHalf,
+  Download,
+  Shield,
+  Smartphone,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -11,9 +19,9 @@ import { useTranslation } from '@/lib/i18n'
 
 interface AppData {
   appName: string
-  developer: string
-  icon: string
-  description: string
+  developer?: string
+  icon?: string
+  description?: string
   shortDescription?: string
   category?: string
   features?: string[]
@@ -113,7 +121,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
       <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white overflow-hidden">
         <div className="absolute inset-0 bg-black opacity-10"></div>
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             {/* App Icon */}
@@ -131,11 +139,9 @@ export default function AppPreview({ app }: AppPreviewProps) {
 
             {/* App Info */}
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-4xl sm:text-5xl font-bold mb-2 drop-shadow-lg">
-                {app.appName}
-              </h1>
+              <h1 className="text-4xl sm:text-5xl font-bold mb-2 drop-shadow-lg">{app.appName}</h1>
               <p className="text-xl text-white/90 mb-4">{app.developer}</p>
-              
+
               {app.category && (
                 <Badge className="bg-white/20 backdrop-blur-sm text-white border-white/30 mb-4">
                   {app.category}
@@ -149,13 +155,13 @@ export default function AppPreview({ app }: AppPreviewProps) {
               {/* Rating */}
               {app.rating && (
                 <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
-                  <div className="flex items-center gap-1">
-                    {renderStars(app.rating)}
-                  </div>
+                  <div className="flex items-center gap-1">{renderStars(app.rating)}</div>
                   <div className="text-white/90">
                     <span className="text-2xl font-bold">{app.rating.toFixed(1)}</span>
                     {app.totalRatings && (
-                      <span className="text-sm ml-2">({app.totalRatings.toLocaleString()} {t('ratings')})</span>
+                      <span className="text-sm ml-2">
+                        ({app.totalRatings.toLocaleString()} {t('ratings')})
+                      </span>
                     )}
                   </div>
                 </div>
@@ -310,7 +316,10 @@ export default function AppPreview({ app }: AppPreviewProps) {
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {app.features.map((feature, index) => (
-                      <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+                      <div
+                        key={index}
+                        className="flex items-start gap-3 p-3 rounded-lg bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20"
+                      >
                         <div className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 mt-2"></div>
                         <span className="text-gray-700 dark:text-gray-300">{feature}</span>
                       </div>
@@ -328,8 +337,11 @@ export default function AppPreview({ app }: AppPreviewProps) {
                     {t('Ratings & Reviews')}
                   </h2>
                   <div className="space-y-6">
-                    {app.reviews.map((review) => (
-                      <div key={review.id} className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-6 last:pb-0">
+                    {app.reviews.map(review => (
+                      <div
+                        key={review.id}
+                        className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-6 last:pb-0"
+                      >
                         <div className="flex items-start gap-4 mb-3">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center text-white font-semibold flex-shrink-0">
                             {review.userName.charAt(0).toUpperCase()}
@@ -351,9 +363,7 @@ export default function AppPreview({ app }: AppPreviewProps) {
                                 {review.title}
                               </p>
                             )}
-                            <p className="text-gray-600 dark:text-gray-400">
-                              {review.comment}
-                            </p>
+                            <p className="text-gray-600 dark:text-gray-400">{review.comment}</p>
                           </div>
                         </div>
                       </div>
@@ -388,7 +398,9 @@ export default function AppPreview({ app }: AppPreviewProps) {
                   {app.minOsVersion && (
                     <div>
                       <p className="text-gray-500 dark:text-gray-400">{t('Requires')}</p>
-                      <p className="font-semibold text-gray-900 dark:text-white">{app.minOsVersion}</p>
+                      <p className="font-semibold text-gray-900 dark:text-white">
+                        {app.minOsVersion}
+                      </p>
                     </div>
                   )}
                   {app.developer && (

@@ -183,7 +183,7 @@ export const qrcodesAPI = {
 
       const cleanParams = Object.fromEntries(
         Object.entries({ ...queryParams, page: page ?? 1 }).filter(
-          ([, v]) => v !== undefined && v !== null && v !== ''
+          ([, v]) => v !== undefined && v !== null && (v as any) !== ''
         )
       )
 
