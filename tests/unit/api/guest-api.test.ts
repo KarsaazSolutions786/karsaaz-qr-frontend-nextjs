@@ -65,7 +65,7 @@ describe('guestAPI', () => {
 
       const result = await guestAPI.getConfiguration()
 
-      expect(mockGet).toHaveBeenCalledWith('/guest/configuration')
+      expect(mockGet).toHaveBeenCalledWith('/guest/configuration', { _silent: true })
       expect(result).toEqual(config)
     })
   })
@@ -79,7 +79,11 @@ describe('guestAPI', () => {
 
       const result = await guestAPI.createSession('web')
 
-      expect(mockPost).toHaveBeenCalledWith('/guest/session', { platform: 'web' })
+      expect(mockPost).toHaveBeenCalledWith(
+        '/guest/session',
+        { platform: 'web' },
+        { _silent: true }
+      )
       expect(result).toEqual(session)
     })
 
@@ -89,7 +93,11 @@ describe('guestAPI', () => {
 
       await guestAPI.createSession()
 
-      expect(mockPost).toHaveBeenCalledWith('/guest/session', { platform: 'web' })
+      expect(mockPost).toHaveBeenCalledWith(
+        '/guest/session',
+        { platform: 'web' },
+        { _silent: true }
+      )
     })
 
     it('does not send X-Guest-Session-Token header', async () => {
@@ -97,9 +105,10 @@ describe('guestAPI', () => {
 
       await guestAPI.createSession()
 
-      // createSession sends only URL + body — no headers config object
+      // createSession's config carries only _silent — no guest token header
       const callArgs = mockPost.mock.calls[0]
-      expect(callArgs).toHaveLength(2) // [url, body] — no third arg
+      expect(callArgs[2]).toEqual({ _silent: true })
+      expect(callArgs[2]).not.toHaveProperty('headers')
     })
   })
 
@@ -116,6 +125,7 @@ describe('guestAPI', () => {
 
       expect(mockGet).toHaveBeenCalledWith('/guest/session', {
         headers: GUEST_HEADER,
+        _silent: true,
       })
       expect(result).toEqual(info)
     })
@@ -271,7 +281,7 @@ describe('guestAPI', () => {
 
       await guestAPI.getSession()
 
-      expect(mockGet).toHaveBeenCalledWith('/guest/session', { headers: {} })
+      expect(mockGet).toHaveBeenCalledWith('/guest/session', { headers: {}, _silent: true })
     })
 
     it('endSession sends empty headers object', async () => {

@@ -33,9 +33,11 @@ export const PUBLIC_ROUTE_PREFIXES: string[] = [
   '/org-portal/accept-invite',
 ]
 
-/** Dashboard routes that require auth_token cookie */
+/** Dashboard routes that require auth_token cookie.
+ * NOTE: '/qrcodes' is deliberately absent — guest mode serves /qrcodes/new and /qrcodes
+ * to visitors whose session token lives in localStorage (no auth_token cookie), so the
+ * middleware cannot gate it. DashboardLayout redirects non-user non-guest visitors client-side. */
 export const PROTECTED_ROUTE_PREFIXES: string[] = [
-  '/qrcodes',
   '/users',
   '/plans',
   '/system',

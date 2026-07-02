@@ -52,6 +52,17 @@ export function middleware(request: NextRequest) {
     hasAuthCookie &&
     (pathname === '/login' || pathname === '/register' || pathname === '/signup')
   ) {
+    // A returnUrl/reason param means the app itself sent the user here (client saw a 401
+    // or missing session). The cookie may be stale — bouncing back to /qrcodes/new would
+    // create an infinite reload loop, since JS cannot delete the httpOnly cookie.
+    const params = request.nextUrl.searchParams
+    if (params.has('returnUrl') || params.has('reason')) {
+      const response = applySecurityHeaders(NextResponse.next())
+      if (params.get('reason') === 'session_expired') {
+        response.cookies.delete('auth_token')
+      }
+      return response
+    }
     const home = request.nextUrl.clone()
     home.pathname = '/qrcodes/new'
     home.search = ''

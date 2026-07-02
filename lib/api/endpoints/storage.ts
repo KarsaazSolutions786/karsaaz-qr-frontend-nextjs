@@ -1,6 +1,7 @@
 'use client'
 
 import apiClient from '../client'
+import { getGuestHeaders } from './guest'
 
 export interface StorageUsageStats {
   used_bytes: number
@@ -31,7 +32,7 @@ export const storageAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: March 2026
    */
-  
+
   async getUsage(): Promise<StorageUsageStats> {
     const response = await apiClient.get('/storage/usage')
     return response.data.data
@@ -42,9 +43,9 @@ export const storageAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: March 2026
    */
-  
+
   async getGuestUsage(): Promise<GuestStorageStats> {
-    const response = await apiClient.get('/guest/storage')
+    const response = await apiClient.get('/guest/storage', { headers: getGuestHeaders() })
     return response.data.data
   },
 
@@ -53,7 +54,7 @@ export const storageAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: March 2026
    */
-  
+
   async recalculate(): Promise<StorageUsageStats> {
     const response = await apiClient.post('/storage/recalculate')
     return response.data.data

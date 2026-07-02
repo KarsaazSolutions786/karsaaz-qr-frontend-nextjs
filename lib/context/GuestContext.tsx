@@ -39,10 +39,16 @@ export interface GuestContextType {
 
 export const GuestContext = createContext<GuestContextType | undefined>(undefined)
 
-const GUEST_ROUTE_PREFIX = '/guest'
+/** Routes where a guest session is auto-created for anonymous visitors.
+ * '/qrcodes/new' is the primary guest entry point (guest-aware dashboard wizard);
+ * '/guest' covers the standalone guest pages. */
+const GUEST_INIT_ROUTE_PREFIXES = ['/guest', '/qrcodes/new']
 
 function isGuestRoute(pathname: string | null): boolean {
-  return Boolean(pathname && pathname.startsWith(GUEST_ROUTE_PREFIX))
+  if (!pathname) return false
+  return GUEST_INIT_ROUTE_PREFIXES.some(
+    prefix => pathname === prefix || pathname.startsWith(prefix + '/')
+  )
 }
 
 type GuestInitResult = {

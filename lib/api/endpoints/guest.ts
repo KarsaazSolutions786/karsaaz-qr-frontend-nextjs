@@ -96,7 +96,7 @@ export interface GuestAnalytics {
  */
 type GuestRequestConfig = { headers?: Record<string, string>; _silent?: boolean }
 
-function getGuestHeaders(): Record<string, string> {
+export function getGuestHeaders(): Record<string, string> {
   if (typeof window === 'undefined') return {}
   const token = localStorage.getItem('guest_session_token')
   return token ? { 'X-Guest-Session-Token': token } : {}

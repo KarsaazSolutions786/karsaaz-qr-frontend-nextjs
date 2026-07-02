@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-06-22T11:46:04Z",
-  "changed_file": "components/features/qrcodes/wizard/QRWizardContainer.tsx",
+  "timestamp": "2026-07-02T08:53:20Z",
+  "changed_file": "tests/unit/api/guest-api.test.ts",
   "test_command": "npx vitest run --reporter=verbose",
   "related_test": "",
   "recommendation": "テストの実行を推奨します"

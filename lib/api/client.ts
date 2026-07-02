@@ -75,8 +75,15 @@ function handleUnauthorizedResponse(config?: InternalAxiosRequestConfig): void {
   localStorage.removeItem('user')
   localStorage.removeItem('logged_in')
 
+  // An active guest on a guest-capable page keeps working — the 401 came from a stale
+  // registered-user credential (e.g. expired auth_token cookie), not the guest session.
+  const isGuestCapablePage = /^\/(guest|qrcodes)(\/|$)/.test(window.location.pathname)
+  if (isGuestCapablePage && localStorage.getItem('guest_session_token')) return
+
   if (!window.location.pathname.startsWith('/login')) {
-    window.location.href = '/login'
+    // reason=session_expired tells the middleware to clear the stale httpOnly cookie
+    // and NOT bounce this request back to the dashboard (prevents a reload loop).
+    window.location.href = '/login?reason=session_expired'
   }
 }
 

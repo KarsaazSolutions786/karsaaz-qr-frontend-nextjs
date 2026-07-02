@@ -28,3 +28,13 @@
 {"file":"C:/Dev/karsaaz qr/history/prompts/general/2026-06-22-qrdesignstudio-r3-god-component-split.general.prompt.md","action":"Write","timestamp":"2026-06-22T11:37:27Z","important":false}
 {"file":"components/features/qrcodes/wizard/QRWizardContainer.tsx","action":"Edit","timestamp":"2026-06-22T11:43:18Z","important":false}
 {"file":"history/prompts/general/016-fix-php85-deprecations-lan-csp.green.prompt.md","action":"Write","timestamp":"2026-07-02T08:22:00Z","important":false}
+{"file":"C:/Users/PC/AppData/Local/Temp/claude/C--Dev-karsaaz-qr/61521045-8a41-4a68-82dd-ec48e2e8d603/scratchpad/guest-reload-probe.mjs","action":"Write","timestamp":"2026-07-02T08:36:09Z","important":false}
+{"file":"guest-reload-probe.tmp.mjs","action":"Write","timestamp":"2026-07-02T08:38:19Z","important":false}
+{"file":"lib/config/protected-routes.ts","action":"Edit","timestamp":"2026-07-02T08:46:52Z","important":false}
+{"file":"middleware.ts","action":"Edit","timestamp":"2026-07-02T08:47:11Z","important":false}
+{"file":"lib/api/client.ts","action":"Edit","timestamp":"2026-07-02T08:47:29Z","important":false}
+{"file":"lib/context/GuestContext.tsx","action":"Edit","timestamp":"2026-07-02T08:47:46Z","important":false}
+{"file":"lib/api/endpoints/guest.ts","action":"Edit","timestamp":"2026-07-02T08:49:16Z","important":false}
+{"file":"lib/api/endpoints/storage.ts","action":"Edit","timestamp":"2026-07-02T08:49:38Z","important":false}
+{"file":"tests/unit/api/guest-api.test.ts","action":"Edit","timestamp":"2026-07-02T08:52:06Z","important":true}
+{"file":"C:/Users/PC/.claude/projects/C--Dev-karsaaz-qr/memory/guest-mode-reload-loop.md","action":"Write","timestamp":"2026-07-02T08:53:58Z","important":false}
