@@ -45,7 +45,9 @@ export default function NewRolePage() {
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
-        Object.values(err?.response?.data?.errors || {}).flat().join(' ') ||
+        Object.values(err?.response?.data?.errors || {})
+          .flat()
+          .join(' ') ||
         t('Failed to create role.')
       setError(msg as string)
     }
@@ -65,7 +67,9 @@ export default function NewRolePage() {
       <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
         <div className="px-6 py-6 border-b border-gray-200">
           <h1 className="text-xl font-semibold text-gray-900">{t('Create Role')}</h1>
-          <p className="mt-1 text-sm text-gray-600">{t('Define a new role and assign permissions.')}</p>
+          <p className="mt-1 text-sm text-gray-600">
+            {t('Define a new role and assign permissions.')}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6">
@@ -84,9 +88,9 @@ export default function NewRolePage() {
               type="text"
               required
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               placeholder="e.g. Editor"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
           </div>
 
@@ -98,9 +102,9 @@ export default function NewRolePage() {
             <input
               type="text"
               value={homePage}
-              onChange={(e) => setHomePage(e.target.value)}
+              onChange={e => setHomePage(e.target.value)}
               placeholder="/dashboard/qrcodes"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
             <p className="mt-1 text-xs text-gray-500">
               {t('The page users with this role are redirected to after login.')}
@@ -129,7 +133,7 @@ export default function NewRolePage() {
             <button
               type="submit"
               disabled={createMutation.isPending}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] rounded-md hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {createMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
               {t('Create Role')}

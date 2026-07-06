@@ -214,7 +214,7 @@ export default function OrgPlansPage() {
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+          className="flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
         >
           <Plus className="h-4 w-4" /> New Plan
         </button>
@@ -244,8 +244,8 @@ export default function OrgPlansPage() {
                   disabled={assigning || (org as any).org_plan_id === plan.id}
                   className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                     (org as any).org_plan_id === plan.id
-                      ? 'bg-indigo-600 text-white cursor-default'
-                      : 'border bg-white text-gray-700 hover:bg-indigo-100'
+                      ? 'bg-primary-600 text-white cursor-default'
+                      : 'border bg-white text-gray-700 hover:bg-primary-100'
                   }`}
                 >
                   {(org as any).org_plan_id === plan.id && (
@@ -387,7 +387,7 @@ export default function OrgPlansPage() {
                   value={form.name}
                   onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
                   placeholder="e.g. Starter, Pro, Enterprise"
-                  className="w-full rounded-lg border px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                  className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
               </div>
 
@@ -401,7 +401,7 @@ export default function OrgPlansPage() {
                   value={form.description}
                   onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                   placeholder="Short plan description"
-                  className="w-full rounded-lg border px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                  className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
               </div>
 
@@ -416,7 +416,7 @@ export default function OrgPlansPage() {
                   step="0.01"
                   value={form.price}
                   onChange={e => setForm(p => ({ ...p, price: parseFloat(e.target.value) || 0 }))}
-                  className="w-full rounded-lg border px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                  className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
               </div>
 
@@ -433,7 +433,7 @@ export default function OrgPlansPage() {
                     onChange={e =>
                       setForm(p => ({ ...p, monthly_api_calls: parseInt(e.target.value) || -1 }))
                     }
-                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                   />
                   <p className="mt-0.5 text-xs text-gray-400">-1 = unlimited</p>
                 </div>
@@ -448,7 +448,7 @@ export default function OrgPlansPage() {
                     onChange={e =>
                       setForm(p => ({ ...p, monthly_qr_creates: parseInt(e.target.value) || -1 }))
                     }
-                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                   />
                   <p className="mt-0.5 text-xs text-gray-400">-1 = unlimited</p>
                 </div>
@@ -464,7 +464,7 @@ export default function OrgPlansPage() {
                         rate_limit_per_minute: parseInt(e.target.value) || 60,
                       }))
                     }
-                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                   />
                 </div>
               </div>
@@ -484,7 +484,7 @@ export default function OrgPlansPage() {
                       }
                     }}
                     placeholder="e.g. analytics, webhooks, bulk"
-                    className="flex-1 rounded-lg border px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                    className="flex-1 rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                   />
                   <button
                     type="button"
@@ -546,7 +546,7 @@ export default function OrgPlansPage() {
                   onChange={e =>
                     setForm(p => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))
                   }
-                  className="w-28 rounded-lg border px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                  className="w-28 rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
               </div>
             </div>
@@ -555,7 +555,7 @@ export default function OrgPlansPage() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] py-2.5 text-sm font-semibold text-white hover:brightness-105 transition-all disabled:opacity-50"
               >
                 <Save className="h-4 w-4" />
                 {saving ? 'Saving…' : editing ? 'Save Changes' : 'Create Plan'}

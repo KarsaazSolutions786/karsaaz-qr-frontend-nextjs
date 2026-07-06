@@ -29,7 +29,7 @@ export function DashboardHeader({
   return (
     <>
       {/* Mobile header */}
-      <div className="sticky top-0 z-10 flex h-14 items-center gap-x-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 shadow-sm lg:hidden">
+      <div className="sticky top-0 z-10 flex h-14 items-center gap-x-5 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 shadow-sm lg:hidden">
         <button
           type="button"
           onClick={() => setSidebarOpen(true)}
@@ -54,7 +54,7 @@ export function DashboardHeader({
       </div>
 
       {/* Desktop header bar */}
-      <div className="hidden lg:flex sticky top-0 z-10 h-14 items-center gap-x-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 shadow-sm">
+      <div className="hidden lg:flex sticky top-0 z-10 h-14 items-center gap-x-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 shadow-sm">
         <div className="flex-1">
           <GlobalSearch />
         </div>

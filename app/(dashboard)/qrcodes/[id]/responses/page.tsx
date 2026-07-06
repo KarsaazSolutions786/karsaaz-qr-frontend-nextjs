@@ -257,7 +257,7 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
           {filtered.length > 0 && (
             <button
               onClick={handleExportCsv}
-              className="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+              className="inline-flex items-center gap-2 rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
             >
               <ArrowDownTrayIcon className="h-4 w-4" />
               {t('Export CSV')}
@@ -305,7 +305,7 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
                 placeholder={t('Search responses...')}
                 value={keyword}
                 onChange={e => setKeyword(e.target.value)}
-                className="block w-full rounded-md border border-gray-300 pl-9 pr-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="block w-full rounded-md border border-gray-300 pl-9 pr-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
             </div>
 
@@ -315,7 +315,7 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
               onClick={() => setShowFilters(prev => !prev)}
               className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
                 showFilters
-                  ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
+                  ? 'border-primary-300 bg-primary-50 text-primary-700'
                   : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
               }`}
             >
@@ -336,7 +336,7 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
                   type="date"
                   value={dateFrom}
                   onChange={e => setDateFrom(e.target.value)}
-                  className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
               </div>
               <div>
@@ -348,7 +348,7 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
                   type="date"
                   value={dateTo}
                   onChange={e => setDateTo(e.target.value)}
-                  className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
               </div>
               {(dateFrom || dateTo) && (
