@@ -171,26 +171,41 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
   const isItemActive = (href: string) => {
     if (!pathname) return false
     const [itemPath, itemQueryString = ''] = href.split('?')
-    const itemParams = new URLSearchParams(itemQueryString)
-    const currentSearchParams = searchParams?.toString() || ''
-    const windowParams = new URLSearchParams(currentSearchParams)
     const exactMatch = pathname === itemPath
     const prefixMatch = pathname.startsWith(`${itemPath}/`)
-    const anotherPrimaryExactMatch = effectivePrimaryNav.some(
-      nav => nav.href !== href && pathname === nav.href.split('?')[0]
-    )
-    const pathMatch = exactMatch || (prefixMatch && !anotherPrimaryExactMatch)
+    const pathMatch = exactMatch || prefixMatch
     if (!pathMatch) return false
-    if (!itemQueryString) return pathMatch
-    const paramsMatch = Array.from(itemParams.keys()).every(
-      key => itemParams.get(key) === windowParams.get(key)
-    )
-    if (!paramsMatch) return false
-    const ignoredKeys = ['page']
-    const hasExtraParams = Array.from(windowParams.keys()).some(
-      key => !ignoredKeys.includes(key) && !itemParams.has(key)
-    )
-    return !hasExtraParams
+
+    // Check query params if item has query parameters
+    if (itemQueryString) {
+      const itemParams = new URLSearchParams(itemQueryString)
+      const currentSearchParams = searchParams?.toString() || ''
+      const windowParams = new URLSearchParams(currentSearchParams)
+      const paramsMatch = Array.from(itemParams.keys()).every(
+        key => itemParams.get(key) === windowParams.get(key)
+      )
+      if (!paramsMatch) return false
+      const ignoredKeys = ['page']
+      const hasExtraParams = Array.from(windowParams.keys()).some(
+        key => !ignoredKeys.includes(key) && !itemParams.has(key)
+      )
+      if (hasExtraParams) return false
+    }
+
+    // Longest prefix/exact match check (to prevent parent items from being active when a child is active)
+    const allNavItems = [...effectivePrimaryNav, ...allSectionNav.flatMap(section => section.items)]
+
+    const hasLongerMatch = allNavItems.some(nav => {
+      if (nav.href === href) return false
+      const [otherPath] = nav.href.split('?')
+      const otherMatches = pathname === otherPath || pathname.startsWith(`${otherPath}/`)
+      if (otherMatches) {
+        return otherPath.length > itemPath.length
+      }
+      return false
+    })
+
+    return !hasLongerMatch
   }
 
   /**
@@ -308,7 +323,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
         <main
           id="main-content"
           role="main"
-          className="flex-1 overflow-y-auto dark:bg-gray-900 dark:text-gray-100 relative z-[1]"
+          className="flex-1 overflow-y-auto dark:bg-gray-900 dark:text-gray-100 relative"
         >
           {isGuest && sessionLimits && (
             <div className="px-4 pt-4 sm:px-6 lg:px-8">

@@ -110,7 +110,7 @@ function formatTimestamp(iso: string): string {
 }
 
 /**
- * Purpose: * Map any check status to a display category for consistent coloring. 
+ * Purpose: * Map any check status to a display category for consistent coloring.
  * Owner/Author: Syed Ashhad
  * Created: February 2026
  * Last Editor: Syed Ashhad
@@ -690,7 +690,7 @@ export default function SystemStatusPage() {
               <div
                 className={`absolute left-0 right-0 top-0 h-1 ${
                   norm === 'ok'
-                    ? 'bg-green-400'
+                    ? 'bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)]'
                     : norm === 'degraded'
                       ? 'bg-yellow-400'
                       : 'bg-red-400'
