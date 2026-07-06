@@ -1,20 +1,20 @@
 /**
  * PNG Export Utility
- * 
+ *
  * Export QR codes as PNG (raster) files using HTML5 Canvas.
  */
 
-import { getSVGDimensions } from './export-svg';
+import { getSVGDimensions } from './export-svg'
 
 export interface PNGExportOptions {
-  filename?: string;
-  width?: number; // Width in pixels
-  height?: number; // Height in pixels
-  scale?: number; // Scale multiplier (for retina displays)
-  quality?: number; // 0-1 (only affects when converting to JPEG first)
-  backgroundColor?: string; // Background color (default: transparent)
-  smoothing?: boolean; // Enable image smoothing
-  pixelRatio?: number; // Device pixel ratio override
+  filename?: string
+  width?: number // Width in pixels
+  height?: number // Height in pixels
+  scale?: number // Scale multiplier (for retina displays)
+  quality?: number // 0-1 (only affects when converting to JPEG first)
+  backgroundColor?: string // Background color (default: transparent)
+  smoothing?: boolean // Enable image smoothing
+  pixelRatio?: number // Device pixel ratio override
 }
 
 /**
@@ -32,20 +32,20 @@ export async function exportPNG(svg: string, options: PNGExportOptions = {}): Pr
     quality = 1.0,
     backgroundColor,
     smoothing = false,
-  } = options;
+  } = options
 
   const canvas = await svgToCanvas(svg, {
     width: width * scale,
     height: height * scale,
     backgroundColor,
     smoothing,
-  });
+  })
 
   // Convert to blob
-  const blob = await canvasToBlob(canvas, 'image/png', quality);
+  const blob = await canvasToBlob(canvas, 'image/png', quality)
 
   // Download
-  downloadBlob(blob, filename);
+  downloadBlob(blob, filename)
 }
 
 /**
@@ -57,61 +57,61 @@ export async function exportPNG(svg: string, options: PNGExportOptions = {}): Pr
 export async function svgToCanvas(
   svg: string,
   options: {
-    width: number;
-    height: number;
-    backgroundColor?: string;
-    smoothing?: boolean;
+    width: number
+    height: number
+    backgroundColor?: string
+    smoothing?: boolean
   }
 ): Promise<HTMLCanvasElement> {
-  const { width, height, backgroundColor, smoothing = false } = options;
+  const { width, height, backgroundColor, smoothing = false } = options
 
   return new Promise((resolve, reject) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
+    const canvas = document.createElement('canvas')
+    canvas.width = width
+    canvas.height = height
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d')
     if (!ctx) {
-      reject(new Error('Failed to get canvas context'));
-      return;
+      reject(new Error('Failed to get canvas context'))
+      return
     }
 
     // Set image smoothing
-    ctx.imageSmoothingEnabled = smoothing;
+    ctx.imageSmoothingEnabled = smoothing
     if (smoothing) {
-      ctx.imageSmoothingQuality = 'high';
+      ctx.imageSmoothingQuality = 'high'
     }
 
     // Fill background if specified
     if (backgroundColor) {
-      ctx.fillStyle = backgroundColor;
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = backgroundColor
+      ctx.fillRect(0, 0, width, height)
     }
 
     // Create image from SVG
-    const img = new Image();
-    
+    const img = new Image()
+
     img.onload = () => {
-      ctx.drawImage(img, 0, 0, width, height);
-      resolve(canvas);
-    };
+      ctx.drawImage(img, 0, 0, width, height)
+      resolve(canvas)
+    }
 
     img.onerror = () => {
-      reject(new Error('Failed to load SVG'));
-    };
+      reject(new Error('Failed to load SVG'))
+    }
 
     // Convert SVG to data URL
-    const svgBlob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(svgBlob);
-    img.src = url;
+    const svgBlob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' })
+    const url = URL.createObjectURL(svgBlob)
+    img.src = url
 
     // Clean up URL after image loads
     img.onload = () => {
-      ctx.drawImage(img, 0, 0, width, height);
-      URL.revokeObjectURL(url);
-      resolve(canvas);
-    };
-  });
+      ctx.drawImage(img, 0, 0, width, height)
+      URL.revokeObjectURL(url)
+      resolve(canvas)
+    }
+  })
 }
 
 /**
@@ -127,17 +127,17 @@ export async function canvasToBlob(
 ): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob(
-      (blob) => {
+      blob => {
         if (blob) {
-          resolve(blob);
+          resolve(blob)
         } else {
-          reject(new Error('Failed to create blob from canvas'));
+          reject(new Error('Failed to create blob from canvas'))
         }
       },
       type,
       quality
-    );
-  });
+    )
+  })
 }
 
 /**
@@ -147,22 +147,16 @@ export async function canvasToBlob(
  */
 
 export async function getPNGDataURL(svg: string, options: PNGExportOptions = {}): Promise<string> {
-  const {
-    width = 1000,
-    height = 1000,
-    scale = 1,
-    backgroundColor,
-    smoothing = false,
-  } = options;
+  const { width = 1000, height = 1000, scale = 1, backgroundColor, smoothing = false } = options
 
   const canvas = await svgToCanvas(svg, {
     width: width * scale,
     height: height * scale,
     backgroundColor,
     smoothing,
-  });
+  })
 
-  return canvas.toDataURL('image/png');
+  return canvas.toDataURL('image/png')
 }
 
 /**
@@ -179,16 +173,16 @@ export async function getPNGBlob(svg: string, options: PNGExportOptions = {}): P
     quality = 1.0,
     backgroundColor,
     smoothing = false,
-  } = options;
+  } = options
 
   const canvas = await svgToCanvas(svg, {
     width: width * scale,
     height: height * scale,
     backgroundColor,
     smoothing,
-  });
+  })
 
-  return canvasToBlob(canvas, 'image/png', quality);
+  return canvasToBlob(canvas, 'image/png', quality)
 }
 
 /**
@@ -198,14 +192,14 @@ export async function getPNGBlob(svg: string, options: PNGExportOptions = {}): P
  */
 
 function downloadBlob(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
 /**
@@ -219,43 +213,43 @@ export function calculateDimensions(
   targetWidth?: number,
   targetHeight?: number
 ): { width: number; height: number } {
-  const svgDims = getSVGDimensions(svg);
-  
+  const svgDims = getSVGDimensions(svg)
+
   if (!svgDims) {
     return {
       width: targetWidth || 1000,
       height: targetHeight || 1000,
-    };
+    }
   }
 
-  const aspectRatio = svgDims.width / svgDims.height;
+  const aspectRatio = svgDims.width / svgDims.height
 
   if (targetWidth && !targetHeight) {
     return {
       width: targetWidth,
       height: Math.round(targetWidth / aspectRatio),
-    };
+    }
   }
 
   if (!targetWidth && targetHeight) {
     return {
       width: Math.round(targetHeight * aspectRatio),
       height: targetHeight,
-    };
+    }
   }
 
   if (targetWidth && targetHeight) {
     return {
       width: targetWidth,
       height: targetHeight,
-    };
+    }
   }
 
   // Default to 1000x1000 if neither specified
   return {
     width: 1000,
     height: 1000,
-  };
+  }
 }
 
 /**
@@ -264,9 +258,12 @@ export function calculateDimensions(
  * Created/Updated: February 2026
  */
 
-export async function estimatePNGSize(svg: string, options: PNGExportOptions = {}): Promise<number> {
-  const blob = await getPNGBlob(svg, options);
-  return blob.size;
+export async function estimatePNGSize(
+  svg: string,
+  options: PNGExportOptions = {}
+): Promise<number> {
+  const blob = await getPNGBlob(svg, options)
+  return blob.size
 }
 
 /**
@@ -276,9 +273,9 @@ export async function estimatePNGSize(svg: string, options: PNGExportOptions = {
  */
 
 export function formatPNGSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 /**
@@ -298,7 +295,7 @@ export async function exportPNGMultipleSizes(
       width: size.width,
       height: size.height,
       filename: size.filename,
-    });
+    })
   }
 }
 
@@ -312,7 +309,7 @@ export const PNG_SIZE_PRESETS = {
   large: { width: 2048, height: 2048, label: 'Large (2048x2048)' },
   xlarge: { width: 4096, height: 4096, label: 'Extra Large (4096x4096)' },
   print: { width: 3000, height: 3000, label: 'Print Quality (3000x3000)' },
-};
+}
 
 /**
  * Purpose: Export with device pixel ratio for retina displays
@@ -326,14 +323,14 @@ export async function exportPNGRetina(
   height: number,
   options: Omit<PNGExportOptions, 'width' | 'height' | 'scale'> = {}
 ): Promise<void> {
-  const pixelRatio = options.pixelRatio || window.devicePixelRatio || 1;
-  
+  const pixelRatio = options.pixelRatio || window.devicePixelRatio || 1
+
   await exportPNG(svg, {
     ...options,
     width,
     height,
     scale: pixelRatio,
-  });
+  })
 }
 
 /**
@@ -342,12 +339,15 @@ export async function exportPNGRetina(
  * Created/Updated: February 2026
  */
 
-export async function copyPNGToClipboard(svg: string, options: PNGExportOptions = {}): Promise<void> {
+export async function copyPNGToClipboard(
+  svg: string,
+  options: PNGExportOptions = {}
+): Promise<void> {
   try {
-    const blob = await getPNGBlob(svg, options);
-    const item = new ClipboardItem({ 'image/png': blob });
-    await navigator.clipboard.write([item]);
-  } catch (error) {
-    throw new Error('Failed to copy PNG to clipboard');
+    const blob = await getPNGBlob(svg, options)
+    const item = new ClipboardItem({ 'image/png': blob })
+    await navigator.clipboard.write([item])
+  } catch {
+    throw new Error('Failed to copy PNG to clipboard')
   }
 }

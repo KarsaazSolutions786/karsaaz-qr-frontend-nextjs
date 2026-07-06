@@ -1,24 +1,24 @@
 /**
  * SVG Export Utility
- * 
+ *
  * Export QR codes as SVG files with various options.
  */
 
-import { svgToDataURL } from './svg-renderer';
+import { svgToDataURL } from './svg-renderer'
 
 export interface SVGExportOptions {
-  filename?: string;
-  optimized?: boolean; // Minify SVG
-  includeXmlDeclaration?: boolean;
-  addBackgroundRect?: boolean; // Add white background rect
-  backgroundColor?: string;
-  embedFonts?: boolean; // Embed custom fonts
+  filename?: string
+  optimized?: boolean // Minify SVG
+  includeXmlDeclaration?: boolean
+  addBackgroundRect?: boolean // Add white background rect
+  backgroundColor?: string
+  embedFonts?: boolean // Embed custom fonts
   metadata?: {
-    title?: string;
-    description?: string;
-    author?: string;
-    keywords?: string[];
-  };
+    title?: string
+    description?: string
+    author?: string
+    keywords?: string[]
+  }
 }
 
 /**
@@ -36,38 +36,38 @@ export async function exportSVG(svg: string, options: SVGExportOptions = {}): Pr
     backgroundColor = '#ffffff',
     embedFonts = false,
     metadata,
-  } = options;
+  } = options
 
-  let processedSvg = svg;
+  let processedSvg = svg
 
   // Add XML declaration
   if (includeXmlDeclaration && !processedSvg.startsWith('<?xml')) {
-    processedSvg = `<?xml version="1.0" encoding="UTF-8"?>\n${processedSvg}`;
+    processedSvg = `<?xml version="1.0" encoding="UTF-8"?>\n${processedSvg}`
   }
 
   // Add metadata
   if (metadata) {
-    processedSvg = addSVGMetadata(processedSvg, metadata);
+    processedSvg = addSVGMetadata(processedSvg, metadata)
   }
 
   // Add background rect
   if (addBackgroundRect) {
-    processedSvg = addBackgroundRectToSVG(processedSvg, backgroundColor);
+    processedSvg = addBackgroundRectToSVG(processedSvg, backgroundColor)
   }
 
   // Optimize SVG
   if (optimized) {
-    processedSvg = optimizeSVG(processedSvg);
+    processedSvg = optimizeSVG(processedSvg)
   }
 
   // Embed fonts if needed
   if (embedFonts) {
-    processedSvg = await embedFontsInSVG(processedSvg);
+    processedSvg = await embedFontsInSVG(processedSvg)
   }
 
   // Create blob and download
-  const blob = new Blob([processedSvg], { type: 'image/svg+xml;charset=utf-8' });
-  downloadBlob(blob, filename);
+  const blob = new Blob([processedSvg], { type: 'image/svg+xml;charset=utf-8' })
+  downloadBlob(blob, filename)
 }
 
 /**
@@ -77,16 +77,16 @@ export async function exportSVG(svg: string, options: SVGExportOptions = {}): Pr
  */
 
 export function getSVGDataURL(svg: string, options: SVGExportOptions = {}): string {
-  const { includeXmlDeclaration = false } = options;
+  const { includeXmlDeclaration = false } = options
 
-  let processedSvg = svg;
+  let processedSvg = svg
 
   // Remove XML declaration for data URLs
   if (!includeXmlDeclaration && processedSvg.startsWith('<?xml')) {
-    processedSvg = processedSvg.replace(/<\?xml[^?]*\?>\s*/g, '');
+    processedSvg = processedSvg.replace(/<\?xml[^?]*\?>\s*/g, '')
   }
 
-  return svgToDataURL(processedSvg);
+  return svgToDataURL(processedSvg)
 }
 
 /**
@@ -96,15 +96,15 @@ export function getSVGDataURL(svg: string, options: SVGExportOptions = {}): stri
  */
 
 export function getSVGBlob(svg: string, options: SVGExportOptions = {}): Blob {
-  const { optimized = false } = options;
+  const { optimized = false } = options
 
-  let processedSvg = svg;
+  let processedSvg = svg
 
   if (optimized) {
-    processedSvg = optimizeSVG(processedSvg);
+    processedSvg = optimizeSVG(processedSvg)
   }
 
-  return new Blob([processedSvg], { type: 'image/svg+xml;charset=utf-8' });
+  return new Blob([processedSvg], { type: 'image/svg+xml;charset=utf-8' })
 }
 
 /**
@@ -113,37 +113,34 @@ export function getSVGBlob(svg: string, options: SVGExportOptions = {}): Blob {
  * Created/Updated: February 2026
  */
 
-function addSVGMetadata(
-  svg: string,
-  metadata: Required<SVGExportOptions>['metadata']
-): string {
-  if (!metadata) return svg;
+function addSVGMetadata(svg: string, metadata: Required<SVGExportOptions>['metadata']): string {
+  if (!metadata) return svg
 
-  const { title, description, author, keywords } = metadata;
+  const { title, description, author, keywords } = metadata
 
   // Build metadata XML
-  let metadataXml = '<metadata>\n';
+  let metadataXml = '<metadata>\n'
 
   if (title) {
-    metadataXml += `  <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">${escapeXml(title)}</dc:title>\n`;
+    metadataXml += `  <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">${escapeXml(title)}</dc:title>\n`
   }
 
   if (description) {
-    metadataXml += `  <dc:description xmlns:dc="http://purl.org/dc/elements/1.1/">${escapeXml(description)}</dc:description>\n`;
+    metadataXml += `  <dc:description xmlns:dc="http://purl.org/dc/elements/1.1/">${escapeXml(description)}</dc:description>\n`
   }
 
   if (author) {
-    metadataXml += `  <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">${escapeXml(author)}</dc:creator>\n`;
+    metadataXml += `  <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">${escapeXml(author)}</dc:creator>\n`
   }
 
   if (keywords && keywords.length > 0) {
-    metadataXml += `  <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">${keywords.map(escapeXml).join(', ')}</dc:subject>\n`;
+    metadataXml += `  <dc:subject xmlns:dc="http://purl.org/dc/elements/1.1/">${keywords.map(escapeXml).join(', ')}</dc:subject>\n`
   }
 
-  metadataXml += '</metadata>';
+  metadataXml += '</metadata>'
 
   // Insert metadata after opening <svg> tag
-  return svg.replace(/(<svg[^>]*>)/, `$1\n${metadataXml}`);
+  return svg.replace(/(<svg[^>]*>)/, `$1\n${metadataXml}`)
 }
 
 /**
@@ -154,23 +151,23 @@ function addSVGMetadata(
 
 function addBackgroundRectToSVG(svg: string, backgroundColor: string): string {
   // Extract viewBox or width/height
-  const viewBoxMatch = svg.match(/viewBox="([^"]+)"/);
-  const widthMatch = svg.match(/width="([^"]+)"/);
-  const heightMatch = svg.match(/height="([^"]+)"/);
+  const viewBoxMatch = svg.match(/viewBox="([^"]+)"/)
+  const widthMatch = svg.match(/width="([^"]+)"/)
+  const heightMatch = svg.match(/height="([^"]+)"/)
 
-  let bgRect = '';
+  let bgRect = ''
 
   if (viewBoxMatch && viewBoxMatch[1]) {
-    const parts = viewBoxMatch[1].split(/\s+/);
-    const width = parts[2] ?? '0';
-    const height = parts[3] ?? '0';
-    bgRect = `<rect x="0" y="0" width="${width}" height="${height}" fill="${backgroundColor}"/>`;
+    const parts = viewBoxMatch[1].split(/\s+/)
+    const width = parts[2] ?? '0'
+    const height = parts[3] ?? '0'
+    bgRect = `<rect x="0" y="0" width="${width}" height="${height}" fill="${backgroundColor}"/>`
   } else if (widthMatch && heightMatch && widthMatch[1] && heightMatch[1]) {
-    bgRect = `<rect x="0" y="0" width="${widthMatch[1]}" height="${heightMatch[1]}" fill="${backgroundColor}"/>`;
+    bgRect = `<rect x="0" y="0" width="${widthMatch[1]}" height="${heightMatch[1]}" fill="${backgroundColor}"/>`
   }
 
   // Insert background rect after opening <svg> tag and any <defs>
-  return svg.replace(/(<svg[^>]*>(?:\s*<defs>[\s\S]*?<\/defs>)?)/, `$1\n${bgRect}`);
+  return svg.replace(/(<svg[^>]*>(?:\s*<defs>[\s\S]*?<\/defs>)?)/, `$1\n${bgRect}`)
 }
 
 /**
@@ -180,16 +177,18 @@ function addBackgroundRectToSVG(svg: string, backgroundColor: string): string {
  */
 
 function optimizeSVG(svg: string): string {
-  return svg
-    // Remove comments
-    .replace(/<!--[\s\S]*?-->/g, '')
-    // Remove unnecessary whitespace
-    .replace(/\s+/g, ' ')
-    .replace(/>\s+</g, '><')
-    // Remove empty attributes
-    .replace(/\s+(\w+)=""\s*/g, ' ')
-    // Trim
-    .trim();
+  return (
+    svg
+      // Remove comments
+      .replace(/<!--[\s\S]*?-->/g, '')
+      // Remove unnecessary whitespace
+      .replace(/\s+/g, ' ')
+      .replace(/>\s+</g, '><')
+      // Remove empty attributes
+      .replace(/\s+(\w+)=""\s*/g, ' ')
+      // Trim
+      .trim()
+  )
 }
 
 /**
@@ -204,9 +203,9 @@ async function embedFontsInSVG(svg: string): Promise<string> {
   // 2. Fetch font files
   // 3. Convert to base64
   // 4. Embed as @font-face in <defs>
-  
+
   // For now, just return the SVG unchanged
-  return svg;
+  return svg
 }
 
 /**
@@ -221,7 +220,7 @@ function escapeXml(text: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
+    .replace(/'/g, '&apos;')
 }
 
 /**
@@ -231,14 +230,14 @@ function escapeXml(text: string): string {
  */
 
 function downloadBlob(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
 /**
@@ -249,9 +248,9 @@ function downloadBlob(blob: Blob, filename: string): void {
 
 export async function copySVGToClipboard(svg: string): Promise<void> {
   try {
-    await navigator.clipboard.writeText(svg);
-  } catch (error) {
-    throw new Error('Failed to copy SVG to clipboard');
+    await navigator.clipboard.writeText(svg)
+  } catch {
+    throw new Error('Failed to copy SVG to clipboard')
   }
 }
 
@@ -262,7 +261,7 @@ export async function copySVGToClipboard(svg: string): Promise<void> {
  */
 
 export function getSVGFileSize(svg: string): number {
-  return new Blob([svg]).size;
+  return new Blob([svg]).size
 }
 
 /**
@@ -272,11 +271,11 @@ export function getSVGFileSize(svg: string): number {
  */
 
 export function formatSVGSize(svg: string): string {
-  const bytes = getSVGFileSize(svg);
-  
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  const bytes = getSVGFileSize(svg)
+
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 /**
@@ -286,29 +285,29 @@ export function formatSVGSize(svg: string): string {
  */
 
 export function validateSVG(svg: string): { valid: boolean; errors: string[] } {
-  const errors: string[] = [];
+  const errors: string[] = []
 
   // Check for opening <svg> tag
   if (!svg.includes('<svg')) {
-    errors.push('Missing <svg> opening tag');
+    errors.push('Missing <svg> opening tag')
   }
 
   // Check for closing </svg> tag
   if (!svg.includes('</svg>')) {
-    errors.push('Missing </svg> closing tag');
+    errors.push('Missing </svg> closing tag')
   }
 
   // Check for viewBox or width/height
   if (!svg.match(/viewBox="[^"]+"/)) {
     if (!svg.match(/width="[^"]+"/) || !svg.match(/height="[^"]+"/)) {
-      errors.push('Missing viewBox or width/height attributes');
+      errors.push('Missing viewBox or width/height attributes')
     }
   }
 
   return {
     valid: errors.length === 0,
     errors,
-  };
+  }
 }
 
 /**
@@ -319,27 +318,27 @@ export function validateSVG(svg: string): { valid: boolean; errors: string[] } {
 
 export function getSVGDimensions(svg: string): { width: number; height: number } | null {
   // Try viewBox first
-  const viewBoxMatch = svg.match(/viewBox="([^"]+)"/);
+  const viewBoxMatch = svg.match(/viewBox="([^"]+)"/)
   if (viewBoxMatch && viewBoxMatch[1]) {
-    const parts = viewBoxMatch[1].split(/\s+/);
+    const parts = viewBoxMatch[1].split(/\s+/)
     return {
       width: parseFloat(parts[2] ?? '0'),
       height: parseFloat(parts[3] ?? '0'),
-    };
+    }
   }
 
   // Try width/height attributes
-  const widthMatch = svg.match(/width="([^"]+)"/);
-  const heightMatch = svg.match(/height="([^"]+)"/);
-  
+  const widthMatch = svg.match(/width="([^"]+)"/)
+  const heightMatch = svg.match(/height="([^"]+)"/)
+
   if (widthMatch && heightMatch && widthMatch[1] && heightMatch[1]) {
     return {
       width: parseFloat(widthMatch[1]),
       height: parseFloat(heightMatch[1]),
-    };
+    }
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -352,5 +351,5 @@ export function resizeSVG(svg: string, newWidth: number, newHeight: number): str
   // Update viewBox to match new dimensions
   return svg
     .replace(/width="[^"]+"/g, `width="${newWidth}"`)
-    .replace(/height="[^"]+"/g, `height="${newHeight}"`);
+    .replace(/height="[^"]+"/g, `height="${newHeight}"`)
 }

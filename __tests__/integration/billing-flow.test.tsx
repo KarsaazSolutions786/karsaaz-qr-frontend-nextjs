@@ -7,6 +7,7 @@ vi.mock('lucide-react', () => ({
   X: (props: any) => <svg data-testid="icon-x" {...props} />,
   CreditCard: (props: any) => <svg data-testid="icon-cc" {...props} />,
   Loader2: (props: any) => <svg data-testid="icon-loader" {...props} />,
+  AlertTriangle: (props: any) => <svg data-testid="icon-alert" {...props} />,
 }))
 
 // Mock useUpdatePaymentMethod

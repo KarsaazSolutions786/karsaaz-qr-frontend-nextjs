@@ -1,11 +1,8 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 import { toast } from 'sonner'
-import {
-  processApiError,
-  getHttpStatusMessage,
-  translateMessage,
-} from '@/lib/utils/error-message-mapper'
+import { translateMessage } from '@/lib/utils/error-message-mapper'
 import { envConfig } from '@/lib/config/env-config'
+import { ApiError } from './error'
 
 // API Base URL Configuration
 // Priority: 1. window.BACKEND_URL (runtime injection)
@@ -160,69 +157,43 @@ apiClient.interceptors.response.use(
       _silent?: boolean
     }
 
+    const apiError = ApiError.fromAxiosError(error)
+
     if (error.response?.status === 401) {
       handleUnauthorizedResponse(originalRequest)
-      return Promise.reject(error)
+      return Promise.reject(apiError)
     }
 
     // Handle 429 Too Many Requests — show rate-limit toast (unless silenced)
     if (error.response?.status === 429) {
       if (!originalRequest._silent) {
-        const retryAfter = error.response.headers?.['retry-after']
-        const message = retryAfter
-          ? `Too many requests. Please wait ${retryAfter} seconds and try again.`
-          : 'Too many requests. Please wait and try again.'
-        toast.error(message, { id: 'api-rate-limit' })
+        toast.error(apiError.message, { id: 'api-rate-limit' })
       }
-      return Promise.reject(error)
+      return Promise.reject(apiError)
     }
 
     // Show user-friendly toast for all other API errors (unless silenced)
     if (!originalRequest._silent && error.response) {
       const status = error.response.status
-      const data = error.response.data as Record<string, unknown>
 
       // Skip toast for 404 on non-critical endpoints (config, subscriptions/current)
       const silentUrls = ['/config', '/subscriptions/current', '/domains']
       const isSilentUrl = silentUrls.some(u => originalRequest.url?.includes(u))
       if (!isSilentUrl && status !== 401) {
-        let userMessage: string
-
-        if (status === 422 && data?.errors) {
-          const errors = data.errors as Record<string, unknown>
-          const fields = Object.keys(errors)
-          const firstField = fields[0]
-          if (firstField !== undefined) {
-            const fieldErrors = errors[firstField]
-            const firstError = Array.isArray(fieldErrors) ? fieldErrors[0] : fieldErrors
-            userMessage =
-              translateMessage(String(firstError)) || 'Please check your input and try again.'
-          } else {
-            userMessage = 'Please check your input and try again.'
-          }
-        } else if (data?.error_code || data?.code) {
-          userMessage = processApiError(
-            data as { error_code?: string; code?: string; message?: string }
-          )
-        } else if (status >= 500) {
-          userMessage = getHttpStatusMessage(status)
-        } else if (data?.message) {
-          userMessage = translateMessage(String(data.message))
-        } else {
-          userMessage = getHttpStatusMessage(status)
+        let userMessage = apiError.message
+        if (status === 422 && apiError.message) {
+          userMessage = translateMessage(apiError.message) || apiError.message
+        } else if (apiError.message) {
+          userMessage = translateMessage(apiError.message) || apiError.message
         }
 
         toast.error(userMessage, { id: `api-error-${userMessage}` })
       }
     } else if (!originalRequest._silent && !error.response) {
       if (error.code === 'ECONNABORTED') {
-        toast.error('Request timed out. Please check your connection and try again.', {
-          id: 'api-timeout',
-        })
+        toast.error(apiError.message, { id: 'api-timeout' })
       } else if (error.code === 'ERR_NETWORK') {
-        toast.error('Unable to connect to the server. Please check your internet connection.', {
-          id: 'api-network-error',
-        })
+        toast.error(apiError.message, { id: 'api-network-error' })
       }
     }
 
@@ -234,7 +205,7 @@ apiClient.interceptors.response.use(
       })
     }
 
-    return Promise.reject(error)
+    return Promise.reject(apiError)
   }
 )
 

@@ -93,7 +93,17 @@ export function QRLookPanel({
         <ShapeGrid
           items={OUTLINED_SHAPES}
           selectedValue={value.shape || 'none'}
-          onSelect={v => onFieldChange('shape', v)}
+          onSelect={v => {
+            const selectedItem = OUTLINED_SHAPES.find(item => item.value === v)
+            if (selectedItem) {
+              onFieldChange('shape', v)
+              onFieldChange('outlineShapeAssetId', selectedItem.id || null)
+              onFieldChange('outlineShapeAssetVersion', selectedItem.version || null)
+              onFieldChange('outlineShapeSource', selectedItem.source || null)
+            } else {
+              onFieldChange('shape', v)
+            }
+          }}
           showAll={showAllShapes}
           onToggleShowAll={() => setShowAllShapes(s => !s)}
           premiumLocked={isFreePlan}

@@ -37,10 +37,16 @@ function toShapeOption(asset: DesignAsset): ShapeOption {
  * Created/Updated: March 2026
  */
 function toOutlinedShape(asset: DesignAsset): OutlinedShape {
+  const meta = asset.metadata as Record<string, unknown> | null
+  const source = meta?.svg_path ? 'uploaded' : 'built_in'
+  const version = (meta?.version as number) ?? 1
   return {
     value: asset.slug,
     label: asset.label,
     image: resolveBackendUrl(asset.thumbnail_url) || undefined,
+    id: asset.id,
+    version,
+    source,
   }
 }
 
@@ -51,17 +57,28 @@ function toOutlinedShape(asset: DesignAsset): OutlinedShape {
  */
 function toAdvancedShape(asset: DesignAsset): AdvancedShape {
   const meta = asset.metadata as Record<string, unknown> | null
+  // V2 registry columns win; metadata fallback for pre-V2 backends
+  const source = asset.source ?? (meta?.svg_path ? 'uploaded' : 'built_in')
+  const version = asset.version ?? (meta?.version as number) ?? 1
+  const baseImage = resolveBackendUrl(asset.thumbnail_url)
   return {
     value: asset.slug,
     label: asset.label,
     hasText: (meta?.hasText as boolean) ?? false,
     textLines: (meta?.textLines as number) ?? 0,
-    image: resolveBackendUrl(asset.thumbnail_url) || undefined,
+    // Version query busts browser/CDN caches when the template (and its
+    // regenerated thumbnail) changes
+    image: baseImage ? `${baseImage}${baseImage.includes('?') ? '&' : '?'}v=${version}` : undefined,
+    id: asset.id,
+    version,
+    source,
+    checksum: asset.checksum ?? null,
+    renderMode: (meta?.renderMode as string) ?? 'svg_template',
   }
 }
 
 /**
- * Purpose: * Read cached design assets from localStorage (if available). 
+ * Purpose: * Read cached design assets from localStorage (if available).
  * Owner/Author: Syed Ashhad
  * Created/Updated: March 2026
  */
@@ -77,7 +94,7 @@ function getCachedAssets(): DesignAsset[] | null {
 }
 
 /**
- * Purpose: * Persist design assets to localStorage for instant hydration next visit. 
+ * Purpose: * Persist design assets to localStorage for instant hydration next visit.
  * Owner/Author: Syed Ashhad
  * Created/Updated: March 2026
  */

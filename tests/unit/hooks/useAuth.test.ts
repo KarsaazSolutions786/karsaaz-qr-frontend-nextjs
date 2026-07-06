@@ -31,6 +31,27 @@ vi.mock('@/lib/api/client', () => ({
   },
 }))
 
+// Mock rpc
+const mockRpc = vi.fn()
+const mockRpcComposite = vi.fn()
+
+vi.mock('@/lib/api/rpc', () => {
+  class MockRpcError extends Error {
+    public isAuthError: boolean
+    constructor(message: string, isAuthError = false) {
+      super(message)
+      this.name = 'RpcError'
+      this.isAuthError = isAuthError
+    }
+  }
+  return {
+    rpc: (...args: unknown[]) => mockRpc(...args),
+    rpcComposite: (...args: unknown[]) => mockRpcComposite(...args),
+    rpcClearCache: vi.fn(),
+    RpcError: MockRpcError,
+  }
+})
+
 // Mock fingerprint service
 vi.mock('@/lib/services/fingerprint', () => ({
   fingerprintService: { clearCache: vi.fn() },
@@ -50,8 +71,9 @@ vi.mock('@tanstack/react-query', () => ({
 }))
 
 // Now import the module under test
-import { AuthProvider, AuthContext } from '@/lib/context/AuthContext'
-import type { AuthContextType } from '@/lib/context/AuthContext'
+import { AuthProvider, AuthContext, useAuth } from '../../../lib/context/AuthContext'
+import { RpcError } from '../../../lib/api/rpc'
+import type { AuthContextType } from '../../../lib/context/AuthContext'
 import type { User } from '@/types/entities/user'
 
 // ---- Helpers ----
@@ -113,8 +135,8 @@ describe('useAuth / AuthProvider', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     setupLocalStorageMock()
-    // Default: /myself fails so isLoading resolves quickly
-    mockGet.mockRejectedValue({ response: { status: 401 } })
+    // Default: appInit fails so isLoading resolves quickly
+    mockRpcComposite.mockRejectedValue(new RpcError(-32000, 'Unauthorized'))
   })
 
   afterEach(() => {
@@ -172,8 +194,15 @@ describe('useAuth / AuthProvider', () => {
     it('should clear localStorage and redirect to /login by default', async () => {
       storage['token'] = 'some-token'
       storage['user'] = JSON.stringify(baseUser)
+
       // Mount validation returns the user
-      mockGet.mockResolvedValueOnce({ data: { data: baseUser } })
+      mockRpcComposite.mockResolvedValueOnce({
+        user: baseUser,
+        subscription: null,
+        usage: {},
+        qr_count: { total: 0, active: 0 },
+        bootstrap: {},
+      })
       // logout POST
       mockPost.mockResolvedValueOnce({})
 
@@ -230,18 +259,24 @@ describe('useAuth / AuthProvider', () => {
   // ---- Token validation on mount ----
 
   describe('token validation on mount', () => {
-    it('should validate token by calling GET /myself when token exists', async () => {
+    it('should validate token by calling appInit when token exists', async () => {
       storage['token'] = 'valid-token'
       storage['user'] = JSON.stringify(baseUser)
 
       const freshUser = { ...baseUser, name: 'Updated Name' }
-      mockGet.mockResolvedValueOnce({ data: { data: freshUser } })
+      mockRpcComposite.mockResolvedValueOnce({
+        user: freshUser,
+        subscription: null,
+        usage: {},
+        qr_count: { total: 0, active: 0 },
+        bootstrap: {},
+      })
 
       const { result } = renderHook(() => useAuthFromContext(), { wrapper: createWrapper() })
 
       await waitFor(() => expect(result.current.isLoading).toBe(false))
 
-      expect(mockGet).toHaveBeenCalledWith('/myself')
+      expect(mockRpcComposite).toHaveBeenCalledWith('appInit', { lang: 'en', platform: 'web' })
       expect(result.current.user?.name).toBe('Updated Name')
     })
 
@@ -249,7 +284,7 @@ describe('useAuth / AuthProvider', () => {
       storage['token'] = 'expired-token'
       storage['user'] = JSON.stringify(baseUser)
 
-      mockGet.mockRejectedValueOnce({ response: { status: 401 } })
+      mockRpcComposite.mockRejectedValueOnce(new RpcError(-32000, 'Unauthorized'))
 
       const { result } = renderHook(() => useAuthFromContext(), { wrapper: createWrapper() })
 
@@ -264,8 +299,8 @@ describe('useAuth / AuthProvider', () => {
       storage['token'] = 'some-token'
       storage['user'] = JSON.stringify(baseUser)
 
-      // Network error has no .response
-      mockGet.mockRejectedValueOnce(new Error('Network Error'))
+      // Network error has isAuthError = false
+      mockRpcComposite.mockRejectedValueOnce(new RpcError(500, 'Network Error'))
 
       const { result } = renderHook(() => useAuthFromContext(), { wrapper: createWrapper() })
 
@@ -282,7 +317,7 @@ describe('useAuth / AuthProvider', () => {
 
       // isLoading should be false immediately (no token = no validation needed)
       await waitFor(() => expect(result.current.isLoading).toBe(false))
-      expect(mockGet).not.toHaveBeenCalled()
+      expect(mockRpcComposite).not.toHaveBeenCalled()
     })
   })
 
@@ -295,7 +330,7 @@ describe('useAuth / AuthProvider', () => {
       await waitFor(() => expect(result.current.isLoading).toBe(false))
 
       const freshUser = { ...baseUser, name: 'Refreshed User' }
-      mockGet.mockResolvedValueOnce({ data: { data: freshUser } })
+      mockRpc.mockResolvedValueOnce(freshUser)
 
       let returned: User | null = null
       await act(async () => {
@@ -312,7 +347,7 @@ describe('useAuth / AuthProvider', () => {
 
       await waitFor(() => expect(result.current.isLoading).toBe(false))
 
-      mockGet.mockRejectedValueOnce(new Error('Server Error'))
+      mockRpc.mockRejectedValueOnce(new Error('Server Error'))
 
       let returned: User | null = null
       await act(async () => {
@@ -330,7 +365,13 @@ describe('useAuth / AuthProvider', () => {
       storage['token'] = 'admin-token'
       storage['user'] = JSON.stringify(adminUser)
 
-      mockGet.mockResolvedValueOnce({ data: { data: adminUser } })
+      mockRpcComposite.mockResolvedValueOnce({
+        user: adminUser,
+        subscription: null,
+        usage: {},
+        qr_count: { total: 0, active: 0 },
+        bootstrap: {},
+      })
 
       const { result } = renderHook(() => useAuthFromContext(), { wrapper: createWrapper() })
 
@@ -353,7 +394,13 @@ describe('useAuth / AuthProvider', () => {
       storage['token'] = 'admin-token'
       storage['user'] = JSON.stringify(adminUser)
 
-      mockGet.mockResolvedValueOnce({ data: { data: adminUser } })
+      mockRpcComposite.mockResolvedValueOnce({
+        user: adminUser,
+        subscription: null,
+        usage: {},
+        qr_count: { total: 0, active: 0 },
+        bootstrap: {},
+      })
 
       const { result } = renderHook(() => useAuthFromContext(), { wrapper: createWrapper() })
 
@@ -375,7 +422,13 @@ describe('useAuth / AuthProvider', () => {
       storage['token'] = 'target-token'
       storage['user'] = JSON.stringify(baseUser)
 
-      mockGet.mockResolvedValueOnce({ data: { data: baseUser } })
+      mockRpcComposite.mockResolvedValueOnce({
+        user: baseUser,
+        subscription: null,
+        usage: {},
+        qr_count: { total: 0, active: 0 },
+        bootstrap: {},
+      })
 
       const { result } = renderHook(() => useAuthFromContext(), { wrapper: createWrapper() })
 
@@ -389,7 +442,7 @@ describe('useAuth / AuthProvider', () => {
       expect(result.current.isActingAs).toBe(false)
       expect(result.current.actingAsUser).toBe(null)
       expect(window.localStorage.removeItem).toHaveBeenCalledWith('mainUser')
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('token', 'admin-token')
+      expect(window.localStorage.removeItem).toHaveBeenCalledWith('token')
     })
 
     it('should do nothing if mainUser is not in localStorage', async () => {
@@ -411,8 +464,6 @@ describe('useAuth / AuthProvider', () => {
 
   describe('useAuth guard', () => {
     it('should throw when used outside AuthProvider', () => {
-      // Import useAuth from context directly
-      const { useAuth } = require('@/lib/context/AuthContext')
       expect(() => {
         renderHook(() => useAuth())
       }).toThrow('useAuth must be used within an AuthProvider')

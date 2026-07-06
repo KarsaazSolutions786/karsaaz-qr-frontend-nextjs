@@ -55,6 +55,13 @@ export interface BackendDesignConfig {
   textBackgroundColor: string
   textSize: number
   frame: string
+  outlineShapeAssetId?: number | null
+  outlineShapeAssetVersion?: number | null
+  outlineShapeSource?: 'uploaded' | 'built_in' | null
+  advancedShapeAssetId?: number | null
+  advancedShapeAssetVersion?: number | null
+  advancedShapeSource?: 'uploaded' | 'built_in' | null
+  advancedShapeRenderMode?: string | null
   stickerScale?: number
   // Sticker-specific
   healthcareFrameColor?: string
@@ -179,9 +186,18 @@ export function transformDesignToBackend(design: Partial<DesignerConfig>): Backe
     margin: design.margin ?? 4,
     shape: design.shape || 'none',
     frameColor: design.frameColor || '#000000',
+    outlineShapeAssetId: design.outlineShapeAssetId ?? null,
+    outlineShapeAssetVersion: design.outlineShapeAssetVersion ?? null,
+    outlineShapeSource: design.outlineShapeSource ?? null,
     advancedShape: design.advancedShape || 'none',
     advancedShapeDropShadow: design.advancedShapeDropShadow ?? true,
     advancedShapeFrameColor: design.advancedShapeFrameColor || '#000000',
+    advancedShapeAssetId: design.advancedShapeAssetId ?? null,
+    advancedShapeAssetVersion: design.advancedShapeAssetVersion ?? null,
+    advancedShapeSource: design.advancedShapeSource ?? null,
+    advancedShapeRenderMode:
+      design.advancedShapeRenderMode ??
+      (design.advancedShape && design.advancedShape !== 'none' ? 'svg_template' : null),
     logoType,
     logoUrl,
     logoScale,
@@ -294,10 +310,17 @@ export function transformDesignFromBackend(
     // Outlined shape
     shape: d.shape || 'none',
     frameColor: d.frameColor || '#000000',
+    outlineShapeAssetId: d.outlineShapeAssetId ?? null,
+    outlineShapeAssetVersion: d.outlineShapeAssetVersion ?? null,
+    outlineShapeSource: d.outlineShapeSource ?? null,
     // Advanced shape
     advancedShape: d.advancedShape || 'none',
     advancedShapeDropShadow: d.advancedShapeDropShadow ?? true,
     advancedShapeFrameColor: d.advancedShapeFrameColor || '#000000',
+    advancedShapeAssetId: d.advancedShapeAssetId ?? null,
+    advancedShapeAssetVersion: d.advancedShapeAssetVersion ?? null,
+    advancedShapeSource: d.advancedShapeSource ?? null,
+    advancedShapeRenderMode: d.advancedShapeRenderMode ?? null,
     // Text
     text: d.text || 'SCAN ME',
     textColor: d.textColor || '#ffffff',

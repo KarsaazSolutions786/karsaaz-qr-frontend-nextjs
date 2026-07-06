@@ -8,7 +8,7 @@
 import DOMPurify from 'dompurify'
 
 /**
- * Purpose: * Escape HTML entities to prevent XSS 
+ * Purpose: * Escape HTML entities to prevent XSS
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
@@ -29,7 +29,7 @@ export function escapeHtml(str: string): string {
 }
 
 /**
- * Purpose: * Sanitize SVG string — remove script tags, event handlers, javascript: URIs 
+ * Purpose: * Sanitize SVG string — remove script tags, event handlers, javascript: URIs
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
@@ -52,7 +52,7 @@ export function sanitizeSvg(svg: string): string {
 }
 
 /**
- * Purpose: * Sanitize HTML string using DOMPurify with a safe allowlist 
+ * Purpose: * Sanitize HTML string using DOMPurify with a safe allowlist
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
@@ -64,14 +64,43 @@ export function sanitizeHTML(html: string): string {
     return html.replace(/<[^>]*>/g, '')
   }
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'blockquote', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+    ALLOWED_TAGS: [
+      'b',
+      'i',
+      'em',
+      'strong',
+      'a',
+      'p',
+      'br',
+      'ul',
+      'ol',
+      'li',
+      'span',
+      'div',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'img',
+      'blockquote',
+      'code',
+      'pre',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+    ],
     ALLOWED_ATTR: ['href', 'target', 'rel', 'src', 'alt', 'class', 'style'],
     ALLOW_DATA_ATTR: false,
   })
 }
 
 /**
- * Purpose: * Check if a URL is safe — uses protocol allowlist instead of denylist 
+ * Purpose: * Check if a URL is safe — uses protocol allowlist instead of denylist
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
@@ -103,11 +132,12 @@ export function preventScriptInjection(html: string): string {
       .replace(/javascript\s*:/gi, '')
       .replace(/data\s*:\s*text\/html/gi, '')
   }
-  return DOMPurify.sanitize(html)
+  const clean = DOMPurify.sanitize(html)
+  return clean.replace(/javascript\s*:/gi, '').replace(/data\s*:\s*text\/html/gi, '')
 }
 
 /**
- * Purpose: * Validate that a URL uses only an allowed scheme (http, https, mailto, tel) 
+ * Purpose: * Validate that a URL uses only an allowed scheme (http, https, mailto, tel)
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */

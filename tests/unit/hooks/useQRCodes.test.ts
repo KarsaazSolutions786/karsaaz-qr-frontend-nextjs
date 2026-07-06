@@ -35,6 +35,8 @@ vi.mock('@/lib/query/keys', () => ({
     qrcodes: {
       list: (filters?: Record<string, unknown>) => ['qrcodes', 'list', filters],
       detail: (id: string) => ['qrcodes', id],
+      analytics: (id: string) => ['qrcodes', id, 'analytics'],
+      linkSettings: (id: string) => ['qrcodes', id, 'link-settings'],
     },
   },
 }))

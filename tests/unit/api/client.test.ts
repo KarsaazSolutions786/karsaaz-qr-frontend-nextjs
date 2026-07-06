@@ -67,8 +67,12 @@ function setupLocationMock() {
     set href(url: string) {
       locationHref = url
     },
-    assign: vi.fn((url: string) => { locationHref = url }),
-    replace: vi.fn((url: string) => { locationHref = url }),
+    assign: vi.fn((url: string) => {
+      locationHref = url
+    }),
+    replace: vi.fn((url: string) => {
+      locationHref = url
+    }),
     reload: vi.fn(),
     toString: () => locationHref,
     origin: 'http://localhost',
@@ -232,7 +236,7 @@ describe('API Client', () => {
 
       expect(window.localStorage.removeItem).toHaveBeenCalledWith('user')
       expect(window.localStorage.removeItem).toHaveBeenCalledWith('token')
-      expect(locationHref).toBe('/login')
+      expect(locationHref).toBe('/login?reason=session_expired')
     })
 
     it('should NOT redirect on 401 for login request', async () => {
@@ -263,7 +267,11 @@ describe('API Client', () => {
 
       const error = {
         response: { status: 500, data: { message: 'Server Error' } },
-        config: { url: '/api/test', _silent: true, _retry: false } as unknown as InternalAxiosRequestConfig,
+        config: {
+          url: '/api/test',
+          _silent: true,
+          _retry: false,
+        } as unknown as InternalAxiosRequestConfig,
         isAxiosError: true,
       }
 
@@ -313,7 +321,9 @@ describe('API Client', () => {
 
       await expect(errorHandler(error)).rejects.toBeTruthy()
 
-      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('30 seconds'))
+      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('30 seconds'), {
+        id: 'api-rate-limit',
+      })
     })
 
     it('should show generic rate-limit toast without retry-after', async () => {
@@ -330,7 +340,9 @@ describe('API Client', () => {
 
       await expect(errorHandler(error)).rejects.toBeTruthy()
 
-      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('Too many requests'))
+      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('Too many requests'), {
+        id: 'api-rate-limit',
+      })
     })
   })
 
@@ -370,7 +382,9 @@ describe('API Client', () => {
 
       await expect(errorHandler(error)).rejects.toBeTruthy()
 
-      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('timed out'))
+      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('timed out'), {
+        id: 'api-timeout',
+      })
     })
 
     it('should show network error toast for ERR_NETWORK', async () => {
@@ -389,7 +403,9 @@ describe('API Client', () => {
 
       await expect(errorHandler(error)).rejects.toBeTruthy()
 
-      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('internet connection'))
+      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('internet connection'), {
+        id: 'api-network-error',
+      })
     })
   })
 })

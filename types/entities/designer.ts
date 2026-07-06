@@ -176,11 +176,18 @@ export interface DesignerConfig {
   // Outlined shape
   shape: string // 60+ shapes or 'none'
   frameColor: string
+  outlineShapeAssetId?: number | null
+  outlineShapeAssetVersion?: number | null
+  outlineShapeSource?: 'uploaded' | 'built_in' | null
 
   // Advanced shape / sticker
   advancedShape: string // 12 options or 'none'
   advancedShapeDropShadow: boolean
   advancedShapeFrameColor: string
+  advancedShapeAssetId?: number | null
+  advancedShapeAssetVersion?: number | null
+  advancedShapeSource?: 'uploaded' | 'built_in' | null
+  advancedShapeRenderMode?: string | null
 
   // Sticker text
   text: string
@@ -239,9 +246,16 @@ export const DEFAULT_DESIGNER_CONFIG: DesignerConfig = {
   },
   shape: 'none',
   frameColor: '#000000',
+  outlineShapeAssetId: null,
+  outlineShapeAssetVersion: null,
+  outlineShapeSource: null,
   advancedShape: 'none',
   advancedShapeDropShadow: true,
   advancedShapeFrameColor: '#000000',
+  advancedShapeAssetId: null,
+  advancedShapeAssetVersion: null,
+  advancedShapeSource: null,
+  advancedShapeRenderMode: null,
   text: 'SCAN ME',
   textColor: '#ffffff',
   textBackgroundColor: '#1c57cb',

@@ -77,6 +77,9 @@ export interface OutlinedShape {
   value: string
   label: string
   image?: string
+  id?: number
+  version?: number
+  source?: 'uploaded' | 'built_in'
 }
 
 export const OUTLINED_SHAPES: OutlinedShape[] = [
@@ -159,6 +162,13 @@ export interface AdvancedShape {
   hasText: boolean
   textLines: number
   image?: string
+  id?: number
+  version?: number
+  source?: 'uploaded' | 'built_in'
+  /** sha256 of the template — changes whenever the template changes (V2 registry) */
+  checksum?: string | null
+  /** How the backend renders this sticker (V2 registry); svg_template = server render */
+  renderMode?: string
 }
 
 export const ADVANCED_SHAPES: AdvancedShape[] = [

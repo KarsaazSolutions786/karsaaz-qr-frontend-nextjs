@@ -19,6 +19,8 @@ export const queryKeys = {
     stats: (id: string) => ['qrcodes', id, 'stats'] as const,
     scans: (id: string, dateRange?: { start: string; end: string }) =>
       ['qrcodes', id, 'scans', dateRange] as const,
+    analytics: (id: string) => ['qrcodes', id, 'analytics'] as const,
+    linkSettings: (id: string) => ['qrcodes', id, 'link-settings'] as const,
   },
 
   // Subscriptions

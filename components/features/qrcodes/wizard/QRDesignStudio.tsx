@@ -69,7 +69,14 @@ const TABS: { id: TabId; label: string; emoji: string }[] = [
 
 const TAB_ICONS: Record<TabId, React.ReactNode> = {
   color: (
-    <svg width="20" height="20" viewBox="0 0 24 24" className="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      className="w-5 h-5"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <circle cx="12" cy="12" r="11" fill="white" stroke="#E889FF" strokeWidth="1.5" />
       <g transform="translate(12, 12) scale(0.8)">
         <path d="M0 0 L0 -10 A10 10 0 0 1 7.07 -7.07 Z" fill="#FF3366" />
@@ -84,7 +91,14 @@ const TAB_ICONS: Record<TabId, React.ReactNode> = {
     </svg>
   ),
   look: (
-    <svg width="20" height="20" viewBox="0 0 24 24" className="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      className="w-5 h-5"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <circle cx="12" cy="12" r="10" fill="#E889FF" />
       <rect x="7" y="7" width="4" height="4" stroke="white" strokeWidth="1.5" fill="none" />
       <rect x="13" y="7" width="4" height="4" stroke="white" strokeWidth="1.5" fill="none" />
@@ -94,8 +108,24 @@ const TAB_ICONS: Record<TabId, React.ReactNode> = {
     </svg>
   ),
   sticker: (
-    <svg width="20" height="20" viewBox="0 0 24 24" className="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="5" y="3" width="14" height="18" rx="2" stroke="#B91C1C" strokeWidth="1.5" fill="none" />
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      className="w-5 h-5"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        x="5"
+        y="3"
+        width="14"
+        height="18"
+        rx="2"
+        stroke="#B91C1C"
+        strokeWidth="1.5"
+        fill="none"
+      />
       <rect x="8" y="6" width="3" height="3" stroke="#B91C1C" strokeWidth="1" fill="none" />
       <rect x="13" y="6" width="3" height="3" stroke="#B91C1C" strokeWidth="1" fill="none" />
       <rect x="8" y="12" width="3" height="3" stroke="#B91C1C" strokeWidth="1" fill="none" />
@@ -191,8 +221,12 @@ export default function QRDesignStudio({
     refMap[tabId]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const handleChange = (field: string, value: unknown) => {
-    onChange({ ...design, [field]: value })
+  const handleChange = (field: string | Record<string, unknown>, value?: unknown) => {
+    if (typeof field === 'string') {
+      onChange({ ...design, [field]: value })
+    } else {
+      onChange({ ...design, ...field })
+    }
   }
 
   const handleLogoChange = (logoUpdates: Partial<DesignerConfig['logo']>) => {

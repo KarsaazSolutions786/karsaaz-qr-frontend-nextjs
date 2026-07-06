@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import axios from 'axios'
+import apiClient from '@/lib/api/client'
 
 interface FeatureCost {
   id: number
@@ -40,7 +40,7 @@ export default function TokenCostsAdminPage() {
 
   const load = useCallback(async () => {
     try {
-      const { data } = await axios.get<{ data: FeatureCost[] }>('/api/admin/api-token-costs')
+      const { data } = await apiClient.get<{ data: FeatureCost[] }>('/admin/api-token-costs')
       setCosts(data.data)
     } catch {
       setError('Failed to load token costs.')
@@ -84,7 +84,7 @@ export default function TokenCostsAdminPage() {
 
     setSaving(prev => ({ ...prev, [cost.id]: true }))
     try {
-      await axios.put(`/api/admin/api-token-costs/${cost.id}`, {
+      await apiClient.put(`/admin/api-token-costs/${cost.id}`, {
         tokens_cost: parseFloat(newCost),
       })
 

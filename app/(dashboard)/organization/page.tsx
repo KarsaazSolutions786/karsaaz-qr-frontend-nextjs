@@ -301,6 +301,14 @@ export default function OrganizationPage() {
                 >
                   <BarChart3 className="h-3 w-3" /> Usage
                 </Link>
+                <Link
+                  href="/org-portal"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-indigo-100 bg-indigo-50/50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-50 hover:text-indigo-800 transition-colors"
+                >
+                  <Building2 className="h-3 w-3" /> Portal
+                </Link>
               </div>
             </div>
           ))}

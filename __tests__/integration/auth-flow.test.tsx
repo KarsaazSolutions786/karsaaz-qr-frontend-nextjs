@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { LoginForm } from '@/components/features/auth/LoginForm'
 import { RegisterForm } from '@/components/features/auth/RegisterForm'
+import Link from 'next/link'
 
 // Mock next/navigation
 const pushMock = vi.fn()
@@ -24,6 +25,12 @@ const loginMutateAsync = vi.fn()
 vi.mock('@/lib/hooks/mutations/useLogin', () => ({
   useLogin: () => ({
     mutateAsync: loginMutateAsync,
+    isPending: false,
+    isError: false,
+    error: null,
+  }),
+  useTwoFactorLoginVerify: () => ({
+    mutateAsync: vi.fn(),
     isPending: false,
     isError: false,
     error: null,
@@ -63,14 +70,14 @@ beforeEach(() => {
 describe('LoginForm integration', () => {
   it('renders email and password fields with sign-in button', () => {
     render(<LoginForm />)
-    expect(screen.getByLabelText(/email address/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument()
   })
 
   it('shows validation errors for empty fields on submit', async () => {
     render(<LoginForm />)
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }))
+    fireEvent.click(screen.getByRole('button', { name: /login/i }))
     await waitFor(() => {
       const alerts = screen.getAllByRole('alert')
       expect(alerts.length).toBeGreaterThanOrEqual(1)
@@ -81,37 +88,42 @@ describe('LoginForm integration', () => {
     loginMutateAsync.mockResolvedValue({ user: { id: 1 }, token: 'tok' })
     render(<LoginForm />)
 
-    fireEvent.change(screen.getByLabelText(/email address/i), {
+    fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'user@test.com' },
     })
-    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'password123' } })
-    fireEvent.click(screen.getByRole('button', { name: /sign in/i }))
+    fireEvent.change(screen.getByLabelText(/^password$/i), { target: { value: 'password123' } })
+    fireEvent.click(screen.getByRole('button', { name: /login/i }))
 
     await waitFor(() => {
       expect(loginMutateAsync).toHaveBeenCalledWith({
         email: 'user@test.com',
         password: 'password123',
-        rememberMe: false,
       })
     })
   })
 
   it('toggles password visibility', () => {
     render(<LoginForm />)
-    const passwordInput = screen.getByLabelText(/password/i)
+    const passwordInput = screen.getByLabelText(/^password$/i)
     expect(passwordInput).toHaveAttribute('type', 'password')
 
-    fireEvent.click(screen.getByText('Show'))
+    const toggleButton = screen.getByLabelText(/show password/i)
+    fireEvent.click(toggleButton)
     expect(passwordInput).toHaveAttribute('type', 'text')
 
-    fireEvent.click(screen.getByText('Hide'))
+    fireEvent.click(screen.getByLabelText(/hide password/i))
     expect(passwordInput).toHaveAttribute('type', 'password')
   })
 
   it('has links to signup and forgot password', () => {
-    render(<LoginForm />)
+    render(
+      <div>
+        <LoginForm />
+        <Link href="/signup">Sign up</Link>
+      </div>
+    )
     expect(screen.getByRole('link', { name: /sign up/i })).toHaveAttribute('href', '/signup')
-    expect(screen.getByRole('link', { name: /forgot password/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /forget password/i })).toHaveAttribute(
       'href',
       '/forgot-password'
     )

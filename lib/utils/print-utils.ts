@@ -1,46 +1,46 @@
 /**
  * Print Utilities
- * 
+ *
  * Utilities for printing QR codes with proper page layout and styles.
  */
 
-'use client';
+'use client'
 
 export interface PrintOptions {
   // Page settings
-  pageSize?: 'a4' | 'letter' | 'legal' | 'a3' | 'a5';
-  orientation?: 'portrait' | 'landscape';
+  pageSize?: 'a4' | 'letter' | 'legal' | 'a3' | 'a5'
+  orientation?: 'portrait' | 'landscape'
   margins?: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
-  
+    top: number
+    right: number
+    bottom: number
+    left: number
+  }
+
   // QR settings
-  qrSize?: number;
-  centerOnPage?: boolean;
-  includeMetadata?: boolean;
-  
+  qrSize?: number
+  centerOnPage?: boolean
+  includeMetadata?: boolean
+
   // Content settings
-  title?: string;
-  description?: string;
-  showURL?: boolean;
-  showDate?: boolean;
-  showLogo?: boolean;
-  
+  title?: string
+  description?: string
+  showURL?: boolean
+  showDate?: boolean
+  showLogo?: boolean
+
   // Print settings
-  printInColor?: boolean;
-  printBackground?: boolean;
-  scale?: number;
+  printInColor?: boolean
+  printBackground?: boolean
+  scale?: number
 }
 
 export interface PrintMetadata {
-  title?: string;
-  description?: string;
-  url?: string;
-  createdDate?: string;
-  qrType?: string;
+  title?: string
+  description?: string
+  url?: string
+  createdDate?: string
+  qrType?: string
 }
 
 const DEFAULT_PRINT_OPTIONS: Required<Omit<PrintOptions, 'title' | 'description'>> = {
@@ -61,7 +61,7 @@ const DEFAULT_PRINT_OPTIONS: Required<Omit<PrintOptions, 'title' | 'description'
   printInColor: true,
   printBackground: true,
   scale: 1,
-};
+}
 
 /**
  * Purpose: Print QR code with options
@@ -74,43 +74,43 @@ export async function printQRCode(
   options: PrintOptions = {},
   metadata?: PrintMetadata
 ): Promise<void> {
-  const opts = { ...DEFAULT_PRINT_OPTIONS, ...options };
-  
+  const opts = { ...DEFAULT_PRINT_OPTIONS, ...options }
+
   // Create print window
-  const printWindow = window.open('', '_blank', 'width=800,height=600');
+  const printWindow = window.open('', '_blank', 'width=800,height=600')
   if (!printWindow) {
-    throw new Error('Failed to open print window. Please allow popups.');
+    throw new Error('Failed to open print window. Please allow popups.')
   }
-  
+
   try {
     // Get SVG content
-    const svgClone = svgElement.cloneNode(true) as SVGElement;
-    const svgString = new XMLSerializer().serializeToString(svgClone);
-    
+    const svgClone = svgElement.cloneNode(true) as SVGElement
+    const svgString = new XMLSerializer().serializeToString(svgClone)
+
     // Build HTML content
-    const htmlContent = buildPrintHTML(svgString, opts, metadata);
-    
+    const htmlContent = buildPrintHTML(svgString, opts, metadata)
+
     // Write to print window
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-    
+    printWindow.document.write(htmlContent)
+    printWindow.document.close()
+
     // Wait for content to load
-    await new Promise((resolve) => {
-      printWindow.onload = resolve;
-      setTimeout(resolve, 500); // Fallback timeout
-    });
-    
+    await new Promise(resolve => {
+      printWindow.onload = resolve
+      setTimeout(resolve, 500) // Fallback timeout
+    })
+
     // Trigger print dialog
-    printWindow.focus();
-    printWindow.print();
-    
+    printWindow.focus()
+    printWindow.print()
+
     // Close print window after printing (or user cancels)
     setTimeout(() => {
-      printWindow.close();
-    }, 100);
+      printWindow.close()
+    }, 100)
   } catch (error) {
-    printWindow.close();
-    throw error;
+    printWindow.close()
+    throw error
   }
 }
 
@@ -125,8 +125,8 @@ function buildPrintHTML(
   options: Required<Omit<PrintOptions, 'title' | 'description'>>,
   metadata?: PrintMetadata
 ): string {
-  const { pageSize: _pageSize, orientation: _orientation, margins: _margins, qrSize: _qrSize, centerOnPage: _centerOnPage, includeMetadata } = options;
-  
+  const { includeMetadata } = options
+
   return `
 <!DOCTYPE html>
 <html>
@@ -145,15 +145,19 @@ function buildPrintHTML(
       ${svgContent}
     </div>
     
-    ${options.showURL && metadata?.url ? `
+    ${
+      options.showURL && metadata?.url
+        ? `
       <div class="url-container">
         <p>${metadata.url}</p>
       </div>
-    ` : ''}
+    `
+        : ''
+    }
   </div>
 </body>
 </html>
-  `.trim();
+  `.trim()
 }
 
 /**
@@ -162,9 +166,12 @@ function buildPrintHTML(
  * Created/Updated: February 2026
  */
 
-function generatePrintStyles(options: Required<Omit<PrintOptions, 'title' | 'description'>>): string {
-  const { pageSize, orientation, margins, qrSize, centerOnPage, printInColor, printBackground } = options;
-  
+function generatePrintStyles(
+  options: Required<Omit<PrintOptions, 'title' | 'description'>>
+): string {
+  const { pageSize, orientation, margins, qrSize, centerOnPage, printInColor, printBackground } =
+    options
+
   return `
     * {
       margin: 0;
@@ -238,7 +245,7 @@ function generatePrintStyles(options: Required<Omit<PrintOptions, 'title' | 'des
         page-break-inside: avoid;
       }
     }
-  `.trim();
+  `.trim()
 }
 
 /**
@@ -247,31 +254,34 @@ function generatePrintStyles(options: Required<Omit<PrintOptions, 'title' | 'des
  * Created/Updated: February 2026
  */
 
-function buildMetadataHTML(metadata: PrintMetadata, options: Required<Omit<PrintOptions, 'title' | 'description'>>): string {
-  const { showDate } = options;
-  const parts: string[] = [];
-  
+function buildMetadataHTML(
+  metadata: PrintMetadata,
+  options: Required<Omit<PrintOptions, 'title' | 'description'>>
+): string {
+  const { showDate } = options
+  const parts: string[] = []
+
   if (metadata.title) {
-    parts.push(`<h1 class="metadata-title">${escapeHTML(metadata.title)}</h1>`);
+    parts.push(`<h1 class="metadata-title">${escapeHTML(metadata.title)}</h1>`)
   }
-  
+
   if (metadata.description) {
-    parts.push(`<p class="metadata-description">${escapeHTML(metadata.description)}</p>`);
+    parts.push(`<p class="metadata-description">${escapeHTML(metadata.description)}</p>`)
   }
-  
-  const infoParts: string[] = [];
+
+  const infoParts: string[] = []
   if (metadata.qrType) {
-    infoParts.push(`Type: ${escapeHTML(metadata.qrType)}`);
+    infoParts.push(`Type: ${escapeHTML(metadata.qrType)}`)
   }
   if (showDate && metadata.createdDate) {
-    infoParts.push(`Created: ${escapeHTML(metadata.createdDate)}`);
+    infoParts.push(`Created: ${escapeHTML(metadata.createdDate)}`)
   }
-  
+
   if (infoParts.length > 0) {
-    parts.push(`<p class="metadata-info">${infoParts.join(' • ')}</p>`);
+    parts.push(`<p class="metadata-info">${infoParts.join(' • ')}</p>`)
   }
-  
-  return parts.length > 0 ? `<div class="metadata-container">${parts.join('\n')}</div>` : '';
+
+  return parts.length > 0 ? `<div class="metadata-container">${parts.join('\n')}</div>` : ''
 }
 
 /**
@@ -281,9 +291,9 @@ function buildMetadataHTML(metadata: PrintMetadata, options: Required<Omit<Print
  */
 
 function escapeHTML(str: string): string {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+  const div = document.createElement('div')
+  div.textContent = str
+  return div.innerHTML
 }
 
 /**
@@ -297,23 +307,23 @@ export async function printPreview(
   options: PrintOptions = {},
   metadata?: PrintMetadata
 ): Promise<void> {
-  const opts = { ...DEFAULT_PRINT_OPTIONS, ...options };
-  
-  const previewWindow = window.open('', '_blank', 'width=800,height=600');
+  const opts = { ...DEFAULT_PRINT_OPTIONS, ...options }
+
+  const previewWindow = window.open('', '_blank', 'width=800,height=600')
   if (!previewWindow) {
-    throw new Error('Failed to open preview window. Please allow popups.');
+    throw new Error('Failed to open preview window. Please allow popups.')
   }
-  
+
   try {
-    const svgClone = svgElement.cloneNode(true) as SVGElement;
-    const svgString = new XMLSerializer().serializeToString(svgClone);
-    const htmlContent = buildPrintHTML(svgString, opts, metadata);
-    
-    previewWindow.document.write(htmlContent);
-    previewWindow.document.close();
+    const svgClone = svgElement.cloneNode(true) as SVGElement
+    const svgString = new XMLSerializer().serializeToString(svgClone)
+    const htmlContent = buildPrintHTML(svgString, opts, metadata)
+
+    previewWindow.document.write(htmlContent)
+    previewWindow.document.close()
   } catch (error) {
-    previewWindow.close();
-    throw error;
+    previewWindow.close()
+    throw error
   }
 }
 
@@ -326,9 +336,9 @@ export async function printPreview(
 export async function printMultipleQRCodes(
   svgElements: SVGElement[],
   options: PrintOptions & {
-    layout?: 'grid' | 'list';
-    columns?: number;
-    spacing?: number;
+    layout?: 'grid' | 'list'
+    columns?: number
+    spacing?: number
   } = {}
 ): Promise<void> {
   const opts = {
@@ -337,38 +347,38 @@ export async function printMultipleQRCodes(
     columns: 2,
     spacing: 20,
     ...options,
-  };
-  
-  const printWindow = window.open('', '_blank', 'width=800,height=600');
-  if (!printWindow) {
-    throw new Error('Failed to open print window. Please allow popups.');
   }
-  
+
+  const printWindow = window.open('', '_blank', 'width=800,height=600')
+  if (!printWindow) {
+    throw new Error('Failed to open print window. Please allow popups.')
+  }
+
   try {
-    const svgStrings = svgElements.map((svg) => {
-      const clone = svg.cloneNode(true) as SVGElement;
-      return new XMLSerializer().serializeToString(clone);
-    });
-    
-    const htmlContent = buildMultiplePrintHTML(svgStrings, opts);
-    
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-    
-    await new Promise((resolve) => {
-      printWindow.onload = resolve;
-      setTimeout(resolve, 500);
-    });
-    
-    printWindow.focus();
-    printWindow.print();
-    
+    const svgStrings = svgElements.map(svg => {
+      const clone = svg.cloneNode(true) as SVGElement
+      return new XMLSerializer().serializeToString(clone)
+    })
+
+    const htmlContent = buildMultiplePrintHTML(svgStrings, opts)
+
+    printWindow.document.write(htmlContent)
+    printWindow.document.close()
+
+    await new Promise(resolve => {
+      printWindow.onload = resolve
+      setTimeout(resolve, 500)
+    })
+
+    printWindow.focus()
+    printWindow.print()
+
     setTimeout(() => {
-      printWindow.close();
-    }, 100);
+      printWindow.close()
+    }, 100)
   } catch (error) {
-    printWindow.close();
-    throw error;
+    printWindow.close()
+    throw error
   }
 }
 
@@ -381,13 +391,13 @@ export async function printMultipleQRCodes(
 function buildMultiplePrintHTML(
   svgContents: string[],
   options: Required<Omit<PrintOptions, 'title' | 'description'>> & {
-    layout: 'grid' | 'list';
-    columns: number;
-    spacing: number;
+    layout: 'grid' | 'list'
+    columns: number
+    spacing: number
   }
 ): string {
-  const { pageSize, orientation, margins, qrSize, layout, columns, spacing } = options;
-  
+  const { pageSize, orientation, margins, qrSize, layout, columns, spacing } = options
+
   return `
 <!DOCTYPE html>
 <html>
@@ -438,15 +448,19 @@ function buildMultiplePrintHTML(
 </head>
 <body>
   <div class="qr-grid">
-    ${svgContents.map((svg) => `
+    ${svgContents
+      .map(
+        svg => `
       <div class="qr-item">
         ${svg}
       </div>
-    `).join('\n')}
+    `
+      )
+      .join('\n')}
   </div>
 </body>
 </html>
-  `.trim();
+  `.trim()
 }
 
 /**
@@ -465,27 +479,27 @@ export function getPrintPageDimensions(
     legal: { width: 215.9, height: 355.6 },
     a3: { width: 297, height: 420 },
     a5: { width: 148, height: 210 },
-  };
-  
-  const size = sizes[pageSize];
+  }
+
+  const size = sizes[pageSize]
   /**
    * Purpose: Executes mmToPx functionality.
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
-  const mmToPx = (mm: number) => Math.round((mm / 25.4) * 96); // Convert mm to pixels at 96 DPI
-  
+  const mmToPx = (mm: number) => Math.round((mm / 25.4) * 96) // Convert mm to pixels at 96 DPI
+
   if (orientation === 'landscape') {
     return {
       width: mmToPx(size.height),
       height: mmToPx(size.width),
-    };
+    }
   }
-  
+
   return {
     width: mmToPx(size.width),
     height: mmToPx(size.height),
-  };
+  }
 }
 
 /**
@@ -495,7 +509,7 @@ export function getPrintPageDimensions(
  */
 
 export function isPrintSupported(): boolean {
-  return typeof window !== 'undefined' && 'print' in window;
+  return typeof window !== 'undefined' && 'print' in window
 }
 
 /**
@@ -505,27 +519,27 @@ export function isPrintSupported(): boolean {
  */
 
 export function onPrintStateChange(callback: (isPrinting: boolean) => void): () => void {
-  if (typeof window === 'undefined') return () => {};
-  
-  const mediaQuery = window.matchMedia('print');
-  
+  if (typeof window === 'undefined') return () => {}
+
+  const mediaQuery = window.matchMedia('print')
+
   /**
    * Purpose: Executes handler functionality.
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
   const handler = (e: MediaQueryListEvent | MediaQueryList) => {
-    callback(e.matches);
-  };
-  
+    callback(e.matches)
+  }
+
   // Initial check
-  handler(mediaQuery);
-  
+  handler(mediaQuery)
+
   // Listen for changes
-  mediaQuery.addEventListener('change', handler);
-  
+  mediaQuery.addEventListener('change', handler)
+
   // Return cleanup function
   return () => {
-    mediaQuery.removeEventListener('change', handler);
-  };
+    mediaQuery.removeEventListener('change', handler)
+  }
 }

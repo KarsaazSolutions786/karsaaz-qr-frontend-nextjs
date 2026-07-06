@@ -73,7 +73,7 @@ export function useQRCodes(params: ListQRCodesParams = {}) {
  */
 export function useQRCodeAnalytics(qrCodeId: number | string | undefined) {
   return useQuery({
-    queryKey: ['qrcodes', qrCodeId, 'analytics'],
+    queryKey: queryKeys.qrcodes.analytics(String(qrCodeId || '')),
     queryFn: () => qrcodesAPI.getAnalytics(qrCodeId!),
     enabled: !!qrCodeId,
     staleTime: 60 * 1000, // 1 minute
@@ -89,7 +89,7 @@ export function useQRCodeAnalytics(qrCodeId: number | string | undefined) {
 export function useQRLinkSettings(qrCodeId: string | undefined, options?: { enabled?: boolean }) {
   const { isGuest, isGuestLoading } = useGuest()
   return useQuery({
-    queryKey: ['qrcodes', qrCodeId, 'link-settings'],
+    queryKey: queryKeys.qrcodes.linkSettings(qrCodeId || ''),
     queryFn: () => qrcodesAPI.getLinkSettings(qrCodeId!),
     enabled:
       (options?.enabled ?? true) &&
@@ -114,7 +114,7 @@ export function useUpdateQRLinkSettings(qrCodeId: string) {
     mutationFn: (data: { slug: string; redirectEnabled: boolean }) =>
       qrcodesAPI.updateLinkSettings(qrCodeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['qrcodes', qrCodeId, 'link-settings'] })
+      queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.linkSettings(qrCodeId) })
       queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.detail(qrCodeId) })
     },
   })

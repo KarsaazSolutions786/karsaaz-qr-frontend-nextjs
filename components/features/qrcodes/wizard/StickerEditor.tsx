@@ -93,7 +93,7 @@ export interface StickerEditorProps {
   /** List of available advanced shapes from useDesignShapes */
   advancedShapes: AdvancedShape[]
   /** Called when any design field changes */
-  onChange: (field: string, value: any) => void
+  onChange: (field: string | Record<string, unknown>, value?: any) => void
   /** Visual variant -- compact uses smaller grid, full uses larger */
   variant?: 'compact' | 'full'
   /** Optional color picker component to use instead of native input */
@@ -223,7 +223,14 @@ export function StickerEditor({
                   onPremiumBlock?.()
                   return
                 }
-                onChange('advancedShape', shape.value)
+                onChange({
+                  advancedShape: shape.value,
+                  advancedShapeAssetId: shape.id || null,
+                  advancedShapeAssetVersion: shape.version || null,
+                  advancedShapeSource: shape.source || null,
+                  advancedShapeRenderMode:
+                    shape.value !== 'none' ? shape.renderMode || 'svg_template' : null,
+                })
               }}
               className={cn(
                 'rounded-lg border-2 transition-all overflow-hidden',
