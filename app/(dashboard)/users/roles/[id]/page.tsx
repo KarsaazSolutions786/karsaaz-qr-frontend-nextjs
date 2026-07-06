@@ -1,4 +1,5 @@
 'use client'
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
@@ -30,6 +31,7 @@ export default function EditRolePage() {
   const [saved, setSaved] = useState(false)
 
   // Pre-fill when role loads
+
   useEffect(() => {
     if (role) {
       setName(role.name)
@@ -67,7 +69,9 @@ export default function EditRolePage() {
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
-        Object.values(err?.response?.data?.errors || {}).flat().join(' ') ||
+        Object.values(err?.response?.data?.errors || {})
+          .flat()
+          .join(' ') ||
         'Failed to save changes.'
       setError(msg as string)
     }
@@ -85,7 +89,10 @@ export default function EditRolePage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-12 text-center">
         <p className="text-gray-600">{t('Role not found.')}</p>
-        <Link href="/users/roles" className="mt-4 inline-block text-blue-600 text-sm hover:underline">
+        <Link
+          href="/users/roles"
+          className="mt-4 inline-block text-blue-600 text-sm hover:underline"
+        >
           {t('Back to roles')}
         </Link>
       </div>
@@ -144,21 +151,23 @@ export default function EditRolePage() {
               type="text"
               required
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={e => setName(e.target.value)}
               disabled={role.read_only}
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:bg-gray-50 disabled:text-gray-400"
             />
           </div>
 
           {/* Home Page */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">{t('Home Page')}</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              {t('Home Page')}
+            </label>
             <input
               type="text"
               value={homePage}
-              onChange={(e) => setHomePage(e.target.value)}
+              onChange={e => setHomePage(e.target.value)}
               placeholder="/dashboard/qrcodes"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
             />
             <p className="mt-1 text-xs text-gray-500">
               {t('The page users with this role are redirected to after login.')}
@@ -187,7 +196,7 @@ export default function EditRolePage() {
             <button
               type="submit"
               disabled={updateMutation.isPending}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] rounded-md hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {updateMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
               {t('Save Changes')}

@@ -237,7 +237,7 @@ export default function QRCodesFoldersPage() {
         <button
           type="button"
           onClick={() => setShowCreateModal(true)}
-          className="mt-4 sm:mt-0 inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+          className="mt-4 sm:mt-0 inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
         >
           <Plus className="w-4 h-4 mr-2" />
           {t('Create Folder')}
@@ -280,7 +280,9 @@ export default function QRCodesFoldersPage() {
                           }
                         }}
                         className={`group flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm cursor-pointer transition-colors mb-1 ${
-                          isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'
+                          isActive
+                            ? 'bg-primary-50 text-primary-700'
+                            : 'text-gray-700 hover:bg-gray-50'
                         }`}
                       >
                         <Folder className="w-4 h-4 flex-shrink-0" />
@@ -331,7 +333,7 @@ export default function QRCodesFoldersPage() {
                 <button
                   type="button"
                   onClick={() => router.push(`/qrcodes/new?folder_id=${selectedFolderId}`)}
-                  className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
+                  className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   {t('Create QR Code')}
@@ -375,7 +377,7 @@ export default function QRCodesFoldersPage() {
                   <button
                     type="button"
                     onClick={() => router.push(`/qrcodes/new?folder_id=${selectedFolderId}`)}
-                    className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                    className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     {t('Create QR Code')}

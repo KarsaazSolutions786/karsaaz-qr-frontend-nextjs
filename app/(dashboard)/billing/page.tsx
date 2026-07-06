@@ -124,7 +124,7 @@ export default function BillingPage() {
             placeholder={
               '[\n  { "name": "full_name", "label": "Full Name", "type": "text", "required": true },\n  { "name": "address", "label": "Address", "type": "textarea", "required": false }\n]'
             }
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
         </section>
 
@@ -141,7 +141,7 @@ export default function BillingPage() {
             placeholder={
               '[\n  { "name": "company_name", "label": "Company Name", "type": "text", "required": true },\n  { "name": "vat_number", "label": "VAT Number", "type": "text", "required": false }\n]'
             }
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
         </section>
 
@@ -163,7 +163,7 @@ export default function BillingPage() {
           <button
             type="submit"
             disabled={saveMutation.isPending}
-            className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all disabled:opacity-50"
           >
             {saveMutation.isPending ? t('Saving…') : t('Save Settings')}
           </button>

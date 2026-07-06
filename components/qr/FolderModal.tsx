@@ -1,25 +1,26 @@
 /**
  * FolderModal Component
- * 
+ *
  * Modal for creating and editing folders.
  */
 
-'use client';
+'use client'
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import React, { useState, useEffect } from 'react';
-import { X, Folder, Check } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
-import { Folder as FolderType } from '@/lib/hooks/useFolders';
+import React, { useState, useEffect } from 'react'
+import { X, Folder, Check } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
+import { Folder as FolderType } from '@/lib/hooks/useFolders'
 
 export interface FolderModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  mode: 'create' | 'edit';
-  folder?: FolderType;
-  parentFolder?: FolderType;
-  onSave: (data: { name: string; color?: string }) => void;
-  colors: { name: string; value: string }[];
-  maxNameLength?: number;
+  isOpen: boolean
+  onClose: () => void
+  mode: 'create' | 'edit'
+  folder?: FolderType
+  parentFolder?: FolderType
+  onSave: (data: { name: string; color?: string }) => void
+  colors: { name: string; value: string }[]
+  maxNameLength?: number
 }
 
 /**
@@ -37,57 +38,57 @@ export function FolderModal({
   colors,
   maxNameLength = 50,
 }: FolderModalProps) {
-  const { t } = useTranslation();
-  const [name, setName] = useState('');
-  const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
-  const [error, setError] = useState('');
-  
+  const { t } = useTranslation()
+  const [name, setName] = useState('')
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined)
+  const [error, setError] = useState('')
+
   useEffect(() => {
     if (isOpen) {
-      setName(folder?.name || '');
-      setSelectedColor(folder?.color);
-      setError('');
+      setName(folder?.name || '')
+      setSelectedColor(folder?.color)
+      setError('')
     }
-  }, [isOpen, folder]);
-  
-  if (!isOpen) return null;
-  
+  }, [isOpen, folder])
+
+  if (!isOpen) return null
+
   /**
    * Purpose: Executes handleSubmit functionality.
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     // Validate
     if (!name.trim()) {
-      setError(t('Folder name is required'));
-      return;
+      setError(t('Folder name is required'))
+      return
     }
-    
+
     if (name.length > maxNameLength) {
-      setError(`${t('Folder name must be')} ${maxNameLength} ${t('characters or less')}`);
-      return;
+      setError(`${t('Folder name must be')} ${maxNameLength} ${t('characters or less')}`)
+      return
     }
-    
+
     // Save
     onSave({
       name: name.trim(),
       color: selectedColor,
-    });
-    
-    onClose();
-  };
-  
+    })
+
+    onClose()
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Folder className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
+              <Folder className="w-5 h-5 text-primary-600" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">
@@ -100,14 +101,11 @@ export function FolderModal({
               )}
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 rounded hover:bg-gray-100 transition-colors"
-          >
+          <button onClick={onClose} className="p-1 rounded hover:bg-gray-100 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         {/* Content */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Name input */}
@@ -119,9 +117,9 @@ export function FolderModal({
               id="folder-name"
               type="text"
               value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                setError('');
+              onChange={e => {
+                setName(e.target.value)
+                setError('')
               }}
               placeholder={t('Enter folder name')}
               maxLength={maxNameLength}
@@ -129,26 +127,23 @@ export function FolderModal({
               className={`
                 w-full px-3 py-2 border rounded-lg
                 focus:outline-none focus:ring-2
-                ${error
-                  ? 'border-red-300 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
+                ${
+                  error
+                    ? 'border-red-300 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-primary-500'
                 }
               `}
             />
-            
+
             {/* Character count */}
             <div className="flex items-center justify-between mt-1">
-              {error ? (
-                <p className="text-xs text-red-600">{error}</p>
-              ) : (
-                <div />
-              )}
+              {error ? <p className="text-xs text-red-600">{error}</p> : <div />}
               <p className="text-xs text-gray-500">
                 {name.length}/{maxNameLength}
               </p>
             </div>
           </div>
-          
+
           {/* Color picker */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -162,18 +157,19 @@ export function FolderModal({
                 className={`
                   w-10 h-10 rounded-lg border-2 flex items-center justify-center
                   transition-all
-                  ${!selectedColor
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-300 bg-white hover:border-gray-400'
+                  ${
+                    !selectedColor
+                      ? 'border-primary-500 bg-primary-50'
+                      : 'border-gray-300 bg-white hover:border-gray-400'
                   }
                 `}
                 title={t('No color')}
               >
                 <div className="w-6 h-6 rounded-full border-2 border-gray-300 bg-white" />
               </button>
-              
+
               {/* Color options */}
-              {colors.map((color) => (
+              {colors.map(color => (
                 <button
                   key={color.value}
                   type="button"
@@ -181,9 +177,10 @@ export function FolderModal({
                   className={`
                     w-10 h-10 rounded-lg border-2 flex items-center justify-center
                     transition-all
-                    ${selectedColor === color.value
-                      ? 'border-blue-500 scale-110'
-                      : 'border-transparent hover:scale-105'
+                    ${
+                      selectedColor === color.value
+                        ? 'border-primary-500 scale-110'
+                        : 'border-transparent hover:scale-105'
                     }
                   `}
                   style={{ backgroundColor: `${color.value}20` }}
@@ -193,33 +190,24 @@ export function FolderModal({
                     className="w-6 h-6 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: color.value }}
                   >
-                    {selectedColor === color.value && (
-                      <Check className="w-4 h-4 text-white" />
-                    )}
+                    {selectedColor === color.value && <Check className="w-4 h-4 text-white" />}
                   </div>
                 </button>
               ))}
             </div>
           </div>
-          
+
           {/* Preview */}
           <div className="pt-4 border-t border-gray-200">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('Preview')}
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Preview')}</label>
             <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
               <div className="flex items-center gap-2">
-                <Folder
-                  className="w-5 h-5"
-                  style={{ color: selectedColor || '#6b7280' }}
-                />
-                <span className="font-medium text-gray-900">
-                  {name || t('Folder Name')}
-                </span>
+                <Folder className="w-5 h-5" style={{ color: selectedColor || '#6b7280' }} />
+                <span className="font-medium text-gray-900">{name || t('Folder Name')}</span>
               </div>
             </div>
           </div>
-          
+
           {/* Footer */}
           <div className="flex items-center justify-end gap-3 pt-4">
             <button
@@ -232,7 +220,7 @@ export function FolderModal({
             <button
               type="submit"
               disabled={!name.trim()}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-semibold text-white bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] rounded-lg hover:brightness-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {mode === 'create' ? t('Create Folder') : t('Save Changes')}
             </button>
@@ -240,18 +228,18 @@ export function FolderModal({
         </form>
       </div>
     </div>
-  );
+  )
 }
 
 /**
  * Folder delete confirmation modal
  */
 export interface FolderDeleteModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  folder: FolderType;
-  onConfirm: (moveItemsToParent: boolean) => void;
-  hasItems: boolean;
+  isOpen: boolean
+  onClose: () => void
+  folder: FolderType
+  onConfirm: (moveItemsToParent: boolean) => void
+  hasItems: boolean
 }
 
 /**
@@ -266,11 +254,11 @@ export function FolderDeleteModal({
   onConfirm,
   hasItems,
 }: FolderDeleteModalProps) {
-  const { t } = useTranslation();
-  const [moveItems, setMoveItems] = useState(true);
-  
-  if (!isOpen) return null;
-  
+  const { t } = useTranslation()
+  const [moveItems, setMoveItems] = useState(true)
+
+  if (!isOpen) return null
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
@@ -284,20 +272,22 @@ export function FolderDeleteModal({
               <p className="text-sm text-gray-600">{t('This action cannot be undone')}</p>
             </div>
           </div>
-          
+
           <div className="space-y-4">
             <p className="text-sm text-gray-700">
               {t('Are you sure you want to delete the folder')}{' '}
               <span className="font-medium">"{folder.name}"</span>?
             </p>
-            
+
             {hasItems && (
               <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-800 mb-3">
-                  {t('This folder contains')} {folder.itemCount} {folder.itemCount !== 1 ? t('items') : t('item')}.
-                  {t('What would you like to do with')} {folder.itemCount === 1 ? t('it') : t('them')}?
+                  {t('This folder contains')} {folder.itemCount}{' '}
+                  {folder.itemCount !== 1 ? t('items') : t('item')}.
+                  {t('What would you like to do with')}{' '}
+                  {folder.itemCount === 1 ? t('it') : t('them')}?
                 </p>
-                
+
                 <div className="space-y-2">
                   <label className="flex items-start gap-2 text-sm text-gray-700">
                     <input
@@ -311,7 +301,7 @@ export function FolderDeleteModal({
                       {folder.parentId && ` (${t('recommended')})`}
                     </span>
                   </label>
-                  
+
                   <label className="flex items-start gap-2 text-sm text-gray-700">
                     <input
                       type="radio"
@@ -319,15 +309,13 @@ export function FolderDeleteModal({
                       onChange={() => setMoveItems(false)}
                       className="mt-0.5"
                     />
-                    <span className="text-red-600">
-                      {t('Delete all items in this folder')}
-                    </span>
+                    <span className="text-red-600">{t('Delete all items in this folder')}</span>
                   </label>
                 </div>
               </div>
             )}
           </div>
-          
+
           <div className="flex items-center justify-end gap-3 mt-6">
             <button
               onClick={onClose}
@@ -337,8 +325,8 @@ export function FolderDeleteModal({
             </button>
             <button
               onClick={() => {
-                onConfirm(moveItems);
-                onClose();
+                onConfirm(moveItems)
+                onClose()
               }}
               className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg"
             >
@@ -348,5 +336,5 @@ export function FolderDeleteModal({
         </div>
       </div>
     </div>
-  );
+  )
 }

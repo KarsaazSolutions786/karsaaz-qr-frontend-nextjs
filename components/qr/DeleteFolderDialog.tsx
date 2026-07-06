@@ -99,7 +99,7 @@ export function DeleteFolderDialog({
                 <label
                   className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
                     action === 'move'
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-primary-500 bg-primary-50'
                       : 'border-gray-200 hover:bg-gray-50'
                   } ${moveDisabled ? 'cursor-not-allowed opacity-50' : ''}`}
                 >
@@ -113,7 +113,7 @@ export function DeleteFolderDialog({
                   />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 text-sm font-medium text-gray-900">
-                      <FolderInput className="h-4 w-4 text-blue-600" />
+                      <FolderInput className="h-4 w-4 text-primary-600" />
                       {t('Move QR codes to another folder')}
                     </div>
                     {moveDisabled ? (
@@ -125,7 +125,7 @@ export function DeleteFolderDialog({
                         <select
                           value={targetFolderId}
                           onChange={e => setTargetFolderId(Number(e.target.value))}
-                          className="mt-2 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="mt-2 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                         >
                           {otherFolders.map(f => (
                             <option key={f.id} value={f.id}>
@@ -142,7 +142,7 @@ export function DeleteFolderDialog({
                 <label
                   className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
                     action === 'unassign'
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-primary-500 bg-primary-50'
                       : 'border-gray-200 hover:bg-gray-50'
                   }`}
                 >
@@ -208,8 +208,10 @@ export function DeleteFolderDialog({
             type="button"
             onClick={handleConfirm}
             disabled={confirmDisabled}
-            className={`rounded-lg px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50 ${
-              isDestructive ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'
+            className={`rounded-lg px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 transition-all ${
+              isDestructive
+                ? 'bg-red-600 hover:bg-red-700'
+                : 'bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] hover:brightness-105'
             }`}
           >
             {loading
