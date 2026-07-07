@@ -1,50 +1,55 @@
 {
-  "running": false,
-  "startedAt": "2026-06-22T11:28:25.346Z",
+  "running": true,
+  "startedAt": "2026-07-07T08:20:46.032Z",
   "workers": {
     "map": {
-      "runCount": 90,
-      "successCount": 90,
+      "runCount": 91,
+      "successCount": 91,
       "failureCount": 0,
-      "averageDurationMs": 7.977777777777778,
-      "lastRun": "2026-03-04T08:30:23.486Z",
-      "nextRun": "2026-06-22T18:23:40.684Z",
+      "averageDurationMs": 7.923076923076923,
+      "lastRun": "2026-07-07T10:03:56.070Z",
+      "lastStartedAt": "2026-07-07T10:03:56.066Z",
+      "nextRun": "2026-07-07T10:20:46.120Z",
       "isRunning": false
     },
     "audit": {
-      "runCount": 131,
-      "successCount": 131,
+      "runCount": 133,
+      "successCount": 133,
       "failureCount": 0,
-      "averageDurationMs": 283.8702290076335,
-      "lastRun": "2026-03-04T08:35:28.231Z",
-      "nextRun": "2026-06-22T18:18:40.683Z",
+      "averageDurationMs": 1047.7218045112782,
+      "lastRun": "2026-07-07T10:04:28.321Z",
+      "lastStartedAt": "2026-07-07T10:03:56.072Z",
+      "nextRun": "2026-07-07T10:13:56.066Z",
       "isRunning": false
     },
     "optimize": {
-      "runCount": 90,
-      "successCount": 90,
+      "runCount": 91,
+      "successCount": 91,
       "failureCount": 0,
-      "averageDurationMs": 62.922222222222224,
-      "lastRun": "2026-03-04T08:30:23.878Z",
-      "nextRun": "2026-06-22T18:23:40.685Z",
+      "averageDurationMs": 3057.054945054945,
+      "lastRun": "2026-07-07T10:08:29.134Z",
+      "lastStartedAt": "2026-07-07T10:03:56.605Z",
+      "nextRun": "2026-07-07T10:09:46.079Z",
       "isRunning": false
     },
     "consolidate": {
-      "runCount": 49,
-      "successCount": 49,
+      "runCount": 50,
+      "successCount": 50,
       "failureCount": 0,
-      "averageDurationMs": 4.387755102040818,
-      "lastRun": "2026-03-04T08:16:17.676Z",
-      "nextRun": "2026-06-22T18:38:40.687Z",
+      "averageDurationMs": 5.040000000000002,
+      "lastRun": "2026-07-07T10:04:28.360Z",
+      "lastStartedAt": "2026-07-07T10:04:28.323Z",
+      "nextRun": "2026-07-07T10:26:46.071Z",
       "isRunning": false
     },
     "testgaps": {
-      "runCount": 69,
-      "successCount": 69,
+      "runCount": 70,
+      "successCount": 70,
       "failureCount": 0,
-      "averageDurationMs": 34.01449275362319,
-      "lastRun": "2026-03-04T08:35:23.859Z",
-      "nextRun": "2026-06-22T18:28:40.686Z",
+      "averageDurationMs": 1835.7,
+      "lastRun": "2026-07-07T10:06:34.486Z",
+      "lastStartedAt": "2026-07-07T10:04:28.334Z",
+      "nextRun": "2026-07-07T10:08:46.090Z",
       "isRunning": false
     },
     "predict": {
@@ -60,6 +65,22 @@
       "failureCount": 0,
       "averageDurationMs": 0,
       "isRunning": false
+    },
+    "backup": {
+      "runCount": 0,
+      "successCount": 0,
+      "failureCount": 0,
+      "averageDurationMs": 0,
+      "isRunning": false,
+      "nextRun": "2026-07-08T08:30:46.038Z"
+    },
+    "harness": {
+      "runCount": 0,
+      "successCount": 0,
+      "failureCount": 0,
+      "averageDurationMs": 0,
+      "isRunning": false,
+      "nextRun": "2026-07-07T14:32:46.037Z"
     }
   },
   "config": {
@@ -104,7 +125,7 @@
         "intervalMs": 1800000,
         "offsetMs": 360000,
         "priority": "low",
-        "description": "Memory consolidation",
+        "description": "Memory distillation (ADR-174)",
         "enabled": true
       },
       {
@@ -113,6 +134,22 @@
         "offsetMs": 480000,
         "priority": "normal",
         "description": "Test coverage analysis",
+        "enabled": true
+      },
+      {
+        "type": "backup",
+        "intervalMs": 86400000,
+        "offsetMs": 600000,
+        "priority": "low",
+        "description": "Nightly memory DB backup (WAL-safe, rotated)",
+        "enabled": true
+      },
+      {
+        "type": "harness",
+        "intervalMs": 21600000,
+        "offsetMs": 720000,
+        "priority": "low",
+        "description": "Self-optimizing harness loop (opt-in RUFLO_HARNESS_LOOP, $0-default)",
         "enabled": true
       },
       {
@@ -133,5 +170,5 @@
       }
     ]
   },
-  "savedAt": "2026-06-23T04:51:55.011Z"
+  "savedAt": "2026-07-07T10:08:29.134Z"
 }
