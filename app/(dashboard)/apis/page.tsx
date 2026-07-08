@@ -611,7 +611,7 @@ function ApiDocsTab() {
         </div>
         <button
           onClick={downloadApiGuide}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 active:scale-95 transition-all"
+          className="flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-105 active:scale-95 transition-all"
         >
           <Download className="h-4 w-4" />
           Download Guide

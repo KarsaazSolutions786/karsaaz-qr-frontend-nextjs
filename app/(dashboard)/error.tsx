@@ -45,7 +45,7 @@ export default function DashboardError({
         <div className="flex gap-3 justify-center">
           <button
             onClick={reset}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white rounded-lg hover:brightness-105 transition-all shadow-sm flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
             {t('Try Again')}
