@@ -5,11 +5,6 @@ import { useRef, useCallback, useEffect } from 'react'
 import { cloudStorageAPI, type CreateBackupData, type OAuthCallbackData, type MegaCredentials, type CloudProvider } from '@/lib/api/endpoints/cloud-storage'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: Hook to list all cloud storage connections
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useCloudConnections() {
   return useQuery({
@@ -19,11 +14,6 @@ export function useCloudConnections() {
   })
 }
 
-/**
- * Purpose: Hook to get a single connection
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useCloudConnection(id: string | null) {
   return useQuery({
@@ -34,12 +24,6 @@ export function useCloudConnection(id: string | null) {
   })
 }
 
-/**
- * Purpose: Hook to list backup jobs
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export function useBackupJobs() {
   return useQuery({
     queryKey: queryKeys.cloudStorage.backupJobs(),
@@ -48,11 +32,6 @@ export function useBackupJobs() {
   })
 }
 
-/**
- * Purpose: Hook to get a single backup job (for polling progress) Polls every 2s while job is pending/processing per CLOUD_STORAGE_DOCUMENTATION.md
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useBackupJob(id: string | null) {
   return useQuery({
@@ -70,17 +49,8 @@ export function useBackupJob(id: string | null) {
   })
 }
 
-/**
- * OAuth Popup Status
- */
+
 export type OAuthPopupStatus = 'idle' | 'waiting' | 'success' | 'error'
-
-/**
- * Purpose: Hook to manage OAuth popup flow with message listening Per CLOUD_STORAGE_DOCUMENTATION.md Section 7
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export function useOAuthPopup(onComplete?: () => void) {
   const queryClient = useQueryClient()
   const popupRef = useRef<Window | null>(null)
@@ -178,20 +148,9 @@ export function useOAuthPopup(onComplete?: () => void) {
   }
 }
 
-/**
- * Purpose: Mutations for cloud storage operations
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useCloudStorageMutations() {
   const queryClient = useQueryClient()
-
-  /**
-   * Purpose: Executes invalidateAll functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: February 2026
-   */
   const invalidateAll = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.cloudStorage.connections() })
     queryClient.invalidateQueries({ queryKey: queryKeys.cloudStorage.backupJobs() })
@@ -256,7 +215,7 @@ export function useCloudStorageMutations() {
     },
   })
 
-  /** Cancel an in-progress backup job */
+ 
   const cancelBackupJob = useMutation({
     mutationFn: (id: string) => cloudStorageAPI.cancelBackupJob(id),
     onSuccess: () => {

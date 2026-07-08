@@ -9,14 +9,9 @@ import { LoginFormData } from '@/lib/validations/auth'
 import { toast } from 'sonner'
 import { rpcClearCache } from '@/lib/api/rpc'
 
-/**
- * Purpose: * Determine where to send the user after login
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): string {
-  // Check for ?from= query parameter first
+
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search)
     const from = params.get('from')
@@ -35,11 +30,6 @@ function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): 
   return '/qrcodes/new'
 }
 
-/**
- * Purpose: Executes useLogin functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useLogin() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -109,13 +99,6 @@ export function useLogin() {
   })
 }
 
-/**
- * Purpose: Executes useTwoFactorLoginVerify functionality.
- * Owner/Author: Syed Ashhad
- * Created: February 2026
- * Last Editor: Syed Ashhad
- * Last Updated: March 2026
- */
 export function useTwoFactorLoginVerify() {
   const router = useRouter()
   const queryClient = useQueryClient()

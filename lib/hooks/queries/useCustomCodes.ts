@@ -2,12 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { customCodesAPI } from '@/lib/api/endpoints/custom-codes'
 import { queryKeys } from '@/lib/query/keys'
 
-// Get all custom codes
-/**
- * Purpose: Executes useCustomCodes functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useCustomCodes(params?: { page?: number; search?: string }) {
   return useQuery({
     queryKey: queryKeys.customCodes.list(params),
@@ -16,12 +10,6 @@ export function useCustomCodes(params?: { page?: number; search?: string }) {
   })
 }
 
-// Get single custom code
-/**
- * Purpose: Executes useCustomCode functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useCustomCode(id: number) {
   return useQuery({
     queryKey: queryKeys.customCodes.detail(id),

@@ -4,11 +4,6 @@ import { usersAPI } from '@/lib/api/endpoints/users'
 import { queryKeys } from '@/lib/query/keys'
 import type { User } from '@/types/entities/user'
 
-/**
- * Purpose: Executes useCreateUser functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useCreateUser() {
   const router = useRouter()
   const queryClient = useQueryClient()

@@ -1,7 +1,3 @@
-/**
- * Paths on app.karsaazqr.com that should 301 to www.karsaazqr.com (marketing site).
- */
-
 export const APP_MARKETING_HOST = 'app.karsaazqr.com'
 export const WWW_MARKETING_ORIGIN = 'https://www.karsaazqr.com'
 

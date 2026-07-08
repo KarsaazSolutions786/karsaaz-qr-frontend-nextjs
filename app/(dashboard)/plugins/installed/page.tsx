@@ -41,14 +41,6 @@ export default function PluginsInstalledPage() {
           <h1 className="text-3xl font-bold text-gray-900">{t('Installed Plugins')}</h1>
           <p className="mt-2 text-sm text-gray-600">{t('Manage your installed plugins')}</p>
         </div>
-        <div className="mt-4 sm:mt-0">
-          <Link
-            href="/plugins/available"
-            className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-all"
-          >
-            {t('Browse Plugins')}
-          </Link>
-        </div>
       </div>
 
       {error && (

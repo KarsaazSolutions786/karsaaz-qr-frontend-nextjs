@@ -130,7 +130,7 @@ export default function AuthenticationSettingsPage() {
                   aria-checked={isTruthy(key)}
                   onClick={() => toggleBool(key)}
                   className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
-                    isTruthy(key) ? 'bg-blue-600' : 'bg-gray-200'
+                    isTruthy(key) ? 'bg-primary-600' : 'bg-gray-200'
                   }`}
                 >
                   <span
@@ -208,7 +208,7 @@ export default function AuthenticationSettingsPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
           >
             {isSaving ? t('Saving...') : t('Save Settings')}
           </button>

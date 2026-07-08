@@ -1,11 +1,3 @@
-/**
- * Predefined plan feature options — matches original getFeatures() from models/features.js
- *
- * BASE_PLAN_FEATURES: non-shape features (static).
- * Shape and sticker options are loaded dynamically from the design-assets API so that
- * newly uploaded assets automatically appear in the plan editor without a code deploy.
- */
-
 import { OUTLINED_SHAPES, ADVANCED_SHAPES as STICKER_SHAPES } from './qr-shapes'
 
 export interface PlanFeatureOption {

@@ -3,11 +3,7 @@ import { useRouter } from 'next/navigation'
 import { rolesAPI, type RoleEntity } from '@/lib/api/endpoints/roles'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: Executes useCreateRole functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useCreateRole() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -21,11 +17,6 @@ export function useCreateRole() {
   })
 }
 
-/**
- * Purpose: Executes useUpdateRole functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useUpdateRole() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -38,11 +29,6 @@ export function useUpdateRole() {
   })
 }
 
-/**
- * Purpose: Executes useDeleteRole functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDeleteRole() {
   const queryClient = useQueryClient()
   return useMutation({

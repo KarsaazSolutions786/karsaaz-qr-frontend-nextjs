@@ -1,9 +1,3 @@
-/**
- * useStickerGallery Hook
- * 
- * State management for sticker gallery with filtering, search, and upload.
- */
-
 'use client';
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
@@ -45,11 +39,6 @@ export interface UseStickerGalleryReturn {
   reset: () => void;
 }
 
-/**
- * Purpose: Executes useStickerGallery functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useStickerGallery(
   options: UseStickerGalleryOptions = {}
 ): UseStickerGalleryReturn {
@@ -166,7 +155,6 @@ export function useStickerGallery(
     [onStickerUpload]
   );
 
-  // Delete sticker
   const deleteSticker = useCallback(
     async (stickerId: string) => {
       if (!onStickerDelete) {
@@ -193,7 +181,6 @@ export function useStickerGallery(
     [onStickerDelete, selectedSticker]
   );
 
-  // Reset state
   const reset = useCallback(() => {
     setSelectedSticker(null);
     setSelectedCategory('all');
@@ -202,13 +189,11 @@ export function useStickerGallery(
     setError(null);
   }, []);
 
-  // Load custom stickers on mount
   useEffect(() => {
     refreshStickers();
   }, [refreshStickers]);
 
   return {
-    // State
     stickers: allStickers,
     filteredStickers,
     selectedSticker,
@@ -231,9 +216,6 @@ export function useStickerGallery(
   };
 }
 
-/**
- * Hook for managing sticker positioning
- */
 export interface UseStickerPositionOptions {
   qrSize: number;
   initialSize?: number;
@@ -241,11 +223,6 @@ export interface UseStickerPositionOptions {
   initialOpacity?: number;
 }
 
-/**
- * Purpose: Executes useStickerPosition functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useStickerPosition(options: UseStickerPositionOptions) {
   const { qrSize, initialSize = 0.2, initialRotation = 0, initialOpacity = 1.0 } = options;
 
@@ -253,12 +230,10 @@ export function useStickerPosition(options: UseStickerPositionOptions) {
   const [rotation, setRotation] = useState(initialRotation);
   const [opacity, setOpacity] = useState(initialOpacity);
 
-  // Calculate pixel dimensions
   const pixelSize = useMemo(() => {
     return qrSize * size;
   }, [qrSize, size]);
 
-  // Reset to defaults
   const reset = useCallback(() => {
     setSize(initialSize);
     setRotation(initialRotation);
@@ -276,12 +251,6 @@ export function useStickerPosition(options: UseStickerPositionOptions) {
     reset,
   };
 }
-
-/**
- * Purpose: Hook for sticker search with debouncing
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useStickerSearch(delay: number = 300) {
   const [query, setQuery] = useState('');
@@ -302,11 +271,6 @@ export function useStickerSearch(delay: number = 300) {
   };
 }
 
-/**
- * Purpose: Hook for managing sticker favorites
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useStickerFavorites() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());

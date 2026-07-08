@@ -1,9 +1,3 @@
-/**
- * useFilterURL Hook
- * 
- * Hook for synchronizing filter state with URL query parameters.
- */
-
 'use client';
 
 import { useCallback, useEffect } from 'react';
@@ -14,12 +8,6 @@ export interface FilterURLOptions {
   debounceMs?: number;
   replaceHistory?: boolean;
 }
-
-/**
- * Purpose: Serialize filters to URL query parameters
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function filtersToURLParams(filters: FilterState): URLSearchParams {
   const params = new URLSearchParams();
@@ -87,11 +75,6 @@ export function filtersToURLParams(filters: FilterState): URLSearchParams {
   return params;
 }
 
-/**
- * Purpose: Parse URL query parameters to filters
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function urlParamsToFilters(searchParams: URLSearchParams): Partial<FilterState> {
   const filters: Partial<FilterState> = {};
@@ -174,11 +157,6 @@ export function urlParamsToFilters(searchParams: URLSearchParams): Partial<Filte
   return filters;
 }
 
-/**
- * Purpose: Hook for synchronizing filters with URL
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useFilterURL(
   filters: FilterState,
@@ -264,12 +242,6 @@ export function useFilterURL(
   };
 }
 
-/**
- * Purpose: Generate sharable filter URL
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export function generateShareableFilterURL(
   filters: FilterState,
   baseURL: string = ''
@@ -279,12 +251,6 @@ export function generateShareableFilterURL(
   
   return queryString ? `${baseURL}?${queryString}` : baseURL;
 }
-
-/**
- * Purpose: Check if URL has filter parameters
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function hasFilterParams(searchParams: URLSearchParams): boolean {
   const filterKeys = [

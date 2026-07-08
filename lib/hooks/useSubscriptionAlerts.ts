@@ -1,22 +1,8 @@
-/**
- * useSubscriptionAlerts Hook
- *
- * Detects subscription states that require user attention and manages
- * modal/alert visibility. Integrates with useSubscription to provide
- * auto-triggered modals for:
- * - Subscription expiring soon (< 7 days)
- * - Trial expiring soon (< 3 days)
- * - Feature-specific upgrade prompts
- *
- * Dismissals are stored in sessionStorage so modals only show once per session.
- */
-
 'use client'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useSubscription } from '@/lib/hooks/useSubscription'
 
-/** Threshold constants matching P1 conventions */
 const SUBSCRIPTION_EXPIRING_DAYS = 7
 const TRIAL_EXPIRING_DAYS = 3
 
@@ -53,31 +39,16 @@ interface SubscriptionAlertsReturn {
   hasWarning: boolean
 }
 
-/**
- * Purpose: Checks if dismissed.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 function isDismissed(alertType: AlertType): boolean {
   if (typeof window === 'undefined') return false
   return sessionStorage.getItem(`${DISMISS_KEY_PREFIX}${alertType}`) === 'true'
 }
 
-/**
- * Purpose: Sets dismissed.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 function setDismissed(alertType: AlertType): void {
   if (typeof window === 'undefined') return
   sessionStorage.setItem(`${DISMISS_KEY_PREFIX}${alertType}`, 'true')
 }
 
-/**
- * Purpose: Executes useSubscriptionAlerts functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function useSubscriptionAlerts(): SubscriptionAlertsReturn {
   const { status, remainingDays, isOnTrial, isLoading } = useSubscription()
 
@@ -86,7 +57,6 @@ export function useSubscriptionAlerts(): SubscriptionAlertsReturn {
   const [featureUpgradeDismissed, setFeatureUpgradeDismissed] = useState(false)
   const [featureUpgradeContext, setFeatureUpgradeContext] = useState<FeatureUpgradeContext | null>(null)
 
-  // Determine if subscription is expiring soon (non-trial)
   const isExpiringSoon = useMemo(() => {
     if (isLoading) return false
     return (
@@ -95,7 +65,7 @@ export function useSubscriptionAlerts(): SubscriptionAlertsReturn {
     )
   }, [status, isOnTrial, remainingDays, isLoading])
 
-  // Determine if trial is expiring soon
+
   const isTrialExpiringSoon = useMemo(() => {
     if (isLoading) return false
     return (
@@ -104,7 +74,6 @@ export function useSubscriptionAlerts(): SubscriptionAlertsReturn {
     )
   }, [status, isOnTrial, remainingDays, isLoading])
 
-  // Reset dismissals when status changes (e.g., user renews then it expires again)
   useEffect(() => {
     if (!isExpiringSoon && expiringDismissed) {
       setExpiringDismissed(false)

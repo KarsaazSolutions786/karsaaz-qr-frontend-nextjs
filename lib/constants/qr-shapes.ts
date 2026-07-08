@@ -1,14 +1,5 @@
-/**
- * QR Shape Constants — matches legacy frontend exactly
- *
- * Module shapes, finder styles, finder dot styles, outlined shapes, and advanced shapes
- */
-
 import { ModuleShape, FinderStyle, FinderDotStyle } from '@/types/entities/designer'
 
-// ============================================================
-// Module Shapes (15) — matches legacy module-fields.js
-// ============================================================
 export interface ShapeOption<T extends string = string> {
   value: T
   label: string
@@ -37,9 +28,6 @@ export const MODULE_SHAPES: ShapeOption<ModuleShape>[] = [
   { value: 'triangle-end', label: 'Tri-End', image: '/images/qr/modules/triangle-end.png' },
 ]
 
-// ============================================================
-// Finder Frame Styles (9) — matches legacy module-fields.js
-// ============================================================
 export const FINDER_STYLES: ShapeOption<FinderStyle>[] = [
   { value: 'default', label: 'Default', image: '/images/qr/finders/default.png' },
   { value: 'eye-shaped', label: 'Eye Shaped', image: '/images/qr/finders/eye-shaped.png' },
@@ -52,9 +40,6 @@ export const FINDER_STYLES: ShapeOption<FinderStyle>[] = [
   { value: 'circle-dots', label: 'Circle Dots', image: '/images/qr/finders/circle-dots.png' },
 ]
 
-// ============================================================
-// Finder Dot Styles (8) — matches legacy module-fields.js
-// ============================================================
 export const FINDER_DOT_STYLES: ShapeOption<FinderDotStyle>[] = [
   { value: 'default', label: 'Default', image: '/images/qr/finders/dots/default.png' },
   { value: 'eye-shaped', label: 'Eye Shaped', image: '/images/qr/finders/dots/eye-shaped.png' },
@@ -70,9 +55,6 @@ export const FINDER_DOT_STYLES: ShapeOption<FinderDotStyle>[] = [
   { value: 'zigzag', label: 'Zigzag', image: '/images/qr/finders/dots/zigzag.png' },
 ]
 
-// ============================================================
-// Outlined Shapes (60+) — matches legacy qr-shapes.js
-// ============================================================
 export interface OutlinedShape {
   value: string
   label: string
@@ -150,9 +132,6 @@ export const OUTLINED_SHAPES: OutlinedShape[] = [
   { value: 'brain', label: 'Brain', image: '/images/qr/shapes/shape-brain.jpg' },
 ]
 
-// ============================================================
-// Advanced Shapes / Stickers (12) — matches legacy advanced-shapes.js
-// ============================================================
 export interface AdvancedShape {
   value: string
   label: string
@@ -248,7 +227,6 @@ export const ADVANCED_SHAPES: AdvancedShape[] = [
   },
 ]
 
-// Review collector preset logos
 export const REVIEW_COLLECTOR_LOGOS = [
   'airbnb',
   'aliexpress',
@@ -284,9 +262,6 @@ export const REVIEW_COLLECTOR_LOGOS = [
   'zoom',
 ]
 
-// ============================================================
-// Preset Logos for Logo Picker — matches legacy qrcg-logo-picker.js
-// ============================================================
 export const PRESET_LOGOS: ShapeOption[] = [
   { value: 'address-book', label: 'Address Book' },
   { value: 'badoo', label: 'Badoo' },

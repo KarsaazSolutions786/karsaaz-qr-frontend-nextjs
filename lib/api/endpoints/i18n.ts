@@ -39,11 +39,6 @@ interface LocalizationTranslationsResponse {
   data: TranslationStrings
 }
 
-/**
- * Purpose: Fetch list of active translations (languages) from the backend. Uses the public /api/localization/languages endpoint (no auth required) with a fallback to the legacy /api/translations/active endpoint.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function getActiveTranslations(): Promise<ActiveTranslation[]> {
   try {
@@ -69,11 +64,6 @@ export async function getActiveTranslations(): Promise<ActiveTranslation[]> {
   return Array.isArray(data) ? data : []
 }
 
-/**
- * Purpose: Fetch translation key-value map for a given locale. Uses the public /api/localization/translations endpoint (no auth required) with a fallback to the legacy /api/translations/active endpoint.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function getTranslationStrings(locale: string): Promise<TranslationStrings> {
   try {
@@ -92,11 +82,6 @@ export async function getTranslationStrings(locale: string): Promise<Translation
   return {}
 }
 
-/**
- * Purpose: Switch language by calling backend endpoint. Maps to: GET /language/{locale} (sets cookie/session)
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function switchLanguage(locale: string): Promise<void> {
   await apiClient.get(`/language/${locale}`)

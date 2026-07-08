@@ -1,9 +1,3 @@
-/**
- * useFilters Hook
- * 
- * Hook for managing QR code filters with state management.
- */
-
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
@@ -52,11 +46,6 @@ const DEFAULT_FILTERS: FilterState = {
   dateRange: 'all',
 };
 
-/**
- * Purpose: Executes useFilters functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useFilters(initialFilters?: Partial<FilterState>) {
   const [filters, setFilters] = useState<FilterState>({
     ...DEFAULT_FILTERS,

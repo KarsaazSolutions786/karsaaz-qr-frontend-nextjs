@@ -18,17 +18,11 @@ import {
   verified,
 } from '@/lib/utils/permissions'
 
-/**
- * Purpose: Executes usePermissions functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function usePermissions() {
   const { user } = useAuth()
 
   return useMemo(
     () => ({
-      /** Core RBAC check — exact replica of original permitted(slug) */
       permitted: (slug: string) => permitted(user, slug),
       hasPermission: (permission: string) => hasPermission(user, permission),
       hasAllPermissions: (permissions: string[]) => hasAllPermissions(user, permissions),

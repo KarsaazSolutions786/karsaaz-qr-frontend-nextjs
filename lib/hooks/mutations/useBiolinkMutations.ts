@@ -3,11 +3,6 @@ import { biolinksAPI } from '@/lib/api/endpoints/biolinks'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateBiolinkRequest, UpdateBiolinkRequest } from '@/types/entities/biolink'
 
-/**
- * Purpose: Executes useCreateBiolink functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useCreateBiolink() {
   const queryClient = useQueryClient()
 
@@ -19,11 +14,7 @@ export function useCreateBiolink() {
   })
 }
 
-/**
- * Purpose: Executes useUpdateBiolink functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useUpdateBiolink() {
   const queryClient = useQueryClient()
 
@@ -36,11 +27,6 @@ export function useUpdateBiolink() {
   })
 }
 
-/**
- * Purpose: Executes useDeleteBiolink functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDeleteBiolink() {
   const queryClient = useQueryClient()
 
@@ -52,11 +38,7 @@ export function useDeleteBiolink() {
   })
 }
 
-/**
- * Purpose: Executes useToggleBiolinkPublish functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useToggleBiolinkPublish() {
   const queryClient = useQueryClient()
 

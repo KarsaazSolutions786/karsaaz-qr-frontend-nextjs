@@ -1,9 +1,4 @@
-/**
- * Application Routes
- */
-
 export const ROUTES = {
-  // Public routes
   HOME: '/',
   PRICING: '/pricing',
   BLOG: '/blog',

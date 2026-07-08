@@ -1,8 +1,3 @@
-/**
- * T313 — API Timeout Presets
- * Centralized timeout configuration for API operations.
- */
-
 export const API_TIMEOUT_PRESETS = {
   DEFAULT: 60_000, // 60s — standard operations
   FAST: 10_000, // 10s — quick reads, counts
@@ -35,22 +30,14 @@ const OPERATION_MAP: Record<string, TimeoutPreset> = {
   search: 'FAST',
 }
 
-/**
- * Purpose: Get the timeout (ms) for a named operation. Falls back to DEFAULT if no match is found.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function getTimeout(operation: string): number {
   const normalized = operation.toLowerCase().trim()
-
-  // Direct match
   const directPreset = OPERATION_MAP[normalized]
   if (directPreset) {
     return API_TIMEOUT_PRESETS[directPreset]
   }
 
-  // Partial match — check if operation contains a known key
   for (const [key, preset] of Object.entries(OPERATION_MAP)) {
     if (normalized.includes(key)) {
       return API_TIMEOUT_PRESETS[preset]

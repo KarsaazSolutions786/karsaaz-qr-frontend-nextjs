@@ -1,9 +1,3 @@
-/**
- * useRealtimeAnalytics Hook
- * 
- * Hook for real-time scan updates and analytics tracking.
- */
-
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -32,7 +26,7 @@ export interface RealtimeStats {
   todayScans: number;
   weekScans: number;
   monthScans: number;
-  liveScans: number; // Current active scans
+  liveScans: number;
   averageScansPerDay: number;
   peakHour: number;
   topCountry?: string;
@@ -42,15 +36,10 @@ export interface RealtimeStats {
 export interface UseRealtimeAnalyticsOptions {
   qrCodeId?: string;
   enabled?: boolean;
-  pollingInterval?: number; // milliseconds
+  pollingInterval?: number;
   maxRecentScans?: number;
 }
 
-/**
- * Purpose: Executes useRealtimeAnalytics functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useRealtimeAnalytics({
   qrCodeId,
   enabled = true,
@@ -73,10 +62,6 @@ export function useRealtimeAnalytics({
   
   const wsRef = useRef<WebSocket | null>(null);
   const pollingTimerRef = useRef<NodeJS.Timeout | null>(null);
-  
-  /**
-   * Fetch current stats
-   */
   const fetchStats = useCallback(async () => {
     try {
       // Simulate API call
@@ -102,24 +87,17 @@ export function useRealtimeAnalytics({
     }
   }, []);
   
-  /**
-   * Handle new scan event
-   */
   const handleScanEvent = useCallback((event: ScanEvent) => {
     setRecentScans(prev => {
       const updated = [event, ...prev].slice(0, maxRecentScans);
       return updated;
     });
-    
-    // Update stats
     setStats(prev => ({
       ...prev,
       totalScans: prev.totalScans + 1,
       todayScans: prev.todayScans + 1,
       liveScans: prev.liveScans + 1,
     }));
-    
-    // Decrease live scans after 10 seconds
     setTimeout(() => {
       setStats(prev => ({
         ...prev,
@@ -128,9 +106,6 @@ export function useRealtimeAnalytics({
     }, 10000);
   }, [maxRecentScans]);
   
-  /**
-   * Connect to WebSocket for real-time updates
-   */
   const connectWebSocket = useCallback(() => {
     if (!enabled || wsRef.current) return;
     
@@ -192,9 +167,6 @@ export function useRealtimeAnalytics({
     }
   }, [enabled, qrCodeId, handleScanEvent]);
   
-  /**
-   * Disconnect WebSocket
-   */
   const disconnectWebSocket = useCallback(() => {
     if (wsRef.current) {
       const ws = wsRef.current as any;
@@ -207,9 +179,6 @@ export function useRealtimeAnalytics({
     setIsConnected(false);
   }, []);
   
-  /**
-   * Start polling
-   */
   const startPolling = useCallback(() => {
     if (!enabled || pollingTimerRef.current) return;
     
@@ -217,9 +186,6 @@ export function useRealtimeAnalytics({
     pollingTimerRef.current = setInterval(fetchStats, pollingInterval);
   }, [enabled, pollingInterval, fetchStats]);
   
-  /**
-   * Stop polling
-   */
   const stopPolling = useCallback(() => {
     if (pollingTimerRef.current) {
       clearInterval(pollingTimerRef.current);
@@ -227,16 +193,10 @@ export function useRealtimeAnalytics({
     }
   }, []);
   
-  /**
-   * Refresh stats manually
-   */
   const refresh = useCallback(() => {
     fetchStats();
   }, [fetchStats]);
   
-  /**
-   * Setup and cleanup
-   */
   useEffect(() => {
     if (enabled) {
       connectWebSocket();
@@ -250,26 +210,15 @@ export function useRealtimeAnalytics({
   }, [enabled, connectWebSocket, disconnectWebSocket, startPolling, stopPolling]);
   
   return {
-    // Stats
     stats,
     recentScans,
-    
-    // Connection
     isConnected,
     error,
-    
-    // Actions
     refresh,
     connect: connectWebSocket,
     disconnect: disconnectWebSocket,
   };
 }
-
-/**
- * Purpose: Calculate time-based analytics
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function calculateTimeBasedStats(scans: ScanEvent[]) {
   const hourlyStats = new Array(24).fill(0);

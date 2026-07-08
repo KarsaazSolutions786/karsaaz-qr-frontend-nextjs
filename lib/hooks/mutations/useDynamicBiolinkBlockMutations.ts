@@ -4,11 +4,7 @@ import { dynamicBiolinkBlocksAPI } from '@/lib/api/endpoints/dynamic-biolink-blo
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateDynamicBiolinkBlockRequest } from '@/types/entities/dynamic-biolink-block'
 
-/**
- * Purpose: Executes useCreateDynamicBiolinkBlock functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useCreateDynamicBiolinkBlock() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -22,11 +18,6 @@ export function useCreateDynamicBiolinkBlock() {
   })
 }
 
-/**
- * Purpose: Executes useUpdateDynamicBiolinkBlock functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useUpdateDynamicBiolinkBlock() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -39,11 +30,6 @@ export function useUpdateDynamicBiolinkBlock() {
   })
 }
 
-/**
- * Purpose: Executes useDeleteDynamicBiolinkBlock functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDeleteDynamicBiolinkBlock() {
   const queryClient = useQueryClient()
   return useMutation({

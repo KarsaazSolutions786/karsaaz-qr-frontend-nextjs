@@ -1,4 +1,3 @@
-// lib/constants/playground-endpoints.ts
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
@@ -28,7 +27,6 @@ export interface PlaygroundSection {
   endpoints: PlaygroundEndpoint[]
 }
 
-// ── USER API (/api/v1/*) ──────────────────────────────────────────────────────
 
 export const USER_API_BASE_PATH = '/v1'
 
@@ -213,7 +211,6 @@ export const USER_API_SECTIONS: PlaygroundSection[] = [
   },
 ]
 
-// ── ORG API (/api/v1/org/*) ───────────────────────────────────────────────────
 
 export const ORG_API_BASE_PATH = '/v1/org'
 

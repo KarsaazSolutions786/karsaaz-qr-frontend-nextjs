@@ -4,12 +4,6 @@ import { leadFormsAPI } from '@/lib/api/endpoints/lead-forms'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateLeadFormRequest } from '@/types/entities/lead-form'
 
-// Create lead form
-/**
- * Purpose: Executes useCreateLeadForm functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useCreateLeadForm() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -23,12 +17,6 @@ export function useCreateLeadForm() {
   })
 }
 
-// Update lead form
-/**
- * Purpose: Executes useUpdateLeadForm functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useUpdateLeadForm() {
   const queryClient = useQueryClient()
 
@@ -42,12 +30,6 @@ export function useUpdateLeadForm() {
   })
 }
 
-// Delete lead form
-/**
- * Purpose: Executes useDeleteLeadForm functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDeleteLeadForm() {
   const queryClient = useQueryClient()
 
@@ -59,12 +41,6 @@ export function useDeleteLeadForm() {
   })
 }
 
-// Delete response
-/**
- * Purpose: Executes useDeleteLeadFormResponse functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDeleteLeadFormResponse() {
   const queryClient = useQueryClient()
 

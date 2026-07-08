@@ -3,8 +3,6 @@ import { envConfig } from '@/lib/config/env-config'
 import { User } from '@/types/entities/user'
 import { generateOAuthStateForRedirect } from '@/lib/services/auth-workflow'
 
-// Auth API Endpoints — matching original Laravel backend
-
 export interface LoginRequest {
   email: string
   password: string

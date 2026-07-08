@@ -6,7 +6,6 @@ import type {
 } from '@/types/entities/custom-code'
 
 export const customCodesAPI = {
-  // Get all custom codes — admin-only; returns empty for non-admin users (403)
   getAll: async (params?: { page?: number; search?: string }): Promise<CustomCodeListResponse> => {
     try {
       const response = await apiClient.get<CustomCodeListResponse>('/custom-codes', {

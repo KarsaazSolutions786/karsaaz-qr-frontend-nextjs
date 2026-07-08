@@ -6,7 +6,6 @@ import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutat
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import {
   Select,
@@ -296,9 +295,13 @@ export default function AppearanceSettingsPage() {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Button onClick={handleSave} disabled={saveMutation.isPending}>
+        <button
+          onClick={handleSave}
+          disabled={saveMutation.isPending}
+          className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
+        >
           {saveMutation.isPending ? t('Saving...') : t('Save Settings')}
-        </Button>
+        </button>
       </div>
     </div>
   )

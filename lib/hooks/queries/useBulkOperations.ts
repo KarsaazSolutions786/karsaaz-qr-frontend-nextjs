@@ -10,11 +10,7 @@ export const bulkOperationsKeys = {
   importInstance: (id: string) => [...bulkOperationsKeys.all, 'import-url-instances', id] as const,
 }
 
-/**
- * Purpose: Hook to fetch all bulk import URL instances
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 
 export function useBulkImportInstances() {
   return useQuery({
@@ -24,11 +20,6 @@ export function useBulkImportInstances() {
   })
 }
 
-/**
- * Purpose: Hook to fetch a single bulk import URL instance
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useBulkImportInstance(id: string | undefined) {
   return useQuery({

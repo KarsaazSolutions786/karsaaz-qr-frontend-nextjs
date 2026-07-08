@@ -12,11 +12,6 @@ interface UseFeatureAccessReturn {
   upgradeFeature: FeatureName | null;
 }
 
-/**
- * Purpose: Executes useFeatureAccess functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useFeatureAccess(userPlan: PlanType = 'free'): UseFeatureAccessReturn {
   const [upgradeFeature, setUpgradeFeature] = useState<FeatureName | null>(null);
 

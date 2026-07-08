@@ -1,9 +1,3 @@
-/**
- * useDownloadOptions Hook
- *
- * Hook for managing download format-specific options.
- */
-
 'use client'
 
 import { useState, useCallback } from 'react'
@@ -75,11 +69,6 @@ const DEFAULT_OPTIONS: DownloadOptions = {
   quality: 1.0,
 }
 
-/**
- * Purpose: Executes useDownloadOptions functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDownloadOptions(initialOptions?: Partial<DownloadOptions>) {
   const [options, setOptions] = useState<DownloadOptions>({
     ...DEFAULT_OPTIONS,
@@ -215,11 +204,6 @@ export function useDownloadOptions(initialOptions?: Partial<DownloadOptions>) {
   }
 }
 
-/**
- * Purpose: Get format recommendations
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function getFormatRecommendation(useCase: 'web' | 'print' | 'vector' | 'document'): {
   format: DownloadFormat
@@ -249,9 +233,6 @@ export function getFormatRecommendation(useCase: 'web' | 'print' | 'vector' | 'd
   }
 }
 
-/**
- * Format capabilities
- */
 export const FORMAT_CAPABILITIES = {
   svg: {
     name: 'SVG',
@@ -307,21 +288,10 @@ export const FORMAT_CAPABILITIES = {
   },
 }
 
-/**
- * Purpose: Get file extension for format
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export function getFileExtension(format: DownloadFormat): string {
   return format
 }
 
-/**
- * Purpose: Get MIME type for format
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function getMIMEType(format: DownloadFormat): string {
   const mimeTypes: Record<DownloadFormat, string> = {

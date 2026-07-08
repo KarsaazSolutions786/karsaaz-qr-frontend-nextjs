@@ -1,14 +1,3 @@
-/**
- * Shared Laravel pagination normalization.
- *
- * Supported backend shapes:
- * - Flat Laravel: { data, current_page, last_page, per_page, total }
- * - Nested meta:  { data, meta: { current_page, last_page, per_page, total } }
- * - Nested pagination (snake_case): { data, pagination: { current_page, ... } }
- * - Already normalized: { data, pagination: { currentPage, lastPage, ... } }
- */
-
-/** Raw Laravel LengthAwarePaginator JSON shape */
 export interface LaravelPaginatedResponse<T> {
   data: T[]
   current_page: number
@@ -19,7 +8,6 @@ export interface LaravelPaginatedResponse<T> {
   to: number | null
 }
 
-/** Normalized pagination used throughout the frontend */
 export interface NormalizedPagination {
   total: number
   perPage: number
@@ -67,8 +55,6 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
       pagination: sanitizePagination({ total: 0, perPage: 10, currentPage: 1, lastPage: 1 }),
     }
   }
-
-  // Already normalized camelCase
   if (raw?.pagination?.lastPage != null || raw?.pagination?.last_page != null) {
     const nested = readPaginationFields(raw.pagination)
     if (nested) {
@@ -79,7 +65,6 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
     }
   }
 
-  // Nested pagination snake_case (Flutter / docs)
   const nestedPagination = readPaginationFields(raw.pagination)
   if (
     nestedPagination &&
@@ -91,7 +76,6 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
     }
   }
 
-  // meta wrapper (v1 / playground style)
   const metaPagination = readPaginationFields(raw.meta)
   if (metaPagination && (raw.meta?.current_page != null || raw.meta?.last_page != null)) {
     return {
@@ -100,7 +84,6 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
     }
   }
 
-  // { success, data: { data: [], current_page, ... } }
   if (raw?.data && typeof raw.data === 'object' && !Array.isArray(raw.data)) {
     const inner = raw.data as Record<string, unknown>
     const innerPagination = readPaginationFields(inner)
@@ -112,7 +95,6 @@ export function normalizePagination<T>(raw: any): PaginatedResponse<T> {
     }
   }
 
-  // Flat Laravel paginator at top level
   const flatPagination = readPaginationFields(raw)
   return {
     data: Array.isArray(raw?.data) ? raw.data : [],

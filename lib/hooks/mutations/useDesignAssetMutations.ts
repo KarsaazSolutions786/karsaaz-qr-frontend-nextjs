@@ -8,11 +8,6 @@ import type { ReorderItem } from '@/types/entities/design-asset'
 
 const DESIGN_ASSETS_STORAGE_KEY = 'karsaaz_design_assets'
 
-/**
- * Purpose: * Invalidate all design-asset queries and clear the localStorage hydration cache. 
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 function invalidateDesignAssets(qc: ReturnType<typeof useQueryClient>) {
   try {
@@ -23,11 +18,7 @@ function invalidateDesignAssets(qc: ReturnType<typeof useQueryClient>) {
   qc.invalidateQueries({ queryKey: queryKeys.designAssets.all() })
 }
 
-/**
- * Purpose: Executes useCreateDesignAsset functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
+
 export function useCreateDesignAsset() {
   const qc = useQueryClient()
   return useMutation({
@@ -36,11 +27,7 @@ export function useCreateDesignAsset() {
   })
 }
 
-/**
- * Purpose: Executes useUpdateDesignAsset functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
+
 export function useUpdateDesignAsset() {
   const qc = useQueryClient()
   return useMutation({
@@ -50,11 +37,7 @@ export function useUpdateDesignAsset() {
   })
 }
 
-/**
- * Purpose: Executes useDeleteDesignAsset functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
+
 export function useDeleteDesignAsset() {
   const qc = useQueryClient()
   return useMutation({
@@ -63,11 +46,6 @@ export function useDeleteDesignAsset() {
   })
 }
 
-/**
- * Purpose: Executes useReorderDesignAssets functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function useReorderDesignAssets() {
   const qc = useQueryClient()
   return useMutation({
@@ -76,11 +54,6 @@ export function useReorderDesignAssets() {
   })
 }
 
-/**
- * Purpose: Executes useToggleDesignAsset functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function useToggleDesignAsset() {
   const qc = useQueryClient()
   return useMutation({

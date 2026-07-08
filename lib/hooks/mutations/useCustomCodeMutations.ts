@@ -4,11 +4,6 @@ import { customCodesAPI } from '@/lib/api/endpoints/custom-codes'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateCustomCodeRequest } from '@/types/entities/custom-code'
 
-/**
- * Purpose: Executes useCreateCustomCode functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useCreateCustomCode() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -21,11 +16,7 @@ export function useCreateCustomCode() {
   })
 }
 
-/**
- * Purpose: Executes useUpdateCustomCode functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useUpdateCustomCode() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -38,11 +29,7 @@ export function useUpdateCustomCode() {
   })
 }
 
-/**
- * Purpose: Executes useDeleteCustomCode functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useDeleteCustomCode() {
   const queryClient = useQueryClient()
   return useMutation({

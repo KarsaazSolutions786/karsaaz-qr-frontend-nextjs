@@ -1,9 +1,3 @@
-/**
- * useMultiSelect Hook
- * 
- * Hook for managing multi-select state for QR codes.
- */
-
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
@@ -14,13 +8,8 @@ export interface MultiSelectOptions {
   onSelectionChange?: (selectedIds: string[]) => void;
 }
 
-/**
- * Purpose: Executes useMultiSelect functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useMultiSelect<T extends { id: string }>(
-  items: T[] = [], // Add default empty array
+  items: T[] = [],
   options: MultiSelectOptions = {}
 ) {
   const { selectAllOnMount = false, maxSelection, onSelectionChange } = options;
@@ -29,34 +18,28 @@ export function useMultiSelect<T extends { id: string }>(
     () => selectAllOnMount && items ? new Set(items.map(item => item.id)) : new Set()
   );
   
-  // Get selected items
   const selectedItems = useMemo(
     () => items ? items.filter(item => selectedIds.has(item.id)) : [],
     [items, selectedIds]
   );
   
-  // Selection count
   const selectedCount = selectedIds.size;
   
-  // Check if all items are selected
   const isAllSelected = useMemo(
     () => items.length > 0 && selectedIds.size === items.length,
     [items.length, selectedIds.size]
   );
   
-  // Check if some (but not all) items are selected
   const isSomeSelected = useMemo(
     () => selectedIds.size > 0 && selectedIds.size < items.length,
     [items.length, selectedIds.size]
   );
   
-  // Check if specific item is selected
   const isSelected = useCallback(
     (id: string) => selectedIds.has(id),
     [selectedIds]
   );
   
-  // Toggle single item
   const toggleItem = useCallback(
     (id: string) => {
       setSelectedIds(prev => {
@@ -65,9 +48,8 @@ export function useMultiSelect<T extends { id: string }>(
         if (newSet.has(id)) {
           newSet.delete(id);
         } else {
-          // Check max selection limit
           if (maxSelection && newSet.size >= maxSelection) {
-            return prev; // Don't add if at limit
+            return prev;
           }
           newSet.add(id);
         }
@@ -80,13 +62,10 @@ export function useMultiSelect<T extends { id: string }>(
     [maxSelection, onSelectionChange]
   );
   
-  // Select single item
   const selectItem = useCallback(
     (id: string) => {
       setSelectedIds(prev => {
         if (prev.has(id)) return prev;
-        
-        // Check max selection limit
         if (maxSelection && prev.size >= maxSelection) {
           return prev;
         }
@@ -102,7 +81,6 @@ export function useMultiSelect<T extends { id: string }>(
     [maxSelection, onSelectionChange]
   );
   
-  // Deselect single item
   const deselectItem = useCallback(
     (id: string) => {
       setSelectedIds(prev => {
@@ -119,14 +97,12 @@ export function useMultiSelect<T extends { id: string }>(
     [onSelectionChange]
   );
   
-  // Select multiple items
   const selectItems = useCallback(
     (ids: string[]) => {
       setSelectedIds(prev => {
         const newSet = new Set(prev);
         
         for (const id of ids) {
-          // Check max selection limit
           if (maxSelection && newSet.size >= maxSelection) {
             break;
           }
@@ -140,8 +116,6 @@ export function useMultiSelect<T extends { id: string }>(
     },
     [maxSelection, onSelectionChange]
   );
-  
-  // Deselect multiple items
   const deselectItems = useCallback(
     (ids: string[]) => {
       setSelectedIds(prev => {
@@ -158,8 +132,6 @@ export function useMultiSelect<T extends { id: string }>(
     },
     [onSelectionChange]
   );
-  
-  // Select all items
   const selectAll = useCallback(() => {
     setSelectedIds(() => {
       const itemsToSelect = maxSelection
@@ -173,7 +145,6 @@ export function useMultiSelect<T extends { id: string }>(
     });
   }, [items, maxSelection, onSelectionChange]);
   
-  // Deselect all items
   const deselectAll = useCallback(() => {
     setSelectedIds(() => {
       onSelectionChange?.([]);
@@ -181,7 +152,6 @@ export function useMultiSelect<T extends { id: string }>(
     });
   }, [onSelectionChange]);
   
-  // Toggle all items
   const toggleAll = useCallback(() => {
     if (isAllSelected) {
       deselectAll();
@@ -190,7 +160,6 @@ export function useMultiSelect<T extends { id: string }>(
     }
   }, [isAllSelected, selectAll, deselectAll]);
   
-  // Select range (for shift-click)
   const selectRange = useCallback(
     (startId: string, endId: string) => {
       const startIndex = items.findIndex(item => item.id === startId);
@@ -207,14 +176,12 @@ export function useMultiSelect<T extends { id: string }>(
     [items, selectItems]
   );
   
-  // Invert selection
   const invertSelection = useCallback(() => {
     setSelectedIds(prev => {
       const newSet = new Set<string>();
       
       for (const item of items) {
         if (!prev.has(item.id)) {
-          // Check max selection limit
           if (maxSelection && newSet.size >= maxSelection) {
             break;
           }
@@ -228,26 +195,19 @@ export function useMultiSelect<T extends { id: string }>(
     });
   }, [items, maxSelection, onSelectionChange]);
   
-  // Clear selection
   const clear = deselectAll;
   
   return {
-    // State
     selectedIds: Array.from(selectedIds),
     selectedItems,
     selectedCount,
     isAllSelected,
     isSomeSelected,
     
-    // Item checks
     isSelected,
-    
-    // Single item actions
     toggleItem,
     selectItem,
     deselectItem,
-    
-    // Multiple item actions
     selectItems,
     deselectItems,
     selectAll,
@@ -259,11 +219,6 @@ export function useMultiSelect<T extends { id: string }>(
   };
 }
 
-/**
- * Purpose: useMultiSelectWithKeyboard Hook Enhanced multi-select with keyboard support (Ctrl/Cmd, Shift).
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useMultiSelectWithKeyboard<T extends { id: string }>(
   items: T[],
@@ -271,21 +226,16 @@ export function useMultiSelectWithKeyboard<T extends { id: string }>(
 ) {
   const multiSelect = useMultiSelect(items, options);
   const [lastSelectedId, setLastSelectedId] = useState<string | null>(null);
-  
-  // Handle item click with keyboard modifiers
   const handleItemClick = useCallback(
     (id: string, event?: React.MouseEvent) => {
       const isCtrlOrCmd = event?.ctrlKey || event?.metaKey;
       const isShift = event?.shiftKey;
       
       if (isShift && lastSelectedId) {
-        // Shift-click: select range
         multiSelect.selectRange(lastSelectedId, id);
       } else if (isCtrlOrCmd) {
-        // Ctrl/Cmd-click: toggle single item
         multiSelect.toggleItem(id);
       } else {
-        // Regular click: select only this item
         multiSelect.deselectAll();
         multiSelect.selectItem(id);
       }

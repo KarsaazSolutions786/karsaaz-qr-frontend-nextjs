@@ -13,11 +13,7 @@ import {
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 
-/**
- * Purpose: * Determine where to send the user after login
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 
 function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): string {
   if (typeof window !== 'undefined') {
@@ -36,11 +32,6 @@ function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): 
   return '/qrcodes/new'
 }
 
-/**
- * Purpose: Query to check if passwordless auth is enabled globally. Matches original: LoginTypeSelector.fetchPasswordlessStatus()
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function usePasswordlessStatus() {
   return useQuery({
@@ -51,11 +42,6 @@ export function usePasswordlessStatus() {
   })
 }
 
-/**
- * Purpose: Mutation to check per-user login preference. Matches original: post('passwordless-auth/check-preference', { email }) Returns { login_method: 'passwordless' | 'traditional' }
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function usePasswordlessCheckPreference() {
   return useMutation({
@@ -64,11 +50,6 @@ export function usePasswordlessCheckPreference() {
   })
 }
 
-/**
- * Purpose: Mutation to initialize OTP — sends 5-digit code to email. Matches original: post('passwordless-auth/init', { email })
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function usePasswordlessInit() {
   return useMutation({
@@ -76,11 +57,6 @@ export function usePasswordlessInit() {
   })
 }
 
-/**
- * Purpose: Mutation to verify OTP and authenticate. Matches original: post('passwordless-auth/verify', { email, otp }) On success: stores token + user, redirects to dashboard.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function usePasswordlessVerify() {
   const router = useRouter()
@@ -106,11 +82,6 @@ export function usePasswordlessVerify() {
   })
 }
 
-/**
- * Purpose: Mutation to resend OTP code. Matches original: post('passwordless-auth/resend', { email })
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function usePasswordlessResend() {
   return useMutation({
@@ -118,11 +89,6 @@ export function usePasswordlessResend() {
   })
 }
 
-/**
- * Purpose: Query to get the current user's login preference (requires auth). Matches original: GET passwordless-auth/preference Returns { preference: 'passwordless' | 'traditional' }
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function usePasswordlessGetPreference() {
   return useQuery({
@@ -133,11 +99,6 @@ export function usePasswordlessGetPreference() {
   })
 }
 
-/**
- * Purpose: Mutation to set login preference (requires auth). To switch to traditional: { preference: 'disabled', password, password_confirmation } To switch to passwordless: { preference: 'enabled' }
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function usePasswordlessSetPreference() {
   const queryClient = useQueryClient()
