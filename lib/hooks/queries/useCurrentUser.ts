@@ -5,11 +5,7 @@ import { rpc, RpcError } from '@/lib/api/rpc'
 import { queryKeys } from '@/lib/query/keys'
 import type { User } from '@/types/entities/user'
 
-/**
- * Purpose: Executes useCurrentUser functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useCurrentUser() {
   return useQuery<User | null>({
     queryKey: queryKeys.auth.currentUser(),

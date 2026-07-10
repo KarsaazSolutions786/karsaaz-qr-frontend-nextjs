@@ -33,14 +33,6 @@ type RawDomain = Record<string, unknown> & {
   updated_at?: unknown; updatedAt?: unknown
 }
 
-/**
- * Purpose: * Map backend snake_case domain response to frontend camelCase Domain type 
- * Owner/Author: Syed Ashhad
- * Created: March 2026
- * Last Editor: Syed Ashhad
- * Last Updated: May 2026
- */
-
 function transformDomain(raw: RawDomain): Domain {
   return {
     id: raw.id as Domain['id'],
@@ -106,10 +98,6 @@ export const domainsAPI = {
     return response.data
   },
 
-  /**
-   * Update domain availability (public/private)
-   * PUT /api/domains/{id}/update-availability
-   */
   updateAvailability: async (id: string, availability: DomainAvailability) => {
     const response = await apiClient.put<Domain>(
       `/domains/${id}/update-availability`,
@@ -118,10 +106,6 @@ export const domainsAPI = {
     return response.data
   },
 
-  /**
-   * Set domain as the default domain for new QR codes
-   * PUT /api/domains/{id}/set-default
-   */
   setDefault: async (id: string) => {
     const response = await apiClient.put<Domain>(`/domains/${id}/set-default`)
     return response.data

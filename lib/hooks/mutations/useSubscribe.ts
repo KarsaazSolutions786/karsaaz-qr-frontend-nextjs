@@ -2,11 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { subscribe, SubscribeRequest, generatePayLink } from '@/lib/api/endpoints/subscriptions'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: Create a subscription record on the backend. Returns the subscription object with id.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 
 export function useSubscribe() {
   const queryClient = useQueryClient()
@@ -25,11 +21,6 @@ export function useSubscribe() {
   })
 }
 
-/**
- * Purpose: Generate a payment link and redirect the browser. Flow (matching Lit reference qrcg-pay-button.js): - Call generate-pay-link for ALL processors - Backend handles subscription creation during payment processing
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useCheckout() {
   return useMutation({
@@ -56,9 +47,6 @@ export function useCheckout() {
       if (promoCodeData) {
         data.promo_code_data = promoCodeData
       }
-
-      // Call generate-pay-link for all processors
-      // Backend handles subscription creation during payment verification
       const result = await generatePayLink(processorSlug, planId, data, isChangePlan)
       return result.link
     },

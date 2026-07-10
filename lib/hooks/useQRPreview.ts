@@ -1,10 +1,3 @@
-/**
- * useQRPreview Hook
- * 
- * Hook for managing QR code preview state with real-time updates.
- * Integrates with wizard state for live config changes.
- */
-
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -29,12 +22,6 @@ export interface QRPreviewState {
   moduleCount: number;
 }
 
-/**
- * Purpose: Hook for QR code preview with real-time updates
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
   const { data, config, stickerConfig, debounce = 100, onError } = options;
 
@@ -45,17 +32,9 @@ export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
     error: null,
     moduleCount: 0,
   });
-
-  // Generate QR code with debounce
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     let isCancelled = false;
-
-    /**
-     * Purpose: Executes generate functionality.
-     * Owner/Author: Syed Ashhad
-     * Created/Updated: February 2026
-     */
     const generate = async () => {
       if (!data || data.trim() === '') {
         setState({
@@ -134,12 +113,6 @@ export function useQRPreview(options: UseQRPreviewOptions): QRPreviewState {
   return state;
 }
 
-/**
- * Purpose: Hook for downloading QR code
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export function useQRDownload(svg: string | null, size: number) {
   const { downloadPNG, downloadSVG, downloadPDF, downloadEPS } = useMemo(() => {
     return {
@@ -168,12 +141,6 @@ export function useQRDownload(svg: string | null, size: number) {
 
   return { downloadPNG, downloadSVG, downloadPDF, downloadEPS };
 }
-
-/**
- * Purpose: Hook for config validation
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useConfigValidation(config: DesignerConfig) {
   return useMemo(() => {
@@ -217,11 +184,6 @@ export function useConfigValidation(config: DesignerConfig) {
   }, [config]);
 }
 
-/**
- * Purpose: Hook for performance metrics
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useQRPerformance(data: string, config: DesignerConfig) {
   return useMemo(() => {

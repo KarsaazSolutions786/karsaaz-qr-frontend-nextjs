@@ -39,9 +39,6 @@ export interface GuestContextType {
 
 export const GuestContext = createContext<GuestContextType | undefined>(undefined)
 
-/** Routes where a guest session is auto-created for anonymous visitors.
- * '/qrcodes/new' is the primary guest entry point (guest-aware dashboard wizard);
- * '/guest' covers the standalone guest pages. */
 const GUEST_INIT_ROUTE_PREFIXES = ['/guest', '/qrcodes/new']
 
 function isGuestRoute(pathname: string | null): boolean {
@@ -60,7 +57,6 @@ type GuestInitResult = {
 
 let guestInitPromise: Promise<GuestInitResult> | null = null
 
-/** Test-only: clears cached init promise between vitest cases. */
 export function resetGuestInitStateForTests(): void {
   guestInitPromise = null
 }
@@ -132,11 +128,6 @@ async function initializeGuestSession(): Promise<GuestInitResult> {
   return guestInitPromise
 }
 
-/**
- * Purpose: Executes GuestProvider functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function GuestProvider({ children }: { children: ReactNode }) {
   const { user, isLoading: isAuthLoading } = useAuth()
   const pathname = usePathname()
@@ -204,7 +195,6 @@ export function GuestProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Initialize guest session only on guest routes (or when reusing an existing token)
   useEffect(() => {
     if (isAuthLoading) return
 

@@ -5,11 +5,6 @@ import { useRouter } from 'next/navigation'
 import { authAPI } from '@/lib/api/endpoints/auth'
 import type { ResetPasswordFormData } from '@/lib/validations/auth'
 
-/**
- * Purpose: Executes useResetPassword functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useResetPassword() {
   const router = useRouter()
 

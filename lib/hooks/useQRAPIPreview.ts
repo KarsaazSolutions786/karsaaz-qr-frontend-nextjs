@@ -1,7 +1,3 @@
-/**
- * Enhanced preview hook for API-based QR preview with URL building
- */
-
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
@@ -17,11 +13,6 @@ export interface UseQRAPIPreviewOptions {
   autoGenerate?: boolean;
 }
 
-/**
- * Purpose: Hook for managing QR code preview via API
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useQRAPIPreview(
   params?: PreviewURLParams,
@@ -35,9 +26,6 @@ export function useQRAPIPreview(
     error: null,
   });
 
-  /**
-   * Generate preview URL
-   */
   const generate = useCallback((newParams?: PreviewURLParams) => {
     const targetParams = newParams || params;
 
@@ -72,9 +60,6 @@ export function useQRAPIPreview(
     }
   }, [params]);
 
-  /**
-   * Reset state
-   */
   const reset = useCallback(() => {
     setState({
       url: null,
@@ -83,9 +68,6 @@ export function useQRAPIPreview(
     });
   }, []);
 
-  /**
-   * Download QR code
-   */
   const download = useCallback(async (filename = 'qrcode') => {
     if (!state.url) {
       if (process.env.NODE_ENV === 'development') console.error('No QR code URL available for download');
@@ -116,9 +98,6 @@ export function useQRAPIPreview(
     }
   }, [state.url]);
 
-  /**
-   * Print QR code
-   */
   const print = useCallback(() => {
     if (!state.url) {
       if (process.env.NODE_ENV === 'development') console.error('No QR code URL available for printing');
@@ -164,9 +143,6 @@ export function useQRAPIPreview(
     printWindow.document.close();
   }, [state.url]);
 
-  /**
-   * Auto-generate on mount if enabled
-   */
   useEffect(() => {
     if (autoGenerate && params?.data) {
       generate();

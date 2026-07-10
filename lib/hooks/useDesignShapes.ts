@@ -17,12 +17,6 @@ import {
 import { resolveBackendUrl } from '@/lib/utils/resolve-backend-url'
 
 const DESIGN_ASSETS_STORAGE_KEY = 'karsaaz_design_assets'
-
-/**
- * Purpose: Executes toShapeOption functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 function toShapeOption(asset: DesignAsset): ShapeOption {
   return {
     value: asset.slug,
@@ -30,12 +24,6 @@ function toShapeOption(asset: DesignAsset): ShapeOption {
     image: resolveBackendUrl(asset.thumbnail_url) || undefined,
   }
 }
-
-/**
- * Purpose: Executes toOutlinedShape functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 function toOutlinedShape(asset: DesignAsset): OutlinedShape {
   const meta = asset.metadata as Record<string, unknown> | null
   const source = meta?.svg_path ? 'uploaded' : 'built_in'
@@ -109,12 +97,6 @@ function setCachedAssets(assets: DesignAsset[]) {
   }
 }
 
-/**
- * Purpose: Fetches all active design assets from the DB API and maps them to the same ShapeOption/OutlinedShape/AdvancedShape format used by the QR designer. Falls back to hardcoded constants on error. Uses localStorage for instant hydration and `initialDataUpdatedAt: 0` so a background refetch always fires, ensuring fresh data after admin edits.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
-
 export function useDesignShapes() {
   const { data: allAssets, isLoading } = useQuery({
     queryKey: queryKeys.designAssets.all(),
@@ -143,11 +125,6 @@ export function useDesignShapes() {
       }
     }
 
-    /**
-     * Purpose: Executes byType functionality.
-     * Owner/Author: Syed Ashhad
-     * Created/Updated: March 2026
-     */
     const byType = (type: string) =>
       allAssets
         .filter(a => a.type === type && a.is_active)

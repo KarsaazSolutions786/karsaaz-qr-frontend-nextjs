@@ -188,14 +188,14 @@ export default function TrashSettingsPage() {
 
             <div className="space-y-3">
               {/* Never */}
-              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
                 <input
                   type="radio"
                   name="auto-delete"
                   value="never"
                   checked={effectiveSelected === 'never'}
                   onChange={() => handleOptionChange('never')}
-                  className="mt-0.5 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                  className="mt-0.5 h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-900">{t('Never (manual only)')}</p>
@@ -206,14 +206,14 @@ export default function TrashSettingsPage() {
               </label>
 
               {/* 7 days */}
-              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
                 <input
                   type="radio"
                   name="auto-delete"
                   value="7"
                   checked={effectiveSelected === '7'}
                   onChange={() => handleOptionChange('7')}
-                  className="mt-0.5 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                  className="mt-0.5 h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-900">{t('7 days')}</p>
@@ -224,14 +224,14 @@ export default function TrashSettingsPage() {
               </label>
 
               {/* 15 days */}
-              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
                 <input
                   type="radio"
                   name="auto-delete"
                   value="15"
                   checked={effectiveSelected === '15'}
                   onChange={() => handleOptionChange('15')}
-                  className="mt-0.5 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                  className="mt-0.5 h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-900">{t('15 days')}</p>
@@ -242,14 +242,14 @@ export default function TrashSettingsPage() {
               </label>
 
               {/* 30 days */}
-              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
                 <input
                   type="radio"
                   name="auto-delete"
                   value="30"
                   checked={effectiveSelected === '30'}
                   onChange={() => handleOptionChange('30')}
-                  className="mt-0.5 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                  className="mt-0.5 h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-900">{t('30 days')}</p>
@@ -260,14 +260,14 @@ export default function TrashSettingsPage() {
               </label>
 
               {/* Custom */}
-              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
+              <label className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
                 <input
                   type="radio"
                   name="auto-delete"
                   value="custom"
                   checked={effectiveSelected === 'custom'}
                   onChange={() => handleOptionChange('custom')}
-                  className="mt-0.5 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                  className="mt-0.5 h-4 w-4 text-primary-600 border-gray-300 focus:ring-primary-500"
                 />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-gray-900">{t('Custom')}</p>
@@ -285,7 +285,7 @@ export default function TrashSettingsPage() {
                           setCustomDays(e.target.value)
                           setIsDirty(true)
                         }}
-                        className="w-24 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-24 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                         placeholder="e.g. 14"
                       />
                       <span className="text-sm text-gray-600">{t('days')}</span>
@@ -357,7 +357,7 @@ export default function TrashSettingsPage() {
                   onClick={() => handleStoragePresetChange(preset)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                     effectiveStoragePreset === preset
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
                       : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
                   }`}
                 >
@@ -369,7 +369,7 @@ export default function TrashSettingsPage() {
                 onClick={() => handleStoragePresetChange('custom')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                   effectiveStoragePreset === 'custom'
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    ? 'border-primary-500 bg-primary-50 text-primary-700'
                     : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
                 }`}
               >
@@ -388,7 +388,7 @@ export default function TrashSettingsPage() {
                     setCustomStorageMb(e.target.value)
                     setIsDirty(true)
                   }}
-                  className="w-28 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-28 px-3 py-1.5 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
                   placeholder="e.g. 75"
                 />
                 <span className="text-sm text-gray-600">MB</span>
@@ -403,7 +403,7 @@ export default function TrashSettingsPage() {
             <button
               onClick={handleSave}
               disabled={!isDirty || updateSettings.isPending}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center px-4 py-2 bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] text-white text-sm font-semibold rounded-md hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
             >
               {updateSettings.isPending ? t('Saving...') : t('Save Settings')}
             </button>

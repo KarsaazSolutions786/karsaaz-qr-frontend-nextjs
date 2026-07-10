@@ -1,6 +1,3 @@
-// useFirebase Hook (T017)
-// Wraps firebase-driver for phone OTP auth in components
-
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -18,11 +15,6 @@ interface UseFirebaseReturn {
   reset: () => void;
 }
 
-/**
- * Purpose: Executes useFirebase functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useFirebase(): UseFirebaseReturn {
   const [isSending, setIsSending] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);

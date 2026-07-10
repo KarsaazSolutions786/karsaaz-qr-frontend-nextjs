@@ -87,13 +87,6 @@ export interface GuestAnalytics {
   daily_trend: { date: string; sessions: number }[]
 }
 
-// ── Guest API Client helper ────────────────────────────────────────────────────
-
-/**
- * Purpose: Retrieves guestheaders.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 type GuestRequestConfig = { headers?: Record<string, string>; _silent?: boolean }
 
 export function getGuestHeaders(): Record<string, string> {

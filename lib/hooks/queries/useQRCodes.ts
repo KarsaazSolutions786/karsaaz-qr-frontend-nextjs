@@ -6,11 +6,7 @@ import { guestAPI } from '@/lib/api/endpoints/guest'
 import { queryKeys } from '@/lib/query/keys'
 import { useGuest } from '@/lib/hooks/useGuest'
 
-/**
- * Purpose: Executes useQRCodes functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useQRCodes(params: ListQRCodesParams = {}) {
   const { isGuest, isGuestLoading } = useGuest()
 
@@ -65,12 +61,6 @@ export function useQRCodes(params: ListQRCodesParams = {}) {
   })
 }
 
-// QR Code Analytics hook
-/**
- * Purpose: Executes useQRCodeAnalytics functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useQRCodeAnalytics(qrCodeId: number | string | undefined) {
   return useQuery({
     queryKey: queryKeys.qrcodes.analytics(String(qrCodeId || '')),
@@ -80,12 +70,6 @@ export function useQRCodeAnalytics(qrCodeId: number | string | undefined) {
   })
 }
 
-// QR Code Link Settings hook
-/**
- * Purpose: Executes useQRLinkSettings functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useQRLinkSettings(qrCodeId: string | undefined, options?: { enabled?: boolean }) {
   const { isGuest, isGuestLoading } = useGuest()
   return useQuery({

@@ -28,12 +28,6 @@ export const API_TIMEOUTS = {
   UPLOAD: 180000, // 180s — file uploads
 } as const
 
-// Route-specific timeout mapping
-/**
- * Purpose: Retrieves timeoutforurl.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 const getTimeoutForUrl = (url?: string): number => {
   if (!url) return API_TIMEOUTS.DEFAULT
   if (/\/(login|register|logout|verify-otp|forgot-password|reset-password)/.test(url))
@@ -44,12 +38,6 @@ const getTimeoutForUrl = (url?: string): number => {
   return API_TIMEOUTS.DEFAULT
 }
 
-// Check if on slow connection and double timeout
-/**
- * Purpose: Executes adjustForSlowConnection functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 const adjustForSlowConnection = (timeout: number): number => {
   if (typeof navigator === 'undefined') return timeout
   const conn = (navigator as any).connection
@@ -72,14 +60,10 @@ function handleUnauthorizedResponse(config?: InternalAxiosRequestConfig): void {
   localStorage.removeItem('user')
   localStorage.removeItem('logged_in')
 
-  // An active guest on a guest-capable page keeps working — the 401 came from a stale
-  // registered-user credential (e.g. expired auth_token cookie), not the guest session.
   const isGuestCapablePage = /^\/(guest|qrcodes)(\/|$)/.test(window.location.pathname)
   if (isGuestCapablePage && localStorage.getItem('guest_session_token')) return
 
   if (!window.location.pathname.startsWith('/login')) {
-    // reason=session_expired tells the middleware to clear the stale httpOnly cookie
-    // and NOT bounce this request back to the dashboard (prevents a reload loop).
     window.location.href = '/login?reason=session_expired'
   }
 }
@@ -94,10 +78,6 @@ const apiClient: AxiosInstance = axios.create({
   withCredentials: true, // Send cookies with requests
 })
 
-// Request interceptor: Attach JWT Bearer token and smart timeout.
-//
-// Primary auth: Bearer token from localStorage (works across localhost/LAN origins).
-// Fallback: httpOnly `auth_token` cookie when same-site (withCredentials: true).
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (typeof window !== 'undefined') {
@@ -107,16 +87,13 @@ apiClient.interceptors.request.use(
       }
     }
 
-    // Let browser set Content-Type with boundary for FormData uploads
     if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
       config.headers.delete('Content-Type')
     }
 
-    // Smart timeout: route-specific + slow-connection adjustment (T020)
     const routeTimeout = getTimeoutForUrl(config.url)
     config.timeout = adjustForSlowConnection(routeTimeout)
 
-    // Optional: Add request timestamp for debugging
     if (process.env.NODE_ENV === 'development') {
       console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`)
     }
@@ -131,10 +108,8 @@ apiClient.interceptors.request.use(
   }
 )
 
-// Response interceptor: Handle errors and token refresh
 apiClient.interceptors.response.use(
   response => {
-    // Successful response — dismiss any stale network-error toasts since the connection is fine.
     toast.dismiss('api-network-error')
     toast.dismiss('api-timeout')
 
@@ -146,8 +121,6 @@ apiClient.interceptors.response.use(
     return response
   },
   async (error: AxiosError) => {
-    // Ignore canceled requests — React Query cancels stale/duplicate requests via
-    // AbortController as normal behaviour. These are NOT errors.
     if (axios.isCancel(error) || error.code === 'ERR_CANCELED' || error.message === 'canceled') {
       return Promise.reject(error)
     }
@@ -164,7 +137,6 @@ apiClient.interceptors.response.use(
       return Promise.reject(apiError)
     }
 
-    // Handle 429 Too Many Requests — show rate-limit toast (unless silenced)
     if (error.response?.status === 429) {
       if (!originalRequest._silent) {
         toast.error(apiError.message, { id: 'api-rate-limit' })
@@ -172,7 +144,6 @@ apiClient.interceptors.response.use(
       return Promise.reject(apiError)
     }
 
-    // Show user-friendly toast for all other API errors (unless silenced)
     if (!originalRequest._silent && error.response) {
       const status = error.response.status
 

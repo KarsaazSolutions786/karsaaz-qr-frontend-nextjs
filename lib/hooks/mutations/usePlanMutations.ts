@@ -5,11 +5,7 @@ import { plansAPI } from '@/lib/api/endpoints/plans'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateSubscriptionPlanRequest } from '@/types/entities/plan'
 
-/**
- * Purpose: Executes useCreatePlan functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useCreatePlan() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -23,11 +19,6 @@ export function useCreatePlan() {
   })
 }
 
-/**
- * Purpose: Executes useUpdatePlan functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useUpdatePlan() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -41,11 +32,6 @@ export function useUpdatePlan() {
   })
 }
 
-/**
- * Purpose: Executes useDeletePlan functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDeletePlan() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -57,11 +43,7 @@ export function useDeletePlan() {
   })
 }
 
-/**
- * Purpose: Executes useDuplicatePlan functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useDuplicatePlan() {
   const queryClient = useQueryClient()
   return useMutation({

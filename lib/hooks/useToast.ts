@@ -23,11 +23,6 @@ const DEFAULT_DURATION = {
   default: 3000,
 }
 
-/**
- * Purpose: useToast hook - provides a consistent toast API wrapping sonner Compatible with the toast patterns from Project 1
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useToast() {
   const toast = useCallback((message: string, options?: ToastOptions) => {
@@ -100,7 +95,6 @@ export function useToast() {
     sonnerToast.dismiss()
   }, [])
 
-  // API Error handler - compatible with Project 1's showApiError
   const showApiError = useCallback(
     (apiError: { message?: string; response?: { status?: number } }) => {
       const message = apiError.message || 'An unexpected error occurred'
@@ -111,7 +105,6 @@ export function useToast() {
     []
   )
 
-  // Validation error handler - compatible with Project 1's showValidationError
   const showValidationError = useCallback(
     (validationError: { message?: string; errors?: Record<string, string[]> }) => {
       let message = validationError.message || 'Validation failed'
@@ -146,39 +139,12 @@ export function useToast() {
   }
 }
 
-// Static methods for use outside of components (like in API clients)
-/**
- * Purpose: Executes showToast functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export const showToast = (message: string) => sonnerToast(message)
-/**
- * Purpose: Executes showSuccessToast functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export const showSuccessToast = (message: string) => sonnerToast.success(message)
-/**
- * Purpose: Executes showErrorToast functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export const showErrorToast = (message: string | Error) => {
   const msg = message instanceof Error ? message.message : message
   return sonnerToast.error(msg, { duration: DEFAULT_DURATION.error })
 }
-/**
- * Purpose: Executes showWarningToast functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export const showWarningToast = (message: string) => sonnerToast.warning(message)
-/**
- * Purpose: Executes showInfoToast functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export const showInfoToast = (message: string) => sonnerToast.info(message)
-
 export default useToast

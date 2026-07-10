@@ -669,54 +669,28 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
         )}
       </div>
 
-      {(renderPreviewSvg || renderPreviewError) && (
-        <div className="mt-3 rounded-lg border border-gray-200 bg-white p-3">
-          <p className="mb-2 text-xs font-semibold text-gray-700">
-            {t('Actual render preview')} —{' '}
-            {t('this is what a real QR code looks like with this asset applied')}
-          </p>
-          {renderPreviewSvg ? (
-            <div
-              className="flex h-40 w-40 items-center justify-center rounded border border-gray-100 bg-gray-50 mx-auto"
-              dangerouslySetInnerHTML={{ __html: renderPreviewSvg }}
-            />
-          ) : (
-            <p className="text-xs text-amber-600">{renderPreviewError}</p>
-          )}
-          <button
-            type="button"
-            onClick={onClose}
-            className="mt-3 w-full rounded bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
-          >
-            {t('Done')}
-          </button>
-        </div>
-      )}
-
-      {!renderPreviewSvg && !renderPreviewError && (
-        <div className="mt-3 flex items-center gap-2">
-          <button
-            type="submit"
-            disabled={isSubmitting || !slug.trim() || !label.trim()}
-            className="rounded bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {uploading
-              ? t('Uploading...')
-              : createMutation.isPending
-                ? t('Adding...')
-                : t('Add Asset')}
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isSubmitting}
-            className="rounded border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
-          >
-            {t('Cancel')}
-          </button>
-          {error && <span className="text-xs text-red-600">{error}</span>}
-        </div>
-      )}
+      <div className="mt-3 flex items-center gap-2">
+        <button
+          type="submit"
+          disabled={isSubmitting || !slug.trim() || !label.trim()}
+          className="rounded bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {uploading
+            ? t('Uploading...')
+            : createMutation.isPending
+              ? t('Adding...')
+              : t('Add Asset')}
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={isSubmitting}
+          className="rounded border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+        >
+          {t('Cancel')}
+        </button>
+        {error && <span className="text-xs text-red-600">{error}</span>}
+      </div>
     </form>
   )
 }
@@ -970,7 +944,7 @@ function AssetTable({ type }: { type: DesignAssetType }) {
         {canAddNew && (
           <button
             onClick={() => setShowAddForm(true)}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-3 py-1.5 text-sm font-medium text-white hover:brightness-105 transition-all shadow-sm"
           >
             <PlusIcon className="h-4 w-4" />
             {t('Add Asset')}

@@ -2,11 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { transactionsAPI } from '@/lib/api/endpoints/transactions'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: Executes useApproveTransaction functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useApproveTransaction() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -17,11 +12,7 @@ export function useApproveTransaction() {
   })
 }
 
-/**
- * Purpose: Executes useRejectTransaction functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useRejectTransaction() {
   const queryClient = useQueryClient()
   return useMutation({

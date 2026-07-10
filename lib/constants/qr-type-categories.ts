@@ -93,20 +93,10 @@ for (const cat of QR_TYPE_CATEGORIES) {
   }
 }
 
-/**
- * Purpose: Retrieves categoryfortype.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function getCategoryForType(typeId: string): string {
   return categoryByTypeId.get(typeId) ?? 'all'
 }
 
-/**
- * Purpose: Executes filterQrTypes functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function filterQrTypes(
   types: QRCodeTypeDefinition[],
   categoryId: string,
@@ -131,11 +121,6 @@ export function filterQrTypes(
   })
 }
 
-/**
- * Purpose: Executes countTypesPerCategory functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function countTypesPerCategory(
   types: QRCodeTypeDefinition[],
   keyword: string

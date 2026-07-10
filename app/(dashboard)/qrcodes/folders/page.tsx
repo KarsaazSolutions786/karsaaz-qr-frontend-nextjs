@@ -330,14 +330,6 @@ export default function QRCodesFoldersPage() {
                     {paginationMeta.total} {t('QR codes in this folder')}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => router.push(`/qrcodes/new?folder_id=${selectedFolderId}`)}
-                  className="inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t('Create QR Code')}
-                </button>
               </div>
 
               <div className="mb-6 space-y-4">

@@ -4,11 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { trashAPI, TrashListParams } from '@/lib/api/endpoints/trash'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: * Fetch paginated trashed QR codes. 
- * Owner/Author: Syed Ashhad
- * Created/Updated: May 2026
- */
 
 export function useTrashList(params: TrashListParams = {}) {
   return useQuery({
@@ -18,11 +13,6 @@ export function useTrashList(params: TrashListParams = {}) {
   })
 }
 
-/**
- * Purpose: * Fetch the user's trash settings. 
- * Owner/Author: Syed Ashhad
- * Created/Updated: May 2026
- */
 
 export function useTrashSettings() {
   return useQuery({
@@ -32,11 +22,6 @@ export function useTrashSettings() {
   })
 }
 
-/**
- * Purpose: * Restore a single QR code from trash. 
- * Owner/Author: Syed Ashhad
- * Created/Updated: May 2026
- */
 
 export function useRestoreQRCode() {
   const queryClient = useQueryClient()
@@ -49,11 +34,6 @@ export function useRestoreQRCode() {
   })
 }
 
-/**
- * Purpose: * Restore multiple QR codes from trash. 
- * Owner/Author: Syed Ashhad
- * Created/Updated: May 2026
- */
 
 export function useRestoreManyQRCodes() {
   const queryClient = useQueryClient()
@@ -66,11 +46,6 @@ export function useRestoreManyQRCodes() {
   })
 }
 
-/**
- * Purpose: * Permanently delete a single QR code from trash. 
- * Owner/Author: Syed Ashhad
- * Created/Updated: May 2026
- */
 
 export function useDestroyTrashedQRCode() {
   const queryClient = useQueryClient()
@@ -82,11 +57,6 @@ export function useDestroyTrashedQRCode() {
   })
 }
 
-/**
- * Purpose: * Permanently delete multiple QR codes from trash. 
- * Owner/Author: Syed Ashhad
- * Created/Updated: May 2026
- */
 
 export function useDestroyManyTrashedQRCodes() {
   const queryClient = useQueryClient()
@@ -98,11 +68,6 @@ export function useDestroyManyTrashedQRCodes() {
   })
 }
 
-/**
- * Purpose: * Empty the entire trash. 
- * Owner/Author: Syed Ashhad
- * Created/Updated: May 2026
- */
 
 export function useEmptyTrash() {
   const queryClient = useQueryClient()
@@ -114,11 +79,6 @@ export function useEmptyTrash() {
   })
 }
 
-/**
- * Purpose: * Update the user's trash settings (auto-delete and/or storage limit). 
- * Owner/Author: Syed Ashhad
- * Created/Updated: May 2026
- */
 
 export function useUpdateTrashSettings() {
   const queryClient = useQueryClient()

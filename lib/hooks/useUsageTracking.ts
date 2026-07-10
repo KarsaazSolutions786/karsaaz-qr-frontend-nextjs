@@ -6,11 +6,6 @@ interface TrackingOptions {
   onError?: (error: Error) => void;
 }
 
-/**
- * Purpose: Executes useUsageTracking functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useUsageTracking(options: TrackingOptions = {}) {
   const { autoTrack = true, onError } = options;
 

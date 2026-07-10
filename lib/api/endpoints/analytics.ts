@@ -15,7 +15,6 @@ import type {
 import { dateRangeToQueryParams } from '@/lib/utils/date-range'
 import { PaginatedResponse } from '@/types/api'
 
-// --- Advanced Analytics Types ---
 
 export interface FunnelStep {
   name: string
@@ -53,7 +52,6 @@ export interface ABTestData {
   winner?: string
 }
 
-// --- Advanced Analytics API ---
 
 export const advancedAnalyticsAPI = {
   getFunnels: async (params?: { period?: string }): Promise<FunnelData[]> => {
@@ -93,12 +91,6 @@ export const advancedAnalyticsAPI = {
   },
 }
 
-// Helper to fetch a single report from the backend
-/**
- * Purpose: Executes fetchReport functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 async function fetchReport(qrcodeId: number, slug: string, dateRange?: DateRange) {
   const params: Record<string, string> = {}
   if (dateRange) {
@@ -111,7 +103,6 @@ async function fetchReport(qrcodeId: number, slug: string, dateRange?: DateRange
 }
 
 export const analyticsAPI = {
-  // Get analytics overview — endpoint may not exist yet; return empty on 404
   getOverview: async (dateRange: DateRange): Promise<AnalyticsOverview | null> => {
     try {
       const params = dateRangeToQueryParams(dateRange)
@@ -125,9 +116,7 @@ export const analyticsAPI = {
     }
   },
 
-  // Get QR code specific stats — aggregated from backend report endpoints
   getQRCodeStats: async (qrcodeId: number, dateRange: DateRange): Promise<QRCodeStats> => {
-    // Fetch all reports in parallel (including city data)
     const [mainReport, scansPerDay, scansPerCountry, scansPerCity, scansPerBrowser, scansPerOS, scansPerDevice] =
       await Promise.allSettled([
         fetchReport(qrcodeId, 'main', dateRange),
@@ -155,15 +144,6 @@ export const analyticsAPI = {
         ? (dayData as RawScanRow[]).reduce((sum: number, d) => sum + (d.scans ?? 0), 0)
         : 0)
     const uniqueScans: number = (mainData as RawScanRow | null)?.unique_scans ?? totalScans
-
-    // Helper to convert raw breakdown array to BreakdownItem[] with percentages
-    /**
-     * Purpose: Executes toBreakdown functionality.
-     * Owner/Author: Syed Ashhad
-     * Created: February 2026
-     * Last Editor: Syed Ashhad
-     * Last Updated: May 2026
-     */
     function toBreakdown(arr: RawScanRow[], labelField: string): BreakdownItem[] {
       if (!Array.isArray(arr) || arr.length === 0) return []
       const total = arr.reduce((s: number, d) => s + (d.scans ?? 0), 0)
@@ -175,15 +155,6 @@ export const analyticsAPI = {
           percentage: total > 0 ? Math.round(((d.scans ?? 0) / total) * 100) : 0,
         }))
     }
-
-    // Convert country data with ISO codes
-    /**
-     * Purpose: Executes toCountryBreakdown functionality.
-     * Owner/Author: Syed Ashhad
-     * Created: February 2026
-     * Last Editor: Syed Ashhad
-     * Last Updated: May 2026
-     */
     function toCountryBreakdown(arr: RawScanRow[]): CountryBreakdownItem[] {
       if (!Array.isArray(arr) || arr.length === 0) return []
       const total = arr.reduce((s: number, d) => s + (d.scans ?? 0), 0)
@@ -197,15 +168,6 @@ export const analyticsAPI = {
         }))
         .sort((a, b) => b.value - a.value)
     }
-
-    // Convert city data
-    /**
-     * Purpose: Executes toCityBreakdown functionality.
-     * Owner/Author: Syed Ashhad
-     * Created: February 2026
-     * Last Editor: Syed Ashhad
-     * Last Updated: May 2026
-     */
     function toCityBreakdown(arr: RawScanRow[]): CityBreakdownItem[] {
       if (!Array.isArray(arr) || arr.length === 0) return []
       const total = arr.reduce((s: number, d) => s + (d.scans ?? 0), 0)
@@ -290,7 +252,6 @@ export const analyticsAPI = {
     }
   },
 
-  // Get top performing QR codes — endpoint may not exist yet; return empty on 404
   getTopQRCodes: async (
     dateRange: DateRange,
     limit: number = 10
@@ -310,7 +271,6 @@ export const analyticsAPI = {
     }
   },
 
-  // Compare multiple QR codes
   compareQRCodes: async (
     qrcodeIds: number[],
     dateRange: DateRange

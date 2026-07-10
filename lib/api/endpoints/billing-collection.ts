@@ -9,10 +9,6 @@ export interface BillingCollectionForm {
 }
 
 export const billingCollectionAPI = {
-  /**
-   * Check if billing collection is enabled
-   * GET /api/billing-collection/is-enabled
-   */
   isEnabled: async (): Promise<boolean> => {
     const response = await apiClient.get<BillingCollectionStatus>(
       '/billing-collection/is-enabled'

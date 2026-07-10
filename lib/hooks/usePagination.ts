@@ -32,11 +32,6 @@ export interface UsePaginationReturn {
   getPageNumbers: (maxVisible?: number) => (number | 'ellipsis')[];
 }
 
-/**
- * Purpose: Executes usePagination functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function usePagination({
   initialPage = 1,
   initialPageSize = 10,
@@ -49,8 +44,6 @@ export function usePagination({
 }: UsePaginationOptions): UsePaginationReturn {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // Initialize from URL if syncing
   const urlPage = syncWithUrl ? parseInt(searchParams.get(pageParam) || '1', 10) : initialPage;
   const urlPageSize = syncWithUrl
     ? parseInt(searchParams.get(pageSizeParam) || String(initialPageSize), 10)
@@ -59,12 +52,11 @@ export function usePagination({
   const [currentPage, setCurrentPage] = useState(Math.max(1, urlPage));
   const [pageSize, setPageSizeState] = useState(Math.max(1, urlPageSize));
 
-  // Calculate total pages
+
   const totalPages = useMemo(() => {
     return Math.max(1, Math.ceil(totalItems / pageSize));
   }, [totalItems, pageSize]);
 
-  // Sync with URL
   useEffect(() => {
     if (syncWithUrl) {
       const params = new URLSearchParams(searchParams.toString());
@@ -73,19 +65,14 @@ export function usePagination({
       router.push(`?${params.toString()}`, { scroll: false });
     }
   }, [currentPage, pageSize, syncWithUrl, pageParam, pageSizeParam, router, searchParams]);
-
-  // Auto-adjust page if it exceeds total pages
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
 
-  // Calculate indices
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, totalItems);
-
-  // Navigation helpers
   const hasNextPage = currentPage < totalPages;
   const hasPreviousPage = currentPage > 1;
   const isFirstPage = currentPage === 1;
@@ -140,23 +127,22 @@ export function usePagination({
       const pages: (number | 'ellipsis')[] = [];
       const sidePages = Math.floor((maxVisible - 3) / 2);
 
-      // Always show first page
       pages.push(1);
 
       if (currentPage <= sidePages + 2) {
-        // Near the start
+
         for (let i = 2; i <= maxVisible - 2; i++) {
           pages.push(i);
         }
         pages.push('ellipsis');
       } else if (currentPage >= totalPages - sidePages - 1) {
-        // Near the end
+
         pages.push('ellipsis');
         for (let i = totalPages - (maxVisible - 3); i < totalPages; i++) {
           pages.push(i);
         }
       } else {
-        // In the middle
+
         pages.push('ellipsis');
         for (let i = currentPage - sidePages; i <= currentPage + sidePages; i++) {
           pages.push(i);
@@ -164,7 +150,7 @@ export function usePagination({
         pages.push('ellipsis');
       }
 
-      // Always show last page
+
       pages.push(totalPages);
 
       return pages;

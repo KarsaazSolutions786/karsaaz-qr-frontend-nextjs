@@ -2,12 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { pagesAPI } from '@/lib/api/endpoints/pages'
 import { queryKeys } from '@/lib/query/keys'
 
-// Get all pages
-/**
- * Purpose: Executes usePages functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function usePages(params?: { page?: number; search?: string }) {
   return useQuery({
     queryKey: queryKeys.pages.list(params),
@@ -16,12 +10,6 @@ export function usePages(params?: { page?: number; search?: string }) {
   })
 }
 
-// Get single page
-/**
- * Purpose: Executes usePage functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function usePage(id: number) {
   return useQuery({
     queryKey: queryKeys.pages.detail(id),

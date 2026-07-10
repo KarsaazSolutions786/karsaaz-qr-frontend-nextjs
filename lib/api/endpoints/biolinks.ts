@@ -23,7 +23,6 @@ export interface BiolinksAnalyticsResponse {
 }
 
 export const biolinksAPI = {
-  // Get all biolinks for the authenticated user — endpoint may not exist yet
   getAll: async (params?: {
     page?: number
     perPage?: number
@@ -40,37 +39,31 @@ export const biolinksAPI = {
     }
   },
 
-  // Get a single biolink by ID
   getById: async (id: number): Promise<Biolink> => {
     const response = await apiClient.get(`/biolinks/${id}`)
     return response.data.data
   },
 
-  // Get a biolink by slug (public view)
   getBySlug: async (slug: string): Promise<Biolink> => {
     const response = await apiClient.get(`/biolinks/slug/${slug}`)
     return response.data.data
   },
 
-  // Create a new biolink
   create: async (data: CreateBiolinkRequest): Promise<Biolink> => {
     const response = await apiClient.post('/biolinks', data)
     return response.data.data
   },
 
-  // Update an existing biolink
   update: async (data: UpdateBiolinkRequest): Promise<Biolink> => {
     const { id, ...updateData } = data
     const response = await apiClient.put(`/biolinks/${id}`, updateData)
     return response.data.data
   },
 
-  // Delete a biolink
   delete: async (id: number): Promise<void> => {
     await apiClient.delete(`/biolinks/${id}`)
   },
 
-  // Publish/unpublish a biolink
   togglePublish: async (id: number, isPublished: boolean): Promise<Biolink> => {
     const response = await apiClient.patch(`/biolinks/${id}/publish`, {
       isPublished,
@@ -78,7 +71,6 @@ export const biolinksAPI = {
     return response.data.data
   },
 
-  // Get biolinks analytics
   getAnalytics: async (
     id: number,
     params?: {
@@ -91,7 +83,6 @@ export const biolinksAPI = {
     return response.data
   },
 
-  // Track biolinks view (public endpoint)
   trackView: async (
     biolinksId: string,
     metadata?: {
@@ -103,7 +94,6 @@ export const biolinksAPI = {
     await apiClient.post(`/public/biolinks/${biolinksId}/track-view`, metadata)
   },
 
-  // Track block click (public endpoint)
   trackBlockClick: async (
     biolinksId: string,
     blockId: string,
@@ -115,13 +105,11 @@ export const biolinksAPI = {
     await apiClient.post(`/public/biolinks/${biolinksId}/blocks/${blockId}/track-click`, metadata)
   },
 
-  // Clone biolinks
   clone: async (id: number): Promise<Biolink> => {
     const response = await apiClient.post(`/biolinks/${id}/clone`)
     return response.data.data
   },
 
-  // Export biolinks data
   export: async (id: number): Promise<Blob> => {
     const response = await apiClient.get(`/biolinks/${id}/export`, {
       responseType: 'blob',
@@ -129,13 +117,11 @@ export const biolinksAPI = {
     return response.data
   },
 
-  // Get biolinks templates
   getTemplates: async (): Promise<Biolink[]> => {
     const response = await apiClient.get('/biolinks/templates')
     return response.data.data
   },
 
-  // Create biolinks from template
   createFromTemplate: async (templateId: string, qrCodeId: string): Promise<Biolink> => {
     const response = await apiClient.post('/biolinks/from-template', {
       templateId,
@@ -145,7 +131,6 @@ export const biolinksAPI = {
   },
 }
 
-// React Query keys for caching
 export const biolinksKeys = {
   all: ['biolinks'] as const,
   lists: () => [...biolinksKeys.all, 'list'] as const,

@@ -1,11 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { blogPostsAPI } from '@/lib/api/endpoints/blog-posts'
 
-/**
- * Purpose: T241: Query hook for fetching public (published) blog posts. Used on the public-facing blog landing page.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function usePublicBlogPosts(params?: { page?: number }) {
   return useQuery({

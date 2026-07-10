@@ -1,10 +1,3 @@
-/**
- * useQRActions Hook
- *
- * Hook for managing QR code actions using real API calls.
- * Uses qrcodesAPI endpoints for duplicate, archive, transfer, PIN, etc.
- */
-
 'use client'
 
 import { useState, useCallback } from 'react'
@@ -36,11 +29,6 @@ export interface PINProtectionOptions {
   expiresAt?: Date
 }
 
-/**
- * Purpose: Executes useQRActions functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useQRActions() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -54,9 +42,6 @@ export function useQRActions() {
     ])
   }, [queryClient])
 
-  /**
-   * Duplicate / Clone a single QR code
-   */
   const duplicateQRCode = useCallback(
     async (qrCodeId: string, _options: DuplicateOptions = {}) => {
       setIsProcessing(true)
@@ -77,9 +62,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Bulk duplicate QR codes (sequential copy calls)
-   */
   const bulkDuplicateQRCodes = useCallback(
     async (qrCodeIds: string[], _options: DuplicateOptions = {}) => {
       setIsProcessing(true)
@@ -105,9 +87,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Archive a single QR code
-   */
   const archiveQRCode = useCallback(
     async (qrCodeId: string, _options: ArchiveOptions = {}): Promise<void> => {
       setIsProcessing(true)
@@ -127,9 +106,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Bulk archive QR codes
-   */
   const bulkArchiveQRCodes = useCallback(
     async (qrCodeIds: string[], _options: ArchiveOptions = {}): Promise<void> => {
       setIsProcessing(true)
@@ -149,9 +125,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Unarchive a single QR code
-   */
   const unarchiveQRCode = useCallback(
     async (qrCodeId: string): Promise<void> => {
       setIsProcessing(true)
@@ -171,9 +144,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Bulk unarchive QR codes
-   */
   const bulkUnarchiveQRCodes = useCallback(
     async (qrCodeIds: string[]): Promise<void> => {
       setIsProcessing(true)
@@ -194,9 +164,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Change QR code status (activate/deactivate)
-   */
   const changeStatus = useCallback(
     async (qrCodeId: string, status: 'active' | 'inactive'): Promise<void> => {
       setIsProcessing(true)
@@ -216,9 +183,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Bulk change status
-   */
   const bulkChangeStatus = useCallback(
     async (qrCodeIds: string[], status: 'active' | 'inactive'): Promise<void> => {
       setIsProcessing(true)
@@ -238,9 +202,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Delete a single QR code
-   */
   const deleteQRCode = useCallback(
     async (qrCodeId: string): Promise<void> => {
       setIsProcessing(true)
@@ -260,9 +221,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Bulk delete QR codes
-   */
   const bulkDeleteQRCodes = useCallback(
     async (qrCodeIds: string[]): Promise<void> => {
       setIsProcessing(true)
@@ -282,9 +240,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Transfer QR code ownership
-   */
   const transferQRCode = useCallback(
     async (qrCodeId: string, options: TransferOptions): Promise<void> => {
       setIsProcessing(true)
@@ -308,9 +263,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Add PIN protection
-   */
   const addPINProtection = useCallback(
     async (qrCodeId: string, options: PINProtectionOptions): Promise<void> => {
       setIsProcessing(true)
@@ -340,9 +292,7 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Remove PIN protection
-   */
+
   const removePINProtection = useCallback(
     async (qrCodeId: string, _currentPin?: string): Promise<void> => {
       setIsProcessing(true)
@@ -362,9 +312,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Update PIN
-   */
   const updatePIN = useCallback(
     async (
       qrCodeId: string,
@@ -397,9 +344,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Convert QR code type
-   */
   const convertQRType = useCallback(
     async (qrCodeId: string, newType: string, newData: Record<string, unknown>): Promise<void> => {
       setIsProcessing(true)
@@ -422,9 +366,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Move QR codes to folder — updates each QR code's folder_id
-   */
   const moveToFolder = useCallback(
     async (qrCodeIds: string[], folderId: string | null): Promise<void> => {
       setIsProcessing(true)
@@ -445,9 +386,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-  /**
-   * Download QR code image
-   */
   const downloadQRCode = useCallback(
     async (qrCodeId: string, format: 'png' | 'svg' = 'png', filename?: string): Promise<void> => {
       setIsProcessing(true)
@@ -474,9 +412,6 @@ export function useQRActions() {
     []
   )
 
-  /**
-   * Bulk download QR codes as individual files
-   */
   const bulkDownloadQRCodes = useCallback(
     async (qrCodeIds: string[], format: 'png' | 'svg' = 'png'): Promise<void> => {
       setIsProcessing(true)
@@ -542,11 +477,6 @@ export function useQRActions() {
   }
 }
 
-/**
- * Purpose: Validate PIN format
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function validatePIN(pin: string): { valid: boolean; error?: string } {
   if (!pin) {

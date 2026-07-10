@@ -1,8 +1,3 @@
-/**
- * T311 — Centralized Environment Configuration
- * Single source of truth for all NEXT_PUBLIC_ environment variables.
- */
-
 interface EnvConfig {
   /** Backend API base URL (no /api suffix) */
   API_URL: string
@@ -24,21 +19,11 @@ interface EnvConfig {
   NODE_ENV: string
 }
 
-/**
- * Purpose: Executes parseBool functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 function parseBool(value: string | undefined, fallback: boolean): boolean {
   if (value === undefined || value === '') return fallback
   return value === 'true' || value === '1'
 }
 
-/**
- * Purpose: Executes buildEnvConfig functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 function resolveCanonicalUrl(appUrl: string): string {
   const explicit = process.env.NEXT_PUBLIC_CANONICAL_URL
   if (explicit) return explicit
@@ -66,11 +51,6 @@ function buildEnvConfig(): EnvConfig {
   }
 }
 
-/**
- * Purpose: Validate that required environment variables are set. Logs warnings in development; can be called at app startup.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function validateEnv(): string[] {
   const missing: string[] = []
@@ -104,5 +84,4 @@ export function validateEnv(): string[] {
   return missing
 }
 
-/** Frozen, typed environment configuration */
 export const envConfig: Readonly<EnvConfig> = Object.freeze(buildEnvConfig())

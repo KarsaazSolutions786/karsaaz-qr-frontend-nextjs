@@ -124,7 +124,7 @@ export function PlanCheckpoints({ checkpoints, onChange }: PlanCheckpointsProps)
                   type="text"
                   value={cp.text}
                   onChange={(e) => updateText(cp.id, e.target.value)}
-                  className="flex-1 rounded border border-gray-200 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="flex-1 rounded border border-gray-200 px-2 py-1 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                 />
                 <button
                   type="button"
@@ -159,13 +159,13 @@ export function PlanCheckpoints({ checkpoints, onChange }: PlanCheckpointsProps)
           onChange={(e) => setNewText(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t('Add new checkpoint (e.g. QR Limit: 10)')}
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
         />
         <button
           type="button"
           onClick={addCheckpoint}
           disabled={!newText.trim()}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 transition-all shadow-sm"
         >
           {t('Add')}
         </button>
