@@ -5,6 +5,7 @@
  */
 
 import { ModuleShape, FinderStyle, FinderDotStyle } from '@/types/entities/designer'
+import type { DesignAssetEngineContract } from '@/types/entities/design-asset'
 
 // ============================================================
 // Module Shapes (15) — matches legacy module-fields.js
@@ -80,6 +81,8 @@ export interface OutlinedShape {
   id?: number
   version?: number
   source?: 'uploaded' | 'built_in'
+  /** Engine contract (design-assets-engine-redesign) — undefined for hardcoded fallback constants */
+  engine?: DesignAssetEngineContract | null
 }
 
 export const OUTLINED_SHAPES: OutlinedShape[] = [
@@ -169,6 +172,8 @@ export interface AdvancedShape {
   checksum?: string | null
   /** How the backend renders this sticker (V2 registry); svg_template = server render */
   renderMode?: string
+  /** Engine contract (design-assets-engine-redesign) — undefined for hardcoded fallback constants */
+  engine?: DesignAssetEngineContract | null
 }
 
 export const ADVANCED_SHAPES: AdvancedShape[] = [

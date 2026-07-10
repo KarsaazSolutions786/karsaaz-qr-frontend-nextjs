@@ -47,6 +47,7 @@ function toOutlinedShape(asset: DesignAsset): OutlinedShape {
     id: asset.id,
     version,
     source,
+    engine: asset.engine ?? null,
   }
 }
 
@@ -64,8 +65,8 @@ function toAdvancedShape(asset: DesignAsset): AdvancedShape {
   return {
     value: asset.slug,
     label: asset.label,
-    hasText: (meta?.hasText as boolean) ?? false,
-    textLines: (meta?.textLines as number) ?? 0,
+    hasText: asset.engine?.capabilities.supportsText ?? (meta?.hasText as boolean) ?? false,
+    textLines: asset.engine?.controls.textLines ?? (meta?.textLines as number) ?? 0,
     // Version query busts browser/CDN caches when the template (and its
     // regenerated thumbnail) changes
     image: baseImage ? `${baseImage}${baseImage.includes('?') ? '&' : '?'}v=${version}` : undefined,
@@ -73,7 +74,8 @@ function toAdvancedShape(asset: DesignAsset): AdvancedShape {
     version,
     source,
     checksum: asset.checksum ?? null,
-    renderMode: (meta?.renderMode as string) ?? 'svg_template',
+    renderMode: asset.engine?.renderMode ?? (meta?.renderMode as string) ?? 'svg_template',
+    engine: asset.engine ?? null,
   }
 }
 

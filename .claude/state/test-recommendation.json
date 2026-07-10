@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-02T08:53:20Z",
-  "changed_file": "tests/unit/api/guest-api.test.ts",
+  "timestamp": "2026-07-08T10:43:00Z",
+  "changed_file": "lib/hooks/useDesignShapes.ts",
   "test_command": "npx vitest run --reporter=verbose",
   "related_test": "",
   "recommendation": "テストの実行を推奨します"

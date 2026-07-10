@@ -38,3 +38,12 @@
 {"file":"lib/api/endpoints/storage.ts","action":"Edit","timestamp":"2026-07-02T08:49:38Z","important":false}
 {"file":"tests/unit/api/guest-api.test.ts","action":"Edit","timestamp":"2026-07-02T08:52:06Z","important":true}
 {"file":"C:/Users/PC/.claude/projects/C--Dev-karsaaz-qr/memory/guest-mode-reload-loop.md","action":"Write","timestamp":"2026-07-02T08:53:58Z","important":false}
+{"file":"C:/Dev/karsaaz qr/Plans.md","action":"Edit","timestamp":"2026-07-08T10:37:24Z","important":true}
+{"file":"C:/Dev/karsaaz qr/qr-code-backend/app/Models/DesignAsset.php","action":"Edit","timestamp":"2026-07-08T10:38:25Z","important":false}
+{"file":"types/entities/design-asset.ts","action":"Edit","timestamp":"2026-07-08T10:40:25Z","important":false}
+{"file":"lib/constants/qr-shapes.ts","action":"Edit","timestamp":"2026-07-08T10:41:21Z","important":false}
+{"file":"lib/hooks/useDesignShapes.ts","action":"Edit","timestamp":"2026-07-08T10:42:23Z","important":false}
+{"file":"C:/Dev/karsaaz qr/Bugs/design-assets-engine-redesign/00-audit.md","action":"Edit","timestamp":"2026-07-08T10:52:46Z","important":false}
+{"file":"C:/Dev/karsaaz qr/ks_qr/lib/data/models/design_asset_model.dart","action":"Edit","timestamp":"2026-07-08T10:56:15Z","important":false}
+{"file":"C:/Dev/karsaaz qr/ks_qr/lib/core/database/ksqr_database.dart","action":"Edit","timestamp":"2026-07-08T10:58:53Z","important":false}
+{"file":"C:/Dev/karsaaz qr/ks_qr/test/unit/models/design_asset_model_test.dart","action":"Write","timestamp":"2026-07-08T11:33:28Z","important":false}

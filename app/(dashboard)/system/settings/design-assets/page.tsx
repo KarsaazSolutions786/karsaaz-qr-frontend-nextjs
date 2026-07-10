@@ -37,6 +37,7 @@ import { showSuccessToast, showErrorToast } from '@/lib/hooks/useToast'
 import { RenderConfigEditor } from '@/components/admin/RenderConfigEditor'
 import type { RenderConfig } from '@/components/admin/RenderConfigEditor'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { sanitizeSvg } from '@/lib/utils/dom-safety'
 
 const ASSET_TABS: { value: DesignAssetType; label: string }[] = [
   { value: 'module_style', label: 'Module Shapes' },
@@ -398,6 +399,8 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
   const [textLines, setTextLines] = useState(1)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [renderPreviewSvg, setRenderPreviewSvg] = useState<string | null>(null)
+  const [renderPreviewError, setRenderPreviewError] = useState<string | null>(null)
 
   const needsSvg = type === 'outline_style' || type === 'advanced_shape'
   const isAdvanced = type === 'advanced_shape'
@@ -484,6 +487,23 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
               }
               showSuccessToast(msg)
               queryClient.invalidateQueries({ queryKey: queryKeys.designAssets.all() })
+
+              // E3.3: show the ACTUAL rendered output (real QR through the real
+              // pipeline), not just the raw uploaded file — this is what catches a
+              // technically-valid-but-visually-broken template before the admin
+              // walks away thinking it's fine. Preview failure doesn't block the
+              // asset (it was already validated + published) — it just means we
+              // can't show a live render here; the form stays open with an error
+              // instead of silently closing.
+              try {
+                const preview = await designAssetsAPI.previewAsset(newAsset.id)
+                setRenderPreviewSvg(sanitizeSvg(window.atob(preview.content)))
+              } catch {
+                setRenderPreviewError(
+                  t('Asset saved, but the live render preview could not be generated.')
+                )
+              }
+              return // keep the form open so the preview is visible; admin closes manually
             } catch (err: unknown) {
               const msg = (err as { response?: { data?: { message?: string } } })?.response?.data
                 ?.message
@@ -649,28 +669,54 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
         )}
       </div>
 
-      <div className="mt-3 flex items-center gap-2">
-        <button
-          type="submit"
-          disabled={isSubmitting || !slug.trim() || !label.trim()}
-          className="rounded bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {uploading
-            ? t('Uploading...')
-            : createMutation.isPending
-              ? t('Adding...')
-              : t('Add Asset')}
-        </button>
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={isSubmitting}
-          className="rounded border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
-        >
-          {t('Cancel')}
-        </button>
-        {error && <span className="text-xs text-red-600">{error}</span>}
-      </div>
+      {(renderPreviewSvg || renderPreviewError) && (
+        <div className="mt-3 rounded-lg border border-gray-200 bg-white p-3">
+          <p className="mb-2 text-xs font-semibold text-gray-700">
+            {t('Actual render preview')} —{' '}
+            {t('this is what a real QR code looks like with this asset applied')}
+          </p>
+          {renderPreviewSvg ? (
+            <div
+              className="flex h-40 w-40 items-center justify-center rounded border border-gray-100 bg-gray-50 mx-auto"
+              dangerouslySetInnerHTML={{ __html: renderPreviewSvg }}
+            />
+          ) : (
+            <p className="text-xs text-amber-600">{renderPreviewError}</p>
+          )}
+          <button
+            type="button"
+            onClick={onClose}
+            className="mt-3 w-full rounded bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+          >
+            {t('Done')}
+          </button>
+        </div>
+      )}
+
+      {!renderPreviewSvg && !renderPreviewError && (
+        <div className="mt-3 flex items-center gap-2">
+          <button
+            type="submit"
+            disabled={isSubmitting || !slug.trim() || !label.trim()}
+            className="rounded bg-blue-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {uploading
+              ? t('Uploading...')
+              : createMutation.isPending
+                ? t('Adding...')
+                : t('Add Asset')}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="rounded border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+          >
+            {t('Cancel')}
+          </button>
+          {error && <span className="text-xs text-red-600">{error}</span>}
+        </div>
+      )}
     </form>
   )
 }
