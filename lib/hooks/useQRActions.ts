@@ -4,6 +4,8 @@ import { useState, useCallback } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
 import { queryKeys } from '@/lib/query/keys'
+import apiClient from '@/lib/api/client'
+import { transformDesignToBackend } from '@/lib/qr/design-transformer'
 
 export interface DuplicateOptions {
   count?: number
@@ -292,7 +294,6 @@ export function useQRActions() {
     [invalidateQRCaches]
   )
 
-
   const removePINProtection = useCallback(
     async (qrCodeId: string, _currentPin?: string): Promise<void> => {
       setIsProcessing(true)
@@ -387,20 +388,117 @@ export function useQRActions() {
   )
 
   const downloadQRCode = useCallback(
-    async (qrCodeId: string, format: 'png' | 'svg' = 'png', filename?: string): Promise<void> => {
+    async (
+      qrCodeId: string,
+      format: 'png' | 'svg' | 'pdf' | 'eps' = 'png',
+      filename?: string
+    ): Promise<void> => {
       setIsProcessing(true)
       setError(null)
 
       try {
-        const blob = await qrcodesAPI.getImage(qrCodeId, format)
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = filename || `qrcode-${qrCodeId}.${format}`
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-        URL.revokeObjectURL(url)
+        // 1. Fetch QR code details to get its configuration and svgUrl
+        const qrcode = await qrcodesAPI.get(qrCodeId)
+        let svgString = ''
+
+        // 2. Try fetching from svgUrl if available
+        if (qrcode.svgUrl) {
+          try {
+            let fetchUrl = qrcode.svgUrl
+            if (fetchUrl.startsWith('http')) {
+              const parsed = new URL(fetchUrl)
+              fetchUrl = parsed.pathname.replace(/^\/api/, '') + parsed.search
+            }
+            const res = await apiClient.get(fetchUrl, { _silent: true } as any)
+            const contentType = res.headers?.['content-type'] || ''
+            if (typeof res.data === 'object' && res.data?.content) {
+              svgString = atob(res.data.content)
+            } else if (
+              typeof res.data === 'string' &&
+              (contentType.includes('svg') || res.data.trim().startsWith('<'))
+            ) {
+              svgString = res.data
+            }
+          } catch (fetchErr) {
+            if (process.env.NODE_ENV === 'development') {
+              console.error(
+                'Failed to fetch from svgUrl, falling back to preview endpoint',
+                fetchErr
+              )
+            }
+          }
+        }
+
+        // 3. Fallback to /qrcodes/preview if svgString is empty
+        if (!svgString && qrcode.data) {
+          const backendDesign = transformDesignToBackend(
+            qrcode.designerConfig || qrcode.customization || {}
+          )
+          const params = new URLSearchParams()
+          params.set('data', JSON.stringify(qrcode.data))
+          params.set('type', qrcode.type)
+          params.set('design', JSON.stringify(backendDesign))
+          params.set('renderText', 'false')
+          params.set('id', String(qrcode.id))
+
+          let hash = 0
+          const paramStr = params.toString()
+          for (let i = 0; i < paramStr.length; i++) {
+            const char = paramStr.charCodeAt(i)
+            hash = (hash << 5) - hash + char
+            hash = hash & hash
+          }
+          const h = Math.abs(hash).toString(36)
+          params.set('h', h)
+
+          const res = await apiClient.get('/qrcodes/preview', {
+            params: Object.fromEntries(params),
+            transformResponse: [(raw: string) => raw],
+          })
+
+          try {
+            const json = JSON.parse(res.data)
+            if (json.content) {
+              svgString = window.atob(json.content)
+            } else {
+              svgString = res.data
+            }
+          } catch {
+            svgString = res.data as string
+          }
+        }
+
+        if (!svgString) {
+          throw new Error('Could not retrieve QR code SVG content')
+        }
+
+        // 4. Parse SVG string to SVGSVGElement
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(svgString, 'image/svg+xml')
+        const svgElement = doc.documentElement as unknown as SVGSVGElement
+
+        const dlFilename = filename || qrcode.name || `qrcode-${qrCodeId}`
+        const { downloadPNG, downloadSVG, downloadPDF, downloadEPS } =
+          await import('@/lib/utils/download-utils')
+
+        // 5. Download in the requested format
+        if (format === 'svg') {
+          downloadSVG(svgElement, dlFilename)
+        } else if (format === 'png') {
+          await downloadPNG(
+            svgElement,
+            dlFilename,
+            qrcode.designerConfig?.size || qrcode.customization?.size || 512
+          )
+        } else if (format === 'pdf') {
+          await downloadPDF(
+            svgElement,
+            dlFilename,
+            qrcode.designerConfig?.size || qrcode.customization?.size || 512
+          )
+        } else if (format === 'eps') {
+          await downloadEPS(svgElement, dlFilename)
+        }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to download QR code'
         setError(errorMessage)
@@ -413,7 +511,7 @@ export function useQRActions() {
   )
 
   const bulkDownloadQRCodes = useCallback(
-    async (qrCodeIds: string[], format: 'png' | 'svg' = 'png'): Promise<void> => {
+    async (qrCodeIds: string[], format: 'png' | 'svg' | 'pdf' | 'eps' = 'png'): Promise<void> => {
       setIsProcessing(true)
       setError(null)
 
@@ -476,7 +574,6 @@ export function useQRActions() {
     bulkDownloadQRCodes,
   }
 }
-
 
 export function validatePIN(pin: string): { valid: boolean; error?: string } {
   if (!pin) {

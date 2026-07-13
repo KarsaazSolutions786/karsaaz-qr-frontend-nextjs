@@ -143,7 +143,6 @@ apiClient.interceptors.response.use(
       }
       return Promise.reject(apiError)
     }
-
     if (!originalRequest._silent && error.response) {
       const status = error.response.status
 

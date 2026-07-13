@@ -170,10 +170,28 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
    */
   const isItemActive = (href: string) => {
     if (!pathname) return false
-    const [itemPath, itemQueryString = ''] = href.split('?')
+    const itemPath = href.split('?')[0] || ''
+    const itemQueryString = href.split('?')[1] || ''
     const exactMatch = pathname === itemPath
     const prefixMatch = pathname.startsWith(`${itemPath}/`)
-    const pathMatch = exactMatch || prefixMatch
+    const anotherPrimaryExactMatch = effectivePrimaryNav.some(
+      nav => nav.href !== href && pathname === nav.href.split('?')[0]
+    )
+
+    // Check if there is another sidebar navigation item that matches the current pathname exactly.
+    // If so, we prevent prefix-matching for this item to avoid highlighting parent paths (e.g. /plans)
+    // when a sub-item (e.g. /plans/credit-pricing) is active.
+    const hasExactMatchElsewhere = (() => {
+      if (exactMatch) return false
+      const allHrefs = [
+        ...effectivePrimaryNav.map(n => n.href.split('?')[0] || ''),
+        ...allSectionNav.flatMap(s => s.items.map(i => i.href.split('?')[0] || '')),
+      ]
+      return allHrefs.some(h => h !== itemPath && pathname === h)
+    })()
+
+    const pathMatch =
+      exactMatch || (prefixMatch && !anotherPrimaryExactMatch && !hasExactMatchElsewhere)
     if (!pathMatch) return false
 
     // Check query params if item has query parameters
@@ -197,7 +215,7 @@ function DashboardLayoutInner({ children }: { children: React.ReactNode }) {
 
     const hasLongerMatch = allNavItems.some(nav => {
       if (nav.href === href) return false
-      const [otherPath] = nav.href.split('?')
+      const otherPath = nav.href.split('?')[0] || ''
       const otherMatches = pathname === otherPath || pathname.startsWith(`${otherPath}/`)
       if (otherMatches) {
         return otherPath.length > itemPath.length
