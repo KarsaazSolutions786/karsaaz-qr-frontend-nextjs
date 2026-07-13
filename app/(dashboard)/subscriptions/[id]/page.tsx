@@ -62,10 +62,12 @@ export default function EditSubscriptionPage() {
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!sub) return
     try {
       await updateMutation.mutateAsync({
         id: subId,
         data: {
+          user_id: sub.user_id,
           subscription_plan_id: Number(form.subscription_plan_id),
           subscription_status: form.subscription_status,
           expires_at: form.expires_at || null,
