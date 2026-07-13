@@ -139,7 +139,6 @@ apiClient.interceptors.response.use(
       const status = error.response.status
 
       // Skip toast for 404 on non-critical endpoints (config, subscriptions/current)
-      const data = error.response.data as Record<string, unknown>
       const silentUrls = ['/config', '/subscriptions/current', '/domains']
       const isSilentUrl = silentUrls.some(u => originalRequest.url?.includes(u))
       if (!isSilentUrl && status !== 401) {

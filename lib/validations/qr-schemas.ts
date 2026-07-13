@@ -5,7 +5,7 @@
 import { z } from 'zod'
 import { isPublicHttpUrl } from '@/lib/utils/safe-url'
 
-const URL_RE = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i
+// const URL_RE = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i
 const WHATSAPP_PHONE_RE = /^\+\d{8,15}$/
 
 function normalizePhone(value: string): string {
@@ -15,8 +15,41 @@ function normalizePhone(value: string): string {
 const flexibleUrl = z
   .string()
   .min(1, 'Please enter a URL.')
-  .refine(v => URL_RE.test(v.trim()), 'Please enter a valid URL (e.g. https://example.com).')
-  .refine(v => isPublicHttpUrl(v.trim()), 'This URL is not allowed.')
+  .refine(
+    val => val.startsWith('https://') || val.startsWith('http://'),
+    'URL must start with http:// or https://'
+  )
+  .refine(val => {
+    try {
+      const parsed = new URL(val)
+      return parsed.hostname.endsWith('.com')
+    } catch {
+      return false
+    }
+  }, 'URL domain must end with .com')
+  .refine(val => isPublicHttpUrl(val.trim()), 'This URL is not allowed.')
+
+const flexibleOptionalUrl = z
+  .string()
+  .optional()
+  .or(z.literal(''))
+  .refine(val => {
+    if (!val) return true
+    return val.startsWith('https://') || val.startsWith('http://')
+  }, 'URL must start with http:// or https://')
+  .refine(val => {
+    if (!val) return true
+    try {
+      const parsed = new URL(val)
+      return parsed.hostname.endsWith('.com')
+    } catch {
+      return false
+    }
+  }, 'URL domain must end with .com')
+  .refine(val => {
+    if (!val) return true
+    return isPublicHttpUrl(val.trim())
+  }, 'This URL is not allowed.')
 
 export const urlDataSchema = z.object({
   url: flexibleUrl,
@@ -60,7 +93,9 @@ export const vcardDataSchema = z.object({
   lastName: z.string().min(1, 'Last name is required.').trim(),
   phones: z.string().optional(),
   emails: z.string().email('Invalid email').optional().or(z.literal('')),
-  website_list: z.string().optional(),
+  // Original website_list validation:
+  // website_list: z.string().optional(),
+  website_list: flexibleOptionalUrl,
   company: z.string().optional(),
   job: z.string().optional(),
   street: z.string().optional(),
