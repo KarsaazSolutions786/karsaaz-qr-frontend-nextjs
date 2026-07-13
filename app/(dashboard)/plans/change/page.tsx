@@ -6,7 +6,6 @@ import { usePlans } from '@/lib/hooks/queries/usePlans'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { planChangeAPI, type PlanChangePreview } from '@/lib/api/endpoints/account'
 import { mapSubscriptionPlanToPlan } from '@/lib/utils/plan-mapper'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
@@ -97,7 +96,7 @@ function PlanChangeContent() {
           <p className="mt-2 text-gray-600">{t('Please select a plan to switch to.')}</p>
           <Link
             href="/plans"
-            className="mt-4 inline-block rounded-md bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
+            className="mt-4 inline-block rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-3 text-white hover:brightness-105 transition-all shadow-sm"
           >
             {t('View Plans')}
           </Link>
@@ -153,9 +152,9 @@ function PlanChangeContent() {
             </div>
 
             {/* New Plan */}
-            <div className="rounded-md border-2 border-blue-500 bg-blue-50 p-4">
+            <div className="rounded-md border-2 border-primary-500 bg-primary-50 p-4">
               <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-sm font-medium text-blue-600 uppercase">{t('New Plan')}</h3>
+                <h3 className="text-sm font-medium text-primary-600 uppercase">{t('New Plan')}</h3>
                 {preview && (
                   <Badge variant={preview.is_upgrade ? 'default' : 'outline'}>
                     {preview.is_upgrade ? t('Upgrade') : t('Downgrade')}
@@ -163,7 +162,7 @@ function PlanChangeContent() {
                 )}
               </div>
               <p className="text-xl font-bold text-gray-900">{mappedNewPlan.name}</p>
-              <p className="text-lg font-semibold text-blue-600 mt-1">
+              <p className="text-lg font-semibold text-primary-600 mt-1">
                 ${(mappedNewPlan.price / 100).toFixed(2)}/mo
               </p>
             </div>
@@ -205,17 +204,17 @@ function PlanChangeContent() {
           >
             {t('← Back to Plans')}
           </Link>
-          <Button
-            size="lg"
+          <button
             onClick={handleConfirm}
             disabled={executing || !preview}
+            className="inline-flex items-center justify-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-3 text-base font-semibold text-white shadow-sm hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
           >
             {executing
               ? t('Processing...')
               : preview?.is_upgrade
                 ? t('Confirm Upgrade')
                 : t('Confirm Downgrade')}
-          </Button>
+          </button>
         </div>
       </div>
     </div>

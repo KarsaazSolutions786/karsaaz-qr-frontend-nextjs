@@ -4,11 +4,7 @@ import { translationsAPI } from '@/lib/api/endpoints/translations'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateTranslationRequest } from '@/types/entities/translation'
 
-/**
- * Purpose: Executes useCreateTranslation functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useCreateTranslation() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -22,11 +18,7 @@ export function useCreateTranslation() {
   })
 }
 
-/**
- * Purpose: Executes useUpdateTranslation functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useUpdateTranslation() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -39,11 +31,7 @@ export function useUpdateTranslation() {
   })
 }
 
-/**
- * Purpose: Executes useDeleteTranslation functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useDeleteTranslation() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -54,11 +42,6 @@ export function useDeleteTranslation() {
   })
 }
 
-/**
- * Purpose: Executes useSetMainTranslation functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useSetMainTranslation() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -69,11 +52,6 @@ export function useSetMainTranslation() {
   })
 }
 
-/**
- * Purpose: Executes useToggleTranslationActive functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useToggleTranslationActive() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -84,11 +62,7 @@ export function useToggleTranslationActive() {
   })
 }
 
-/**
- * Purpose: Executes useAutoTranslate functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useAutoTranslate() {
   const queryClient = useQueryClient()
   return useMutation({

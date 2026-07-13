@@ -125,7 +125,7 @@ export function DeleteFolderDialog({
                         <select
                           value={targetFolderId}
                           onChange={e => setTargetFolderId(Number(e.target.value))}
-                          className="mt-2 w-full rounded-md border border-gray-300 px-2 py-1.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                          className="mt-2 w-full rounded-md border border-gray-300 pl-2 pr-10 py-1.5 text-sm appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236b7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_0.75rem_center] bg-[length:1.25rem_1.25rem] focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                         >
                           {otherFolders.map(f => (
                             <option key={f.id} value={f.id}>

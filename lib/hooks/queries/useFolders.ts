@@ -5,11 +5,6 @@ import { foldersAPI } from '@/lib/api/endpoints/folders'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 
-/**
- * Purpose: Executes useFolders functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useFolders() {
   const { user } = useAuth()
   return useQuery({
@@ -20,11 +15,6 @@ export function useFolders() {
   })
 }
 
-/**
- * Purpose: Mutation for creating a new folder.
- * Owner/Author: Syed Ashhad
- * Created/Updated: June 2026
- */
 export function useCreateFolder() {
   const { user } = useAuth()
   const queryClient = useQueryClient()

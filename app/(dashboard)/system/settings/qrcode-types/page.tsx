@@ -135,7 +135,7 @@ export default function QrCodeTypesSettingsPage() {
                   type="checkbox"
                   checked={selectedTypes.includes(value)}
                   onChange={() => toggleType(value)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
                 />
                 {label}
               </label>
@@ -195,7 +195,7 @@ export default function QrCodeTypesSettingsPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
           >
             {isSaving ? t('Saving...') : t('Save Settings')}
           </button>

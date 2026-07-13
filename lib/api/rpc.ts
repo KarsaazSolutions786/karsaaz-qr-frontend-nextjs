@@ -1,30 +1,4 @@
-/**
- * JSON-RPC 2.0 Client for Karsaaz QR React Frontend.
- *
- * Mirrors the Lit frontend's rpc.js with full TypeScript types.
- * Uses the same httpOnly cookie auth as apiClient (withCredentials: true).
- *
- * Usage:
- *   import { rpc, rpcBatch, rpcComposite, rpcClearCache } from '@/lib/api/rpc';
- *
- *   // Single call
- *   const user = await rpc<UserProfile>('user.profile');
- *
- *   // Batch call (one HTTP request)
- *   const results = await rpcBatch([
- *     { method: 'user.profile' },
- *     { method: 'qrcode.count' },
- *     { method: 'qrcode.scanCount' },
- *   ]);
- *   const user = results.get('user.profile')?.result;
- *
- *   // Composite (server-side aggregation — fastest)
- *   const dashboard = await rpcComposite<DashboardData>('dashboard', { recentQrCount: 5 });
- */
-
 import { envConfig } from '@/lib/config/env-config'
-
-// ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface RpcCallDef {
   method: string
@@ -37,11 +11,8 @@ export interface RpcResult<T = unknown> {
 }
 
 export interface RpcOptions {
-  /** Use the public (no-auth) endpoint */
   public?: boolean
-  /** Bypass dedup cache */
   skipDedup?: boolean
-  /** AbortSignal for cancellation (e.g., from React Query) */
   signal?: AbortSignal
 }
 
@@ -59,19 +30,10 @@ interface JsonRpcResponse {
   error?: { code: number; message: string; data?: unknown }
 }
 
-// ─── State ───────────────────────────────────────────────────────────────────
-
 let _nextId = 1
 const _dedupCache = new Map<string, { result: unknown; ts: number }>()
 const DEDUP_WINDOW_MS = 15000
 
-// ─── Core API ────────────────────────────────────────────────────────────────
-
-/**
- * Purpose: Execute a single RPC method.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 export async function rpc<T = unknown>(
   method: string,
@@ -107,12 +69,6 @@ export async function rpc<T = unknown>(
   return result
 }
 
-/**
- * Purpose: Execute multiple RPC calls in a single HTTP request. Returns a Map keyed by method name.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
-
 export async function rpcBatch(
   calls: RpcCallDef[],
   options: RpcOptions = {}
@@ -126,7 +82,6 @@ export async function rpcBatch(
     id: _nextId++,
   }))
 
-  // Build id → method lookup
   const idToCall = new Map<number, string>()
   requests.forEach((req, i) => {
     idToCall.set(req.id, calls[i]!.method)
@@ -137,7 +92,6 @@ export async function rpcBatch(
   const resultMap = new Map<string, RpcResult>()
 
   if (!Array.isArray(raw)) {
-    // Server returned a single error for the entire batch
     const resp = raw as JsonRpcResponse
     const error = resp.error
       ? new RpcError(resp.error.code, resp.error.message, resp.error.data)
@@ -149,15 +103,12 @@ export async function rpcBatch(
     return resultMap
   }
 
-  // Map responses by ID
   const byId = new Map<number, JsonRpcResponse>()
   for (const resp of raw as JsonRpcResponse[]) {
     if (resp && resp.id != null) {
       byId.set(resp.id, resp)
     }
   }
-
-  // Build result map keyed by method name
   for (const [id, method] of idToCall) {
     const resp = byId.get(id)
     if (!resp) {
@@ -178,11 +129,6 @@ export async function rpcBatch(
   return resultMap
 }
 
-/**
- * Purpose: Shorthand for composite endpoints (server-side aggregation). Participates in dedup by default (15s window) — callers can pass skipDedup: true to bypass when they need a guaranteed fresh response (e.g., after mutations).
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 export async function rpcComposite<T = unknown>(
   name: string,
@@ -192,23 +138,12 @@ export async function rpcComposite<T = unknown>(
   return rpc<T>(`compose.${name}`, params, options)
 }
 
-/**
- * Purpose: Clear dedup cache. Call on logout or user switch.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 export function rpcClearCache(): void {
   _dedupCache.clear()
 }
 
-// ─── Transport ───────────────────────────────────────────────────────────────
 
-/**
- * Purpose: Retrieves baseurl.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 function _getBaseUrl(): string {
   if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).BACKEND_URL) {
     return `${(window as unknown as Record<string, unknown>).BACKEND_URL}`
@@ -216,11 +151,6 @@ function _getBaseUrl(): string {
   return envConfig.API_URL
 }
 
-/**
- * Purpose: Executes _rpcFetch functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 async function _rpcFetch(
   body: JsonRpcRequest | JsonRpcRequest[],
   isPublic = false,
@@ -234,8 +164,6 @@ async function _rpcFetch(
     Accept: 'application/json',
     'Content-Type': 'application/json',
   }
-
-  // Bearer token from localStorage (primary auth for cross-origin dev); cookie as fallback.
   if (!isPublic && typeof window !== 'undefined') {
     const token = localStorage.getItem('token')
     if (token) {
@@ -262,31 +190,14 @@ async function _rpcFetch(
   return response.json()
 }
 
-/**
- * Purpose: Executes _dedupKey functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 function _dedupKey(method: string, params: Record<string, unknown>): string {
   return `${method}:${JSON.stringify(params || {})}`
 }
 
-// ─── Error Class ─────────────────────────────────────────────────────────────
-
-/**
- * Purpose: Class definition for RpcError.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export class RpcError extends Error {
   code: number
   data: unknown
 
-  /**
-   * Purpose: Constructor for constructor.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: March 2026
-   */
   constructor(code: number, message: string, data?: unknown) {
     super(message)
     this.name = 'RpcError'

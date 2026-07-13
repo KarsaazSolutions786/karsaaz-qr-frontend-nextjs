@@ -654,7 +654,7 @@ export default function EditPlanPage() {
           <button
             type="submit"
             disabled={updateMutation.isPending}
-            className="rounded-md bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
           >
             {updateMutation.isPending ? t('Saving…') : t('Save Plan')}
           </button>

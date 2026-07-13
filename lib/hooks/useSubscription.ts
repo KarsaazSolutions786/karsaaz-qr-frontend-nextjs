@@ -1,8 +1,3 @@
-/**
- * Subscription Hook - TanStack Query Based (T010)
- * Manages subscription state derived from user data
- */
-
 'use client'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -85,11 +80,6 @@ const defaultFeatures: FeatureFlags = {
   allow_ai_design: false,
 }
 
-/**
- * Purpose: Get the latest status from a subscription's statuses array
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 function getLatestStatus(sub: Subscription | null): string | null {
   if (!sub) return null
@@ -104,38 +94,24 @@ function getLatestStatus(sub: Subscription | null): string | null {
   return sortedStatuses[0]?.status || null
 }
 
-/**
- * Purpose: Check if subscription is a trial plan
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 function isTrialPlan(sub: Subscription | null): boolean {
   return sub?.subscription_plan?.is_trial === true
 }
 
-/**
- * Purpose: Select the best subscription to display from a list of subscriptions
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 function selectSubscription(subscriptions: Subscription[]): Subscription | null {
   if (!subscriptions || subscriptions.length === 0) return null
 
-  // Sort subscriptions by created_at descending (newest first)
   const sortedSubs = [...subscriptions].sort((a, b) => {
     const dateA = new Date(a.created_at).getTime()
     const dateB = new Date(b.created_at).getTime()
     return dateB - dateA
   })
 
-  // First, try to find the most recent "active" non-trial subscription
   let activeSub = sortedSubs.find(s => getLatestStatus(s) === 'active' && !isTrialPlan(s))
 
   if (activeSub) return activeSub
 
-  // If no active non-trial, check if there's a more recent subscription attempt
   const mostRecent = sortedSubs[0]
   const activeTrial = sortedSubs.find(s => getLatestStatus(s) === 'active' && isTrialPlan(s))
 
@@ -148,20 +124,12 @@ function selectSubscription(subscriptions: Subscription[]): Subscription | null 
   return mostRecent || activeTrial || null
 }
 
-/**
- * Purpose: Check if user has super admin role
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 function isSuperAdminUser(user: User | null): boolean {
   if (!user) return false
   return (user as any).roles?.some((r: any) => !!r.super_admin) ?? false
 }
 
-/**
- * Build an unlimited admin plan (no restrictions)
- */
 const adminPlan: SubscriptionPlan = {
   id: 0,
   name: 'Admin (Unlimited)',
@@ -207,11 +175,6 @@ const adminFeatures: FeatureFlags = {
   allow_ai_design: true,
 }
 
-/**
- * Purpose: Process user data to extract subscription information
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 function processSubscriptionData(user: User | null): SubscriptionData {
   if (!user) {
@@ -226,7 +189,6 @@ function processSubscriptionData(user: User | null): SubscriptionData {
     }
   }
 
-  // Admin users get unlimited access regardless of subscription status
   if (isSuperAdminUser(user)) {
     return {
       status: 'active',
@@ -245,7 +207,6 @@ function processSubscriptionData(user: User | null): SubscriptionData {
   const isOnTrial = !!activeSub?.on_trial || !!plan?.is_trial
   const subscriptionStatus = getLatestStatus(activeSub)
 
-  // Calculate remaining days
   let remainingDays = 0
   if (activeSub) {
     const expiresAt = activeSub.expires_at || activeSub.end_date || activeSub.currentPeriodEnd
@@ -258,7 +219,6 @@ function processSubscriptionData(user: User | null): SubscriptionData {
     }
   }
 
-  // Derive display status
   let status: SubscriptionStatus = 'active'
   if (!activeSub) {
     status = 'expired'
@@ -284,7 +244,6 @@ function processSubscriptionData(user: User | null): SubscriptionData {
     status = 'expiring_soon'
   }
 
-  // Extract features from plan
   const features: FeatureFlags = {
     qr_code_types: plan?.qr_types || [],
     max_dynamic_qrcodes: plan?.number_of_dynamic_qrcodes || 0,
@@ -314,22 +273,14 @@ function processSubscriptionData(user: User | null): SubscriptionData {
   }
 }
 
-/**
- * Purpose: Main subscription hook using TanStack Query
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export function useSubscription() {
   const queryClient = useQueryClient()
   const { user, isLoading, refreshUserData } = useAuth()
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [upgradeReason, setUpgradeReason] = useState('')
 
-  // Process subscription data from user
   const subscriptionData = processSubscriptionData(user || null)
 
-  // Fetch real usage stats from backend (same pattern as useSubscriptionLimits)
   const { data: usageStats } = useQuery<UserStats>({
     queryKey: [...queryKeys.qrcodes.all(), 'usage-stats'],
     queryFn: getUserStats,
@@ -343,12 +294,11 @@ export function useSubscription() {
     () => ({
       dynamicQrcodes: usageStats?.dynamic_qrcodes_count ?? 0,
       scansThisMonth: usageStats?.total_scans ?? 0,
-      invitedUsers: 0, // No backend endpoint for invited user count yet
+      invitedUsers: 0,
     }),
     [usageStats]
   )
 
-  // Helper functions
   const isUserSubscribed = useCallback(() => {
     const { status } = subscriptionData
     return (
@@ -386,7 +336,6 @@ export function useSubscription() {
 
   const userInvitedUsersLimitReached = useCallback(() => {
     const maxInvited = subscriptionData.features.max_invited_users
-    // -1 or 0 means unlimited
     if (maxInvited <= 0) return false
     return usage.invitedUsers >= maxInvited
   }, [subscriptionData.features.max_invited_users, usage.invitedUsers])
@@ -396,7 +345,6 @@ export function useSubscription() {
       return { allowed: false, reason: 'Subscription expired. Please renew to create QR codes.' }
     }
     const maxQR = subscriptionData.features.max_dynamic_qrcodes
-    // -1 or 0 means unlimited
     if (maxQR > 0 && usage.dynamicQrcodes >= maxQR) {
       return {
         allowed: false,
@@ -433,7 +381,6 @@ export function useSubscription() {
   }, [queryClient])
 
   return {
-    // State
     status: subscriptionData.status,
     plan: subscriptionData.plan,
     subscription: subscriptionData.subscription,

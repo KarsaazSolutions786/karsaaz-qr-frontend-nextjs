@@ -12,7 +12,6 @@ import type {
   CityBreakdownItem,
 } from '@/types/entities/analytics'
 
-// ---------- Date range preset type for chart selectors ----------
 
 export type ChartDatePreset = '7d' | '30d' | '90d' | '1y'
 
@@ -23,16 +22,11 @@ const PRESET_MAP: Record<ChartDatePreset, DateRangePreset> = {
   '1y': 'thisYear',
 }
 
-/**
- * Purpose: Executes chartPresetToDateRange functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function chartPresetToDateRange(preset: ChartDatePreset): DateRange {
   return getPresetDateRange(PRESET_MAP[preset])
 }
 
-// ---------- Scans Per Day hook ----------
+
 
 export interface UseScansPerDayResult {
   data: TimeSeriesPoint[]
@@ -43,11 +37,6 @@ export interface UseScansPerDayResult {
   dateRange: DateRange
 }
 
-/**
- * Purpose: Executes useScansPerDay functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function useScansPerDay(
   qrcodeId: number,
   initialPreset: ChartDatePreset = '30d'
@@ -67,7 +56,6 @@ export function useScansPerDay(
   }
 }
 
-// ---------- Scans Per Country hook ----------
 
 export interface UseScansPerCountryResult {
   data: CountryBreakdownItem[]
@@ -76,11 +64,6 @@ export interface UseScansPerCountryResult {
   totalScans: number
 }
 
-/**
- * Purpose: Executes useScansPerCountry functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function useScansPerCountry(
   qrcodeId: number,
   dateRange: DateRange
@@ -95,7 +78,6 @@ export function useScansPerCountry(
   }
 }
 
-// ---------- Scans Per City hook ----------
 
 export interface UseScansPerCityResult {
   data: CityBreakdownItem[]
@@ -104,11 +86,6 @@ export interface UseScansPerCityResult {
   totalScans: number
 }
 
-/**
- * Purpose: Executes useScansPerCity functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function useScansPerCity(
   qrcodeId: number,
   dateRange: DateRange
@@ -123,7 +100,6 @@ export function useScansPerCity(
   }
 }
 
-// ---------- Scans Per OS hook ----------
 
 export interface UseScansPerOSResult {
   data: BreakdownItem[]
@@ -132,11 +108,6 @@ export interface UseScansPerOSResult {
   totalScans: number
 }
 
-/**
- * Purpose: Executes useScansPerOS functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function useScansPerOS(
   qrcodeId: number,
   dateRange: DateRange
@@ -151,7 +122,6 @@ export function useScansPerOS(
   }
 }
 
-// ---------- Combined chart data hook (shares a single API call) ----------
 
 export interface UseAnalyticsChartsResult {
   scansByDay: TimeSeriesPoint[]
@@ -166,12 +136,6 @@ export interface UseAnalyticsChartsResult {
   preset: ChartDatePreset
   setPreset: (preset: ChartDatePreset) => void
 }
-
-/**
- * Purpose: Single hook that provides all chart data from a shared useQRCodeStats query. This avoids duplicate API calls when multiple charts are rendered on the same page.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 export function useAnalyticsCharts(
   qrcodeId: number,

@@ -2,11 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { updatePaymentMethod } from '@/lib/api/endpoints/stripe'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: T226: Mutation hook for updating payment method. Invalidates billing queries on success.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useUpdatePaymentMethod() {
   const queryClient = useQueryClient()

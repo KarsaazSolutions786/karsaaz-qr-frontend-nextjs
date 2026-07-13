@@ -16,11 +16,6 @@ export interface QRCodeStats {
   scan_trend: { date: string; count: number }[]
 }
 
-/**
- * Purpose: Fetches QR code stats using scans-per-day report. The backend does not have a /stats endpoint — uses /reports/scans-per-day instead.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function useQRCodeStats(id: string) {
   return useQuery<QRCodeStats>({

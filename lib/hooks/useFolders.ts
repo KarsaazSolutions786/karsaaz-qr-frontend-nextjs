@@ -1,9 +1,3 @@
-/**
- * useFolders Hook
- * 
- * Hook for managing folder hierarchy and operations.
- */
-
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
@@ -39,11 +33,6 @@ const FOLDER_COLORS = [
 const MAX_FOLDER_DEPTH = 3;
 const MAX_FOLDER_NAME_LENGTH = 50;
 
-/**
- * Purpose: Executes useFolders functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useFolders(initialFolders: Folder[] = []) {
   const [folders, setFolders] = useState<Folder[]>(initialFolders);
   const [expandedFolderIds, setExpandedFolderIds] = useState<Set<string>>(new Set());

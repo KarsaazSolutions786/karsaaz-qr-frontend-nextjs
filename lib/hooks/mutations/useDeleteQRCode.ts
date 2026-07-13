@@ -6,11 +6,6 @@ import { toast } from 'sonner'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: Executes useDeleteQRCode functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDeleteQRCode() {
   const router = useRouter()
   const queryClient = useQueryClient()

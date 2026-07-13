@@ -1,32 +1,6 @@
-/**
- * React hooks for JSON-RPC 2.0 calls via TanStack Query.
- *
- * These hooks combine the RPC client with React Query for caching,
- * deduplication, background refetching, and optimistic updates.
- *
- * Usage:
- *   // Query (read)
- *   const { data: user } = useRpcQuery<UserProfile>('user.profile');
- *   const { data } = useRpcQuery<QRList>('qrcode.list', { page: 1, perPage: 15 });
- *
- *   // Composite query (server-side aggregation)
- *   const { data: dashboard } = useRpcComposite<DashboardData>('dashboard');
- *
- *   // Batch query (multiple methods in one HTTP call)
- *   const { data } = useRpcBatch([
- *     { method: 'qrcode.count' },
- *     { method: 'qrcode.scanCount' },
- *   ]);
- *
- *   // Mutation (write)
- *   const deleteMutation = useRpcMutation('qrcode.delete');
- *   deleteMutation.mutate({ id: 123 });
- */
-
 import { useQuery, useMutation, useQueryClient, type UseQueryOptions, type UseMutationOptions } from '@tanstack/react-query'
 import { rpc, rpcBatch, rpcComposite, RpcError, type RpcCallDef, type RpcResult } from '@/lib/api/rpc'
 
-// ─── Query Key Factory ───────────────────────────────────────────────────────
 
 export const rpcKeys = {
   all: ['rpc'] as const,
@@ -38,19 +12,11 @@ export const rpcKeys = {
   batch: (methods: string[]) => ['rpc', 'batch', methods.sort().join(',')] as const,
 }
 
-// ─── useRpcQuery ─────────────────────────────────────────────────────────────
-
-/**
- * Purpose: Execute a single RPC method as a TanStack query. Automatically caches, deduplicates, and refetches.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 export function useRpcQuery<T = unknown>(
   method: string,
   params?: Record<string, unknown>,
   options?: Omit<UseQueryOptions<T, RpcError>, 'queryKey' | 'queryFn'> & {
-    /** Use the public (no-auth) endpoint */
     public?: boolean
   }
 ) {
@@ -61,20 +27,12 @@ export function useRpcQuery<T = unknown>(
     queryFn: ({ signal }) =>
       rpc<T>(method, params ?? {}, {
         public: isPublic,
-        skipDedup: true, // React Query handles dedup
+        skipDedup: true,
         signal,
       }),
     ...queryOptions,
   })
 }
-
-// ─── useRpcComposite ─────────────────────────────────────────────────────────
-
-/**
- * Purpose: Execute a composite RPC method (server-side aggregation). e.g., useRpcComposite('dashboard') → compose.dashboard
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 export function useRpcComposite<T = unknown>(
   name: string,
@@ -96,13 +54,6 @@ export function useRpcComposite<T = unknown>(
   })
 }
 
-// ─── useRpcBatch ─────────────────────────────────────────────────────────────
-
-/**
- * Purpose: Execute multiple RPC calls in a single HTTP request. Returns a Map<method, RpcResult> so each result can be accessed by method name.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 export function useRpcBatch(
   calls: RpcCallDef[],
@@ -121,18 +72,10 @@ export function useRpcBatch(
   })
 }
 
-// ─── useRpcMutation ──────────────────────────────────────────────────────────
-
-/**
- * Purpose: Execute an RPC method as a mutation (for write operations). Usage: const del = useRpcMutation('qrcode.delete', { onSuccess: () => queryClient.invalidateQueries({ queryKey: rpcKeys.method('qrcode.list') }), }); del.mutate({ id: 123 });
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 export function useRpcMutation<TResult = unknown, TParams = Record<string, unknown>>(
   method: string,
   options?: Omit<UseMutationOptions<TResult, RpcError, TParams>, 'mutationFn'> & {
-    /** Invalidate these RPC method caches on success */
     invalidates?: string[]
   }
 ) {
@@ -144,25 +87,15 @@ export function useRpcMutation<TResult = unknown, TParams = Record<string, unkno
       rpc<TResult>(method, params as Record<string, unknown>),
     ...mutationOptions,
     onSuccess: (data, variables, context) => {
-      // Auto-invalidate related queries
       if (invalidates?.length) {
         for (const m of invalidates) {
           queryClient.invalidateQueries({ queryKey: rpcKeys.method(m) })
         }
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(mutationOptions?.onSuccess as ((...args: any[]) => unknown) | undefined)?.(data, variables, context)
     },
   })
 }
-
-// ─── Utility: Invalidate all RPC queries ─────────────────────────────────────
-
-/**
- * Purpose: Invalidate all RPC query caches. Call on logout or user switch.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 
 export function useRpcInvalidateAll() {
   const queryClient = useQueryClient()

@@ -45,11 +45,6 @@ portalAxios.interceptors.request.use(config => {
   return config
 })
 
-/**
- * Purpose: Executes OrgPortalAuthProvider functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: April 2026
- */
 export function OrgPortalAuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(() =>
     typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null
@@ -144,16 +139,10 @@ export function OrgPortalAuthProvider({ children }: { children: ReactNode }) {
   return <OrgPortalAuthContext.Provider value={value}>{children}</OrgPortalAuthContext.Provider>
 }
 
-/**
- * Purpose: Executes useOrgPortalAuth functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: April 2026
- */
 export function useOrgPortalAuth(): OrgPortalAuthContextType {
   const ctx = React.useContext(OrgPortalAuthContext)
   if (!ctx) throw new Error('useOrgPortalAuth must be used within OrgPortalAuthProvider')
   return ctx
 }
 
-/** Axios instance pre-configured with the org portal base URL — export for page use */
 export { portalAxios }

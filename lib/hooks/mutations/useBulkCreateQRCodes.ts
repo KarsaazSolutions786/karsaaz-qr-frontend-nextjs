@@ -5,11 +5,6 @@ import { useRouter } from 'next/navigation'
 import { qrcodesAPI, BulkCreateRequest } from '@/lib/api/endpoints/qrcodes'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: Executes useBulkCreateQRCodes functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useBulkCreateQRCodes() {
   const router = useRouter()
   const queryClient = useQueryClient()

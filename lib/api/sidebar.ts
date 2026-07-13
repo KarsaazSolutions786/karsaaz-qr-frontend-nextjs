@@ -1,8 +1,3 @@
-/**
- * Sidebar API Functions
- * Matches Lit frontend menu-store.js data fetching
- */
-
 import apiClient from './client'
 import { foldersAPI, type Folder } from './endpoints/folders'
 import { getTemplateCategories as fetchTemplateCategories } from './endpoints/templates'
@@ -25,12 +20,6 @@ export interface Plan {
   currency?: string
 }
 
-/**
- * Purpose: Fetch user's folders with QR counts for sidebar Matches Lit frontend: GET /folders/{userId}
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export async function getSidebarFolders(userId?: number | string): Promise<Folder[]> {
   if (!userId) return []
   try {
@@ -42,12 +31,6 @@ export async function getSidebarFolders(userId?: number | string): Promise<Folde
   }
 }
 
-/**
- * Purpose: Fetch template categories for sidebar Uses existing templates API
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export async function getSidebarTemplateCategories(): Promise<TemplateCategory[]> {
   try {
     const categories = await fetchTemplateCategories()
@@ -58,11 +41,6 @@ export async function getSidebarTemplateCategories(): Promise<TemplateCategory[]
   }
 }
 
-/**
- * Purpose: Get count of dynamic QR codes Matches Lit frontend getDynamicQRCodeCount()
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function getDynamicQRCodeCount(): Promise<number> {
   try {
@@ -92,7 +70,6 @@ export async function getDynamicQRCodeCount(): Promise<number> {
       },
     })
 
-    // Check if response has pagination data
     return response.data?.meta?.total || response.data?.length || 0
   } catch (error) {
     if (process.env.NODE_ENV === 'development') console.error('Failed to fetch QR code count:', error)
@@ -100,11 +77,6 @@ export async function getDynamicQRCodeCount(): Promise<number> {
   }
 }
 
-/**
- * Purpose: Get total scan count Matches Lit frontend getTotalScans()
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function getTotalScans(): Promise<number> {
   try {
@@ -126,7 +98,6 @@ export async function getTotalScans(): Promise<number> {
       'biolink',
     ].join(',')
 
-    // Matches Lit frontend: GET /qrcodes/count/scans?type=... returns { count: number }
     const response = await apiClient.get('/qrcodes/count/scans', {
       params: { type: dynamicTypes },
     })
@@ -138,34 +109,18 @@ export async function getTotalScans(): Promise<number> {
   }
 }
 
-/**
- * Get user's current plan from user data
- * Matches Lit frontend currentPlan() logic - extracts plan from user's subscriptions
- */
 type RawUser = { subscriptions?: Array<{ statuses?: Array<{ status?: string }>; subscription_plan?: Plan; updated_at?: string; created_at?: string }> }
 
-/**
- * Purpose: Retrieves currentplanfromuser.
- * Owner/Author: Syed Ashhad
- * Created: February 2026
- * Last Editor: Syed Ashhad
- * Last Updated: May 2026
- */
 export function getCurrentPlanFromUser(user: RawUser | null | undefined): Plan | null {
   if (!user?.subscriptions || !Array.isArray(user.subscriptions)) {
     return null
   }
-
-  // Find active subscription first
   const activeSubscription = user.subscriptions.find(
     (sub) => sub.statuses?.[0]?.status === 'active'
   )
-
   if (activeSubscription?.subscription_plan) {
     return activeSubscription.subscription_plan
   }
-
-  // If no active, get the most recent subscription
   if (user.subscriptions.length > 0) {
     const sorted = [...user.subscriptions].sort((a, b) => {
       const dateA = new Date(a.updated_at ?? a.created_at ?? '').getTime()
@@ -178,22 +133,11 @@ export function getCurrentPlanFromUser(user: RawUser | null | undefined): Plan |
   return null
 }
 
-/**
- * Purpose: Get user's current plan (legacy, now no-op - use getCurrentPlanFromUser instead)
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function getCurrentPlan(): Promise<Plan | null> {
   // This endpoint doesn't exist - return null and let consumer use getCurrentPlanFromUser
   return null
 }
-
-/**
- * Purpose: Get all user stats at once
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function getUserStats(): Promise<UserStats> {
   const [qrCount, scans] = await Promise.all([getDynamicQRCodeCount(), getTotalScans()])
@@ -204,11 +148,6 @@ export async function getUserStats(): Promise<UserStats> {
   }
 }
 
-/**
- * Purpose: Format unlimited/numeric values for display Matches BillingMode.formatTotalNumber() from Lit frontend
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function formatLimit(value: number | 'unlimited' | string): string {
   if (value === 'unlimited' || value === '0' || value === 0) {

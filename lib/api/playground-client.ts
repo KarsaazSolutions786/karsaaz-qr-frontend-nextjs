@@ -1,10 +1,4 @@
-// lib/api/playground-client.ts
-//
-// Isolated Axios instance for the API Playground.
-// - Sends Authorization: Bearer {token} — NOT the session cookie
-// - withCredentials: false  (no cookie)
-// - Never redirects on 401 — surface the error response directly
-// - Captures response time and raw headers for display
+
 
 import axios, { type AxiosRequestConfig } from 'axios'
 import { envConfig } from '@/lib/config/env-config'
@@ -18,11 +12,6 @@ export interface PlaygroundResponse {
   error: boolean
 }
 
-/**
- * Purpose: Executes sendPlaygroundRequest functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: April 2026
- */
 export async function sendPlaygroundRequest({
   method,
   fullUrl,
@@ -34,7 +23,6 @@ export async function sendPlaygroundRequest({
   apiKey: string
   body: string
 }): Promise<PlaygroundResponse> {
-  // Guard: only allow requests to our own API origin
   const expectedOrigin = new URL(envConfig.API_URL).origin
   if (!fullUrl.startsWith(expectedOrigin)) {
     return {
@@ -58,7 +46,7 @@ export async function sendPlaygroundRequest({
       ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
     },
     withCredentials: false,
-    validateStatus: () => true, // never throw — surface all HTTP statuses
+    validateStatus: () => true,
     timeout: 30_000,
     ...(hasBody
       ? {
@@ -77,8 +65,6 @@ export async function sendPlaygroundRequest({
   try {
     const res = await axios(config)
     const durationMs = Math.round(performance.now() - start)
-
-    // Flatten response headers to plain string Record
     const headers: Record<string, string> = {}
     Object.entries(res.headers).forEach(([k, v]) => {
       if (typeof v === 'string') headers[k] = v

@@ -1,11 +1,3 @@
-/**
- * QR Code Type Definitions
- *
- * Centralized source of truth for all QR code types.
- * Mirrors the original Lit Element project's qr-types.js with all 43 types,
- * categories, and icon mappings.
- */
-
 export interface QRCodeTypeDefinition {
   id: string
   name: string
@@ -14,10 +6,6 @@ export interface QRCodeTypeDefinition {
   description?: string
 }
 
-/**
- * Social media types that use a smaller icon-only card layout
- * in the bento grid (no text label, just the icon).
- */
 export const SOCIAL_MEDIA_TYPES: Record<string, boolean> = {
   facebook: true,
   instagram: true,
@@ -32,10 +20,6 @@ export const SOCIAL_MEDIA_TYPES: Record<string, boolean> = {
   wechat: true,
 }
 
-/**
- * Full list of all QR code types in display order.
- * Order matters — the first 16 are shown in the bento grid layout.
- */
 export const QR_TYPES: QRCodeTypeDefinition[] = [
   {
     id: 'text',
@@ -361,12 +345,6 @@ export const QR_TYPES: QRCodeTypeDefinition[] = [
   },
 ]
 
-/**
- * Purpose: Get available QR code types, optionally filtered by category.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export function getAvailableQrCodeTypes(
   category?: 'all' | 'static' | 'dynamic'
 ): QRCodeTypeDefinition[] {
@@ -374,34 +352,17 @@ export function getAvailableQrCodeTypes(
   return QR_TYPES.filter(t => t.cat === category)
 }
 
-/**
- * Purpose: Find a QR code type definition by its slug/id.
- * Owner/Author: Syed Ashhad
- * Created: February 2026
- * Last Editor: Syed Ashhad
- * Last Updated: March 2026
- */
 
 export function findQrCodeType(slug: string): QRCodeTypeDefinition | undefined {
   return QR_TYPES.find(t => t.id === slug)
 }
 
-/**
- * Purpose: Check if a QR code type is dynamic.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function isQrCodeTypeDynamic(slug: string): boolean {
   const type = findQrCodeType(slug)
   return type?.cat === 'dynamic'
 }
 
-/**
- * Purpose: Check if a type ID corresponds to a social media type that should render as an icon-only card.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function isSocialMediaType(typeId: string): boolean {
   return !!SOCIAL_MEDIA_TYPES[typeId]

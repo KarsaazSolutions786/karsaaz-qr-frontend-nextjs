@@ -1,17 +1,6 @@
-/**
- * Dynamic Biolink Blocks API Client
- * Fetches block definitions from the backend API
- */
-
 import apiClient from './client'
 import { DynamicBlockDefinition } from '@/types/entities/dynamic-blocks'
 
-// Fetch all active dynamic block definitions
-/**
- * Purpose: Executes fetchDynamicBlockDefinitions functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export async function fetchDynamicBlockDefinitions(): Promise<DynamicBlockDefinition[]> {
   try {
     const response = await apiClient.get<DynamicBlockDefinition[]>(
@@ -24,12 +13,6 @@ export async function fetchDynamicBlockDefinitions(): Promise<DynamicBlockDefini
   }
 }
 
-// Fetch a single dynamic block definition by ID
-/**
- * Purpose: Executes fetchDynamicBlockDefinition functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export async function fetchDynamicBlockDefinition(
   id: string
 ): Promise<DynamicBlockDefinition | null> {
@@ -42,14 +25,9 @@ export async function fetchDynamicBlockDefinition(
   }
 }
 
-// React Query hook for dynamic block definitions
+
 import { useQuery } from '@tanstack/react-query'
 
-/**
- * Purpose: Executes useDynamicBlockDefinitions functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDynamicBlockDefinitions() {
   return useQuery({
     queryKey: ['dynamic-block-definitions'],
@@ -61,11 +39,6 @@ export function useDynamicBlockDefinitions() {
   })
 }
 
-/**
- * Purpose: Executes useDynamicBlockDefinition functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDynamicBlockDefinition(id: string | null) {
   return useQuery({
     queryKey: ['dynamic-block-definition', id],

@@ -4,11 +4,7 @@ import { contactsAPI } from '@/lib/api/endpoints/contacts'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateContactRequest } from '@/types/entities/contact'
 
-/**
- * Purpose: Executes useCreateContact functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useCreateContact() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -21,11 +17,7 @@ export function useCreateContact() {
   })
 }
 
-/**
- * Purpose: Executes useUpdateContact functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useUpdateContact() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -38,11 +30,6 @@ export function useUpdateContact() {
   })
 }
 
-/**
- * Purpose: Executes useDeleteContact functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useDeleteContact() {
   const queryClient = useQueryClient()
   return useMutation({

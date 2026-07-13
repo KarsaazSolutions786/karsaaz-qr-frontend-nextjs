@@ -1,18 +1,3 @@
-/**
- * useCheckoutEnforcement Hook
- *
- * Detects incomplete checkout states and provides UI state for
- * the IncompleteCheckoutBanner component. Uses the CheckoutEnforcementManager
- * from lib/services/checkout-enforcement.ts.
- *
- * Scenarios detected:
- * - User has a subscription record with pending_payment status but no active plan
- * - User started checkout but never completed payment
- *
- * The hook reads from the user's subscription data (via useSubscription)
- * and determines whether to show an "incomplete checkout" banner/modal.
- */
-
 'use client'
 
 import { useMemo, useState, useCallback } from 'react'
@@ -42,12 +27,6 @@ interface CheckoutEnforcementResult {
 }
 
 const DISMISS_KEY = 'checkout-enforcement-dismissed'
-
-/**
- * Purpose: Executes useCheckoutEnforcement functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: March 2026
- */
 export function useCheckoutEnforcement(): CheckoutEnforcementResult {
   const { user } = useAuth()
   const { status, plan, subscription } = useSubscription()
@@ -57,7 +36,6 @@ export function useCheckoutEnforcement(): CheckoutEnforcementResult {
     return sessionStorage.getItem(DISMISS_KEY) === 'true'
   })
 
-  // Build contexts for the enforcement manager
   const enforcementResult = useMemo(() => {
     if (!user) {
       return { shouldRedirect: false, redirectUrl: null, reason: undefined }
@@ -69,8 +47,6 @@ export function useCheckoutEnforcement(): CheckoutEnforcementResult {
       subscriptions: (user.subscriptions as Array<Record<string, unknown>>) ?? [],
       roles: user.roles as Array<{ name: string; super_admin?: boolean | number }> | undefined,
     }
-
-    // Determine if checkout was completed by checking for active status
     const isCheckoutCompleted = status === 'active' || status === 'trial' ||
       status === 'expiring_soon' || status === 'trial_expiring_soon'
 
@@ -83,10 +59,8 @@ export function useCheckoutEnforcement(): CheckoutEnforcementResult {
     return checkoutEnforcement.enforce(userContext, subscriptionContext)
   }, [user, status, plan])
 
-  // Extract the pending plan name if checkout is incomplete
   const pendingPlanName = useMemo(() => {
     if (!enforcementResult.shouldRedirect) return null
-    // The subscription object may have the plan the user was trying to get
     if (subscription?.subscription_plan) {
       return (subscription.subscription_plan as any)?.name ?? null
     }

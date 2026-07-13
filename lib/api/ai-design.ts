@@ -1,10 +1,3 @@
-/**
- * AI Design API Wrapper
- * 
- * API integration for AI-powered QR code design generation.
- * Communicates with backend AI service to generate design suggestions.
- */
-
 import apiClient from './client';
 import { DesignerConfig } from '@/types/entities/designer';
 
@@ -46,12 +39,6 @@ export interface AIDesignVariationsResponse {
   error?: string;
 }
 
-/**
- * Purpose: Generate AI design from prompt
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
-
 export async function generateAIDesign(request: AIDesignRequest): Promise<AIDesignResponse> {
   try {
     const response = await apiClient.post<AIDesignResponse>('/ai-designs/generate', request);
@@ -65,12 +52,6 @@ export async function generateAIDesign(request: AIDesignRequest): Promise<AIDesi
     };
   }
 }
-
-/**
- * Purpose: Generate multiple variations
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function generateAIDesignVariations(
   request: AIDesignRequest,
@@ -91,11 +72,7 @@ export async function generateAIDesignVariations(
   }
 }
 
-/**
- * Purpose: Get AI design by ID
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 
 export async function getAIDesign(designId: string): Promise<AIDesignResponse> {
   try {
@@ -111,11 +88,6 @@ export async function getAIDesign(designId: string): Promise<AIDesignResponse> {
   }
 }
 
-/**
- * Purpose: Refine existing AI design
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function refineAIDesign(
   designId: string,
@@ -136,11 +108,6 @@ export async function refineAIDesign(
   }
 }
 
-/**
- * Purpose: Save AI design to user's collection
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function saveAIDesign(designId: string, name?: string): Promise<{ success: boolean }> {
   try {
@@ -151,11 +118,6 @@ export async function saveAIDesign(designId: string, name?: string): Promise<{ s
   }
 }
 
-/**
- * Purpose: Get user's saved AI designs
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function getSavedAIDesigns(): Promise<AIDesignVariation[]> {
   try {
@@ -166,11 +128,6 @@ export async function getSavedAIDesigns(): Promise<AIDesignVariation[]> {
   }
 }
 
-/**
- * Purpose: Delete saved AI design
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function deleteAIDesign(designId: string): Promise<{ success: boolean }> {
   try {
@@ -181,11 +138,6 @@ export async function deleteAIDesign(designId: string): Promise<{ success: boole
   }
 }
 
-/**
- * Purpose: Get AI design suggestions based on QR content
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export async function getAIDesignSuggestions(qrData: string): Promise<{
   success: boolean;
@@ -199,11 +151,6 @@ export async function getAIDesignSuggestions(qrData: string): Promise<{
   }
 }
 
-/**
- * Purpose: Estimate AI design generation time
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function estimateGenerationTime(complexity: 'simple' | 'moderate' | 'complex'): number {
   const times = {
@@ -214,11 +161,6 @@ export function estimateGenerationTime(complexity: 'simple' | 'moderate' | 'comp
   return times[complexity];
 }
 
-/**
- * Purpose: Validate AI design prompt
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 
 export function validateAIPrompt(prompt: string): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
@@ -241,9 +183,6 @@ export function validateAIPrompt(prompt: string): { valid: boolean; errors: stri
   };
 }
 
-/**
- * Get prompt examples
- */
 export const AI_PROMPT_EXAMPLES = [
   {
     category: 'Business',
@@ -283,9 +222,6 @@ export const AI_PROMPT_EXAMPLES = [
   },
 ];
 
-/**
- * Get style recommendations
- */
 export const AI_STYLE_RECOMMENDATIONS = {
   modern: {
     name: 'Modern',

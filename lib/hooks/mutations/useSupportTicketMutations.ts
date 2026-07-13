@@ -3,11 +3,7 @@ import { supportTicketsAPI } from '@/lib/api/endpoints/support-tickets'
 import { queryKeys } from '@/lib/query/keys'
 import type { CreateTicketPayload } from '@/types/entities/support-ticket'
 
-/**
- * Purpose: Executes useCreateSupportTicket functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useCreateSupportTicket() {
   const queryClient = useQueryClient()
   return useMutation({
@@ -18,11 +14,6 @@ export function useCreateSupportTicket() {
   })
 }
 
-/**
- * Purpose: Executes useReplySupportTicket functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useReplySupportTicket() {
   const queryClient = useQueryClient()
   return useMutation({

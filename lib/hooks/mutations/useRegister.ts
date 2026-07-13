@@ -7,11 +7,7 @@ import { getStoredReferralCode, clearStoredReferralCode } from '@/lib/utils/refe
 import type { RegisterFormData } from '@/lib/validations/auth'
 import { toast } from 'sonner'
 
-/**
- * Purpose: Executes useRegister functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useRegister() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -35,8 +31,6 @@ export function useRegister() {
       })
     },
     onSuccess: (response, variables) => {
-      // Store session flag + user immediately (even before email verification).
-      // Token is stored in httpOnly cookie by backend.
       if (response.token && typeof window !== 'undefined') {
         localStorage.setItem('logged_in', 'true')
         localStorage.setItem('token', response.token)
@@ -55,8 +49,6 @@ export function useRegister() {
         }
         queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
       }
-
-      // Clear stored referral code after successful registration
       clearStoredReferralCode()
 
       // Redirect to email verification page

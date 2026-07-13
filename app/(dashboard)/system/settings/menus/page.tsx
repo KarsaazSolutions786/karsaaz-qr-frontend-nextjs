@@ -6,7 +6,6 @@ import { useSaveSystemConfigs } from '@/lib/hooks/mutations/useSystemConfigMutat
 import { Card, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
@@ -174,9 +173,13 @@ export default function MenuManagementPage() {
       </Card>
 
       <div className="mt-6 flex justify-end">
-        <Button onClick={handleSave} disabled={saveMutation.isPending}>
+        <button
+          onClick={handleSave}
+          disabled={saveMutation.isPending}
+          className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
+        >
           {saveMutation.isPending ? t('Saving...') : t('Save Settings')}
-        </Button>
+        </button>
       </div>
     </div>
   )

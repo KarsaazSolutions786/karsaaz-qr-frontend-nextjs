@@ -6,11 +6,7 @@ import { authAPI, VerifyOTPRequest } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 
-/**
- * Purpose: Executes useVerifyOTP functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useVerifyOTP() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -43,11 +39,6 @@ export function useVerifyOTP() {
   })
 }
 
-/**
- * Purpose: Executes useResendOTP functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useResendOTP() {
   return useMutation({
     mutationFn: (email: string) => authAPI.resendOTP(email),

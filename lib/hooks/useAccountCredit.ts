@@ -8,27 +8,16 @@ import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 import { useAuth } from '@/lib/context/AuthContext'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Billing config keys that determine credit-mode status and pricing.
- * These are the same keys the Laravel HeadConfigsComposer exposes.
- */
 const BILLING_CONFIG_KEYS = [
   'billing.mode',
   'account_credit.dynamic_qrcode_price',
   'account_credit.static_qrcode_price',
 ]
 
-/**
- * Purpose: Executes useAccountCredit functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
+
 export function useAccountCredit() {
   const { user } = useAuth()
   const store = useAccountCreditStore()
-
-  // ── Fetch billing config from system configs API (cached 5 min) ──
-  // Disabled when no user is authenticated (guest mode) — requires auth
   const { data: billingConfigs } = useQuery({
     queryKey: queryKeys.systemConfigs.byKeys(BILLING_CONFIG_KEYS),
     queryFn: async () => {
@@ -45,14 +34,10 @@ export function useAccountCredit() {
     retry: 1,
   })
 
-  // ── Derived billing state ──
   const isAccountCreditMode = billingConfigs?.['billing.mode'] === 'account_credit'
   const dynamicQRPrice = Number(billingConfigs?.['account_credit.dynamic_qrcode_price'] ?? 0)
   const staticQRPrice = Number(billingConfigs?.['account_credit.static_qrcode_price'] ?? 0)
 
-  // ── Balance from user object (set by /myself) or from store ──
-  // The /myself endpoint already returns account_balance when credit mode is active.
-  // We also keep the store as a secondary source that can be refreshed independently.
   const balance = useMemo(() => {
     if (isAccountCreditMode && typeof user?.account_balance === 'number') {
       return user.account_balance

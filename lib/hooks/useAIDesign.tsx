@@ -1,10 +1,3 @@
-/**
- * useAIDesign Hook
- * 
- * State management for AI design generation.
- * Handles API calls, loading states, and error handling.
- */
-
 'use client';
 
 import { useState, useCallback } from 'react';
@@ -48,11 +41,6 @@ export interface UseAIDesignReturn {
   reset: () => void;
 }
 
-/**
- * Purpose: Executes useAIDesign functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useAIDesign(options: UseAIDesignOptions = {}): UseAIDesignReturn {
   const { onSuccess, onError, baseConfig } = options;
 
@@ -63,9 +51,6 @@ export function useAIDesign(options: UseAIDesignOptions = {}): UseAIDesignReturn
   const [savedDesigns, setSavedDesigns] = useState<AIDesignVariation[]>([]);
   const [suggestions, setSuggestions] = useState<Array<{ prompt: string; style: string }>>([]);
 
-  /**
-   * Generate AI design from prompt
-   */
   const generate = useCallback(
     async (prompt: string, style: string) => {
       setIsGenerating(true);
@@ -282,11 +267,6 @@ export interface AIDesignButtonProps {
   variant?: 'primary' | 'secondary' | 'minimal';
 }
 
-/**
- * Purpose: Executes AIDesignButton functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function AIDesignButton({
   onClick,
   isGenerating = false,
@@ -335,19 +315,11 @@ export function AIDesignButton({
   );
 }
 
-/**
- * AI Design Loading State Component
- */
 export interface AIDesignLoadingProps {
   message?: string;
   progress?: number; // 0-100
 }
 
-/**
- * Purpose: Executes AIDesignLoading functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function AIDesignLoading({ message = 'Generating your design...', progress }: AIDesignLoadingProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12">

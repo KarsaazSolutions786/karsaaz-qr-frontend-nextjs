@@ -5,11 +5,6 @@ import { useRouter } from 'next/navigation'
 import { qrcodesAPI, CreateQRCodeRequest } from '@/lib/api/endpoints/qrcodes'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: Executes useCreateQRCode functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useCreateQRCode() {
   const router = useRouter()
   const queryClient = useQueryClient()

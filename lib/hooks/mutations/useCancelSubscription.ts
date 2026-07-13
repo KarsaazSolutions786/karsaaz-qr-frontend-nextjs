@@ -2,11 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { cancelSubscription } from '@/lib/api/endpoints/subscriptions'
 import { queryKeys } from '@/lib/query/keys'
 
-/**
- * Purpose: Executes useCancelSubscription functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: February 2026
- */
 export function useCancelSubscription() {
   const queryClient = useQueryClient()
 
