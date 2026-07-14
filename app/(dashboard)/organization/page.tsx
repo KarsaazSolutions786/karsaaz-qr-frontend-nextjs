@@ -17,6 +17,8 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { organizationAPI, type Organization } from '@/lib/api/endpoints/organization'
+import { useRouter } from 'next/navigation'
+import { useOrgStore } from '@/lib/stores/useOrgStore'
 
 interface PortalCredentials {
   email: string
@@ -38,6 +40,15 @@ export default function OrganizationPage() {
   const [credentials, setCredentials] = useState<PortalCredentials | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [copied, setCopied] = useState<'email' | 'password' | null>(null)
+
+  const router = useRouter()
+  const { selectedOrg, setSelectedOrg } = useOrgStore()
+
+  const handleOrgSelect = (org: Organization) => {
+    setSelectedOrg(org)
+    toast.success(`"${org.name}" has been selected.`)
+    router.push(`?org=${org.id}`)
+  }
 
   useEffect(() => {
     organizationAPI
@@ -248,7 +259,12 @@ export default function OrganizationPage() {
           {orgs.map(org => (
             <div
               key={org.id}
-              className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+              onClick={() => handleOrgSelect(org)}
+              className={`cursor-pointer rounded-xl border bg-white p-5 shadow-sm transition-all ${
+                selectedOrg?.id === org.id
+                  ? 'ring-2 ring-primary-500 border-primary-500'
+                  : 'hover:shadow-md'
+              }`}
             >
               <div className="mb-4 flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -288,7 +304,7 @@ export default function OrganizationPage() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2">
+              <div className="flex gap-2" onClick={e => e.stopPropagation()}>
                 <Link
                   href={`/organization/api-keys?org=${org.id}`}
                   className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
