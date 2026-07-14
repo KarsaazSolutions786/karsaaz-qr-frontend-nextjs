@@ -5,9 +5,19 @@ export interface AdminSubscription {
   id: number
   user_id: number
   subscription_plan_id: number
-  user_name: string
-  user_email: string
-  subscription_plan_name: string
+  // user_name: string
+  // user_email: string
+  // subscription_plan_name: string
+  user_name?: string
+  user_email?: string
+  subscription_plan_name?: string
+  user?: {
+    name: string
+    email: string
+  }
+  subscription_plan?: {
+    name: string
+  }
   expires_at: string | null
   created_at: string
   updated_at: string

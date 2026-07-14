@@ -10,6 +10,7 @@ import {
 } from '@/lib/hooks/queries/useAdminSubscriptions'
 import { useUpdateAdminSubscription } from '@/lib/hooks/mutations/useAdminSubscriptionMutations'
 import { usePlans } from '@/lib/hooks/queries/usePlans'
+import { useUser } from '@/lib/hooks/queries/useUsers'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
 /**
@@ -22,6 +23,7 @@ export default function EditSubscriptionPage() {
   const { id } = useParams<{ id: string }>()
   const subId = Number(id)
   const { data: sub, isLoading } = useAdminSubscription(subId)
+  const { data: userData } = useUser(sub?.user_id ? String(sub.user_id) : '')
   const { data: plansData } = usePlans()
   const { data: statuses } = useSubscriptionStatuses()
   const updateMutation = useUpdateAdminSubscription()
@@ -60,10 +62,12 @@ export default function EditSubscriptionPage() {
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!sub) return
     try {
       await updateMutation.mutateAsync({
         id: subId,
         data: {
+          user_id: sub.user_id,
           subscription_plan_id: Number(form.subscription_plan_id),
           subscription_status: form.subscription_status,
           expires_at: form.expires_at || null,
@@ -112,12 +116,21 @@ export default function EditSubscriptionPage() {
           <div>
             <span className="font-medium text-gray-700">{t('User:')} </span>
             <Link href={`/users/${sub.user_id}`} className="text-blue-600 hover:underline">
-              {sub.user_name || sub.user_id}
+              {/* {sub.user_name || sub.user_id} */}
+              {/* {sub.user?.name || sub.user_id} */}
+              {/* {sub.user?.name || sub.user_name || sub.user_id} */}
+              {/* {userData?.name || sub.user?.name || sub.user_name || sub.user_id} */}
+              {sub.user_id}
             </Link>
           </div>
           <div>
             <span className="font-medium text-gray-700">{t('Email:')} </span>
-            <span className="text-gray-600">{sub.user_email || '—'}</span>
+            {/* <span className="text-gray-600">{sub.user_email || '—'}</span> */}
+            {/* <span className="text-gray-600">{sub.user?.email || '—'}</span> */}
+            {/* <span className="text-gray-600">{sub.user?.email || sub.user_email || '—'}</span> */}
+            <span className="text-gray-600">
+              {userData?.email || sub.user?.email || sub.user_email || '—'}
+            </span>
           </div>
         </div>
       </div>

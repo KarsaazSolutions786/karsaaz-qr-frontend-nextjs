@@ -24,7 +24,9 @@ function StatusBadge({ status }: { status?: string }) {
     trialing: 'bg-primary-100 text-primary-800',
   }
   return (
-    <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${styles[s] ?? 'bg-gray-100 text-gray-700'}`}>
+    <span
+      className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${styles[s] ?? 'bg-gray-100 text-gray-700'}`}
+    >
       {status ?? '—'}
     </span>
   )
@@ -50,7 +52,12 @@ export default function SubscriptionsPage() {
   const handleDeletePending = async () => {
     if (!confirm(t('Delete all pending subscriptions? This cannot be undone.'))) return
     const result = await deletePendingMutation.mutateAsync()
-    toast.success(t('Deleted {{count}} pending subscription(s).').replace('{{count}}', String(result?.deleted ?? 0)))
+    toast.success(
+      t('Deleted {{count}} pending subscription(s).').replace(
+        '{{count}}',
+        String(result?.deleted ?? 0)
+      )
+    )
   }
 
   return (
@@ -84,7 +91,10 @@ export default function SubscriptionsPage() {
           type="search"
           placeholder={t('Search by user name, email, or plan…')}
           value={keyword}
-          onChange={(e) => { setKeyword(e.target.value); setPage(1) }}
+          onChange={e => {
+            setKeyword(e.target.value)
+            setPage(1)
+          }}
           className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-primary-500 focus:outline-none sm:max-w-md sm:text-sm"
         />
       </div>
@@ -100,14 +110,30 @@ export default function SubscriptionsPage() {
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{t('ID')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Name')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Email')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Plan')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Status')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Expires At')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Started At')}</th>
-                  <th className="relative py-3.5 pl-3 pr-4"><span className="sr-only">{t('Actions')}</span></th>
+                  <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                    {t('ID')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Name')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Email')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Plan')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Status')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Expires At')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Started At')}
+                  </th>
+                  <th className="relative py-3.5 pl-3 pr-4">
+                    <span className="sr-only">{t('Actions')}</span>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
@@ -121,7 +147,8 @@ export default function SubscriptionsPage() {
                         href={`/users/${sub.user_id}`}
                         className="text-primary-600 hover:text-primary-800 hover:underline"
                       >
-                        {sub.user_name || '—'}
+                        {/* {sub.user_name || '—'} */}
+                        {sub.user?.name || '—'}
                       </Link>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -129,11 +156,13 @@ export default function SubscriptionsPage() {
                         href={`/users/${sub.user_id}`}
                         className="text-primary-600 hover:text-primary-800 hover:underline"
                       >
-                        {sub.user_email || '—'}
+                        {/* {sub.user_email || '—'} */}
+                        {sub.user?.email || '—'}
                       </Link>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                      {sub.subscription_plan_name || '—'}
+                      {/* {sub.subscription_plan_name || '—'} */}
+                      {sub.subscription_plan?.name || '—'}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm">
                       <StatusBadge status={sub.statuses?.[0]?.status} />
@@ -145,7 +174,10 @@ export default function SubscriptionsPage() {
                       {sub.created_at ? new Date(sub.created_at).toLocaleDateString() : '—'}
                     </td>
                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
-                      <Link href={`/subscriptions/${sub.id}`} className="text-primary-600 hover:text-primary-900">
+                      <Link
+                        href={`/subscriptions/${sub.id}`}
+                        className="text-primary-600 hover:text-primary-900"
+                      >
                         {t('Edit')}
                       </Link>
                     </td>
@@ -158,7 +190,7 @@ export default function SubscriptionsPage() {
           {data.pagination && data.pagination.lastPage > 1 && (
             <div className="mt-6 flex items-center justify-between">
               <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
@@ -168,7 +200,7 @@ export default function SubscriptionsPage() {
                 {t('Page')} {page} {t('of')} {data.pagination.lastPage}
               </span>
               <button
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => setPage(p => p + 1)}
                 disabled={page >= data.pagination.lastPage}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
@@ -179,12 +211,27 @@ export default function SubscriptionsPage() {
         </>
       ) : (
         <div className="py-16 text-center">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          <svg
+            className="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            />
           </svg>
           <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No subscriptions')}</h3>
-          <p className="mt-1 text-sm text-gray-500">{t('Get started by creating a subscription.')}</p>
-          <Link href="/subscriptions/new" className="mt-6 inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white hover:brightness-105 transition-all">
+          <p className="mt-1 text-sm text-gray-500">
+            {t('Get started by creating a subscription.')}
+          </p>
+          <Link
+            href="/subscriptions/new"
+            className="mt-6 inline-flex items-center rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-semibold text-white hover:brightness-105 transition-all"
+          >
             {t('+ Create')}
           </Link>
         </div>

@@ -27,6 +27,23 @@ module.exports = {
   				DEFAULT: '#b664c6',
   				light: '#c98dd5',
   				foreground: '#6b4a78'
+  			},
+  			background: '#ffffff',
+  			foreground: '#0f172a',
+  			card: {
+  				DEFAULT: '#ffffff',
+  				foreground: '#0f172a'
+  			},
+  			popover: {
+  				DEFAULT: '#ffffff',
+  				foreground: '#0f172a'
+  			},
+  			border: '#e2e8f0',
+  			input: '#e2e8f0',
+  			ring: '#8368dc',
+  			muted: {
+  				DEFAULT: '#f1f5f9',
+  				foreground: '#64748b'
   			}
   		},
   		keyframes: {
