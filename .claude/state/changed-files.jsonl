@@ -47,3 +47,13 @@
 {"file":"C:/Dev/karsaaz qr/ks_qr/lib/data/models/design_asset_model.dart","action":"Edit","timestamp":"2026-07-08T10:56:15Z","important":false}
 {"file":"C:/Dev/karsaaz qr/ks_qr/lib/core/database/ksqr_database.dart","action":"Edit","timestamp":"2026-07-08T10:58:53Z","important":false}
 {"file":"C:/Dev/karsaaz qr/ks_qr/test/unit/models/design_asset_model_test.dart","action":"Write","timestamp":"2026-07-08T11:33:28Z","important":false}
+{"file":"lib/hooks/useOrganizationApiKeys.ts","action":"Write","timestamp":"2026-07-15T05:25:32Z","important":false}
+{"file":"app/(dashboard)/organization/api-keys/page.tsx","action":"Edit","timestamp":"2026-07-15T05:26:40Z","important":false}
+{"file":"app/(org-portal)/org-portal/api-keys/page.tsx","action":"Edit","timestamp":"2026-07-15T05:28:02Z","important":false}
+{"file":"C:/Dev/karsaaz qr/Plans.md","action":"Edit","timestamp":"2026-07-15T05:35:55Z","important":true}
+{"file":"tests/unit/api/client.test.ts","action":"Edit","timestamp":"2026-07-15T07:26:47Z","important":true}
+{"file":"lib/api/endpoints/organization.ts","action":"Edit","timestamp":"2026-07-15T07:38:31Z","important":false}
+{"file":"app/(dashboard)/organization/plans/page.tsx","action":"Edit","timestamp":"2026-07-15T07:49:55Z","important":false}
+{"file":"app/(dashboard)/plans/new/page.tsx","action":"Edit","timestamp":"2026-07-15T07:52:20Z","important":false}
+{"file":"app/(dashboard)/organization/page.tsx","action":"Edit","timestamp":"2026-07-15T08:01:34Z","important":false}
+{"file":"app/(dashboard)/organization/manage/[id]/page.tsx","action":"Write","timestamp":"2026-07-15T08:03:01Z","important":false}

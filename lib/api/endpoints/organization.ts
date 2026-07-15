@@ -195,17 +195,24 @@ export interface OrgPlan {
   monthly_api_calls: number // -1 = unlimited
   monthly_qr_creates: number // -1 = unlimited
   rate_limit_per_minute: number
+  included_tokens?: number
   features?: string[]
   is_active: boolean
   is_popular: boolean
+  /** True for a bespoke plan scoped to exactly one organization_id (not in the shared catalog). */
+  is_custom: boolean
+  /** Non-null only for custom plans -- the single organization this plan is private to. */
+  organization_id: number | null
   sort_order: number
   created_at: string
 }
 
 export const orgPlanAPI = {
-  list: () => apiClient.get<{ data: OrgPlan[] }>('/org-plans'),
+  /** Admin: full catalog + all custom plans (optionally scoped with { organization_id } to review one org's plans). Org-portal: shared catalog + own org's custom plans only. */
+  list: (params?: { organization_id?: number }) =>
+    apiClient.get<{ data: OrgPlan[] }>('/org-plans', { params }),
 
-  create: (payload: Omit<OrgPlan, 'id' | 'slug' | 'created_at'>) =>
+  create: (payload: Omit<OrgPlan, 'id' | 'slug' | 'created_at' | 'is_custom'>) =>
     apiClient.post<{ data: OrgPlan }>('/org-plans', payload),
 
   update: (planId: number, payload: Partial<OrgPlan>) =>
@@ -230,5 +237,77 @@ export const orgPortalPlansAPI = {
           Authorization: `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('org_portal_token') : ''}`,
         },
       }
+    ),
+}
+
+// ─── Admin Organization Management (super admin) ─────────────────────────────
+
+export interface AdminOrganizationListItem {
+  id: number
+  name: string
+  slug: string
+  status: 'pending' | 'trial' | 'active' | 'suspended' | 'closed'
+  suspended_at?: string | null
+  suspension_reason?: string | null
+  org_plan_id: number | null
+  org_plan?: OrgPlan | null
+  created_at: string
+}
+
+export interface AdminOrganizationDetail {
+  organization: AdminOrganizationListItem & {
+    owner: { id: number; name: string; email: string }
+    org_plan: OrgPlan | null
+    credits: { balance: number; lifetime_purchased: number; lifetime_spent: number }
+    members: Array<{ id: number; role: string; user: { id: number; name: string; email: string } }>
+  }
+  api_keys: Array<{
+    id: number
+    name: string
+    prefix: string
+    is_active: boolean
+    last_used_at: string | null
+    expires_at: string | null
+    revoked_at: string | null
+  }>
+  audit_logs: Array<{
+    id: number
+    action: string
+    actor_type: string
+    actor_id: number | null
+    target_type: string
+    target_id: number
+    metadata: Record<string, unknown>
+    created_at: string
+  }>
+}
+
+export const adminOrganizationAPI = {
+  list: (params?: { search?: string; status?: string; per_page?: number; page?: number }) =>
+    apiClient.get<{
+      data: AdminOrganizationListItem[]
+      current_page: number
+      last_page: number
+      total: number
+    }>('/admin/organizations', { params }),
+
+  show: (organizationId: number) =>
+    apiClient.get<{ data: AdminOrganizationDetail }>(`/admin/organizations/${organizationId}`),
+
+  suspend: (organizationId: number, reason: string) =>
+    apiClient.post<{ data: AdminOrganizationListItem }>(
+      `/admin/organizations/${organizationId}/suspend`,
+      { reason }
+    ),
+
+  reactivate: (organizationId: number) =>
+    apiClient.post<{ data: AdminOrganizationListItem }>(
+      `/admin/organizations/${organizationId}/reactivate`
+    ),
+
+  adjustCredits: (organizationId: number, amount: number, reason: string) =>
+    apiClient.post<{ data: { transaction: unknown; balance: number } }>(
+      `/admin/organizations/${organizationId}/credits/adjust`,
+      { amount, reason }
     ),
 }

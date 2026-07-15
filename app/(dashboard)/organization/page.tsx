@@ -288,7 +288,13 @@ export default function OrganizationPage() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`/organization/manage/${org.id}`}
+                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-primary-200 bg-primary-50 px-3 py-1.5 text-xs font-medium text-primary-700 hover:bg-primary-100"
+                >
+                  <ShieldAlert className="h-3 w-3" /> Manage
+                </Link>
                 <Link
                   href={`/organization/api-keys?org=${org.id}`}
                   className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
@@ -300,6 +306,12 @@ export default function OrganizationPage() {
                   className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
                 >
                   <BarChart3 className="h-3 w-3" /> Usage
+                </Link>
+                <Link
+                  href={`/organization/plans?org=${org.id}`}
+                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  <Wallet className="h-3 w-3" /> Plan
                 </Link>
                 <Link
                   href="/org-portal"

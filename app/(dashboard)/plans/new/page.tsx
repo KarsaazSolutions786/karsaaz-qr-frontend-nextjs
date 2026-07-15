@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useCreatePlan } from '@/lib/hooks/mutations/usePlanMutations'
 import { BalloonSelector } from '@/components/ui/balloon-selector'
 import { BASE_PLAN_FEATURES } from '@/lib/constants/plan-features'
@@ -45,8 +46,14 @@ const inputClass =
  */
 export default function NewPlanPage() {
   const { t } = useTranslation()
+  const router = useRouter()
   const createMutation = useCreatePlan()
   const { data: designAssets = [] } = useAllDesignAssets()
+
+  // Who this plan is for. Normal-user plans (SubscriptionPlan) are created below;
+  // organization plans (OrgPlan) live in a separate model/form -- picking
+  // "Organizations" routes there instead of duplicating that form here.
+  const [audience, setAudience] = useState<'user' | 'organization'>('user')
 
   const featureOptions = useMemo(() => {
     const shapeOptions = designAssets
@@ -148,6 +155,47 @@ export default function NewPlanPage() {
           {t('← Back to Plans')}
         </Link>
         <h1 className="text-2xl font-bold text-gray-900">{t('Create Plan')}</h1>
+      </div>
+
+      {/* Audience picker -- determines which plan system this create flow targets */}
+      <div className="mb-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+        <h2 className="mb-1 text-sm font-semibold text-gray-900">{t('Who is this plan for?')}</h2>
+        <p className="mb-4 text-xs text-gray-500">
+          {t('Normal-user plans and organization plans are managed separately.')}
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setAudience('user')}
+            className={`rounded-lg border-2 px-4 py-3 text-left transition-colors ${
+              audience === 'user'
+                ? 'border-blue-500 bg-blue-50'
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <div className="text-sm font-semibold text-gray-900">{t('Normal Users')}</div>
+            <div className="mt-0.5 text-xs text-gray-500">
+              {t('Individual subscriber plans (Free, Pro, etc.)')}
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setAudience('organization')
+              router.push('/organization/plans?create=1')
+            }}
+            className={`rounded-lg border-2 px-4 py-3 text-left transition-colors ${
+              audience === 'organization'
+                ? 'border-indigo-500 bg-indigo-50'
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <div className="text-sm font-semibold text-gray-900">{t('Organizations')}</div>
+            <div className="mt-0.5 text-xs text-gray-500">
+              {t('API plans for organization accounts')}
+            </div>
+          </button>
+        </div>
       </div>
 
       {createMutation.error && (

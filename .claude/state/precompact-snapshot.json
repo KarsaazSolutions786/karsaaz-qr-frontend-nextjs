@@ -12,9 +12,9 @@
         "sessionAgeMinutes": 120
       }
     },
-    "recommended": true,
-    "summary": "Context reset recommended (auto): 20 recent edit count exceed threshold 8",
-    "reasons": ["20 recent edit count exceed threshold 8"],
+    "recommended": false,
+    "summary": "Context reset not required (auto)",
+    "reasons": null,
     "candidates": [
       {
         "key": "wip_tasks",
@@ -33,9 +33,9 @@
       {
         "key": "recent_edits",
         "label": "recent edit count",
-        "actual": 20,
+        "actual": 7,
         "threshold": 8,
-        "triggered": true
+        "triggered": false
       },
       {
         "key": "failed_checks",
@@ -55,7 +55,7 @@
     "counters": {
       "wipTasks": 0,
       "blockedTasks": 0,
-      "recentEdits": 20,
+      "recentEdits": 7,
       "failedChecks": 0,
       "sessionAgeMinutes": null
     }
@@ -70,28 +70,15 @@
   "metrics": null,
   "recentEdits": [
     ".claude-flow/daemon-state.json",
+    ".claude-flow/metrics/codebase-map.json",
+    ".claude-flow/metrics/consolidation.json",
     ".claude/sessions/.last_inbox_check",
     ".claude/state/changed-files.jsonl",
     ".claude/state/test-recommendation.json",
-    "components/features/qrcodes/wizard/QRDesignStudio.tsx",
-    "components/features/qrcodes/wizard/QRWizardContainer.tsx",
-    "components/features/qrcodes/wizard/Step1TemplateSelection.tsx",
-    "components/features/qrcodes/wizard/Step2Designer.tsx",
-    "components/features/qrcodes/wizard/Step2TypeAndData.tsx",
-    "components/features/qrcodes/wizard/Step3Designer.tsx",
-    "components/features/qrcodes/wizard/Step3Download.tsx",
-    "components/features/qrcodes/wizard/Step4Settings.tsx",
-    "components/features/qrcodes/wizard/StickerEditor.tsx",
-    "components/features/qrcodes/wizard/index.ts",
-    "components/wizard/StateRecoveryModal.tsx",
-    "lib/hooks/useBrowserBackButton.tsx",
-    "lib/hooks/useWizard.ts",
-    "lib/qr/design-transformer.ts",
-    "lib/store/wizard-store.ts",
-    ".claude/state/handoff-artifact.json"
+    ".eslintcache"
   ],
   "sessionId": "",
-  "timestamp": "2026-06-22T11:46:08Z",
+  "timestamp": "2026-07-15T06:52:56Z",
   "version": "1.0.0",
   "wipTasks": null
 }

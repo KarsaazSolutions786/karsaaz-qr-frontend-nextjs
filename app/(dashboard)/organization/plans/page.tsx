@@ -23,16 +23,18 @@ import {
   type Organization,
 } from '@/lib/api/endpoints/organization'
 
-const DEFAULT_FORM: Omit<OrgPlan, 'id' | 'slug' | 'created_at'> = {
+const DEFAULT_FORM: Omit<OrgPlan, 'id' | 'slug' | 'created_at' | 'is_custom'> = {
   name: '',
   description: '',
   price: 0,
   monthly_api_calls: -1,
   monthly_qr_creates: -1,
   rate_limit_per_minute: 60,
+  included_tokens: 0,
   features: [],
   is_active: true,
   is_popular: false,
+  organization_id: null,
   sort_order: 0,
 }
 
@@ -53,6 +55,8 @@ function formatLimit(n: number) {
 export default function OrgPlansPage() {
   const searchParams = useSearchParams()
   const orgId = Number(searchParams.get('org') ?? 0)
+  const wantsCustomCreate = searchParams.get('custom') === '1' && !!orgId
+  const wantsGenericCreate = searchParams.get('create') === '1' && !wantsCustomCreate
 
   const [plans, setPlans] = useState<OrgPlan[]>([])
   const [org, setOrg] = useState<Organization | null>(null)
@@ -66,7 +70,9 @@ export default function OrgPlansPage() {
   const [assigning, setAssigning] = useState(false)
 
   useEffect(() => {
-    const p = orgPlanAPI.list().then(res => setPlans(res.data.data ?? []))
+    const p = orgPlanAPI
+      .list(orgId ? { organization_id: orgId } : undefined)
+      .then(res => setPlans(res.data.data ?? []))
     const o = orgId
       ? organizationAPI
           .get(orgId)
@@ -77,6 +83,19 @@ export default function OrgPlansPage() {
       .catch(() => toast.error('Failed to load plans'))
       .finally(() => setLoading(false))
   }, [orgId])
+
+  // ?custom=1&org=<id> opens the create form pre-locked to that organization.
+  // ?create=1 (no org) opens a plain shared-catalog create form -- arrives from
+  // the /plans/new audience picker when "Organizations" is chosen.
+  useEffect(() => {
+    if ((wantsCustomCreate || wantsGenericCreate) && !loading && !showForm) {
+      setEditing(null)
+      setForm(wantsCustomCreate ? { ...DEFAULT_FORM, organization_id: orgId } : DEFAULT_FORM)
+      setFeatureInput('')
+      setShowForm(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wantsCustomCreate, wantsGenericCreate, loading])
 
   /**
    * Purpose: Executes openCreate functionality.
@@ -104,11 +123,24 @@ export default function OrgPlansPage() {
       monthly_api_calls: plan.monthly_api_calls,
       monthly_qr_creates: plan.monthly_qr_creates,
       rate_limit_per_minute: plan.rate_limit_per_minute,
+      included_tokens: plan.included_tokens ?? 0,
       features: plan.features ?? [],
       is_active: plan.is_active,
       is_popular: plan.is_popular,
+      organization_id: plan.organization_id,
       sort_order: plan.sort_order,
     })
+    setFeatureInput('')
+    setShowForm(true)
+  }
+
+  /**
+   * Purpose: Open the create form pre-locked to a specific organization -- creates a
+   * private plan visible only to that org, auto-assigned to it on save.
+   */
+  const openCreateCustomFor = (organizationId: number) => {
+    setEditing(null)
+    setForm({ ...DEFAULT_FORM, organization_id: organizationId })
     setFeatureInput('')
     setShowForm(true)
   }
@@ -150,7 +182,14 @@ export default function OrgPlansPage() {
       } else {
         const res = await orgPlanAPI.create(form)
         setPlans(p => [...p, res.data.data])
-        toast.success('Plan created')
+        toast.success(
+          form.organization_id
+            ? `Custom plan created and assigned to ${org?.name ?? 'organization'}`
+            : 'Plan created'
+        )
+        if (form.organization_id && orgId === form.organization_id) {
+          setOrg(prev => (prev ? ({ ...prev, org_plan_id: res.data.data.id } as any) : prev))
+        }
       }
       setShowForm(false)
     } catch {
@@ -229,10 +268,16 @@ export default function OrgPlansPage() {
               Assign plan to: <span className="text-indigo-600">{org.name}</span>
             </span>
             {(org as any).org_plan_id && (
-              <span className="ml-auto text-xs text-gray-500">
+              <span className="text-xs text-gray-500">
                 Current plan ID: {(org as any).org_plan_id}
               </span>
             )}
+            <button
+              onClick={() => openCreateCustomFor(orgId)}
+              className="ml-auto flex items-center gap-1 rounded-lg border border-indigo-300 bg-white px-3 py-1.5 text-xs font-semibold text-indigo-700 hover:bg-indigo-100"
+            >
+              <Plus className="h-3 w-3" /> Create Custom Plan for {org.name}
+            </button>
           </div>
           <div className="flex flex-wrap gap-2">
             {plans
@@ -295,7 +340,19 @@ export default function OrgPlansPage() {
               )}
 
               <div className="mb-3">
-                <h3 className="font-bold text-gray-900">{plan.name}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-bold text-gray-900">{plan.name}</h3>
+                  {plan.is_custom && (
+                    <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
+                      Custom
+                    </span>
+                  )}
+                </div>
+                {plan.is_custom && (
+                  <p className="mt-0.5 text-xs text-amber-600">
+                    Private -- exclusive to org #{plan.organization_id}
+                  </p>
+                )}
                 {plan.description && (
                   <p className="mt-0.5 text-xs text-gray-400">{plan.description}</p>
                 )}
@@ -366,7 +423,11 @@ export default function OrgPlansPage() {
           <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl my-8">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-lg font-bold text-gray-900">
-                {editing ? 'Edit Plan' : 'Create Plan'}
+                {form.organization_id
+                  ? `Custom Plan for ${org?.id === form.organization_id ? org.name : `Org #${form.organization_id}`}`
+                  : editing
+                    ? 'Edit Plan'
+                    : 'Create Plan'}
               </h2>
               <button
                 onClick={() => setShowForm(false)}
@@ -375,6 +436,13 @@ export default function OrgPlansPage() {
                 <X className="h-5 w-5" />
               </button>
             </div>
+
+            {form.organization_id && !editing && (
+              <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
+                This plan is private and will be auto-assigned to this organization on save -- it
+                will not appear in the shared catalog for other organizations.
+              </div>
+            )}
 
             <div className="space-y-4">
               {/* Name */}
@@ -469,6 +537,22 @@ export default function OrgPlansPage() {
                 </div>
               </div>
 
+              {/* Included tokens */}
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-gray-600">
+                  Included Tokens (bonus credits granted on assignment)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  value={form.included_tokens ?? 0}
+                  onChange={e =>
+                    setForm(p => ({ ...p, included_tokens: parseInt(e.target.value) || 0 }))
+                  }
+                  className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                />
+              </div>
+
               {/* Features */}
               <div>
                 <label className="mb-1 block text-xs font-semibold text-gray-600">Features</label>
@@ -558,7 +642,13 @@ export default function OrgPlansPage() {
                 className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] py-2.5 text-sm font-semibold text-white hover:brightness-105 transition-all disabled:opacity-50"
               >
                 <Save className="h-4 w-4" />
-                {saving ? 'Saving…' : editing ? 'Save Changes' : 'Create Plan'}
+                {saving
+                  ? 'Saving…'
+                  : editing
+                    ? 'Save Changes'
+                    : form.organization_id
+                      ? 'Create & Assign Custom Plan'
+                      : 'Create Plan'}
               </button>
               <button
                 onClick={() => setShowForm(false)}

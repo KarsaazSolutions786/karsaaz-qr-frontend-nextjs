@@ -467,12 +467,16 @@ describe('apiWithRetry', () => {
     const fn = vi.fn().mockRejectedValue(serverError)
 
     const promise = apiWithRetry(fn, 2)
+    // Attach the rejection handler before advancing timers -- otherwise the promise
+    // can reject mid-advance with no handler attached yet, firing as an unhandled
+    // rejection that vitest surfaces as a spurious test-run failure.
+    const assertion = expect(promise).rejects.toThrow('Server Error')
 
     // Advance past all retry delays (1s + 2s)
     await vi.advanceTimersByTimeAsync(1100)
     await vi.advanceTimersByTimeAsync(2100)
 
-    await expect(promise).rejects.toThrow('Server Error')
+    await assertion
     expect(fn).toHaveBeenCalledTimes(3) // initial + 2 retries
   })
 
