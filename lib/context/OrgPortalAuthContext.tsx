@@ -10,6 +10,8 @@ export interface OrgPortalOrg {
   slug: string
   status: string
   portal_email: string
+  plan?: { id: number; name: string } | null
+  credits?: { balance: number; lifetime_purchased: number; lifetime_spent: number } | null
 }
 
 export interface OrgPortalAuthContextType {
