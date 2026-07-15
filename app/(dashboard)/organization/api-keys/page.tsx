@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { Copy, Check, Plus, Trash2, ShieldCheck } from 'lucide-react'
-import { apiKeyAPI, type ApiKey } from '@/lib/api/endpoints/organization'
+import { useOrganizationApiKeys } from '@/lib/hooks/useOrganizationApiKeys'
 
 const SCOPE_OPTIONS = [
   { value: '*', label: 'Full Access' },
@@ -18,22 +18,20 @@ const SCOPE_OPTIONS = [
  * Purpose: Executes ApiKeysPage functionality.
  * Owner/Author: Syed Ashhad
  * Created/Updated: April 2026
+ * Last Editor: Claude Code
+ * Last Updated: 2026-07-15 (ORG-V2-6 / OV6.2: fetch/mutation state now shared with
+ * the org-portal api-keys page via useOrganizationApiKeys)
  */
 export default function ApiKeysPage() {
   const params = useSearchParams()
   const orgId = Number(params.get('org') ?? 0)
 
-  const [keys, setKeys] = useState<ApiKey[]>([])
-  const [loading, setLoading] = useState(true)
+  const { keys, usageStats, loading, create, revoke } = useOrganizationApiKeys('dashboard', orgId)
+
   const [showForm, setShowForm] = useState(false)
   const [creating, setCreating] = useState(false)
   const [newKeyToken, setNewKeyToken] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
-  const [usageStats, setUsageStats] = useState<{
-    monthly_requests_used: number
-    monthly_requests_limit: number
-    rate_limit_per_minute: number
-  } | null>(null)
 
   const [form, setForm] = useState({
     name: '',
@@ -42,18 +40,6 @@ export default function ApiKeysPage() {
     scopes: ['*'] as string[],
   })
 
-  useEffect(() => {
-    if (!orgId) return
-    apiKeyAPI
-      .list(orgId)
-      .then(res => {
-        setKeys(res.data.data ?? [])
-        if (res.data.usage) setUsageStats(res.data.usage)
-      })
-      .catch(() => toast.error('Failed to load API keys'))
-      .finally(() => setLoading(false))
-  }, [orgId])
-
   /**
    * Purpose: Executes handleCreate functionality.
    * Owner/Author: Syed Ashhad
@@ -61,16 +47,15 @@ export default function ApiKeysPage() {
    */
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!create) return
     setCreating(true)
     try {
-      const res = await apiKeyAPI.create(orgId, {
+      const created = await create({
         name: form.name,
         scopes: form.scopes,
         rate_limit_per_minute: form.rate_limit_per_minute,
         expires_at: form.expires_at || undefined,
       })
-      const created = res.data.data
-      setKeys(prev => [created, ...prev])
       setNewKeyToken(created.token ?? null)
       setShowForm(false)
       toast.success("API key created! Save the token now — it won't be shown again.")
@@ -87,10 +72,10 @@ export default function ApiKeysPage() {
    * Created/Updated: April 2026
    */
   const handleRevoke = async (keyId: number) => {
+    if (!revoke) return
     if (!confirm('Revoke this API key? This cannot be undone.')) return
     try {
-      await apiKeyAPI.revoke(orgId, keyId)
-      setKeys(prev => prev.filter(k => k.id !== keyId))
+      await revoke(keyId)
       toast.success('API key revoked.')
     } catch {
       toast.error('Failed to revoke key')
@@ -159,7 +144,8 @@ export default function ApiKeysPage() {
             <p className="text-2xl font-bold text-blue-600">
               {usageStats.monthly_requests_used.toLocaleString()}
               <span className="text-sm font-normal text-gray-400">
-                {' '}/ {formatLimit(usageStats.monthly_requests_limit)}
+                {' '}
+                / {formatLimit(usageStats.monthly_requests_limit)}
               </span>
             </p>
             <p className="mt-0.5 text-xs text-gray-500">Monthly Requests</p>

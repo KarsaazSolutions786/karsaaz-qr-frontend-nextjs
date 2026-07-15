@@ -1,52 +1,25 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { KeyRound, RefreshCw, AlertCircle, Copy, CheckCircle, Eye, EyeOff } from 'lucide-react'
 import { toast } from 'sonner'
-import { portalAxios } from '@/lib/context/OrgPortalAuthContext'
-
-interface ApiKey {
-  id: number
-  name: string
-  prefix: string
-  is_active: boolean
-  last_used_at: string | null
-  expires_at: string | null
-  rate_limit_per_minute: number
-  created_at: string
-}
-
-interface UsageStats {
-  monthly_requests_used: number
-  monthly_requests_limit: number
-  rate_limit_per_minute: number
-}
+import { useOrganizationApiKeys } from '@/lib/hooks/useOrganizationApiKeys'
 
 /**
  * Purpose: Executes OrgPortalApiKeysPage functionality.
  * Owner/Author: Syed Ashhad
  * Created/Updated: April 2026
+ * Last Editor: Claude Code
+ * Last Updated: 2026-07-15 (ORG-V2-6 / OV6.2: fetch/mutation state now shared with
+ * the dashboard organization/api-keys page via useOrganizationApiKeys)
  */
 export default function OrgPortalApiKeysPage() {
-  const [keys, setKeys] = useState<ApiKey[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const { keys, usageStats, loading, error, regenerate } = useOrganizationApiKeys('portal')
+
   const [newToken, setNewToken] = useState<{ id: number; token: string } | null>(null)
   const [regenerating, setRegenerating] = useState<number | null>(null)
   const [revealed, setRevealed] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [usageStats, setUsageStats] = useState<UsageStats | null>(null)
-
-  useEffect(() => {
-    portalAxios
-      .get<{ data: ApiKey[]; usage?: UsageStats }>('/api-keys')
-      .then(res => {
-        setKeys(res.data.data ?? [])
-        if (res.data.usage) setUsageStats(res.data.usage)
-      })
-      .catch(() => setError('Failed to load API keys.'))
-      .finally(() => setLoading(false))
-  }, [])
 
   /**
    * Purpose: Executes handleRegenerate functionality.
@@ -54,16 +27,14 @@ export default function OrgPortalApiKeysPage() {
    * Created/Updated: April 2026
    */
   const handleRegenerate = async (keyId: number) => {
+    if (!regenerate) return
     if (!confirm('Regenerate this key? The old key will stop working immediately.')) return
     setRegenerating(keyId)
     try {
-      const res = await portalAxios.post<{ token: string }>(`/api-keys/${keyId}/regenerate`)
-      setNewToken({ id: keyId, token: res.data.token })
+      const token = await regenerate(keyId)
+      setNewToken({ id: keyId, token })
       setRevealed(false)
       setCopied(false)
-      // Refresh list to show new prefix
-      const refreshed = await portalAxios.get<{ data: ApiKey[] }>('/api-keys')
-      setKeys(refreshed.data.data ?? [])
       toast.success('API key regenerated! Copy and store it now.')
     } catch {
       toast.error('Failed to regenerate key.')
@@ -89,7 +60,7 @@ export default function OrgPortalApiKeysPage() {
    * Owner/Author: Syed Ashhad
    * Created/Updated: April 2026
    */
-  const formatDate = (d: string | null) => (d ? new Date(d).toLocaleDateString() : '—')
+  const formatDate = (d: string | null | undefined) => (d ? new Date(d).toLocaleDateString() : '—')
   /**
    * Purpose: Executes formatLimit functionality.
    * Owner/Author: Syed Ashhad
@@ -119,7 +90,8 @@ export default function OrgPortalApiKeysPage() {
             <p className="text-2xl font-bold text-indigo-600">
               {usageStats.monthly_requests_used.toLocaleString()}
               <span className="text-sm font-normal text-gray-400">
-                {' '}/ {formatLimit(usageStats.monthly_requests_limit)}
+                {' '}
+                / {formatLimit(usageStats.monthly_requests_limit)}
               </span>
             </p>
             <p className="mt-0.5 text-xs text-gray-500">Monthly Requests</p>
