@@ -27,6 +27,16 @@ import { QRCodeCard } from '@/components/features/qrcodes/QRCodeCard'
 import { QRCodeMinimalCard } from '@/components/qr/QRCodeMinimalCard'
 import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
+import { QRCode } from '@/types/entities/qrcode'
+import { BackendQRPreview } from '@/components/qr/BackendQRPreview'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog'
 
 /**
  * Purpose: Executes TrashPage functionality.
@@ -39,6 +49,7 @@ export default function TrashPage() {
   const [page, setPage] = useState(1)
   const [sortBy, setSortBy] = useState<SortOption>('date-desc')
   const [confirmEmpty, setConfirmEmpty] = useState(false)
+  const [selectedQRCode, setSelectedQRCode] = useState<QRCode | null>(null)
 
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
     if (typeof window !== 'undefined') {
@@ -175,8 +186,8 @@ export default function TrashPage() {
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Trash2 className="w-6 h-6 text-orange-600" />
+            <div className="p-2 bg-red-100 rounded-lg">
+              <Trash2 className="w-6 h-6 text-red-600" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">{t('Trash')}</h1>
@@ -205,8 +216,8 @@ export default function TrashPage() {
               disabled={emptyTrash.isPending}
               className={`inline-flex items-center rounded-md px-4 py-2 text-sm font-semibold shadow-sm focus:outline-none disabled:opacity-50 transition-colors ${
                 confirmEmpty
-                  ? 'bg-red-600 text-white hover:bg-red-700'
-                  : 'bg-orange-600 text-white hover:bg-orange-700'
+                  ? 'bg-red-700 text-white hover:bg-red-800'
+                  : 'bg-red-600 text-white hover:bg-red-700'
               }`}
             >
               <Trash2 className="w-4 h-4 mr-2" />
@@ -303,7 +314,11 @@ export default function TrashPage() {
               {qrcodes.map(qrcode => (
                 <div key={qrcode.id} className="relative group">
                   <div className="opacity-80 hover:opacity-100 transition-opacity">
-                    <QRCodeCard qrcode={qrcode} />
+                    <QRCodeCard
+                      qrcode={qrcode}
+                      disableLink={true}
+                      onClick={() => setSelectedQRCode(qrcode)}
+                    />
                   </div>
                   {/* Trash action overlay */}
                   <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 pt-8 bg-gradient-to-t from-white/90 to-transparent flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity rounded-b-lg">
@@ -422,6 +437,87 @@ export default function TrashPage() {
           )}
         </>
       )}
+
+      {/* Read-Only Trash QR Details Modal */}
+      <Dialog open={!!selectedQRCode} onOpenChange={open => !open && setSelectedQRCode(null)}>
+        <DialogContent className="sm:max-w-md bg-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">
+              {selectedQRCode?.name || t('QR Code Details')}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-gray-500">
+              {t(
+                'This QR code is currently in the trash. Restore it to view full details or edit.'
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedQRCode && (
+            <div className="flex flex-col items-center gap-6 py-4">
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center">
+                <BackendQRPreview
+                  data={selectedQRCode.data as Record<string, any>}
+                  qrType={selectedQRCode.type}
+                  config={selectedQRCode.designerConfig}
+                  className="w-[180px] h-[180px] object-contain"
+                />
+              </div>
+
+              <div className="w-full space-y-3">
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-sm font-medium text-gray-500">{t('Type')}</span>
+                  <span className="text-sm font-semibold text-gray-900 capitalize">
+                    {selectedQRCode.type}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-sm font-medium text-gray-500">{t('Scans')}</span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {(selectedQRCode.scans || 0).toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-sm font-medium text-gray-500">{t('Created')}</span>
+                  <span className="text-sm font-semibold text-gray-900">
+                    {selectedQRCode.createdAt
+                      ? new Date(selectedQRCode.createdAt).toLocaleDateString()
+                      : ''}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="sm:justify-start gap-2">
+            <button
+              onClick={async () => {
+                if (selectedQRCode) {
+                  await handleRestore(selectedQRCode.id)
+                  setSelectedQRCode(null)
+                }
+              }}
+              disabled={restoreOne.isPending}
+              className="inline-flex flex-1 items-center justify-center gap-1.5 px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-md hover:bg-green-700 disabled:opacity-50"
+            >
+              <RotateCcw className="w-4 h-4" />
+              {t('Restore')}
+            </button>
+            <button
+              onClick={async () => {
+                if (selectedQRCode) {
+                  setSelectedQRCode(null)
+                  await handleDestroyForever(selectedQRCode.id)
+                }
+              }}
+              disabled={destroyOne.isPending}
+              className="inline-flex flex-1 items-center justify-center gap-1.5 px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-md hover:bg-red-700 disabled:opacity-50"
+            >
+              <Trash2 className="w-4 h-4" />
+              {t('Delete Forever')}
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

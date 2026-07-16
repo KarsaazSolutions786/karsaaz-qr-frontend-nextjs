@@ -17,11 +17,14 @@ import {
   Share2,
 } from 'lucide-react'
 import { QRPreviewImage } from '@/components/qr/QRPreviewImage'
+import { BackendQRPreview } from '@/components/qr/BackendQRPreview'
 import { useTranslation } from '@/lib/i18n'
 
 interface QRCodeCardProps {
   qrcode: QRCode
   onAction?: (action: string, id: string) => void
+  disableLink?: boolean
+  onClick?: () => void
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -43,7 +46,12 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; dot: string }> =
   archived: { bg: 'bg-orange-50', text: 'text-orange-700', dot: 'bg-orange-500' },
 }
 
-export const QRCodeCard = memo(function QRCodeCard({ qrcode, onAction }: QRCodeCardProps) {
+export const QRCodeCard = memo(function QRCodeCard({
+  qrcode,
+  onAction,
+  disableLink,
+  onClick,
+}: QRCodeCardProps) {
   const { t } = useTranslation()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -87,31 +95,58 @@ export const QRCodeCard = memo(function QRCodeCard({ qrcode, onAction }: QRCodeC
     <div
       className={`group relative rounded-lg border border-gray-200 bg-white shadow-sm transition hover:shadow-md hover:border-gray-300 ${menuOpen ? 'z-50' : ''}`}
     >
-      {/* QR Preview */}
-      <Link href={`/qrcodes/${qrcode.id}`} className="block p-4 pb-3">
-        <div className="flex justify-center mb-3">
-          <QRPreviewImage
-            svgUrl={qrcode.svgUrl}
-            fallbackUrl={qrcode.screenshotUrl}
-            alt={qrcode.name}
-            size={120}
-          />
-        </div>
+      {/* QR Preview wrapper */}
+      {disableLink ? (
+        <div onClick={onClick} className="block p-4 pb-3 cursor-pointer">
+          <div className="flex justify-center mb-3">
+            <BackendQRPreview
+              data={qrcode.data as Record<string, any>}
+              qrType={qrcode.type}
+              config={qrcode.designerConfig}
+              className="w-[120px] h-[120px] object-contain"
+            />
+          </div>
 
-        {/* Name + Type */}
-        <h3 className="text-sm font-semibold text-gray-900 truncate">{qrcode.name}</h3>
-        <div className="mt-1 flex items-center gap-2">
-          <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
-            {t(TYPE_LABELS[qrcode.type] || qrcode.type)}
-          </span>
-          <span
-            className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${statusStyle.bg} ${statusStyle.text}`}
-          >
-            <span className={`inline-block w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
-            {t(status.charAt(0).toUpperCase() + status.slice(1))}
-          </span>
+          {/* Name + Type */}
+          <h3 className="text-sm font-semibold text-gray-900 truncate">{qrcode.name}</h3>
+          <div className="mt-1 flex items-center gap-2">
+            <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
+              {t(TYPE_LABELS[qrcode.type] || qrcode.type)}
+            </span>
+            <span
+              className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${statusStyle.bg} ${statusStyle.text}`}
+            >
+              <span className={`inline-block w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
+              {t(status.charAt(0).toUpperCase() + status.slice(1))}
+            </span>
+          </div>
         </div>
-      </Link>
+      ) : (
+        <Link href={`/qrcodes/${qrcode.id}`} className="block p-4 pb-3">
+          <div className="flex justify-center mb-3">
+            <QRPreviewImage
+              svgUrl={qrcode.svgUrl}
+              fallbackUrl={qrcode.screenshotUrl}
+              alt={qrcode.name}
+              size={120}
+            />
+          </div>
+
+          {/* Name + Type */}
+          <h3 className="text-sm font-semibold text-gray-900 truncate">{qrcode.name}</h3>
+          <div className="mt-1 flex items-center gap-2">
+            <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">
+              {t(TYPE_LABELS[qrcode.type] || qrcode.type)}
+            </span>
+            <span
+              className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${statusStyle.bg} ${statusStyle.text}`}
+            >
+              <span className={`inline-block w-1.5 h-1.5 rounded-full ${statusStyle.dot}`} />
+              {t(status.charAt(0).toUpperCase() + status.slice(1))}
+            </span>
+          </div>
+        </Link>
+      )}
 
       {/* Footer Row */}
       <div className="flex items-center justify-between border-t border-gray-100 px-4 py-2.5">

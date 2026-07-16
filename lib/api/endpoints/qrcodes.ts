@@ -36,7 +36,7 @@ export interface ListQRCodesParams {
  * Last Updated: May 2026
  */
 
-function mapQRCode(raw: Record<string, unknown>): QRCode {
+export function mapQRCode(raw: Record<string, unknown>): QRCode {
   const r = raw as Record<string, unknown>
   const design = transformDesignFromBackend(
     (r.design ?? r.designerConfig ?? r.customization ?? {}) as Record<string, any>
