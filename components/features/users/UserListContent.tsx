@@ -12,7 +12,8 @@ import {
   useResetUserScansLimit,
   useGenerateMagicUrl,
 } from '@/lib/hooks/mutations/useUserMutations'
-import { Filter, Plus, Copy, Check, X, Loader2 } from 'lucide-react'
+import { Filter, Plus, Copy, Check, X, Loader2, MoreVertical } from 'lucide-react'
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 import type { User } from '@/types/entities/user'
 import { UserFilterPanel, type UserFilters } from './UserFilterPanel'
@@ -116,7 +117,9 @@ function FilterModal({
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Number of QR Codes')}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {t('Number of QR Codes')}
+          </label>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-gray-500 mb-1">{t('Min')}</label>
@@ -510,80 +513,107 @@ export function UserListContent({ paying }: UserListContentProps) {
                           : '—'}
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium">
-                        <div className="flex items-center justify-end gap-3 flex-wrap">
-                          {/* Act As */}
-                          <button
-                            onClick={() => handleActAs(user)}
-                            disabled={!!pendingAction}
-                            className="text-indigo-600 hover:text-indigo-900 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
-                          >
-                            {pendingAction === `actas-${user.id}` ? (
-                              <Loader2 className="w-3 h-3 animate-spin inline" />
-                            ) : null}{' '}
-                            {t('Act As')}
-                          </button>
+                        <DropdownMenu.Root>
+                          <DropdownMenu.Trigger asChild>
+                            <button className="text-gray-400 hover:text-gray-600 focus:outline-none p-1 rounded-full hover:bg-gray-100 transition-colors">
+                              <MoreVertical className="w-5 h-5" />
+                            </button>
+                          </DropdownMenu.Trigger>
 
-                          {/* Edit */}
-                          <Link
-                            href={`/users/${user.id}`}
-                            className="text-blue-600 hover:text-blue-900 text-xs"
-                          >
-                            {t('Edit')}
-                          </Link>
+                          <DropdownMenu.Portal>
+                            <DropdownMenu.Content
+                              align="end"
+                              className="z-50 min-w-[160px] bg-white rounded-md shadow-lg border border-gray-100 py-1 flex flex-col overflow-hidden"
+                            >
+                              {/* Act As */}
+                              <DropdownMenu.Item asChild>
+                                <button
+                                  onClick={() => handleActAs(user)}
+                                  disabled={!!pendingAction}
+                                  className="w-full text-left px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {pendingAction === `actas-${user.id}` ? (
+                                    <Loader2 className="w-3 h-3 animate-spin inline mr-2" />
+                                  ) : null}{' '}
+                                  {t('Act As')}
+                                </button>
+                              </DropdownMenu.Item>
 
-                          {/* Magic Login */}
-                          <button
-                            onClick={() => handleMagicUrl(user)}
-                            disabled={!!pendingAction}
-                            className="text-purple-600 hover:text-purple-900 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
-                          >
-                            {pendingAction === `magic-${user.id}` ? (
-                              <Loader2 className="w-3 h-3 animate-spin inline" />
-                            ) : null}{' '}
-                            {t('Magic Link')}
-                          </button>
+                              {/* Edit */}
+                              <DropdownMenu.Item asChild>
+                                <Link
+                                  href={`/users/${user.id}`}
+                                  className="block w-full text-left px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 focus:bg-blue-50 focus:outline-none"
+                                >
+                                  {t('Edit')}
+                                </Link>
+                              </DropdownMenu.Item>
 
-                          {/* Balance */}
-                          <button
-                            onClick={() => setBalanceUser(user)}
-                            className="text-emerald-600 hover:text-emerald-900 text-xs"
-                          >
-                            {t('Balance')}
-                          </button>
+                              {/* Magic Login */}
+                              <DropdownMenu.Item asChild>
+                                <button
+                                  onClick={() => handleMagicUrl(user)}
+                                  disabled={!!pendingAction}
+                                  className="w-full text-left px-4 py-2 text-sm text-purple-600 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {pendingAction === `magic-${user.id}` ? (
+                                    <Loader2 className="w-3 h-3 animate-spin inline mr-2" />
+                                  ) : null}{' '}
+                                  {t('Magic Link')}
+                                </button>
+                              </DropdownMenu.Item>
 
-                          {/* Delete */}
-                          <button
-                            onClick={() => handleDelete(user)}
-                            disabled={deleteMutation.isPending}
-                            className="text-red-600 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
-                          >
-                            {t('Delete')}
-                          </button>
+                              {/* Balance */}
+                              <DropdownMenu.Item asChild>
+                                <button
+                                  onClick={() => setBalanceUser(user)}
+                                  className="w-full text-left px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none"
+                                >
+                                  {t('Balance')}
+                                </button>
+                              </DropdownMenu.Item>
 
-                          {/* Reset Role */}
-                          <button
-                            onClick={() => handleResetRole(user)}
-                            disabled={!!pendingAction}
-                            className="text-orange-600 hover:text-orange-900 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
-                          >
-                            {pendingAction === `resetrole-${user.id}` ? (
-                              <Loader2 className="w-3 h-3 animate-spin inline" />
-                            ) : null}{' '}
-                            {t('Reset Role')}
-                          </button>
+                              {/* Delete */}
+                              <DropdownMenu.Item asChild>
+                                <button
+                                  onClick={() => handleDelete(user)}
+                                  disabled={deleteMutation.isPending}
+                                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 focus:bg-red-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {t('Delete')}
+                                </button>
+                              </DropdownMenu.Item>
 
-                          {/* Reset Scans */}
-                          <button
-                            onClick={() => handleResetScans(user)}
-                            disabled={!!pendingAction}
-                            className="text-yellow-600 hover:text-yellow-900 disabled:opacity-50 disabled:cursor-not-allowed text-xs"
-                          >
-                            {pendingAction === `resetscans-${user.id}` ? (
-                              <Loader2 className="w-3 h-3 animate-spin inline" />
-                            ) : null}{' '}
-                            {t('Reset Scans')}
-                          </button>
-                        </div>
+                              {/* Reset Role */}
+                              <DropdownMenu.Item asChild>
+                                <button
+                                  onClick={() => handleResetRole(user)}
+                                  disabled={!!pendingAction}
+                                  className="w-full text-left px-4 py-2 text-sm text-orange-600 hover:bg-orange-50 focus:bg-orange-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {pendingAction === `resetrole-${user.id}` ? (
+                                    <Loader2 className="w-3 h-3 animate-spin inline mr-2" />
+                                  ) : null}{' '}
+                                  {t('Reset Role')}
+                                </button>
+                              </DropdownMenu.Item>
+
+                              {/* Reset Scans */}
+                              <DropdownMenu.Item asChild>
+                                <button
+                                  onClick={() => handleResetScans(user)}
+                                  disabled={!!pendingAction}
+                                  className="w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-50 focus:bg-yellow-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {pendingAction === `resetscans-${user.id}` ? (
+                                    <Loader2 className="w-3 h-3 animate-spin inline mr-2" />
+                                  ) : null}{' '}
+                                  {t('Reset Scans')}
+                                </button>
+                              </DropdownMenu.Item>
+                            </DropdownMenu.Content>
+                          </DropdownMenu.Portal>
+                        </DropdownMenu.Root>
                       </td>
                     </tr>
                   ))}

@@ -137,6 +137,13 @@ export default function QRWizardContainer({
   const [wizardStep, setWizardStep] = useState(initialStepIndex)
   const [isValidating, setIsValidating] = useState(false)
 
+  // Clear query parameter and reset URL when returning to the type selection step
+  useEffect(() => {
+    if (mode === 'create' && WIZARD_STEPS[wizardStep]?.id === 'type') {
+      router.replace('/qrcodes/new', { scroll: false })
+    }
+  }, [wizardStep, WIZARD_STEPS, mode, router])
+
   const canGoBack = wizardStep > 0
   const canGoNext = wizardStep < WIZARD_STEPS.length - 1
 
@@ -475,7 +482,10 @@ export default function QRWizardContainer({
           <Suspense fallback={<WizardDesignSkeleton />}>
             <QRDesignStudio
               qrType={qrType}
-              qrTypeLabel={findQrCodeType(qrType)?.name || qrType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+              qrTypeLabel={
+                findQrCodeType(qrType)?.name ||
+                qrType.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+              }
               qrData={formData}
               design={design}
               onChange={handleDesignChange}

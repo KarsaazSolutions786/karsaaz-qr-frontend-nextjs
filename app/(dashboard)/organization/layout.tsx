@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useOrgStore } from '@/lib/stores/useOrgStore'
 import {
   Building2,
   KeyRound,
@@ -31,28 +33,49 @@ const NAV = [
 export default function OrganizationLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const orgId = searchParams.get('org')
+  const urlOrgId = searchParams.get('org')
+  const { selectedOrg } = useOrgStore()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true)
+  }, [])
+
+  const activeOrgId = urlOrgId || selectedOrg?.id
 
   /**
    * Purpose: Executes withOrg functionality.
    * Owner/Author: Syed Ashhad
    * Created/Updated: April 2026
    */
-  const withOrg = (href: string) => (orgId ? `${href}?org=${orgId}` : href)
+  const withOrg = (href: string) => (activeOrgId ? `${href}?org=${activeOrgId}` : href)
 
   return (
     <div className="flex min-h-screen flex-col">
       {/* Top bar */}
-      <div className="border-b bg-white px-6 py-3 flex items-center gap-3">
-        <Link
-          href="/qrcodes"
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          Dashboard
-        </Link>
-        <span className="text-gray-300">/</span>
-        <span className="text-sm font-semibold text-gray-900">Organization API</span>
+      <div className="border-b bg-white px-6 py-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/qrcodes"
+            className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Dashboard
+          </Link>
+          <span className="text-gray-300">/</span>
+          <span className="text-sm font-semibold text-gray-900">Organization API</span>
+        </div>
+
+        {mounted && selectedOrg && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-500 font-medium">Current Organization:</span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-sm font-semibold text-white bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] rounded-full shadow-sm">
+              <Building2 className="w-3.5 h-3.5" />
+              {selectedOrg.name}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-1">

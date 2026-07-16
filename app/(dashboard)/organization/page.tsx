@@ -272,7 +272,12 @@ export default function OrganizationPage() {
           {orgs.map(org => (
             <div
               key={org.id}
-              className="rounded-xl border bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
+              onClick={() => handleOrgSelect(org)}
+              className={`cursor-pointer rounded-xl border bg-white p-5 shadow-sm transition-all ${
+                selectedOrg?.id === org.id
+                  ? 'ring-2 ring-primary-500 border-primary-500'
+                  : 'hover:shadow-md'
+              }`}
             >
               <div className="mb-4 flex items-start justify-between">
                 <div className="flex items-center gap-3">

@@ -1,5 +1,6 @@
 import apiClient from '../client'
 import type { QRCode } from '@/types/entities/qrcode'
+import { mapQRCode } from './qrcodes'
 
 export interface TrashListParams {
   search?: string
@@ -35,10 +36,14 @@ export const trashAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: May 2026
    */
-  
+
   async list(params: TrashListParams = {}): Promise<TrashListResponse> {
     const response = await apiClient.get('/qrcodes/trash', { params })
-    return response.data
+    const data = response.data
+    return {
+      ...data,
+      data: (data.data || []).map((raw: any) => mapQRCode(raw)),
+    }
   },
 
   /**
@@ -46,10 +51,14 @@ export const trashAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: May 2026
    */
-  
+
   async restore(id: number | string): Promise<{ message: string; data: QRCode }> {
     const response = await apiClient.post(`/qrcodes/trash/${id}/restore`)
-    return response.data
+    const data = response.data
+    return {
+      ...data,
+      data: data.data ? mapQRCode(data.data) : undefined,
+    }
   },
 
   /**
@@ -57,7 +66,7 @@ export const trashAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: May 2026
    */
-  
+
   async restoreMany(ids: (number | string)[]): Promise<{ message: string; restored: number }> {
     const response = await apiClient.post('/qrcodes/trash/restore-many', { ids })
     return response.data
@@ -68,7 +77,7 @@ export const trashAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: May 2026
    */
-  
+
   async destroy(id: number | string): Promise<{ message: string }> {
     const response = await apiClient.delete(`/qrcodes/trash/${id}`)
     return response.data
@@ -79,7 +88,7 @@ export const trashAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: May 2026
    */
-  
+
   async destroyMany(ids: (number | string)[]): Promise<{ message: string; deleted: number }> {
     const response = await apiClient.delete('/qrcodes/trash/destroy-many', { data: { ids } })
     return response.data
@@ -90,7 +99,7 @@ export const trashAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: May 2026
    */
-  
+
   async empty(): Promise<{ message: string; deleted: number }> {
     const response = await apiClient.post('/qrcodes/trash/empty')
     return response.data
@@ -101,7 +110,7 @@ export const trashAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: May 2026
    */
-  
+
   async getSettings(): Promise<TrashSettings> {
     const response = await apiClient.get('/qrcodes/trash/settings')
     return response.data
@@ -112,7 +121,7 @@ export const trashAPI = {
    * Owner/Author: Syed Ashhad
    * Created/Updated: May 2026
    */
-  
+
   async updateSettings(data: {
     trash_auto_delete_days?: number | null
     trash_storage_limit_mb?: number

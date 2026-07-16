@@ -22,7 +22,6 @@ import React, {
 import apiClient from '@/lib/api/client'
 import { DesignerConfig, DEFAULT_DESIGNER_CONFIG } from '@/types/entities/designer'
 import { transformDesignToBackend } from '@/lib/qr/design-transformer'
-import { sanitizeSvg } from '@/lib/utils/dom-safety'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
@@ -59,7 +58,7 @@ export interface BackendQRPreviewRef {
 /* ------------------------------------------------------------------ */
 
 /**
- * Purpose: * Fast 32-bit hash (same algorithm as legacy preview-url-builder) 
+ * Purpose: * Fast 32-bit hash (same algorithm as legacy preview-url-builder)
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
@@ -112,11 +111,25 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
   ) {
     const { t } = useTranslation()
     const [svg, setSvg] = useState<string | null>(null)
+    const [blobUrl, setBlobUrl] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const abortRef = useRef<AbortController | null>(null)
     const mountedRef = useRef(true)
+
+    useEffect(() => {
+      if (!svg) {
+        setBlobUrl(null)
+        return
+      }
+      const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      setBlobUrl(url)
+      return () => {
+        URL.revokeObjectURL(url)
+      }
+    }, [svg])
 
     // Merge config with defaults
     const mergedConfig: DesignerConfig = {
@@ -286,7 +299,7 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
       )
     }
 
-    if (!svg) {
+    if (!svg || !blobUrl) {
       return (
         <div className={`qr-backend-preview ${className}`}>
           <div className="flex items-center justify-center p-8">
@@ -297,18 +310,8 @@ export const BackendQRPreview = forwardRef<BackendQRPreviewRef, BackendQRPreview
     }
 
     return (
-      <div className={`qr-backend-preview ${className}`}>
-        <div
-          className="qr-backend-preview__svg"
-          dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg ?? '') }}
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        />
+      <div className={`qr-backend-preview ${className} relative flex items-center justify-center`}>
+        <img src={blobUrl} alt={t('QR Code Preview')} className="w-full h-full object-contain" />
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded-lg">
             <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-600" />
