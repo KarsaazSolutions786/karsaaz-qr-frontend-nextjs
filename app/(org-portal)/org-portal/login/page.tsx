@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Building2 } from 'lucide-react'
+import Image from 'next/image'
 import { useOrgPortalAuth } from '@/lib/context/OrgPortalAuthContext'
 
 /**
@@ -40,72 +40,127 @@ export default function OrgPortalLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm">
-        {/* Logo */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg">
-            <Building2 className="h-7 w-7 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">Organization Portal</h1>
-          <p className="mt-1 text-sm text-gray-500">Sign in to manage your API access</p>
-        </div>
+    <div
+      id="main-content"
+      className="relative flex min-h-screen items-center justify-center overflow-hidden"
+      style={{
+        backgroundImage:
+          'linear-gradient(225deg, rgba(248, 127, 251, 1) 2%, rgba(150, 131, 255, 1) 98%)',
+      }}
+    >
+      <div
+        className="pointer-events-none absolute select-none"
+        aria-hidden="true"
+        style={{
+          top: '-30%',
+          right: '-21%',
+          width: 918,
+          height: 918,
+          transform: 'rotate(-50.47deg)',
+        }}
+      >
+        <img src="/images/auth/qr-diamonds.svg" alt="" className="block h-full w-full" />
+      </div>
+      <div
+        className="pointer-events-none absolute select-none"
+        aria-hidden="true"
+        style={{ left: 35, top: 343, width: 1369, height: 1369 }}
+      >
+        <img src="/images/auth/ellipse-outer.svg" alt="" className="block h-full w-full" />
+      </div>
+      <div
+        className="pointer-events-none absolute select-none"
+        aria-hidden="true"
+        style={{ left: 161, top: 467, width: 1115, height: 1115 }}
+      >
+        <img src="/images/auth/ellipse-mid.svg" alt="" className="block h-full w-full" />
+      </div>
+      <div
+        className="pointer-events-none absolute select-none"
+        aria-hidden="true"
+        style={{ left: 276, top: 591, width: 881, height: 882 }}
+      >
+        <img src="/images/auth/ellipse-inner.svg" alt="" className="block h-full w-full" />
+      </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-100"
+      <div className="relative z-10 w-[447px] max-w-[calc(100%-32px)]">
+        <div
+          className="flex w-full flex-col rounded-[23px] bg-white/30 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)] text-white"
+          style={{ minHeight: 543, padding: '40px 24px 30px' }}
         >
-          <div className="mb-4">
-            <label className="mb-1.5 block text-sm font-medium text-gray-700" htmlFor="email">
-              Portal Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="yourorg@portal.karsaazqr.com"
-              required
-              className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-            />
+          {/* Logo / Header */}
+          <div className="mb-8 text-center">
+            <div className="flex justify-center mb-4">
+              <Image
+                src="/images/auth/karsaaz-logo.svg"
+                alt="Karsaaz QR"
+                width={176.5}
+                height={36.9}
+                priority
+              />
+            </div>
+            <h1 className="text-2xl font-bold text-white">Organization Portal</h1>
+            <p className="mt-1 text-sm text-white/90">Sign in to manage your API access</p>
           </div>
 
-          <div className="mb-6">
-            <label className="mb-1.5 block text-sm font-medium text-gray-700" htmlFor="password">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-4 flex-1 flex flex-col justify-center">
+            <div>
+              <label htmlFor="email" className="mb-1 block text-xs font-bold text-white">
+                Portal Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="yourorg@portal.karsaazqr.com"
+                required
+                className="block w-full rounded-lg border border-gray-200 bg-white/90 px-4 py-2 text-sm text-gray-800 focus:border-purple-500 focus:outline-none"
+              />
+            </div>
 
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>
-          )}
+            <div>
+              <label htmlFor="password" className="mb-1 block text-xs font-bold text-white">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                className="block w-full rounded-lg border border-gray-200 bg-white/90 px-4 py-2 text-sm text-gray-800 focus:border-purple-500 focus:outline-none"
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
-          >
-            {loading ? 'Signing in…' : 'Sign in'}
-          </button>
-        </form>
+            {error && (
+              <div
+                role="alert"
+                className="rounded-lg bg-red-500/25 border border-red-500/40 p-3 text-white text-xs"
+              >
+                <p className="text-xs font-medium text-red-100">{error}</p>
+              </div>
+            )}
 
-        <p className="mt-6 text-center text-sm text-gray-500">
-          Don&apos;t have an organization yet?{' '}
-          <Link
-            href="/signup?intent=organization"
-            className="font-medium text-indigo-600 hover:text-indigo-700"
-          >
-            Create one
-          </Link>
-        </p>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-full bg-[#8351e0] py-2.5 text-sm font-semibold text-white hover:bg-[#7244c8] transition-colors disabled:opacity-60 mt-2"
+            >
+              {loading ? 'Signing in…' : 'Sign in'}
+            </button>
+          </form>
+
+          <p className="mt-6 text-center text-xs text-white/90">
+            Don&apos;t have an organization yet?{' '}
+            <Link
+              href="/signup?intent=organization"
+              className="font-semibold text-white underline decoration-solid hover:text-white/80"
+            >
+              Create one
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   )
