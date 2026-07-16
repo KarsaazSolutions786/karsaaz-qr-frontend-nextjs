@@ -7,6 +7,7 @@ export interface Organization {
   status: 'active' | 'suspended' | 'trial'
   website?: string
   plan?: string
+  owner_user_id?: number
   credits: {
     balance: number
     lifetime_purchased: number

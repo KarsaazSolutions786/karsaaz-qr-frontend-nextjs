@@ -153,6 +153,16 @@ export default function Navbar() {
                   )}
                 </a>
               ))}
+              <Link
+                href="/for-organizations"
+                className={`relative text-base font-medium transition-colors duration-200 pb-2 ${
+                  pathname === '/for-organizations'
+                    ? 'text-purple-600'
+                    : 'text-gray-500 hover:text-purple-600'
+                }`}
+              >
+                For Organizations
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -233,6 +243,17 @@ export default function Navbar() {
                   {link.name}
                 </a>
               ))}
+              <Link
+                href="/for-organizations"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block px-4 py-3 text-base font-medium transition-colors duration-200 rounded-lg ${
+                  pathname === '/for-organizations'
+                    ? 'text-purple-600 bg-purple-50'
+                    : 'text-gray-500 hover:text-purple-600 hover:bg-purple-50'
+                }`}
+              >
+                For Organizations
+              </Link>
 
               {/* Mobile Continue Free Button */}
               <Link

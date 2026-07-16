@@ -63,7 +63,13 @@ export const ADMIN_ROUTE_PREFIXES = [
   '/contacts',
   '/lead-forms',
   '/support-tickets',
-  '/organization',
+  // NOT '/organization' bare -- any authenticated user may self-serve create and
+  // manage their OWN organization there (OrganizationController::store()/index()
+  // has no admin gate, and index() is scoped to the caller's own orgs). Only the
+  // admin-console sub-pages below (viewing/managing ALL organizations, or the
+  // global org-plan catalog) stay admin-gated.
+  '/organization/manage',
+  '/organization/plans',
 ]
 
 export const figmaPrimaryNav: FigmaNavItem[] = [
@@ -83,7 +89,8 @@ export const figmaPrimaryNav: FigmaNavItem[] = [
     label: 'Organization API',
     href: '/organization',
     icon: BuildingOffice2Icon,
-    adminOnly: true,
+    // Not admin-only -- any authenticated user can create and manage their own
+    // organization here (see ADMIN_ROUTE_PREFIXES comment above).
   },
 ]
 

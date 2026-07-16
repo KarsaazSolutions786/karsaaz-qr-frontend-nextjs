@@ -36,6 +36,23 @@ export const registerSchema = z
 
 export type RegisterFormData = z.infer<typeof registerSchema>
 
+// Organization signup schema -- registerSchema plus an organization name, used by
+// the combined "create your account + your organization in one step" flow.
+export const orgRegisterSchema = registerSchema._def.schema
+  .extend({
+    organizationName: z
+      .string()
+      .trim()
+      .min(1, 'Organization name is required')
+      .max(120, 'Organization name must be less than 120 characters'),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
+
+export type OrgRegisterFormData = z.infer<typeof orgRegisterSchema>
+
 // OTP verification schema — original backend uses 5-digit codes
 export const otpVerificationSchema = z.object({
   code: z.string().regex(/^[0-9]{5}$/, 'OTP code must be 5 digits'),

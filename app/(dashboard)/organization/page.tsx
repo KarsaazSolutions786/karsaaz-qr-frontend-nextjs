@@ -15,8 +15,11 @@ import {
   EyeOff,
   ShieldAlert,
   CheckCircle2,
+  Users,
 } from 'lucide-react'
 import { organizationAPI, type Organization } from '@/lib/api/endpoints/organization'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { isSuperAdmin } from '@/lib/utils/permissions'
 
 interface PortalCredentials {
   email: string
@@ -30,6 +33,8 @@ interface PortalCredentials {
  * Created/Updated: April 2026
  */
 export default function OrganizationPage() {
+  const { user } = useAuth()
+  const canManageAllOrgs = isSuperAdmin(user)
   const [orgs, setOrgs] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
   const [creating, setCreating] = useState(false)
@@ -38,6 +43,25 @@ export default function OrganizationPage() {
   const [credentials, setCredentials] = useState<PortalCredentials | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [copied, setCopied] = useState<'email' | 'password' | null>(null)
+
+  // Picked up once from the combined org-signup flow (RegisterOrgForm) -- shows
+  // the same one-time credentials modal used by the inline "New Organization"
+  // create form below, then clears it so a refresh never re-shows it.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const stored = sessionStorage.getItem('new_org_portal_credentials')
+    if (!stored) return
+    sessionStorage.removeItem('new_org_portal_credentials')
+    try {
+      const creds = JSON.parse(stored)
+      setCredentials({
+        ...creds,
+        note: creds.note ?? 'Save these credentials — the password will not be shown again.',
+      })
+    } catch {
+      // Malformed sessionStorage value -- ignore, not worth surfacing an error for.
+    }
+  }, [])
 
   useEffect(() => {
     organizationAPI
@@ -289,12 +313,14 @@ export default function OrganizationPage() {
 
               {/* Actions */}
               <div className="flex flex-wrap gap-2">
-                <Link
-                  href={`/organization/manage/${org.id}`}
-                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-primary-200 bg-primary-50 px-3 py-1.5 text-xs font-medium text-primary-700 hover:bg-primary-100"
-                >
-                  <ShieldAlert className="h-3 w-3" /> Manage
-                </Link>
+                {canManageAllOrgs && (
+                  <Link
+                    href={`/organization/manage/${org.id}`}
+                    className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-primary-200 bg-primary-50 px-3 py-1.5 text-xs font-medium text-primary-700 hover:bg-primary-100"
+                  >
+                    <ShieldAlert className="h-3 w-3" /> Manage
+                  </Link>
+                )}
                 <Link
                   href={`/organization/api-keys?org=${org.id}`}
                   className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
@@ -308,11 +334,19 @@ export default function OrganizationPage() {
                   <BarChart3 className="h-3 w-3" /> Usage
                 </Link>
                 <Link
-                  href={`/organization/plans?org=${org.id}`}
+                  href={`/organization/team?org=${org.id}`}
                   className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
                 >
-                  <Wallet className="h-3 w-3" /> Plan
+                  <Users className="h-3 w-3" /> Team
                 </Link>
+                {canManageAllOrgs && (
+                  <Link
+                    href={`/organization/plans?org=${org.id}`}
+                    className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    <Wallet className="h-3 w-3" /> Plan
+                  </Link>
+                )}
                 <Link
                   href="/org-portal"
                   target="_blank"

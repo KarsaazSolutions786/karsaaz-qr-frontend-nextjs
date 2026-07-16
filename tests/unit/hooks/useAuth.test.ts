@@ -78,6 +78,22 @@ import type { User } from '@/types/entities/user'
 
 // ---- Helpers ----
 
+/**
+ * The vi.mock('@/lib/api/rpc', ...) factory above replaces RpcError with a
+ * MockRpcError whose constructor is (message, isAuthError) -- deliberately
+ * simpler than the real class's (code, message, data). tsc type-checks
+ * `new RpcError(...)` against the *real* class's signature regardless, so a
+ * plain `new RpcError(...)` call here would either fail to compile (string
+ * where the real signature wants a number) or silently construct the wrong
+ * runtime shape. This helper isolates the one intentional type escape.
+ */
+function mockAuthError(message: string, isAuthError: boolean): RpcError {
+  return new (RpcError as unknown as new (message: string, isAuthError: boolean) => RpcError)(
+    message,
+    isAuthError
+  )
+}
+
 const baseUser: User = {
   id: 1,
   email: 'test@example.com',
@@ -136,7 +152,9 @@ describe('useAuth / AuthProvider', () => {
     vi.clearAllMocks()
     setupLocalStorageMock()
     // Default: appInit fails so isLoading resolves quickly
-    mockRpcComposite.mockRejectedValue(new RpcError(-32000, 'Unauthorized'))
+    // Note: this file's mocked RpcError is (message, isAuthError), NOT the real
+    // class's (code, message, data) -- always construct it that way here.
+    mockRpcComposite.mockRejectedValue(mockAuthError('Unauthorized', true))
   })
 
   afterEach(() => {
@@ -284,7 +302,7 @@ describe('useAuth / AuthProvider', () => {
       storage['token'] = 'expired-token'
       storage['user'] = JSON.stringify(baseUser)
 
-      mockRpcComposite.mockRejectedValueOnce(new RpcError(-32000, 'Unauthorized'))
+      mockRpcComposite.mockRejectedValueOnce(mockAuthError('Unauthorized', true))
 
       const { result } = renderHook(() => useAuthFromContext(), { wrapper: createWrapper() })
 
@@ -300,7 +318,7 @@ describe('useAuth / AuthProvider', () => {
       storage['user'] = JSON.stringify(baseUser)
 
       // Network error has isAuthError = false
-      mockRpcComposite.mockRejectedValueOnce(new RpcError(500, 'Network Error'))
+      mockRpcComposite.mockRejectedValueOnce(mockAuthError('Network Error', false))
 
       const { result } = renderHook(() => useAuthFromContext(), { wrapper: createWrapper() })
 

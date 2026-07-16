@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-15T08:03:01Z",
-  "changed_file": "app/(dashboard)/organization/manage/[id]/page.tsx",
+  "timestamp": "2026-07-16T06:20:40Z",
+  "changed_file": "app/(org-portal)/org-portal/login/page.tsx",
   "test_command": "npx vitest run --reporter=verbose",
   "related_test": "",
   "recommendation": "テストの実行を推奨します"

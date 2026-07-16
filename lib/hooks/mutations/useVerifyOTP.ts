@@ -1,14 +1,14 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { authAPI, VerifyOTPRequest } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 
-
 export function useVerifyOTP() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const queryClient = useQueryClient()
   const { setUser } = useAuth()
 
@@ -29,8 +29,13 @@ export function useVerifyOTP() {
         localStorage.setItem('token', response.token)
       }
 
-      // Redirect based on user's role home_page
-      let homePage = response.user?.roles?.[0]?.home_page || '/qrcodes/new'
+      // ?next=... overrides the default role home_page -- used by the combined
+      // org-signup flow to land the new owner on /organization instead. Only a
+      // same-origin relative path is accepted (single leading "/", not "//" or an
+      // absolute URL) to avoid an open-redirect via a client-controlled query param.
+      const next = searchParams?.get('next')
+      const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : null
+      let homePage = safeNext || response.user?.roles?.[0]?.home_page || '/qrcodes/new'
       if (homePage.startsWith('/dashboard')) {
         homePage = homePage.replace('/dashboard', '')
       }

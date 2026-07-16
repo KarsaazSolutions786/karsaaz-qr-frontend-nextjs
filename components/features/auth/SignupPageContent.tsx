@@ -11,12 +11,14 @@
  */
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth'
 import { useTranslation } from '@/lib/i18n'
 import { RegisterForm } from './RegisterForm'
+import { OrgRegisterForm } from './OrgRegisterForm'
 import { GoogleLoginButton } from './GoogleLoginButton'
 import Link from 'next/link'
+import { Building2 } from 'lucide-react'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 
 /**
@@ -27,16 +29,21 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 export function SignupPageContent() {
   const { t } = useTranslation()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const isOrgIntent = searchParams?.get('intent') === 'organization'
   const { data: statusData, isLoading, isError } = usePasswordlessStatus()
   const [registrationDisabled, setRegistrationDisabled] = useState(false)
 
   // Redirect to login when passwordless is enabled
   // (matches original: <qrcg-redirect from="/account/sign-up" to="/account/login">)
+  // Skipped for the org-signup intent -- the combined account+organization flow
+  // needs a real password (OrgRegisterForm), passwordless/OTP login has no
+  // equivalent combined step.
   useEffect(() => {
-    if (!isLoading && !isError && statusData?.enabled === true) {
+    if (!isOrgIntent && !isLoading && !isError && statusData?.enabled === true) {
       router.replace('/login')
     }
-  }, [isLoading, isError, statusData, router])
+  }, [isOrgIntent, isLoading, isError, statusData, router])
 
   // While checking status, show spinner
   if (isLoading) {
@@ -47,8 +54,8 @@ export function SignupPageContent() {
     )
   }
 
-  // If passwordless is enabled, show nothing while redirecting
-  if (!isError && statusData?.enabled === true) {
+  // If passwordless is enabled, show nothing while redirecting (not for org intent)
+  if (!isOrgIntent && !isError && statusData?.enabled === true) {
     return null
   }
 
@@ -62,7 +69,9 @@ export function SignupPageContent() {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">{t('Registration Disabled')}</h2>
           <p className="mt-4 text-sm text-gray-600">
-            {t('New user registrations are currently disabled. Please contact the administrator for more information.')}
+            {t(
+              'New user registrations are currently disabled. Please contact the administrator for more information.'
+            )}
           </p>
         </div>
         <Link
@@ -75,17 +84,45 @@ export function SignupPageContent() {
     )
   }
 
+  if (isOrgIntent) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg">
+            <Building2 className="h-7 w-7 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900">
+            {t('Create your')} <span className="text-purple-600">Karsaaz</span>{' '}
+            <span className="text-gray-700">QR</span> {t('organization')}
+          </h2>
+          <p className="mt-2 text-sm text-gray-600">
+            {t('One step: your account and your organization, both set up together.')}
+          </p>
+        </div>
+
+        <OrgRegisterForm onRegistrationDisabled={() => setRegistrationDisabled(true)} />
+
+        <p className="text-center text-sm text-gray-500">
+          {t('Already manage an organization?')}{' '}
+          <Link
+            href="/org-portal/login"
+            className="font-medium text-indigo-600 hover:text-indigo-700"
+          >
+            {t('Sign in to the Organization Portal')}
+          </Link>
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900">
-          {t('Welcome to')}{' '}
-          <span className="text-purple-600">Karsaaz</span>{' '}
+          {t('Welcome to')} <span className="text-purple-600">Karsaaz</span>{' '}
           <span className="text-gray-700">QR</span>
         </h2>
-        <p className="mt-2 text-sm text-gray-600">
-          {t('Sign Up to your account and join us.')}
-        </p>
+        <p className="mt-2 text-sm text-gray-600">{t('Sign Up to your account and join us.')}</p>
       </div>
 
       <GoogleLoginButton />

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Building2 } from 'lucide-react'
 import { useOrgPortalAuth } from '@/lib/context/OrgPortalAuthContext'
 
@@ -95,6 +96,16 @@ export default function OrgPortalLoginPage() {
             {loading ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
+
+        <p className="mt-6 text-center text-sm text-gray-500">
+          Don&apos;t have an organization yet?{' '}
+          <Link
+            href="/signup?intent=organization"
+            className="font-medium text-indigo-600 hover:text-indigo-700"
+          >
+            Create one
+          </Link>
+        </p>
       </div>
     </div>
   )
