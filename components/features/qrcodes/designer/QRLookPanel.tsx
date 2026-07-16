@@ -13,7 +13,7 @@ import { ShapeGrid } from './ShapeGrid'
 
 interface QRLookPanelProps {
   value: DesignerConfig
-  onFieldChange: (field: string, value: unknown) => void
+  onFieldChange: (field: string | Record<string, unknown>, value?: unknown) => void
   onLogoChange: (updates: Partial<DesignerConfig['logo']>) => void
   isFreePlan: boolean
   onPremiumBlock: () => void
@@ -95,11 +95,16 @@ export function QRLookPanel({
           selectedValue={value.shape || 'none'}
           onSelect={v => {
             const selectedItem = OUTLINED_SHAPES.find(item => item.value === v)
+            // Single batched update: sequential onFieldChange calls each spread
+            // the same stale design object in QRDesignStudio.handleChange, so
+            // later calls clobber earlier ones and `shape` never sticks.
             if (selectedItem) {
-              onFieldChange('shape', v)
-              onFieldChange('outlineShapeAssetId', selectedItem.id || null)
-              onFieldChange('outlineShapeAssetVersion', selectedItem.version || null)
-              onFieldChange('outlineShapeSource', selectedItem.source || null)
+              onFieldChange({
+                shape: v,
+                outlineShapeAssetId: selectedItem.id || null,
+                outlineShapeAssetVersion: selectedItem.version || null,
+                outlineShapeSource: selectedItem.source || null,
+              })
             } else {
               onFieldChange('shape', v)
             }

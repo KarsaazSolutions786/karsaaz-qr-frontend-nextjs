@@ -221,18 +221,38 @@ export default function QRDesignStudio({
     refMap[tabId]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  // Base for the next design update. Spreading the `design` prop directly is
+  // stale within a single event handler: two consecutive handleChange calls
+  // (e.g. onLogoChange + errorCorrectionLevel, or shape + asset identity keys)
+  // would each spread the same old object, so the later call silently clobbers
+  // the earlier one. The ref composes synchronous updates before React
+  // re-renders with the new prop.
+  const pendingDesignRef = useRef<Partial<DesignerConfig>>(design)
+  useEffect(() => {
+    pendingDesignRef.current = design
+  }, [design])
+
+  const applyDesignUpdate = (updates: Record<string, unknown>) => {
+    const next = { ...pendingDesignRef.current, ...updates } as Partial<DesignerConfig>
+    pendingDesignRef.current = next
+    onChange(next)
+  }
+
   const handleChange = (field: string | Record<string, unknown>, value?: unknown) => {
     if (typeof field === 'string') {
-      onChange({ ...design, [field]: value })
+      applyDesignUpdate({ [field]: value })
     } else {
-      onChange({ ...design, ...field })
+      applyDesignUpdate(field)
     }
   }
 
   const handleLogoChange = (logoUpdates: Partial<DesignerConfig['logo']>) => {
-    onChange({
-      ...design,
-      logo: { ...mergedConfig.logo, ...logoUpdates } as DesignerConfig['logo'],
+    applyDesignUpdate({
+      logo: {
+        ...DEFAULT_DESIGNER_CONFIG.logo,
+        ...(pendingDesignRef.current.logo ?? {}),
+        ...logoUpdates,
+      } as DesignerConfig['logo'],
     })
   }
 
