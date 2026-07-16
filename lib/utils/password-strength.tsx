@@ -43,15 +43,15 @@ export function PasswordStrengthBar({ password }: { password: string }) {
   return (
     <div className="mt-2">
       <div className="flex items-center gap-2">
-        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="flex-1 h-2 bg-black/20 rounded-full overflow-hidden">
           <div
             className={`h-full ${strength.color} transition-all duration-300`}
             style={{ width: `${(strength.score / 5) * 100}%` }}
           />
         </div>
-        <span className="text-xs font-medium text-gray-600">{t(strength.label)}</span>
+        <span className="text-xs font-medium text-white">{t(strength.label)}</span>
       </div>
-      <p className="mt-1 text-xs text-gray-500">
+      <p className="mt-1 text-xs text-white">
         {t('Use 8+ characters with a mix of letters, numbers & symbols')}
       </p>
     </div>

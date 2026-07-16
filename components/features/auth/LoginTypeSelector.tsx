@@ -198,6 +198,18 @@ function TraditionalLoginView({
             {t('Signup')}
           </Link>
         </p>
+        <p
+          className="text-left text-[12px] font-medium text-white"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          {t('Already manage an organization?')}{' '}
+          <Link
+            href="/org-portal/login"
+            className="font-semibold text-white underline decoration-solid hover:text-white/80"
+          >
+            {t('Sign in to the Organization Portal')}
+          </Link>
+        </p>
       </div>
     </div>
   )

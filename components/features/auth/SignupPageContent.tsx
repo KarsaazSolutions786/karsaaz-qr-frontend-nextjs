@@ -18,8 +18,8 @@ import { RegisterForm } from './RegisterForm'
 import { OrgRegisterForm } from './OrgRegisterForm'
 import { GoogleLoginButton } from './GoogleLoginButton'
 import Link from 'next/link'
-import { Building2 } from 'lucide-react'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import Image from 'next/image'
 
 /**
  * Purpose: Executes SignupPageContent functionality.
@@ -65,10 +65,13 @@ export function SignupPageContent() {
   // If registration is disabled, show message instead of form
   if (registrationDisabled) {
     return (
-      <div className="space-y-6 text-center">
+      <div
+        className="flex w-full flex-col rounded-[23px] bg-white/30 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)] text-white text-center space-y-6"
+        style={{ minHeight: 543, padding: '40px 24px 30px' }}
+      >
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">{t('Registration Disabled')}</h2>
-          <p className="mt-4 text-sm text-gray-600">
+          <h2 className="text-2xl font-bold text-white">{t('Registration Disabled')}</h2>
+          <p className="mt-4 text-sm text-white/90">
             {t(
               'New user registrations are currently disabled. Please contact the administrator for more information.'
             )}
@@ -76,7 +79,7 @@ export function SignupPageContent() {
         </div>
         <Link
           href="/login"
-          className="inline-block rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
+          className="inline-block rounded-full bg-[#8351e0] px-6 py-2.5 text-white hover:bg-[#7244c8] font-semibold text-center transition-colors"
         >
           {t('Go to Login')}
         </Link>
@@ -86,27 +89,41 @@ export function SignupPageContent() {
 
   if (isOrgIntent) {
     return (
-      <div className="space-y-6">
+      <div
+        className="flex w-full flex-col rounded-[23px] bg-white/30 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)] text-white space-y-6"
+        style={{ minHeight: 543, padding: '40px 24px 30px' }}
+      >
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg">
-            <Building2 className="h-7 w-7 text-white" />
+          <div className="flex flex-col items-center">
+            <div className="flex items-center justify-center gap-x-2">
+              <h2
+                className="whitespace-nowrap text-[24px] font-semibold leading-normal text-white"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {t('Create your')}
+              </h2>
+              <Image
+                src="/images/auth/karsaaz-logo.svg"
+                alt="Karsaaz QR"
+                width={150}
+                height={31.4}
+                priority
+              />
+            </div>
+            <h3 className="mt-1 text-[20px] font-semibold text-white">{t('organization')}</h3>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">
-            {t('Create your')} <span className="text-purple-600">Karsaaz</span>{' '}
-            <span className="text-gray-700">QR</span> {t('organization')}
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-3 text-xs text-white/90">
             {t('One step: your account and your organization, both set up together.')}
           </p>
         </div>
 
         <OrgRegisterForm onRegistrationDisabled={() => setRegistrationDisabled(true)} />
 
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-xs text-white/90">
           {t('Already manage an organization?')}{' '}
           <Link
             href="/org-portal/login"
-            className="font-medium text-indigo-600 hover:text-indigo-700"
+            className="font-semibold text-white underline decoration-solid hover:text-white/80"
           >
             {t('Sign in to the Organization Portal')}
           </Link>
@@ -116,23 +133,40 @@ export function SignupPageContent() {
   }
 
   return (
-    <div className="space-y-6">
+    <div
+      className="flex w-full flex-col rounded-[23px] bg-white/30 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)] text-white space-y-6"
+      style={{ minHeight: 543, padding: '40px 24px 30px' }}
+    >
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900">
-          {t('Welcome to')} <span className="text-purple-600">Karsaaz</span>{' '}
-          <span className="text-gray-700">QR</span>
-        </h2>
-        <p className="mt-2 text-sm text-gray-600">{t('Sign Up to your account and join us.')}</p>
+        {/* "Welcome to" + Karsaaz QR logo inline */}
+        <div className="flex items-center gap-x-2 justify-center">
+          <h2
+            className="whitespace-nowrap text-[28px] font-semibold leading-normal text-white"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {t('Welcome to')}
+          </h2>
+          <Image
+            src="/images/auth/karsaaz-logo.svg"
+            alt="Karsaaz QR"
+            width={176.5}
+            height={36.9}
+            priority
+          />
+        </div>
+        <p className="mt-2 text-sm text-white/90">{t('Sign Up to your account and join us.')}</p>
       </div>
 
-      <GoogleLoginButton />
+      <div className="flex justify-center">
+        <GoogleLoginButton />
+      </div>
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-300" />
+          <div className="w-full border-t border-white/20" />
         </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="bg-gray-50 px-2 text-gray-500">{t('Or continue with email')}</span>
+        <div className="relative flex justify-center text-xs">
+          <span className="px-2 text-white/80">{t('Or continue with email')}</span>
         </div>
       </div>
 

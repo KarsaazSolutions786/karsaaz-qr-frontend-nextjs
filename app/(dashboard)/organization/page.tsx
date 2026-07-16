@@ -43,6 +43,11 @@ export default function OrganizationPage() {
   const [credentials, setCredentials] = useState<PortalCredentials | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [copied, setCopied] = useState<'email' | 'password' | null>(null)
+  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null)
+
+  const handleOrgSelect = (org: Organization) => {
+    setSelectedOrg(org)
+  }
 
   // Picked up once from the combined org-signup flow (RegisterOrgForm) -- shows
   // the same one-time credentials modal used by the inline "New Organization"

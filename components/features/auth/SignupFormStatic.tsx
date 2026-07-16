@@ -2,9 +2,13 @@ import Link from 'next/link'
 
 export function SignupFormStatic() {
   return (
-    <div id="signup-form-ssr" className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-      <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">Create your account</h1>
-      <p className="mb-6 text-center text-sm text-gray-600">
+    <div
+      id="signup-form-ssr"
+      className="w-full rounded-[23px] bg-white/30 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)] space-y-4"
+      style={{ minHeight: 543, padding: '40px 24px 30px' }}
+    >
+      <h1 className="mb-2 text-center text-2xl font-bold text-white">Create your account</h1>
+      <p className="mb-6 text-center text-sm text-white/90">
         Sign up free to create and manage QR codes
       </p>
       <form
@@ -14,7 +18,7 @@ export function SignupFormStatic() {
         className="space-y-4"
       >
         <div>
-          <label htmlFor="ssr-signup-name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="ssr-signup-name" className="mb-1 block text-xs font-bold text-white">
             Full name
           </label>
           <input
@@ -24,11 +28,11 @@ export function SignupFormStatic() {
             autoComplete="name"
             maxLength={100}
             required
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="block w-full rounded-lg border border-gray-200 bg-white/90 px-4 py-2 text-sm text-gray-800 focus:border-purple-500 focus:outline-none"
           />
         </div>
         <div>
-          <label htmlFor="ssr-signup-email" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="ssr-signup-email" className="mb-1 block text-xs font-bold text-white">
             Email
           </label>
           <input
@@ -38,11 +42,11 @@ export function SignupFormStatic() {
             autoComplete="email"
             maxLength={255}
             required
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="block w-full rounded-lg border border-gray-200 bg-white/90 px-4 py-2 text-sm text-gray-800 focus:border-purple-500 focus:outline-none"
           />
         </div>
         <div>
-          <label htmlFor="ssr-signup-password" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="ssr-signup-password" className="mb-1 block text-xs font-bold text-white">
             Password
           </label>
           <input
@@ -53,19 +57,22 @@ export function SignupFormStatic() {
             maxLength={128}
             required
             minLength={8}
-            className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+            className="block w-full rounded-lg border border-gray-200 bg-white/90 px-4 py-2 text-sm text-gray-800 focus:border-purple-500 focus:outline-none"
           />
         </div>
         <button
           type="submit"
-          className="w-full rounded-lg bg-[#8351e0] py-2 text-sm font-semibold text-white"
+          className="w-full rounded-full bg-[#8351e0] py-2.5 text-sm font-semibold text-white hover:bg-[#7244c8] transition-colors"
         >
           Create account
         </button>
       </form>
-      <p className="mt-4 text-center text-sm text-gray-600">
+      <p className="mt-4 text-center text-xs text-white/90">
         Already have an account?{' '}
-        <Link href="/login" className="text-[#8351e0] underline">
+        <Link
+          href="/login"
+          className="font-semibold text-white underline decoration-solid hover:text-white/80"
+        >
           Sign in
         </Link>
       </p>
