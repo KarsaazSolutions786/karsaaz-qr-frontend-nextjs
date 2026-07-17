@@ -170,7 +170,7 @@ export default function AdminGuestSettingsPage() {
   const summary = analytics?.summary
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
       {error && (
         <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700">{error}</div>
       )}
