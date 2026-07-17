@@ -9,9 +9,9 @@ type ReportStatus = 'pending' | 'reviewed' | 'resolved' | 'dismissed'
 
 interface AbuseReport {
   id: number
-  reporter: string
-  reported_url: string
-  reason: string
+  reporter_ip: string
+  qrcode_hash: string | null
+  category: string
   status: ReportStatus
   created_at: string
   details: string
@@ -166,15 +166,19 @@ export default function AbuseReportsPage() {
                 {reports.map((report) => (
                   <tr key={report.id}>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                      {report.reporter}
+                      {report.reporter_ip || 'Unknown'}
                     </td>
                     <td className="max-w-xs truncate px-6 py-4 text-sm text-blue-600 hover:underline">
-                      <a href={report.reported_url} target="_blank" rel="noopener noreferrer">
-                        {report.reported_url}
-                      </a>
+                      {report.qrcode_hash ? (
+                        <a href={`/${report.qrcode_hash}`} target="_blank" rel="noopener noreferrer">
+                          /{report.qrcode_hash}
+                        </a>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                      {report.reason}
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 capitalize">
+                      {report.category}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4">
                       <span
