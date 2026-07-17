@@ -276,18 +276,20 @@ export function transformDesignFromBackend(
   // Logo
   let logo: DesignerConfig['logo'] | undefined
   if (d.logoUrl) {
+    // Number() coercions: saved designs may round-trip numeric fields as
+    // strings, which breaks sliders and .toFixed displays downstream.
     logo = {
       url: d.logoUrl,
       logoType: (d.logoType || 'preset') as 'preset' | 'custom',
-      size: d.logoScale || 0.2,
+      size: Number(d.logoScale) || 0.2,
       margin: 1,
       shape: (d.logoBackgroundShape || 'circle') as 'square' | 'circle',
-      positionX: d.logoPositionX ?? 0.5,
-      positionY: d.logoPositionY ?? 0.5,
-      rotate: d.logoRotate ?? 0,
+      positionX: Number(d.logoPositionX ?? 0.5),
+      positionY: Number(d.logoPositionY ?? 0.5),
+      rotate: Number(d.logoRotate ?? 0),
       backgroundEnabled: d.logoBackground ?? true,
       backgroundFill: d.logoBackgroundFill || '#ffffff',
-      backgroundScale: d.logoBackgroundScale ?? 1.3,
+      backgroundScale: Number(d.logoBackgroundScale ?? 1.3),
       backgroundShape: (d.logoBackgroundShape || 'circle') as 'square' | 'circle',
     }
   }
@@ -326,7 +328,9 @@ export function transformDesignFromBackend(
     textColor: d.textColor || '#ffffff',
     textBackgroundColor: d.textBackgroundColor || '#1c57cb',
     fontFamily: d.fontFamily || 'Raleway',
-    textSize: d.textSize || 1,
+    // Saved designs may round-trip numbers as strings — coerce so numeric
+    // consumers (slider, .toFixed, font-size math) get a real number.
+    textSize: Number(d.textSize) || 1,
     // Sticker-specific
     healthcareFrameColor: d.healthcareFrameColor,
     healthcareHeartColor: d.healthcareHeartColor,
@@ -341,11 +345,11 @@ export function transformDesignFromBackend(
     // AI
     isAi: d.is_ai || false,
     aiPrompt: d.ai_prompt,
-    aiStrength: d.ai_strength ?? 1.8,
-    aiSteps: d.ai_steps ?? 18,
+    aiStrength: Number(d.ai_strength ?? 1.8),
+    aiSteps: Number(d.ai_steps ?? 18),
     // Size
     errorCorrectionLevel: d.errorCorrection || 'M',
-    margin: d.margin ?? 4,
+    margin: Number(d.margin ?? 4),
     // UI aliases for QRCodePreview compatibility
     style:
       d.module === 'square'

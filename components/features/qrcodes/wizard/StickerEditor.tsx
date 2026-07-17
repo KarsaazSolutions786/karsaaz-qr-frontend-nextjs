@@ -477,12 +477,13 @@ export function StickerEditor({
                 />
               </div>
 
-              {/* Text Size */}
+              {/* Text Size — coerce defensively: saved designs can hydrate
+                  textSize as a string, and String.toFixed throws */}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs text-gray-500">{t('Text Size')}</label>
                   <span className="text-xs font-medium text-gray-700">
-                    {(config.textSize || 1).toFixed(1)}x
+                    {(Number(config.textSize) || 1).toFixed(1)}x
                   </span>
                 </div>
                 <input
@@ -490,7 +491,7 @@ export function StickerEditor({
                   min="0.5"
                   max="3"
                   step="0.1"
-                  value={config.textSize || 1}
+                  value={Number(config.textSize) || 1}
                   onChange={e => onChange('textSize', parseFloat(e.target.value))}
                   className="w-full accent-purple-500"
                 />
@@ -510,7 +511,7 @@ export function StickerEditor({
                     fontFamily: config.fontFamily || 'Raleway',
                     color: config.textColor || '#ffffff',
                     backgroundColor: config.textBackgroundColor || '#1c57cb',
-                    fontSize: `${(config.textSize || 1) * 14}px`,
+                    fontSize: `${(Number(config.textSize) || 1) * 14}px`,
                   }}
                 >
                   {config.text || 'SCAN ME'}

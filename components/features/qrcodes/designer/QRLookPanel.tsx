@@ -349,7 +349,8 @@ export function QRLookPanel({
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-2">
-                    {t('Background Size')}: {(value.logo.backgroundScale ?? 1.3).toFixed(1)}x
+                    {t('Background Size')}:{' '}
+                    {(Number(value.logo.backgroundScale ?? 1.3) || 1.3).toFixed(1)}x
                   </label>
                   <input
                     type="range"

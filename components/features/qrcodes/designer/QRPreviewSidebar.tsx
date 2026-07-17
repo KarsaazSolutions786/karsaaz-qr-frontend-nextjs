@@ -111,7 +111,7 @@ export function QRPreviewSidebar({
           </div>
           <div>
             <label className="block text-xs text-purple-700 mb-1">
-              {t('Strength')}: {(mergedConfig.aiStrength ?? 1.8).toFixed(1)}
+              {t('Strength')}: {(Number(mergedConfig.aiStrength ?? 1.8) || 1.8).toFixed(1)}
             </label>
             <input
               type="range"
