@@ -18,10 +18,14 @@ export interface Organization {
 export interface OrganizationMember {
   id: number
   user_id: number
-  role: 'owner' | 'admin' | 'member' | 'viewer'
+  role: 'owner' | 'admin' | 'developer' | 'billing' | 'viewer' | 'member'
+  organization_role_id: number | null
+  status: 'pending' | 'pending_setup' | 'active' | 'removed'
   invited_at: string
   joined_at?: string
   user: { id: number; name: string; email: string }
+  /** Only present on responses that explicitly load it, e.g. acceptInvite(). */
+  organization?: Organization
 }
 
 export interface ApiKey {
@@ -91,11 +95,109 @@ export const organizationAPI = {
   inviteMember: (orgId: number, email: string, role: string) =>
     apiClient.post<{ data: OrganizationMember }>(`/organization/${orgId}/members`, { email, role }),
 
+  /** Managed-user creation (spec §3.6) -- provisions a member account directly, no email-invite round trip. The new user gets a password-reset "set up your account" link, never a plaintext password. */
+  createManagedUser: (orgId: number, name: string, email: string, role: string) =>
+    apiClient.post<{ data: OrganizationMember }>(`/organization/${orgId}/members/managed`, {
+      name,
+      email,
+      role,
+    }),
+
   updateMember: (orgId: number, memberId: number, role: string) =>
     apiClient.put(`/organization/${orgId}/members/${memberId}`, { role }),
 
   removeMember: (orgId: number, memberId: number) =>
     apiClient.delete(`/organization/${orgId}/members/${memberId}`),
+
+  /** Accept a pending invitation for the currently authenticated user. */
+  acceptInvite: (token: string) =>
+    apiClient.post<{ data: OrganizationMember }>('/organization-invitations/accept', { token }),
+
+  auditLogs: (orgId: number, page = 1) =>
+    apiClient.get<{
+      data: OrganizationAuditLogEntry[]
+      current_page: number
+      last_page: number
+      total: number
+    }>(`/organization/${orgId}/audit-logs`, { params: { page } }),
+}
+
+export interface OrganizationAuditLogEntry {
+  id: number
+  actor_type: string
+  actor_id: number | null
+  action: string
+  target_type: string | null
+  target_id: number | null
+  metadata: Record<string, unknown>
+  created_at: string
+}
+
+// ─── Roles & Permissions (2026-07-20 — DB-backed, spec §5.3/§13.6) ───────────
+
+export interface OrganizationRole {
+  id: number
+  organization_id: number | null
+  slug: string
+  name: string
+  is_system: boolean
+  members_count?: number
+  permissions: Array<{ id: number; permission_slug: string }>
+}
+
+export const organizationRoleAPI = {
+  list: (orgId: number) =>
+    apiClient.get<{ data: OrganizationRole[] }>(`/organization/${orgId}/roles`),
+
+  permissions: (orgId: number) =>
+    apiClient.get<{ data: string[] }>(`/organization/${orgId}/permissions`),
+
+  create: (orgId: number, payload: { name: string; slug: string; permissions: string[] }) =>
+    apiClient.post<{ data: OrganizationRole }>(`/organization/${orgId}/roles`, payload),
+
+  update: (orgId: number, roleId: number, payload: { name: string; permissions: string[] }) =>
+    apiClient.patch<{ data: OrganizationRole }>(`/organization/${orgId}/roles/${roleId}`, payload),
+
+  delete: (orgId: number, roleId: number) =>
+    apiClient.delete(`/organization/${orgId}/roles/${roleId}`),
+}
+
+// ─── Member-Plan Inheritance (2026-07-20 — spec §3.4/§3.5/§5.4/§5.5) ─────────
+
+export interface OrganizationEntitlements {
+  plan: {
+    id: number
+    name: string
+    number_of_dynamic_qrcodes?: number
+    number_of_scans?: number
+    storage_quota_bytes?: number
+  }
+  source: 'organization_default' | 'organization_override' | 'system_reconciliation'
+  is_default: boolean
+}
+
+export interface MemberPlanOption {
+  subscription_plan: { id: number; name: string; price: number }
+  is_default: boolean
+  max_assignments: number | null
+}
+
+export const organizationMemberPlanAPI = {
+  myEntitlements: (orgId: number) =>
+    apiClient.get<{ data: OrganizationEntitlements }>(`/organization/${orgId}/entitlements`),
+
+  options: (orgId: number) =>
+    apiClient.get<{
+      data: { default_plan: { id: number; name: string } | null; allowed_plans: MemberPlanOption[] }
+    }>(`/organization/${orgId}/member-plan-options`),
+
+  assign: (orgId: number, membershipId: number, subscriptionPlanId: number) =>
+    apiClient.patch<{ data: unknown }>(`/organization/${orgId}/members/${membershipId}/plan`, {
+      subscription_plan_id: subscriptionPlanId,
+    }),
+
+  removeOverride: (orgId: number, membershipId: number) =>
+    apiClient.delete(`/organization/${orgId}/members/${membershipId}/plan-override`),
 }
 
 // ─── API Keys ─────────────────────────────────────────────────────────────────
