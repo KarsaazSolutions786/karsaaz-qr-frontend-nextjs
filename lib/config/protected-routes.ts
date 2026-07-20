@@ -22,8 +22,6 @@ export const PUBLIC_ROUTE_PREFIXES: string[] = [
   '/pricing',
   '/account/email-verified',
   '/account/dashboard',
-  '/org-portal/login',
-  '/org-portal/accept-invite',
 ]
 
 export const PROTECTED_ROUTE_PREFIXES: string[] = [
@@ -64,7 +62,6 @@ export const PROTECTED_ROUTE_PREFIXES: string[] = [
   '/analytics',
   '/commissions',
   '/notifications',
-  '/org-portal/dashboard',
 ]
 
 export function isPublicRoute(pathname: string): boolean {

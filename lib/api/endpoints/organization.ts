@@ -75,10 +75,7 @@ export const organizationAPI = {
   list: () => apiClient.get<{ data: Organization[] }>('/organization'),
 
   create: (payload: { name: string; website?: string }) =>
-    apiClient.post<{
-      data: Organization
-      portal_credentials?: { email: string; password: string; note?: string }
-    }>('/organization', payload),
+    apiClient.post<{ data: Organization }>('/organization', payload),
 
   get: (orgId: number) => apiClient.get<{ data: Organization }>(`/organization/${orgId}`),
 
@@ -99,11 +96,6 @@ export const organizationAPI = {
 
   removeMember: (orgId: number, memberId: number) =>
     apiClient.delete(`/organization/${orgId}/members/${memberId}`),
-
-  sendInvite: (orgId: number, contactEmail?: string) =>
-    apiClient.post<{
-      data: { invite_url: string; expires_at: string; org_name: string; org_slug: string }
-    }>(`/organization/${orgId}/send-invite`, contactEmail ? { contact_email: contactEmail } : {}),
 }
 
 // ─── API Keys ─────────────────────────────────────────────────────────────────
@@ -156,20 +148,22 @@ export const orgUsageAPI = {
     }>(`/organization/${orgId}/credits`),
 }
 
-// ─── Portal Credentials (admin) ──────────────────────────────────────────────
+// ─── Dashboard overview ───────────────────────────────────────────────────────
+// Replaces the org-portal-only dashboard endpoint (org-portal auth retired
+// 2026-07-20 — see gptprompts/orgCompleteFlow&Implimentation.md §3.2).
 
-export interface PortalCredentials {
-  portal_email: string
-  portal_password?: string // only present after reset
-  note?: string
+export interface OrganizationDashboardOverview {
+  organization: { id: number; name: string; status: string; plan: string | null }
+  qr_created_via_api: number
+  api_calls_this_month: number
+  credits_spent_month: number
+  credits_balance: number
+  active_api_keys: number
 }
 
-export const orgPortalAdminAPI = {
-  getCredentials: (orgId: number) =>
-    apiClient.get<{ data: PortalCredentials }>(`/organization/${orgId}/portal/credentials`),
-
-  resetPassword: (orgId: number) =>
-    apiClient.post<{ data: PortalCredentials }>(`/organization/${orgId}/portal/reset-password`),
+export const orgDashboardAPI = {
+  get: (orgId: number) =>
+    apiClient.get<{ data: OrganizationDashboardOverview }>(`/organization/${orgId}/dashboard`),
 }
 
 // ─── Billing / Credits ───────────────────────────────────────────────────────
@@ -227,17 +221,28 @@ export const orgPlanAPI = {
     }),
 }
 
-// ─── Org Portal Plans (portal-auth) ──────────────────────────────────────────
+// ─── Org Plan Self-Service (owner/billing-manager, Sanctum user auth) ────────
+// Replaces the org-portal-only plans/selectPlan endpoints (org-portal auth
+// retired 2026-07-20). Unlike orgPlanAPI.assignToOrg (super-admin only, no
+// payment step), selectForSelf drives the owner-initiated plan-change flow:
+// free plans assign immediately, paid plans return a Stripe checkout URL.
 
-export const orgPortalPlansAPI = {
-  get: () =>
+export const orgPlanSelfServiceAPI = {
+  get: (orgId: number) =>
     apiClient.get<{ data: { current_plan: OrgPlan | null; available_plans: OrgPlan[] } }>(
-      '/org-portal/plans',
-      {
-        headers: {
-          Authorization: `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('org_portal_token') : ''}`,
-        },
-      }
+      `/organization/${orgId}/org-plan`
+    ),
+
+  /**
+   * Free plan (or re-selecting the current plan): resolves with
+   * `{ message, data: Organization }` — the plan is already assigned.
+   * Paid plan: resolves with `{ data: { checkout_url } }` — redirect the
+   * owner to Stripe; the plan is assigned by the webhook on completion.
+   */
+  select: (orgId: number, orgPlanId: number) =>
+    apiClient.post<{ message?: string; data?: { checkout_url?: string } | Organization }>(
+      `/organization/${orgId}/org-plan/select`,
+      { org_plan_id: orgPlanId }
     ),
 }
 

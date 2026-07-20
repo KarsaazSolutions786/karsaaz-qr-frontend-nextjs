@@ -46,11 +46,11 @@ export function useRegisterOrganization() {
         localStorage.removeItem('guest_action_count')
       }
 
-      const orgResponse = await organizationAPI.create({ name: data.organizationName })
+      await organizationAPI.create({ name: data.organizationName })
 
-      return { registerResponse, orgResponse: orgResponse.data }
+      return { registerResponse }
     },
-    onSuccess: ({ registerResponse, orgResponse }, variables) => {
+    onSuccess: ({ registerResponse }, variables) => {
       if (registerResponse.user) {
         setUser(registerResponse.user)
         if (typeof window !== 'undefined') {
@@ -59,16 +59,6 @@ export function useRegisterOrganization() {
         queryClient.setQueryData(queryKeys.auth.currentUser(), registerResponse.user)
       }
       clearStoredReferralCode()
-
-      // One-time portal credentials -- stashed for /organization to pick up and
-      // show its existing "shown once" modal, since a full page navigation loses
-      // React state.
-      if (orgResponse.portal_credentials && typeof window !== 'undefined') {
-        sessionStorage.setItem(
-          'new_org_portal_credentials',
-          JSON.stringify(orgResponse.portal_credentials)
-        )
-      }
 
       router.push(
         `/verify-email?email=${encodeURIComponent(variables.email)}&next=${encodeURIComponent('/organization')}`
