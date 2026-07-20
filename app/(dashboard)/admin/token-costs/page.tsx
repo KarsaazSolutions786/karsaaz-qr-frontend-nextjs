@@ -100,7 +100,7 @@ export default function TokenCostsAdminPage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-bold mb-1">API Token Costs</h1>
       <p className="text-sm text-muted-foreground mb-6">
         Control how many tokens are deducted from an organization's balance per API operation.

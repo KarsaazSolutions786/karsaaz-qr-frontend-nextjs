@@ -1023,9 +1023,9 @@ export default function ApisPage() {
   // ──────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl overflow-x-hidden px-4 py-8 sm:px-6 lg:px-8">
       {/* Header + Tabs — always narrow */}
-      <div className="mx-auto max-w-3xl">
+      <div className="max-w-7xl">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900">{t('API Access')}</h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -1035,7 +1035,7 @@ export default function ApisPage() {
       </div>
 
       {/* Tabs */}
-      <div className="mx-auto mb-6 flex w-fit max-w-3xl gap-1 rounded-lg border border-gray-200 bg-gray-100 p-1">
+      <div className="mb-6 flex w-fit max-w-7xl gap-1 rounded-lg border border-gray-200 bg-gray-100 p-1">
         <button
           onClick={() => setTab('keys')}
           className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
@@ -1080,7 +1080,7 @@ export default function ApisPage() {
 
       {/* ── Docs tab ── */}
       {tab === 'docs' && (
-        <div className="mx-auto max-w-3xl">
+        <div className="max-w-7xl">
           <ApiDocsTab />
         </div>
       )}
@@ -1092,7 +1092,7 @@ export default function ApisPage() {
 
       {/* ── Keys tab ── */}
       {tab === 'keys' && (
-        <div className="mx-auto max-w-3xl">
+        <div className="max-w-7xl">
           <>
             {/* Plan limits banner */}
             <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
