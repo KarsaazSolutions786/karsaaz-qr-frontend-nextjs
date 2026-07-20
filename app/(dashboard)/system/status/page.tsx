@@ -255,6 +255,12 @@ interface ServiceDisplayConfig {
   renderMetrics: (check: any) => { label: string; value: string }[]
 }
 
+const formatMemoryString = (val: string) => {
+  return val
+    .replace(/([0-9.]+)([KMGT])(?!B)$/i, '$1 $2B')
+    .replace(/([0-9]+)B$/i, '$1 B')
+}
+
 const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
   {
     key: 'database',
@@ -274,8 +280,8 @@ const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
     icon: 'M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01',
     renderMetrics: (check: RedisCheck) => {
       const metrics: { label: string; value: string }[] = []
-      if (check.used_memory) metrics.push({ label: 'Used Memory', value: check.used_memory })
-      if (check.max_memory) metrics.push({ label: 'Max Memory', value: check.max_memory })
+      if (check.used_memory) metrics.push({ label: 'Used Memory', value: formatMemoryString(check.used_memory) })
+      if (check.max_memory) metrics.push({ label: 'Max Memory', value: formatMemoryString(check.max_memory) })
       if (check.connected_clients)
         metrics.push({ label: 'Clients', value: check.connected_clients })
       return metrics
@@ -322,7 +328,7 @@ const SERVICE_CONFIGS: ServiceDisplayConfig[] = [
         metrics.push({ label: 'Used', value: formatBytes(check.usage_bytes) })
       if (check.peak_bytes !== undefined)
         metrics.push({ label: 'Peak', value: formatBytes(check.peak_bytes) })
-      if (check.limit) metrics.push({ label: 'Limit', value: check.limit })
+      if (check.limit) metrics.push({ label: 'Limit', value: formatMemoryString(check.limit) })
       return metrics
     },
   },
