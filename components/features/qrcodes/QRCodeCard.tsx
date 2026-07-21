@@ -100,7 +100,7 @@ export const QRCodeCard = memo(function QRCodeCard({
         <div onClick={onClick} className="block p-4 pb-3 cursor-pointer">
           <div className="flex justify-center mb-3">
             <BackendQRPreview
-              data={qrcode.data as Record<string, unknown>}
+              data={qrcode.data as unknown as Record<string, unknown>}
               qrType={qrcode.type}
               config={qrcode.designerConfig}
               className="w-[120px] h-[120px] object-contain"
