@@ -1,25 +1,25 @@
 /**
  * DebouncedSearch Component
- * 
+ *
  * Search input with debouncing for performance.
  */
 
-'use client';
+'use client'
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Search, X, Loader2 } from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
-import { useDebounce, useDebouncedCallback } from '@/lib/utils/performance-utils';
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { Search, X, Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
+import { useDebounce, useDebouncedCallback } from '@/lib/utils/performance-utils'
 
 export interface DebouncedSearchProps {
-  onSearch: (query: string) => void | Promise<void>;
-  placeholder?: string;
-  delay?: number;
-  minLength?: number;
-  showClearButton?: boolean;
-  className?: string;
-  autoFocus?: boolean;
-  initialValue?: string;
+  onSearch: (query: string) => void | Promise<void>
+  placeholder?: string
+  delay?: number
+  minLength?: number
+  showClearButton?: boolean
+  className?: string
+  autoFocus?: boolean
+  initialValue?: string
 }
 
 /**
@@ -37,13 +37,25 @@ export function DebouncedSearch({
   autoFocus = false,
   initialValue = '',
 }: DebouncedSearchProps) {
-  const { t } = useTranslation();
-  const resolvedPlaceholder = placeholder ?? t('Search...');
-  const [query, setQuery] = useState(initialValue);
-  const [isSearching, setIsSearching] = useState(false);
-  const debouncedQuery = useDebounce(query, delay);
-  
+  const { t } = useTranslation()
+  const resolvedPlaceholder = placeholder ?? t('Search...')
+  const [query, setQuery] = useState(initialValue)
+  const [isSearching, setIsSearching] = useState(false)
+  const debouncedQuery = useDebounce(query, delay)
+
+  const onSearchRef = useRef(onSearch)
+  const initialMount = useRef(true)
+
   useEffect(() => {
+    onSearchRef.current = onSearch
+  }, [onSearch])
+
+  useEffect(() => {
+    if (initialMount.current) {
+      initialMount.current = false
+      return
+    }
+
     /**
      * Purpose: Executes performSearch functionality.
      * Owner/Author: Syed Ashhad
@@ -51,25 +63,25 @@ export function DebouncedSearch({
      */
     const performSearch = async () => {
       if (debouncedQuery.length >= minLength) {
-        setIsSearching(true);
+        setIsSearching(true)
         try {
-          await onSearch(debouncedQuery);
+          await onSearchRef.current(debouncedQuery)
         } finally {
-          setIsSearching(false);
+          setIsSearching(false)
         }
       } else if (debouncedQuery.length === 0) {
-        await onSearch('');
+        await onSearchRef.current('')
       }
-    };
-    
-    performSearch();
-  }, [debouncedQuery, minLength, onSearch]);
-  
+    }
+
+    performSearch()
+  }, [debouncedQuery, minLength])
+
   const handleClear = useCallback(() => {
-    setQuery('');
-    onSearch('');
-  }, [onSearch]);
-  
+    setQuery('')
+    onSearchRef.current('')
+  }, [])
+
   return (
     <div className={`relative ${className}`}>
       <div className="relative">
@@ -77,13 +89,13 @@ export function DebouncedSearch({
         <input
           type="text"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={e => setQuery(e.target.value)}
           placeholder={resolvedPlaceholder}
           autoFocus={autoFocus}
           aria-label={t('Search')}
           className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        
+
         {/* Loading or Clear Button */}
         <div className="absolute right-3 top-1/2 -translate-y-1/2">
           {isSearching ? (
@@ -98,7 +110,7 @@ export function DebouncedSearch({
           ) : null}
         </div>
       </div>
-      
+
       {/* Search Info */}
       {query && query.length < minLength && (
         <p className="text-xs text-gray-500 mt-1">
@@ -106,18 +118,21 @@ export function DebouncedSearch({
         </p>
       )}
     </div>
-  );
+  )
 }
 
 /**
  * DebouncedInput Component
- * 
+ *
  * Generic debounced input component.
  */
-export interface DebouncedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
-  value: string;
-  onChange: (value: string) => void;
-  delay?: number;
+export interface DebouncedInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'onChange'
+> {
+  value: string
+  onChange: (value: string) => void
+  delay?: number
 }
 
 /**
@@ -132,46 +147,39 @@ export function DebouncedInput({
   className = '',
   ...props
 }: DebouncedInputProps) {
-  const [internalValue, setInternalValue] = useState(externalValue);
-  
-  const debouncedOnChange = useDebouncedCallback(onChange, delay);
-  
+  const [internalValue, setInternalValue] = useState(externalValue)
+
+  const debouncedOnChange = useDebouncedCallback(onChange, delay)
+
   useEffect(() => {
-    setInternalValue(externalValue);
-  }, [externalValue]);
-  
+    setInternalValue(externalValue)
+  }, [externalValue])
+
   /**
    * Purpose: Executes handleChange functionality.
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setInternalValue(newValue);
-    debouncedOnChange(newValue);
-  };
-  
-  return (
-    <input
-      {...props}
-      value={internalValue}
-      onChange={handleChange}
-      className={className}
-    />
-  );
+    const newValue = e.target.value
+    setInternalValue(newValue)
+    debouncedOnChange(newValue)
+  }
+
+  return <input {...props} value={internalValue} onChange={handleChange} className={className} />
 }
 
 /**
  * SearchWithSuggestions Component
- * 
+ *
  * Debounced search with autocomplete suggestions.
  */
 export interface SearchWithSuggestionsProps {
-  onSearch: (query: string) => void;
-  getSuggestions?: (query: string) => Promise<string[]>;
-  placeholder?: string;
-  delay?: number;
-  className?: string;
+  onSearch: (query: string) => void
+  getSuggestions?: (query: string) => Promise<string[]>
+  placeholder?: string
+  delay?: number
+  className?: string
 }
 
 /**
@@ -187,13 +195,13 @@ export function SearchWithSuggestions({
   className = '',
 }: SearchWithSuggestionsProps) {
   const { t: tSugg } = useTranslation()
-  const resolvedSuggPlaceholder = placeholder ?? tSugg('Search...');
-  const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const debouncedQuery = useDebounce(query, delay);
-  
+  const resolvedSuggPlaceholder = placeholder ?? tSugg('Search...')
+  const [query, setQuery] = useState('')
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const debouncedQuery = useDebounce(query, delay)
+
   useEffect(() => {
     /**
      * Purpose: Executes fetchSuggestions functionality.
@@ -202,35 +210,41 @@ export function SearchWithSuggestions({
      */
     const fetchSuggestions = async () => {
       if (debouncedQuery && getSuggestions) {
-        setIsLoading(true);
+        setIsLoading(true)
         try {
-          const results = await getSuggestions(debouncedQuery);
-          setSuggestions(results);
-          setShowSuggestions(true);
+          const results = await getSuggestions(debouncedQuery)
+          setSuggestions(results)
+          setShowSuggestions(true)
         } finally {
-          setIsLoading(false);
+          setIsLoading(false)
         }
       } else {
-        setSuggestions([]);
-        setShowSuggestions(false);
+        setSuggestions([])
+        setShowSuggestions(false)
       }
-    };
-    
-    fetchSuggestions();
-  }, [debouncedQuery, getSuggestions]);
-  
-  const handleSelect = useCallback((suggestion: string) => {
-    setQuery(suggestion);
-    setShowSuggestions(false);
-    onSearch(suggestion);
-  }, [onSearch]);
-  
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    setShowSuggestions(false);
-    onSearch(query);
-  }, [query, onSearch]);
-  
+    }
+
+    fetchSuggestions()
+  }, [debouncedQuery, getSuggestions])
+
+  const handleSelect = useCallback(
+    (suggestion: string) => {
+      setQuery(suggestion)
+      setShowSuggestions(false)
+      onSearch(suggestion)
+    },
+    [onSearch]
+  )
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault()
+      setShowSuggestions(false)
+      onSearch(query)
+    },
+    [query, onSearch]
+  )
+
   return (
     <div className={`relative ${className}`}>
       <form onSubmit={handleSubmit}>
@@ -239,20 +253,20 @@ export function SearchWithSuggestions({
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={e => setQuery(e.target.value)}
             onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             placeholder={resolvedSuggPlaceholder}
             aria-label={tSugg('Search')}
             className="w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          
+
           {isLoading && (
             <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 animate-spin" />
           )}
         </div>
       </form>
-      
+
       {/* Suggestions Dropdown */}
       {showSuggestions && suggestions.length > 0 && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
@@ -271,5 +285,5 @@ export function SearchWithSuggestions({
         </div>
       )}
     </div>
-  );
+  )
 }
