@@ -21,6 +21,7 @@ export const usersAPI = {
   }) => {
     // Map frontend params to backend expected format
     const apiParams: Record<string, any> = { page: params?.page || 1 }
+    if (params?.per_page) apiParams.page_size = params.per_page
 
     // Backend uses 'keyword' not 'search'
     if (params?.search) apiParams.keyword = params.search
