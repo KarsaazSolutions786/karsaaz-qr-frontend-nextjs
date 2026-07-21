@@ -39,7 +39,7 @@ export interface ListQRCodesParams {
 export function mapQRCode(raw: Record<string, unknown>): QRCode {
   const r = raw as Record<string, unknown>
   const design = transformDesignFromBackend(
-    (r.design ?? r.designerConfig ?? r.customization ?? {}) as Record<string, any>
+    (r.design ?? r.designerConfig ?? r.customization ?? {}) as Record<string, unknown>
   )
 
   return {
@@ -49,13 +49,16 @@ export function mapQRCode(raw: Record<string, unknown>): QRCode {
     name: (r.name ?? '') as string,
     type: (r.type ?? 'url') as QRCode['type'],
     data: r.data as QRCode['data'],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     customization: design as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     designerConfig: design as any,
     folderId: (r.folder_id ?? r.folderId ?? null) as string | null,
-    status:
-      r.status === 'enabled'
+    status: !!r.archived
+      ? 'archived'
+      : r.status === 'enabled'
         ? 'active'
-        : ((r.status ?? (r.archived ? 'archived' : 'active')) as QRCode['status']),
+        : ((r.status ?? 'active') as QRCode['status']),
     domainId: (r.domain_id ?? r.domainId) as string | undefined,
     screenshotUrl: (r.qrcode_screenshot_url ??
       r.simple_png_url ??
@@ -183,7 +186,7 @@ export const qrcodesAPI = {
 
       const cleanParams = Object.fromEntries(
         Object.entries({ ...queryParams, page: page ?? 1 }).filter(
-          ([, v]) => v !== undefined && v !== null && (v as any) !== ''
+          ([, v]) => v !== undefined && v !== null && (v as unknown) !== ''
         )
       )
 
@@ -297,13 +300,15 @@ export const qrcodesAPI = {
 
   // Archive QR code
   archive: async (id: string) => {
-    const response = await apiClient.post(`/qrcodes/${id}/archive`)
+    // const response = await apiClient.post(`/qrcodes/${id}/archive`)
+    const response = await apiClient.post(`/qrcodes/archive/${id}`, { archived: true })
     return mapQRCode(response.data)
   },
 
   // Unarchive QR code
   unarchive: async (id: string) => {
-    const response = await apiClient.post(`/qrcodes/${id}/unarchive`)
+    // const response = await apiClient.post(`/qrcodes/${id}/unarchive`)
+    const response = await apiClient.post(`/qrcodes/archive/${id}`, { archived: false })
     return mapQRCode(response.data)
   },
 

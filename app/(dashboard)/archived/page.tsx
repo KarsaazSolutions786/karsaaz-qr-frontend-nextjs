@@ -156,6 +156,35 @@ export default function ArchivedQRCodesPage() {
   const handleRowAction = useCallback(
     (action: string, qrCodeId: string) => {
       switch (action) {
+        case 'view':
+        case 'preview':
+          router.push(`/qrcodes/${qrCodeId}`)
+          break
+        case 'edit':
+          router.push(`/qrcodes/${qrCodeId}/edit`)
+          break
+        case 'stats':
+        case 'analytics':
+          router.push(`/qrcodes/${qrCodeId}/analytics`)
+          break
+        case 'share': {
+          const shareUrl = `${window.location.origin}/qr/${qrCodeId}`
+          navigator.clipboard
+            .writeText(shareUrl)
+            .then(() => {
+              alert(t('QR code link copied to clipboard!'))
+            })
+            .catch(() => {
+              window.open(shareUrl, '_blank')
+            })
+          break
+        }
+        case 'move-to-folder':
+          // Folders might not be supported in archive directly, but we can redirect or show an alert, or support it if needed.
+          // In original it just ignores it because it's not handled.
+          // Wait, 'move-to-folder' needs setFolderModalQRIds which is not in archived page. I'll just ignore it or alert.
+          alert(t('Moving to folders is only available for active QR codes.'))
+          break
         case 'unarchive':
           unarchiveQRCode(qrCodeId)
           break
@@ -174,7 +203,7 @@ export default function ArchivedQRCodesPage() {
           break
       }
     },
-    [unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode, t]
+    [router, unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode, t]
   )
 
   /**
@@ -372,7 +401,11 @@ export default function ArchivedQRCodesPage() {
               {viewMode === 'grid' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {qrcodes.map(qrcode => (
-                    <QRCodeCard key={qrcode.id} qrcode={qrcode} />
+                    <QRCodeCard
+                      key={qrcode.id}
+                      qrcode={qrcode}
+                      onAction={action => handleRowAction(action, qrcode.id)}
+                    />
                   ))}
                 </div>
               )}

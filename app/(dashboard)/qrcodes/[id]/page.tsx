@@ -41,10 +41,17 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
   const [showTransfer, setShowTransfer] = useState(false)
   const [showArchive, setShowArchive] = useState(false)
   const [showPINProtection, setShowPINProtection] = useState(false)
-  
+
   const { data: qrcode, isLoading } = useQRCode(params.id)
   const deleteMutation = useDeleteQRCode()
-  const { duplicateQRCode, archiveQRCode, transferQRCode, convertQRType, downloadQRCode } = useQRActions()
+  const {
+    duplicateQRCode,
+    archiveQRCode,
+    unarchiveQRCode,
+    transferQRCode,
+    convertQRType,
+    downloadQRCode,
+  } = useQRActions()
 
   /**
    * Purpose: Executes handleDelete functionality.
@@ -54,7 +61,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
   const handleDelete = async () => {
     try {
       await deleteMutation.mutateAsync(params.id)
-    } catch (error) {
+    } catch {
       // Error handled by mutation
     }
   }
@@ -64,7 +71,12 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
-  const handleDuplicate = async (options: { count: number; includeDesign: boolean; includeSettings: boolean; prefix: string }) => {
+  const handleDuplicate = async (options: {
+    count: number
+    includeDesign: boolean
+    includeSettings: boolean
+    prefix: string
+  }) => {
     if (qrcode) {
       await duplicateQRCode(qrcode.id, options)
       setShowDuplicate(false)
@@ -83,12 +95,23 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
     }
   }
 
+  const handleUnarchive = async () => {
+    if (qrcode) {
+      await unarchiveQRCode(qrcode.id)
+    }
+  }
+
   /**
    * Purpose: Executes handleTransfer functionality.
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
-  const handleTransfer = async (options: { newOwnerId: string; transferDesign: boolean; transferAnalytics: boolean; notifyNewOwner: boolean }) => {
+  const handleTransfer = async (options: {
+    newOwnerId: string
+    transferDesign: boolean
+    transferAnalytics: boolean
+    notifyNewOwner: boolean
+  }) => {
     if (qrcode) {
       await transferQRCode(qrcode.id, options)
       setShowTransfer(false)
@@ -190,7 +213,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
             <div className="flex justify-center mb-6">
               <QRCodePreview qrcode={qrcode} size={280} />
             </div>
-            
+
             {/* Quick Actions */}
             <div className="space-y-2">
               <button
@@ -206,7 +229,9 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
                       a.download = `${qrcode.name || 'qrcode'}.png`
                       a.click()
                       window.URL.revokeObjectURL(url)
-                    } catch { /* ignore */ }
+                    } catch {
+                      /* ignore */
+                    }
                   } else {
                     downloadQRCode(qrcode.id, 'png', qrcode.name)
                   }
@@ -249,10 +274,12 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
                   </div>
                   <button
                     className="w-full inline-flex items-center justify-center gap-2 rounded-md border border-orange-300 px-4 py-2 text-sm font-medium text-orange-600 hover:bg-orange-50"
-                    onClick={() => setShowArchive(true)}
+                    onClick={() =>
+                      qrcode.status === 'archived' ? handleUnarchive() : setShowArchive(true)
+                    }
                   >
                     <ArchiveBoxIcon className="h-4 w-4" />
-                    {t('Archive')}
+                    {qrcode.status === 'archived' ? t('Unarchive') : t('Archive')}
                   </button>
                 </>
               )}
@@ -291,12 +318,17 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
               <div>
                 <dt className="text-sm font-medium text-gray-500">{t('Status')}</dt>
                 <dd className="mt-1">
-                  <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    qrcode.status === 'archived' ? 'bg-orange-100 text-orange-800' :
-                    qrcode.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
-                    {(qrcode.status || 'active').charAt(0).toUpperCase() + (qrcode.status || 'active').slice(1)}
+                  <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      qrcode.status === 'archived'
+                        ? 'bg-orange-100 text-orange-800'
+                        : qrcode.status === 'inactive'
+                          ? 'bg-gray-100 text-gray-800'
+                          : 'bg-green-100 text-green-800'
+                    }`}
+                  >
+                    {(qrcode.status || 'active').charAt(0).toUpperCase() +
+                      (qrcode.status || 'active').slice(1)}
                   </span>
                 </dd>
               </div>
@@ -335,7 +367,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
             onConfirm={handleDelete}
             isDeleting={deleteMutation.isPending}
           />
-          
+
           {qrcode && (
             <>
               <TypeConversionModal
@@ -345,14 +377,14 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
                 onClose={() => setShowTypeConversion(false)}
                 onConvert={handleConvertType}
               />
-              
+
               <DuplicateModal
                 isOpen={showDuplicate}
                 onClose={() => setShowDuplicate(false)}
                 qrCodeName={qrcode.name || 'QR Code'}
                 onDuplicate={handleDuplicate}
               />
-              
+
               <TransferOwnershipModal
                 isOpen={showTransfer}
                 onClose={() => setShowTransfer(false)}
@@ -360,7 +392,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
                 currentOwner={qrcode.userId?.toString() || ''}
                 onTransfer={handleTransfer}
               />
-              
+
               <ArchiveModal
                 isOpen={showArchive}
                 onClose={() => setShowArchive(false)}
@@ -368,7 +400,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
                 qrCodeNames={[qrcode.name || 'QR Code']}
                 onArchive={handleArchive}
               />
-              
+
               <PINProtectionModal
                 qrCodeId={qrcode.id}
                 hasPIN={false}

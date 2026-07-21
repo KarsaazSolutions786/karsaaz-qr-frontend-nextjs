@@ -100,7 +100,7 @@ export const QRCodeCard = memo(function QRCodeCard({
         <div onClick={onClick} className="block p-4 pb-3 cursor-pointer">
           <div className="flex justify-center mb-3">
             <BackendQRPreview
-              data={qrcode.data as Record<string, any>}
+              data={qrcode.data as Record<string, unknown>}
               qrType={qrcode.type}
               config={qrcode.designerConfig}
               className="w-[120px] h-[120px] object-contain"
@@ -218,10 +218,11 @@ export const QRCodeCard = memo(function QRCodeCard({
               </button>
               <hr className="my-1 border-gray-100" />
               <button
-                onClick={() => handleAction('archive')}
+                onClick={() => handleAction(qrcode.status === 'archived' ? 'unarchive' : 'archive')}
                 className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-orange-600 hover:bg-orange-50"
               >
-                <Archive className="w-3.5 h-3.5" /> {t('Archive')}
+                <Archive className="w-3.5 h-3.5" />{' '}
+                {qrcode.status === 'archived' ? t('Unarchive') : t('Archive')}
               </button>
               <button
                 onClick={() => handleAction('delete')}
