@@ -27,6 +27,8 @@ import type { Folder } from '@/lib/api/endpoints/folders'
 import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
 import { Download, Trash2, ArchiveRestore, Copy } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import { toast } from 'sonner'
+import { QRDownloadModal } from '@/components/qr/QRDownloadModal'
 
 /**
  * Purpose: Executes ArchivedQRCodesPage functionality.
@@ -42,6 +44,7 @@ export default function ArchivedQRCodesPage() {
   const [showFolders, setShowFolders] = useState(false)
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<SortOption>('date-desc')
+  const [downloadModalQRIds, setDownloadModalQRIds] = useState<string[]>([])
 
   // Load view mode from localStorage (same as main QR list)
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
@@ -109,16 +112,21 @@ export default function ArchivedQRCodesPage() {
         id: 'download',
         label: t('Download'),
         icon: <Download className="w-4 h-4" />,
-        onClick: async (ids: string[]) => {
-          await bulkDownloadQRCodes(ids)
-        },
+        onClick: (ids: string[]) => setDownloadModalQRIds(ids),
       },
       {
         id: 'duplicate',
         label: t('Duplicate'),
         icon: <Copy className="w-4 h-4" />,
         onClick: async (ids: string[]) => {
-          await bulkDuplicateQRCodes(ids)
+          toast
+            .promise(bulkDuplicateQRCodes(ids), {
+              loading: t('Duplicating QR codes...'),
+              success: t('QR codes duplicated successfully'),
+              error: t('Failed to duplicate QR codes'),
+            })
+            .unwrap()
+            .then(() => deselectAll())
         },
       },
       {
@@ -189,7 +197,11 @@ export default function ArchivedQRCodesPage() {
           unarchiveQRCode(qrCodeId)
           break
         case 'duplicate':
-          duplicateQRCode(qrCodeId)
+          toast.promise(duplicateQRCode(qrCodeId), {
+            loading: t('Duplicating QR code...'),
+            success: t('QR code duplicated successfully'),
+            error: t('Failed to duplicate QR code'),
+          })
           break
         case 'delete':
           if (confirm(t('Are you sure you want to delete this QR code?'))) {
@@ -197,7 +209,7 @@ export default function ArchivedQRCodesPage() {
           }
           break
         case 'download':
-          downloadQRCode(qrCodeId)
+          setDownloadModalQRIds([qrCodeId])
           break
         default:
           break
@@ -465,6 +477,12 @@ export default function ArchivedQRCodesPage() {
         filters={filters}
         onFiltersChange={updateFilters}
         onReset={resetFilters}
+      />
+
+      <QRDownloadModal
+        isOpen={downloadModalQRIds.length > 0}
+        onClose={() => setDownloadModalQRIds([])}
+        qrCodeIds={downloadModalQRIds}
       />
     </div>
   )

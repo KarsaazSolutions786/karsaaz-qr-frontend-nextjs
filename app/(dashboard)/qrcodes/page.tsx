@@ -44,6 +44,7 @@ import { isSuperAdmin } from '@/lib/utils/permissions'
 import { useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query/keys'
 import { FolderSelectModal } from '@/components/common/FolderSelectModal'
+import { QRDownloadModal } from '@/components/qr/QRDownloadModal'
 import { useSubscriptionLimits } from '@/lib/hooks/useSubscriptionLimits'
 import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
 import { BulkChangeTypeModal } from '@/components/qr/BulkChangeTypeModal'
@@ -168,6 +169,7 @@ export default function QRCodesPage() {
   const [folderModalQRIds, setFolderModalQRIds] = useState<string[] | null>(null)
   const [showChangeTypeModal, setShowChangeTypeModal] = useState(false)
   const [showChangeOwnerModal, setShowChangeOwnerModal] = useState(false)
+  const [downloadModalQRIds, setDownloadModalQRIds] = useState<string[]>([])
 
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>(() => {
     if (typeof window === 'undefined') return 'grid'
@@ -371,7 +373,7 @@ export default function QRCodesPage() {
         id: 'download',
         label: t('Download'),
         icon: <Download className="w-4 h-4" />,
-        onClick: (ids: string[]) => bulkDownloadQRCodes(ids),
+        onClick: (ids: string[]) => setDownloadModalQRIds(ids),
       },
       {
         id: 'move',
@@ -385,7 +387,16 @@ export default function QRCodesPage() {
         id: 'duplicate',
         label: t('Duplicate'),
         icon: <Copy className="w-4 h-4" />,
-        onClick: (ids: string[]) => bulkDuplicateQRCodes(ids),
+        onClick: (ids: string[]) => {
+          toast
+            .promise(bulkDuplicateQRCodes(ids), {
+              loading: t('Duplicating QR codes...'),
+              success: t('QR codes duplicated successfully'),
+              error: t('Failed to duplicate QR codes'),
+            })
+            .unwrap()
+            .then(() => deselectAll())
+        },
       },
       {
         id: 'activate',
@@ -486,7 +497,11 @@ export default function QRCodesPage() {
           archiveQRCode(qrCodeId)
           break
         case 'duplicate':
-          duplicateQRCode(qrCodeId)
+          toast.promise(duplicateQRCode(qrCodeId), {
+            loading: t('Duplicating QR code...'),
+            success: t('QR code duplicated successfully'),
+            error: t('Failed to duplicate QR code'),
+          })
           break
         case 'activate':
           changeStatus(qrCodeId, 'active')
@@ -500,7 +515,7 @@ export default function QRCodesPage() {
           }
           break
         case 'download':
-          downloadQRCode(qrCodeId)
+          setDownloadModalQRIds([qrCodeId])
           break
         default:
           break
@@ -780,6 +795,11 @@ export default function QRCodesPage() {
           deselectAll()
           queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.all() })
         }}
+      />
+      <QRDownloadModal
+        isOpen={downloadModalQRIds.length > 0}
+        onClose={() => setDownloadModalQRIds([])}
+        qrCodeIds={downloadModalQRIds}
       />
     </div>
   )

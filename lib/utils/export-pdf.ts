@@ -106,26 +106,10 @@ export async function exportPDF(svg: string, options: PDFExportOptions = {}): Pr
     y = (pageHeight - qrHeight) / 2
   }
 
-  // Convert SVG to data URL
-  const svgDataUrl = svgToDataURL(svg)
+  // Convert SVG to high-resolution PNG (jsPDF's native SVG support is too limited for complex QR designs)
+  const pngDataUrl = await svgToPNG(svg, qrWidth * 10, qrHeight * 10)
 
-  // Add SVG to PDF
-  try {
-    pdf.addImage(svgDataUrl, 'SVG', x, y, qrWidth, qrHeight)
-  } catch {
-    // Fallback: try PNG conversion
-    const pngDataUrl = await svgToPNG(svg, qrWidth * 10, qrHeight * 10)
-    pdf.addImage(
-      pngDataUrl,
-      'PNG',
-      x,
-      y,
-      qrWidth,
-      qrHeight,
-      undefined,
-      compression ? 'FAST' : 'NONE'
-    )
-  }
+  pdf.addImage(pngDataUrl, 'PNG', x, y, qrWidth, qrHeight, undefined, compression ? 'FAST' : 'NONE')
 
   // Save PDF
   pdf.save(filename)

@@ -3,12 +3,10 @@
 import { useState, useRef, useCallback, useMemo } from 'react'
 import { toast } from 'sonner'
 import { BackendQRPreview, BackendQRPreviewRef } from '@/components/qr/BackendQRPreview'
-import { exportPDF } from '@/lib/utils/export-pdf'
-import { exportEPS } from '@/lib/utils/export-eps'
 import { DesignerConfig } from '@/types/entities/designer'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Download, FileText, Printer, Loader2, Lock, Plus } from 'lucide-react'
+import { Download, Loader2, Lock, Plus } from 'lucide-react'
 import { useSubscription } from '@/lib/hooks/useSubscription'
 import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
 import SaveAsTemplateButton from '@/components/templates/SaveAsTemplateButton'
@@ -110,7 +108,7 @@ export default function Step4Download({
       if (!previewRef.current) return
 
       // Enforce format restrictions for free/trial plans
-      if (isFreePlan && (format === 'svg' || format === 'pdf' || format === 'eps')) {
+      if (isFreePlan && format === 'svg') {
         openUpgradeModal(
           `${format.toUpperCase()} ${t('download requires a paid plan. Upgrade to unlock all formats.')}`
         )
@@ -163,30 +161,6 @@ export default function Step4Download({
           }
           img.src = dataURL
           return
-        } else if (format === 'pdf') {
-          await exportPDF(svgStr, {
-            filename: `${filename}.pdf`,
-            pageSize: 'a4',
-            orientation: 'portrait',
-            margin: 20,
-            centerOnPage: true,
-            metadata: {
-              title: filename,
-              creator: 'Karsaaz QR Code Generator',
-            },
-          })
-        } else if (format === 'eps') {
-          const size = Number(downloadSize)
-          await exportEPS(svgStr, {
-            filename: `${filename}.eps`,
-            width: size,
-            height: size,
-            metadata: {
-              title: filename,
-              creator: 'Karsaaz QR Code Generator',
-              creationDate: new Date().toISOString(),
-            },
-          })
         }
       } catch (error) {
         if (process.env.NODE_ENV === 'development') console.error('Download failed:', error)
@@ -321,28 +295,6 @@ export default function Step4Download({
         >
           <Download className="w-4 h-4" />
           SVG
-          {isFreePlan && <Lock className="ml-1 h-3 w-3" />}
-        </Button>
-        <Button
-          onClick={() => handleDownload('pdf')}
-          disabled={!hasPreviewData || isDownloading}
-          variant={isFreePlan ? 'ghost' : 'outline'}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium ${isFreePlan ? 'opacity-50' : ''}`}
-          title={isFreePlan ? t('PDF download requires a paid plan') : undefined}
-        >
-          <FileText className="w-4 h-4" />
-          PDF
-          {isFreePlan && <Lock className="ml-1 h-3 w-3" />}
-        </Button>
-        <Button
-          onClick={() => handleDownload('eps')}
-          disabled={!hasPreviewData || isDownloading}
-          variant={isFreePlan ? 'ghost' : 'outline'}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium ${isFreePlan ? 'opacity-50' : ''}`}
-          title={isFreePlan ? t('EPS download requires a paid plan') : undefined}
-        >
-          <Printer className="w-4 h-4" />
-          EPS
           {isFreePlan && <Lock className="ml-1 h-3 w-3" />}
         </Button>
         <Button

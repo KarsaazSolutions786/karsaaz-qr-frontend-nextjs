@@ -12,9 +12,11 @@ import { DuplicateModal } from '@/components/qr/DuplicateModal'
 import { TransferOwnershipModal } from '@/components/qr/TransferOwnershipModal'
 import { ArchiveModal } from '@/components/qr/ArchiveModal'
 import { PINProtectionModal } from '@/components/qr/PINProtectionModal'
+import { QRDownloadModal } from '@/components/qr/QRDownloadModal'
 import { formatDate } from '@/lib/utils/format'
 import Link from 'next/link'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { useTranslation } from '@/lib/i18n'
 import {
   DocumentDuplicateIcon,
@@ -41,17 +43,12 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
   const [showTransfer, setShowTransfer] = useState(false)
   const [showArchive, setShowArchive] = useState(false)
   const [showPINProtection, setShowPINProtection] = useState(false)
+  const [downloadModalQRIds, setDownloadModalQRIds] = useState<string[]>([])
 
   const { data: qrcode, isLoading } = useQRCode(params.id)
   const deleteMutation = useDeleteQRCode()
-  const {
-    duplicateQRCode,
-    archiveQRCode,
-    unarchiveQRCode,
-    transferQRCode,
-    convertQRType,
-    downloadQRCode,
-  } = useQRActions()
+  const { duplicateQRCode, archiveQRCode, unarchiveQRCode, transferQRCode, convertQRType } =
+    useQRActions()
 
   /**
    * Purpose: Executes handleDelete functionality.
@@ -78,7 +75,13 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
     prefix: string
   }) => {
     if (qrcode) {
-      await duplicateQRCode(qrcode.id, options)
+      await toast
+        .promise(duplicateQRCode(qrcode.id, options), {
+          loading: t('Duplicating QR code...'),
+          success: t('QR code duplicated successfully'),
+          error: t('Failed to duplicate QR code'),
+        })
+        .unwrap()
       setShowDuplicate(false)
     }
   }
@@ -233,7 +236,7 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
                       /* ignore */
                     }
                   } else {
-                    downloadQRCode(qrcode.id, 'png', qrcode.name)
+                    setDownloadModalQRIds([qrcode.id])
                   }
                 }}
               >
@@ -412,6 +415,12 @@ export default function QRCodeDetailPage({ params }: { params: { id: string } })
           )}
         </>
       )}
+
+      <QRDownloadModal
+        isOpen={downloadModalQRIds.length > 0}
+        onClose={() => setDownloadModalQRIds([])}
+        qrCodeIds={downloadModalQRIds}
+      />
     </div>
   )
 }

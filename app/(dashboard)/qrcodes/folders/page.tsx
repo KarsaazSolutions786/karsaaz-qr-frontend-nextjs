@@ -27,6 +27,7 @@ import { QRCodeMinimalCard } from '@/components/qr/QRCodeMinimalCard'
 import { Pagination } from '@/components/common/Pagination'
 import { PageQueryError } from '@/components/common/PageQueryError'
 import { DeleteFolderDialog } from '@/components/qr/DeleteFolderDialog'
+import { QRDownloadModal } from '@/components/qr/QRDownloadModal'
 import { parseSortOption } from '@/lib/utils/qr-list-helpers'
 import { FolderModal } from '@/components/qr/FolderModal'
 
@@ -59,6 +60,7 @@ export default function QRCodesFoldersPage() {
   const [folderLoading, setFolderLoading] = useState(false)
   const [folderToDelete, setFolderToDelete] = useState<FolderEntity | null>(null)
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'minimal'>('grid')
+  const [downloadModalQRIds, setDownloadModalQRIds] = useState<string[]>([])
 
   const { data: folders = [], isLoading: foldersLoading } = useFolders()
   const selectedFolder = folders.find(f => String(f.id) === selectedFolderId) ?? null
@@ -110,8 +112,7 @@ export default function QRCodesFoldersPage() {
 
   const { data, isLoading, isFetching, error, refetch } = useQRCodes(qrListParams)
 
-  const { archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode, downloadQRCode } =
-    useQRActions()
+  const { archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode } = useQRActions()
 
   const paginationMeta = useMemo(() => {
     const total = Math.max(0, Number(data?.pagination?.total) || 0)
@@ -192,10 +193,14 @@ export default function QRCodesFoldersPage() {
           router.push(`/qrcodes/${qrCodeId}/analytics`)
           break
         case 'download':
-          downloadQRCode(qrCodeId)
+          setDownloadModalQRIds([qrCodeId])
           break
         case 'duplicate':
-          duplicateQRCode(qrCodeId)
+          toast.promise(duplicateQRCode(qrCodeId), {
+            loading: t('Duplicating QR code...'),
+            success: t('QR code duplicated successfully'),
+            error: t('Failed to duplicate QR code'),
+          })
           break
         case 'archive':
           archiveQRCode(qrCodeId)
@@ -213,7 +218,7 @@ export default function QRCodesFoldersPage() {
           break
       }
     },
-    [router, downloadQRCode, duplicateQRCode, archiveQRCode, changeStatus, deleteQRCode]
+    [router, duplicateQRCode, archiveQRCode, changeStatus, deleteQRCode, t]
   )
 
   if (error) {
@@ -451,6 +456,11 @@ export default function QRCodesFoldersPage() {
         loading={folderLoading}
         onClose={() => setFolderToDelete(null)}
         onConfirm={handleConfirmDeleteFolder}
+      />
+      <QRDownloadModal
+        isOpen={downloadModalQRIds.length > 0}
+        onClose={() => setDownloadModalQRIds([])}
+        qrCodeIds={downloadModalQRIds}
       />
     </div>
   )

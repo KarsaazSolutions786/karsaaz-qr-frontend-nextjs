@@ -390,8 +390,9 @@ export function useQRActions() {
   const downloadQRCode = useCallback(
     async (
       qrCodeId: string,
-      format: 'png' | 'svg' | 'pdf' | 'eps' = 'png',
-      filename?: string
+      format: 'png' | 'svg' = 'png',
+      filename?: string,
+      size?: number
     ): Promise<void> => {
       setIsProcessing(true)
       setError(null)
@@ -478,8 +479,7 @@ export function useQRActions() {
         const svgElement = doc.documentElement as unknown as SVGSVGElement
 
         const dlFilename = filename || qrcode.name || `qrcode-${qrCodeId}`
-        const { downloadPNG, downloadSVG, downloadPDF, downloadEPS } =
-          await import('@/lib/utils/download-utils')
+        const { downloadPNG, downloadSVG } = await import('@/lib/utils/download-utils')
 
         // 5. Download in the requested format
         if (format === 'svg') {
@@ -488,16 +488,8 @@ export function useQRActions() {
           await downloadPNG(
             svgElement,
             dlFilename,
-            qrcode.designerConfig?.size || qrcode.customization?.size || 512
+            size || qrcode.designerConfig?.size || qrcode.customization?.size || 512
           )
-        } else if (format === 'pdf') {
-          await downloadPDF(
-            svgElement,
-            dlFilename,
-            qrcode.designerConfig?.size || qrcode.customization?.size || 512
-          )
-        } else if (format === 'eps') {
-          await downloadEPS(svgElement, dlFilename)
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to download QR code'
@@ -511,13 +503,13 @@ export function useQRActions() {
   )
 
   const bulkDownloadQRCodes = useCallback(
-    async (qrCodeIds: string[], format: 'png' | 'svg' | 'pdf' | 'eps' = 'png'): Promise<void> => {
+    async (qrCodeIds: string[], format: 'png' | 'svg' = 'png', size?: number): Promise<void> => {
       setIsProcessing(true)
       setError(null)
 
       try {
         for (const id of qrCodeIds) {
-          await downloadQRCode(id, format)
+          await downloadQRCode(id, format, undefined, size)
           // Small delay between downloads to avoid browser blocking
           await new Promise(resolve => setTimeout(resolve, 200))
         }
