@@ -35,11 +35,9 @@ export function useVerifyOTP() {
       // absolute URL) to avoid an open-redirect via a client-controlled query param.
       const next = searchParams?.get('next')
       const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : null
-      let homePage = safeNext || response.user?.roles?.[0]?.home_page || '/qrcodes/new'
-      if (homePage.startsWith('/dashboard')) {
-        homePage = homePage.replace('/dashboard', '')
-      }
-      router.push(homePage)
+      const nextUrl = safeNext ? safeNext : '/dashboard'
+      
+      router.push(nextUrl)
     },
   })
 }

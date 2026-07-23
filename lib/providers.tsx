@@ -6,6 +6,8 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from '@/lib/query/client'
 import { AuthProvider } from '@/lib/context/AuthContext'
 import { GuestProvider } from '@/lib/context/GuestContext'
+import { OrganizationProvider } from '@/lib/context/OrganizationContext'
+
 import { TranslationProvider } from '@/lib/i18n'
 import { PluginProvider } from '@/lib/plugins'
 import { ThemeProvider } from '@/lib/providers/theme-provider'
@@ -46,24 +48,26 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <GuestProvider>
-          <TranslationProvider>
-            <PluginProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="light"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <ProtectionInitializer />
-                <WebVitalsReporter />
-                <OfflineIndicator />
-                <Toaster position="top-right" richColors closeButton duration={4000} />
-                {children}
-              </ThemeProvider>
-            </PluginProvider>
-          </TranslationProvider>
-        </GuestProvider>
+        <OrganizationProvider>
+          <GuestProvider>
+            <TranslationProvider>
+              <PluginProvider>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="light"
+                  enableSystem
+                  disableTransitionOnChange
+                >
+                  <ProtectionInitializer />
+                  <WebVitalsReporter />
+                  <OfflineIndicator />
+                  <Toaster position="top-right" richColors closeButton duration={4000} />
+                  {children}
+                </ThemeProvider>
+              </PluginProvider>
+            </TranslationProvider>
+          </GuestProvider>
+        </OrganizationProvider>
         {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
       </AuthProvider>
     </QueryClientProvider>

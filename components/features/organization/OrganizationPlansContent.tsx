@@ -199,7 +199,7 @@ export function OrganizationPlansContent() {
               Register Organization
             </Link>
             <Link
-              href="/login"
+              href="/organization/login"
               className="rounded-full border-2 border-purple-600 px-6 py-3 text-sm font-semibold text-purple-700 transition-colors hover:bg-purple-50"
             >
               Organization Login
@@ -265,7 +265,7 @@ export function OrganizationPlansContent() {
 
         <div className="mt-10 text-center text-sm text-gray-500">
           Already have an organization?{' '}
-          <Link href="/login" className="font-medium text-purple-600 hover:underline">
+          <Link href="/organization/login" className="font-medium text-purple-600 hover:underline">
             Sign in
           </Link>
         </div>

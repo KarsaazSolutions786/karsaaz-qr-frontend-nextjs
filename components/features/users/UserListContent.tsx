@@ -526,9 +526,8 @@ export function UserListContent({ paying }: UserListContentProps) {
                               className="z-50 min-w-[160px] bg-white rounded-md shadow-lg border border-gray-100 py-1 flex flex-col overflow-hidden"
                             >
                               {/* Act As */}
-                              <DropdownMenu.Item asChild>
+                              <DropdownMenu.Item onSelect={() => handleActAs(user)} asChild>
                                 <button
-                                  onClick={() => handleActAs(user)}
                                   disabled={!!pendingAction}
                                   className="w-full text-left px-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 focus:bg-indigo-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
@@ -550,9 +549,8 @@ export function UserListContent({ paying }: UserListContentProps) {
                               </DropdownMenu.Item>
 
                               {/* Magic Login */}
-                              <DropdownMenu.Item asChild>
+                              <DropdownMenu.Item onSelect={() => handleMagicUrl(user)} asChild>
                                 <button
-                                  onClick={() => handleMagicUrl(user)}
                                   disabled={!!pendingAction}
                                   className="w-full text-left px-4 py-2 text-sm text-purple-600 hover:bg-purple-50 focus:bg-purple-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
@@ -564,9 +562,8 @@ export function UserListContent({ paying }: UserListContentProps) {
                               </DropdownMenu.Item>
 
                               {/* Balance */}
-                              <DropdownMenu.Item asChild>
+                              <DropdownMenu.Item onSelect={() => setBalanceUser(user)} asChild>
                                 <button
-                                  onClick={() => setBalanceUser(user)}
                                   className="w-full text-left px-4 py-2 text-sm text-emerald-600 hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none"
                                 >
                                   {t('Balance')}
@@ -574,9 +571,8 @@ export function UserListContent({ paying }: UserListContentProps) {
                               </DropdownMenu.Item>
 
                               {/* Delete */}
-                              <DropdownMenu.Item asChild>
+                              <DropdownMenu.Item onSelect={() => handleDelete(user)} asChild>
                                 <button
-                                  onClick={() => handleDelete(user)}
                                   disabled={deleteMutation.isPending}
                                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 focus:bg-red-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
@@ -585,9 +581,8 @@ export function UserListContent({ paying }: UserListContentProps) {
                               </DropdownMenu.Item>
 
                               {/* Reset Role */}
-                              <DropdownMenu.Item asChild>
+                              <DropdownMenu.Item onSelect={() => handleResetRole(user)} asChild>
                                 <button
-                                  onClick={() => handleResetRole(user)}
                                   disabled={!!pendingAction}
                                   className="w-full text-left px-4 py-2 text-sm text-orange-600 hover:bg-orange-50 focus:bg-orange-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
@@ -599,9 +594,8 @@ export function UserListContent({ paying }: UserListContentProps) {
                               </DropdownMenu.Item>
 
                               {/* Reset Scans */}
-                              <DropdownMenu.Item asChild>
+                              <DropdownMenu.Item onSelect={() => handleResetScans(user)} asChild>
                                 <button
-                                  onClick={() => handleResetScans(user)}
                                   disabled={!!pendingAction}
                                   className="w-full text-left px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-50 focus:bg-yellow-50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                                 >

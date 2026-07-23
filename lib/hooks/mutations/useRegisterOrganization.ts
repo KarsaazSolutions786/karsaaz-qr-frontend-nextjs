@@ -1,18 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { authAPI } from '@/lib/api/endpoints/auth'
-import { organizationAPI } from '@/lib/api/endpoints/organization'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { getStoredReferralCode, clearStoredReferralCode } from '@/lib/utils/referral-tracking'
-import type { OrgRegisterFormData } from '@/lib/validations/auth'
+import type { RegisterFormData } from '@/lib/validations/auth'
 
 /**
  * Purpose: Combined "create your account + your organization" flow -- a single
  * submit registers the user (same /register endpoint as the normal signup) and,
- * once that issues an auth token, immediately creates the organization owned by
- * that new account. Mirrors useRegister() but chains the organization-create call
- * before redirecting, and lands on /organization instead of /qrcodes/new.
+ * once that issues an auth token, redirects to /verify-email.
  * Owner/Author: Claude Code
  * Created/Updated: 2026-07-15
  */
@@ -22,7 +19,7 @@ export function useRegisterOrganization() {
   const { setUser } = useAuth()
 
   return useMutation({
-    mutationFn: async (data: OrgRegisterFormData) => {
+    mutationFn: async (data: RegisterFormData) => {
       const referralCode = getStoredReferralCode()
       const guestToken =
         typeof window !== 'undefined' ? localStorage.getItem('guest_session_token') : null
@@ -37,16 +34,12 @@ export function useRegisterOrganization() {
         ...(guestToken ? { guest_session_token: guestToken } : {}),
       })
 
-      // The org-create call requires auth:sanctum -- store the fresh token first
-      // so apiClient's request interceptor picks it up for the next call.
       if (registerResponse.token && typeof window !== 'undefined') {
         localStorage.setItem('logged_in', 'true')
         localStorage.setItem('token', registerResponse.token)
         localStorage.removeItem('guest_session_token')
         localStorage.removeItem('guest_action_count')
       }
-
-      await organizationAPI.create({ name: data.organizationName })
 
       return { registerResponse }
     },
@@ -61,7 +54,7 @@ export function useRegisterOrganization() {
       clearStoredReferralCode()
 
       router.push(
-        `/verify-email?email=${encodeURIComponent(variables.email)}&next=${encodeURIComponent('/organization')}`
+        `/verify-email?email=${encodeURIComponent(variables.email)}&next=${encodeURIComponent('/organization/onboarding')}`
       )
     },
   })

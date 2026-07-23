@@ -103,9 +103,13 @@ export function GoogleLoginButton() {
         }
         queryClient.setQueryData(queryKeys.auth.currentUser(), loginResult.user)
 
-        const homePage =
-          loginResult.user.roles?.[0]?.home_page?.replace('/dashboard', '') || '/qrcodes/new'
-        router.push(homePage)
+        const params = new URLSearchParams(window.location.search)
+        const from = params.get('from')
+        const nextUrl = from && from.startsWith('/') && !from.startsWith('//') && !from.includes('://') 
+          ? from 
+          : '/dashboard'
+        
+        router.push(nextUrl)
       } catch (error) {
         if (process.env.NODE_ENV === 'development') console.error('Google login failed:', error)
       }

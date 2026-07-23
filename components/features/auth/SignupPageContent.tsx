@@ -88,48 +88,7 @@ export function SignupPageContent() {
   }
 
   if (isOrgIntent) {
-    return (
-      <div
-        className="flex w-full flex-col rounded-[23px] bg-white/30 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)] text-white space-y-6"
-        style={{ minHeight: 543, padding: '40px 24px 30px' }}
-      >
-        <div className="text-center">
-          <div className="flex flex-col items-center">
-            <div className="flex items-center justify-center gap-x-2">
-              <h2
-                className="whitespace-nowrap text-[24px] font-semibold leading-normal text-white"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {t('Create your')}
-              </h2>
-              <Image
-                src="/images/auth/karsaaz-logo.svg"
-                alt="Karsaaz QR"
-                width={150}
-                height={31.4}
-                priority
-              />
-            </div>
-            <h3 className="mt-1 text-[20px] font-semibold text-white">{t('organization')}</h3>
-          </div>
-          <p className="mt-3 text-xs text-white/90">
-            {t('One step: your account and your organization, both set up together.')}
-          </p>
-        </div>
-
-        <OrgRegisterForm onRegistrationDisabled={() => setRegistrationDisabled(true)} />
-
-        <p className="text-center text-xs text-white/90">
-          {t('Already manage an organization?')}{' '}
-          <Link
-            href="/login"
-            className="font-semibold text-white underline decoration-solid hover:text-white/80"
-          >
-            {t('Sign in')}
-          </Link>
-        </p>
-      </div>
-    )
+    return <OrgRegisterForm onRegistrationDisabled={() => setRegistrationDisabled(true)} />
   }
 
   return (

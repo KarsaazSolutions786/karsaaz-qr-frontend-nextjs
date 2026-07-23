@@ -63,7 +63,11 @@ function handleUnauthorizedResponse(config?: InternalAxiosRequestConfig): void {
   const isGuestCapablePage = /^\/(guest|qrcodes)(\/|$)/.test(window.location.pathname)
   if (isGuestCapablePage && localStorage.getItem('guest_session_token')) return
 
-  if (!window.location.pathname.startsWith('/login')) {
+  if (window.location.pathname.startsWith('/organization/')) {
+    if (window.location.pathname !== '/organization/login') {
+      window.location.href = '/organization/login?reason=session_expired'
+    }
+  } else if (!window.location.pathname.startsWith('/login')) {
     window.location.href = '/login?reason=session_expired'
   }
 }

@@ -87,4 +87,5 @@ export interface User {
   passwordlessEnabled?: boolean
   createdAt?: string
   lastLoginAt?: string
+  organizations?: any[]
 }

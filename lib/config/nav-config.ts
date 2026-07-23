@@ -87,7 +87,7 @@ export const figmaPrimaryNav: FigmaNavItem[] = [
   {
     key: 'organization',
     label: 'Organization API',
-    href: '/organization',
+    href: '/organization/dashboard',
     icon: BuildingOffice2Icon,
     // Not admin-only -- any authenticated user can create and manage their own
     // organization here (see ADMIN_ROUTE_PREFIXES comment above).

@@ -10,26 +10,6 @@ import { toast } from 'sonner'
 import { rpcClearCache } from '@/lib/api/rpc'
 
 
-function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): string {
-
-  if (typeof window !== 'undefined') {
-    const params = new URLSearchParams(window.location.search)
-    const from = params.get('from')
-    if (from && from.startsWith('/') && !from.startsWith('//') && !from.includes('://')) {
-      return from
-    }
-  }
-  // Use the home_page from user's first role (matches original frontend)
-  let homePage = user.roles?.[0]?.home_page
-  // Strip legacy /dashboard prefix (old Lit frontend used /dashboard/qrcodes, Next.js uses /qrcodes)
-  if (homePage?.startsWith('/dashboard')) {
-    homePage = homePage.replace('/dashboard', '')
-  }
-  if (homePage) return homePage
-  // Default fallback
-  return '/qrcodes/new'
-}
-
 export function useLogin() {
   const router = useRouter()
   const queryClient = useQueryClient()
@@ -94,7 +74,12 @@ export function useLogin() {
         return
       }
 
-      router.push(getPostLoginRedirect(loginResponse.user))
+      // Check for returnUrl or next in the URL
+      const searchParams = new URLSearchParams(window.location.search)
+      const next = searchParams.get('returnUrl') || searchParams.get('next')
+      const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : null
+      
+      router.push(safeNext || '/dashboard')
     },
   })
 }
@@ -139,7 +124,7 @@ export function useTwoFactorLoginVerify() {
         return
       }
 
-      router.push(getPostLoginRedirect(response.user))
+      router.push('/dashboard')
     },
   })
 }

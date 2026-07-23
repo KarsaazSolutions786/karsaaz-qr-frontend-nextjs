@@ -1,8 +1,7 @@
 import { Metadata } from 'next'
 import { generateOGMetadata } from '@/lib/utils/og-metadata'
 import { Suspense } from 'react'
-import { SignupFormStatic } from '@/components/features/auth/SignupFormStatic'
-import { SignupHydrationBridge } from '@/components/features/auth/SignupHydrationBridge'
+
 import { SignupPageContent } from '@/components/features/auth/SignupPageContent'
 
 export const metadata: Metadata = {
@@ -59,8 +58,7 @@ export default function SignupPage() {
         <img src="/images/auth/ellipse-inner.svg" alt="" className="block h-full w-full" />
       </div>
 
-      <div className="relative z-10 w-[447px] max-w-[calc(100%-32px)] grid [&>*]:col-start-1 [&>*]:row-start-1">
-        <SignupFormStatic />
+      <div className="relative z-10 w-[447px] max-w-[calc(100%-32px)]">
         <Suspense
           fallback={
             <div className="flex items-center justify-center rounded-[23px] bg-white/30 p-12 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)]">
@@ -68,7 +66,6 @@ export default function SignupPage() {
             </div>
           }
         >
-          <SignupHydrationBridge />
           <SignupPageContent />
         </Suspense>
       </div>

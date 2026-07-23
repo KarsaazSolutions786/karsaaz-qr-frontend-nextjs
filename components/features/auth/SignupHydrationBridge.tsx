@@ -4,7 +4,11 @@ import { useEffect } from 'react'
 
 export function SignupHydrationBridge() {
   useEffect(() => {
-    document.getElementById('signup-form-ssr')?.setAttribute('hidden', 'true')
+    const el = document.getElementById('signup-form-ssr')
+    if (el) {
+      el.style.display = 'none'
+      el.setAttribute('hidden', 'true')
+    }
   }, [])
   return null
 }

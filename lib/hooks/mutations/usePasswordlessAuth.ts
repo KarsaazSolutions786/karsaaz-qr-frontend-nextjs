@@ -15,23 +15,6 @@ import { useAuth } from '@/lib/hooks/useAuth'
 
 
 
-function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): string {
-  if (typeof window !== 'undefined') {
-    const params = new URLSearchParams(window.location.search)
-    const from = params.get('from')
-    if (from && from.startsWith('/') && !from.startsWith('//') && !from.includes('://')) {
-      return from
-    }
-  }
-  let homePage = user.roles?.[0]?.home_page
-  // Strip legacy /dashboard prefix (old Lit frontend used /dashboard/qrcodes, Next.js uses /qrcodes)
-  if (homePage?.startsWith('/dashboard')) {
-    homePage = homePage.replace('/dashboard', '')
-  }
-  if (homePage) return homePage
-  return '/qrcodes/new'
-}
-
 
 export function usePasswordlessStatus() {
   return useQuery({
@@ -42,7 +25,6 @@ export function usePasswordlessStatus() {
   })
 }
 
-
 export function usePasswordlessCheckPreference() {
   return useMutation({
     mutationFn: (data: PasswordlessCheckPreferenceRequest) =>
@@ -50,13 +32,11 @@ export function usePasswordlessCheckPreference() {
   })
 }
 
-
 export function usePasswordlessInit() {
   return useMutation({
     mutationFn: (data: PasswordlessInitRequest) => authAPI.passwordlessInit(data),
   })
 }
-
 
 export function usePasswordlessVerify() {
   const router = useRouter()
@@ -77,7 +57,7 @@ export function usePasswordlessVerify() {
       queryClient.setQueryData(queryKeys.auth.currentUser(), response.user)
 
       // Redirect to dashboard
-      router.push(getPostLoginRedirect(response.user))
+      router.push('/dashboard')
     },
   })
 }
