@@ -28,18 +28,27 @@ import { UserCircleIcon } from '@heroicons/react/24/outline'
 import { LanguagePicker } from '@/components/common/LanguagePicker'
 import { useTranslation } from '@/lib/i18n'
 
-const NAV = [
-  { href: '/organization/dashboard', label: 'Overview', icon: Building2, exact: true },
-  { href: '/organization/team', label: 'Team', icon: Users },
-  { href: '/organization/roles', label: 'Roles', icon: ShieldCheck },
-  { href: '/organization/plans', label: 'Plans', icon: Layers },
-  { href: '/organization/api-keys', label: 'API Keys', icon: KeyRound },
-  { href: '/organization/usage', label: 'Usage', icon: BarChart3 },
-  { href: '/organization/billing', label: 'Billing', icon: CreditCard },
-  { href: '/organization/audit-logs', label: 'Audit Logs', icon: ScrollText },
-  { href: '/organization/settings', label: 'Settings', icon: Settings },
-  { href: '/organization/api-docs', label: 'API Docs', icon: BookOpen },
-]
+const getNavItems = (isAdmin: boolean) => {
+  if (isAdmin) {
+    return [
+      { href: '/organization', label: 'Dashboard', icon: Building2, exact: true },
+      { href: '/organization/roles', label: 'Roles', icon: ShieldCheck },
+      { href: '/organization/plans', label: 'Plans', icon: Layers },
+      { href: '/organization/audit-logs', label: 'Audit Logs', icon: ScrollText },
+      { href: '/organization/api-docs', label: 'API Docs', icon: BookOpen },
+    ]
+  }
+
+  return [
+    { href: '/organization/dashboard', label: 'Overview', icon: Building2, exact: true },
+    { href: '/organization/team', label: 'Team', icon: Users },
+    { href: '/organization/api-keys', label: 'API Keys', icon: KeyRound },
+    { href: '/organization/usage', label: 'Usage', icon: BarChart3 },
+    { href: '/organization/billing', label: 'Billing', icon: CreditCard },
+    { href: '/organization/settings', label: 'Settings', icon: Settings },
+    { href: '/organization/api-docs', label: 'API Docs', icon: BookOpen },
+  ]
+}
 
 /**
  * Purpose: Organization switcher dropdown -- spec §13.10. Lists every
@@ -72,7 +81,7 @@ function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number |
         }
       })
       .catch(() => {})
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -196,7 +205,7 @@ export default function OrganizationLayout({ children }: { children: React.React
           <span className="text-gray-300">/</span>
           <span className="text-sm font-semibold text-gray-900">Organization API</span>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <LanguagePicker />
           <Link
@@ -216,27 +225,27 @@ export default function OrganizationLayout({ children }: { children: React.React
             {mounted && <OrganizationSwitcher activeOrgId={activeOrgId} />}
           </div>
           <nav className="flex flex-col gap-1 p-4">
-            {NAV.filter(item => 
-              isSuperUser || !['/organization/roles', '/organization/plans', '/organization/billing', '/organization/audit-logs', '/organization/settings'].includes(item.href)
-            ).map(({ href, label, icon: Icon, exact }) => {
-              const active = exact ? pathname === href : pathname.startsWith(href)
-              return (
-                <Link
-                  key={href}
-                  href={withOrg(href)}
-                  className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                    active
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {label}
-                </Link>
-              )
-            })}
+            {getNavItems(mounted ? isSuperUser : false).map(
+              ({ href, label, icon: Icon, exact }) => {
+                const active = exact ? pathname === href : pathname.startsWith(href)
+                return (
+                  <Link
+                    key={href}
+                    href={href === '/organization' ? href : withOrg(href)}
+                    className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                      active
+                        ? 'bg-primary-50 text-primary-700'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </Link>
+                )
+              }
+            )}
           </nav>
-          
+
           <div className="mt-auto p-4 border-t flex flex-col gap-2">
             <Link
               href={withOrg('/organization/upgrade')}
@@ -245,7 +254,7 @@ export default function OrganizationLayout({ children }: { children: React.React
               <Sparkles className="h-4 w-4" />
               Upgrade Plan
             </Link>
-            
+
             <button
               onClick={() => logout()}
               className="flex items-center gap-2 w-full rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors"
