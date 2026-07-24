@@ -265,8 +265,8 @@ export function OrganizationPlansContent() {
 
         <div className="mt-10 text-center text-sm text-gray-500">
           Already have an organization?{' '}
-          <Link href="/org-portal" className="font-medium text-purple-600 hover:underline">
-            Sign in to the Organization Portal
+          <Link href="/login" className="font-medium text-purple-600 hover:underline">
+            Sign in
           </Link>
         </div>
       </section>

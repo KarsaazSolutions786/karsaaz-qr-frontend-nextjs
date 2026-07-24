@@ -10,22 +10,12 @@ import {
   Wallet,
   Plus,
   AlertCircle,
-  Copy,
-  Eye,
-  EyeOff,
-  ShieldAlert,
-  CheckCircle2,
   Users,
+  ShieldAlert,
 } from 'lucide-react'
 import { organizationAPI, type Organization } from '@/lib/api/endpoints/organization'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
-
-interface PortalCredentials {
-  email: string
-  password: string
-  note: string
-}
 
 /**
  * Purpose: Executes OrganizationPage functionality.
@@ -40,33 +30,11 @@ export default function OrganizationPage() {
   const [creating, setCreating] = useState(false)
   const [newOrgName, setNewOrgName] = useState('')
   const [showForm, setShowForm] = useState(false)
-  const [credentials, setCredentials] = useState<PortalCredentials | null>(null)
-  const [showPassword, setShowPassword] = useState(false)
-  const [copied, setCopied] = useState<'email' | 'password' | null>(null)
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null)
 
   const handleOrgSelect = (org: Organization) => {
     setSelectedOrg(org)
   }
-
-  // Picked up once from the combined org-signup flow (RegisterOrgForm) -- shows
-  // the same one-time credentials modal used by the inline "New Organization"
-  // create form below, then clears it so a refresh never re-shows it.
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const stored = sessionStorage.getItem('new_org_portal_credentials')
-    if (!stored) return
-    sessionStorage.removeItem('new_org_portal_credentials')
-    try {
-      const creds = JSON.parse(stored)
-      setCredentials({
-        ...creds,
-        note: creds.note ?? 'Save these credentials — the password will not be shown again.',
-      })
-    } catch {
-      // Malformed sessionStorage value -- ignore, not worth surfacing an error for.
-    }
-  }, [])
 
   useEffect(() => {
     organizationAPI
@@ -81,12 +49,6 @@ export default function OrganizationPage() {
    * Owner/Author: Syed Ashhad
    * Created/Updated: April 2026
    */
-  const copyToClipboard = async (text: string, field: 'email' | 'password') => {
-    await navigator.clipboard.writeText(text)
-    setCopied(field)
-    setTimeout(() => setCopied(null), 2000)
-  }
-
   /**
    * Purpose: Executes handleCreate functionality.
    * Owner/Author: Syed Ashhad
@@ -101,17 +63,7 @@ export default function OrganizationPage() {
       setOrgs(prev => [...prev, res.data.data])
       setNewOrgName('')
       setShowForm(false)
-      // Show the one-time credentials modal
-      if (res.data.portal_credentials) {
-        const creds = res.data.portal_credentials
-        setCredentials({
-          ...creds,
-          note: creds.note ?? 'Save these credentials — the password will not be shown again.',
-        })
-        setShowPassword(false)
-      } else {
-        toast.success('Organization created!')
-      }
+      toast.success('Organization created!')
     } catch {
       toast.error('Failed to create organization')
     } finally {
@@ -129,94 +81,6 @@ export default function OrganizationPage() {
 
   return (
     <div className="max-w-4xl">
-      {/* ── One-time credentials modal ── */}
-      {credentials && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-            {/* Header */}
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-yellow-100">
-                <ShieldAlert className="h-5 w-5 text-yellow-600" />
-              </div>
-              <div>
-                <h2 className="text-base font-bold text-gray-900">
-                  Organization Portal Credentials
-                </h2>
-                <p className="text-xs text-yellow-600 font-medium">Shown once — save them now!</p>
-              </div>
-            </div>
-
-            <p className="mb-5 text-sm text-gray-500">
-              Share these with the organization owner. The password{' '}
-              <span className="font-semibold text-red-600">cannot be recovered</span> after closing
-              this dialog.
-            </p>
-
-            {/* Email */}
-            <div className="mb-3">
-              <label className="mb-1 block text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Portal Login Email
-              </label>
-              <div className="flex items-center gap-2 rounded-lg border bg-gray-50 px-3 py-2">
-                <span className="flex-1 truncate font-mono text-sm text-gray-800">
-                  {credentials.email}
-                </span>
-                <button
-                  onClick={() => copyToClipboard(credentials.email, 'email')}
-                  className="shrink-0 text-gray-400 hover:text-primary-600"
-                  title="Copy email"
-                >
-                  {copied === 'email' ? (
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Password */}
-            <div className="mb-6">
-              <label className="mb-1 block text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                Portal Password
-              </label>
-              <div className="flex items-center gap-2 rounded-lg border bg-gray-50 px-3 py-2">
-                <span className="flex-1 truncate font-mono text-sm text-gray-800">
-                  {showPassword ? credentials.password : '••••••••••••••••'}
-                </span>
-                <button
-                  onClick={() => setShowPassword(v => !v)}
-                  className="shrink-0 text-gray-400 hover:text-primary-600"
-                  title={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-                <button
-                  onClick={() => copyToClipboard(credentials.password, 'password')}
-                  className="shrink-0 text-gray-400 hover:text-indigo-600"
-                  title="Copy password"
-                >
-                  {copied === 'password' ? (
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <button
-              onClick={() => {
-                setCredentials(null)
-                toast.success('Organization created!')
-              }}
-              className="w-full rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] py-2.5 text-sm font-semibold text-white hover:brightness-105 transition-all"
-            >
-              I've saved these credentials — Close
-            </button>
-          </div>
-        </div>
-      )}
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Organizations</h1>
@@ -357,14 +221,6 @@ export default function OrganizationPage() {
                     <Wallet className="h-3 w-3" /> Plan
                   </Link>
                 )}
-                <Link
-                  href="/org-portal"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-indigo-100 bg-indigo-50/50 px-3 py-1.5 text-xs font-medium text-indigo-700 hover:bg-indigo-50 hover:text-indigo-800 transition-colors"
-                >
-                  <Building2 className="h-3 w-3" /> Portal
-                </Link>
               </div>
             </div>
           ))}

@@ -3,124 +3,14 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
-import {
-  UserPlus,
-  Trash2,
-  Users,
-  KeyRound,
-  Eye,
-  EyeOff,
-  Copy,
-  RefreshCw,
-  Link2,
-  Check,
-} from 'lucide-react'
+import { UserPlus, Trash2, Users } from 'lucide-react'
 import {
   organizationAPI,
-  orgPortalAdminAPI,
   type OrganizationMember,
   type Organization,
-  type PortalCredentials,
 } from '@/lib/api/endpoints/organization'
 
 const ROLE_OPTIONS = ['admin', 'member', 'viewer']
-
-/**
- * Purpose: Executes SendInviteButton functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: April 2026
- */
-function SendInviteButton({ orgId }: { orgId: number }) {
-  const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [inviteUrl, setUrl] = useState('')
-  const [copied, setCopied] = useState(false)
-  const [error, setError] = useState('')
-  const [expiresAt, setExp] = useState('')
-
-  /**
-   * Purpose: Executes generate functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: April 2026
-   */
-  const generate = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const res = await organizationAPI.sendInvite(orgId, email || undefined)
-      setUrl(res.data.data.invite_url)
-      setExp(res.data.data.expires_at)
-    } catch {
-      setError('Failed to generate invite link.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  /**
-   * Purpose: Executes copy functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: April 2026
-   */
-  const copy = () => {
-    navigator.clipboard.writeText(inviteUrl)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-    toast.success('Invite link copied!')
-  }
-
-  return (
-    <div className="mt-4 border-t pt-4">
-      <p className="mb-2 text-xs font-medium text-gray-700">
-        Send an invite link instead (org sets their own password)
-      </p>
-      <div className="flex gap-2">
-        <input
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          placeholder="Contact email (optional)"
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none"
-        />
-        <button
-          onClick={generate}
-          disabled={loading}
-          className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-        >
-          <Link2 className="h-4 w-4" />
-          {loading ? 'Generating…' : 'Generate Invite'}
-        </button>
-      </div>
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-      {inviteUrl && (
-        <div className="mt-3 rounded-lg border border-indigo-100 bg-indigo-50 p-3">
-          <div className="mb-1 flex items-center justify-between">
-            <span className="text-xs font-medium text-indigo-700">
-              Invite Link (valid 72 hours)
-            </span>
-            {expiresAt && (
-              <span className="text-xs text-gray-400">
-                Expires {new Date(expiresAt).toLocaleString()}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap font-mono text-xs text-gray-700">
-              {inviteUrl}
-            </span>
-            <button
-              onClick={copy}
-              className="shrink-0 text-indigo-500 hover:text-indigo-700"
-              title="Copy link"
-            >
-              {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
 
 /**
  * Purpose: Executes SettingsPage functionality.
@@ -138,56 +28,16 @@ export default function SettingsPage() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('member')
 
-  // Portal credentials state
-  const [portalCreds, setPortalCreds] = useState<PortalCredentials | null>(null)
-  const [showPortalPassword, setShowPortalPassword] = useState(false)
-  const [resettingPassword, setResettingPassword] = useState(false)
-
   useEffect(() => {
     if (!orgId) return
-    Promise.all([
-      organizationAPI.get(orgId),
-      organizationAPI.getMembers(orgId),
-      orgPortalAdminAPI.getCredentials(orgId),
-    ])
-      .then(([orgRes, memRes, credsRes]) => {
+    Promise.all([organizationAPI.get(orgId), organizationAPI.getMembers(orgId)])
+      .then(([orgRes, memRes]) => {
         setOrg(orgRes.data.data)
         setMembers(memRes.data.data ?? [])
-        setPortalCreds(credsRes.data.data)
       })
       .catch(() => toast.error('Failed to load settings'))
       .finally(() => setLoading(false))
   }, [orgId])
-
-  /**
-   * Purpose: Executes handleResetPortalPassword functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: April 2026
-   */
-  const handleResetPortalPassword = async () => {
-    if (!confirm('Reset the portal password? The new password will be shown once.')) return
-    setResettingPassword(true)
-    try {
-      const res = await orgPortalAdminAPI.resetPassword(orgId)
-      setPortalCreds(res.data.data)
-      setShowPortalPassword(true)
-      toast.success('Portal password reset! Copy the new password now.')
-    } catch (err: any) {
-      toast.error(err?.response?.data?.error ?? 'Failed to reset portal password')
-    } finally {
-      setResettingPassword(false)
-    }
-  }
-
-  /**
-   * Purpose: Executes copyToClipboard functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: April 2026
-   */
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text)
-    toast.success(`${label} copied!`)
-  }
 
   /**
    * Purpose: Executes handleInvite functionality.
@@ -273,79 +123,6 @@ export default function SettingsPage() {
                   <dd className="font-medium">{org.plan ?? 'Free'}</dd>
                 </div>
               </dl>
-            </div>
-          )}
-
-          {/* Portal Credentials */}
-          {portalCreds && (
-            <div className="mb-8 rounded-xl border bg-white p-5 shadow-sm">
-              <div className="mb-4 flex items-center gap-2">
-                <KeyRound className="h-4 w-4 text-indigo-600" />
-                <h2 className="font-semibold text-gray-800">Portal Login Credentials</h2>
-              </div>
-              <p className="mb-4 text-xs text-gray-500">
-                Share these credentials with your API buyer so they can log in at{' '}
-                <span className="font-mono text-indigo-600">/org-portal/login</span>.
-              </p>
-              <div className="space-y-3">
-                {/* Email */}
-                <div className="flex items-center gap-3 rounded-lg border bg-gray-50 px-3 py-2">
-                  <span className="w-16 text-xs font-medium text-gray-500">Email</span>
-                  <span className="flex-1 font-mono text-sm text-gray-800">
-                    {portalCreds.portal_email}
-                  </span>
-                  <button
-                    onClick={() => copyToClipboard(portalCreds.portal_email, 'Email')}
-                    className="text-gray-400 hover:text-indigo-600"
-                    title="Copy"
-                  >
-                    <Copy className="h-4 w-4" />
-                  </button>
-                </div>
-                {/* Password (shown after reset) */}
-                {portalCreds.portal_password && (
-                  <div className="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2">
-                    <span className="w-16 text-xs font-medium text-gray-500">Password</span>
-                    <span className="flex-1 font-mono text-sm text-gray-800">
-                      {showPortalPassword ? portalCreds.portal_password : '••••••••••••••••'}
-                    </span>
-                    <button
-                      onClick={() => setShowPortalPassword(v => !v)}
-                      className="text-gray-400 hover:text-indigo-600"
-                      title={showPortalPassword ? 'Hide' : 'Show'}
-                    >
-                      {showPortalPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => copyToClipboard(portalCreds.portal_password!, 'Password')}
-                      className="text-gray-400 hover:text-indigo-600"
-                      title="Copy"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
-                {portalCreds.portal_password && (
-                  <p className="text-xs text-yellow-600">
-                    ⚠ This password is shown only once. Copy it now.
-                  </p>
-                )}
-              </div>
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={handleResetPortalPassword}
-                  disabled={resettingPassword}
-                  className="flex items-center gap-1.5 rounded-lg border border-orange-200 bg-orange-50 px-3 py-1.5 text-sm font-medium text-orange-700 hover:bg-orange-100 disabled:opacity-50"
-                >
-                  <RefreshCw className={`h-3.5 w-3.5 ${resettingPassword ? 'animate-spin' : ''}`} />
-                  {resettingPassword ? 'Resetting…' : 'Reset Portal Password'}
-                </button>
-              </div>
-              <SendInviteButton orgId={orgId} />
             </div>
           )}
 

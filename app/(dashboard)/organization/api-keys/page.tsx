@@ -26,7 +26,7 @@ export default function ApiKeysPage() {
   const params = useSearchParams()
   const orgId = Number(params.get('org') ?? 0)
 
-  const { keys, usageStats, loading, create, revoke } = useOrganizationApiKeys('dashboard', orgId)
+  const { keys, usageStats, loading, create, revoke } = useOrganizationApiKeys(orgId)
 
   const [showForm, setShowForm] = useState(false)
   const [creating, setCreating] = useState(false)

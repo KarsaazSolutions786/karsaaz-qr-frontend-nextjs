@@ -122,10 +122,10 @@ export function SignupPageContent() {
         <p className="text-center text-xs text-white/90">
           {t('Already manage an organization?')}{' '}
           <Link
-            href="/org-portal/login"
+            href="/login"
             className="font-semibold text-white underline decoration-solid hover:text-white/80"
           >
-            {t('Sign in to the Organization Portal')}
+            {t('Sign in')}
           </Link>
         </p>
       </div>

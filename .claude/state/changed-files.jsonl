@@ -82,3 +82,18 @@
 {"file":"components/features/qrcodes/designer/__tests__/QRLookPanel.shape-select.test.tsx","action":"Write","timestamp":"2026-07-16T10:47:13Z","important":true}
 {"file":"C:/Dev/karsaaz qr/history/prompts/sticker-engine-v2-regression/198-shape-selection-stale-state-fix.green.prompt.md","action":"Write","timestamp":"2026-07-16T10:49:18Z","important":false}
 {"file":"C:/Dev/karsaaz qr/qr-code-backend/app/Http/Controllers/DesignAssetController.php","action":"Edit","timestamp":"2026-07-16T12:03:12Z","important":false}
+{"file":"lib/qr/design-transformer.ts","action":"Edit","timestamp":"2026-07-17T10:50:26Z","important":false}
+{"file":"components/features/qrcodes/wizard/StickerEditor.tsx","action":"Edit","timestamp":"2026-07-17T10:50:56Z","important":false}
+{"file":"lib/qr/__tests__/design-transformer.numeric-coercion.test.ts","action":"Write","timestamp":"2026-07-17T10:54:03Z","important":true}
+{"file":"C:/Dev/karsaaz qr/history/prompts/sticker-engine-v2-regression/200-sticker-edit-textsize-crash-fix.green.prompt.md","action":"Write","timestamp":"2026-07-17T10:55:48Z","important":false}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/lib/hooks/useOrganizationApiKeys.ts","action":"Write","timestamp":"2026-07-20T08:43:42Z","important":false}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/app/(dashboard)/organization/api-keys/page.tsx","action":"Edit","timestamp":"2026-07-20T08:44:43Z","important":false}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/lib/api/endpoints/organization.ts","action":"Edit","timestamp":"2026-07-20T08:46:03Z","important":false}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/app/(dashboard)/organization/settings/page.tsx","action":"Edit","timestamp":"2026-07-20T08:48:05Z","important":false}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/components/features/auth/LoginTypeSelector.tsx","action":"Edit","timestamp":"2026-07-20T08:50:41Z","important":false}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/components/features/auth/SignupPageContent.tsx","action":"Edit","timestamp":"2026-07-20T08:51:15Z","important":false}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/components/features/organization/OrganizationPlansContent.tsx","action":"Edit","timestamp":"2026-07-20T08:51:40Z","important":false}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/lib/config/protected-routes.ts","action":"Edit","timestamp":"2026-07-20T08:52:09Z","important":false}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/app/(dashboard)/organization/page.tsx","action":"Edit","timestamp":"2026-07-20T08:52:53Z","important":false}
+{"file":"c:/Dev/karsaaz qr/Plans.md","action":"Edit","timestamp":"2026-07-20T08:56:55Z","important":true}
+{"file":"c:/Dev/karsaaz qr/karsaaz Qr React js/lib/hooks/mutations/useRegisterOrganization.ts","action":"Edit","timestamp":"2026-07-20T10:20:24Z","important":false}
