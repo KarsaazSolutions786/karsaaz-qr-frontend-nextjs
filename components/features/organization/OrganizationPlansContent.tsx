@@ -191,6 +191,20 @@ export function OrganizationPlansContent() {
             API access, team roles, webhooks, and usage-based billing for teams that integrate QR
             codes into their own products and workflows.
           </p>
+          <div className="mt-8 flex justify-center gap-4">
+            <Link
+              href="/signup?intent=organization"
+              className="rounded-full bg-purple-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 transition-all"
+            >
+              Register Organization
+            </Link>
+            <Link
+              href="/login"
+              className="rounded-full bg-white px-8 py-3 text-sm font-semibold text-purple-600 shadow-sm ring-1 ring-inset ring-purple-200 hover:bg-purple-50 transition-all"
+            >
+              Login
+            </Link>
+          </div>
         </div>
       </section>
 
