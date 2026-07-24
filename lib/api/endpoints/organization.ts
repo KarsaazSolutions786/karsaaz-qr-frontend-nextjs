@@ -85,8 +85,12 @@ export interface CreditPackage {
 export const organizationAPI = {
   list: () => apiClient.get<{ data: Organization[] }>('/organization'),
 
-  create: (payload: { name: string; website?: string }) =>
-    apiClient.post<{ data: Organization }>('/organization', payload),
+  create: (payload: {
+    name: string
+    website?: string
+    max_capacity?: number
+    organization_type?: string
+  }) => apiClient.post<{ data: Organization }>('/organization', payload),
 
   get: (orgId: number) => apiClient.get<{ data: Organization }>(`/organization/${orgId}`),
 

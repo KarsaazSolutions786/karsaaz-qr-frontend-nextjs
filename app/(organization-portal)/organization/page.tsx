@@ -3,16 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import {
-  Building2,
-  KeyRound,
-  BarChart3,
-  Wallet,
-  Plus,
-  AlertCircle,
-  Users,
-  ShieldAlert,
-} from 'lucide-react'
+import { Building2, KeyRound, BarChart3, Wallet, Plus, Users, ShieldAlert } from 'lucide-react'
 import { organizationAPI, type Organization } from '@/lib/api/endpoints/organization'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
@@ -34,6 +25,7 @@ export default function OrganizationPage() {
   const { selectedOrg, setSelectedOrg } = useOrgStore()
 
   const handleOrgSelect = (org: Organization) => {
+    if (selectedOrg?.id === org.id) return
     setSelectedOrg(org)
     toast.success('Organization successfully selected')
   }
@@ -82,7 +74,7 @@ export default function OrganizationPage() {
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="w-full max-w-[1400px]">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Organizations</h1>
@@ -131,96 +123,126 @@ export default function OrganizationPage() {
       )}
 
       {orgs.length === 0 ? (
-        <div className="rounded-xl border border-dashed bg-white p-12 text-center">
-          <AlertCircle className="mx-auto mb-3 h-8 w-8 text-gray-400" />
-          <p className="font-medium text-gray-600">No organizations yet</p>
-          <p className="mt-1 text-sm text-gray-400">
-            Create your first organization to get API access.
+        <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50/50 p-12 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-gray-100">
+            <Building2 className="h-8 w-8 text-primary-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900">No organizations yet</h3>
+          <p className="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
+            Get started by creating your first organization to manage API access, teams, and usage
+            analytics.
           </p>
+          <button
+            onClick={() => setShowForm(true)}
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:brightness-105 transition-all"
+          >
+            <Plus className="h-4 w-4" /> Create Organization
+          </button>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {orgs.map(org => (
             <div
               key={org.id}
               onClick={() => handleOrgSelect(org)}
-              className={`cursor-pointer rounded-xl border bg-white p-5 shadow-sm transition-all ${
+              className={`group cursor-pointer rounded-2xl bg-white transition-all duration-300 ease-in-out ${
                 selectedOrg?.id === org.id
-                  ? 'ring-2 ring-primary-500 border-primary-500'
-                  : 'hover:shadow-md'
+                  ? 'shadow-[0_0_0_2px_rgba(217,70,239,0.3),_0_8px_30px_rgb(0,0,0,0.08)] -translate-y-1'
+                  : 'border border-gray-100 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1'
               }`}
             >
-              <div className="mb-4 flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100">
-                    <Building2 className="h-5 w-5 text-primary-600" />
+              <div className="p-6">
+                <div className="mb-6 flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100/50 ring-1 ring-primary-100 shadow-inner">
+                      <Building2 className="h-6 w-6 text-primary-500" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold tracking-tight text-gray-900 group-hover:text-primary-600 transition-colors">
+                        {org.name}
+                      </h3>
+                      <p className="text-sm font-medium text-gray-400">{org.slug}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{org.name}</h3>
-                    <p className="text-xs text-gray-400">{org.slug}</p>
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider ${
+                      org.status === 'active'
+                        ? 'bg-green-50 text-green-700 ring-1 ring-green-600/10'
+                        : org.status === 'suspended'
+                          ? 'bg-red-50 text-red-700 ring-1 ring-red-600/10'
+                          : 'bg-yellow-50 text-yellow-700 ring-1 ring-yellow-600/10'
+                    }`}
+                  >
+                    {org.status}
+                  </span>
+                </div>
+
+                {/* Stats row */}
+                <div className="flex text-center divide-x divide-gray-100 rounded-xl border border-gray-100 bg-gray-50/50 py-3 mb-1">
+                  <div className="flex-1">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
+                      Credits
+                    </div>
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Wallet className="h-4 w-4 text-primary-400" />
+                      <span className="text-base font-bold text-gray-900">
+                        {org.credits?.balance ?? 0}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
+                      Plan
+                    </div>
+                    <div className="flex items-center justify-center gap-1.5">
+                      <KeyRound className="h-4 w-4 text-green-500" />
+                      <span className="text-base font-bold text-gray-900">
+                        {org.plan ?? 'Free'}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                    org.status === 'active'
-                      ? 'bg-green-100 text-green-700'
-                      : org.status === 'suspended'
-                        ? 'bg-red-100 text-red-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                  }`}
-                >
-                  {org.status}
-                </span>
               </div>
 
-              {/* Stats row */}
-              <div className="mb-4 flex gap-4 text-center">
-                <div className="flex-1 rounded-lg bg-gray-50 py-2">
-                  <Wallet className="mx-auto mb-1 h-4 w-4 text-primary-500" />
-                  <div className="text-sm font-bold text-gray-900">{org.credits?.balance ?? 0}</div>
-                  <div className="text-xs text-gray-400">Credits</div>
-                </div>
-                <div className="flex-1 rounded-lg bg-gray-50 py-2">
-                  <KeyRound className="mx-auto mb-1 h-4 w-4 text-green-500" />
-                  <div className="text-sm font-bold text-gray-900">{org.plan ?? 'Free'}</div>
-                  <div className="text-xs text-gray-400">Plan</div>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex flex-wrap gap-2">
+              {/* Actions - Mini-Grid */}
+              <div
+                className="grid grid-cols-2 md:grid-cols-3 border-t border-gray-100 rounded-b-2xl overflow-hidden"
+                onClick={e => e.stopPropagation()}
+              >
                 {canManageAllOrgs && (
                   <Link
                     href={`/organization/manage/${org.id}`}
-                    className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-primary-200 bg-primary-50 px-3 py-1.5 text-xs font-medium text-primary-700 hover:bg-primary-100"
+                    className="flex items-center justify-center gap-1.5 py-3 px-2 text-[13px] font-semibold text-primary-600 bg-white hover:bg-primary-50 hover:text-primary-700 transition-colors border-l border-t border-gray-100 -ml-px -mt-px"
                   >
-                    <ShieldAlert className="h-3 w-3" /> Manage
+                    <ShieldAlert className="h-4 w-4 shrink-0" />{' '}
+                    <span className="truncate">Manage</span>
                   </Link>
                 )}
                 <Link
                   href={`/organization/api-keys?org=${org.id}`}
-                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                  className="flex items-center justify-center gap-1.5 py-3 px-2 text-[13px] font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-colors border-l border-t border-gray-100 -ml-px -mt-px"
                 >
-                  <KeyRound className="h-3 w-3" /> API Keys
+                  <KeyRound className="h-4 w-4 shrink-0" />{' '}
+                  <span className="truncate">API Keys</span>
                 </Link>
                 <Link
                   href={`/organization/usage?org=${org.id}`}
-                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                  className="flex items-center justify-center gap-1.5 py-3 px-2 text-[13px] font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-colors border-l border-t border-gray-100 -ml-px -mt-px"
                 >
-                  <BarChart3 className="h-3 w-3" /> Usage
+                  <BarChart3 className="h-4 w-4 shrink-0" /> <span className="truncate">Usage</span>
                 </Link>
                 <Link
                   href={`/organization/team?org=${org.id}`}
-                  className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                  className="flex items-center justify-center gap-1.5 py-3 px-2 text-[13px] font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-colors border-l border-t border-gray-100 -ml-px -mt-px"
                 >
-                  <Users className="h-3 w-3" /> Team
+                  <Users className="h-4 w-4 shrink-0" /> <span className="truncate">Team</span>
                 </Link>
                 {canManageAllOrgs && (
                   <Link
                     href={`/organization/plans?org=${org.id}`}
-                    className="flex flex-1 items-center justify-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                    className="flex items-center justify-center gap-1.5 py-3 px-2 text-[13px] font-medium text-gray-600 bg-white hover:bg-gray-50 hover:text-gray-900 transition-colors border-l border-t border-gray-100 -ml-px -mt-px"
                   >
-                    <Wallet className="h-3 w-3" /> Plan
+                    <Wallet className="h-4 w-4 shrink-0" /> <span className="truncate">Plan</span>
                   </Link>
                 )}
               </div>

@@ -11,6 +11,13 @@ export const queryKeys = {
     currentUser: () => ['auth', 'current-user'] as const,
   },
 
+  // Organization
+  organization: {
+    all: ['organization'] as const,
+    detail: (id: number) => ['organization', id] as const,
+    members: (id: number) => ['organization', id, 'members'] as const,
+  },
+
   // QR Codes
   qrcodes: {
     all: () => ['qrcodes'] as const,

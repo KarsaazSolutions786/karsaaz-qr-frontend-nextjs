@@ -14,13 +14,13 @@ import {
   BarChart3,
   CreditCard,
   Settings,
-  ChevronLeft,
   ChevronDown,
   BookOpen,
   Layers,
   Users,
   ShieldCheck,
   ScrollText,
+  LayoutDashboard,
   LogOut,
   Sparkles,
 } from 'lucide-react'
@@ -31,7 +31,8 @@ import { useTranslation } from '@/lib/i18n'
 const getNavItems = (isAdmin: boolean) => {
   if (isAdmin) {
     return [
-      { href: '/organization', label: 'Dashboard', icon: Building2, exact: true },
+      { href: '/organization', label: 'Organizations', icon: Building2, exact: true },
+      { href: '/organization/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
       { href: '/organization/roles', label: 'Roles', icon: ShieldCheck },
       { href: '/organization/plans', label: 'Plans', icon: Layers },
       { href: '/organization/audit-logs', label: 'Audit Logs', icon: ScrollText },
@@ -40,7 +41,7 @@ const getNavItems = (isAdmin: boolean) => {
   }
 
   return [
-    { href: '/organization/dashboard', label: 'Overview', icon: Building2, exact: true },
+    { href: '/organization/dashboard', label: 'Overview', icon: LayoutDashboard, exact: true },
     { href: '/organization/team', label: 'Team', icon: Users },
     { href: '/organization/api-keys', label: 'API Keys', icon: KeyRound },
     { href: '/organization/usage', label: 'Usage', icon: BarChart3 },
@@ -76,8 +77,9 @@ function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number |
         const fetchedOrgs = res.data.data ?? []
         setOrgs(fetchedOrgs)
         if (fetchedOrgs.length > 0 && !activeOrgId) {
-          setSelectedOrg(fetchedOrgs[0])
-          router.replace(`${pathname}?org=${fetchedOrgs[0].id}`)
+          const firstOrg = fetchedOrgs[0]
+          setSelectedOrg(firstOrg || null)
+          if (firstOrg) router.replace(`${pathname}?org=${firstOrg.id}`)
         }
       })
       .catch(() => {})
@@ -195,14 +197,6 @@ export default function OrganizationLayout({ children }: { children: React.React
       {/* Top bar */}
       <div className="border-b bg-white px-6 py-3 flex items-center justify-between gap-3 shadow-sm">
         <div className="flex items-center gap-3">
-          <Link
-            href="/qrcodes"
-            className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Dashboard
-          </Link>
-          <span className="text-gray-300">/</span>
           <span className="text-sm font-semibold text-gray-900">Organization API</span>
         </div>
 

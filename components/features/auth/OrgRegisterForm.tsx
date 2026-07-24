@@ -20,9 +20,7 @@ import { extractReferralCode, storeReferralCode } from '@/lib/utils/referral-tra
  * Owner/Author: Claude Code
  * Created/Updated: 2026-07-15
  */
-export function OrgRegisterForm({
-  onRegistrationDisabled,
-}: { onRegistrationDisabled?: () => void } = {}) {
+export function OrgRegisterForm() {
   const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const registerMutation = useRegisterOrganization()
@@ -58,7 +56,7 @@ export function OrgRegisterForm({
         orgName: data.organizationName,
         password: data.password,
         confirmPassword: data.confirmPassword,
-        termsConsent: String(data.termsConsent)
+        termsConsent: String(data.termsConsent),
       })
       router.push(`/organization-onboard?${params.toString()}`)
     } catch (error: any) {
@@ -234,9 +232,7 @@ export function OrgRegisterForm({
         disabled={isSubmitting}
         className="w-full rounded-full bg-[#8351e0] py-2.5 text-sm font-semibold text-white hover:bg-[#7244c8] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isSubmitting
-          ? t('Please wait...')
-          : t('Continue')}
+        {isSubmitting ? t('Please wait...') : t('Continue')}
       </button>
 
       <p className="text-center text-xs text-white/90">
