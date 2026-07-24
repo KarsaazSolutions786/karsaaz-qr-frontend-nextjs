@@ -379,6 +379,11 @@ export function processApiError(error: ApiError): string {
     return processValidationErrors(error.validationErrors)
   }
 
+  // Handle HTTP status codes FIRST to avoid Laravel's 'This action is unauthorized.' (403) being mapped to 'unauthorized' (401)
+  if (error.status && [401, 403].includes(error.status)) {
+    return getHttpStatusMessage(error.status)
+  }
+
   // Handle error with code
   if (error.error_code || error.code) {
     return getErrorMessage(error.error_code || error.code)
@@ -389,7 +394,7 @@ export function processApiError(error: ApiError): string {
     return translateMessage(error.message)
   }
 
-  // Handle HTTP status codes
+  // Handle HTTP status codes fallback
   if (error.status) {
     return getHttpStatusMessage(error.status)
   }

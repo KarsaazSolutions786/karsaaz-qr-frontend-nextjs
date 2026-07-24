@@ -108,6 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.removeItem('user')
             localStorage.removeItem('token')
             localStorage.removeItem('logged_in')
+            localStorage.removeItem('org-storage')
           }
         }
       })
@@ -149,6 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (lastUserId && lastUserId !== newUserId) {
           queryClient.clear()
           rpcClearCache()
+          localStorage.removeItem('org-storage')
         } else {
           queryClient.invalidateQueries()
         }
@@ -183,6 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem('token')
       localStorage.removeItem('logged_in')
       localStorage.removeItem('mainUser')
+      localStorage.removeItem('org-storage')
     }
     queryClient.setQueryData(queryKeys.auth.currentUser(), null)
     queryClient.clear()

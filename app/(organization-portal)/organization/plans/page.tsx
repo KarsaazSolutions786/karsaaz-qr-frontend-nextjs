@@ -22,6 +22,8 @@ import {
   type OrgPlan,
   type Organization,
 } from '@/lib/api/endpoints/organization'
+import { plansAPI } from '@/lib/api/endpoints/plans'
+import type { SubscriptionPlan } from '@/types/entities/plan'
 
 const DEFAULT_FORM: Omit<OrgPlan, 'id' | 'slug' | 'created_at' | 'is_custom'> = {
   name: '',
@@ -32,6 +34,8 @@ const DEFAULT_FORM: Omit<OrgPlan, 'id' | 'slug' | 'created_at' | 'is_custom'> = 
   rate_limit_per_minute: 60,
   included_tokens: 0,
   features: [],
+  max_seats: -1,
+  default_subscription_plan_id: null,
   is_active: true,
   is_popular: false,
   organization_id: null,
@@ -60,6 +64,7 @@ export default function OrgPlansPage() {
 
   const [plans, setPlans] = useState<OrgPlan[]>([])
   const [org, setOrg] = useState<Organization | null>(null)
+  const [subPlans, setSubPlans] = useState<SubscriptionPlan[]>([])
   const [loading, setLoading] = useState(true)
 
   const [showForm, setShowForm] = useState(false)
@@ -79,7 +84,8 @@ export default function OrgPlansPage() {
           .then(res => setOrg(res.data.data))
           .catch(() => null)
       : Promise.resolve()
-    Promise.all([p, o])
+    const sp = plansAPI.getAll({ page: 1 }).then(res => setSubPlans(res.data))
+    Promise.all([p, o, sp])
       .catch(() => toast.error('Failed to load plans'))
       .finally(() => setLoading(false))
   }, [orgId])
@@ -125,6 +131,8 @@ export default function OrgPlansPage() {
       rate_limit_per_minute: plan.rate_limit_per_minute,
       included_tokens: plan.included_tokens ?? 0,
       features: plan.features ?? [],
+      max_seats: plan.max_seats ?? -1,
+      default_subscription_plan_id: plan.default_subscription_plan_id ?? null,
       is_active: plan.is_active,
       is_popular: plan.is_popular,
       organization_id: plan.organization_id,
@@ -534,6 +542,48 @@ export default function OrgPlansPage() {
                     }
                     className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                   />
+                </div>
+              </div>
+
+              {/* Members & Default Plan */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-gray-600">
+                    Max Members
+                  </label>
+                  <input
+                    type="number"
+                    min="-1"
+                    value={form.max_seats}
+                    onChange={e =>
+                      setForm(p => ({ ...p, max_seats: parseInt(e.target.value) || -1 }))
+                    }
+                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  />
+                  <p className="mt-0.5 text-xs text-gray-400">-1 = unlimited</p>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-gray-600">
+                    Default User Plan
+                  </label>
+                  <select
+                    value={form.default_subscription_plan_id ?? ''}
+                    onChange={e =>
+                      setForm(p => ({
+                        ...p,
+                        default_subscription_plan_id: e.target.value ? parseInt(e.target.value) : null,
+                      }))
+                    }
+                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 bg-white"
+                  >
+                    <option value="">None</option>
+                    {subPlans.map(sp => (
+                      <option key={sp.id} value={sp.id}>
+                        {sp.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-0.5 text-xs text-gray-400">Assigned automatically</p>
                 </div>
               </div>
 

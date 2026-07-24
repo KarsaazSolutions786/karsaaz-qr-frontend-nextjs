@@ -16,6 +16,7 @@ import {
 import { organizationAPI, type Organization } from '@/lib/api/endpoints/organization'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
+import { useOrgStore } from '@/lib/stores/useOrgStore'
 
 /**
  * Purpose: Executes OrganizationPage functionality.
@@ -30,10 +31,11 @@ export default function OrganizationPage() {
   const [creating, setCreating] = useState(false)
   const [newOrgName, setNewOrgName] = useState('')
   const [showForm, setShowForm] = useState(false)
-  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null)
+  const { selectedOrg, setSelectedOrg } = useOrgStore()
 
   const handleOrgSelect = (org: Organization) => {
     setSelectedOrg(org)
+    toast.success('Organization successfully selected')
   }
 
   useEffect(() => {

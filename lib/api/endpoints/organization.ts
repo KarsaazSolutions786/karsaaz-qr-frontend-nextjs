@@ -13,6 +13,11 @@ export interface Organization {
     lifetime_purchased: number
     lifetime_spent: number
   }
+  org_plan?: {
+    id: number
+    name: string
+    max_seats: number
+  }
 }
 
 export interface OrganizationMember {
@@ -294,6 +299,8 @@ export interface OrgPlan {
   rate_limit_per_minute: number
   included_tokens?: number
   features?: string[]
+  max_seats?: number
+  default_subscription_plan_id?: number | null
   is_active: boolean
   is_popular: boolean
   /** True for a bespoke plan scoped to exactly one organization_id (not in the shared catalog). */

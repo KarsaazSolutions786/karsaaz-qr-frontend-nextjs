@@ -73,7 +73,7 @@ export default function OrganizationDashboardOverview() {
         <h2 className="mb-4 text-lg font-semibold text-gray-900">Quick Links</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Link
-            href="/organization/team"
+            href={`/organization/team?org=${selectedOrg.id}`}
             className="group relative flex flex-col items-start gap-4 rounded-xl border bg-white p-5 shadow-sm transition-all hover:border-primary-500 hover:shadow-md"
           >
             <div className="rounded-lg bg-gray-50 p-2 text-gray-500 group-hover:bg-primary-50 group-hover:text-primary-600">
@@ -86,7 +86,7 @@ export default function OrganizationDashboardOverview() {
           </Link>
 
           <Link
-            href="/organization/api-keys"
+            href={`/organization/api-keys?org=${selectedOrg.id}`}
             className="group relative flex flex-col items-start gap-4 rounded-xl border bg-white p-5 shadow-sm transition-all hover:border-primary-500 hover:shadow-md"
           >
             <div className="rounded-lg bg-gray-50 p-2 text-gray-500 group-hover:bg-primary-50 group-hover:text-primary-600">
@@ -99,7 +99,7 @@ export default function OrganizationDashboardOverview() {
           </Link>
 
           <Link
-            href="/organization/billing"
+            href={`/organization/billing?org=${selectedOrg.id}`}
             className="group relative flex flex-col items-start gap-4 rounded-xl border bg-white p-5 shadow-sm transition-all hover:border-primary-500 hover:shadow-md"
           >
             <div className="rounded-lg bg-gray-50 p-2 text-gray-500 group-hover:bg-primary-50 group-hover:text-primary-600">
@@ -112,7 +112,7 @@ export default function OrganizationDashboardOverview() {
           </Link>
           
           <Link
-            href="/organization/settings"
+            href={`/organization/settings?org=${selectedOrg.id}`}
             className="group relative flex flex-col items-start gap-4 rounded-xl border bg-white p-5 shadow-sm transition-all hover:border-primary-500 hover:shadow-md"
           >
             <div className="rounded-lg bg-gray-50 p-2 text-gray-500 group-hover:bg-primary-50 group-hover:text-primary-600">

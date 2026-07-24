@@ -98,6 +98,12 @@ function PlanCard({ plan }: { plan: OrgPlan }) {
             {plan.included_tokens.toLocaleString()} bonus credits included
           </li>
         )}
+        {(plan.max_seats !== undefined) && (
+          <li className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
+            {formatLimit(plan.max_seats)} members limit
+          </li>
+        )}
         {(plan.features ?? []).map(f => (
           <li key={f} className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
@@ -131,6 +137,10 @@ function CustomPlanCard() {
         <li className="flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
           Tailored API call & QR create limits
+        </li>
+        <li className="flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
+          Unlimited members support
         </li>
         <li className="flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
@@ -199,7 +209,7 @@ export function OrganizationPlansContent() {
               Register Organization
             </Link>
             <Link
-              href="/login"
+              href="/organization-login"
               className="rounded-full bg-white px-8 py-3 text-sm font-semibold text-purple-600 shadow-sm ring-1 ring-inset ring-purple-200 hover:bg-purple-50 transition-all"
             >
               Login
@@ -265,7 +275,7 @@ export function OrganizationPlansContent() {
 
         <div className="mt-10 text-center text-sm text-gray-500">
           Already have an organization?{' '}
-          <Link href="/login" className="font-medium text-purple-600 hover:underline">
+          <Link href="/organization-login" className="font-medium text-purple-600 hover:underline">
             Sign in
           </Link>
         </div>

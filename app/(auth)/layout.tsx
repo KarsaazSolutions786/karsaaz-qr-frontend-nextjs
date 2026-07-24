@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { toast } from 'sonner'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { useTranslation } from '@/lib/i18n'
@@ -13,6 +13,7 @@ import { useTranslation } from '@/lib/i18n'
  */
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const pathname = usePathname()
   const { t } = useTranslation()
   const { user, isLoading } = useAuth()
   const notifiedRef = useRef(false)
@@ -29,9 +30,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       if (homePage.startsWith('/dashboard')) {
         homePage = homePage.replace('/dashboard', '')
       }
+      if (pathname === '/organization-login') {
+        homePage = '/organization/dashboard'
+      }
       router.push(homePage)
     }
-  }, [user, isLoading, router, t])
+  }, [user, isLoading, router, t, pathname])
 
   // Don't block rendering - let the redirect happen in the background
   // This prevents hydration mismatch errors
