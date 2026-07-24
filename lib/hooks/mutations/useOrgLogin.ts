@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import { useOrgStore } from '@/lib/stores/useOrgStore'
 import { authAPI, LoginResponse } from '@/lib/api/endpoints/auth'
 import { queryKeys } from '@/lib/query/keys'
 import { useAuth } from '@/lib/hooks/useAuth'
@@ -9,9 +10,7 @@ import { LoginFormData } from '@/lib/validations/auth'
 import { toast } from 'sonner'
 import { rpcClearCache } from '@/lib/api/rpc'
 
-
 function getPostLoginRedirect(user: { roles?: Array<{ home_page?: string }> }): string {
-
   if (typeof window !== 'undefined') {
     const params = new URLSearchParams(window.location.search)
     const from = params.get('from')
@@ -91,7 +90,9 @@ export function useOrgLogin() {
 
       // Check if email is verified — if not, redirect to verification
       if (loginResponse.user.email_verified_at === null) {
-        router.push(`/verify-email?email=${encodeURIComponent(loginResponse.user.email)}&next=${encodeURIComponent('/organization/dashboard')}`)
+        router.push(
+          `/verify-email?email=${encodeURIComponent(loginResponse.user.email)}&next=${encodeURIComponent('/organization/dashboard')}`
+        )
         return
       }
 
@@ -124,6 +125,7 @@ export function useTwoFactorLoginVerify() {
           queryClient.clear()
           rpcClearCache()
           localStorage.removeItem('org-storage')
+          useOrgStore.getState().setSelectedOrg(null)
         } else {
           // If same user, trigger background invalidation
           // to ensure latest data is fetched while showing cache instantly.

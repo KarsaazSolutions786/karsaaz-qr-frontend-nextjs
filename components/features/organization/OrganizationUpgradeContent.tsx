@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { CheckCircle2, Sparkles, Zap } from 'lucide-react'
+import { CheckCircle2, Sparkles } from 'lucide-react'
 import { useOrgPlans } from '@/lib/hooks/queries/useOrgPlans'
 import { useOrgStore } from '@/lib/stores/useOrgStore'
 import { orgPlanSelfServiceAPI, type OrgPlan } from '@/lib/api/endpoints/organization'
@@ -36,7 +36,7 @@ export function OrganizationUpgradeContent() {
       // TypeScript safety since data is either an Organization or an object with checkout_url
       const response = await orgPlanSelfServiceAPI.select(selectedOrg.id, plan.id)
       const responseData = response.data?.data as any
-      
+
       if (responseData?.checkout_url) {
         window.location.href = responseData.checkout_url
       } else {
@@ -83,7 +83,8 @@ export function OrganizationUpgradeContent() {
           Upgrade your Organization
         </h1>
         <p className="mt-4 text-lg text-gray-500">
-          Unlock higher limits, dedicated rate limits, and more API calls for {mounted && selectedOrg ? selectedOrg.name : 'your organization'}.
+          Unlock higher limits, dedicated rate limits, and more API calls for{' '}
+          {mounted && selectedOrg ? selectedOrg.name : 'your organization'}.
         </p>
       </div>
 
@@ -127,7 +128,7 @@ export function OrganizationUpgradeContent() {
                   {plan.included_tokens.toLocaleString()} bonus credits included
                 </li>
               )}
-              {(plan.max_seats !== undefined) && (
+              {plan.max_seats !== undefined && (
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
                   {formatLimit(plan.max_seats)} members limit
@@ -158,8 +159,8 @@ export function OrganizationUpgradeContent() {
             <h3 className="text-xl font-bold text-gray-900">Custom</h3>
           </div>
           <p className="mb-6 text-sm text-gray-600">
-            Need higher limits, a dedicated rate limit, or bespoke terms? We build a plan around your
-            organization's actual usage.
+            Need higher limits, a dedicated rate limit, or bespoke terms? We build a plan around
+            your organization's actual usage.
           </p>
           <ul className="mb-6 flex-1 space-y-2.5 text-sm text-gray-600">
             <li className="flex items-center gap-2">

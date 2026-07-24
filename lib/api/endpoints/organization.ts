@@ -13,6 +13,8 @@ export interface Organization {
     lifetime_purchased: number
     lifetime_spent: number
   }
+  max_capacity?: number
+  organization_type?: string
   org_plan?: {
     id: number
     name: string

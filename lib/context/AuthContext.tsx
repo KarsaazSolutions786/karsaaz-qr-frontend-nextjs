@@ -11,6 +11,7 @@ import React, {
 } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import { useOrgStore } from '@/lib/stores/useOrgStore'
 import apiClient from '@/lib/api/client'
 import { rpc, rpcComposite, rpcClearCache, RpcError } from '@/lib/api/rpc'
 import { envConfig } from '@/lib/config/env-config'
@@ -109,6 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.removeItem('token')
             localStorage.removeItem('logged_in')
             localStorage.removeItem('org-storage')
+            useOrgStore.getState().setSelectedOrg(null)
           }
         }
       })
@@ -116,7 +118,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsLoading(false)
       })
   }, [queryClient])
-
 
   const refreshUserData = useCallback(async (): Promise<User | null> => {
     try {
@@ -170,7 +171,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       window.location.href = `${apiUrl}/auth0/logout`
       return
     }
-    
+
     try {
       await apiClient.post('/logout')
     } catch {
@@ -186,6 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem('logged_in')
       localStorage.removeItem('mainUser')
       localStorage.removeItem('org-storage')
+      useOrgStore.getState().setSelectedOrg(null)
     }
     queryClient.setQueryData(queryKeys.auth.currentUser(), null)
     queryClient.clear()
