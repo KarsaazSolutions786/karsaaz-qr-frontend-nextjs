@@ -22,7 +22,7 @@ import {
 } from 'lucide-react'
 
 const NAV = [
-  { href: '/organization', label: 'Overview', icon: Building2, exact: true },
+  { href: '/organization/dashboard', label: 'Overview', icon: Building2, exact: true },
   { href: '/organization/team', label: 'Team', icon: Users },
   { href: '/organization/roles', label: 'Roles', icon: ShieldCheck },
   { href: '/organization/plans', label: 'Plans', icon: Layers },
@@ -82,15 +82,19 @@ function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number |
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(v => !v)}
-        className="flex items-center gap-1.5 rounded-full bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-3 py-1 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all"
+        className="flex w-full items-center justify-between gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-800 shadow-sm hover:bg-gray-50 transition-all"
       >
-        <Building2 className="h-3.5 w-3.5" />
-        {current?.name ?? 'Select organization'}
-        <ChevronDown className="h-3.5 w-3.5" />
+        <div className="flex items-center gap-2 truncate">
+          <div className="flex h-6 w-6 items-center justify-center rounded bg-primary-100 text-primary-600">
+            <Building2 className="h-3.5 w-3.5" />
+          </div>
+          <span className="truncate">{current?.name ?? 'Select organization'}</span>
+        </div>
+        <ChevronDown className="h-4 w-4 text-gray-400 shrink-0" />
       </button>
 
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-64 rounded-lg border bg-white py-1 shadow-lg">
+        <div className="absolute left-0 right-0 z-20 mt-1 w-full rounded-lg border bg-white py-1 shadow-lg">
           <div className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
             Your organizations
           </div>
@@ -174,14 +178,15 @@ export default function OrganizationLayout({ children }: { children: React.React
           <span className="text-gray-300">/</span>
           <span className="text-sm font-semibold text-gray-900">Organization API</span>
         </div>
-
-        {mounted && <OrganizationSwitcher activeOrgId={activeOrgId} />}
       </div>
 
       <div className="flex flex-1">
         {/* Sidebar */}
-        <aside className="w-56 shrink-0 border-r bg-gray-50 p-4">
-          <nav className="flex flex-col gap-1">
+        <aside className="w-64 shrink-0 border-r bg-gray-50 flex flex-col">
+          <div className="p-4 border-b">
+            {mounted && <OrganizationSwitcher activeOrgId={activeOrgId} />}
+          </div>
+          <nav className="flex flex-col gap-1 p-4">
             {NAV.map(({ href, label, icon: Icon, exact }) => {
               const active = exact ? pathname === href : pathname.startsWith(href)
               return (

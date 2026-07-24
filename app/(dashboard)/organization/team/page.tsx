@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { Users, UserPlus, Trash2, Wallet } from 'lucide-react'
+import { useOrgStore } from '@/lib/stores/useOrgStore'
 import {
   organizationAPI,
   organizationRoleAPI,
@@ -27,6 +28,7 @@ import {
 export default function OrganizationTeamPage() {
   const searchParams = useSearchParams()
   const orgId = Number(searchParams.get('org') ?? 0)
+  const { selectedOrg } = useOrgStore()
 
   const [members, setMembers] = useState<OrganizationMember[]>([])
   const [roles, setRoles] = useState<OrganizationRole[]>([])
@@ -134,7 +136,14 @@ export default function OrganizationTeamPage() {
             <Users className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Team</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900">Team</h1>
+              {selectedOrg && (
+                <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                  {members.length} / {selectedOrg.max_capacity ?? 10}
+                </span>
+              )}
+            </div>
             <p className="text-sm text-gray-500">Manage who has access to this organization.</p>
           </div>
         </div>
