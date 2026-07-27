@@ -12,7 +12,9 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { useOrgPlans } from '@/lib/hooks/queries/useOrgPlans'
+import { usePlans } from '@/lib/hooks/queries/usePlans'
 import type { OrgPlan } from '@/lib/api/endpoints/organization'
+import type { SubscriptionPlan } from '@/types/entities/plan'
 
 /** What every organization gets on the platform, regardless of plan tier -- mirrors
  * the actual capabilities built out under app/(dashboard)/organization/*. */
@@ -59,7 +61,13 @@ function formatLimit(n: number) {
   return n === -1 ? 'Unlimited' : n.toLocaleString()
 }
 
-function PlanCard({ plan }: { plan: OrgPlan }) {
+function PlanCard({
+  plan,
+  subscriptionPlans = [],
+}: {
+  plan: OrgPlan
+  subscriptionPlans?: SubscriptionPlan[]
+}) {
   return (
     <div
       className={`relative flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm transition-shadow hover:shadow-lg ${
@@ -92,13 +100,21 @@ function PlanCard({ plan }: { plan: OrgPlan }) {
           <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
           {plan.rate_limit_per_minute} requests/minute rate limit
         </li>
+        {plan.default_subscription_plan_id && (
+          <li className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
+            Default Plan (For Users):{' '}
+            {subscriptionPlans.find(sp => sp.id === plan.default_subscription_plan_id)?.name ||
+              `ID: ${plan.default_subscription_plan_id}`}
+          </li>
+        )}
         {!!plan.included_tokens && (
           <li className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
             {plan.included_tokens.toLocaleString()} bonus credits included
           </li>
         )}
-        {(plan.max_seats !== undefined) && (
+        {plan.max_seats !== undefined && (
           <li className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
             {formatLimit(plan.max_seats)} members limit
@@ -170,6 +186,7 @@ function CustomPlanCard() {
  */
 export function OrganizationPlansContent() {
   const { data, isLoading, error } = useOrgPlans()
+  const { data: plansData } = usePlans()
   const plans = (data?.data?.data ?? []).filter(p => p.is_active && !p.is_custom)
 
   return (
@@ -266,7 +283,7 @@ export function OrganizationPlansContent() {
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {plans.map(plan => (
-                <PlanCard key={plan.id} plan={plan} />
+                <PlanCard key={plan.id} plan={plan} subscriptionPlans={plansData?.data ?? []} />
               ))}
               <CustomPlanCard />
             </div>

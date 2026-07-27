@@ -403,7 +403,7 @@ export default function OrgPlansPage() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
-                  Default Plan:{' '}
+                  Default Plan (For Users):{' '}
                   <span className="font-semibold ml-auto">
                     {plan.default_subscription_plan_id
                       ? subPlans.find(sp => sp.id === plan.default_subscription_plan_id)?.name ||
