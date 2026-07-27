@@ -1,14 +1,17 @@
 'use client'
 
+import React, { Suspense, useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
-import { usePathname, useSearchParams, useRouter } from 'next/navigation'
-import { useState, useEffect, useRef } from 'react'
-import { useOrgStore } from '@/lib/stores/useOrgStore'
-import { useQueryClient } from '@tanstack/react-query'
-import { useOrganizations } from '@/lib/hooks/queries/useOrganizations'
-import type { Organization } from '@/lib/api/endpoints/organization'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
+import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
+import { DashboardHeader } from '@/components/layout/DashboardHeader'
+import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useOrgStore } from '@/lib/stores/useOrgStore'
+import { useOrganizations } from '@/lib/hooks/queries/useOrganizations'
+import { useQueryClient } from '@tanstack/react-query'
+import type { Organization } from '@/lib/api/endpoints/organization'
 import {
   Building2,
   KeyRound,
@@ -22,12 +25,8 @@ import {
   ShieldCheck,
   ScrollText,
   LayoutDashboard,
-  LogOut,
   Sparkles,
 } from 'lucide-react'
-import { UserCircleIcon } from '@heroicons/react/24/outline'
-import { LanguagePicker } from '@/components/common/LanguagePicker'
-import { useTranslation } from '@/lib/i18n'
 
 const getNavItems = (isAdmin: boolean) => {
   if (isAdmin) {
@@ -52,16 +51,6 @@ const getNavItems = (isAdmin: boolean) => {
   ]
 }
 
-/**
- * Purpose: Organization switcher dropdown -- spec §13.10. Lists every
- * organization the user belongs to, lets them switch the active org (updates
- * useOrgStore + invalidates organization-scoped React Query caches so no
- * data from the previous organization leaks into the new context) and
- * navigate to it, and offers "Personal workspace" to leave the org area
- * entirely.
- * Owner/Author: Claude Code
- * Created/Updated: 2026-07-20
- */
 function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number | null }) {
   const { selectedOrg, setSelectedOrg } = useOrgStore()
   const { data: orgs = [] } = useOrganizations()
@@ -77,8 +66,7 @@ function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number |
       setSelectedOrg(firstOrg || null)
       if (firstOrg) router.replace(`${pathname}?org=${firstOrg.id}`)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orgs.length, activeOrgId])
+  }, [orgs.length, activeOrgId, orgs, pathname, router, selectedOrg, setSelectedOrg])
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
@@ -91,7 +79,6 @@ function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number |
   const handleSwitch = (org: Organization) => {
     setSelectedOrg(org)
     setOpen(false)
-    // Never leak cached data from the previous organization's context.
     queryClient.invalidateQueries({ predicate: query => query.queryKey.includes('organization') })
     router.push(`${pathname}?org=${org.id}`)
   }
@@ -99,7 +86,7 @@ function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number |
   const current = orgs.find(o => String(o.id) === String(activeOrgId)) ?? selectedOrg
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative z-50 w-64 max-w-full pl-2" ref={ref}>
       <button
         onClick={() => setOpen(v => !v)}
         className="flex w-full items-center justify-between gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-800 shadow-sm hover:bg-gray-50 transition-all"
@@ -114,7 +101,7 @@ function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number |
       </button>
 
       {open && (
-        <div className="absolute left-0 right-0 z-20 mt-1 w-full rounded-lg border bg-white py-1 shadow-lg">
+        <div className="absolute left-2 right-0 top-full mt-1 w-full rounded-lg border bg-white py-1 shadow-lg">
           <div className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
             Your organizations
           </div>
@@ -157,104 +144,117 @@ function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number |
   )
 }
 
-/**
- * Purpose: Executes OrganizationLayout functionality.
- * Owner/Author: Syed Ashhad
- * Created/Updated: April 2026
- */
 export default function OrganizationLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex h-screen karsaaz-bg dark:bg-gray-900">
+          <div className="flex-1 flex items-center justify-center">
+            <LottieLoader size={80} />
+          </div>
+        </div>
+      }
+    >
+      <OrganizationLayoutInner>{children}</OrganizationLayoutInner>
+    </Suspense>
+  )
+}
+
+function OrganizationLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const urlOrgId = searchParams.get('org')
+  const urlOrgId = searchParams?.get('org')
   const { selectedOrg } = useOrgStore()
   const { user, logout } = useAuth()
   const isSuperUser = isSuperAdmin(user)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const { t } = useTranslation()
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true)
   }, [])
 
   const activeOrgId = urlOrgId || selectedOrg?.id
-
-  /**
-   * Purpose: Executes withOrg functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: April 2026
-   */
   const withOrg = (href: string) => (activeOrgId ? `${href}?org=${activeOrgId}` : href)
 
+  const navItems = mounted ? getNavItems(isSuperUser) : []
+
+  const effectivePrimaryNav = navItems.map(item => ({
+    key: item.label.toLowerCase().replace(/\s+/g, '-'),
+    label: item.label,
+    href: item.href === '/organization' ? item.href : withOrg(item.href),
+    icon: item.icon as any,
+  }))
+
+  const collapsedNavItems = effectivePrimaryNav.map(item => ({
+    name: item.label,
+    href: item.href,
+    icon: item.icon,
+  }))
+
+  const isItemActive = (href: string) => {
+    if (!pathname) return false
+    const itemPath = href.split('?')[0] || ''
+    const exactMatch = pathname === itemPath
+    if (itemPath === '/organization') return exactMatch
+    const prefixMatch = pathname.startsWith(`${itemPath}/`)
+    return exactMatch || prefixMatch
+  }
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return
+    setIsLoggingOut(true)
+    try {
+      await logout()
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
+
+  const toggleSection = (sectionKey: string) => {
+    setExpandedSections(prev => ({ ...prev, [sectionKey]: !prev[sectionKey] }))
+  }
+
+  const upgradeWidget = mounted ? (
+    <Link
+      href={withOrg('/organization/upgrade')}
+      className={`flex items-center justify-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all w-full ${sidebarCollapsed ? 'px-0' : ''}`}
+    >
+      <Sparkles className="h-4 w-4 shrink-0" />
+      {!sidebarCollapsed && <span className="truncate">Upgrade Plan</span>}
+    </Link>
+  ) : null
+
   return (
-    <div className="flex min-h-screen flex-col">
-      {/* Top bar */}
-      <div className="border-b bg-white px-6 py-3 flex items-center justify-between gap-3 shadow-sm">
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-gray-900">Organization API</span>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <LanguagePicker />
-          <Link
-            href="/account"
-            className="flex items-center gap-1.5 rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
-            title={t('My Account')}
-          >
-            <UserCircleIcon className="h-6 w-6" />
-          </Link>
-        </div>
-      </div>
-
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        <aside className="w-64 shrink-0 border-r bg-gray-50 flex flex-col">
-          <div className="p-4 border-b">
-            {mounted && <OrganizationSwitcher activeOrgId={activeOrgId} />}
-          </div>
-          <nav className="flex flex-col gap-1 p-4">
-            {getNavItems(mounted ? isSuperUser : false).map(
-              ({ href, label, icon: Icon, exact }) => {
-                const active = exact ? pathname === href : pathname.startsWith(href)
-                return (
-                  <Link
-                    key={href}
-                    href={href === '/organization' ? href : withOrg(href)}
-                    className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                      active
-                        ? 'bg-primary-50 text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {label}
-                  </Link>
-                )
-              }
-            )}
-          </nav>
-
-          <div className="mt-auto p-4 border-t flex flex-col gap-2">
-            <Link
-              href={withOrg('/organization/upgrade')}
-              className="flex items-center justify-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-3 py-2.5 text-sm font-semibold text-white shadow-sm hover:brightness-105 transition-all w-full"
-            >
-              <Sparkles className="h-4 w-4" />
-              Upgrade Plan
-            </Link>
-
-            <button
-              onClick={() => logout()}
-              className="flex items-center gap-2 w-full rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-red-50 hover:text-red-700 transition-colors"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </button>
-          </div>
-        </aside>
-
-        {/* Content */}
-        <main className="flex-1 overflow-auto p-8">{children}</main>
+    <div className="flex h-screen karsaaz-bg dark:bg-gray-900 overflow-hidden">
+      <DashboardSidebar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        sidebarCollapsed={sidebarCollapsed}
+        setSidebarCollapsed={setSidebarCollapsed}
+        expandedSections={expandedSections}
+        toggleSection={toggleSection}
+        effectivePrimaryNav={effectivePrimaryNav}
+        allSectionNav={[]}
+        collapsedNavItems={collapsedNavItems}
+        isItemActive={isItemActive}
+        isLoggingOut={isLoggingOut}
+        handleLogout={handleLogout}
+        bottomWidget={upgradeWidget}
+      />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <DashboardHeader
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          isAccountCreditMode={false}
+          extraStartComponent={mounted ? <OrganizationSwitcher activeOrgId={activeOrgId} /> : null}
+        />
+        <main className="flex-1 overflow-auto bg-transparent relative z-0">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 w-full">{children}</div>
+        </main>
       </div>
     </div>
   )
