@@ -298,7 +298,7 @@ export default function PlansPage() {
                     {t('Rate Limit')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    {t('Default Plan')}
+                    {t('Default Plan (For Users)')}
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     {t('Max Seats')}
