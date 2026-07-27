@@ -41,7 +41,7 @@ export function OrgLoginContent() {
 
   return (
     <div
-      className="flex w-full flex-col rounded-[24px] bg-white/30 shadow-[0px_8px_32px_rgba(31,38,135,0.15)] backdrop-blur-[12px] border border-white/20"
+      className="flex w-full flex-col rounded-[23px] bg-white/30 shadow-[0px_3px_12px_0px_rgba(54,54,54,0.3)]"
       style={{ padding: '48px 32px 32px', maxWidth: '440px' }}
     >
       <div className="flex flex-col items-center text-center">
@@ -54,7 +54,9 @@ export function OrgLoginContent() {
             priority
           />
         </div>
-        <h2 className="text-[28px] font-bold text-white tracking-tight">{t('Organization Portal')}</h2>
+        <h2 className="text-[28px] font-bold text-white tracking-tight">
+          {t('Organization Portal')}
+        </h2>
         <p className="mt-2 text-sm text-white/80">{t('Sign in to manage your API access')}</p>
       </div>
 
@@ -91,7 +93,9 @@ export function OrgLoginContent() {
               {showPassword ? t('Hide') : t('Show')}
             </button>
           </div>
-          {errors.password && <p className="text-xs text-red-400 mt-1">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-xs text-red-400 mt-1">{errors.password.message}</p>
+          )}
         </div>
 
         <Button
@@ -105,7 +109,7 @@ export function OrgLoginContent() {
 
       <div className="mt-8 text-center">
         <p className="text-sm text-white/90">
-          {t('Don\'t have an organization yet? ')}
+          {t("Don't have an organization yet? ")}
           <Link
             href="/signup?intent=organization"
             className="font-semibold text-white underline decoration-white/50 underline-offset-2 hover:decoration-white transition-all"
