@@ -15,6 +15,7 @@ import {
   Save,
   X,
   Building2,
+  Users,
 } from 'lucide-react'
 import {
   orgPlanAPI,
@@ -391,6 +392,23 @@ export default function OrgPlansPage() {
                   Rate limit:{' '}
                   <span className="font-semibold ml-auto">{plan.rate_limit_per_minute}/min</span>
                 </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                  Default Plan:{' '}
+                  <span className="font-semibold ml-auto">
+                    {plan.default_subscription_plan_id
+                      ? subPlans.find(sp => sp.id === plan.default_subscription_plan_id)?.name ||
+                        `ID: ${plan.default_subscription_plan_id}`
+                      : 'None'}
+                  </span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Users className="h-3.5 w-3.5 text-blue-400 shrink-0" />
+                  Max Members:{' '}
+                  <span className="font-semibold ml-auto">
+                    {plan.max_seats === -1 ? 'Unlimited' : plan.max_seats}
+                  </span>
+                </li>
               </ul>
 
               {plan.features && plan.features.length > 0 && (
@@ -571,7 +589,9 @@ export default function OrgPlansPage() {
                     onChange={e =>
                       setForm(p => ({
                         ...p,
-                        default_subscription_plan_id: e.target.value ? parseInt(e.target.value) : null,
+                        default_subscription_plan_id: e.target.value
+                          ? parseInt(e.target.value)
+                          : null,
                       }))
                     }
                     className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 bg-white"
