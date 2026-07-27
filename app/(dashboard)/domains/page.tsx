@@ -10,6 +10,7 @@ import { DomainStatusModal } from '@/components/features/domains/DomainStatusMod
 import type { Domain } from '@/types/entities/domain'
 import Link from 'next/link'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes DomainsPage functionality.
@@ -17,6 +18,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function DomainsPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const router = useRouter()
   const { data, isLoading } = useDomains()
@@ -42,7 +44,17 @@ export default function DomainsPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async (domain: Domain) => {
-    if (!confirm(t('Delete domain "{{domain}}"? This action cannot be undone.').replace('{{domain}}', domain.domain))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete domain "{{domain}}"? This action cannot be undone.').replace(
+          '{{domain}}',
+          domain.domain
+        ),
+        type: 'danger',
+      }))
+    )
+      return
     await deleteMutation.mutateAsync(domain.id)
   }
 

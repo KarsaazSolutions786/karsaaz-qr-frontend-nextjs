@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTemplateCategories, useDeleteTemplateCategory } from '@/lib/hooks/queries/useTemplates'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes TemplateCategoriesPage functionality.
@@ -11,6 +12,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function TemplateCategoriesPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   // TanStack Query hooks
   const { data: categories = [], isLoading: loading } = useTemplateCategories()
@@ -22,10 +24,19 @@ export default function TemplateCategoriesPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async (id: number) => {
-    if (!confirm(t('Delete this category?'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete this category?'),
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await deleteMutation.mutateAsync(id)
-    } catch { /* error */ }
+    } catch {
+      /* error */
+    }
   }
 
   return (
@@ -33,7 +44,9 @@ export default function TemplateCategoriesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('Template Categories')}</h1>
-          <p className="mt-1 text-sm text-gray-600">{t('Organize QR code templates into categories.')}</p>
+          <p className="mt-1 text-sm text-gray-600">
+            {t('Organize QR code templates into categories.')}
+          </p>
         </div>
         <Link
           href="/template-categories/new"
@@ -50,21 +63,31 @@ export default function TemplateCategoriesPage() {
       ) : categories.length === 0 ? (
         <div className="mt-8 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
           <h3 className="text-sm font-medium text-gray-900">{t('No categories')}</h3>
-          <p className="mt-1 text-sm text-gray-500">{t('Create a category to organize your templates.')}</p>
+          <p className="mt-1 text-sm text-gray-500">
+            {t('Create a category to organize your templates.')}
+          </p>
         </div>
       ) : (
         <div className="mt-6 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Name')}</th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">{t('Sort Order')}</th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">{t('Actions')}</th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  ID
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  {t('Name')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  {t('Sort Order')}
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                  {t('Actions')}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {categories.map((cat) => (
+              {categories.map(cat => (
                 <tr key={cat.id}>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{cat.id}</td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
@@ -76,12 +99,20 @@ export default function TemplateCategoriesPage() {
                     )}
                     {cat.name}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">{cat.sort_order ?? '\u2014'}</td>
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                    {cat.sort_order ?? '\u2014'}
+                  </td>
                   <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
-                    <Link href={`/template-categories/${cat.id}`} className="mr-3 font-medium text-primary-600 hover:text-primary-500">
+                    <Link
+                      href={`/template-categories/${cat.id}`}
+                      className="mr-3 font-medium text-primary-600 hover:text-primary-500"
+                    >
                       {t('Edit')}
                     </Link>
-                    <button onClick={() => handleDelete(cat.id)} className="font-medium text-red-600 hover:text-red-500">
+                    <button
+                      onClick={() => handleDelete(cat.id)}
+                      className="font-medium text-red-600 hover:text-red-500"
+                    >
                       {t('Delete')}
                     </button>
                   </td>

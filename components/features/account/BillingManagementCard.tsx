@@ -12,6 +12,7 @@ import {
 } from '@/lib/api/endpoints/stripe'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes formatAmount functionality.
@@ -31,9 +32,7 @@ function formatAmount(amount: number, currency?: string): string {
  * Created/Updated: February 2026
  */
 function formatDate(timestamp: number | string): string {
-  const date = typeof timestamp === 'number'
-    ? new Date(timestamp * 1000)
-    : new Date(timestamp)
+  const date = typeof timestamp === 'number' ? new Date(timestamp * 1000) : new Date(timestamp)
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -55,6 +54,7 @@ const statusColors: Record<string, string> = {
  * Created/Updated: February 2026
  */
 export function BillingManagementCard() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
@@ -132,25 +132,35 @@ export function BillingManagementCard() {
   }, [showInvoices])
 
   // Set default payment method
-  const handleSetDefault = useCallback(async (pmId: string) => {
-    setLoading(true)
-    try {
-      await setDefaultPaymentMethod(pmId)
-      await handleLoadPaymentMethods()
-    } catch {
-      setError(t('Failed to update default payment method'))
-    } finally {
-      setLoading(false)
-    }
-  }, [handleLoadPaymentMethods])
+  const handleSetDefault = useCallback(
+    async (pmId: string) => {
+      setLoading(true)
+      try {
+        await setDefaultPaymentMethod(pmId)
+        await handleLoadPaymentMethods()
+      } catch {
+        setError(t('Failed to update default payment method'))
+      } finally {
+        setLoading(false)
+      }
+    },
+    [handleLoadPaymentMethods]
+  )
 
   // Remove payment method
   const handleRemove = useCallback(async (pmId: string) => {
-    if (!confirm(t('Are you sure you want to remove this payment method?'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Are you sure you want to remove this payment method?'),
+        type: 'danger',
+      }))
+    )
+      return
     setLoading(true)
     try {
       await removePaymentMethod(pmId)
-      setPaymentMethods((prev) => prev.filter((pm) => pm.id !== pmId))
+      setPaymentMethods(prev => prev.filter(pm => pm.id !== pmId))
     } catch {
       setError(t('Failed to remove payment method'))
     } finally {
@@ -173,8 +183,18 @@ export function BillingManagementCard() {
             {portalLoading ? (
               <Spinner />
             ) : (
-              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+              <svg
+                className="h-4 w-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
+                />
               </svg>
             )}
             {t('Open Billing Portal')}
@@ -185,9 +205,21 @@ export function BillingManagementCard() {
             disabled={pmLoading}
             className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
-            {pmLoading ? <Spinner /> : (
-              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+            {pmLoading ? (
+              <Spinner />
+            ) : (
+              <svg
+                className="h-4 w-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"
+                />
               </svg>
             )}
             {t('Payment Methods')}
@@ -198,9 +230,21 @@ export function BillingManagementCard() {
             disabled={invLoading}
             className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
           >
-            {invLoading ? <Spinner /> : (
-              <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            {invLoading ? (
+              <Spinner />
+            ) : (
+              <svg
+                className="h-4 w-4 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                />
               </svg>
             )}
             {t('Invoices')}
@@ -227,11 +271,15 @@ export function BillingManagementCard() {
         <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
           <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('Payment Methods')}</h3>
           {paymentMethods.length === 0 ? (
-            <p className="text-center text-sm text-gray-500 py-4">{t('No payment methods found')}</p>
+            <p className="text-center text-sm text-gray-500 py-4">
+              {t('No payment methods found')}
+            </p>
           ) : (
             <div className="space-y-2">
-              {paymentMethods.map((pm) => {
-                const isDefault = pm.is_default || (pm as any).customer?.invoice_settings?.default_payment_method === pm.id
+              {paymentMethods.map(pm => {
+                const isDefault =
+                  pm.is_default ||
+                  (pm as any).customer?.invoice_settings?.default_payment_method === pm.id
                 const brand = (pm as any).card?.brand || pm.brand || (pm as any).type || 'card'
                 const last4 = (pm as any).card?.last4 || pm.last4 || '****'
                 const expMonth = (pm as any).card?.exp_month || pm.exp_month
@@ -294,7 +342,7 @@ export function BillingManagementCard() {
             <p className="text-center text-sm text-gray-500 py-4">{t('No invoices found')}</p>
           ) : (
             <div className="space-y-2">
-              {invoices.map((inv) => {
+              {invoices.map(inv => {
                 const invNumber = (inv as any).number || inv.id
                 const invDate = (inv as any).created || inv.date
                 const invAmount = (inv as any).amount_paid || (inv as any).total || inv.amount || 0
@@ -316,7 +364,9 @@ export function BillingManagementCard() {
                       <span className="text-sm font-semibold text-gray-900">
                         {formatAmount(invAmount, invCurrency)}
                       </span>
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium uppercase ${statusColors[invStatus] || 'bg-gray-100 text-gray-600'}`}>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium uppercase ${statusColors[invStatus] || 'bg-gray-100 text-gray-600'}`}
+                      >
                         {invStatus}
                       </span>
                       {(invUrl || pdfUrl) && (
@@ -347,7 +397,5 @@ export function BillingManagementCard() {
  * Created/Updated: February 2026
  */
 function Spinner() {
-  return (
-    <LottieLoader size={80} />
-  )
+  return <LottieLoader size={80} />
 }

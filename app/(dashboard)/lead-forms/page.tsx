@@ -6,6 +6,7 @@ import { useDeleteLeadFormResponse } from '@/lib/hooks/mutations/useLeadFormMuta
 import type { LeadForm, LeadFormResponse, LeadFormResponseField } from '@/types/entities/lead-form'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 // ─── CSV helpers ─────────────────────────────────────────────────────────────
 
@@ -16,9 +17,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  */
 function arrayToCsv(rows: (string | number | null)[][]): string {
   return rows
-    .map((row) =>
-      row.map((val) => `"${String(val ?? '').replace(/"/g, '""')}"`).join(',')
-    )
+    .map(row => row.map(val => `"${String(val ?? '').replace(/"/g, '""')}"`).join(','))
     .join('\n')
 }
 
@@ -74,6 +73,7 @@ function getFields(response: LeadFormResponse): LeadFormResponseField[] {
  * Created/Updated: February 2026
  */
 function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [keyword, setKeyword] = useState('')
   const deleteMutation = useDeleteLeadFormResponse()
@@ -84,9 +84,7 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
   const filtered = useMemo(() => {
     if (!keyword.trim()) return responses
     const re = new RegExp(keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
-    return responses.filter((r) =>
-      getFields(r).some((f) => re.test(String(f.value ?? '')))
-    )
+    return responses.filter(r => getFields(r).some(f => re.test(String(f.value ?? ''))))
   }, [responses, keyword])
 
   /**
@@ -98,8 +96,8 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
     if (responses.length === 0) return
     const firstResponse = responses[0]
     if (!firstResponse) return
-    const headers = getFields(firstResponse).map((f) => f.question)
-    const rows = responses.map((r) => getFields(r).map((f) => f.value))
+    const headers = getFields(firstResponse).map(f => f.question)
+    const rows = responses.map(r => getFields(r).map(f => f.value))
     const csv = arrayToCsv([headers, ...rows])
     downloadCsv(csv, todayFilename())
   }
@@ -110,7 +108,14 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
    * Created/Updated: February 2026
    */
   const handleDelete = async (responseId: number) => {
-    if (!confirm(t('Delete this response? This cannot be undone.'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete this response? This cannot be undone.'),
+        type: 'danger',
+      }))
+    )
+      return
     await deleteMutation.mutateAsync(responseId)
   }
 
@@ -131,7 +136,7 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
           type="search"
           placeholder={t('Search responses…')}
           value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
+          onChange={e => setKeyword(e.target.value)}
           className="block w-full max-w-xs rounded-md border border-gray-300 px-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
         />
         {responses.length > 0 && (
@@ -139,8 +144,18 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
             onClick={handleExportCsv}
             className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+              />
             </svg>
             {t('Export CSV')}
           </button>
@@ -188,9 +203,11 @@ function LeadFormResponsesViewer({ formId }: ResponsesViewerProps) {
                         {field.question}
                       </dt>
                       <dd key={`v-${fi}`} className="text-gray-800 break-words">
-                        {field.value !== null && field.value !== undefined && field.value !== ''
-                          ? String(field.value)
-                          : <span className="italic text-gray-400">—</span>}
+                        {field.value !== null && field.value !== undefined && field.value !== '' ? (
+                          String(field.value)
+                        ) : (
+                          <span className="italic text-gray-400">—</span>
+                        )}
                       </dd>
                     </>
                   ))}
@@ -222,7 +239,9 @@ interface FormCardProps {
  */
 function LeadFormCard({ form }: FormCardProps) {
   const { t } = useTranslation()
-  const title = form.qrcode_name ?? t('Lead Form #{{id}} - QR Code Not Found').replace('{{id}}', String(form.id))
+  const title =
+    form.qrcode_name ??
+    t('Lead Form #{{id}} - QR Code Not Found').replace('{{id}}', String(form.id))
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
@@ -235,7 +254,8 @@ function LeadFormCard({ form }: FormCardProps) {
           </p>
         </div>
         <span className="text-xs text-gray-500">
-          {form.responseCount ?? 0} {(form.responseCount ?? 0) !== 1 ? t('responses') : t('response')} {t('total')}
+          {form.responseCount ?? 0}{' '}
+          {(form.responseCount ?? 0) !== 1 ? t('responses') : t('response')} {t('total')}
         </span>
       </div>
 
@@ -286,7 +306,7 @@ export default function LeadFormsPage() {
           {data.pagination && data.pagination.lastPage > 1 && (
             <div className="mt-8 flex items-center justify-between">
               <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
@@ -296,7 +316,7 @@ export default function LeadFormsPage() {
                 {t('Page')} {page} {t('of')} {data.pagination.lastPage}
               </span>
               <button
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => setPage(p => p + 1)}
                 disabled={page >= data.pagination.lastPage}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >

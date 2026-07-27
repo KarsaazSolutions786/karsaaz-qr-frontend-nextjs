@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { Copy, Check, Plus, Trash2, ShieldCheck } from 'lucide-react'
 import { useOrganizationApiKeys } from '@/lib/hooks/useOrganizationApiKeys'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 const SCOPE_OPTIONS = [
   { value: '*', label: 'Full Access' },
@@ -23,6 +24,7 @@ const SCOPE_OPTIONS = [
  * the org-portal api-keys page via useOrganizationApiKeys)
  */
 export default function ApiKeysPage() {
+  const { confirm } = useConfirmation()
   const params = useSearchParams()
   const orgId = Number(params.get('org') ?? 0)
 
@@ -73,7 +75,14 @@ export default function ApiKeysPage() {
    */
   const handleRevoke = async (keyId: number) => {
     if (!revoke) return
-    if (!confirm('Revoke this API key? This cannot be undone.')) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: 'Revoke this API key? This cannot be undone.',
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await revoke(keyId)
       toast.success('API key revoked.')

@@ -1,4 +1,5 @@
 'use client'
+'use no memo'
 
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -20,7 +21,11 @@ import { extractReferralCode, storeReferralCode } from '@/lib/utils/referral-tra
  * Owner/Author: Claude Code
  * Created/Updated: 2026-07-15
  */
-export function OrgRegisterForm() {
+export function OrgRegisterForm({
+  onRegistrationDisabled,
+}: {
+  onRegistrationDisabled?: () => void
+}) {
   const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const registerMutation = useRegisterOrganization()
@@ -49,6 +54,7 @@ export function OrgRegisterForm() {
   const password = watch('password', '')
 
   const onSubmit = async (data: OrgRegisterFormData) => {
+    if (onRegistrationDisabled) onRegistrationDisabled()
     try {
       const params = new URLSearchParams({
         email: data.email,

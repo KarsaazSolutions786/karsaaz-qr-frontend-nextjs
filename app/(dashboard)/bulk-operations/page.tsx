@@ -2,9 +2,13 @@
 
 import { useState, useRef } from 'react'
 import apiClient from '@/lib/api/client'
-import { useBulkImportInstances, useBulkOperationsMutations } from '@/lib/hooks/queries/useBulkOperations'
+import {
+  useBulkImportInstances,
+  useBulkOperationsMutations,
+} from '@/lib/hooks/queries/useBulkOperations'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 interface BulkInstance {
   id: number
@@ -27,14 +31,19 @@ const statusStyles: Record<string, string> = {
  * Created/Updated: February 2026
  */
 export default function BulkOperationsPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const fileRef = useRef<HTMLInputElement>(null)
 
   // TanStack Query hooks
-  const { data: instances = [], isLoading: loading } = useBulkImportInstances() as { data: BulkInstance[]; isLoading: boolean }
-  const { createImport, reRunInstance, deleteInstance, deleteAllQRCodes, renameInstance } = useBulkOperationsMutations()
+  const { data: instances = [], isLoading: loading } = useBulkImportInstances() as {
+    data: BulkInstance[]
+    isLoading: boolean
+  }
+  const { createImport, reRunInstance, deleteInstance, deleteAllQRCodes, renameInstance } =
+    useBulkOperationsMutations()
 
   const uploading = createImport.isPending
 
@@ -49,7 +58,9 @@ export default function BulkOperationsPage() {
     try {
       await createImport.mutateAsync(file)
       if (fileRef.current) fileRef.current.value = ''
-    } catch { /* error */ }
+    } catch {
+      /* error */
+    }
   }
 
   /**
@@ -60,7 +71,9 @@ export default function BulkOperationsPage() {
   const handleReRun = async (id: number) => {
     try {
       await reRunInstance.mutateAsync(id)
-    } catch { /* error */ }
+    } catch {
+      /* error */
+    }
   }
 
   /**
@@ -69,10 +82,19 @@ export default function BulkOperationsPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async (id: number) => {
-    if (!confirm(t('Delete this bulk operation instance?'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete this bulk operation instance?'),
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await deleteInstance.mutateAsync(id)
-    } catch { /* error */ }
+    } catch {
+      /* error */
+    }
   }
 
   /**
@@ -81,10 +103,19 @@ export default function BulkOperationsPage() {
    * Created/Updated: February 2026
    */
   const handleDeleteAllQR = async (id: number) => {
-    if (!confirm(t('Delete ALL QR codes from this instance? This cannot be undone.'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete ALL QR codes from this instance? This cannot be undone.'),
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await deleteAllQRCodes.mutateAsync(id)
-    } catch { /* error */ }
+    } catch {
+      /* error */
+    }
   }
 
   /**
@@ -102,7 +133,10 @@ export default function BulkOperationsPage() {
    * Created/Updated: February 2026
    */
   const handleSampleCsv = () => {
-    window.open(`${apiClient.defaults.baseURL}/bulk-operations/import-url-qrcodes/csv-sample`, '_blank')
+    window.open(
+      `${apiClient.defaults.baseURL}/bulk-operations/import-url-qrcodes/csv-sample`,
+      '_blank'
+    )
   }
 
   /**
@@ -114,7 +148,9 @@ export default function BulkOperationsPage() {
     try {
       await renameInstance.mutateAsync({ id, name: editName })
       setEditingId(null)
-    } catch { /* error */ }
+    } catch {
+      /* error */
+    }
   }
 
   return (
@@ -132,7 +168,12 @@ export default function BulkOperationsPage() {
           </button>
         </p>
         <div className="mt-4 flex items-center gap-3">
-          <input ref={fileRef} type="file" accept=".csv" className="text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100" />
+          <input
+            ref={fileRef}
+            type="file"
+            accept=".csv"
+            className="text-sm text-gray-500 file:mr-4 file:rounded file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
+          />
           <button
             onClick={handleUpload}
             disabled={uploading}
@@ -154,30 +195,48 @@ export default function BulkOperationsPage() {
         ) : instances.length === 0 ? (
           <div className="mt-4 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
             <h3 className="text-sm font-medium text-gray-900">{t('No bulk operations yet')}</h3>
-            <p className="mt-1 text-sm text-gray-500">{t('Upload a CSV file above to get started.')}</p>
+            <p className="mt-1 text-sm text-gray-500">
+              {t('Upload a CSV file above to get started.')}
+            </p>
           </div>
         ) : (
           <div className="mt-4 space-y-4">
-            {instances.map((inst) => (
-              <div key={inst.id} className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            {instances.map(inst => (
+              <div
+                key={inst.id}
+                className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm"
+              >
                 <div className="flex items-start justify-between">
                   <div>
                     {editingId === inst.id ? (
                       <div className="flex items-center gap-2">
                         <input
                           value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
+                          onChange={e => setEditName(e.target.value)}
                           className="rounded border border-gray-300 px-2 py-1 text-sm"
                           autoFocus
                         />
-                        <button onClick={() => handleRename(inst.id)} className="text-sm text-indigo-600">{t('Save')}</button>
-                        <button onClick={() => setEditingId(null)} className="text-sm text-gray-500">{t('Cancel')}</button>
+                        <button
+                          onClick={() => handleRename(inst.id)}
+                          className="text-sm text-indigo-600"
+                        >
+                          {t('Save')}
+                        </button>
+                        <button
+                          onClick={() => setEditingId(null)}
+                          className="text-sm text-gray-500"
+                        >
+                          {t('Cancel')}
+                        </button>
                       </div>
                     ) : (
                       <h3 className="text-sm font-medium text-gray-900">
                         {inst.name || `Instance #${inst.id}`}
                         <button
-                          onClick={() => { setEditingId(inst.id); setEditName(inst.name || '') }}
+                          onClick={() => {
+                            setEditingId(inst.id)
+                            setEditName(inst.name || '')
+                          }}
                           className="ml-2 text-xs text-gray-400 hover:text-gray-600"
                         >
                           ✏️
@@ -188,7 +247,9 @@ export default function BulkOperationsPage() {
                       {t('Created')}: {new Date(inst.created_at).toLocaleString()}
                     </p>
                   </div>
-                  <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusStyles[inst.status] || 'bg-gray-100 text-gray-600'}`}>
+                  <span
+                    className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusStyles[inst.status] || 'bg-gray-100 text-gray-600'}`}
+                  >
                     {inst.status}
                   </span>
                 </div>
@@ -197,7 +258,9 @@ export default function BulkOperationsPage() {
                 {inst.total > 0 && (
                   <div className="mt-3">
                     <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>{inst.progress} / {inst.total}</span>
+                      <span>
+                        {inst.progress} / {inst.total}
+                      </span>
                       <span>{Math.round((inst.progress / inst.total) * 100)}%</span>
                     </div>
                     <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-200">
@@ -212,17 +275,29 @@ export default function BulkOperationsPage() {
                 {/* Actions */}
                 <div className="mt-4 flex flex-wrap gap-2">
                   {inst.status !== 'running' && (
-                    <button onClick={() => handleReRun(inst.id)} className="rounded bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100">
+                    <button
+                      onClick={() => handleReRun(inst.id)}
+                      className="rounded bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 hover:bg-blue-100"
+                    >
                       {t('Re-Run')}
                     </button>
                   )}
-                  <button onClick={() => handleExportCsv(inst.id)} className="rounded bg-green-50 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-100">
+                  <button
+                    onClick={() => handleExportCsv(inst.id)}
+                    className="rounded bg-green-50 px-3 py-1 text-xs font-medium text-green-700 hover:bg-green-100"
+                  >
                     {t('Export CSV')}
                   </button>
-                  <button onClick={() => handleDelete(inst.id)} className="rounded bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100">
+                  <button
+                    onClick={() => handleDelete(inst.id)}
+                    className="rounded bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100"
+                  >
                     {t('Delete')}
                   </button>
-                  <button onClick={() => handleDeleteAllQR(inst.id)} className="rounded bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100">
+                  <button
+                    onClick={() => handleDeleteAllQR(inst.id)}
+                    className="rounded bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100"
+                  >
                     {t('Delete All QR Codes')}
                   </button>
                 </div>

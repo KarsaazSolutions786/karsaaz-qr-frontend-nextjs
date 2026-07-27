@@ -13,6 +13,7 @@ import {
   type OrganizationRole,
   type MemberPlanOption,
 } from '@/lib/api/endpoints/organization'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Organization user management per spec §13.5 -- paginated member
@@ -26,6 +27,7 @@ import {
  * Created/Updated: 2026-07-20
  */
 export default function OrganizationTeamPage() {
+  const { confirm } = useConfirmation()
   const searchParams = useSearchParams()
   const orgId = Number(searchParams.get('org') ?? 0)
   const { selectedOrg } = useOrgStore()
@@ -118,7 +120,14 @@ export default function OrganizationTeamPage() {
       toast.error('Cannot remove the owner')
       return
     }
-    if (!confirm(`Remove ${member.user?.name ?? 'this member'} from the organization?`)) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: `Remove ${member.user?.name ?? 'this member'} from the organization?`,
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await organizationAPI.removeMember(orgId, member.id)
       toast.success('Member removed')

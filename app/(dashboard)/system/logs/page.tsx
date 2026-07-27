@@ -5,6 +5,7 @@ import { systemConfigsAPI } from '@/lib/api/endpoints/system-configs'
 import { envConfig } from '@/lib/config/env-config'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes SystemLogsPage functionality.
@@ -12,6 +13,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function SystemLogsPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [logContent, setLogContent] = useState('')
   const [fileSize, setFileSize] = useState(0)
@@ -67,7 +69,7 @@ export default function SystemLogsPage() {
     try {
       const url = await systemConfigsAPI.downloadLogFile()
       // Backend returns a relative signed URL — resolve against API origin
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const baseOrigin =
         (typeof window !== 'undefined' && (window as any).BACKEND_URL) || envConfig.API_URL
       const fullUrl = url.startsWith('http') ? url : `${baseOrigin}${url}`
@@ -83,7 +85,14 @@ export default function SystemLogsPage() {
    * Created/Updated: February 2026
    */
   const handleClear = async () => {
-    if (!confirm(t('Are you sure you want to clear the log file? This cannot be undone.'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Are you sure you want to clear the log file? This cannot be undone.'),
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await systemConfigsAPI.clearLogFile()
       setLogContent('')

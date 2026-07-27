@@ -27,6 +27,7 @@ import type { Folder } from '@/lib/api/endpoints/folders'
 import { parseSortOption, buildApiFilters } from '@/lib/utils/qr-list-helpers'
 import { Download, Trash2, ArchiveRestore, Copy } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes ArchivedQRCodesPage functionality.
@@ -34,6 +35,7 @@ import { useTranslation } from '@/lib/i18n'
  * Created/Updated: February 2026
  */
 export default function ArchivedQRCodesPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const router = useRouter()
   const [search, setSearch] = useState('')
@@ -154,7 +156,7 @@ export default function ArchivedQRCodesPage() {
 
   // Single-item action handler for archived rows
   const handleRowAction = useCallback(
-    (action: string, qrCodeId: string) => {
+    async (action: string, qrCodeId: string) => {
       switch (action) {
         case 'unarchive':
           unarchiveQRCode(qrCodeId)
@@ -163,7 +165,13 @@ export default function ArchivedQRCodesPage() {
           duplicateQRCode(qrCodeId)
           break
         case 'delete':
-          if (confirm(t('Are you sure you want to delete this QR code?'))) {
+          if (
+            await confirm({
+              title: 'Are you sure?',
+              message: t('Are you sure you want to delete this QR code?'),
+              type: 'danger',
+            })
+          ) {
             deleteQRCode(qrCodeId)
           }
           break
@@ -174,7 +182,7 @@ export default function ArchivedQRCodesPage() {
           break
       }
     },
-    [unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode, t]
+    [unarchiveQRCode, duplicateQRCode, deleteQRCode, downloadQRCode, t, confirm]
   )
 
   /**

@@ -6,6 +6,7 @@ import { foldersAPI, type Folder } from '@/lib/api/endpoints/folders'
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from '@/lib/i18n'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 interface FolderSelectModalProps {
   /** Currently selected folder IDs */
@@ -29,6 +30,7 @@ export function FolderSelectModal({
   onConfirm,
   onClose,
 }: FolderSelectModalProps) {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const { user } = useAuth()
   const [folders, setFolders] = useState<Folder[]>([])
@@ -91,7 +93,14 @@ export function FolderSelectModal({
    */
   async function handleDeleteFolder(folderId: number) {
     if (!user?.id) return
-    if (!confirm(t('Delete this folder?'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete this folder?'),
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await foldersAPI.delete(user.id, folderId)
       setFolders(prev => prev.filter(f => f.id !== folderId))

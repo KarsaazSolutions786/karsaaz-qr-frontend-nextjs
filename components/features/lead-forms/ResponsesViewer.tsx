@@ -6,6 +6,7 @@ import { useLeadFormResponses } from '@/lib/hooks/queries/useLeadForms'
 import { useDeleteLeadFormResponse } from '@/lib/hooks/mutations/useLeadFormMutations'
 import type { LeadFormResponse, LeadFormResponseField } from '@/types/entities/lead-form'
 import { ChevronDown, ChevronRight, Download, Search, Trash2 } from 'lucide-react'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 // ─── CSV helpers ─────────────────────────────────────────────────────────────
 
@@ -16,9 +17,7 @@ import { ChevronDown, ChevronRight, Download, Search, Trash2 } from 'lucide-reac
  */
 function arrayToCsv(rows: (string | number | null)[][]): string {
   return rows
-    .map((row) =>
-      row.map((val) => `"${String(val ?? '').replace(/"/g, '""')}"`).join(',')
-    )
+    .map(row => row.map(val => `"${String(val ?? '').replace(/"/g, '""')}"`).join(','))
     .join('\n')
 }
 
@@ -62,7 +61,8 @@ function getFields(response: LeadFormResponse): LeadFormResponseField[] {
  * Created/Updated: February 2026
  */
 export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
-  const { t } = useTranslation();
+  const { confirm } = useConfirmation()
+  const { t } = useTranslation()
   const [keyword, setKeyword] = useState('')
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const [dateFrom, setDateFrom] = useState('')
@@ -70,7 +70,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
   const deleteMutation = useDeleteLeadFormResponse()
   const { data, isLoading } = useLeadFormResponses(formId)
 
-  const responses: LeadFormResponse[] = data?.data ?? []
+  const responses: LeadFormResponse[] = useMemo(() => data?.data ?? [], [data?.data])
 
   const filtered = useMemo(() => {
     let list = responses
@@ -78,23 +78,18 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
     // Date range filter
     if (dateFrom) {
       const from = new Date(dateFrom)
-      list = list.filter((r) => new Date(r.createdAt) >= from)
+      list = list.filter(r => new Date(r.createdAt) >= from)
     }
     if (dateTo) {
       const to = new Date(dateTo)
       to.setHours(23, 59, 59, 999)
-      list = list.filter((r) => new Date(r.createdAt) <= to)
+      list = list.filter(r => new Date(r.createdAt) <= to)
     }
 
     // Keyword filter
     if (keyword.trim()) {
-      const re = new RegExp(
-        keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
-        'i'
-      )
-      list = list.filter((r) =>
-        getFields(r).some((f) => re.test(String(f.value ?? '')))
-      )
+      const re = new RegExp(keyword.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+      list = list.filter(r => getFields(r).some(f => re.test(String(f.value ?? ''))))
     }
 
     return list
@@ -109,11 +104,11 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
     if (filtered.length === 0) return
     const firstResponse = filtered[0]
     if (!firstResponse) return
-    const headers = ['#', 'Date', ...getFields(firstResponse).map((f) => f.question)]
+    const headers = ['#', 'Date', ...getFields(firstResponse).map(f => f.question)]
     const rows = filtered.map((r, i) => [
       i + 1,
       new Date(r.createdAt).toLocaleString(),
-      ...getFields(r).map((f) => f.value),
+      ...getFields(r).map(f => f.value),
     ])
     const csv = arrayToCsv([headers, ...rows])
     const d = new Date()
@@ -127,7 +122,14 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
    * Created/Updated: February 2026
    */
   const handleDelete = async (responseId: number) => {
-    if (!confirm('Delete this response? This cannot be undone.')) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: 'Delete this response? This cannot be undone.',
+        type: 'danger',
+      }))
+    )
+      return
     await deleteMutation.mutateAsync(responseId)
   }
 
@@ -150,7 +152,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
             type="search"
             placeholder={t('Search responses...')}
             value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={e => setKeyword(e.target.value)}
             className="block w-full rounded-md border border-gray-300 pl-9 pr-3 py-1.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
           />
         </div>
@@ -159,7 +161,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
         <input
           type="date"
           value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
+          onChange={e => setDateFrom(e.target.value)}
           className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
           title="From date"
         />
@@ -167,7 +169,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
         <input
           type="date"
           value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
+          onChange={e => setDateTo(e.target.value)}
           className="rounded-md border border-gray-300 px-2 py-1.5 text-sm"
           title="To date"
         />
@@ -186,9 +188,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
       {/* Table */}
       {filtered.length === 0 ? (
         <p className="py-4 text-sm text-gray-400 italic">
-          {responses.length === 0
-            ? t('No responses yet.')
-            : t('No responses match your filters.')}
+          {responses.length === 0 ? t('No responses yet.') : t('No responses match your filters.')}
         </p>
       ) : (
         <div className="overflow-x-auto rounded-md border border-gray-200">
@@ -196,18 +196,10 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="w-8 px-3 py-2" />
-                <th className="px-3 py-2 text-left font-medium text-gray-600">
-                  #
-                </th>
-                <th className="px-3 py-2 text-left font-medium text-gray-600">
-                  {t('Date')}
-                </th>
-                <th className="px-3 py-2 text-left font-medium text-gray-600">
-                  {t('Summary')}
-                </th>
-                <th className="px-3 py-2 text-right font-medium text-gray-600">
-                  {t('Actions')}
-                </th>
+                <th className="px-3 py-2 text-left font-medium text-gray-600">#</th>
+                <th className="px-3 py-2 text-left font-medium text-gray-600">{t('Date')}</th>
+                <th className="px-3 py-2 text-left font-medium text-gray-600">{t('Summary')}</th>
+                <th className="px-3 py-2 text-right font-medium text-gray-600">{t('Actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -216,7 +208,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
                 const isExpanded = expandedId === response.id
                 const summary = fields
                   .slice(0, 2)
-                  .map((f) => `${f.question}: ${f.value ?? '—'}`)
+                  .map(f => `${f.question}: ${f.value ?? '—'}`)
                   .join(' | ')
 
                 return (
@@ -224,9 +216,7 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
                     <tr
                       key={response.id}
                       className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                      onClick={() =>
-                        setExpandedId(isExpanded ? null : response.id)
-                      }
+                      onClick={() => setExpandedId(isExpanded ? null : response.id)}
                     >
                       <td className="px-3 py-2">
                         {isExpanded ? (
@@ -235,18 +225,14 @@ export default function ResponsesViewer({ formId }: ResponsesViewerProps) {
                           <ChevronRight className="h-4 w-4 text-gray-400" />
                         )}
                       </td>
-                      <td className="px-3 py-2 font-medium text-gray-500">
-                        {idx + 1}
-                      </td>
+                      <td className="px-3 py-2 font-medium text-gray-500">{idx + 1}</td>
                       <td className="px-3 py-2 whitespace-nowrap text-gray-600">
                         {new Date(response.createdAt).toLocaleString()}
                       </td>
-                      <td className="px-3 py-2 text-gray-700 truncate max-w-xs">
-                        {summary}
-                      </td>
+                      <td className="px-3 py-2 text-gray-700 truncate max-w-xs">{summary}</td>
                       <td className="px-3 py-2 text-right">
                         <button
-                          onClick={(e) => {
+                          onClick={e => {
                             e.stopPropagation()
                             handleDelete(response.id)
                           }}

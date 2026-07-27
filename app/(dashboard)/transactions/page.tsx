@@ -4,9 +4,13 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslation } from '@/lib/i18n'
 import { useTransactions } from '@/lib/hooks/queries/useTransactions'
-import { useApproveTransaction, useRejectTransaction } from '@/lib/hooks/mutations/useTransactionMutations'
+import {
+  useApproveTransaction,
+  useRejectTransaction,
+} from '@/lib/hooks/mutations/useTransactionMutations'
 import type { Transaction } from '@/types/entities/transaction'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes StatusBadge functionality.
@@ -21,7 +25,9 @@ function StatusBadge({ status }: { status?: string }) {
     failed: 'bg-red-100 text-red-800',
   }
   return (
-    <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${styles[s] ?? 'bg-gray-100 text-gray-700'}`}>
+    <span
+      className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${styles[s] ?? 'bg-gray-100 text-gray-700'}`}
+    >
       {status ?? '—'}
     </span>
   )
@@ -67,11 +73,7 @@ function getUserDisplay(transaction: Transaction): string {
  * Created/Updated: February 2026
  */
 function getDescriptionDisplay(transaction: Transaction): string {
-  return (
-    transaction.subscription_plan_name ||
-    transaction.description ||
-    '—'
-  )
+  return transaction.subscription_plan_name || transaction.description || '—'
 }
 
 /**
@@ -80,6 +82,7 @@ function getDescriptionDisplay(transaction: Transaction): string {
  * Created/Updated: February 2026
  */
 export default function TransactionsPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -93,7 +96,14 @@ export default function TransactionsPage() {
    * Created/Updated: February 2026
    */
   const handleApprove = async (id: string) => {
-    if (!confirm(t('Approve this transaction?'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Approve this transaction?'),
+        type: 'danger',
+      }))
+    )
+      return
     await approveMutation.mutateAsync(Number(id))
     toast.success(t('Transaction approved successfully.'))
   }
@@ -104,7 +114,14 @@ export default function TransactionsPage() {
    * Created/Updated: February 2026
    */
   const handleReject = async (id: string) => {
-    if (!confirm(t('Reject this transaction?'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Reject this transaction?'),
+        type: 'danger',
+      }))
+    )
+      return
     await rejectMutation.mutateAsync(Number(id))
     toast.success(t('Transaction rejected successfully.'))
   }
@@ -126,9 +143,7 @@ export default function TransactionsPage() {
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('Transactions')}</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            {t('View and manage payment transactions')}
-          </p>
+          <p className="mt-2 text-sm text-gray-600">{t('View and manage payment transactions')}</p>
         </div>
       </div>
 
@@ -137,7 +152,10 @@ export default function TransactionsPage() {
           type="search"
           placeholder={t('Search transactions…')}
           value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+          onChange={e => {
+            setSearch(e.target.value)
+            setPage(1)
+          }}
           className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-blue-500 focus:outline-none sm:max-w-md sm:text-sm"
         />
       </div>
@@ -152,21 +170,40 @@ export default function TransactionsPage() {
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 w-8">{t('ID')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Amount')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('User')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Description')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Source')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 max-w-32">{t('Stripe ID')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Status')}</th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Date')}</th>
-                  <th className="relative py-3.5 pl-3 pr-4 w-28"><span className="sr-only">Actions</span></th>
+                  <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 w-8">
+                    {t('ID')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Amount')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('User')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Description')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Source')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 max-w-32">
+                    {t('Stripe ID')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Status')}
+                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    {t('Date')}
+                  </th>
+                  <th className="relative py-3.5 pl-3 pr-4 w-28">
+                    <span className="sr-only">Actions</span>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
                 {data.data.map((transaction: Transaction) => {
                   const isOffline = transaction.source === 'offline-payment'
-                  const stripeId = transaction.stripe_payment_intent_id || transaction.stripePaymentIntentId
+                  const stripeId =
+                    transaction.stripe_payment_intent_id || transaction.stripePaymentIntentId
                   const date = transaction.createdAt || transaction.created_at
 
                   return (
@@ -185,16 +222,18 @@ export default function TransactionsPage() {
                         {getDescriptionDisplay(transaction)}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
-                        <span className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${
-                          isOffline ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-600'
-                        }`}>
+                        <span
+                          className={`inline-flex rounded px-2 py-0.5 text-xs font-medium ${
+                            isOffline
+                              ? 'bg-orange-100 text-orange-800'
+                              : 'bg-gray-100 text-gray-600'
+                          }`}
+                        >
                           {transaction.source || transaction.type?.replace('_', ' ') || '—'}
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-xs font-mono text-gray-400">
-                        {stripeId ? (
-                          <span title={stripeId}>{stripeId.slice(0, 12)}…</span>
-                        ) : '---'}
+                        {stripeId ? <span title={stripeId}>{stripeId.slice(0, 12)}…</span> : '---'}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm">
                         <StatusBadge status={transaction.status} />
@@ -243,7 +282,7 @@ export default function TransactionsPage() {
           {data.pagination && data.pagination.lastPage > 1 && (
             <div className="mt-6 flex items-center justify-between">
               <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
@@ -253,7 +292,7 @@ export default function TransactionsPage() {
                 {t('Page')} {page} {t('of')} {data.pagination.lastPage}
               </span>
               <button
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => setPage(p => p + 1)}
                 disabled={page >= data.pagination.lastPage}
                 className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
@@ -264,11 +303,23 @@ export default function TransactionsPage() {
         </>
       ) : (
         <div className="py-16 text-center">
-          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+          <svg
+            className="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+            />
           </svg>
           <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No transactions')}</h3>
-          <p className="mt-1 text-sm text-gray-500">{t('Transactions will appear here when payments are processed.')}</p>
+          <p className="mt-1 text-sm text-gray-500">
+            {t('Transactions will appear here when payments are processed.')}
+          </p>
         </div>
       )}
     </div>

@@ -38,6 +38,7 @@ import { RenderConfigEditor } from '@/components/admin/RenderConfigEditor'
 import type { RenderConfig } from '@/components/admin/RenderConfigEditor'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 import { sanitizeSvg } from '@/lib/utils/dom-safety'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 const ASSET_TABS: { value: DesignAssetType; label: string }[] = [
   { value: 'module_style', label: 'Module Shapes' },
@@ -727,6 +728,7 @@ function AddAssetForm({ type, onClose }: { type: DesignAssetType; onClose: () =>
  * Created/Updated: March 2026
  */
 function AssetTable({ type }: { type: DesignAssetType }) {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const { data: assets, isLoading, isError } = useAdminDesignAssets(type)
   const toggleMutation = useToggleDesignAsset()
@@ -808,8 +810,14 @@ function AssetTable({ type }: { type: DesignAssetType }) {
   )
 
   const handleDelete = useCallback(
-    (id: number, label: string) => {
-      if (window.confirm(`Delete "${label}"? This cannot be undone.`)) {
+    async (id: number, label: string) => {
+      if (
+        await confirm({
+          title: 'Are you sure?',
+          message: `Delete "${label}"? This cannot be undone.`,
+          type: 'danger',
+        })
+      ) {
         deleteMutation.mutate(id, {
           onSuccess: () => showSuccessToast(t('Asset deleted')),
           onError: () => showErrorToast(t('Failed to delete asset.')),
@@ -887,7 +895,13 @@ function AssetTable({ type }: { type: DesignAssetType }) {
   const handleBulkDelete = useCallback(async () => {
     if (!selectedIds.size) return
     const count = selectedIds.size
-    if (!window.confirm(`Delete ${count} asset${count > 1 ? 's' : ''}? This cannot be undone.`))
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: `Delete ${count} asset${count > 1 ? 's' : ''}? This cannot be undone.`,
+        type: 'danger',
+      }))
+    )
       return
     setBulkDeleting(true)
     try {

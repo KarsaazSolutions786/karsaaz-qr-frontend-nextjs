@@ -1,12 +1,12 @@
 /**
  * MultiSelectToolbar Component
- * 
+ *
  * Toolbar for bulk actions on selected QR codes.
  */
 
-'use client';
+'use client'
 
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   Download,
   Trash2,
@@ -18,24 +18,25 @@ import {
   X,
   MoreHorizontal,
   FileDown,
-} from 'lucide-react';
-import { useTranslation } from '@/lib/i18n';
+} from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 export interface BulkAction {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  variant?: 'default' | 'danger';
-  requiresConfirmation?: boolean;
-  onClick: (selectedIds: string[]) => void | Promise<void>;
+  id: string
+  label: string
+  icon: React.ReactNode
+  variant?: 'default' | 'danger'
+  requiresConfirmation?: boolean
+  onClick: (selectedIds: string[]) => void | Promise<void>
 }
 
 export interface MultiSelectToolbarProps {
-  selectedCount: number;
-  onClearSelection: () => void;
-  actions?: BulkAction[];
-  maxHeight?: boolean;
-  className?: string;
+  selectedCount: number
+  onClearSelection: () => void
+  actions?: BulkAction[]
+  maxHeight?: boolean
+  className?: string
 }
 
 const DEFAULT_ACTIONS: BulkAction[] = [
@@ -89,7 +90,7 @@ const DEFAULT_ACTIONS: BulkAction[] = [
     requiresConfirmation: true,
     onClick: () => {},
   },
-];
+]
 
 /**
  * Purpose: Executes MultiSelectToolbar functionality.
@@ -103,15 +104,15 @@ export function MultiSelectToolbar({
   maxHeight = true,
   className = '',
 }: MultiSelectToolbarProps) {
-  const { t } = useTranslation();
-  const [showMoreActions, setShowMoreActions] = useState(false);
-  
-  if (selectedCount === 0) return null;
-  
+  const { t } = useTranslation()
+  const [showMoreActions, setShowMoreActions] = useState(false)
+
+  if (selectedCount === 0) return null
+
   // Split actions into primary and more actions
-  const primaryActions = actions.slice(0, 4);
-  const moreActions = actions.slice(4);
-  
+  const primaryActions = actions.slice(0, 4)
+  const moreActions = actions.slice(4)
+
   return (
     <div
       className={`
@@ -132,23 +133,19 @@ export function MultiSelectToolbar({
             >
               <X className="w-5 h-5" />
             </button>
-            
+
             <span className="font-medium">
               {selectedCount} {selectedCount === 1 ? t('item') : t('items')} {t('selected')}
             </span>
           </div>
-          
+
           {/* Actions */}
           <div className="flex items-center gap-2">
             {/* Primary actions */}
-            {primaryActions.map((action) => (
-              <ActionButton
-                key={action.id}
-                action={action}
-                selectedCount={selectedCount}
-              />
+            {primaryActions.map(action => (
+              <ActionButton key={action.id} action={action} selectedCount={selectedCount} />
             ))}
-            
+
             {/* More actions dropdown */}
             {moreActions.length > 0 && (
               <div className="relative">
@@ -157,40 +154,35 @@ export function MultiSelectToolbar({
                   className={`
                     inline-flex items-center gap-2 px-3 py-2 rounded-lg
                     font-medium text-sm transition-colors
-                    ${showMoreActions
-                      ? 'bg-blue-700'
-                      : 'bg-blue-500 hover:bg-blue-700'
-                    }
+                    ${showMoreActions ? 'bg-blue-700' : 'bg-blue-500 hover:bg-blue-700'}
                   `}
                 >
                   <MoreHorizontal className="w-4 h-4" />
                   <span>{t('More')}</span>
                 </button>
-                
+
                 {showMoreActions && (
                   <>
                     {/* Backdrop */}
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setShowMoreActions(false)}
-                    />
-                    
+                    <div className="fixed inset-0 z-10" onClick={() => setShowMoreActions(false)} />
+
                     {/* Dropdown */}
                     <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-20">
                       <div className="py-2">
-                        {moreActions.map((action) => (
+                        {moreActions.map(action => (
                           <button
                             key={action.id}
                             onClick={() => {
-                              action.onClick([]);
-                              setShowMoreActions(false);
+                              action.onClick([])
+                              setShowMoreActions(false)
                             }}
                             className={`
                               w-full flex items-center gap-3 px-4 py-2.5
                               text-left transition-colors
-                              ${action.variant === 'danger'
-                                ? 'text-red-600 hover:bg-red-50'
-                                : 'text-gray-700 hover:bg-gray-50'
+                              ${
+                                action.variant === 'danger'
+                                  ? 'text-red-600 hover:bg-red-50'
+                                  : 'text-gray-700 hover:bg-gray-50'
                               }
                             `}
                           >
@@ -208,7 +200,7 @@ export function MultiSelectToolbar({
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 /**
@@ -217,16 +209,11 @@ export function MultiSelectToolbar({
  * Created/Updated: February 2026
  */
 
-function ActionButton({
-  action,
-  selectedCount,
-}: {
-  action: BulkAction;
-  selectedCount: number;
-}) {
-  const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(false);
-  
+function ActionButton({ action, selectedCount }: { action: BulkAction; selectedCount: number }) {
+  const { confirm } = useConfirmation()
+  const { t } = useTranslation()
+  const [isLoading, setIsLoading] = useState(false)
+
   /**
    * Purpose: Executes handleClick functionality.
    * Owner/Author: Syed Ashhad
@@ -234,22 +221,24 @@ function ActionButton({
    */
   const handleClick = async () => {
     if (action.requiresConfirmation) {
-      const confirmed = confirm(
-        `${t('Are you sure you want to')} ${action.label.toLowerCase()} ${selectedCount} ${
+      const confirmed = await confirm({
+        title: 'Are you sure?',
+        message: `${t('Are you sure you want to')} ${action.label.toLowerCase()} ${selectedCount} ${
           selectedCount === 1 ? t('item') : t('items')
-        }?`
-      );
-      if (!confirmed) return;
+        }?`,
+        type: 'danger',
+      })
+      if (!confirmed) return
     }
-    
-    setIsLoading(true);
+
+    setIsLoading(true)
     try {
-      await action.onClick([]);
+      await action.onClick([])
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
-  
+  }
+
   return (
     <button
       onClick={handleClick}
@@ -258,16 +247,17 @@ function ActionButton({
         inline-flex items-center gap-2 px-3 py-2 rounded-lg
         font-medium text-sm transition-colors
         disabled:opacity-50 disabled:cursor-not-allowed
-        ${action.variant === 'danger'
-          ? 'bg-red-600 hover:bg-red-700'
-          : 'bg-blue-500 hover:bg-blue-700'
+        ${
+          action.variant === 'danger'
+            ? 'bg-red-600 hover:bg-red-700'
+            : 'bg-blue-500 hover:bg-blue-700'
         }
       `}
     >
       {action.icon}
       <span>{action.label}</span>
     </button>
-  );
+  )
 }
 
 /**
@@ -283,14 +273,14 @@ export function MultiSelectToolbarCompact({
   onDeleteAll,
   className = '',
 }: {
-  selectedCount: number;
-  onClearSelection: () => void;
-  onDownloadAll: () => void;
-  onDeleteAll: () => void;
-  className?: string;
+  selectedCount: number
+  onClearSelection: () => void
+  onDownloadAll: () => void
+  onDeleteAll: () => void
+  className?: string
 }) {
-  const { t } = useTranslation();
-  if (selectedCount === 0) return null;
+  const { t } = useTranslation()
+  if (selectedCount === 0) return null
 
   return (
     <div
@@ -301,17 +291,14 @@ export function MultiSelectToolbarCompact({
       `}
     >
       <div className="flex items-center gap-2">
-        <button
-          onClick={onClearSelection}
-          className="p-1 rounded hover:bg-blue-700"
-        >
+        <button onClick={onClearSelection} className="p-1 rounded hover:bg-blue-700">
           <X className="w-4 h-4" />
         </button>
         <span className="text-sm font-medium">
           {selectedCount} {t('selected')}
         </span>
       </div>
-      
+
       <div className="flex items-center gap-2">
         <button
           onClick={onDownloadAll}
@@ -329,5 +316,5 @@ export function MultiSelectToolbarCompact({
         </button>
       </div>
     </div>
-  );
+  )
 }

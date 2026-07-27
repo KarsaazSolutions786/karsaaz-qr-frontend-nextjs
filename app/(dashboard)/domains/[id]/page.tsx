@@ -17,6 +17,7 @@ import type { DomainConnectivity, DomainAvailability } from '@/types/entities/do
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes EditDomainPage functionality.
@@ -24,6 +25,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function EditDomainPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const { data: domain, isLoading, refetch } = useDomain(id)
@@ -63,7 +65,16 @@ export default function EditDomainPage() {
    * Created/Updated: March 2026
    */
   const handleSetDefault = async () => {
-    if (!confirm(t('Are you sure you want to set this domain as the default domain for all new QR codes?'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t(
+          'Are you sure you want to set this domain as the default domain for all new QR codes?'
+        ),
+        type: 'danger',
+      }))
+    )
+      return
     await setDefaultMutation.mutateAsync(id)
     toast.success(t('Domain has been set as the default domain'))
     refetch()
@@ -99,10 +110,7 @@ export default function EditDomainPage() {
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6">
-        <Link
-          href="/domains"
-          className="text-sm text-gray-500 hover:text-gray-700"
-        >
+        <Link href="/domains" className="text-sm text-gray-500 hover:text-gray-700">
           {t('Back to Domains')}
         </Link>
         <h1 className="mt-2 text-3xl font-bold text-gray-900">{t('Edit Domain')}</h1>
@@ -118,7 +126,9 @@ export default function EditDomainPage() {
             <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Domain Settings')}</h2>
             <DomainForm
               defaultValues={{ domain: domain.domain }}
-              onSubmit={async (data) => { await updateMutation.mutateAsync({ id, data }) }}
+              onSubmit={async data => {
+                await updateMutation.mutateAsync({ id, data })
+              }}
               isLoading={updateMutation.isPending}
             />
           </div>
@@ -150,9 +160,7 @@ export default function EditDomainPage() {
               <div className="flex items-center justify-between rounded-md border border-gray-100 bg-gray-50 p-4">
                 <div>
                   <p className="text-sm font-medium text-gray-700">{t('Default Domain')}</p>
-                  <p className="text-sm text-gray-500">
-                    {domain.isDefault ? t('Yes') : t('No')}
-                  </p>
+                  <p className="text-sm text-gray-500">{domain.isDefault ? t('Yes') : t('No')}</p>
                 </div>
                 {!domain.isDefault && (
                   <button
@@ -161,9 +169,7 @@ export default function EditDomainPage() {
                     disabled={setDefaultMutation.isPending}
                     className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                   >
-                    {setDefaultMutation.isPending
-                      ? t('Setting...')
-                      : t('Set as Default')}
+                    {setDefaultMutation.isPending ? t('Setting...') : t('Set as Default')}
                   </button>
                 )}
               </div>

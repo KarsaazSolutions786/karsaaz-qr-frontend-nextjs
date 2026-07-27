@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
-import { queryKeys } from '@/lib/query/keys'
 
 export function useDeleteQRCode() {
   const router = useRouter()
@@ -12,9 +11,9 @@ export function useDeleteQRCode() {
 
   return useMutation({
     mutationFn: (id: string) => qrcodesAPI.delete(id),
-    onSuccess: (_data, id) => {
-      queryClient.removeQueries({ queryKey: queryKeys.qrcodes.detail(id) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.qrcodes.all() })
+    onSuccess: () => {
+      toast.success('Successfully moved to trash')
+      queryClient.invalidateQueries({ queryKey: ['qrcodes', 'list'] })
       router.push('/qrcodes')
     },
     onError: (error: any) => {

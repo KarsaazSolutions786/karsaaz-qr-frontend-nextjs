@@ -8,6 +8,7 @@ import { useRoles } from '@/lib/hooks/queries/useRoles'
 import { useDeleteRole } from '@/lib/hooks/mutations/useRoleMutations'
 import type { RoleEntity } from '@/lib/api/endpoints/roles'
 import { useTranslation } from '@/lib/i18n'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes RoleNameCell functionality.
@@ -40,6 +41,7 @@ function RoleNameCell({ role }: { role: RoleEntity }) {
  * Created/Updated: February 2026
  */
 export default function RolesPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -53,7 +55,14 @@ export default function RolesPage() {
    */
   const handleDelete = async (id: number, name: string) => {
     if (
-      confirm(t('Are you sure you want to delete the role "{{name}}"?').replace('{{name}}', name))
+      await confirm({
+        title: 'Are you sure?',
+        message: t('Are you sure you want to delete the role "{{name}}"?').replace(
+          '{{name}}',
+          name
+        ),
+        type: 'danger',
+      })
     ) {
       await deleteMutation.mutateAsync(id)
     }

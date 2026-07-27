@@ -11,14 +11,7 @@
 import React, { useMemo } from 'react'
 import { Monitor } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Sector,
-} from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Sector } from 'recharts'
 import type { BreakdownItem } from '@/types/entities/analytics'
 
 // ---------- Types ----------
@@ -84,25 +77,14 @@ function ChartSkeleton() {
 
 // ---------- Active shape renderer (for hover effect on segments) ----------
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 /**
  * Purpose: Executes renderActiveShape functionality.
  * Owner/Author: Syed Ashhad
  * Created/Updated: March 2026
  */
 function renderActiveShape(props: any) {
-  const {
-    cx,
-    cy,
-    innerRadius,
-    outerRadius,
-    startAngle,
-    endAngle,
-    fill,
-    payload,
-    percent,
-    value,
-  } = props
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } =
+    props
 
   return (
     <g>
@@ -125,23 +107,10 @@ function renderActiveShape(props: any) {
         fill={fill}
       />
       {/* Center text on hover */}
-      <text
-        x={cx}
-        y={cy - 8}
-        textAnchor="middle"
-        fill="#111827"
-        fontSize={16}
-        fontWeight="bold"
-      >
+      <text x={cx} y={cy - 8} textAnchor="middle" fill="#111827" fontSize={16} fontWeight="bold">
         {payload.label}
       </text>
-      <text
-        x={cx}
-        y={cy + 12}
-        textAnchor="middle"
-        fill="#6b7280"
-        fontSize={13}
-      >
+      <text x={cx} y={cy + 12} textAnchor="middle" fill="#6b7280" fontSize={13}>
         {value.toLocaleString()} ({(percent * 100).toFixed(1)}%)
       </text>
     </g>
@@ -173,15 +142,10 @@ function CustomTooltip({
   return (
     <div className="rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-lg">
       <div className="flex items-center gap-2">
-        <div
-          className="h-3 w-3 rounded-full"
-          style={{ backgroundColor: color }}
-        />
+        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: color }} />
         <p className="text-sm font-semibold text-gray-900">{item.label}</p>
       </div>
-      <p className="mt-1 text-lg font-bold text-gray-900">
-        {item.value.toLocaleString()} scans
-      </p>
+      <p className="mt-1 text-lg font-bold text-gray-900">{item.value.toLocaleString()} scans</p>
       <p className="text-sm text-gray-500">{item.percentage}% of total</p>
     </div>
   )
@@ -219,12 +183,8 @@ export function ScansPerOSChart({
           <Monitor className="h-5 w-5 text-emerald-600" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
-            {t('Scans by OS')}
-          </h3>
-          <p className="text-sm text-gray-500">
-            {t('Operating system distribution')}
-          </p>
+          <h3 className="text-lg font-semibold text-gray-900">{t('Scans by OS')}</h3>
+          <p className="text-sm text-gray-500">{t('Operating system distribution')}</p>
         </div>
       </div>
 
@@ -257,12 +217,7 @@ export function ScansPerOSChart({
                   activeShape={renderActiveShape}
                 >
                   {chartData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={entry.color}
-                      stroke="#fff"
-                      strokeWidth={2}
-                    />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="#fff" strokeWidth={2} />
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
@@ -272,9 +227,7 @@ export function ScansPerOSChart({
             {/* Center total overlay (always visible, hidden by activeShape on hover) */}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div className="text-center">
-                <p className="text-2xl font-bold text-gray-900">
-                  {totalScans.toLocaleString()}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{totalScans.toLocaleString()}</p>
                 <p className="text-xs text-gray-500">{t('Total Scans')}</p>
               </div>
             </div>
@@ -282,11 +235,9 @@ export function ScansPerOSChart({
 
           {/* Legend */}
           <div className="w-full space-y-3 lg:w-1/2">
-            {chartData.map((item) => {
+            {chartData.map(item => {
               const percentage =
-                totalScans > 0
-                  ? ((item.value / totalScans) * 100).toFixed(1)
-                  : '0.0'
+                totalScans > 0 ? ((item.value / totalScans) * 100).toFixed(1) : '0.0'
 
               return (
                 <div
@@ -297,16 +248,12 @@ export function ScansPerOSChart({
                     className="h-3 w-3 flex-shrink-0 rounded-full"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="flex-1 text-sm font-medium text-gray-900">
-                    {item.label}
-                  </span>
+                  <span className="flex-1 text-sm font-medium text-gray-900">{item.label}</span>
                   <div className="text-right">
                     <span className="text-sm font-semibold text-gray-900">
                       {item.value.toLocaleString()}
                     </span>
-                    <span className="ml-2 text-sm text-gray-500">
-                      {percentage}%
-                    </span>
+                    <span className="ml-2 text-sm text-gray-500">{percentage}%</span>
                   </div>
                 </div>
               )
@@ -316,9 +263,7 @@ export function ScansPerOSChart({
             <div className="mt-2 border-t border-gray-100 pt-3">
               <div className="flex items-center gap-3 px-3">
                 <div className="h-3 w-3 flex-shrink-0 rounded-full bg-gray-300" />
-                <span className="flex-1 text-sm font-medium text-gray-600">
-                  {t('Total')}
-                </span>
+                <span className="flex-1 text-sm font-medium text-gray-600">{t('Total')}</span>
                 <span className="text-sm font-bold text-gray-900">
                   {totalScans.toLocaleString()}
                 </span>

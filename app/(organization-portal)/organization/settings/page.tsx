@@ -9,6 +9,7 @@ import {
   type OrganizationMember,
   type Organization,
 } from '@/lib/api/endpoints/organization'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 const ROLE_OPTIONS = ['admin', 'member', 'viewer']
 
@@ -18,6 +19,7 @@ const ROLE_OPTIONS = ['admin', 'member', 'viewer']
  * Created/Updated: April 2026
  */
 export default function SettingsPage() {
+  const { confirm } = useConfirmation()
   const params = useSearchParams()
   const orgId = Number(params.get('org') ?? 0)
 
@@ -69,7 +71,10 @@ export default function SettingsPage() {
       toast.error('Cannot remove the owner')
       return
     }
-    if (!confirm('Remove this member?')) return
+    if (
+      !(await confirm({ title: 'Are you sure?', message: 'Remove this member?', type: 'danger' }))
+    )
+      return
     try {
       await organizationAPI.removeMember(orgId, memberId)
       setMembers(prev => prev.filter(m => m.id !== memberId))

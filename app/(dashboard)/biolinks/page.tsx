@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useBiolinks } from '@/lib/hooks/queries/useBiolinks'
 import { useDeleteBiolink } from '@/lib/hooks/mutations/useBiolinkMutations'
 import { useTranslation } from '@/lib/i18n'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes BiolinksPage functionality.
@@ -12,6 +13,7 @@ import { useTranslation } from '@/lib/i18n'
  * Created/Updated: February 2026
  */
 export default function BiolinksPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
 
@@ -24,7 +26,16 @@ export default function BiolinksPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async (id: number, slug: string) => {
-    if (confirm(t('Delete biolink "{{slug}}"? This action cannot be undone.').replace('{{slug}}', slug))) {
+    if (
+      await confirm({
+        title: 'Are you sure?',
+        message: t('Delete biolink "{{slug}}"? This action cannot be undone.').replace(
+          '{{slug}}',
+          slug
+        ),
+        type: 'danger',
+      })
+    ) {
       await deleteMutation.mutateAsync(id)
     }
   }
@@ -63,7 +74,7 @@ export default function BiolinksPage() {
           type="text"
           placeholder={t('Search biolinks...')}
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
         />
       </div>
@@ -72,7 +83,9 @@ export default function BiolinksPage() {
         {biolinks.length === 0 ? (
           <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
             <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No biolinks')}</h3>
-            <p className="mt-1 text-sm text-gray-500">{t('Get started by creating your first biolink page.')}</p>
+            <p className="mt-1 text-sm text-gray-500">
+              {t('Get started by creating your first biolink page.')}
+            </p>
             <div className="mt-6">
               <Link
                 href="/biolinks/new"
@@ -105,7 +118,7 @@ export default function BiolinksPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {biolinks.map((biolink) => (
+                {biolinks.map(biolink => (
                   <tr key={biolink.id}>
                     <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                       {biolink.title}
@@ -114,11 +127,13 @@ export default function BiolinksPage() {
                       /{biolink.slug}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm">
-                      <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                      <span
+                        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
                           biolink.isPublished
                             ? 'bg-green-100 text-green-800'
                             : 'bg-gray-100 text-gray-800'
-                        }`}>
+                        }`}
+                      >
                         {biolink.isPublished ? t('Published') : t('Draft')}
                       </span>
                     </td>

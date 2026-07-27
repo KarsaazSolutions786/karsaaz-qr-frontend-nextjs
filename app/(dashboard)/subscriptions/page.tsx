@@ -8,6 +8,7 @@ import { useAdminSubscriptions } from '@/lib/hooks/queries/useAdminSubscriptions
 import { useDeletePendingSubscriptions } from '@/lib/hooks/mutations/useAdminSubscriptionMutations'
 import type { AdminSubscription } from '@/lib/api/endpoints/admin-subscriptions'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes StatusBadge functionality.
@@ -38,6 +39,7 @@ function StatusBadge({ status }: { status?: string }) {
  * Created/Updated: February 2026
  */
 export default function SubscriptionsPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [keyword, setKeyword] = useState('')
@@ -50,7 +52,14 @@ export default function SubscriptionsPage() {
    * Created/Updated: February 2026
    */
   const handleDeletePending = async () => {
-    if (!confirm(t('Delete all pending subscriptions? This cannot be undone.'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete all pending subscriptions? This cannot be undone.'),
+        type: 'danger',
+      }))
+    )
+      return
     const result = await deletePendingMutation.mutateAsync()
     toast.success(
       t('Deleted {{count}} pending subscription(s).').replace(

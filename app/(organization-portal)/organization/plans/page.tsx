@@ -25,6 +25,7 @@ import {
 } from '@/lib/api/endpoints/organization'
 import { plansAPI } from '@/lib/api/endpoints/plans'
 import type { SubscriptionPlan } from '@/types/entities/plan'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 const DEFAULT_FORM: Omit<OrgPlan, 'id' | 'slug' | 'created_at' | 'is_custom'> = {
   name: '',
@@ -58,6 +59,7 @@ function formatLimit(n: number) {
  * Created/Updated: April 2026
  */
 export default function OrgPlansPage() {
+  const { confirm } = useConfirmation()
   const searchParams = useSearchParams()
   const orgId = Number(searchParams.get('org') ?? 0)
   const wantsCustomCreate = searchParams.get('custom') === '1' && !!orgId
@@ -214,7 +216,14 @@ export default function OrgPlansPage() {
    * Created/Updated: April 2026
    */
   const handleDelete = async (plan: OrgPlan) => {
-    if (!confirm(`Delete plan "${plan.name}"? This cannot be undone.`)) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: `Delete plan "${plan.name}"? This cannot be undone.`,
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await orgPlanAPI.delete(plan.id)
       setPlans(p => p.filter(x => x.id !== plan.id))

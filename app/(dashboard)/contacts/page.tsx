@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n'
 import { VirtualizedTable } from '@/components/common/VirtualizedList'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes ContactsPage functionality.
@@ -15,6 +16,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function ContactsPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -30,12 +32,14 @@ export default function ContactsPage() {
    */
   const handleDelete = async (contact: Contact) => {
     if (
-      !confirm(
-        t('Delete contact from "{{name}}"? This action cannot be undone.').replace(
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete contact from "{{name}}"? This action cannot be undone.').replace(
           '{{name}}',
           contact.name
-        )
-      )
+        ),
+        type: 'danger',
+      }))
     )
       return
     setDeleteTarget(contact.id)

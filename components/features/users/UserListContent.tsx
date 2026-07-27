@@ -263,7 +263,7 @@ export function UserListContent({ paying }: UserListContentProps) {
     const isConfirmed = await confirm({
       title: t('Act As User'),
       message: `${t('Impersonate')} "${user.name || user.email}"? ${t('You will be redirected to their dashboard.')}`,
-      type: 'warning',
+      type: 'danger',
     })
     if (isConfirmed) {
       setPendingAction(`actas-${user.id}`)
@@ -284,7 +284,7 @@ export function UserListContent({ paying }: UserListContentProps) {
     const isConfirmed = await confirm({
       title: t('Reset Role'),
       message: `${t('Reset role for')} "${user.name || user.email}"? ${t('This will clear their assigned role.')}`,
-      type: 'warning',
+      type: 'danger',
     })
     if (isConfirmed) {
       setPendingAction(`resetrole-${user.id}`)
@@ -305,7 +305,7 @@ export function UserListContent({ paying }: UserListContentProps) {
     const isConfirmed = await confirm({
       title: t('Reset Scans'),
       message: `${t('Reset scan limits for')} "${user.name || user.email}"?`,
-      type: 'warning',
+      type: 'danger',
     })
     if (isConfirmed) {
       setPendingAction(`resetscans-${user.id}`)

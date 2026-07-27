@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { ShieldCheck, Lock, Plus, Trash2, X, Check } from 'lucide-react'
 import { organizationRoleAPI, type OrganizationRole } from '@/lib/api/endpoints/organization'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 const PERMISSION_GROUPS: Record<string, string> = {
   organization: 'Organization',
@@ -36,6 +37,7 @@ function groupPermissions(permissions: string[]) {
  * Created/Updated: 2026-07-20
  */
 export default function OrganizationRolesPage() {
+  const { confirm } = useConfirmation()
   const params = useSearchParams()
   const orgId = Number(params.get('org') ?? 0)
 
@@ -121,7 +123,14 @@ export default function OrganizationRolesPage() {
   }
 
   const handleDelete = async (role: OrganizationRole) => {
-    if (!confirm(`Delete the "${role.name}" role?`)) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: `Delete the "${role.name}" role?`,
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await organizationRoleAPI.delete(orgId, role.id)
       toast.success('Role deleted')

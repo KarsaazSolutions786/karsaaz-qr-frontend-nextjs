@@ -10,6 +10,7 @@ import type { SubscriptionPlan } from '@/types/entities/plan'
 import type { OrgPlan } from '@/lib/api/endpoints/organization'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes PlansPage functionality.
@@ -17,6 +18,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function PlansPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -31,7 +33,13 @@ export default function PlansPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async (id: number, name: string) => {
-    if (confirm(t('Are you sure you want to delete "{{name}}"?').replace('{{name}}', name))) {
+    if (
+      await confirm({
+        title: 'Are you sure?',
+        message: t('Are you sure you want to delete "{{name}}"?').replace('{{name}}', name),
+        type: 'danger',
+      })
+    ) {
       try {
         await deleteMutation.mutateAsync(id)
       } catch {
@@ -41,7 +49,13 @@ export default function PlansPage() {
   }
 
   const handleDeleteOrgPlan = async (plan: OrgPlan) => {
-    if (confirm(`Are you sure you want to delete organization plan "${plan.name}"?`)) {
+    if (
+      await confirm({
+        title: 'Are you sure?',
+        message: `Are you sure you want to delete organization plan "${plan.name}"?`,
+        type: 'danger',
+      })
+    ) {
       try {
         await orgPlanAPI.delete(plan.id)
         refetchOrgPlans()
