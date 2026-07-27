@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-20T10:21:59Z",
-  "changed_file": "c:/Dev/karsaaz qr/karsaaz Qr React js/lib/hooks/mutations/useRegisterOrganization.ts",
+  "timestamp": "2026-07-20T11:49:28Z",
+  "changed_file": "c:/Dev/karsaaz qr/karsaaz Qr React js/app/(public)/organization-invitations/accept/page.tsx",
   "test_command": "npx vitest run --reporter=verbose",
   "related_test": "",
   "recommendation": "テストの実行を推奨します"
