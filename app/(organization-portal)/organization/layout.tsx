@@ -5,7 +5,8 @@ import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import { useOrgStore } from '@/lib/stores/useOrgStore'
 import { useQueryClient } from '@tanstack/react-query'
-import { organizationAPI, type Organization } from '@/lib/api/endpoints/organization'
+import { useOrganizations } from '@/lib/hooks/queries/useOrganizations'
+import type { Organization } from '@/lib/api/endpoints/organization'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
 import {
@@ -63,7 +64,7 @@ const getNavItems = (isAdmin: boolean) => {
  */
 function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number | null }) {
   const { selectedOrg, setSelectedOrg } = useOrgStore()
-  const [orgs, setOrgs] = useState<Organization[]>([])
+  const { data: orgs = [] } = useOrganizations()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const router = useRouter()
@@ -71,20 +72,13 @@ function OrganizationSwitcher({ activeOrgId }: { activeOrgId?: string | number |
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    organizationAPI
-      .list()
-      .then(res => {
-        const fetchedOrgs = res.data.data ?? []
-        setOrgs(fetchedOrgs)
-        if (fetchedOrgs.length > 0 && !activeOrgId) {
-          const firstOrg = fetchedOrgs[0]
-          setSelectedOrg(firstOrg || null)
-          if (firstOrg) router.replace(`${pathname}?org=${firstOrg.id}`)
-        }
-      })
-      .catch(() => {})
+    if (orgs.length > 0 && !activeOrgId && !selectedOrg) {
+      const firstOrg = orgs[0]
+      setSelectedOrg(firstOrg || null)
+      if (firstOrg) router.replace(`${pathname}?org=${firstOrg.id}`)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [orgs.length, activeOrgId])
 
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {

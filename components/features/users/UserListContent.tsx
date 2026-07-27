@@ -18,6 +18,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
 import type { User } from '@/types/entities/user'
 import { UserFilterPanel, type UserFilters } from './UserFilterPanel'
 import { UserBalanceModal } from './UserBalanceModal'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 interface UserListContentProps {
   paying?: 'paying' | 'non-paying'
@@ -174,6 +175,7 @@ function FilterModal({
  */
 export function UserListContent({ paying }: UserListContentProps) {
   const { t } = useTranslation()
+  const { confirm } = useConfirmation()
   const pathname = usePathname()
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(15)
@@ -242,11 +244,12 @@ export function UserListContent({ paying }: UserListContentProps) {
    * Created/Updated: February 2026
    */
   const handleDelete = async (user: User) => {
-    if (
-      confirm(
-        `Delete "${user.name || user.email}"?\n\nThis will permanently delete all related QR Codes, subscriptions and transactions.`
-      )
-    ) {
+    const isConfirmed = await confirm({
+      title: t('Delete User'),
+      message: `${t('Delete')} "${user.name || user.email}"?\n\n${t('This will permanently delete all related QR Codes, subscriptions and transactions.')}`,
+      type: 'danger',
+    })
+    if (isConfirmed) {
       await deleteMutation.mutateAsync(Number(user.id))
     }
   }
@@ -257,11 +260,12 @@ export function UserListContent({ paying }: UserListContentProps) {
    * Created/Updated: February 2026
    */
   const handleActAs = async (user: User) => {
-    if (
-      confirm(
-        `Impersonate "${user.name || user.email}"? You will be redirected to their dashboard.`
-      )
-    ) {
+    const isConfirmed = await confirm({
+      title: t('Act As User'),
+      message: `${t('Impersonate')} "${user.name || user.email}"? ${t('You will be redirected to their dashboard.')}`,
+      type: 'warning',
+    })
+    if (isConfirmed) {
       setPendingAction(`actas-${user.id}`)
       try {
         await actAsMutation.mutateAsync(Number(user.id))
@@ -277,9 +281,12 @@ export function UserListContent({ paying }: UserListContentProps) {
    * Created/Updated: February 2026
    */
   const handleResetRole = async (user: User) => {
-    if (
-      confirm(`Reset role for "${user.name || user.email}"? This will clear their assigned role.`)
-    ) {
+    const isConfirmed = await confirm({
+      title: t('Reset Role'),
+      message: `${t('Reset role for')} "${user.name || user.email}"? ${t('This will clear their assigned role.')}`,
+      type: 'warning',
+    })
+    if (isConfirmed) {
       setPendingAction(`resetrole-${user.id}`)
       try {
         await resetRoleMutation.mutateAsync(Number(user.id))
@@ -295,7 +302,12 @@ export function UserListContent({ paying }: UserListContentProps) {
    * Created/Updated: February 2026
    */
   const handleResetScans = async (user: User) => {
-    if (confirm(`Reset scan limits for "${user.name || user.email}"?`)) {
+    const isConfirmed = await confirm({
+      title: t('Reset Scans'),
+      message: `${t('Reset scan limits for')} "${user.name || user.email}"?`,
+      type: 'warning',
+    })
+    if (isConfirmed) {
       setPendingAction(`resetscans-${user.id}`)
       try {
         await resetScansMutation.mutateAsync(Number(user.id))

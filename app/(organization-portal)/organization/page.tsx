@@ -1,13 +1,24 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { Building2, KeyRound, BarChart3, Wallet, Plus, Users, ShieldAlert } from 'lucide-react'
+import {
+  Building2,
+  KeyRound,
+  BarChart3,
+  Wallet,
+  Plus,
+  Users,
+  ShieldAlert,
+  Trash2,
+} from 'lucide-react'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 import { organizationAPI, type Organization } from '@/lib/api/endpoints/organization'
 import { useAuth } from '@/lib/hooks/useAuth'
 import { isSuperAdmin } from '@/lib/utils/permissions'
 import { useOrgStore } from '@/lib/stores/useOrgStore'
+import { useOrganizations } from '@/lib/hooks/queries/useOrganizations'
 
 /**
  * Purpose: Executes OrganizationPage functionality.
@@ -17,12 +28,12 @@ import { useOrgStore } from '@/lib/stores/useOrgStore'
 export default function OrganizationPage() {
   const { user } = useAuth()
   const canManageAllOrgs = isSuperAdmin(user)
-  const [orgs, setOrgs] = useState<Organization[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: orgs = [], isLoading, refetch } = useOrganizations()
   const [creating, setCreating] = useState(false)
   const [newOrgName, setNewOrgName] = useState('')
   const [showForm, setShowForm] = useState(false)
   const { selectedOrg, setSelectedOrg } = useOrgStore()
+  const { confirm } = useConfirmation()
 
   const handleOrgSelect = (org: Organization) => {
     if (selectedOrg?.id === org.id) return
@@ -30,31 +41,39 @@ export default function OrganizationPage() {
     toast.success('Organization successfully selected')
   }
 
-  useEffect(() => {
-    organizationAPI
-      .list()
-      .then(res => setOrgs(res.data.data ?? []))
-      .catch(() => toast.error('Failed to load organizations'))
-      .finally(() => setLoading(false))
-  }, [])
+  /**
+   * Purpose: Executes handleDelete functionality.
+   * Owner/Author: Syed Ashhad
+   * Created/Updated: April 2026
+   */
+  const handleDelete = async (org: Organization, e: React.MouseEvent) => {
+    e.stopPropagation()
+    const isConfirmed = await confirm({
+      title: 'Delete Organization',
+      message: `Are you sure you want to delete "${org.name}"? This action cannot be undone.`,
+      type: 'danger',
+    })
 
-  /**
-   * Purpose: Executes copyToClipboard functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: April 2026
-   */
-  /**
-   * Purpose: Executes handleCreate functionality.
-   * Owner/Author: Syed Ashhad
-   * Created/Updated: April 2026
-   */
+    if (isConfirmed) {
+      try {
+        await organizationAPI.delete(org.id)
+        await refetch()
+        if (selectedOrg?.id === org.id) {
+          setSelectedOrg(null)
+        }
+        toast.success('Organization deleted successfully')
+      } catch {
+        toast.error('Failed to delete organization')
+      }
+    }
+  }
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newOrgName.trim()) return
     setCreating(true)
     try {
-      const res = await organizationAPI.create({ name: newOrgName.trim() })
-      setOrgs(prev => [...prev, res.data.data])
+      await organizationAPI.create({ name: newOrgName.trim() })
+      await refetch()
       setNewOrgName('')
       setShowForm(false)
       toast.success('Organization created!')
@@ -65,7 +84,7 @@ export default function OrganizationPage() {
     }
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary-600 border-t-transparent" />
@@ -140,7 +159,7 @@ export default function OrganizationPage() {
           </button>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {orgs.map(org => (
             <div
               key={org.id}
@@ -245,6 +264,12 @@ export default function OrganizationPage() {
                     <Wallet className="h-4 w-4 shrink-0" /> <span className="truncate">Plan</span>
                   </Link>
                 )}
+                <button
+                  onClick={e => handleDelete(org, e)}
+                  className="flex items-center justify-center gap-1.5 py-3 px-2 text-[13px] font-medium text-red-600 bg-white hover:bg-red-50 hover:text-red-700 transition-colors border-l border-t border-gray-100 -ml-px -mt-px"
+                >
+                  <Trash2 className="h-4 w-4 shrink-0" /> <span className="truncate">Delete</span>
+                </button>
               </div>
             </div>
           ))}

@@ -14,6 +14,7 @@ import { iframeDetector } from '@/lib/services/iframe-detector'
 import { WebVitalsReporter } from '@/components/common/WebVitalsReporter'
 import { OfflineIndicator } from '@/components/common/OfflineIndicator'
 import { Toaster } from 'sonner'
+import { ConfirmationProvider } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: * Initialize client-side protection services (T021)
@@ -59,7 +60,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 <WebVitalsReporter />
                 <OfflineIndicator />
                 <Toaster position="top-right" richColors closeButton duration={4000} />
-                {children}
+                <ConfirmationProvider>{children}</ConfirmationProvider>
               </ThemeProvider>
             </PluginProvider>
           </TranslationProvider>
