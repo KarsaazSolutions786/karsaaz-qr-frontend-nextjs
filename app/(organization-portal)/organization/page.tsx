@@ -171,20 +171,20 @@ export default function OrganizationPage() {
               }`}
             >
               <div className="p-6">
-                <div className="mb-6 flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100/50 ring-1 ring-primary-100 shadow-inner">
+                <div className="mb-6 flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                    <div className="shrink-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-50 to-primary-100/50 ring-1 ring-primary-100 shadow-inner">
                       <Building2 className="h-6 w-6 text-primary-500" />
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold tracking-tight text-gray-900 group-hover:text-primary-600 transition-colors">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate text-lg font-semibold tracking-tight text-gray-900 group-hover:text-primary-600 transition-colors">
                         {org.name}
                       </h3>
-                      <p className="text-sm font-medium text-gray-400">{org.slug}</p>
+                      <p className="truncate text-sm font-medium text-gray-400">{org.slug}</p>
                     </div>
                   </div>
                   <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider ${
+                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wider ${
                       org.status === 'active'
                         ? 'bg-green-50 text-green-700 ring-1 ring-green-600/10'
                         : org.status === 'suspended'
