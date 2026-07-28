@@ -163,8 +163,10 @@ export default function OrganizationLayout({ children }: { children: React.React
 function OrganizationLayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const urlOrgId = searchParams?.get('org')
   const { selectedOrg } = useOrgStore()
+  const { data: orgs = [], isLoading: orgsLoading } = useOrganizations()
   const { user, logout } = useAuth()
   const isSuperUser = isSuperAdmin(user)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -176,6 +178,12 @@ function OrganizationLayoutInner({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  useEffect(() => {
+    if (!orgsLoading && orgs.length === 0 && pathname !== '/organization') {
+      router.replace('/organization')
+    }
+  }, [orgs.length, orgsLoading, pathname, router])
 
   const activeOrgId = urlOrgId || selectedOrg?.id
   const withOrg = (href: string) => (activeOrgId ? `${href}?org=${activeOrgId}` : href)

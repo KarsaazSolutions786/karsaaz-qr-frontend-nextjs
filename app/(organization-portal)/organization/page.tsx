@@ -101,13 +101,15 @@ export default function OrganizationPage() {
             Manage organizations and their API access to the QR platform.
           </p>
         </div>
-        <button
-          onClick={() => setShowForm(v => !v)}
-          className="flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 transition-all"
-        >
-          <Plus className="h-4 w-4" />
-          New Organization
-        </button>
+        {orgs.length > 0 && (
+          <button
+            onClick={() => setShowForm(v => !v)}
+            className="flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 transition-all"
+          >
+            <Plus className="h-4 w-4" />
+            New Organization
+          </button>
+        )}
       </div>
 
       {/* Create form */}
@@ -148,14 +150,14 @@ export default function OrganizationPage() {
           </div>
           <h3 className="text-lg font-semibold text-gray-900">No organizations yet</h3>
           <p className="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
-            Get started by creating your first organization to manage API access, teams, and usage
-            analytics.
+            Get started by registering your first organization to manage API access, teams, and
+            usage analytics.
           </p>
           <button
             onClick={() => setShowForm(true)}
             className="mt-6 inline-flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:brightness-105 transition-all"
           >
-            <Plus className="h-4 w-4" /> Create Organization
+            <Plus className="h-4 w-4" /> Register Organization
           </button>
         </div>
       ) : (
