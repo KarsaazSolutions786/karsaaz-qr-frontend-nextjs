@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import React, { useState } from 'react';
-import { useTranslation } from '@/lib/i18n';
+import React, { useState } from 'react'
+import { useTranslation } from '@/lib/i18n'
 import {
   DndContext,
   closestCenter,
@@ -10,15 +10,15 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-} from '@dnd-kit/core';
+} from '@dnd-kit/core'
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import {
   PlusIcon,
   TrashIcon,
@@ -26,13 +26,14 @@ import {
   EyeSlashIcon,
   PencilIcon,
   Bars3Icon,
-} from '@heroicons/react/24/outline';
-import { BiolinkBlock, BlockType, createBlockTemplate } from '@/types/entities/biolinks';
-import { BlockSettingsModal } from './BlockSettingsModal';
+} from '@heroicons/react/24/outline'
+import { BiolinkBlock, BlockType, createBlockTemplate } from '@/types/entities/biolinks'
+import { BlockSettingsModal } from './BlockSettingsModal'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 interface BlocksManagerProps {
-  blocks: BiolinkBlock[];
-  onChange: (blocks: BiolinkBlock[]) => void;
+  blocks: BiolinkBlock[]
+  onChange: (blocks: BiolinkBlock[]) => void
 }
 
 const blockTypeLabels: Record<BlockType, string> = {
@@ -51,7 +52,7 @@ const blockTypeLabels: Record<BlockType, string> = {
   [BlockType.DOWNLOAD]: 'Download File',
   [BlockType.PAYMENT]: 'Payment Link',
   [BlockType.NEWSLETTER]: 'Newsletter Signup',
-};
+}
 
 const blockTypeIcons: Record<BlockType, string> = {
   [BlockType.LINK]: '🔗',
@@ -69,13 +70,13 @@ const blockTypeIcons: Record<BlockType, string> = {
   [BlockType.DOWNLOAD]: '📥',
   [BlockType.PAYMENT]: '💳',
   [BlockType.NEWSLETTER]: '📬',
-};
+}
 
 interface SortableBlockItemProps {
-  block: BiolinkBlock;
-  onEdit: (block: BiolinkBlock) => void;
-  onToggleVisibility: (blockId: string) => void;
-  onDelete: (blockId: string) => void;
+  block: BiolinkBlock
+  onEdit: (block: BiolinkBlock) => void
+  onToggleVisibility: (blockId: string) => void
+  onDelete: (blockId: string) => void
 }
 
 /**
@@ -83,22 +84,22 @@ interface SortableBlockItemProps {
  * Owner/Author: Syed Ashhad
  * Created/Updated: February 2026
  */
-function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: SortableBlockItemProps) {
-  const { t } = useTranslation();
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: block.id });
+function SortableBlockItem({
+  block,
+  onEdit,
+  onToggleVisibility,
+  onDelete,
+}: SortableBlockItemProps) {
+  const { t } = useTranslation()
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: block.id,
+  })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-  };
+  }
 
   /**
    * Purpose: Retrieves blocklabel.
@@ -108,19 +109,19 @@ function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: Sort
   const getBlockLabel = () => {
     switch (block.type) {
       case BlockType.LINK:
-        return (block as any).title || t('Untitled Link');
+        return (block as any).title || t('Untitled Link')
       case BlockType.TEXT:
-        return (block as any).content?.substring(0, 30) || t('Empty Text');
+        return (block as any).content?.substring(0, 30) || t('Empty Text')
       case BlockType.HEADING:
-        return (block as any).text || t('Empty Heading');
+        return (block as any).text || t('Empty Heading')
       case BlockType.EMAIL:
-        return (block as any).email || t('Email Button');
+        return (block as any).email || t('Email Button')
       case BlockType.PHONE:
-        return (block as any).phone || t('Phone Button');
+        return (block as any).phone || t('Phone Button')
       default:
-        return blockTypeLabels[block.type];
+        return blockTypeLabels[block.type]
     }
-  };
+  }
 
   return (
     <div
@@ -175,7 +176,7 @@ function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: Sort
         </button>
       </div>
     </div>
-  );
+  )
 }
 
 /**
@@ -184,16 +185,17 @@ function SortableBlockItem({ block, onEdit, onToggleVisibility, onDelete }: Sort
  * Created/Updated: February 2026
  */
 export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
-  const { t } = useTranslation();
-  const [showAddMenu, setShowAddMenu] = useState(false);
-  const [editingBlock, setEditingBlock] = useState<BiolinkBlock | null>(null);
+  const { confirm } = useConfirmation()
+  const { t } = useTranslation()
+  const [showAddMenu, setShowAddMenu] = useState(false)
+  const [editingBlock, setEditingBlock] = useState<BiolinkBlock | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
-  );
+  )
 
   /**
    * Purpose: Executes handleDragEnd functionality.
@@ -201,20 +203,20 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
    * Created/Updated: February 2026
    */
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    const { active, over } = event
 
     if (over && active.id !== over.id) {
-      const oldIndex = blocks.findIndex((block) => block.id === active.id);
-      const newIndex = blocks.findIndex((block) => block.id === over.id);
+      const oldIndex = blocks.findIndex(block => block.id === active.id)
+      const newIndex = blocks.findIndex(block => block.id === over.id)
 
       const reorderedBlocks = arrayMove(blocks, oldIndex, newIndex).map((block, index) => ({
         ...block,
         order: index,
-      }));
+      }))
 
-      onChange(reorderedBlocks);
+      onChange(reorderedBlocks)
     }
-  };
+  }
 
   /**
    * Purpose: Executes handleAddBlock functionality.
@@ -222,22 +224,28 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
    * Created/Updated: February 2026
    */
   const handleAddBlock = (type: BlockType) => {
-    const newBlock = createBlockTemplate(type, blocks.length);
-    onChange([...blocks, newBlock]);
-    setShowAddMenu(false);
-    setEditingBlock(newBlock);
-  };
+    const newBlock = createBlockTemplate(type, blocks.length)
+    onChange([...blocks, newBlock])
+    setShowAddMenu(false)
+    setEditingBlock(newBlock)
+  }
 
   /**
    * Purpose: Executes handleDeleteBlock functionality.
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
-  const handleDeleteBlock = (blockId: string) => {
-    if (confirm(t('Are you sure you want to delete this block?'))) {
-      onChange(blocks.filter((block) => block.id !== blockId));
+  const handleDeleteBlock = async (blockId: string) => {
+    if (
+      await confirm({
+        title: 'Are you sure?',
+        message: t('Are you sure you want to delete this block?'),
+        type: 'danger',
+      })
+    ) {
+      onChange(blocks.filter(block => block.id !== blockId))
     }
-  };
+  }
 
   /**
    * Purpose: Executes handleToggleVisibility functionality.
@@ -246,11 +254,9 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
    */
   const handleToggleVisibility = (blockId: string) => {
     onChange(
-      blocks.map((block) =>
-        block.id === blockId ? { ...block, visible: !block.visible } : block
-      )
-    );
-  };
+      blocks.map(block => (block.id === blockId ? { ...block, visible: !block.visible } : block))
+    )
+  }
 
   /**
    * Purpose: Executes handleUpdateBlock functionality.
@@ -258,9 +264,9 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
    * Created/Updated: February 2026
    */
   const handleUpdateBlock = (updatedBlock: BiolinkBlock) => {
-    onChange(blocks.map((block) => (block.id === updatedBlock.id ? updatedBlock : block)));
-    setEditingBlock(null);
-  };
+    onChange(blocks.map(block => (block.id === updatedBlock.id ? updatedBlock : block)))
+    setEditingBlock(null)
+  }
 
   return (
     <div className="space-y-4">
@@ -277,10 +283,7 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
 
           {showAddMenu && (
             <>
-              <div
-                className="fixed inset-0 z-10"
-                onClick={() => setShowAddMenu(false)}
-              />
+              <div className="fixed inset-0 z-10" onClick={() => setShowAddMenu(false)} />
               <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border z-20 max-h-96 overflow-y-auto">
                 <div className="p-2 space-y-1">
                   {Object.entries(blockTypeLabels).map(([type, label]) => (
@@ -316,14 +319,10 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
           </button>
         </div>
       ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext items={blocks.map((b) => b.id)} strategy={verticalListSortingStrategy}>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={blocks.map(b => b.id)} strategy={verticalListSortingStrategy}>
             <div className="space-y-2">
-              {blocks.map((block) => (
+              {blocks.map(block => (
                 <SortableBlockItem
                   key={block.id}
                   block={block}
@@ -345,5 +344,5 @@ export function BlocksManager({ blocks, onChange }: BlocksManagerProps) {
         />
       )}
     </div>
-  );
+  )
 }

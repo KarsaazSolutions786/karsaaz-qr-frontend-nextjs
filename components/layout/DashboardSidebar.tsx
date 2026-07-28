@@ -24,6 +24,7 @@ interface DashboardSidebarProps {
   isLoggingOut: boolean
   handleLogout: () => void
   isGuest?: boolean
+  bottomWidget?: React.ReactNode
 }
 
 /**
@@ -45,6 +46,7 @@ export function DashboardSidebar({
   isLoggingOut,
   handleLogout,
   isGuest = false,
+  bottomWidget,
 }: DashboardSidebarProps) {
   const { t } = useTranslation()
 
@@ -240,7 +242,9 @@ export function DashboardSidebar({
       <div
         className={`relative z-10 ${sidebarCollapsed ? 'px-3 pb-3 flex items-center justify-center gap-2' : 'px-5 pb-3 flex items-center justify-between gap-1'}`}
       >
-        {sidebarCollapsed ? (
+        {bottomWidget ? (
+          bottomWidget
+        ) : sidebarCollapsed ? (
           <>
             <div className="flex h-[35px] w-[31px] items-center justify-center rounded-[4px] border border-[#1b1b1b0a] bg-white">
               <Image src="/sidebar-assets/apple.svg" alt="App Store" width={16} height={16} />

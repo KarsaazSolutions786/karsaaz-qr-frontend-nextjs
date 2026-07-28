@@ -6,6 +6,7 @@ import { qrcodesAPI } from '@/lib/api/endpoints/qrcodes'
 import { queryKeys } from '@/lib/query/keys'
 import apiClient from '@/lib/api/client'
 import { transformDesignToBackend } from '@/lib/qr/design-transformer'
+import { toast } from 'sonner'
 
 export interface DuplicateOptions {
   count?: number
@@ -212,6 +213,7 @@ export function useQRActions() {
       try {
         await qrcodesAPI.delete(qrCodeId)
         await invalidateQRCaches()
+        toast.success('Successfully moved to trash')
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to delete QR code'
         setError(errorMessage)
@@ -231,6 +233,7 @@ export function useQRActions() {
       try {
         await Promise.all(qrCodeIds.map(id => qrcodesAPI.delete(id)))
         await invalidateQRCaches()
+        toast.success('Successfully moved to trash')
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to bulk delete QR codes'
         setError(errorMessage)

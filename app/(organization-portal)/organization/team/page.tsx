@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { Users, UserPlus, Trash2, Wallet } from 'lucide-react'
+import { useOrgStore } from '@/lib/stores/useOrgStore'
 import {
   organizationAPI,
   organizationRoleAPI,
@@ -12,6 +13,7 @@ import {
   type OrganizationRole,
   type MemberPlanOption,
 } from '@/lib/api/endpoints/organization'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Organization user management per spec §13.5 -- paginated member
@@ -25,12 +27,15 @@ import {
  * Created/Updated: 2026-07-20
  */
 export default function OrganizationTeamPage() {
+  const { confirm } = useConfirmation()
   const searchParams = useSearchParams()
   const orgId = Number(searchParams.get('org') ?? 0)
+  const { selectedOrg } = useOrgStore()
 
   const [members, setMembers] = useState<OrganizationMember[]>([])
   const [roles, setRoles] = useState<OrganizationRole[]>([])
   const [planOptions, setPlanOptions] = useState<MemberPlanOption[]>([])
+  const [defaultPlan, setDefaultPlan] = useState<{ id: number; name: string } | null>(null)
   const [loading, setLoading] = useState(true)
 
   const [showInvite, setShowInvite] = useState(false)
@@ -52,6 +57,7 @@ export default function OrganizationTeamPage() {
         setMembers(membersRes.data.data ?? [])
         setRoles(rolesRes.data.data ?? [])
         setPlanOptions(optionsRes.data.data?.allowed_plans ?? [])
+        setDefaultPlan(optionsRes.data.data?.default_plan ?? null)
       })
       .catch(() => toast.error('Failed to load team'))
       .finally(() => setLoading(false))
@@ -114,7 +120,14 @@ export default function OrganizationTeamPage() {
       toast.error('Cannot remove the owner')
       return
     }
-    if (!confirm(`Remove ${member.user?.name ?? 'this member'} from the organization?`)) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: `Remove ${member.user?.name ?? 'this member'} from the organization?`,
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await organizationAPI.removeMember(orgId, member.id)
       toast.success('Member removed')
@@ -134,7 +147,15 @@ export default function OrganizationTeamPage() {
             <Users className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Team</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-bold text-gray-900">Team</h1>
+              {selectedOrg && (
+                <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                  {members.length} /{' '}
+                  {selectedOrg.max_capacity ?? selectedOrg.org_plan?.max_seats ?? 10}
+                </span>
+              )}
+            </div>
             <p className="text-sm text-gray-500">Manage who has access to this organization.</p>
           </div>
         </div>
@@ -212,7 +233,9 @@ export default function OrganizationTeamPage() {
                         className="flex items-center gap-1 rounded-lg border px-2 py-1 text-xs focus:outline-none"
                         title="Organization default unless overridden"
                       >
-                        <option value="__default__">Organization default</option>
+                        <option value="__default__">
+                          Organization default {defaultPlan ? `(${defaultPlan.name})` : ''}
+                        </option>
                         {planOptions.map(opt => (
                           <option key={opt.subscription_plan.id} value={opt.subscription_plan.id}>
                             {opt.subscription_plan.name}
@@ -221,7 +244,8 @@ export default function OrganizationTeamPage() {
                       </select>
                     ) : (
                       <span className="flex items-center gap-1 text-xs text-gray-400">
-                        <Wallet className="h-3 w-3" /> Organization default
+                        <Wallet className="h-3 w-3" /> Organization default{' '}
+                        {defaultPlan ? `(${defaultPlan.name})` : ''}
                       </span>
                     )}
                   </td>

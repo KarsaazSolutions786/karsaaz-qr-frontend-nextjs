@@ -12,6 +12,7 @@ interface DashboardHeaderProps {
   sidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
   isAccountCreditMode: boolean
+  extraStartComponent?: React.ReactNode
 }
 
 /**
@@ -23,6 +24,7 @@ export function DashboardHeader({
   sidebarOpen,
   setSidebarOpen,
   isAccountCreditMode,
+  extraStartComponent,
 }: DashboardHeaderProps) {
   const { t } = useTranslation()
 
@@ -39,6 +41,9 @@ export function DashboardHeader({
         >
           <Bars3Icon className="h-6 w-6" />
         </button>
+        {extraStartComponent && (
+          <div className="flex items-center lg:hidden">{extraStartComponent}</div>
+        )}
         <div className="flex-1">
           <GlobalSearch />
         </div>
@@ -55,6 +60,7 @@ export function DashboardHeader({
 
       {/* Desktop header bar */}
       <div className="hidden lg:flex sticky top-0 z-10 h-14 items-center gap-x-6 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 shadow-sm">
+        {extraStartComponent && <div className="flex items-center">{extraStartComponent}</div>}
         <div className="flex-1">
           <GlobalSearch />
         </div>

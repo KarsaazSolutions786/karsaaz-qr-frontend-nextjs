@@ -7,6 +7,7 @@ import { useDeletePage } from '@/lib/hooks/mutations/usePageMutations'
 import type { Page } from '@/types/entities/page'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes PagesPage functionality.
@@ -14,6 +15,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function PagesPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -26,7 +28,13 @@ export default function PagesPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async (id: number, title: string) => {
-    if (confirm(t('Are you sure you want to delete "{{title}}"?').replace('{{title}}', title))) {
+    if (
+      await confirm({
+        title: 'Are you sure?',
+        message: t('Are you sure you want to delete "{{title}}"?').replace('{{title}}', title),
+        type: 'danger',
+      })
+    ) {
       await deleteMutation.mutateAsync(id)
     }
   }
@@ -54,7 +62,7 @@ export default function PagesPage() {
             type="search"
             placeholder={t('Search pages...')}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={e => setSearch(e.target.value)}
             className="block w-full rounded-md border border-gray-300 px-4 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 sm:max-w-md"
           />
         </div>
@@ -70,10 +78,18 @@ export default function PagesPage() {
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="w-8 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">ID</th>
-                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">{t('Title')}</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Slug')}</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Published')}</th>
+                    <th className="w-8 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                      ID
+                    </th>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                      {t('Title')}
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {t('Slug')}
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {t('Published')}
+                    </th>
                     <th className="relative py-3.5 pl-3 pr-4">
                       <span className="sr-only">{t('Actions')}</span>
                     </th>
@@ -82,7 +98,9 @@ export default function PagesPage() {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {data.data.map((pageItem: Page) => (
                     <tr key={pageItem.id}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-500">{pageItem.id}</td>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-500">
+                        {pageItem.id}
+                      </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                         {pageItem.title}
                       </td>
@@ -123,7 +141,7 @@ export default function PagesPage() {
             {data.pagination && data.pagination.lastPage > 1 && (
               <div className="mt-6 flex items-center justify-between">
                 <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
                   className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -133,7 +151,7 @@ export default function PagesPage() {
                   {t('Page')} {page} {t('of')} {data.pagination.lastPage}
                 </span>
                 <button
-                  onClick={() => setPage((p) => p + 1)}
+                  onClick={() => setPage(p => p + 1)}
                   disabled={page >= data.pagination.lastPage}
                   className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -158,7 +176,9 @@ export default function PagesPage() {
               />
             </svg>
             <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No pages yet')}</h3>
-            <p className="mt-1 text-sm text-gray-500">{t('Get started by creating your first page')}</p>
+            <p className="mt-1 text-sm text-gray-500">
+              {t('Get started by creating your first page')}
+            </p>
             <div className="mt-6">
               <Link
                 href="/pages/new"

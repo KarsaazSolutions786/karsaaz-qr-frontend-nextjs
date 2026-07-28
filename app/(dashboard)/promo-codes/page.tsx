@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
 import { PageQueryError } from '@/components/common/PageQueryError'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes StatusBadge functionality.
@@ -32,6 +33,7 @@ function StatusBadge({ active }: { active: boolean }) {
  * Created/Updated: February 2026
  */
 export default function PromoCodesPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -66,7 +68,14 @@ export default function PromoCodesPage() {
 
   const handleDelete = async (id: number, code: string) => {
     if (
-      !confirm(t('Delete promo code "{{code}}"? This cannot be undone.').replace('{{code}}', code))
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete promo code "{{code}}"? This cannot be undone.').replace(
+          '{{code}}',
+          code
+        ),
+        type: 'danger',
+      }))
     )
       return
     await deleteMutation.mutateAsync(id)

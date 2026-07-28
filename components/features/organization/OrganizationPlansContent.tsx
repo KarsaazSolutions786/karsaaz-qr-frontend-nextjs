@@ -12,7 +12,9 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { useOrgPlans } from '@/lib/hooks/queries/useOrgPlans'
+import { usePlans } from '@/lib/hooks/queries/usePlans'
 import type { OrgPlan } from '@/lib/api/endpoints/organization'
+import type { SubscriptionPlan } from '@/types/entities/plan'
 
 /** What every organization gets on the platform, regardless of plan tier -- mirrors
  * the actual capabilities built out under app/(dashboard)/organization/*. */
@@ -59,7 +61,13 @@ function formatLimit(n: number) {
   return n === -1 ? 'Unlimited' : n.toLocaleString()
 }
 
-function PlanCard({ plan }: { plan: OrgPlan }) {
+function PlanCard({
+  plan,
+  subscriptionPlans = [],
+}: {
+  plan: OrgPlan
+  subscriptionPlans?: SubscriptionPlan[]
+}) {
   return (
     <div
       className={`relative flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm transition-shadow hover:shadow-lg ${
@@ -92,10 +100,24 @@ function PlanCard({ plan }: { plan: OrgPlan }) {
           <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
           {plan.rate_limit_per_minute} requests/minute rate limit
         </li>
+        {plan.default_subscription_plan_id && (
+          <li className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
+            Default Plan (For Users):{' '}
+            {subscriptionPlans.find(sp => sp.id === plan.default_subscription_plan_id)?.name ||
+              `ID: ${plan.default_subscription_plan_id}`}
+          </li>
+        )}
         {!!plan.included_tokens && (
           <li className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
             {plan.included_tokens.toLocaleString()} bonus credits included
+          </li>
+        )}
+        {plan.max_seats !== undefined && (
+          <li className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
+            {formatLimit(plan.max_seats)} members limit
           </li>
         )}
         {(plan.features ?? []).map(f => (
@@ -134,6 +156,10 @@ function CustomPlanCard() {
         </li>
         <li className="flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
+          Unlimited members support
+        </li>
+        <li className="flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
           Custom rate limits for high-volume integrations
         </li>
         <li className="flex items-center gap-2">
@@ -160,6 +186,7 @@ function CustomPlanCard() {
  */
 export function OrganizationPlansContent() {
   const { data, isLoading, error } = useOrgPlans()
+  const { data: plansData } = usePlans()
   const plans = (data?.data?.data ?? []).filter(p => p.is_active && !p.is_custom)
 
   return (
@@ -191,18 +218,18 @@ export function OrganizationPlansContent() {
             API access, team roles, webhooks, and usage-based billing for teams that integrate QR
             codes into their own products and workflows.
           </p>
-          <div className="mt-8 flex items-center justify-center gap-4">
+          <div className="mt-8 flex justify-center gap-4">
             <Link
               href="/signup?intent=organization"
-              className="rounded-full border-2 border-transparent bg-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:border-white hover:bg-purple-500 hover:shadow-lg hover:shadow-purple-500/50"
+              className="rounded-full bg-purple-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 transition-all"
             >
               Register Organization
             </Link>
             <Link
-              href="/login"
-              className="rounded-full border-2 border-purple-600 px-6 py-3 text-sm font-semibold text-purple-700 transition-colors hover:bg-purple-50"
+              href="/organization-login"
+              className="rounded-full bg-white px-8 py-3 text-sm font-semibold text-purple-600 shadow-sm ring-1 ring-inset ring-purple-200 hover:bg-purple-50 transition-all"
             >
-              Organization Login
+              Login
             </Link>
           </div>
         </div>
@@ -256,7 +283,7 @@ export function OrganizationPlansContent() {
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {plans.map(plan => (
-                <PlanCard key={plan.id} plan={plan} />
+                <PlanCard key={plan.id} plan={plan} subscriptionPlans={plansData?.data ?? []} />
               ))}
               <CustomPlanCard />
             </div>
@@ -265,7 +292,7 @@ export function OrganizationPlansContent() {
 
         <div className="mt-10 text-center text-sm text-gray-500">
           Already have an organization?{' '}
-          <Link href="/login" className="font-medium text-purple-600 hover:underline">
+          <Link href="/organization-login" className="font-medium text-purple-600 hover:underline">
             Sign in
           </Link>
         </div>

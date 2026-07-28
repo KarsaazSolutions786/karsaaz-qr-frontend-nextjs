@@ -7,6 +7,7 @@ import { useDeleteContact } from '@/lib/hooks/mutations/useContactMutations'
 import type { Contact } from '@/types/entities/contact'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes ContactFormPage functionality.
@@ -14,6 +15,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function ContactFormPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -26,7 +28,16 @@ export default function ContactFormPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async (id: number, name: string) => {
-    if (confirm(t('Are you sure you want to delete the submission from "{{name}}"?').replace('{{name}}', name))) {
+    if (
+      await confirm({
+        title: 'Are you sure?',
+        message: t('Are you sure you want to delete the submission from "{{name}}"?').replace(
+          '{{name}}',
+          name
+        ),
+        type: 'danger',
+      })
+    ) {
       await deleteMutation.mutateAsync(id)
     }
   }
@@ -63,9 +74,7 @@ export default function ContactFormPage() {
       <div className="sm:flex sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">{t('Contact Form Submissions')}</h1>
-          <p className="mt-2 text-sm text-gray-600">
-            {t('View messages from your contact form')}
-          </p>
+          <p className="mt-2 text-sm text-gray-600">{t('View messages from your contact form')}</p>
         </div>
       </div>
 
@@ -75,7 +84,7 @@ export default function ContactFormPage() {
             type="search"
             placeholder={t('Search submissions...')}
             value={search}
-            onChange={(e) => {
+            onChange={e => {
               setSearch(e.target.value)
               setPage(1)
             }}
@@ -94,11 +103,21 @@ export default function ContactFormPage() {
               <table className="min-w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">{t('Name')}</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Email')}</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Subject')}</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Message')}</th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{t('Date')}</th>
+                    <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                      {t('Name')}
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {t('Email')}
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {t('Subject')}
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {t('Message')}
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {t('Date')}
+                    </th>
                     <th className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                       <span className="sr-only">{t('Actions')}</span>
                     </th>
@@ -146,7 +165,7 @@ export default function ContactFormPage() {
             {data.pagination && data.pagination.lastPage > 1 && (
               <div className="mt-6 flex items-center justify-between">
                 <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
                   className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -156,7 +175,7 @@ export default function ContactFormPage() {
                   {t('Page')} {page} {t('of')} {data.pagination.lastPage}
                 </span>
                 <button
-                  onClick={() => setPage((p) => p + 1)}
+                  onClick={() => setPage(p => p + 1)}
                   disabled={page >= data.pagination.lastPage}
                   className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
                 >
@@ -167,8 +186,18 @@ export default function ContactFormPage() {
           </>
         ) : (
           <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg
+              className="mx-auto h-12 w-12 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
             <h3 className="mt-2 text-sm font-medium text-gray-900">{t('No submissions found')}</h3>
             <p className="mt-1 text-sm text-gray-500">

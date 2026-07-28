@@ -14,6 +14,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 // Provider display names
 const PROVIDER_NAMES: Record<string, string> = {
@@ -32,8 +33,7 @@ function formatSize(bytes?: number): string {
   if (!bytes) return '\u2014'
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  if (bytes < 1024 * 1024 * 1024)
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`
 }
 
@@ -70,12 +70,13 @@ export function CloudBackupHistory({
   showStartBackup = false,
   onStartBackup,
 }: CloudBackupHistoryProps) {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
 
   if (isLoading) {
     return (
       <div className="space-y-4 p-6">
-        {[1, 2, 3].map((i) => (
+        {[1, 2, 3].map(i => (
           <div key={i} className="flex animate-pulse items-start gap-4">
             <div className="h-10 w-10 rounded-lg bg-gray-200" />
             <div className="flex-1">
@@ -126,14 +127,11 @@ export function CloudBackupHistory({
       )}
 
       <div className="divide-y divide-gray-200">
-        {backups.map((backup) => {
+        {backups.map(backup => {
           const inProgress = isJobInProgress(backup.status)
 
           return (
-            <div
-              key={backup.id}
-              className="p-4 transition-colors hover:bg-gray-50"
-            >
+            <div key={backup.id} className="p-4 transition-colors hover:bg-gray-50">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-4 flex-1">
                   {/* Status Icon */}
@@ -181,9 +179,7 @@ export function CloudBackupHistory({
                         {PROVIDER_NAMES[backup.provider] || backup.provider}
                       </span>
                       {backup.format && (
-                        <span className="text-xs uppercase text-gray-400">
-                          {backup.format}
-                        </span>
+                        <span className="text-xs uppercase text-gray-400">{backup.format}</span>
                       )}
                     </div>
                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
@@ -191,21 +187,16 @@ export function CloudBackupHistory({
                         <Calendar className="h-3.5 w-3.5" />
                         {new Date(backup.created_at).toLocaleString()}
                       </span>
-                      {(backup.total_qr_codes != null ||
-                        backup.files_count != null) && (
+                      {(backup.total_qr_codes != null || backup.files_count != null) && (
                         <span className="flex items-center gap-1">
                           <Database className="h-3.5 w-3.5" />
-                          {backup.total_qr_codes ?? backup.files_count}{' '}
-                          {t('QR codes')}
+                          {backup.total_qr_codes ?? backup.files_count} {t('QR codes')}
                         </span>
                       )}
-                      {(backup.size_bytes != null ||
-                        backup.file_size != null) && (
+                      {(backup.size_bytes != null || backup.file_size != null) && (
                         <span className="flex items-center gap-1">
                           <ArrowUpDown className="h-3.5 w-3.5" />
-                          {formatSize(
-                            backup.size_bytes ?? backup.file_size ?? 0
-                          )}
+                          {formatSize(backup.size_bytes ?? backup.file_size ?? 0)}
                         </span>
                       )}
                       {backup.completed_at && backup.started_at && (
@@ -221,9 +212,7 @@ export function CloudBackupHistory({
                       )}
                     </div>
                     {backup.error_message && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {backup.error_message}
-                      </p>
+                      <p className="mt-1 text-sm text-red-600">{backup.error_message}</p>
                     )}
                   </div>
                 </div>
@@ -231,8 +220,14 @@ export function CloudBackupHistory({
                 {/* Actions */}
                 <div className="ml-4 flex items-center gap-2">
                   <button
-                    onClick={() => {
-                      if (confirm(t('Delete this backup record?'))) {
+                    onClick={async () => {
+                      if (
+                        await confirm({
+                          title: 'Are you sure?',
+                          message: t('Delete this backup record?'),
+                          type: 'danger',
+                        })
+                      ) {
                         onDelete(backup.id)
                       }
                     }}

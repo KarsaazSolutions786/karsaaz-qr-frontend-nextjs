@@ -1,10 +1,11 @@
 'use client'
+'use no memo'
 
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { orgRegisterSchema, type OrgRegisterFormData } from '@/lib/validations/auth'
 import { useRegisterOrganization } from '@/lib/hooks/mutations/useRegisterOrganization'
 import { useTranslation } from '@/lib/i18n'
@@ -22,11 +23,14 @@ import { extractReferralCode, storeReferralCode } from '@/lib/utils/referral-tra
  */
 export function OrgRegisterForm({
   onRegistrationDisabled,
-}: { onRegistrationDisabled?: () => void } = {}) {
+}: {
+  onRegistrationDisabled?: () => void
+}) {
   const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const registerMutation = useRegisterOrganization()
   const searchParams = useSearchParams()
+  const router = useRouter()
 
   useEffect(() => {
     const refCode = searchParams?.get('ref')
@@ -50,19 +54,21 @@ export function OrgRegisterForm({
   const password = watch('password', '')
 
   const onSubmit = async (data: OrgRegisterFormData) => {
+    if (onRegistrationDisabled) onRegistrationDisabled()
     try {
-      await registerMutation.mutateAsync(data)
+      const params = new URLSearchParams({
+        email: data.email,
+        name: data.name,
+        orgName: data.organizationName,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        termsConsent: String(data.termsConsent),
+      })
+      router.push(`/organization-onboard?${params.toString()}`)
     } catch (error: any) {
-      const message = error?.response?.data?.message || error?.message || ''
-      if (
-        message.toLowerCase().includes('registration') &&
-        message.toLowerCase().includes('disabled')
-      ) {
-        onRegistrationDisabled?.()
-      }
+      console.error(error)
     }
   }
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
@@ -229,12 +235,10 @@ export function OrgRegisterForm({
 
       <button
         type="submit"
-        disabled={isSubmitting || registerMutation.isPending}
+        disabled={isSubmitting}
         className="w-full rounded-full bg-[#8351e0] py-2.5 text-sm font-semibold text-white hover:bg-[#7244c8] transition-colors disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {isSubmitting || registerMutation.isPending
-          ? t('Creating your organization...')
-          : t('Create organization')}
+        {isSubmitting ? t('Please wait...') : t('Continue')}
       </button>
 
       <p className="text-center text-xs text-white/90">

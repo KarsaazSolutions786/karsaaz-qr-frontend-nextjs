@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTemplateCategories, useDeleteTemplateCategory } from '@/lib/hooks/queries/useTemplates'
 import { useTranslation } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes TemplateCategoriesPage functionality.
@@ -11,6 +12,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function TemplateCategoriesPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   // TanStack Query hooks
   const { data: categories = [], isLoading: loading } = useTemplateCategories()
@@ -22,7 +24,14 @@ export default function TemplateCategoriesPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async (id: number) => {
-    if (!confirm(t('Delete this category?'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete this category?'),
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await deleteMutation.mutateAsync(id)
     } catch {

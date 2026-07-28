@@ -17,9 +17,21 @@ import {
   Cloud,
   AlertCircle,
 } from 'lucide-react'
-import { useCloudConnections, useBackupJobs, useBackupJob, useCloudStorageMutations, useOAuthPopup } from '@/lib/hooks/queries/useCloudStorage'
-import type { CloudProvider, CloudConnection, BackupJob, BackupJobStatusLegacy } from '@/lib/api/endpoints/cloud-storage'
+import {
+  useCloudConnections,
+  useBackupJobs,
+  useBackupJob,
+  useCloudStorageMutations,
+  useOAuthPopup,
+} from '@/lib/hooks/queries/useCloudStorage'
+import type {
+  CloudProvider,
+  CloudConnection,
+  BackupJob,
+  BackupJobStatusLegacy,
+} from '@/lib/api/endpoints/cloud-storage'
 import { useTranslation } from '@/lib/i18n'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 // ─── Helper Functions ───────────────────────────────────────────────────
 
@@ -77,12 +89,30 @@ const PROVIDERS: ProviderInfo[] = [
     description: 'Connect your Google Drive to back up QR codes and data.',
     icon: (
       <svg className="w-8 h-8" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066DA"/>
-        <path d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 001.2 4.5h27.5z" fill="#00AC47"/>
-        <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.85z" fill="#EA4335"/>
-        <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832D"/>
-        <path d="M59.85 53H27.5l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.3c1.6 0 3.15-.45 4.5-1.2z" fill="#2684FC"/>
-        <path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.2 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#FFBA00"/>
+        <path
+          d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z"
+          fill="#0066DA"
+        />
+        <path
+          d="M43.65 25l-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 001.2 4.5h27.5z"
+          fill="#00AC47"
+        />
+        <path
+          d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.85z"
+          fill="#EA4335"
+        />
+        <path
+          d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z"
+          fill="#00832D"
+        />
+        <path
+          d="M59.85 53H27.5l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.3c1.6 0 3.15-.45 4.5-1.2z"
+          fill="#2684FC"
+        />
+        <path
+          d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25l16.2 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+          fill="#FFBA00"
+        />
       </svg>
     ),
     isOAuth: true,
@@ -93,7 +123,10 @@ const PROVIDERS: ProviderInfo[] = [
     description: 'Connect your Dropbox account for cloud backups.',
     icon: (
       <svg className="w-8 h-8" viewBox="0 0 43 40" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12.5 0L0 8.2l8.6 6.9 12.5-8.2zM0 22l12.5 8.2 8.6-6.9L8.6 15zM21.1 23.3l8.6 6.9L42.2 22l-8.6-6.9zM42.2 8.2L29.7 0l-8.6 6.9 12.5 8.2zM21.2 25.1l-8.6 6.9-3.9-2.6v2.9l12.5 7.5 12.5-7.5v-2.9l-3.9 2.6z" fill="#0061FF"/>
+        <path
+          d="M12.5 0L0 8.2l8.6 6.9 12.5-8.2zM0 22l12.5 8.2 8.6-6.9L8.6 15zM21.1 23.3l8.6 6.9L42.2 22l-8.6-6.9zM42.2 8.2L29.7 0l-8.6 6.9 12.5 8.2zM21.2 25.1l-8.6 6.9-3.9-2.6v2.9l12.5 7.5 12.5-7.5v-2.9l-3.9 2.6z"
+          fill="#0061FF"
+        />
       </svg>
     ),
     isOAuth: true,
@@ -104,7 +137,10 @@ const PROVIDERS: ProviderInfo[] = [
     description: 'Connect your Microsoft OneDrive for backups.',
     icon: (
       <svg className="w-8 h-8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10.146 4.884a5.135 5.135 0 014.673-.657 6.27 6.27 0 012.418 1.43A7.503 7.503 0 0124 12.75a7.502 7.502 0 01-4.5 6.875H8.25a8.248 8.248 0 01-5.915-2.487A8.248 8.248 0 01.5 12a8.248 8.248 0 014.846-7.498 5.14 5.14 0 014.8.382z" fill="#0364B8"/>
+        <path
+          d="M10.146 4.884a5.135 5.135 0 014.673-.657 6.27 6.27 0 012.418 1.43A7.503 7.503 0 0124 12.75a7.502 7.502 0 01-4.5 6.875H8.25a8.248 8.248 0 01-5.915-2.487A8.248 8.248 0 01.5 12a8.248 8.248 0 014.846-7.498 5.14 5.14 0 014.8.382z"
+          fill="#0364B8"
+        />
       </svg>
     ),
     isOAuth: true,
@@ -170,8 +206,8 @@ function BackupModal({
           <div className="flex items-start gap-3 text-amber-700 bg-amber-50 p-4 rounded-lg mb-4">
             <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
             <div>
-            <p className="font-medium">{t('No active cloud connections')}</p>
-            <p className="text-sm mt-1">{t('Please connect a cloud provider first.')}</p>
+              <p className="font-medium">{t('No active cloud connections')}</p>
+              <p className="text-sm mt-1">{t('Please connect a cloud provider first.')}</p>
             </div>
           </div>
           <button
@@ -199,15 +235,18 @@ function BackupModal({
 
         {/* Connection selector */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Cloud Provider')}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t('Cloud Provider')}
+          </label>
           <select
             value={selectedConnection}
-            onChange={(e) => setSelectedConnection(e.target.value)}
+            onChange={e => setSelectedConnection(e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           >
-            {activeConnections.map((c) => (
+            {activeConnections.map(c => (
               <option key={c.id} value={c.id}>
-                {PROVIDERS.find(p => p.id === c.provider)?.name || c.provider} — {getConnectionEmail(c) || c.name || t('Connected')}
+                {PROVIDERS.find(p => p.id === c.provider)?.name || c.provider} —{' '}
+                {getConnectionEmail(c) || c.name || t('Connected')}
               </option>
             ))}
           </select>
@@ -215,10 +254,12 @@ function BackupModal({
 
         {/* Format */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">{t('Export Format')}</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t('Export Format')}
+          </label>
           <select
             value={format}
-            onChange={(e) => setFormat(e.target.value as 'json' | 'zip')}
+            onChange={e => setFormat(e.target.value as 'json' | 'zip')}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           >
             <option value="json">{t('JSON (data only)')}</option>
@@ -232,7 +273,7 @@ function BackupModal({
             <input
               type="checkbox"
               checked={includeDesigns}
-              onChange={(e) => setIncludeDesigns(e.target.checked)}
+              onChange={e => setIncludeDesigns(e.target.checked)}
               className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
             <span className="text-sm text-gray-700">{t('Include QR code designs')}</span>
@@ -241,7 +282,7 @@ function BackupModal({
             <input
               type="checkbox"
               checked={includeAnalytics}
-              onChange={(e) => setIncludeAnalytics(e.target.checked)}
+              onChange={e => setIncludeAnalytics(e.target.checked)}
               className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
             <span className="text-sm text-gray-700">{t('Include analytics data')}</span>
@@ -250,11 +291,13 @@ function BackupModal({
             <input
               type="checkbox"
               checked={includeImages}
-              onChange={(e) => setIncludeImages(e.target.checked)}
+              onChange={e => setIncludeImages(e.target.checked)}
               className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
             />
             <div>
-              <span className="text-sm text-gray-700">{t('Include QR code images (SVG + PNG)')}</span>
+              <span className="text-sm text-gray-700">
+                {t('Include QR code images (SVG + PNG)')}
+              </span>
               <p className="text-xs text-gray-500">{t('Increases backup size significantly')}</p>
             </div>
           </label>
@@ -269,13 +312,15 @@ function BackupModal({
             {t('Cancel')}
           </button>
           <button
-            onClick={() => onStart({
-              connectionId: selectedConnection,
-              format,
-              includeDesigns,
-              includeAnalytics,
-              includeImages,
-            })}
+            onClick={() =>
+              onStart({
+                connectionId: selectedConnection,
+                format,
+                includeDesigns,
+                includeAnalytics,
+                includeImages,
+              })
+            }
             disabled={isStarting || !selectedConnection}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] rounded-md hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
@@ -319,7 +364,7 @@ function MegaConnectModal({
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             placeholder={t('your@email.com')}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
@@ -330,7 +375,7 @@ function MegaConnectModal({
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             placeholder={t('Enter your MEGA password')}
             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
           />
@@ -379,7 +424,7 @@ function BackupProgress({
   // Get progress percentage from various backend field names
   const progressPercent = job.progress ?? job.progress_percentage ?? 0
   const isInProgress = isJobInProgress(job.status)
-  
+
   // Format file size
   /**
    * Purpose: Executes formatSize functionality.
@@ -465,6 +510,7 @@ function BackupProgress({
  * Created/Updated: February 2026
  */
 export default function CloudStoragePage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState<'connections' | 'history'>('connections')
   const [showBackupModal, setShowBackupModal] = useState(false)
@@ -472,7 +518,11 @@ export default function CloudStoragePage() {
   const [pollingJobId, setPollingJobId] = useState<string | null>(null)
 
   // Real data from API
-  const { data: connections, isLoading: connectionsLoading, refetch: refetchConnections } = useCloudConnections()
+  const {
+    data: connections,
+    isLoading: connectionsLoading,
+    refetch: refetchConnections,
+  } = useCloudConnections()
   const { data: backupJobs, isLoading: backupsLoading } = useBackupJobs()
   const { data: pollingJob } = useBackupJob(pollingJobId)
 
@@ -500,52 +550,66 @@ export default function CloudStoragePage() {
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
-  const getProviderInfo = (provider: CloudProvider) =>
-    PROVIDERS.find(p => p.id === provider)
+  const getProviderInfo = (provider: CloudProvider) => PROVIDERS.find(p => p.id === provider)
 
   // Handle connect button click (use new OAuth popup hook)
-  const handleConnect = useCallback(async (provider: ProviderInfo) => {
-    if (provider.isOAuth) {
-      try {
-        await openOAuthPopup(provider.id as Exclude<CloudProvider, 'mega'>)
-      } catch (error) {
-        console.error('OAuth popup error:', error)
-        // Show error to user
+  const handleConnect = useCallback(
+    async (provider: ProviderInfo) => {
+      if (provider.isOAuth) {
+        try {
+          await openOAuthPopup(provider.id as Exclude<CloudProvider, 'mega'>)
+        } catch (error) {
+          console.error('OAuth popup error:', error)
+          // Show error to user
+        }
+      } else {
+        // MEGA — show credentials modal
+        setShowMegaModal(true)
       }
-    } else {
-      // MEGA — show credentials modal
-      setShowMegaModal(true)
-    }
-  }, [openOAuthPopup])
+    },
+    [openOAuthPopup]
+  )
 
   // Handle MEGA connect
-  const handleMegaConnect = useCallback((email: string, password: string) => {
-    connectMega.mutate({ email, password }, {
-      onSuccess: () => setShowMegaModal(false),
-    })
-  }, [connectMega])
+  const handleMegaConnect = useCallback(
+    (email: string, password: string) => {
+      connectMega.mutate(
+        { email, password },
+        {
+          onSuccess: () => setShowMegaModal(false),
+        }
+      )
+    },
+    [connectMega]
+  )
 
   // Handle start backup (updated for new modal props)
-  const handleStartBackup = useCallback((config: {
-    connectionId: string
-    format: string
-    includeDesigns: boolean
-    includeAnalytics: boolean
-    includeImages: boolean
-  }) => {
-    createBackup.mutate({
-      connection_id: config.connectionId,
-      format: config.format as 'json' | 'zip',
-      include_designs: config.includeDesigns,
-      include_analytics: config.includeAnalytics,
-      include_images: config.includeImages,
-    }, {
-      onSuccess: (job) => {
-        setShowBackupModal(false)
-        setPollingJobId(job.id)
-      },
-    })
-  }, [createBackup])
+  const handleStartBackup = useCallback(
+    (config: {
+      connectionId: string
+      format: string
+      includeDesigns: boolean
+      includeAnalytics: boolean
+      includeImages: boolean
+    }) => {
+      createBackup.mutate(
+        {
+          connection_id: config.connectionId,
+          format: config.format as 'json' | 'zip',
+          include_designs: config.includeDesigns,
+          include_analytics: config.includeAnalytics,
+          include_images: config.includeImages,
+        },
+        {
+          onSuccess: job => {
+            setShowBackupModal(false)
+            setPollingJobId(job.id)
+          },
+        }
+      )
+    },
+    [createBackup]
+  )
 
   // Format file size
   /**
@@ -578,7 +642,9 @@ export default function CloudStoragePage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900">{t('Cloud Storage')}</h1>
               <p className="mt-1 text-sm text-gray-600">
-                {activeTab === 'connections' ? t('Connect cloud storage providers for backups') : t('View backup history and manage backups')}
+                {activeTab === 'connections'
+                  ? t('Connect cloud storage providers for backups')
+                  : t('View backup history and manage backups')}
               </p>
             </div>
           </div>
@@ -645,7 +711,10 @@ export default function CloudStoragePage() {
           {connectionsLoading ? (
             <div className="space-y-4">
               {[1, 2, 3, 4].map(i => (
-                <div key={i} className="animate-pulse bg-white rounded-lg border border-gray-200 p-5">
+                <div
+                  key={i}
+                  className="animate-pulse bg-white rounded-lg border border-gray-200 p-5"
+                >
                   <div className="flex items-center gap-4">
                     <div className="w-8 h-8 bg-gray-200 rounded" />
                     <div className="flex-1">
@@ -657,7 +726,7 @@ export default function CloudStoragePage() {
               ))}
             </div>
           ) : (
-            PROVIDERS.map((provider) => {
+            PROVIDERS.map(provider => {
               const connection = connectedProviders.find(c => c.provider === provider.id)
               // Use helper function to get normalized status
               const connectionStatus = connection ? getConnectionStatus(connection) : null
@@ -670,10 +739,13 @@ export default function CloudStoragePage() {
                 <div
                   key={provider.id}
                   className={`overflow-hidden rounded-lg border bg-white shadow-sm ${
-                    isConnected ? 'border-green-300 ring-1 ring-green-200' :
-                    isExpired ? 'border-yellow-300 ring-1 ring-yellow-200' :
-                    isInactive ? 'border-red-300 ring-1 ring-red-200' :
-                    'border-gray-200'
+                    isConnected
+                      ? 'border-green-300 ring-1 ring-green-200'
+                      : isExpired
+                        ? 'border-yellow-300 ring-1 ring-yellow-200'
+                        : isInactive
+                          ? 'border-red-300 ring-1 ring-red-200'
+                          : 'border-gray-200'
                   }`}
                 >
                   <div className="flex items-center justify-between p-5">
@@ -685,7 +757,8 @@ export default function CloudStoragePage() {
                         {connection && (
                           <p className="text-xs text-gray-400 mt-1">
                             {email && `${email} · `}
-                            {connection.connected_at && `Connected ${new Date(connection.connected_at).toLocaleDateString()}`}
+                            {connection.connected_at &&
+                              `Connected ${new Date(connection.connected_at).toLocaleDateString()}`}
                           </p>
                         )}
                       </div>
@@ -710,8 +783,17 @@ export default function CloudStoragePage() {
                             )}
                           </button>
                           <button
-                            onClick={() => {
-                              if (confirm(t('Disconnect {{name}}?').replace('{{name}}', provider.name))) {
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  title: 'Are you sure?',
+                                  message: t('Disconnect {{name}}?').replace(
+                                    '{{name}}',
+                                    provider.name
+                                  ),
+                                  type: 'danger',
+                                })
+                              ) {
                                 deleteConnection.mutate(connection!.id)
                               }
                             }}
@@ -730,7 +812,9 @@ export default function CloudStoragePage() {
                           </span>
                           {provider.isOAuth && (
                             <button
-                              onClick={() => refreshToken.mutate(provider.id as Exclude<CloudProvider, 'mega'>)}
+                              onClick={() =>
+                                refreshToken.mutate(provider.id as Exclude<CloudProvider, 'mega'>)
+                              }
                               disabled={refreshToken.isPending}
                               className="inline-flex items-center gap-1 text-sm font-medium text-purple-600 hover:text-purple-700 disabled:opacity-50"
                             >
@@ -739,8 +823,17 @@ export default function CloudStoragePage() {
                             </button>
                           )}
                           <button
-                            onClick={() => {
-                              if (confirm(t('Disconnect {{name}}?').replace('{{name}}', provider.name))) {
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  title: 'Are you sure?',
+                                  message: t('Disconnect {{name}}?').replace(
+                                    '{{name}}',
+                                    provider.name
+                                  ),
+                                  type: 'danger',
+                                })
+                              ) {
                                 deleteConnection.mutate(connection!.id)
                               }
                             }}
@@ -757,8 +850,17 @@ export default function CloudStoragePage() {
                             {t('Inactive')}
                           </span>
                           <button
-                            onClick={() => {
-                              if (confirm(t('Remove {{name}} connection?').replace('{{name}}', provider.name))) {
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  title: 'Are you sure?',
+                                  message: t('Remove {{name}} connection?').replace(
+                                    '{{name}}',
+                                    provider.name
+                                  ),
+                                  type: 'danger',
+                                })
+                              ) {
                                 deleteConnection.mutate(connection!.id)
                               }
                             }}
@@ -774,7 +876,7 @@ export default function CloudStoragePage() {
                           disabled={isOAuthProcessing || connectMega.isPending}
                           className="inline-flex items-center gap-2 rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white shadow-sm hover:brightness-105 disabled:opacity-50 transition-all"
                         >
-                          {(isOAuthProcessing || connectMega.isPending) ? (
+                          {isOAuthProcessing || connectMega.isPending ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
                           ) : (
                             <ExternalLink className="w-4 h-4" />
@@ -799,7 +901,9 @@ export default function CloudStoragePage() {
                     {t('No cloud storage connected')}
                   </p>
                   <p className="text-sm text-blue-700 mt-1">
-                    {t('Connect a cloud storage provider above to start backing up your QR codes and data.')}
+                    {t(
+                      'Connect a cloud storage provider above to start backing up your QR codes and data.'
+                    )}
                   </p>
                 </div>
               </div>
@@ -841,8 +945,7 @@ export default function CloudStoragePage() {
                 <p className="text-sm text-gray-500 mt-1">
                   {connectedProviders.length > 0
                     ? t('Click "Start Backup Now" to create your first backup')
-                    : t('Connect a cloud storage provider first, then start a backup')
-                  }
+                    : t('Connect a cloud storage provider first, then start a backup')}
                 </p>
                 {connectedProviders.length > 0 && (
                   <button
@@ -856,10 +959,10 @@ export default function CloudStoragePage() {
               </div>
             ) : (
               <div className="divide-y divide-gray-200">
-                {backups.map((backup) => {
+                {backups.map(backup => {
                   const providerInfo = getProviderInfo(backup.provider)
                   const backupInProgress = isJobInProgress(backup.status)
-                  
+
                   return (
                     <div key={backup.id} className="p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex items-start justify-between">
@@ -896,10 +999,10 @@ export default function CloudStoragePage() {
                                   backup.status === 'completed'
                                     ? 'bg-green-100 text-green-700'
                                     : backup.status === 'failed'
-                                    ? 'bg-red-100 text-red-700'
-                                    : backup.status === 'cancelled'
-                                    ? 'bg-amber-100 text-amber-700'
-                                    : 'bg-primary-100 text-primary-700'
+                                      ? 'bg-red-100 text-red-700'
+                                      : backup.status === 'cancelled'
+                                        ? 'bg-amber-100 text-amber-700'
+                                        : 'bg-primary-100 text-primary-700'
                                 }`}
                               >
                                 {backup.status === 'completed' && t('Completed')}
@@ -913,7 +1016,9 @@ export default function CloudStoragePage() {
                                 {providerInfo?.name || backup.provider}
                               </span>
                               {backup.format && (
-                                <span className="text-xs text-gray-400 uppercase">{backup.format}</span>
+                                <span className="text-xs text-gray-400 uppercase">
+                                  {backup.format}
+                                </span>
                               )}
                             </div>
                             <div className="flex items-center gap-4 text-sm text-gray-600">
@@ -936,7 +1041,12 @@ export default function CloudStoragePage() {
                               {backup.completed_at && backup.started_at && (
                                 <span className="flex items-center gap-1">
                                   <Clock className="w-3.5 h-3.5" />
-                                  {Math.round((new Date(backup.completed_at).getTime() - new Date(backup.started_at).getTime()) / 1000)}s
+                                  {Math.round(
+                                    (new Date(backup.completed_at).getTime() -
+                                      new Date(backup.started_at).getTime()) /
+                                      1000
+                                  )}
+                                  s
                                 </span>
                               )}
                             </div>
@@ -949,8 +1059,14 @@ export default function CloudStoragePage() {
                         {/* Actions */}
                         <div className="flex items-center gap-2 ml-4">
                           <button
-                            onClick={() => {
-                              if (confirm(t('Delete this backup record?'))) {
+                            onClick={async () => {
+                              if (
+                                await confirm({
+                                  title: 'Are you sure?',
+                                  message: t('Delete this backup record?'),
+                                  type: 'danger',
+                                })
+                              ) {
                                 deleteBackupJob.mutate(backup.id)
                               }
                             }}

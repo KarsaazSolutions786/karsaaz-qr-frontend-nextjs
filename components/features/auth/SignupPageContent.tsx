@@ -122,7 +122,7 @@ export function SignupPageContent() {
         <p className="text-center text-xs text-white/90">
           {t('Already manage an organization?')}{' '}
           <Link
-            href="/login"
+            href="/organization-login"
             className="font-semibold text-white underline decoration-solid hover:text-white/80"
           >
             {t('Sign in')}

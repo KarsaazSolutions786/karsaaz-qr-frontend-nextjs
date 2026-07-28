@@ -6,6 +6,7 @@ import type { FormResponse } from './types'
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 interface FormResponseViewerProps {
   responses: FormResponse[]
@@ -24,7 +25,8 @@ export default function FormResponseViewer({
   onDeleteResponse,
   loading = false,
 }: FormResponseViewerProps) {
-  const { t } = useTranslation();
+  const { confirm } = useConfirmation()
+  const { t } = useTranslation()
   const [selectedResponse, setSelectedResponse] = useState<FormResponse | null>(null)
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -34,12 +36,12 @@ export default function FormResponseViewer({
   const columns = useMemo(() => {
     if (responses.length === 0) return []
     const firstResponse = responses[0]!
-    return firstResponse.fields.map((f) => f.name)
+    return firstResponse.fields.map(f => f.name)
   }, [responses])
 
   // Filter by date range
   const filteredResponses = useMemo(() => {
-    return responses.filter((response) => {
+    return responses.filter(response => {
       const responseDate = new Date(response.createdAt)
 
       if (dateFrom) {
@@ -62,7 +64,11 @@ export default function FormResponseViewer({
     async (id: number) => {
       if (!onDeleteResponse) return
 
-      const confirmed = window.confirm('Are you sure you want to delete this response?')
+      const confirmed = await confirm({
+        title: 'Are you sure?',
+        message: 'Are you sure you want to delete this response?',
+        type: 'danger',
+      })
       if (!confirmed) return
 
       setDeletingId(id)
@@ -77,7 +83,7 @@ export default function FormResponseViewer({
         setDeletingId(null)
       }
     },
-    [onDeleteResponse, selectedResponse]
+    [onDeleteResponse, selectedResponse, confirm]
   )
 
   const exportCsv = useCallback(() => {
@@ -85,21 +91,17 @@ export default function FormResponseViewer({
 
     const headers = ['#', 'Date', ...columns]
     const rows = filteredResponses.map((response, index) => {
-      const fieldValues = columns.map((colName) => {
-        const field = response.fields.find((f) => f.name === colName)
+      const fieldValues = columns.map(colName => {
+        const field = response.fields.find(f => f.name === colName)
         return field?.value || ''
       })
-      return [
-        String(index + 1),
-        new Date(response.createdAt).toLocaleString(),
-        ...fieldValues,
-      ]
+      return [String(index + 1), new Date(response.createdAt).toLocaleString(), ...fieldValues]
     })
 
     const csvContent = [headers, ...rows]
-      .map((row) =>
+      .map(row =>
         row
-          .map((cell) => {
+          .map(cell => {
             // Escape double quotes and wrap in quotes if contains comma/newline
             const escaped = cell.replace(/"/g, '""')
             return /[,\n"]/.test(cell) ? `"${escaped}"` : escaped
@@ -131,7 +133,12 @@ export default function FormResponseViewer({
             className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             {t('Back to list')}
           </button>
@@ -153,9 +160,7 @@ export default function FormResponseViewer({
                   <p className="text-sm font-medium text-gray-500">{field.name}</p>
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm text-gray-900 whitespace-pre-wrap">
-                    {field.value || '-'}
-                  </p>
+                  <p className="text-sm text-gray-900 whitespace-pre-wrap">{field.value || '-'}</p>
                 </div>
               </div>
             ))}
@@ -183,7 +188,9 @@ export default function FormResponseViewer({
       <div className="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
         <div className="mb-3 text-4xl text-gray-300">&#128203;</div>
         <p className="text-sm text-gray-500">{t('No responses yet')}</p>
-        <p className="text-xs text-gray-400 mt-1">{t('Responses will appear here once the form is submitted')}</p>
+        <p className="text-xs text-gray-400 mt-1">
+          {t('Responses will appear here once the form is submitted')}
+        </p>
       </div>
     )
   }
@@ -197,7 +204,7 @@ export default function FormResponseViewer({
           <Input
             type="date"
             value={dateFrom}
-            onChange={(e) => setDateFrom(e.target.value)}
+            onChange={e => setDateFrom(e.target.value)}
             className="w-40"
             placeholder="From"
           />
@@ -205,7 +212,7 @@ export default function FormResponseViewer({
           <Input
             type="date"
             value={dateTo}
-            onChange={(e) => setDateTo(e.target.value)}
+            onChange={e => setDateTo(e.target.value)}
             className="w-40"
             placeholder="To"
           />
@@ -247,7 +254,7 @@ export default function FormResponseViewer({
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 {t('Date')}
               </th>
-              {columns.map((col) => (
+              {columns.map(col => (
                 <th
                   key={col}
                   className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -267,14 +274,12 @@ export default function FormResponseViewer({
                 className="hover:bg-gray-50 cursor-pointer"
                 onClick={() => setSelectedResponse(response)}
               >
-                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
-                  {index + 1}
-                </td>
+                <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">{index + 1}</td>
                 <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500">
                   {new Date(response.createdAt).toLocaleDateString()}
                 </td>
-                {columns.map((col) => {
-                  const field = response.fields.find((f) => f.name === col)
+                {columns.map(col => {
+                  const field = response.fields.find(f => f.name === col)
                   return (
                     <td
                       key={col}
@@ -287,7 +292,7 @@ export default function FormResponseViewer({
                 <td className="whitespace-nowrap px-4 py-3 text-right text-sm">
                   <button
                     type="button"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation()
                       handleDelete(response.id)
                     }}

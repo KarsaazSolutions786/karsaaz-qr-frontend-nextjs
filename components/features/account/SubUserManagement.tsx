@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { TrashIcon, UserPlusIcon } from '@heroicons/react/24/outline'
 import { useSubUsers, useDeleteSubUser, useInviteSubUser } from '@/lib/hooks/queries/useUsers'
 import { useTranslation } from '@/lib/i18n'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 export interface SubUserEntry {
   id: number | string
@@ -53,6 +54,7 @@ export function SubUserManagement({
   maxUsers,
   userId,
 }: SubUserManagementProps) {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [showInvite, setShowInvite] = useState(false)
   const [inviteName, setInviteName] = useState('')
@@ -130,7 +132,14 @@ export function SubUserManagement({
    * Created/Updated: February 2026
    */
   async function handleRemove(userId: number | string) {
-    if (!confirm(t('Remove this user? They will lose all access.'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Remove this user? They will lose all access.'),
+        type: 'danger',
+      }))
+    )
+      return
     setRemoving(userId)
     try {
       await onRemove(userId)

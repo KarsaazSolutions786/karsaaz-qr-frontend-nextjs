@@ -67,7 +67,6 @@ export function QRPreviewImage({
 
     // Fetch immediately — pagination limits items per page so no perf concern
     fetchSvg(svgUrl)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [svgUrl])
 
   /**
@@ -103,7 +102,10 @@ export function QRPreviewImage({
       if (typeof data === 'object' && data?.content) {
         // JSON response: { content: "base64_svg" }
         svgString = atob(data.content)
-      } else if (typeof data === 'string' && (contentType.includes('svg') || data.trim().startsWith('<'))) {
+      } else if (
+        typeof data === 'string' &&
+        (contentType.includes('svg') || data.trim().startsWith('<'))
+      ) {
         // Raw SVG string response
         svgString = data
       } else {
@@ -175,7 +177,7 @@ export function QRPreviewImage({
         width={size}
         height={size}
         className={`rounded-md object-contain ${className}`}
-        onError={(e) => {
+        onError={e => {
           ;(e.target as HTMLImageElement).style.display = 'none'
         }}
       />

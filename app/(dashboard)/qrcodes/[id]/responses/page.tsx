@@ -20,6 +20,7 @@ import {
   FunnelIcon,
   TableCellsIcon,
 } from '@heroicons/react/24/outline'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 // ---------- CSV helpers ----------
 
@@ -95,6 +96,7 @@ function endOfDay(date: Date): Date {
  * Created/Updated: March 2026
  */
 export default function FormResponsesPage({ params }: { params: { id: string } }) {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const qrCodeId = params.id
 
@@ -198,7 +200,14 @@ export default function FormResponsesPage({ params }: { params: { id: string } }
    * Created/Updated: March 2026
    */
   const handleDelete = async (responseId: number) => {
-    if (!window.confirm(t('Delete this response? This cannot be undone.'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Delete this response? This cannot be undone.'),
+        type: 'danger',
+      }))
+    )
+      return
     await deleteMutation.mutateAsync(responseId)
   }
 

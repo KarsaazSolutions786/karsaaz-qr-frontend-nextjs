@@ -50,6 +50,7 @@ import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredM
 import { BulkChangeTypeModal } from '@/components/qr/BulkChangeTypeModal'
 import { BulkChangeOwnerModal } from '@/components/qr/BulkChangeOwnerModal'
 import { useGuest } from '@/lib/hooks/useGuest'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes QRCodesPage functionality.
@@ -57,6 +58,7 @@ import { useGuest } from '@/lib/hooks/useGuest'
  * Created/Updated: February 2026
  */
 export default function QRCodesPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const router = useRouter()
   const pathname = usePathname()
@@ -465,7 +467,7 @@ export default function QRCodesPage() {
 
   // Single-item action handler for QRCodeCard and QRCodeDetailedRow
   const handleRowAction = useCallback(
-    (action: string, qrCodeId: string) => {
+    async (action: string, qrCodeId: string) => {
       switch (action) {
         case 'view':
         case 'preview':
@@ -510,7 +512,13 @@ export default function QRCodesPage() {
           changeStatus(qrCodeId, 'inactive')
           break
         case 'delete':
-          if (confirm(t('Are you sure you want to delete this QR code?'))) {
+          if (
+            await confirm({
+              title: 'Are you sure?',
+              message: t('Are you sure you want to delete this QR code?'),
+              type: 'danger',
+            })
+          ) {
             deleteQRCode(qrCodeId)
           }
           break
@@ -521,7 +529,7 @@ export default function QRCodesPage() {
           break
       }
     },
-    [router, archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode, downloadQRCode, t]
+    [router, archiveQRCode, duplicateQRCode, changeStatus, deleteQRCode, downloadQRCode, t, confirm]
   )
 
   if (error) {

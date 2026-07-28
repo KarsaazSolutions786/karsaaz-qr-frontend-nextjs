@@ -15,6 +15,7 @@ import {
   Save,
   X,
   Building2,
+  Users,
 } from 'lucide-react'
 import {
   orgPlanAPI,
@@ -22,6 +23,9 @@ import {
   type OrgPlan,
   type Organization,
 } from '@/lib/api/endpoints/organization'
+import { plansAPI } from '@/lib/api/endpoints/plans'
+import type { SubscriptionPlan } from '@/types/entities/plan'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 const DEFAULT_FORM: Omit<OrgPlan, 'id' | 'slug' | 'created_at' | 'is_custom'> = {
   name: '',
@@ -32,6 +36,8 @@ const DEFAULT_FORM: Omit<OrgPlan, 'id' | 'slug' | 'created_at' | 'is_custom'> = 
   rate_limit_per_minute: 60,
   included_tokens: 0,
   features: [],
+  max_seats: -1,
+  default_subscription_plan_id: null,
   is_active: true,
   is_popular: false,
   organization_id: null,
@@ -53,6 +59,7 @@ function formatLimit(n: number) {
  * Created/Updated: April 2026
  */
 export default function OrgPlansPage() {
+  const { confirm } = useConfirmation()
   const searchParams = useSearchParams()
   const orgId = Number(searchParams.get('org') ?? 0)
   const wantsCustomCreate = searchParams.get('custom') === '1' && !!orgId
@@ -60,6 +67,7 @@ export default function OrgPlansPage() {
 
   const [plans, setPlans] = useState<OrgPlan[]>([])
   const [org, setOrg] = useState<Organization | null>(null)
+  const [subPlans, setSubPlans] = useState<SubscriptionPlan[]>([])
   const [loading, setLoading] = useState(true)
 
   const [showForm, setShowForm] = useState(false)
@@ -79,7 +87,8 @@ export default function OrgPlansPage() {
           .then(res => setOrg(res.data.data))
           .catch(() => null)
       : Promise.resolve()
-    Promise.all([p, o])
+    const sp = plansAPI.getAll({ page: 1 }).then(res => setSubPlans(res.data))
+    Promise.all([p, o, sp])
       .catch(() => toast.error('Failed to load plans'))
       .finally(() => setLoading(false))
   }, [orgId])
@@ -125,6 +134,8 @@ export default function OrgPlansPage() {
       rate_limit_per_minute: plan.rate_limit_per_minute,
       included_tokens: plan.included_tokens ?? 0,
       features: plan.features ?? [],
+      max_seats: plan.max_seats ?? -1,
+      default_subscription_plan_id: plan.default_subscription_plan_id ?? null,
       is_active: plan.is_active,
       is_popular: plan.is_popular,
       organization_id: plan.organization_id,
@@ -205,7 +216,14 @@ export default function OrgPlansPage() {
    * Created/Updated: April 2026
    */
   const handleDelete = async (plan: OrgPlan) => {
-    if (!confirm(`Delete plan "${plan.name}"? This cannot be undone.`)) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: `Delete plan "${plan.name}"? This cannot be undone.`,
+        type: 'danger',
+      }))
+    )
+      return
     try {
       await orgPlanAPI.delete(plan.id)
       setPlans(p => p.filter(x => x.id !== plan.id))
@@ -383,6 +401,23 @@ export default function OrgPlansPage() {
                   Rate limit:{' '}
                   <span className="font-semibold ml-auto">{plan.rate_limit_per_minute}/min</span>
                 </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                  Default Plan (For Users):{' '}
+                  <span className="font-semibold ml-auto">
+                    {plan.default_subscription_plan_id
+                      ? subPlans.find(sp => sp.id === plan.default_subscription_plan_id)?.name ||
+                        `ID: ${plan.default_subscription_plan_id}`
+                      : 'None'}
+                  </span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Users className="h-3.5 w-3.5 text-blue-400 shrink-0" />
+                  Max Members:{' '}
+                  <span className="font-semibold ml-auto">
+                    {plan.max_seats === -1 ? 'Unlimited' : plan.max_seats}
+                  </span>
+                </li>
               </ul>
 
               {plan.features && plan.features.length > 0 && (
@@ -534,6 +569,50 @@ export default function OrgPlansPage() {
                     }
                     className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                   />
+                </div>
+              </div>
+
+              {/* Members & Default Plan */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-gray-600">
+                    Max Members
+                  </label>
+                  <input
+                    type="number"
+                    min="-1"
+                    value={form.max_seats}
+                    onChange={e =>
+                      setForm(p => ({ ...p, max_seats: parseInt(e.target.value) || -1 }))
+                    }
+                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                  />
+                  <p className="mt-0.5 text-xs text-gray-400">-1 = unlimited</p>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-semibold text-gray-600">
+                    Default User Plan
+                  </label>
+                  <select
+                    value={form.default_subscription_plan_id ?? ''}
+                    onChange={e =>
+                      setForm(p => ({
+                        ...p,
+                        default_subscription_plan_id: e.target.value
+                          ? parseInt(e.target.value)
+                          : null,
+                      }))
+                    }
+                    className="w-full rounded-lg border px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 bg-white"
+                  >
+                    <option value="">None</option>
+                    {subPlans.map(sp => (
+                      <option key={sp.id} value={sp.id}>
+                        {sp.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-0.5 text-xs text-gray-400">Assigned automatically</p>
                 </div>
               </div>
 

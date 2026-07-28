@@ -15,6 +15,7 @@ import { translationsAPI } from '@/lib/api/endpoints/translations'
 import type { Translation } from '@/types/entities/translation'
 import { useTranslation as useI18n } from '@/lib/i18n'
 import { LottieLoader } from '@/components/ui/lottie-loader'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes TranslationsPage functionality.
@@ -22,6 +23,7 @@ import { LottieLoader } from '@/components/ui/lottie-loader'
  * Created/Updated: February 2026
  */
 export default function TranslationsPage() {
+  const { confirm } = useConfirmation()
   const router = useRouter()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -47,7 +49,13 @@ export default function TranslationsPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async (id: number, name: string) => {
-    if (confirm(t('Are you sure you want to delete') + ` "${name}"?`)) {
+    if (
+      await confirm({
+        title: 'Are you sure?',
+        message: t('Are you sure you want to delete') + ` "${name}"?`,
+        type: 'danger',
+      })
+    ) {
       await deleteMutation.mutateAsync(id)
     }
   }
@@ -57,18 +65,29 @@ export default function TranslationsPage() {
    * Owner/Author: Syed Ashhad
    * Created/Updated: February 2026
    */
-  const handleAutoTranslate = (id: number) => {
+  const handleAutoTranslate = async (id: number) => {
     if (!canAutoTranslate) {
       if (
-        confirm(
-          t('Google Translate API key is not configured. Go to System Settings to configure it?')
-        )
+        await confirm({
+          title: 'Are you sure?',
+          message: t(
+            'Google Translate API key is not configured. Go to System Settings to configure it?'
+          ),
+          type: 'danger',
+        })
       ) {
         router.push('/system/settings?tab-id=advanced')
       }
       return
     }
-    if (!confirm(t('Start auto-translation? This may take a few minutes.'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Start auto-translation? This may take a few minutes.'),
+        type: 'danger',
+      }))
+    )
+      return
     autoTranslateMutation.mutate(id, {
       onSuccess: () => {
         toast.success(t('Auto-translation started. This may take a few minutes to complete.'))

@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useCreatePlan } from '@/lib/hooks/mutations/usePlanMutations'
 import { BalloonSelector } from '@/components/ui/balloon-selector'
 import { BASE_PLAN_FEATURES } from '@/lib/constants/plan-features'
@@ -14,6 +13,7 @@ import {
 } from '@/components/features/plans/QrTypeLimitsEditor'
 import { useTranslation } from '@/lib/i18n'
 import { useAllDesignAssets } from '@/lib/hooks/queries/useDesignAssets'
+import { CreateOrgPlanForm } from './CreateOrgPlanForm'
 
 const FREQUENCY_OPTIONS = [
   { value: 'monthly', label: 'Monthly' },
@@ -46,7 +46,6 @@ const inputClass =
  */
 export default function NewPlanPage() {
   const { t } = useTranslation()
-  const router = useRouter()
   const createMutation = useCreatePlan()
   const { data: designAssets = [] } = useAllDesignAssets()
 
@@ -182,7 +181,6 @@ export default function NewPlanPage() {
             type="button"
             onClick={() => {
               setAudience('organization')
-              router.push('/organization/plans?create=1')
             }}
             className={`rounded-lg border-2 px-4 py-3 text-left transition-colors ${
               audience === 'organization'
@@ -204,353 +202,361 @@ export default function NewPlanPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* 1. Basic Details */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Basic Details')}</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Name')} <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={form.name}
-                onChange={e => set('name', e.target.value)}
-                className={inputClass}
-                placeholder={t('e.g. Pro Monthly')}
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">{t('Frequency')}</label>
-              <div className="mt-1">
-                <BalloonSelector
-                  options={FREQUENCY_OPTIONS}
-                  value={form.frequency}
-                  onChange={v => set('frequency', v)}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {audience === 'organization' ? (
+        <CreateOrgPlanForm />
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* 1. Basic Details */}
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Basic Details')}</h2>
+            <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  {t('Price')}{' '}
-                  <span className="text-xs text-gray-400">({t('Type 0 for free')})</span>
+                  {t('Name')} <span className="text-red-500">*</span>
                 </label>
                 <input
-                  type="number"
-                  min={0}
-                  step={0.01}
-                  value={form.price}
-                  onChange={e => set('price', e.target.value)}
+                  type="text"
+                  required
+                  value={form.name}
+                  onChange={e => set('name', e.target.value)}
                   className={inputClass}
+                  placeholder={t('e.g. Pro Monthly')}
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700">{t('Sort Order')}</label>
-                <input
-                  type="number"
-                  value={form.sortOrder}
-                  onChange={e => set('sortOrder', e.target.value)}
-                  className={inputClass}
-                />
+                <label className="block text-sm font-medium text-gray-700">{t('Frequency')}</label>
+                <div className="mt-1">
+                  <BalloonSelector
+                    options={FREQUENCY_OPTIONS}
+                    value={form.frequency}
+                    onChange={v => set('frequency', v)}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-start gap-6">
-              <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={form.isHidden}
-                  onChange={e => set('isHidden', e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600"
-                />
-                {t('Hidden')}
-              </label>
-              <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
-                <input
-                  type="checkbox"
-                  checked={form.isTrial}
-                  onChange={e => set('isTrial', e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-blue-600"
-                />
-                {t('Is Trial')}
-              </label>
-            </div>
-
-            {form.isTrial && (
-              <div className="sm:max-w-xs">
-                <label className="block text-sm font-medium text-gray-700">{t('Trial Days')}</label>
-                <input
-                  type="number"
-                  min={1}
-                  value={form.trialDays}
-                  onChange={e => set('trialDays', e.target.value)}
-                  className={inputClass}
-                />
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* 2. Plan Configuration */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Plan Configuration')}</h2>
-          <p className="mb-4 text-sm text-gray-500">{t('Use -1 for unlimited.')}</p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Number of Dynamic QR Codes')}
-              </label>
-              <input
-                type="number"
-                min={-1}
-                value={form.numberOfDynamicQrcodes}
-                onChange={e => set('numberOfDynamicQrcodes', e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Number of Scans')}
-              </label>
-              <input
-                type="number"
-                min={-1}
-                value={form.numberOfScans}
-                onChange={e => set('numberOfScans', e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Number of Custom Domains')}
-              </label>
-              <input
-                type="number"
-                min={-1}
-                step={1}
-                value={form.numberOfCustomDomains}
-                onChange={e => set('numberOfCustomDomains', e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('File Size Limit (MB)')}
-              </label>
-              <input
-                type="number"
-                min={-1}
-                step={1}
-                value={form.fileSizeLimit}
-                onChange={e => set('fileSizeLimit', e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Number of Users')}
-              </label>
-              <input
-                type="number"
-                min={-1}
-                step={1}
-                value={form.numberOfUsers}
-                onChange={e => set('numberOfUsers', e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Number of Menu Items (Restaurant Menu)')}
-              </label>
-              <input
-                type="number"
-                min={-1}
-                step={1}
-                value={form.numberOfRestaurantMenuItems}
-                onChange={e => set('numberOfRestaurantMenuItems', e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Number of Products (Product Catalogue)')}
-              </label>
-              <input
-                type="number"
-                min={-1}
-                step={1}
-                value={form.numberOfProductCatalogueItems}
-                onChange={e => set('numberOfProductCatalogueItems', e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Number of AI Generations')}
-              </label>
-              <input
-                type="number"
-                min={-1}
-                value={form.numberOfAiGenerations}
-                onChange={e => set('numberOfAiGenerations', e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Number of Bulk Created QR Codes')}
-              </label>
-              <input
-                type="number"
-                min={-1}
-                value={form.numberOfBulkCreatedQrcodes}
-                onChange={e => set('numberOfBulkCreatedQrcodes', e.target.value)}
-                className={inputClass}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* 3. Ads Settings */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Ads Settings')}</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                {t('Show Ads. Default (Disabled)')}
-              </label>
-              <p className="mb-2 text-xs text-gray-500">
-                {t('Show ads before redirecting to the QR code.')}
-              </p>
-              <BalloonSelector
-                options={ADS_OPTIONS}
-                value={form.showAds}
-                onChange={v => set('showAds', v)}
-              />
-            </div>
-
-            {form.showAds === 'enabled' && (
-              <>
-                <div className="sm:max-w-xs">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('Ads Timeout. Default (15)')}
+                    {t('Price')}{' '}
+                    <span className="text-xs text-gray-400">({t('Type 0 for free')})</span>
                   </label>
-                  <p className="mb-1 text-xs text-gray-500">
-                    {t('Timeout before showing the final QR code in seconds.')}
-                  </p>
                   <input
                     type="number"
                     min={0}
-                    value={form.adsTimeout}
-                    onChange={e => set('adsTimeout', e.target.value)}
+                    step={0.01}
+                    value={form.price}
+                    onChange={e => set('price', e.target.value)}
                     className={inputClass}
-                    placeholder="15"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">
-                    {t('Ads Code. (HTML)')}
+                    {t('Sort Order')}
                   </label>
-                  <p className="mb-1 text-xs text-gray-500">
-                    {t('Add the ads code in HTML below.')}
-                  </p>
-                  <textarea
-                    rows={6}
-                    value={form.adsCode}
-                    onChange={e => set('adsCode', e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs shadow-sm focus:border-blue-500 focus:outline-none"
-                    placeholder="<script>...</script>"
+                  <input
+                    type="number"
+                    value={form.sortOrder}
+                    onChange={e => set('sortOrder', e.target.value)}
+                    className={inputClass}
                   />
                 </div>
-              </>
-            )}
-          </div>
-        </section>
+              </div>
 
-        {/* 4. Available QR Code Types */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Available Types')}</h2>
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('QR Code Types')}
-              </label>
-              <BalloonSelector
-                options={qrTypeOptions}
-                value={form.qrTypes}
-                onChange={v => set('qrTypes', v)}
-                multiple
-              />
+              <div className="flex items-start gap-6">
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={form.isHidden}
+                    onChange={e => set('isHidden', e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600"
+                  />
+                  {t('Hidden')}
+                </label>
+                <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={form.isTrial}
+                    onChange={e => set('isTrial', e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-blue-600"
+                  />
+                  {t('Is Trial')}
+                </label>
+              </div>
+
+              {form.isTrial && (
+                <div className="sm:max-w-xs">
+                  <label className="block text-sm font-medium text-gray-700">
+                    {t('Trial Days')}
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={form.trialDays}
+                    onChange={e => set('trialDays', e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
+              )}
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('Unavailable types behaviour. (Default is showing upgrade message)')}
-              </label>
-              <BalloonSelector
-                options={UNAVAILABLE_TYPES_OPTIONS}
-                value={form.unavailableTypesBehaviour}
-                onChange={v => set('unavailableTypesBehaviour', v)}
-              />
+          </section>
+
+          {/* 2. Plan Configuration */}
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Plan Configuration')}</h2>
+            <p className="mb-4 text-sm text-gray-500">{t('Use -1 for unlimited.')}</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('Number of Dynamic QR Codes')}
+                </label>
+                <input
+                  type="number"
+                  min={-1}
+                  value={form.numberOfDynamicQrcodes}
+                  onChange={e => set('numberOfDynamicQrcodes', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('Number of Scans')}
+                </label>
+                <input
+                  type="number"
+                  min={-1}
+                  value={form.numberOfScans}
+                  onChange={e => set('numberOfScans', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('Number of Custom Domains')}
+                </label>
+                <input
+                  type="number"
+                  min={-1}
+                  step={1}
+                  value={form.numberOfCustomDomains}
+                  onChange={e => set('numberOfCustomDomains', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('File Size Limit (MB)')}
+                </label>
+                <input
+                  type="number"
+                  min={-1}
+                  step={1}
+                  value={form.fileSizeLimit}
+                  onChange={e => set('fileSizeLimit', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('Number of Users')}
+                </label>
+                <input
+                  type="number"
+                  min={-1}
+                  step={1}
+                  value={form.numberOfUsers}
+                  onChange={e => set('numberOfUsers', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('Number of Menu Items (Restaurant Menu)')}
+                </label>
+                <input
+                  type="number"
+                  min={-1}
+                  step={1}
+                  value={form.numberOfRestaurantMenuItems}
+                  onChange={e => set('numberOfRestaurantMenuItems', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('Number of Products (Product Catalogue)')}
+                </label>
+                <input
+                  type="number"
+                  min={-1}
+                  step={1}
+                  value={form.numberOfProductCatalogueItems}
+                  onChange={e => set('numberOfProductCatalogueItems', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('Number of AI Generations')}
+                </label>
+                <input
+                  type="number"
+                  min={-1}
+                  value={form.numberOfAiGenerations}
+                  onChange={e => set('numberOfAiGenerations', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('Number of Bulk Created QR Codes')}
+                </label>
+                <input
+                  type="number"
+                  min={-1}
+                  value={form.numberOfBulkCreatedQrcodes}
+                  onChange={e => set('numberOfBulkCreatedQrcodes', e.target.value)}
+                  className={inputClass}
+                />
+              </div>
             </div>
+          </section>
+
+          {/* 3. Ads Settings */}
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Ads Settings')}</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  {t('Show Ads. Default (Disabled)')}
+                </label>
+                <p className="mb-2 text-xs text-gray-500">
+                  {t('Show ads before redirecting to the QR code.')}
+                </p>
+                <BalloonSelector
+                  options={ADS_OPTIONS}
+                  value={form.showAds}
+                  onChange={v => set('showAds', v)}
+                />
+              </div>
+
+              {form.showAds === 'enabled' && (
+                <>
+                  <div className="sm:max-w-xs">
+                    <label className="block text-sm font-medium text-gray-700">
+                      {t('Ads Timeout. Default (15)')}
+                    </label>
+                    <p className="mb-1 text-xs text-gray-500">
+                      {t('Timeout before showing the final QR code in seconds.')}
+                    </p>
+                    <input
+                      type="number"
+                      min={0}
+                      value={form.adsTimeout}
+                      onChange={e => set('adsTimeout', e.target.value)}
+                      className={inputClass}
+                      placeholder="15"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                      {t('Ads Code. (HTML)')}
+                    </label>
+                    <p className="mb-1 text-xs text-gray-500">
+                      {t('Add the ads code in HTML below.')}
+                    </p>
+                    <textarea
+                      rows={6}
+                      value={form.adsCode}
+                      onChange={e => set('adsCode', e.target.value)}
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs shadow-sm focus:border-blue-500 focus:outline-none"
+                      placeholder="<script>...</script>"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </section>
+
+          {/* 4. Available QR Code Types */}
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Available Types')}</h2>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('QR Code Types')}
+                </label>
+                <BalloonSelector
+                  options={qrTypeOptions}
+                  value={form.qrTypes}
+                  onChange={v => set('qrTypes', v)}
+                  multiple
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('Unavailable types behaviour. (Default is showing upgrade message)')}
+                </label>
+                <BalloonSelector
+                  options={UNAVAILABLE_TYPES_OPTIONS}
+                  value={form.unavailableTypesBehaviour}
+                  onChange={v => set('unavailableTypesBehaviour', v)}
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* 5. Dynamic Type Limits */}
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('QR Type Limits')}</h2>
+            <QrTypeLimitsEditor
+              limits={form.qrTypeLimits}
+              onChange={qrTypeLimits => set('qrTypeLimits', qrTypeLimits)}
+            />
+          </section>
+
+          {/* 6. Other Features */}
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Other Features')}</h2>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('Features')}</label>
+            <BalloonSelector
+              options={featureOptions}
+              value={form.features}
+              onChange={v => set('features', v)}
+              multiple
+            />
+          </section>
+
+          {/* 7. Plan Checkpoints */}
+          <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Plan Checkpoints')}</h2>
+            <p className="mb-4 text-sm text-gray-500">
+              {t('Displayed on the pricing page as plan milestones.')}
+            </p>
+            <PlanCheckpoints
+              checkpoints={form.checkpoints}
+              onChange={checkpoints => set('checkpoints', checkpoints)}
+            />
+          </section>
+
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-4">
+            <Link
+              href="/plans"
+              className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              {t('Cancel')}
+            </Link>
+            <button
+              type="submit"
+              disabled={createMutation.isPending}
+              className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+            >
+              {createMutation.isPending ? t('Creating…') : t('Create Plan')}
+            </button>
           </div>
-        </section>
-
-        {/* 5. Dynamic Type Limits */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('QR Type Limits')}</h2>
-          <QrTypeLimitsEditor
-            limits={form.qrTypeLimits}
-            onChange={qrTypeLimits => set('qrTypeLimits', qrTypeLimits)}
-          />
-        </section>
-
-        {/* 6. Other Features */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Other Features')}</h2>
-          <label className="block text-sm font-medium text-gray-700 mb-2">{t('Features')}</label>
-          <BalloonSelector
-            options={featureOptions}
-            value={form.features}
-            onChange={v => set('features', v)}
-            multiple
-          />
-        </section>
-
-        {/* 7. Plan Checkpoints */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('Plan Checkpoints')}</h2>
-          <p className="mb-4 text-sm text-gray-500">
-            {t('Displayed on the pricing page as plan milestones.')}
-          </p>
-          <PlanCheckpoints
-            checkpoints={form.checkpoints}
-            onChange={checkpoints => set('checkpoints', checkpoints)}
-          />
-        </section>
-
-        {/* Actions */}
-        <div className="flex items-center justify-end gap-4">
-          <Link
-            href="/plans"
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            {t('Cancel')}
-          </Link>
-          <button
-            type="submit"
-            disabled={createMutation.isPending}
-            className="rounded-md bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-6 py-2 text-sm font-semibold text-white shadow-sm hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
-          >
-            {createMutation.isPending ? t('Creating…') : t('Create Plan')}
-          </button>
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   )
 }

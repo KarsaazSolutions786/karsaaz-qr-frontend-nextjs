@@ -9,6 +9,7 @@ import BiolinkEditor from '@/components/features/biolinks/editor/BiolinkEditor'
 import BiolinkPreview from '@/components/features/biolinks/editor/BiolinkPreview'
 import type { BlockData } from '@/types/entities/biolink'
 import { useTranslation } from '@/lib/i18n'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes EditBiolinkPage functionality.
@@ -16,6 +17,7 @@ import { useTranslation } from '@/lib/i18n'
  * Created/Updated: February 2026
  */
 export default function EditBiolinkPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const router = useRouter()
   const params = useParams()
@@ -33,6 +35,7 @@ export default function EditBiolinkPage() {
 
   useEffect(() => {
     if (biolink) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTitle(biolink.title)
       setSlug(biolink.slug)
       setDescription(biolink.description || '')
@@ -73,7 +76,13 @@ export default function EditBiolinkPage() {
    * Created/Updated: February 2026
    */
   const handleDelete = async () => {
-    if (confirm('Delete this biolink? This action cannot be undone.')) {
+    if (
+      await confirm({
+        title: 'Are you sure?',
+        message: 'Delete this biolink? This action cannot be undone.',
+        type: 'danger',
+      })
+    ) {
       try {
         await deleteMutation.mutateAsync(id)
         router.push('/biolinks')
@@ -124,7 +133,7 @@ export default function EditBiolinkPage() {
               <input
                 type="text"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={e => setTitle(e.target.value)}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
             </div>
@@ -134,7 +143,7 @@ export default function EditBiolinkPage() {
               <input
                 type="text"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />
               <p className="mt-1 text-xs text-gray-500">yoursite.com/{slug}</p>
@@ -144,7 +153,7 @@ export default function EditBiolinkPage() {
               <label className="block text-sm font-medium text-gray-700">{t('Description')}</label>
               <textarea
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={e => setDescription(e.target.value)}
                 rows={3}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
               />

@@ -37,6 +37,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 /**
  * Purpose: Executes TrashPage functionality.
@@ -44,6 +45,7 @@ import {
  * Created/Updated: May 2026
  */
 export default function TrashPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -133,7 +135,14 @@ export default function TrashPage() {
    * Created/Updated: May 2026
    */
   const handleDestroyForever = async (id: string) => {
-    if (!confirm(t('Permanently delete this QR code? This cannot be undone.'))) return
+    if (
+      !(await confirm({
+        title: 'Are you sure?',
+        message: t('Permanently delete this QR code? This cannot be undone.'),
+        type: 'danger',
+      }))
+    )
+      return
     await destroyOne.mutateAsync(id)
     toast.success(t('QR code permanently deleted'))
   }

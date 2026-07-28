@@ -16,6 +16,7 @@ import { AdminSetUserPasswordModal } from '@/components/features/users/AdminSetU
 import { SubuserPermissionsForm } from '@/components/features/users/SubuserPermissionsForm'
 import { usePasswordlessStatus } from '@/lib/hooks/mutations/usePasswordlessAuth'
 import { useTranslation } from '@/lib/i18n'
+import { useConfirmation } from '@/components/ui/confirmation-modal'
 
 interface FormState {
   name: string
@@ -32,6 +33,7 @@ interface FormState {
  * Created/Updated: February 2026
  */
 export default function EditUserPage() {
+  const { confirm } = useConfirmation()
   const { t } = useTranslation()
   const params = useParams()
   const userId = params.id as string
@@ -162,7 +164,13 @@ export default function EditUserPage() {
    * Created/Updated: February 2026
    */
   const handleVerifyEmail = async () => {
-    if (confirm("Mark this user's email as verified?")) {
+    if (
+      await confirm({
+        title: 'Are you sure?',
+        message: "Mark this user's email as verified?",
+        type: 'danger',
+      })
+    ) {
       await verifyEmailMutation.mutateAsync(Number(userId))
     }
   }
