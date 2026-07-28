@@ -20,6 +20,8 @@ export interface Organization {
     name: string
     max_seats: number
   }
+  members_count?: number
+  plan_limit?: number
 }
 
 export interface OrganizationMember {

@@ -37,10 +37,9 @@ export default function OrganizationDashboardOverview() {
             <div>
               <p className="text-sm font-medium text-gray-500">Team Members</p>
               <h2 className="text-2xl font-bold text-gray-900">
-                {/* We can show an active count if the API supports it, for now a placeholder showing the scale */}
-                1{' '}
+                {selectedOrg.members_count ?? 1}{' '}
                 <span className="text-sm text-gray-400 font-normal">
-                  / {selectedOrg.max_capacity ?? 10}
+                  / {selectedOrg.plan_limit ?? 5}
                 </span>
               </h2>
             </div>

@@ -216,7 +216,7 @@ export default function OrganizationPage() {
                     <div className="flex items-center justify-center gap-1.5">
                       <KeyRound className="h-4 w-4 text-green-500" />
                       <span className="text-base font-bold text-gray-900">
-                        {org.plan ?? 'Free'}
+                        {org.org_plan?.name ?? (org.plan as any)?.name ?? 'Free'}
                       </span>
                     </div>
                   </div>

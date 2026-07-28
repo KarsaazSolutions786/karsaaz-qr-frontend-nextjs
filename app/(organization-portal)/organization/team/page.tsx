@@ -151,8 +151,7 @@ export default function OrganizationTeamPage() {
               <h1 className="text-2xl font-bold text-gray-900">Team</h1>
               {selectedOrg && (
                 <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
-                  {members.length} /{' '}
-                  {selectedOrg.max_capacity ?? selectedOrg.org_plan?.max_seats ?? 10}
+                  {members.length} / {selectedOrg.plan_limit ?? 5}
                 </span>
               )}
             </div>
