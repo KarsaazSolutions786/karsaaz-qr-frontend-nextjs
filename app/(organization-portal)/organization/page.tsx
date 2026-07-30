@@ -50,7 +50,7 @@ export default function OrganizationPage() {
     e.stopPropagation()
     const isConfirmed = await confirm({
       title: 'Delete Organization',
-      message: `Are you sure you want to delete "${org.name}"? This action cannot be undone.`,
+      message: `Are you sure you want to delete "${org.name}"? All your users, data/QRs and organisation will be permanently deleted.`,
       type: 'danger',
     })
 
@@ -101,13 +101,15 @@ export default function OrganizationPage() {
             Manage organizations and their API access to the QR platform.
           </p>
         </div>
-        <button
-          onClick={() => setShowForm(v => !v)}
-          className="flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 transition-all"
-        >
-          <Plus className="h-4 w-4" />
-          New Organization
-        </button>
+        {!canManageAllOrgs && orgs.length >= 1 ? null : (
+          <button
+            onClick={() => setShowForm(v => !v)}
+            className="flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 transition-all"
+          >
+            <Plus className="h-4 w-4" />
+            New Organization
+          </button>
+        )}
       </div>
 
       {/* Create form */}
