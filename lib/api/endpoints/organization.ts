@@ -203,14 +203,6 @@ export const organizationMemberPlanAPI = {
     apiClient.get<{
       data: { default_plan: { id: number; name: string } | null; allowed_plans: MemberPlanOption[] }
     }>(`/organization/${orgId}/member-plan-options`),
-
-  assign: (orgId: number, membershipId: number, subscriptionPlanId: number) =>
-    apiClient.patch<{ data: unknown }>(`/organization/${orgId}/members/${membershipId}/plan`, {
-      subscription_plan_id: subscriptionPlanId,
-    }),
-
-  removeOverride: (orgId: number, membershipId: number) =>
-    apiClient.delete(`/organization/${orgId}/members/${membershipId}/plan-override`),
 }
 
 // ─── API Keys ─────────────────────────────────────────────────────────────────

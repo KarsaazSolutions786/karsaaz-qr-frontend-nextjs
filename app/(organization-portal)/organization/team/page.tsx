@@ -11,7 +11,6 @@ import {
   organizationMemberPlanAPI,
   type OrganizationMember,
   type OrganizationRole,
-  type MemberPlanOption,
 } from '@/lib/api/endpoints/organization'
 import { useConfirmation } from '@/components/ui/confirmation-modal'
 
@@ -34,7 +33,6 @@ export default function OrganizationTeamPage() {
 
   const [members, setMembers] = useState<OrganizationMember[]>([])
   const [roles, setRoles] = useState<OrganizationRole[]>([])
-  const [planOptions, setPlanOptions] = useState<MemberPlanOption[]>([])
   const [defaultPlan, setDefaultPlan] = useState<{ id: number; name: string } | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -56,7 +54,6 @@ export default function OrganizationTeamPage() {
       .then(([membersRes, rolesRes, optionsRes]) => {
         setMembers(membersRes.data.data ?? [])
         setRoles(rolesRes.data.data ?? [])
-        setPlanOptions(optionsRes.data.data?.allowed_plans ?? [])
         setDefaultPlan(optionsRes.data.data?.default_plan ?? null)
       })
       .catch(() => toast.error('Failed to load team'))
@@ -96,22 +93,6 @@ export default function OrganizationTeamPage() {
       load()
     } catch (err: any) {
       toast.error(err?.response?.data?.error ?? 'Failed to update role')
-    }
-  }
-
-  const handlePlanChange = async (member: OrganizationMember, value: string) => {
-    try {
-      if (value === '__default__') {
-        await organizationMemberPlanAPI.removeOverride(orgId, member.id)
-        toast.success('Reverted to the organization default plan')
-      } else {
-        await organizationMemberPlanAPI.assign(orgId, member.id, Number(value))
-        toast.success('Plan assigned')
-      }
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.error ?? err?.response?.data?.message ?? 'Failed to change plan'
-      )
     }
   }
 
@@ -225,28 +206,10 @@ export default function OrganizationTeamPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    {planOptions.length > 0 ? (
-                      <select
-                        defaultValue="__default__"
-                        onChange={e => handlePlanChange(member, e.target.value)}
-                        className="flex items-center gap-1 rounded-lg border px-2 py-1 text-xs focus:outline-none"
-                        title="Organization default unless overridden"
-                      >
-                        <option value="__default__">
-                          Organization default {defaultPlan ? `(${defaultPlan.name})` : ''}
-                        </option>
-                        {planOptions.map(opt => (
-                          <option key={opt.subscription_plan.id} value={opt.subscription_plan.id}>
-                            {opt.subscription_plan.name}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <span className="flex items-center gap-1 text-xs text-gray-400">
-                        <Wallet className="h-3 w-3" /> Organization default{' '}
-                        {defaultPlan ? `(${defaultPlan.name})` : ''}
-                      </span>
-                    )}
+                    <span className="flex items-center gap-1 text-xs text-gray-500 font-medium">
+                      <Wallet className="h-3 w-3" /> Organization default{' '}
+                      {defaultPlan ? `(${defaultPlan.name})` : ''}
+                    </span>
                   </td>
                   <td className="px-4 py-3 text-right">
                     {member.role !== 'owner' && (
