@@ -114,7 +114,7 @@ function PlanCard({
             {plan.included_tokens.toLocaleString()} bonus credits included
           </li>
         )}
-        {plan.max_seats !== undefined && (
+        {plan.max_seats != null && (
           <li className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 shrink-0 text-purple-500" />
             {formatLimit(plan.max_seats)} members limit
