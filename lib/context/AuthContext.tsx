@@ -187,6 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem('logged_in')
       localStorage.removeItem('mainUser')
       localStorage.removeItem('org-storage')
+      sessionStorage.clear()
       useOrgStore.getState().setSelectedOrg(null)
     }
     queryClient.setQueryData(queryKeys.auth.currentUser(), null)

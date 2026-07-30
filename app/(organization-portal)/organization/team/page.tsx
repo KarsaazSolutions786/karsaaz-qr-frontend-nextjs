@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { Users, UserPlus, Trash2, Wallet } from 'lucide-react'
+import { Users, UserPlus, Trash2, Wallet, X, Sparkles } from 'lucide-react'
 import { useOrgStore } from '@/lib/stores/useOrgStore'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { isSuperAdmin } from '@/lib/utils/permissions'
 import {
   organizationAPI,
   organizationRoleAPI,
@@ -30,6 +32,7 @@ export default function OrganizationTeamPage() {
   const searchParams = useSearchParams()
   const orgId = Number(searchParams.get('org') ?? 0)
   const { selectedOrg } = useOrgStore()
+  const { user } = useAuth()
 
   const [members, setMembers] = useState<OrganizationMember[]>([])
   const [roles, setRoles] = useState<OrganizationRole[]>([])
@@ -42,6 +45,27 @@ export default function OrganizationTeamPage() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('developer')
   const [submitting, setSubmitting] = useState(false)
+
+  const [showUpgradeBanner, setShowUpgradeBanner] = useState(false)
+
+  useEffect(() => {
+    const isAdmin = user ? isSuperAdmin(user) : false
+    if (selectedOrg && (selectedOrg.plan_limit ?? 1) <= 1 && !isAdmin) {
+      const hasDismissed = sessionStorage.getItem(`dismissed_org_upgrade_banner_${selectedOrg.id}`)
+      if (!hasDismissed) {
+        setShowUpgradeBanner(true)
+      }
+    } else {
+      setShowUpgradeBanner(false)
+    }
+  }, [selectedOrg, user])
+
+  const dismissBanner = () => {
+    if (selectedOrg) {
+      sessionStorage.setItem(`dismissed_org_upgrade_banner_${selectedOrg.id}`, 'true')
+    }
+    setShowUpgradeBanner(false)
+  }
 
   const load = () => {
     if (!orgId) return
@@ -120,8 +144,34 @@ export default function OrganizationTeamPage() {
 
   if (!orgId) return <p className="text-gray-500">Select an organization first.</p>
 
+  const isAdmin = user ? isSuperAdmin(user) : false
+  const isAtLimit = !isAdmin && members.length >= (selectedOrg?.plan_limit ?? 1)
+
   return (
     <div className="max-w-4xl">
+      {showUpgradeBanner && (
+        <div className="mb-6 flex items-start justify-between rounded-xl border border-purple-100 bg-gradient-to-r from-purple-50 to-pink-50 p-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-purple-100/50">
+              <Sparkles className="h-5 w-5 text-purple-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-purple-900">Unlock Team Collaboration</h3>
+              <p className="mt-0.5 text-sm text-purple-700">
+                Your organization is currently on a free plan. Upgrade to a paid plan to invite
+                members and collaborate with your team!
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={dismissBanner}
+            className="shrink-0 rounded-lg p-1 text-purple-400 transition-colors hover:bg-purple-100/50 hover:text-purple-600"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+      )}
+
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-100">
@@ -132,20 +182,30 @@ export default function OrganizationTeamPage() {
               <h1 className="text-2xl font-bold text-gray-900">Team</h1>
               {selectedOrg && (
                 <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
-                  {members.length} / {selectedOrg.plan_limit ?? 5}
+                  {members.length} / {selectedOrg.plan_limit ?? 1}
                 </span>
               )}
             </div>
             <p className="text-sm text-gray-500">Manage who has access to this organization.</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowInvite(true)}
-          className="flex items-center gap-2 rounded-lg bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] px-4 py-2 text-sm font-medium text-white hover:brightness-105 transition-all"
+        <span
+          title={isAtLimit ? 'Upgrade/Purchase the plan to add more members' : undefined}
+          className={isAtLimit ? 'cursor-not-allowed inline-block' : ''}
         >
-          <UserPlus className="h-4 w-4" />
-          Add member
-        </button>
+          <button
+            onClick={() => setShowInvite(true)}
+            disabled={isAtLimit}
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white transition-all ${
+              isAtLimit
+                ? 'bg-gray-400 cursor-not-allowed pointer-events-none'
+                : 'bg-[radial-gradient(circle,_#E889FF_0%,_#B36AC5_100%)] hover:brightness-105'
+            }`}
+          >
+            <UserPlus className="h-4 w-4" />
+            Add member
+          </button>
+        </span>
       </div>
 
       {loading ? (
