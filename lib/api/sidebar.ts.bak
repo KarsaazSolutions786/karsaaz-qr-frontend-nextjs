@@ -26,8 +26,7 @@ export async function getSidebarFolders(userId?: number | string): Promise<Folde
     const folders = await foldersAPI.listByUser(userId)
     return folders || []
   } catch (error) {
-    if (process.env.NODE_ENV === 'development')
-      console.error('Failed to fetch sidebar folders:', error)
+    if (process.env.NODE_ENV === 'development') console.error('Failed to fetch sidebar folders:', error)
     return []
   }
 }
@@ -37,11 +36,11 @@ export async function getSidebarTemplateCategories(): Promise<TemplateCategory[]
     const categories = await fetchTemplateCategories()
     return categories || []
   } catch (error) {
-    if (process.env.NODE_ENV === 'development')
-      console.error('Failed to fetch sidebar template categories:', error)
+    if (process.env.NODE_ENV === 'development') console.error('Failed to fetch sidebar template categories:', error)
     return []
   }
 }
+
 
 export async function getDynamicQRCodeCount(): Promise<number> {
   try {
@@ -71,13 +70,13 @@ export async function getDynamicQRCodeCount(): Promise<number> {
       },
     })
 
-    return response.data?.total || response.data?.meta?.total || response.data?.length || 0
+    return response.data?.meta?.total || response.data?.length || 0
   } catch (error) {
-    if (process.env.NODE_ENV === 'development')
-      console.error('Failed to fetch QR code count:', error)
+    if (process.env.NODE_ENV === 'development') console.error('Failed to fetch QR code count:', error)
     return 0
   }
 }
+
 
 export async function getTotalScans(): Promise<number> {
   try {
@@ -110,20 +109,15 @@ export async function getTotalScans(): Promise<number> {
   }
 }
 
-type RawUser = {
-  subscriptions?: Array<{
-    statuses?: Array<{ status?: string }>
-    subscription_plan?: Plan
-    updated_at?: string
-    created_at?: string
-  }>
-}
+type RawUser = { subscriptions?: Array<{ statuses?: Array<{ status?: string }>; subscription_plan?: Plan; updated_at?: string; created_at?: string }> }
 
 export function getCurrentPlanFromUser(user: RawUser | null | undefined): Plan | null {
   if (!user?.subscriptions || !Array.isArray(user.subscriptions)) {
     return null
   }
-  const activeSubscription = user.subscriptions.find(sub => sub.statuses?.[0]?.status === 'active')
+  const activeSubscription = user.subscriptions.find(
+    (sub) => sub.statuses?.[0]?.status === 'active'
+  )
   if (activeSubscription?.subscription_plan) {
     return activeSubscription.subscription_plan
   }
@@ -139,6 +133,7 @@ export function getCurrentPlanFromUser(user: RawUser | null | undefined): Plan |
   return null
 }
 
+
 export async function getCurrentPlan(): Promise<Plan | null> {
   // This endpoint doesn't exist - return null and let consumer use getCurrentPlanFromUser
   return null
@@ -152,6 +147,7 @@ export async function getUserStats(): Promise<UserStats> {
     total_scans: scans,
   }
 }
+
 
 export function formatLimit(value: number | 'unlimited' | string): string {
   if (value === 'unlimited' || value === '0' || value === 0) {
