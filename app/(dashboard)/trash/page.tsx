@@ -29,6 +29,8 @@ import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 import { QRCode } from '@/types/entities/qrcode'
 import { BackendQRPreview } from '@/components/qr/BackendQRPreview'
+import { useSubscriptionLimits } from '@/lib/hooks/useSubscriptionLimits'
+import { UpgradeRequiredModal } from '@/components/subscription/UpgradeRequiredModal'
 import {
   Dialog,
   DialogContent,
@@ -47,6 +49,12 @@ import { useConfirmation } from '@/components/ui/confirmation-modal'
 export default function TrashPage() {
   const { confirm } = useConfirmation()
   const { t } = useTranslation()
+  const {
+    showUpgradeModal,
+    setShowUpgradeModal,
+    usage: quotaUsage,
+    limits: quotaLimits,
+  } = useSubscriptionLimits()
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const [sortBy, setSortBy] = useState<SortOption>('date-desc')
@@ -98,9 +106,20 @@ export default function TrashPage() {
         label: t('Restore'),
         icon: <RotateCcw className="w-4 h-4" />,
         onClick: async (ids: string[]) => {
-          await restoreMany.mutateAsync(ids)
-          deselectAll()
-          toast.success(t('QR codes restored successfully'))
+          try {
+            await restoreMany.mutateAsync(ids)
+            deselectAll()
+            toast.success(t('QR codes restored successfully'))
+          } catch (error: any) {
+            if (
+              error?.message === 'upgrade_required' ||
+              error?.message === 'PLAN_UPGRADE_REQUIRED' ||
+              error?.originalError?.response?.data?.message === 'upgrade_required'
+            ) {
+              toast.dismiss()
+              setShowUpgradeModal(true)
+            }
+          }
         },
       },
       {
@@ -116,7 +135,7 @@ export default function TrashPage() {
         },
       },
     ],
-    [restoreMany, destroyMany, deselectAll, t]
+    [restoreMany, destroyMany, deselectAll, t, setShowUpgradeModal]
   )
 
   /**
@@ -125,8 +144,19 @@ export default function TrashPage() {
    * Created/Updated: May 2026
    */
   const handleRestore = async (id: string) => {
-    await restoreOne.mutateAsync(id)
-    toast.success(t('QR code restored'))
+    try {
+      await restoreOne.mutateAsync(id)
+      toast.success(t('QR code restored'))
+    } catch (error: any) {
+      if (
+        error?.message === 'upgrade_required' ||
+        error?.message === 'PLAN_UPGRADE_REQUIRED' ||
+        error?.originalError?.response?.data?.message === 'upgrade_required'
+      ) {
+        toast.dismiss()
+        setShowUpgradeModal(true)
+      }
+    }
   }
 
   /**
@@ -527,6 +557,13 @@ export default function TrashPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <UpgradeRequiredModal
+        open={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        currentUsage={quotaUsage.totalQRCodes}
+        planLimit={quotaLimits.maxQRCodes}
+      />
     </div>
   )
 }
